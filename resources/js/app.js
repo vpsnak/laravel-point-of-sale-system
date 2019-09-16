@@ -6,6 +6,8 @@
 
 require('./includes');
 
+import vuetify from './plugins/vuetify' // path to vuetify export
+
 window.Vue = require('vue');
 
 /**
@@ -29,5 +31,6 @@ files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(
 
 const app = new Vue({
     el: '#app',
-    template: ''
+    template: '',
+    vuetify
 });
