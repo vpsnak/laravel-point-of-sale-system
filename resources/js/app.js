@@ -7,6 +7,7 @@
 require("./includes");
 
 import vuetify from "./plugins/vuetify"; // path to vuetify export
+import store from "./store";
 
 window.Vue = require("vue");
 
@@ -40,5 +41,6 @@ files.keys().map(key =>
 const app = new Vue({
     el: "#app",
     template: "",
+    store,
     vuetify: vuetify
 });
