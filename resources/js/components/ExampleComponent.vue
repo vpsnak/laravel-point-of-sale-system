@@ -2,7 +2,12 @@
 	<v-app id="app">
 		<v-navigation-drawer app overflow :mini-variant="primaryDrawer.model">
 			<v-list dense nav>
-				<v-list-item v-for="menuItem in menuItems" :key="menuItem.id" link @click="menuAction(menuItem.action)">
+				<v-list-item
+					v-for="menuItem in menuItems"
+					:key="menuItem.id"
+					link
+					@click="menuAction(menuItem.action)"
+				>
 					<v-list-item-icon>
 						<v-icon>{{ menuItem.icon }}</v-icon>
 					</v-list-item-icon>
@@ -11,7 +16,7 @@
 						<v-list-item-title>{{ menuItem.title }}</v-list-item-title>
 					</v-list-item-content>
 				</v-list-item>
-     		</v-list>
+			</v-list>
 		</v-navigation-drawer>
 
 		<v-app-bar app>
@@ -21,13 +26,38 @@
 
 		<v-content>
 			<v-container fluid>
-				<v-row align="center" justify="center">
+				<v-row justify="center">
 					<v-col cols="8">
 						<v-card>
 							<v-card-text>
 								<v-row>
-									<v-col cols="12" md="6">
-										<router-view></router-view>
+									<v-col v-for="card in cards" :key="card.title" :cols="card.flex">
+										<v-card>
+											<v-img
+												:src="card.src"
+												class="white--text"
+												height="200px"
+												gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
+											>
+												<v-card-title class="fill-height align-end" v-text="card.title"></v-card-title>
+											</v-img>
+
+											<v-card-actions>
+												<div class="flex-grow-1"></div>
+
+												<v-btn icon>
+													<v-icon>mdi-heart</v-icon>
+												</v-btn>
+
+												<v-btn icon>
+													<v-icon>mdi-bookmark</v-icon>
+												</v-btn>
+
+												<v-btn icon>
+													<v-icon>mdi-share-variant</v-icon>
+												</v-btn>
+											</v-card-actions>
+										</v-card>
 									</v-col>
 								</v-row>
 							</v-card-text>
@@ -35,44 +65,15 @@
 						</v-card>
 					</v-col>
 					<v-col cols="4">
-				<v-dialog
-					v-model="showDialog"
-					max-width="290"
-					>
-      <v-card>
-        <v-card-title class="headline">Use Google's location service?</v-card-title>
-
-        <v-card-text>
-          Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.
-        </v-card-text>
-
-        <v-card-actions>
-          <div class="flex-grow-1"></div>
-
-          <v-btn
-            color="green darken-1"
-            text
-            @click="dialog = false"
-          >
-            Disagree
-          </v-btn>
-
-          <v-btn
-            color="green darken-1"
-            text
-            @click="dialog = false"
-          >
-            Agree
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
 						<v-card>
 							<v-card-text>
 								<v-row>
-									<v-col cols="12" md="6">
-										<router-link to="/foo">Go to Foo</router-link>
-										<router-link to="/bar">Go to Bar</router-link>
+									<v-col cols="12">
+										<v-toolbar flat>
+											<v-text-field placeholder="Search product" class="grey--text">
+												<v-icon slot="prepend" color="green">mdi-magnify</v-icon>
+											</v-text-field>
+										</v-toolbar>
 									</v-col>
 								</v-row>
 							</v-card-text>
@@ -100,31 +101,51 @@ export default {
 			menuItems: [
 				{
 					id: 1,
-					title: 'asd',
-					icon: 'arrow_downward',
-					action: 'popup'
+					title: "asd",
+					icon: "arrow_downward",
+					action: "popup"
 				},
 				{
 					id: 2,
-					title: 'asd',
-					icon: 'fa-user',
-					action: 'alert'
+					title: "asd",
+					icon: "fa-user",
+					action: "alert"
+				}
+			],
+			cards: [
+				{
+					title: "Pre-fab homes",
+					src: "https://cdn.vuetifyjs.com/images/cards/house.jpg",
+					flex: 3
+				},
+				{
+					title: "Favorite road trips",
+					src: "https://cdn.vuetifyjs.com/images/cards/road.jpg",
+					flex: 3
+				},
+				{
+					title: "Best airlines",
+					src: "https://cdn.vuetifyjs.com/images/cards/plane.jpg",
+					flex: 3
+				},
+				{
+					title: "Favorite road trips",
+					src: "https://cdn.vuetifyjs.com/images/cards/road.jpg",
+					flex: 3
 				}
 			]
-		} 
+		};
 	},
-	mounted() {
-
-	},
+	mounted() {},
 	methods: {
 		menuAction(action) {
-			switch(action) {
-				case 'alert':
-					alert('psssst')
-					break
-				case 'popup':
-					this.showDialog = true
-					break
+			switch (action) {
+				case "alert":
+					alert("psssst");
+					break;
+				case "popup":
+					this.showDialog = true;
+					break;
 				default:
 					console.log(action);
 					break;

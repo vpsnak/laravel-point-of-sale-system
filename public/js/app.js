@@ -2209,6 +2209,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2218,14 +2219,31 @@ __webpack_require__.r(__webpack_exports__);
       },
       menuItems: [{
         id: 1,
-        title: 'asd',
-        icon: 'arrow_downward',
-        action: 'popup'
+        title: "asd",
+        icon: "arrow_downward",
+        action: "popup"
       }, {
         id: 2,
-        title: 'asd',
-        icon: 'fa-user',
-        action: 'alert'
+        title: "asd",
+        icon: "fa-user",
+        action: "alert"
+      }],
+      cards: [{
+        title: "Pre-fab homes",
+        src: "https://cdn.vuetifyjs.com/images/cards/house.jpg",
+        flex: 3
+      }, {
+        title: "Favorite road trips",
+        src: "https://cdn.vuetifyjs.com/images/cards/road.jpg",
+        flex: 3
+      }, {
+        title: "Best airlines",
+        src: "https://cdn.vuetifyjs.com/images/cards/plane.jpg",
+        flex: 3
+      }, {
+        title: "Favorite road trips",
+        src: "https://cdn.vuetifyjs.com/images/cards/road.jpg",
+        flex: 3
       }]
     };
   },
@@ -2233,11 +2251,11 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     menuAction: function menuAction(action) {
       switch (action) {
-        case 'alert':
-          alert('psssst');
+        case "alert":
+          alert("psssst");
           break;
 
-        case 'popup':
+        case "popup":
           this.showDialog = true;
           break;
 
@@ -23656,7 +23674,7 @@ var render = function() {
             [
               _c(
                 "v-row",
-                { attrs: { align: "center", justify: "center" } },
+                { attrs: { justify: "center" } },
                 [
                   _c(
                     "v-col",
@@ -23670,14 +23688,91 @@ var render = function() {
                             [
                               _c(
                                 "v-row",
-                                [
-                                  _c(
+                                _vm._l(_vm.cards, function(card) {
+                                  return _c(
                                     "v-col",
-                                    { attrs: { cols: "12", md: "6" } },
-                                    [_c("router-view")],
+                                    {
+                                      key: card.title,
+                                      attrs: { cols: card.flex }
+                                    },
+                                    [
+                                      _c(
+                                        "v-card",
+                                        [
+                                          _c(
+                                            "v-img",
+                                            {
+                                              staticClass: "white--text",
+                                              attrs: {
+                                                src: card.src,
+                                                height: "200px",
+                                                gradient:
+                                                  "to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
+                                              }
+                                            },
+                                            [
+                                              _c("v-card-title", {
+                                                staticClass:
+                                                  "fill-height align-end",
+                                                domProps: {
+                                                  textContent: _vm._s(
+                                                    card.title
+                                                  )
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-card-actions",
+                                            [
+                                              _c("div", {
+                                                staticClass: "flex-grow-1"
+                                              }),
+                                              _vm._v(" "),
+                                              _c(
+                                                "v-btn",
+                                                { attrs: { icon: "" } },
+                                                [
+                                                  _c("v-icon", [
+                                                    _vm._v("mdi-heart")
+                                                  ])
+                                                ],
+                                                1
+                                              ),
+                                              _vm._v(" "),
+                                              _c(
+                                                "v-btn",
+                                                { attrs: { icon: "" } },
+                                                [
+                                                  _c("v-icon", [
+                                                    _vm._v("mdi-bookmark")
+                                                  ])
+                                                ],
+                                                1
+                                              ),
+                                              _vm._v(" "),
+                                              _c(
+                                                "v-btn",
+                                                { attrs: { icon: "" } },
+                                                [
+                                                  _c("v-icon", [
+                                                    _vm._v("mdi-share-variant")
+                                                  ])
+                                                ],
+                                                1
+                                              )
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
                                     1
                                   )
-                                ],
+                                }),
                                 1
                               )
                             ],
@@ -23697,82 +23792,6 @@ var render = function() {
                     { attrs: { cols: "4" } },
                     [
                       _c(
-                        "v-dialog",
-                        {
-                          attrs: { "max-width": "290" },
-                          model: {
-                            value: _vm.showDialog,
-                            callback: function($$v) {
-                              _vm.showDialog = $$v
-                            },
-                            expression: "showDialog"
-                          }
-                        },
-                        [
-                          _c(
-                            "v-card",
-                            [
-                              _c("v-card-title", { staticClass: "headline" }, [
-                                _vm._v("Use Google's location service?")
-                              ]),
-                              _vm._v(" "),
-                              _c("v-card-text", [
-                                _vm._v(
-                                  "\n          Let Google help apps determine location. This means sending anonymous location data to Google, even when no apps are running.\n        "
-                                )
-                              ]),
-                              _vm._v(" "),
-                              _c(
-                                "v-card-actions",
-                                [
-                                  _c("div", { staticClass: "flex-grow-1" }),
-                                  _vm._v(" "),
-                                  _c(
-                                    "v-btn",
-                                    {
-                                      attrs: {
-                                        color: "green darken-1",
-                                        text: ""
-                                      },
-                                      on: {
-                                        click: function($event) {
-                                          _vm.dialog = false
-                                        }
-                                      }
-                                    },
-                                    [
-                                      _vm._v(
-                                        "\n            Disagree\n          "
-                                      )
-                                    ]
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "v-btn",
-                                    {
-                                      attrs: {
-                                        color: "green darken-1",
-                                        text: ""
-                                      },
-                                      on: {
-                                        click: function($event) {
-                                          _vm.dialog = false
-                                        }
-                                      }
-                                    },
-                                    [_vm._v("\n            Agree\n          ")]
-                                  )
-                                ],
-                                1
-                              )
-                            ],
-                            1
-                          )
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
                         "v-card",
                         [
                           _c(
@@ -23783,18 +23802,37 @@ var render = function() {
                                 [
                                   _c(
                                     "v-col",
-                                    { attrs: { cols: "12", md: "6" } },
+                                    { attrs: { cols: "12" } },
                                     [
                                       _c(
-                                        "router-link",
-                                        { attrs: { to: "/foo" } },
-                                        [_vm._v("Go to Foo")]
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "router-link",
-                                        { attrs: { to: "/bar" } },
-                                        [_vm._v("Go to Bar")]
+                                        "v-toolbar",
+                                        { attrs: { flat: "" } },
+                                        [
+                                          _c(
+                                            "v-text-field",
+                                            {
+                                              staticClass: "grey--text",
+                                              attrs: {
+                                                placeholder: "Search product"
+                                              }
+                                            },
+                                            [
+                                              _c(
+                                                "v-icon",
+                                                {
+                                                  attrs: {
+                                                    slot: "prepend",
+                                                    color: "green"
+                                                  },
+                                                  slot: "prepend"
+                                                },
+                                                [_vm._v("mdi-magnify")]
+                                              )
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
                                       )
                                     ],
                                     1
@@ -76101,12 +76139,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuetify/lib/components/VCard */ "./node_modules/vuetify/lib/components/VCard/index.js");
 /* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/index.js");
 /* harmony import */ var vuetify_lib_components_VContent__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vuetify/lib/components/VContent */ "./node_modules/vuetify/lib/components/VContent/index.js");
-/* harmony import */ var vuetify_lib_components_VDialog__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuetify/lib/components/VDialog */ "./node_modules/vuetify/lib/components/VDialog/index.js");
-/* harmony import */ var vuetify_lib_components_VFooter__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vuetify/lib/components/VFooter */ "./node_modules/vuetify/lib/components/VFooter/index.js");
-/* harmony import */ var vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! vuetify/lib/components/VIcon */ "./node_modules/vuetify/lib/components/VIcon/index.js");
+/* harmony import */ var vuetify_lib_components_VFooter__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuetify/lib/components/VFooter */ "./node_modules/vuetify/lib/components/VFooter/index.js");
+/* harmony import */ var vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vuetify/lib/components/VIcon */ "./node_modules/vuetify/lib/components/VIcon/index.js");
+/* harmony import */ var vuetify_lib_components_VImg__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! vuetify/lib/components/VImg */ "./node_modules/vuetify/lib/components/VImg/index.js");
 /* harmony import */ var vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! vuetify/lib/components/VList */ "./node_modules/vuetify/lib/components/VList/index.js");
 /* harmony import */ var vuetify_lib_components_VNavigationDrawer__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! vuetify/lib/components/VNavigationDrawer */ "./node_modules/vuetify/lib/components/VNavigationDrawer/index.js");
-/* harmony import */ var vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! vuetify/lib/components/VToolbar */ "./node_modules/vuetify/lib/components/VToolbar/index.js");
+/* harmony import */ var vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! vuetify/lib/components/VTextField */ "./node_modules/vuetify/lib/components/VTextField/index.js");
+/* harmony import */ var vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! vuetify/lib/components/VToolbar */ "./node_modules/vuetify/lib/components/VToolbar/index.js");
 
 
 
@@ -76149,7 +76188,9 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 
 
-_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VApp: vuetify_lib_components_VApp__WEBPACK_IMPORTED_MODULE_4__["VApp"],VAppBar: vuetify_lib_components_VAppBar__WEBPACK_IMPORTED_MODULE_5__["VAppBar"],VAppBarNavIcon: vuetify_lib_components_VAppBar__WEBPACK_IMPORTED_MODULE_5__["VAppBarNavIcon"],VBtn: vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_6__["VBtn"],VCard: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_7__["VCard"],VCardActions: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_7__["VCardActions"],VCardText: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_7__["VCardText"],VCardTitle: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_7__["VCardTitle"],VCol: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_8__["VCol"],VContainer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_8__["VContainer"],VContent: vuetify_lib_components_VContent__WEBPACK_IMPORTED_MODULE_9__["VContent"],VDialog: vuetify_lib_components_VDialog__WEBPACK_IMPORTED_MODULE_10__["VDialog"],VFooter: vuetify_lib_components_VFooter__WEBPACK_IMPORTED_MODULE_11__["VFooter"],VIcon: vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_12__["VIcon"],VList: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_13__["VList"],VListItem: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_13__["VListItem"],VListItemContent: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_13__["VListItemContent"],VListItemIcon: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_13__["VListItemIcon"],VListItemTitle: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_13__["VListItemTitle"],VNavigationDrawer: vuetify_lib_components_VNavigationDrawer__WEBPACK_IMPORTED_MODULE_14__["VNavigationDrawer"],VRow: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_8__["VRow"],VToolbarTitle: vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_15__["VToolbarTitle"]})
+
+
+_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VApp: vuetify_lib_components_VApp__WEBPACK_IMPORTED_MODULE_4__["VApp"],VAppBar: vuetify_lib_components_VAppBar__WEBPACK_IMPORTED_MODULE_5__["VAppBar"],VAppBarNavIcon: vuetify_lib_components_VAppBar__WEBPACK_IMPORTED_MODULE_5__["VAppBarNavIcon"],VBtn: vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_6__["VBtn"],VCard: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_7__["VCard"],VCardActions: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_7__["VCardActions"],VCardText: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_7__["VCardText"],VCardTitle: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_7__["VCardTitle"],VCol: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_8__["VCol"],VContainer: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_8__["VContainer"],VContent: vuetify_lib_components_VContent__WEBPACK_IMPORTED_MODULE_9__["VContent"],VFooter: vuetify_lib_components_VFooter__WEBPACK_IMPORTED_MODULE_10__["VFooter"],VIcon: vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_11__["VIcon"],VImg: vuetify_lib_components_VImg__WEBPACK_IMPORTED_MODULE_12__["VImg"],VList: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_13__["VList"],VListItem: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_13__["VListItem"],VListItemContent: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_13__["VListItemContent"],VListItemIcon: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_13__["VListItemIcon"],VListItemTitle: vuetify_lib_components_VList__WEBPACK_IMPORTED_MODULE_13__["VListItemTitle"],VNavigationDrawer: vuetify_lib_components_VNavigationDrawer__WEBPACK_IMPORTED_MODULE_14__["VNavigationDrawer"],VRow: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_8__["VRow"],VTextField: vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_15__["VTextField"],VToolbar: vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_16__["VToolbar"],VToolbarTitle: vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_16__["VToolbarTitle"]})
 
 
 /* hot reload */
@@ -76204,8 +76245,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mdi_font_css_materialdesignicons_css__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_mdi_font_css_materialdesignicons_css__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _fortawesome_fontawesome_free_css_all_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @fortawesome/fontawesome-free/css/all.css */ "./node_modules/@fortawesome/fontawesome-free/css/all.css");
 /* harmony import */ var _fortawesome_fontawesome_free_css_all_css__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_fortawesome_fontawesome_free_css_all_css__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var material_design_icons_iconfont_dist_material_design_icons_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! material-design-icons-iconfont/dist/material-design-icons.css */ "./node_modules/material-design-icons-iconfont/dist/material-design-icons.css");
-/* harmony import */ var material_design_icons_iconfont_dist_material_design_icons_css__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(material_design_icons_iconfont_dist_material_design_icons_css__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var material_design_icons_iconfont_dist_material_design_icons_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! material-design-icons-iconfont/dist/material-design-icons.css */ "./node_modules/material-design-icons-iconfont/dist/material-design-icons.css");
+/* harmony import */ var material_design_icons_iconfont_dist_material_design_icons_css__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(material_design_icons_iconfont_dist_material_design_icons_css__WEBPACK_IMPORTED_MODULE_3__);
 
 
 
@@ -76265,7 +76306,7 @@ __webpack_require__.r(__webpack_exports__);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuetify_lib__WEBPACK_IMPORTED_MODULE_1__["default"]);
 /* harmony default export */ __webpack_exports__["default"] = (new vuetify_lib__WEBPACK_IMPORTED_MODULE_1__["default"]({
   theme: {
-    dark: true
+    dark: false
   },
   icons: {
     iconfont: "mdi" | "fa"
@@ -76351,8 +76392,8 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({});
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\user\Documents\Projects\plantshed\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\Users\user\Documents\Projects\plantshed\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\Users\pavlos\Documents\Projects\plantshed\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\Users\pavlos\Documents\Projects\plantshed\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
