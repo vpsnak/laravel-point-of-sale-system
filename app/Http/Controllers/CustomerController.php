@@ -7,6 +7,13 @@ use App\Customer;
 
 class CustomerController extends Controller
 {
+    protected $crud;
+
+    public function __construct(\CRUDController $CRUDController)
+    {
+        $this->crud = $CRUDController;
+    }
+
     public function getAll()
     {
         return response(Customer::all());
@@ -20,9 +27,8 @@ class CustomerController extends Controller
             'email' => 'required|email|unique:customers,email'
         ]);
 
-        $model = new Customer($validatedData);
-        $model->save();
+        $response = $this->crud->create(Customer::class, $validatedData);
 
-        return response('Customer created successfully!', 201);
+        return $response;
     }
 }
