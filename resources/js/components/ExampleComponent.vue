@@ -14,7 +14,9 @@
 						<v-card>
 							<v-card-text>
 								<v-row>
-									<v-col cols="12" md="6"></v-col>
+									<v-col cols="12" md="6">
+										<router-view></router-view>
+									</v-col>
 								</v-row>
 							</v-card-text>
 							<v-card-actions></v-card-actions>
@@ -25,8 +27,8 @@
 							<v-card-text>
 								<v-row>
 									<v-col cols="12" md="6">
-										<span color="white">asd</span>
-										<v-icon>fa-ad</v-icon>
+										<router-link to="/foo">Go to Foo</router-link>
+										<router-link to="/bar">Go to Bar</router-link>
 									</v-col>
 								</v-row>
 							</v-card-text>
@@ -51,9 +53,6 @@ export default {
 		}
 	}),
 
-	mounted() {
-		console.log(this);
-		console.log(this.$store.state.count);
-	}
+	mounted() {}
 };
 </script>

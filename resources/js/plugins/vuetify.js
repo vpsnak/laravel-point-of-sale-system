@@ -11,3 +11,5 @@ export default new Vuetify({
         iconfont: "mdi" || "fa"
     }
 });
+
+export const vuetify = new Vuetify({});
