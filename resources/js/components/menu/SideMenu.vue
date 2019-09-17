@@ -1,11 +1,7 @@
 <template>
 	<v-navigation-drawer app overflow :mini-variant="mini">
 		<v-list dense nav>
-			<v-list-item
-				v-for="menuItem in menuItems"
-				:key="menuItem.id"
-				@click="menuAction(menuItem.action)"
-			>
+			<v-list-item v-for="menuItem in menuItems" :key="menuItem.id" :to="menuItem.to">
 				<v-list-item-icon>
 					<v-icon>{{ menuItem.icon }}</v-icon>
 				</v-list-item-icon>
@@ -26,33 +22,31 @@ export default {
 			menuItems: [
 				{
 					id: 1,
-					title: "asd",
-					icon: "arrow_downward",
-					action: "popup"
+					title: "Dashboard",
+					icon: "dashboard",
+					to: "/"
 				},
 				{
 					id: 2,
-					title: "asd",
-					icon: "fa-user",
-					action: "alert"
+					title: "Sales",
+					icon: "shopping_cart",
+					to: "sales"
+				},
+				{
+					id: 3,
+					title: "Nikos",
+					icon: "fa-coffee",
+					to: "nikos"
+				},
+				{
+					id: 4,
+					title: "Chris",
+					icon: "fa-cannabis",
+					to: "chris"
 				}
 			]
 		};
 	},
-	methods: {
-		menuAction(action) {
-			switch (action) {
-				case "alert":
-					this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-					break;
-				case "popup":
-					this.showDialog = true;
-					break;
-				default:
-					console.log(action);
-					break;
-			}
-		}
-	}
+	methods: {}
 };
 </script>

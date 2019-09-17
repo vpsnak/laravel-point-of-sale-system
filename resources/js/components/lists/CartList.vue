@@ -178,9 +178,8 @@ export default {
 
 	methods: {
 		decreaseQty(item) {
-			item.qty--;
-			if (item.qty < 1) {
-				this.removeItem(item);
+			if (item.qty > 1) {
+				item.qty--;
 			}
 		},
 		increaseQty(item) {

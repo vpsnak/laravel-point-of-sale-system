@@ -45,7 +45,7 @@ const router = new VueRouter({
 
 const app = new Vue({
     el: "#app",
-    template: "",
+    template: "<master />",
     router,
     store,
     vuetify
