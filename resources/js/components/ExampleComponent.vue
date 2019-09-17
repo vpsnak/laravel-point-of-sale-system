@@ -17,18 +17,15 @@
 			</v-container>
 		</v-content>
 
-<footerMenu />
+		<footerMenu />
 	</v-app>
 </template>
 
 <script>
 export default {
 	data() {
-		return {
-
-		};
+		return {};
 	},
-	mounted() {},
-
+	mounted() {}
 };
 </script>
