@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateProductsTable extends Migration
 {
@@ -18,10 +18,9 @@ class CreateProductsTable extends Migration
             $table->string('sku')->unique()->index();
             $table->string('name');
             $table->string('photo_url');
-            $table->integer('quantity');
-            $table->decimal('price');
             $table->softDeletes();
             $table->timestamps();
+            // stock_id price_id foreign
         });
     }
 
