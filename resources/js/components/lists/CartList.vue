@@ -129,3 +129,17 @@
 	    <v-card-actions></v-card-actions>
 	</v-card>
 </template>
+
+<script>
+export default {
+    data() {
+        return {
+            items: [
+				{ name: 'Cotton Long Sleeve T-shirt', price: '44' },
+				{ name: 'Recipes', price: '4' },
+				{ name: 'Work', price: '7' },
+			],
+        }
+    }
+}
+</script>

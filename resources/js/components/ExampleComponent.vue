@@ -25,12 +25,7 @@
 export default {
 	data() {
 		return {
-			items: [
-				{ name: 'Cotton Long Sleeve T-shirt', price: '44' },
-				{ name: 'Recipes', price: '4' },
-				{ name: 'Work', price: '7' },
-			],
-			showDialog: false,
+
 		};
 	},
 	mounted() {},
