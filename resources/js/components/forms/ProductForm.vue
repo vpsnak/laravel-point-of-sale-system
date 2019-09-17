@@ -1,46 +1,61 @@
 <template>
   <v-form v-model="valid">
-    <v-container>
-      <v-row>
+		<v-row justify="center">     
+             <!-- $table->bigIncrements('id');
+            $table->string('sku')->unique()->index();
+            $table->string('name');
+            $table->string('photo_url');
+            $table->softDeletes();
+            $table->timestamps();
+            // stock_id price_id foreign
+        }); -->
         <v-col
           cols="12"
-          md="4"
+        >
+          <div class="text-center">
+            <v-chip
+      color="primary"
+      label
+    >
+      <v-icon left>fab fa-java</v-icon>
+     Product Form 
+    </v-chip>
+    </div>
+            </v-col>
+        <v-col
+          cols="3"
         >
           <v-text-field
-            v-model="firstname"
+            v-model="sku"
             :rules="nameRules"
             :counter="10"
-            label="First name"
+            label="Sku"
             required
           ></v-text-field>
         </v-col>
 
         <v-col
-          cols="12"
-          md="4"
+          cols="3"
         >
           <v-text-field
-            v-model="lastname"
+            v-model="name"
             :rules="nameRules"
             :counter="10"
-            label="Last name"
+            label="Name"
             required
           ></v-text-field>
         </v-col>
 
         <v-col
-          cols="12"
-          md="4"
+          cols="3"
         >
           <v-text-field
-            v-model="email"
-            :rules="emailRules"
-            label="E-mail"
+            v-model="photo_url"
+            label="Photo Url"
             required
           ></v-text-field>
         </v-col>
       </v-row>
-    </v-container>
   </v-form>
 </template>
 

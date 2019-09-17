@@ -35,7 +35,7 @@ export default {
 				{
 					id: 3,
 					title: "Nikos",
-					icon: "fa-coffee",
+					icon: "fab fa-magento",
 					to: "nikos"
 				},
 				{
