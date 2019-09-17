@@ -2552,7 +2552,7 @@ __webpack_require__.r(__webpack_exports__);
       }, {
         id: 3,
         title: "Nikos",
-        icon: "fa-coffee",
+        icon: "fab fa-magento",
         to: "nikos"
       }, {
         id: 4,
@@ -24222,7 +24222,7 @@ var render = function() {
                   { attrs: { color: "primary", label: "" } },
                   [
                     _c("v-icon", { attrs: { left: "" } }, [
-                      _vm._v("fas fa-list")
+                      _vm._v("fab fa-java")
                     ]),
                     _vm._v("\n     Product Form \n    ")
                   ],

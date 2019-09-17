@@ -17,7 +17,7 @@
       color="primary"
       label
     >
-      <v-icon left>fas fa-list</v-icon>
+      <v-icon left>fab fa-java</v-icon>
      Product Form 
     </v-chip>
     </div>
