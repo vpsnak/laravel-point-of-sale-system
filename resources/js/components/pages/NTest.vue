@@ -1,0 +1,4 @@
+<template>
+   <productForm>
+   </productForm>
+</template>
