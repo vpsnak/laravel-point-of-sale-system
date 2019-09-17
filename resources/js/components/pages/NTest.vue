@@ -1,3 +1,6 @@
 <template>
-	<h2>dsa</h2>
+	<v-container fluid>
+   <productForm>
+   </productForm>
+   </v-container>
 </template>
