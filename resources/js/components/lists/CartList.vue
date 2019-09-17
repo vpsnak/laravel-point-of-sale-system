@@ -179,7 +179,8 @@ export default {
 	methods: {
 		decreaseQty(item) {
 		    item.qty--;
-			if (item.qty == 0) this.items.splice(item, 1);
+			if (item.qty < 1) this.items.splice(item, 1);
+
 		},
 		increaseQty(item) {
 			item.qty++;
