@@ -1,6 +1,5 @@
 <template>
   <v-form v-model="valid">
-		<v-row justify="center">     
              <!-- $table->bigIncrements('id');
             $table->string('sku')->unique()->index();
             $table->string('name');
@@ -9,22 +8,15 @@
             $table->timestamps();
             // stock_id price_id foreign
         }); -->
-        <v-col
-          cols="12"
-        >
           <div class="text-center">
             <v-chip
-      color="primary"
+      color="deep-purple"
       label
     >
-      <v-icon left>fab fa-java</v-icon>
+      <v-icon left>fab fa-product-hunt</i> </v-icon>
      Product Form 
     </v-chip>
     </div>
-            </v-col>
-        <v-col
-          cols="3"
-        >
           <v-text-field
             v-model="sku"
             :rules="nameRules"
@@ -32,11 +24,7 @@
             label="Sku"
             required
           ></v-text-field>
-        </v-col>
-
-        <v-col
-          cols="3"
-        >
+  
           <v-text-field
             v-model="name"
             :rules="nameRules"
@@ -44,17 +32,20 @@
             label="Name"
             required
           ></v-text-field>
-        </v-col>
-
-        <v-col
-          cols="3"
-        >
+  
           <v-text-field
             v-model="photo_url"
             label="Photo Url"
             required
           ></v-text-field>
-        </v-col>
+
+          <v-select
+        v-model="select"
+        :items="items"
+        :rules="[v => !!v || 'Item is required']"
+        label="Store"
+        required
+      ></v-select>
       </v-row>
   </v-form>
 </template>
@@ -73,6 +64,13 @@
       emailRules: [
         v => !!v || 'E-mail is required',
         v => /.+@.+/.test(v) || 'E-mail must be valid',
+      ],
+      select: null,
+      items: [
+        'Store 1',
+        'Store 2',
+        'Store 3',
+        'Store 4',
       ],
     }),
   }
