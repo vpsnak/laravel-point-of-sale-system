@@ -16,8 +16,8 @@ class CreateShippingsTable extends Migration
         Schema::create('shippings', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
+            $table->unsignedBigInteger('price_id');
             $table->timestamps();
-            // price_id
         });
     }
 
