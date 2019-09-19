@@ -12,15 +12,29 @@ class ProductController extends Controller
         return response(Product::with('stores')->get());
     }
 
+    public function create(Request $request)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'sku' => 'required|string',
+        ]);
+
+        $response = $this->crud->create(Product::class, $validatedData);
+
+        return $response;
+    }
+
     public function search(Request $request)
     {
         $validatedData = $request->validate([
             'keyword' => 'required'
         ]);
 
-        return response(Product::where([
-            ['sku', 'like', "%{$validatedData['keyword']}%"],
-            ['name', 'like', "%{$validatedData['keyword']}%"],
-        ])->get(), 200);
+        return response(
+            Product::where('sku', 'like', "%{$validatedData['keyword']}%")
+                ->orWhere('name', 'like', "%{$validatedData['keyword']}%")
+                ->get(),
+            200
+        );
     }
 }

@@ -18,4 +18,5 @@ Route::post('/customers/search', 'CustomerController@search');
 
 // Products 
 Route::get('/products', 'ProductController@all');
+Route::post('/products/search', 'ProductController@create');
 Route::post('/products/search', 'ProductController@search');

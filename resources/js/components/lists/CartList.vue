@@ -55,6 +55,9 @@
 								<v-col cols="4">
 									<v-select :items="discountTypes" label="Discount" item-text="label" item-value="value"></v-select>
 								</v-col>
+								<v-col cols="4">
+									<v-text-field type="number" label="Amount"></v-text-field>
+								</v-col>
 							</v-list-item>
 						</v-list-group>
 					</v-list>
