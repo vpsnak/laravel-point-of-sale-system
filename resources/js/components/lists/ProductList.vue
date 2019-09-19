@@ -19,6 +19,44 @@
 				</v-col>
 			</v-row>
 			<v-row>
+				   <v-col cols="12" sm="6" class="py-2">
+            <v-btn-toggle v-model="icon">
+              <v-btn 
+			     :loading="loading"
+				 :disabled="loading"
+				 @click="loader = 'loading'"
+				 text value="left">
+				  <v-icon left>fas fa-heart</v-icon>
+                <span>Favourites</span>
+              </v-btn>
+              <v-btn 
+			  :loading="loading2"
+				 :disabled="loading2"
+				 @click="loader = 'loading2'"
+				 text value="center">
+				  <v-icon left>fas fa-sort-numeric-up</v-icon>
+				  <span class="hidden-sm-and-down">Best Sellers</span>
+              </v-btn>
+              <v-btn 
+			   :loading="loading3"
+				 :disabled="loading3"
+				 @click="loader = 'loading3'"
+				 text value="right">
+				  <v-icon left>fas fa-spa</v-icon>
+				  <span class="hidden-sm-and-down">Roses</span>
+              </v-btn>
+              <v-btn 
+			   :loading="loading4"
+				 :disabled="loading4"
+				 @click="loader = 'loading4'"
+				 text value="justify">
+				 <v-icon left>fas fa-seedling</v-icon>
+                <span class="hidden-sm-and-down">Succulents</span>
+              </v-btn>
+            </v-btn-toggle>
+          </v-col>
+				</v-row>
+			<v-row>
 				<v-col v-for="card in cards" :key="card.id" :cols="card.flex">
 					<v-card>
 						<v-img
@@ -77,6 +115,11 @@
 export default {
 	data() {
 		return {
+			loader: null,
+			loading: false,
+			loading2: false,
+			loading3: false,
+			loading4: false,
 			cards: [
 				{
 					id: "1",
@@ -104,6 +147,16 @@ export default {
 				}
 			]
 		};
-	}
+	},
+	watch: {
+      loader () {
+        const l = this.loader
+        this[l] = !this[l]
+
+        setTimeout(() => (this[l] = false), 2000)
+
+        this.loader = null
+      },
+    },
 };
 </script>

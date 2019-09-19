@@ -2843,9 +2843,52 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      loader: null,
+      loading: false,
+      loading2: false,
+      loading3: false,
+      loading4: false,
       cards: [{
         id: "1",
         title: "Pre-fab homes",
@@ -2868,6 +2911,18 @@ __webpack_require__.r(__webpack_exports__);
         flex: 3
       }]
     };
+  },
+  watch: {
+    loader: function loader() {
+      var _this = this;
+
+      var l = this.loader;
+      this[l] = !this[l];
+      setTimeout(function () {
+        return _this[l] = false;
+      }, 2000);
+      this.loader = null;
+    }
   }
 });
 
@@ -25578,6 +25633,140 @@ var render = function() {
                           ])
                         },
                         [_vm._v(" "), _c("span", [_vm._v("Add product")])]
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "v-row",
+            [
+              _c(
+                "v-col",
+                { staticClass: "py-2", attrs: { cols: "12", sm: "6" } },
+                [
+                  _c(
+                    "v-btn-toggle",
+                    {
+                      model: {
+                        value: _vm.icon,
+                        callback: function($$v) {
+                          _vm.icon = $$v
+                        },
+                        expression: "icon"
+                      }
+                    },
+                    [
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: {
+                            loading: _vm.loading,
+                            disabled: _vm.loading,
+                            text: "",
+                            value: "left"
+                          },
+                          on: {
+                            click: function($event) {
+                              _vm.loader = "loading"
+                            }
+                          }
+                        },
+                        [
+                          _c("v-icon", { attrs: { left: "" } }, [
+                            _vm._v("fas fa-heart")
+                          ]),
+                          _vm._v(" "),
+                          _c("span", [_vm._v("Favourites")])
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: {
+                            loading: _vm.loading2,
+                            disabled: _vm.loading2,
+                            text: "",
+                            value: "center"
+                          },
+                          on: {
+                            click: function($event) {
+                              _vm.loader = "loading2"
+                            }
+                          }
+                        },
+                        [
+                          _c("v-icon", { attrs: { left: "" } }, [
+                            _vm._v("fas fa-sort-numeric-up")
+                          ]),
+                          _vm._v(" "),
+                          _c("span", { staticClass: "hidden-sm-and-down" }, [
+                            _vm._v("Best Sellers")
+                          ])
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: {
+                            loading: _vm.loading3,
+                            disabled: _vm.loading3,
+                            text: "",
+                            value: "right"
+                          },
+                          on: {
+                            click: function($event) {
+                              _vm.loader = "loading3"
+                            }
+                          }
+                        },
+                        [
+                          _c("v-icon", { attrs: { left: "" } }, [
+                            _vm._v("fas fa-spa")
+                          ]),
+                          _vm._v(" "),
+                          _c("span", { staticClass: "hidden-sm-and-down" }, [
+                            _vm._v("Roses")
+                          ])
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: {
+                            loading: _vm.loading4,
+                            disabled: _vm.loading4,
+                            text: "",
+                            value: "justify"
+                          },
+                          on: {
+                            click: function($event) {
+                              _vm.loader = "loading4"
+                            }
+                          }
+                        },
+                        [
+                          _c("v-icon", { attrs: { left: "" } }, [
+                            _vm._v("fas fa-seedling")
+                          ]),
+                          _vm._v(" "),
+                          _c("span", { staticClass: "hidden-sm-and-down" }, [
+                            _vm._v("Succulents")
+                          ])
+                        ],
+                        1
                       )
                     ],
                     1
@@ -66987,7 +67176,7 @@ __webpack_require__.r(__webpack_exports__);
 /*!******************************************************!*\
   !*** ./node_modules/vuetify/lib/components/index.js ***!
   \******************************************************/
-/*! exports provided: VApp, VAppBar, VAppBarNavIcon, VAutocomplete, VBtn, VCard, VCardTitle, VCardActions, VCardText, VChip, VContent, VDialog, VDivider, VFooter, VForm, VContainer, VCol, VRow, VSpacer, VLayout, VFlex, VIcon, VImg, VListItemActionText, VListItemContent, VListItemTitle, VListItemSubtitle, VList, VListGroup, VListItem, VListItemAction, VListItemAvatar, VListItemIcon, VListItemGroup, VNavigationDrawer, VSelect, VSubheader, VTextField, VToolbar, VToolbarItems, VToolbarTitle, VTooltip, VCarouselTransition, VCarouselReverseTransition, VTabTransition, VTabReverseTransition, VMenuTransition, VFabTransition, VDialogTransition, VDialogBottomTransition, VFadeTransition, VScaleTransition, VScrollXTransition, VScrollXReverseTransition, VScrollYTransition, VScrollYReverseTransition, VSlideXTransition, VSlideXReverseTransition, VSlideYTransition, VSlideYReverseTransition, VExpandTransition, VExpandXTransition, VAlert, VAvatar, VBadge, VBanner, VBottomNavigation, VBottomSheet, VBreadcrumbs, VBreadcrumbsItem, VBreadcrumbsDivider, VBtnToggle, VCalendar, VCalendarDaily, VCalendarWeekly, VCalendarMonthly, VCarousel, VCarouselItem, VCheckbox, VSimpleCheckbox, VChipGroup, VColorPicker, VColorPickerSwatches, VColorPickerCanvas, VCombobox, VCounter, VData, VDataIterator, VDataFooter, VDataTable, VEditDialog, VTableOverflow, VDataTableHeader, VSimpleTable, VVirtualTable, VDatePicker, VDatePickerTitle, VDatePickerHeader, VDatePickerDateTable, VDatePickerMonthTable, VDatePickerYears, VExpansionPanels, VExpansionPanel, VExpansionPanelHeader, VExpansionPanelContent, VFileInput, VHover, VInput, VItem, VItemGroup, VLabel, VMenu, VMessages, VOverflowBtn, VOverlay, VPagination, VSheet, VParallax, VPicker, VProgressCircular, VProgressLinear, VRadioGroup, VRadio, VRangeSlider, VRating, VResponsive, VSlider, VSlideGroup, VSlideItem, VSnackbar, VSparkline, VSpeedDial, VStepper, VStepperContent, VStepperStep, VStepperHeader, VStepperItems, VSwitch, VSystemBar, VTabs, VTab, VTabItem, VTabsItems, VTabsSlider, VTextarea, VTimeline, VTimelineItem, VTimePicker, VTimePickerClock, VTimePickerTitle, VTreeview, VTreeviewNode, VWindow, VWindowItem */
+/*! exports provided: VApp, VAppBar, VAppBarNavIcon, VAlert, VAutocomplete, VAvatar, VBadge, VBanner, VBottomNavigation, VBottomSheet, VBreadcrumbs, VBreadcrumbsItem, VBreadcrumbsDivider, VBtn, VBtnToggle, VCalendar, VCalendarDaily, VCalendarWeekly, VCalendarMonthly, VCard, VCardTitle, VCardActions, VCardText, VCarousel, VCarouselItem, VCheckbox, VSimpleCheckbox, VChip, VChipGroup, VColorPicker, VColorPickerSwatches, VColorPickerCanvas, VContent, VCombobox, VCounter, VData, VDataIterator, VDataFooter, VDataTable, VEditDialog, VTableOverflow, VDataTableHeader, VSimpleTable, VVirtualTable, VDatePicker, VDatePickerTitle, VDatePickerHeader, VDatePickerDateTable, VDatePickerMonthTable, VDatePickerYears, VDialog, VDivider, VExpansionPanels, VExpansionPanel, VExpansionPanelHeader, VExpansionPanelContent, VFileInput, VFooter, VForm, VContainer, VCol, VRow, VSpacer, VLayout, VFlex, VHover, VIcon, VImg, VInput, VItem, VItemGroup, VLabel, VListItemActionText, VListItemContent, VListItemTitle, VListItemSubtitle, VList, VListGroup, VListItem, VListItemAction, VListItemAvatar, VListItemIcon, VListItemGroup, VMenu, VMessages, VNavigationDrawer, VOverflowBtn, VOverlay, VPagination, VSheet, VParallax, VPicker, VProgressCircular, VProgressLinear, VRadioGroup, VRadio, VRangeSlider, VRating, VResponsive, VSelect, VSlider, VSlideGroup, VSlideItem, VSnackbar, VSparkline, VSpeedDial, VStepper, VStepperContent, VStepperStep, VStepperHeader, VStepperItems, VSubheader, VSwitch, VSystemBar, VTabs, VTab, VTabItem, VTabsItems, VTabsSlider, VTextarea, VTextField, VTimeline, VTimelineItem, VTimePicker, VTimePickerClock, VTimePickerTitle, VToolbar, VToolbarItems, VToolbarTitle, VTooltip, VTreeview, VTreeviewNode, VWindow, VWindowItem, VCarouselTransition, VCarouselReverseTransition, VTabTransition, VTabReverseTransition, VMenuTransition, VFabTransition, VDialogTransition, VDialogBottomTransition, VFadeTransition, VScaleTransition, VScrollXTransition, VScrollXReverseTransition, VScrollYTransition, VScrollYReverseTransition, VSlideXTransition, VSlideXReverseTransition, VSlideYTransition, VSlideYReverseTransition, VExpandTransition, VExpandXTransition */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -68280,7 +68469,7 @@ Vuetify.version = "2.0.18";
 /*!*******************************************!*\
   !*** ./node_modules/vuetify/lib/index.js ***!
   \*******************************************/
-/*! exports provided: colors, default, VApp, VAppBar, VAppBarNavIcon, VAutocomplete, VBtn, VCard, VCardTitle, VCardActions, VCardText, VChip, VContent, VDialog, VDivider, VFooter, VForm, VContainer, VCol, VRow, VSpacer, VLayout, VFlex, VIcon, VImg, VListItemActionText, VListItemContent, VListItemTitle, VListItemSubtitle, VList, VListGroup, VListItem, VListItemAction, VListItemAvatar, VListItemIcon, VListItemGroup, VNavigationDrawer, VSelect, VSubheader, VTextField, VToolbar, VToolbarItems, VToolbarTitle, VTooltip, VCarouselTransition, VCarouselReverseTransition, VTabTransition, VTabReverseTransition, VMenuTransition, VFabTransition, VDialogTransition, VDialogBottomTransition, VFadeTransition, VScaleTransition, VScrollXTransition, VScrollXReverseTransition, VScrollYTransition, VScrollYReverseTransition, VSlideXTransition, VSlideXReverseTransition, VSlideYTransition, VSlideYReverseTransition, VExpandTransition, VExpandXTransition, ClickOutside, Resize, Ripple, Scroll, Touch, VAlert, VAvatar, VBadge, VBanner, VBottomNavigation, VBottomSheet, VBreadcrumbs, VBreadcrumbsItem, VBreadcrumbsDivider, VBtnToggle, VCalendar, VCalendarDaily, VCalendarWeekly, VCalendarMonthly, VCarousel, VCarouselItem, VCheckbox, VSimpleCheckbox, VChipGroup, VColorPicker, VColorPickerSwatches, VColorPickerCanvas, VCombobox, VCounter, VData, VDataIterator, VDataFooter, VDataTable, VEditDialog, VTableOverflow, VDataTableHeader, VSimpleTable, VVirtualTable, VDatePicker, VDatePickerTitle, VDatePickerHeader, VDatePickerDateTable, VDatePickerMonthTable, VDatePickerYears, VExpansionPanels, VExpansionPanel, VExpansionPanelHeader, VExpansionPanelContent, VFileInput, VHover, VInput, VItem, VItemGroup, VLabel, VMenu, VMessages, VOverflowBtn, VOverlay, VPagination, VSheet, VParallax, VPicker, VProgressCircular, VProgressLinear, VRadioGroup, VRadio, VRangeSlider, VRating, VResponsive, VSlider, VSlideGroup, VSlideItem, VSnackbar, VSparkline, VSpeedDial, VStepper, VStepperContent, VStepperStep, VStepperHeader, VStepperItems, VSwitch, VSystemBar, VTabs, VTab, VTabItem, VTabsItems, VTabsSlider, VTextarea, VTimeline, VTimelineItem, VTimePicker, VTimePickerClock, VTimePickerTitle, VTreeview, VTreeviewNode, VWindow, VWindowItem */
+/*! exports provided: ClickOutside, Resize, Ripple, Scroll, Touch, colors, default, VApp, VAppBar, VAppBarNavIcon, VAlert, VAutocomplete, VAvatar, VBadge, VBanner, VBottomNavigation, VBottomSheet, VBreadcrumbs, VBreadcrumbsItem, VBreadcrumbsDivider, VBtn, VBtnToggle, VCalendar, VCalendarDaily, VCalendarWeekly, VCalendarMonthly, VCard, VCardTitle, VCardActions, VCardText, VCarousel, VCarouselItem, VCheckbox, VSimpleCheckbox, VChip, VChipGroup, VColorPicker, VColorPickerSwatches, VColorPickerCanvas, VContent, VCombobox, VCounter, VData, VDataIterator, VDataFooter, VDataTable, VEditDialog, VTableOverflow, VDataTableHeader, VSimpleTable, VVirtualTable, VDatePicker, VDatePickerTitle, VDatePickerHeader, VDatePickerDateTable, VDatePickerMonthTable, VDatePickerYears, VDialog, VDivider, VExpansionPanels, VExpansionPanel, VExpansionPanelHeader, VExpansionPanelContent, VFileInput, VFooter, VForm, VContainer, VCol, VRow, VSpacer, VLayout, VFlex, VHover, VIcon, VImg, VInput, VItem, VItemGroup, VLabel, VListItemActionText, VListItemContent, VListItemTitle, VListItemSubtitle, VList, VListGroup, VListItem, VListItemAction, VListItemAvatar, VListItemIcon, VListItemGroup, VMenu, VMessages, VNavigationDrawer, VOverflowBtn, VOverlay, VPagination, VSheet, VParallax, VPicker, VProgressCircular, VProgressLinear, VRadioGroup, VRadio, VRangeSlider, VRating, VResponsive, VSelect, VSlider, VSlideGroup, VSlideItem, VSnackbar, VSparkline, VSpeedDial, VStepper, VStepperContent, VStepperStep, VStepperHeader, VStepperItems, VSubheader, VSwitch, VSystemBar, VTabs, VTab, VTabItem, VTabsItems, VTabsSlider, VTextarea, VTextField, VTimeline, VTimelineItem, VTimePicker, VTimePickerClock, VTimePickerTitle, VToolbar, VToolbarItems, VToolbarTitle, VTooltip, VTreeview, VTreeviewNode, VWindow, VWindowItem, VCarouselTransition, VCarouselReverseTransition, VTabTransition, VTabReverseTransition, VMenuTransition, VFabTransition, VDialogTransition, VDialogBottomTransition, VFadeTransition, VScaleTransition, VScrollXTransition, VScrollXReverseTransition, VScrollYTransition, VScrollYReverseTransition, VSlideXTransition, VSlideXReverseTransition, VSlideYTransition, VSlideYReverseTransition, VExpandTransition, VExpandXTransition */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -68292,9 +68481,37 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VAppBarNavIcon", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VAppBarNavIcon"]; });
 
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VAlert", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VAlert"]; });
+
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VAutocomplete", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VAutocomplete"]; });
 
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VAvatar", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VAvatar"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VBadge", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VBadge"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VBanner", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VBanner"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VBottomNavigation", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VBottomNavigation"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VBottomSheet", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VBottomSheet"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VBreadcrumbs", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VBreadcrumbs"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VBreadcrumbsItem", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VBreadcrumbsItem"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VBreadcrumbsDivider", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VBreadcrumbsDivider"]; });
+
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VBtn", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VBtn"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VBtnToggle", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VBtnToggle"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCalendar", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCalendar"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCalendarDaily", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCalendarDaily"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCalendarWeekly", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCalendarWeekly"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCalendarMonthly", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCalendarMonthly"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCard", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCard"]; });
 
@@ -68304,13 +68521,73 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCardText", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCardText"]; });
 
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCarousel", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCarousel"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCarouselItem", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCarouselItem"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCheckbox", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCheckbox"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSimpleCheckbox", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSimpleCheckbox"]; });
+
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VChip", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VChip"]; });
 
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VChipGroup", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VChipGroup"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VColorPicker", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VColorPicker"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VColorPickerSwatches", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VColorPickerSwatches"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VColorPickerCanvas", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VColorPickerCanvas"]; });
+
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VContent", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VContent"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCombobox", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCombobox"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCounter", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCounter"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VData", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VData"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDataIterator", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDataIterator"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDataFooter", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDataFooter"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDataTable", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDataTable"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VEditDialog", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VEditDialog"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTableOverflow", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTableOverflow"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDataTableHeader", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDataTableHeader"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSimpleTable", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSimpleTable"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VVirtualTable", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VVirtualTable"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDatePicker", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDatePicker"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDatePickerTitle", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDatePickerTitle"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDatePickerHeader", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDatePickerHeader"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDatePickerDateTable", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDatePickerDateTable"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDatePickerMonthTable", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDatePickerMonthTable"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDatePickerYears", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDatePickerYears"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDialog", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDialog"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDivider", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDivider"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VExpansionPanels", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VExpansionPanels"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VExpansionPanel", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VExpansionPanel"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VExpansionPanelHeader", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VExpansionPanelHeader"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VExpansionPanelContent", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VExpansionPanelContent"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VFileInput", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VFileInput"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VFooter", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VFooter"]; });
 
@@ -68328,9 +68605,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VFlex", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VFlex"]; });
 
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VHover", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VHover"]; });
+
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VIcon", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VIcon"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VImg", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VImg"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VInput", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VInput"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VItem", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VItem"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VItemGroup", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VItemGroup"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VLabel", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VLabel"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VListItemActionText", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VListItemActionText"]; });
 
@@ -68354,13 +68641,91 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VListItemGroup", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VListItemGroup"]; });
 
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VMenu", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VMenu"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VMessages", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VMessages"]; });
+
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VNavigationDrawer", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VNavigationDrawer"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VOverflowBtn", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VOverflowBtn"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VOverlay", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VOverlay"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VPagination", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VPagination"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSheet", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSheet"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VParallax", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VParallax"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VPicker", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VPicker"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VProgressCircular", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VProgressCircular"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VProgressLinear", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VProgressLinear"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VRadioGroup", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VRadioGroup"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VRadio", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VRadio"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VRangeSlider", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VRangeSlider"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VRating", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VRating"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VResponsive", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VResponsive"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSelect", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSelect"]; });
 
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSlider", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSlider"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSlideGroup", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSlideGroup"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSlideItem", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSlideItem"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSnackbar", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSnackbar"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSparkline", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSparkline"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSpeedDial", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSpeedDial"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VStepper", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VStepper"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VStepperContent", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VStepperContent"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VStepperStep", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VStepperStep"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VStepperHeader", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VStepperHeader"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VStepperItems", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VStepperItems"]; });
+
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSubheader", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSubheader"]; });
 
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSwitch", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSwitch"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSystemBar", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSystemBar"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTabs", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTabs"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTab", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTab"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTabItem", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTabItem"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTabsItems", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTabsItems"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTabsSlider", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTabsSlider"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTextarea", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTextarea"]; });
+
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTextField", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTextField"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTimeline", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTimeline"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTimelineItem", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTimelineItem"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTimePicker", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTimePicker"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTimePickerClock", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTimePickerClock"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTimePickerTitle", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTimePickerTitle"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VToolbar", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VToolbar"]; });
 
@@ -68369,6 +68734,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VToolbarTitle", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VToolbarTitle"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTooltip", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTooltip"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTreeview", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTreeview"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTreeviewNode", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTreeviewNode"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VWindow", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VWindow"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VWindowItem", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VWindowItem"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCarouselTransition", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCarouselTransition"]; });
 
@@ -68409,190 +68782,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VExpandTransition", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VExpandTransition"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VExpandXTransition", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VExpandXTransition"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VAlert", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VAlert"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VAvatar", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VAvatar"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VBadge", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VBadge"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VBanner", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VBanner"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VBottomNavigation", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VBottomNavigation"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VBottomSheet", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VBottomSheet"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VBreadcrumbs", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VBreadcrumbs"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VBreadcrumbsItem", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VBreadcrumbsItem"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VBreadcrumbsDivider", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VBreadcrumbsDivider"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VBtnToggle", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VBtnToggle"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCalendar", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCalendar"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCalendarDaily", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCalendarDaily"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCalendarWeekly", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCalendarWeekly"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCalendarMonthly", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCalendarMonthly"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCarousel", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCarousel"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCarouselItem", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCarouselItem"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCheckbox", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCheckbox"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSimpleCheckbox", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSimpleCheckbox"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VChipGroup", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VChipGroup"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VColorPicker", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VColorPicker"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VColorPickerSwatches", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VColorPickerSwatches"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VColorPickerCanvas", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VColorPickerCanvas"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCombobox", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCombobox"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VCounter", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VCounter"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VData", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VData"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDataIterator", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDataIterator"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDataFooter", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDataFooter"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDataTable", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDataTable"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VEditDialog", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VEditDialog"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTableOverflow", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTableOverflow"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDataTableHeader", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDataTableHeader"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSimpleTable", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSimpleTable"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VVirtualTable", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VVirtualTable"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDatePicker", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDatePicker"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDatePickerTitle", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDatePickerTitle"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDatePickerHeader", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDatePickerHeader"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDatePickerDateTable", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDatePickerDateTable"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDatePickerMonthTable", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDatePickerMonthTable"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VDatePickerYears", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VDatePickerYears"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VExpansionPanels", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VExpansionPanels"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VExpansionPanel", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VExpansionPanel"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VExpansionPanelHeader", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VExpansionPanelHeader"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VExpansionPanelContent", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VExpansionPanelContent"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VFileInput", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VFileInput"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VHover", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VHover"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VInput", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VInput"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VItem", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VItem"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VItemGroup", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VItemGroup"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VLabel", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VLabel"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VMenu", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VMenu"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VMessages", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VMessages"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VOverflowBtn", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VOverflowBtn"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VOverlay", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VOverlay"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VPagination", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VPagination"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSheet", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSheet"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VParallax", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VParallax"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VPicker", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VPicker"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VProgressCircular", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VProgressCircular"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VProgressLinear", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VProgressLinear"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VRadioGroup", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VRadioGroup"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VRadio", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VRadio"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VRangeSlider", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VRangeSlider"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VRating", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VRating"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VResponsive", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VResponsive"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSlider", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSlider"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSlideGroup", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSlideGroup"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSlideItem", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSlideItem"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSnackbar", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSnackbar"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSparkline", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSparkline"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSpeedDial", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSpeedDial"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VStepper", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VStepper"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VStepperContent", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VStepperContent"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VStepperStep", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VStepperStep"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VStepperHeader", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VStepperHeader"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VStepperItems", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VStepperItems"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSwitch", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSwitch"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VSystemBar", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VSystemBar"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTabs", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTabs"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTab", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTab"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTabItem", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTabItem"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTabsItems", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTabsItems"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTabsSlider", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTabsSlider"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTextarea", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTextarea"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTimeline", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTimeline"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTimelineItem", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTimelineItem"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTimePicker", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTimePicker"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTimePickerClock", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTimePickerClock"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTimePickerTitle", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTimePickerTitle"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTreeview", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTreeview"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VTreeviewNode", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VTreeviewNode"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VWindow", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VWindow"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VWindowItem", function() { return _components__WEBPACK_IMPORTED_MODULE_0__["VWindowItem"]; });
 
 /* harmony import */ var _directives__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./directives */ "./node_modules/vuetify/lib/directives/index.js");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ClickOutside", function() { return _directives__WEBPACK_IMPORTED_MODULE_1__["ClickOutside"]; });
@@ -79254,13 +79443,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vuetify-loader/lib/runtime/installComponents.js */ "./node_modules/vuetify-loader/lib/runtime/installComponents.js");
 /* harmony import */ var _node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vuetify/lib/components/VBtn */ "./node_modules/vuetify/lib/components/VBtn/index.js");
-/* harmony import */ var vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib/components/VCard */ "./node_modules/vuetify/lib/components/VCard/index.js");
-/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/index.js");
-/* harmony import */ var vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuetify/lib/components/VIcon */ "./node_modules/vuetify/lib/components/VIcon/index.js");
-/* harmony import */ var vuetify_lib_components_VImg__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vuetify/lib/components/VImg */ "./node_modules/vuetify/lib/components/VImg/index.js");
-/* harmony import */ var vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vuetify/lib/components/VTextField */ "./node_modules/vuetify/lib/components/VTextField/index.js");
-/* harmony import */ var vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuetify/lib/components/VToolbar */ "./node_modules/vuetify/lib/components/VToolbar/index.js");
-/* harmony import */ var vuetify_lib_components_VTooltip__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vuetify/lib/components/VTooltip */ "./node_modules/vuetify/lib/components/VTooltip/index.js");
+/* harmony import */ var vuetify_lib_components_VBtnToggle__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuetify/lib/components/VBtnToggle */ "./node_modules/vuetify/lib/components/VBtnToggle/index.js");
+/* harmony import */ var vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify/lib/components/VCard */ "./node_modules/vuetify/lib/components/VCard/index.js");
+/* harmony import */ var vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuetify/lib/components/VGrid */ "./node_modules/vuetify/lib/components/VGrid/index.js");
+/* harmony import */ var vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vuetify/lib/components/VIcon */ "./node_modules/vuetify/lib/components/VIcon/index.js");
+/* harmony import */ var vuetify_lib_components_VImg__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vuetify/lib/components/VImg */ "./node_modules/vuetify/lib/components/VImg/index.js");
+/* harmony import */ var vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! vuetify/lib/components/VTextField */ "./node_modules/vuetify/lib/components/VTextField/index.js");
+/* harmony import */ var vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! vuetify/lib/components/VToolbar */ "./node_modules/vuetify/lib/components/VToolbar/index.js");
+/* harmony import */ var vuetify_lib_components_VTooltip__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! vuetify/lib/components/VTooltip */ "./node_modules/vuetify/lib/components/VTooltip/index.js");
 
 
 
@@ -79293,7 +79483,8 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
 
 
 
-_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VBtn: vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_4__["VBtn"],VCard: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__["VCard"],VCardActions: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__["VCardActions"],VCardText: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__["VCardText"],VCardTitle: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_5__["VCardTitle"],VCol: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__["VCol"],VIcon: vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_7__["VIcon"],VImg: vuetify_lib_components_VImg__WEBPACK_IMPORTED_MODULE_8__["VImg"],VRow: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_6__["VRow"],VTextField: vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_9__["VTextField"],VToolbar: vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_10__["VToolbar"],VTooltip: vuetify_lib_components_VTooltip__WEBPACK_IMPORTED_MODULE_11__["VTooltip"]})
+
+_node_modules_vuetify_loader_lib_runtime_installComponents_js__WEBPACK_IMPORTED_MODULE_3___default()(component, {VBtn: vuetify_lib_components_VBtn__WEBPACK_IMPORTED_MODULE_4__["VBtn"],VBtnToggle: vuetify_lib_components_VBtnToggle__WEBPACK_IMPORTED_MODULE_5__["VBtnToggle"],VCard: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_6__["VCard"],VCardActions: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_6__["VCardActions"],VCardText: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_6__["VCardText"],VCardTitle: vuetify_lib_components_VCard__WEBPACK_IMPORTED_MODULE_6__["VCardTitle"],VCol: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_7__["VCol"],VIcon: vuetify_lib_components_VIcon__WEBPACK_IMPORTED_MODULE_8__["VIcon"],VImg: vuetify_lib_components_VImg__WEBPACK_IMPORTED_MODULE_9__["VImg"],VRow: vuetify_lib_components_VGrid__WEBPACK_IMPORTED_MODULE_7__["VRow"],VTextField: vuetify_lib_components_VTextField__WEBPACK_IMPORTED_MODULE_10__["VTextField"],VToolbar: vuetify_lib_components_VToolbar__WEBPACK_IMPORTED_MODULE_11__["VToolbar"],VTooltip: vuetify_lib_components_VTooltip__WEBPACK_IMPORTED_MODULE_12__["VTooltip"]})
 
 
 /* hot reload */
@@ -80474,8 +80665,8 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({});
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\Users\pavlos\Documents\Projects\plantshed\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\Users\pavlos\Documents\Projects\plantshed\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\Users\nikos\Documents\Projects\plantshed\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\Users\nikos\Documents\Projects\plantshed\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
