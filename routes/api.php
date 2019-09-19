@@ -19,6 +19,7 @@ use Illuminate\Http\Request;
 
 Route::get('/customers', 'CustomerController@getAll');
 Route::post('/customers/create', 'CustomerController@create');
+Route::post('/customers/search', 'CustomerController@search');
 
 
 Route::get('/products', 'ProductController@all');
