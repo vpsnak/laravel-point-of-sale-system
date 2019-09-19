@@ -38,10 +38,9 @@ class CustomerController extends Controller
             'keyword' => 'required'
         ]);
 
-        return response(Product::where([
-            ['name', 'like', "%{$validatedData['keyword']}%"],
-            ['email', 'like', "%{$validatedData['keyword']}%"],
-            ['phone', 'like', "%{$validatedData['keyword']}%"],
-        ])->get(), 200);
+        return response(Product::where('name', 'like', "%{$validatedData['keyword']}%")
+            ->orWhere('email', 'like', "%{$validatedData['keyword']}%")
+            ->orWhere('phone', 'like', "%{$validatedData['keyword']}%")
+            ->get(), 200);
     }
 }
