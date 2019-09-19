@@ -11,4 +11,9 @@ class Customer extends Model
         'last_name',
         'email'
     ];
+
+    public function addresses()
+    {
+        return $this->belongsToMany(App\Address::class);
+    }
 }
