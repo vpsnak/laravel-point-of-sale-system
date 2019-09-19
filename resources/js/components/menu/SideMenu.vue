@@ -34,12 +34,48 @@ export default {
 				},
 				{
 					id: 3,
-					title: "Nikos",
-					icon: "fab fa-magento",
-					to: "nikos"
+					title: "Forms",
+					icon: "fab fa-python",
+					to: "forms"
 				},
 				{
 					id: 4,
+					title: "Orders",
+					icon: "fas fa-clone",
+					to: "orders"
+				},
+				{
+					id: 5,
+					title: "Customers",
+					icon: "fas fa-user-friends",
+					to: "customers"
+				},
+				{
+					id: 6,
+					title: "Products",
+					icon: "fas fa-coins",
+					to: "products"
+				},
+				{
+					id: 7,
+					title: "Categories",
+					icon: "fas fa-th-list",
+					to: "categories"
+				},
+				{
+					id: 8,
+					title: "Stores",
+					icon: "fas fa-store",
+					to: "stores"
+				},
+				{
+					id: 9,
+					title: "Users",
+					icon: "fas fa-users",
+					to: "users"
+				},
+				{
+					id: 10,
 					title: "Chris",
 					icon: "fa-cannabis",
 					to: "chris"
