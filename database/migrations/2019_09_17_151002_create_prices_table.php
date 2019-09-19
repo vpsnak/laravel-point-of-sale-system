@@ -17,7 +17,7 @@ class CreatePricesTable extends Migration
             $table->bigIncrements('id');
             $table->decimal('tax', 4)->unsigned()->default(0);
             $table->decimal('amount');
-            $table->unsignedBigInteger('discount_id');
+            $table->unsignedBigInteger('discount_id')->nullable();
             $table->timestamps();
         });
     }

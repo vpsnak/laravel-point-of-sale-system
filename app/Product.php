@@ -20,4 +20,9 @@ class Product extends Model
     {
         return $this->belongsToMany(\App\Cart::class)->withPivot('qty');
     }
+
+    public function price()
+    {
+        return $this->hasOne(\App\Price::class);
+    }
 }

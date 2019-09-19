@@ -15,16 +15,16 @@ class CreateMagentoOrdersTable extends Migration
     {
         Schema::create('magento_orders', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('entity_id', 10)->unsigned();
+            $table->integer('entity_id')->unsigned();
             $table->string('state', 32)->nullable();
             $table->string('status', 32)->nullable();
-            $table->integer('customer_id', 10)->unsigned();
+            $table->integer('customer_id')->unsigned();
             $table->decimal('discount_amount')->nullable();
             $table->decimal('grand_total')->nullable();
             $table->decimal('shipping_amount')->nullable();
             $table->decimal('subtotal')->nullable();
             $table->decimal('tax_amount')->nullable();
-            $table->integer('shipping_address_id', 11)->nullable();
+            $table->integer('shipping_address_id')->nullable();
             $table->string('increment_id', 50)->nullable();
             $table->string('customer_email')->nullable();
             $table->string('customer_firstname')->nullable();
