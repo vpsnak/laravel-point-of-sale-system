@@ -31,4 +31,17 @@ class CustomerController extends Controller
 
         return $response;
     }
+
+    public function search(Request $request)
+    {
+        $validatedData = $request->validate([
+            'keyword' => 'required'
+        ]);
+
+        return response(Product::where([
+            ['name', 'like', "%{$validatedData['keyword']}%"],
+            ['email', 'like', "%{$validatedData['keyword']}%"],
+            ['phone', 'like', "%{$validatedData['keyword']}%"],
+        ])->get(), 200);
+    }
 }
