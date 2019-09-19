@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,14 +11,11 @@ use Illuminate\Http\Request;
 |
 */
 
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
+// Customers 
 Route::get('/customers', 'CustomerController@getAll');
 Route::post('/customers/create', 'CustomerController@create');
 Route::post('/customers/search', 'CustomerController@search');
 
-
+// Products 
 Route::get('/products', 'ProductController@all');
 Route::post('/products/search', 'ProductController@search');
