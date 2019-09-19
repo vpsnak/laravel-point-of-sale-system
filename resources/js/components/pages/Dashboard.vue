@@ -1,3 +1,3 @@
 <template>
-	<h5>to pire?</h5>
+	<popupDialog title="alvanos"></popupDialog>
 </template>

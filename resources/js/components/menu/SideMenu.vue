@@ -1,8 +1,8 @@
 <template>
 	<v-navigation-drawer app overflow :mini-variant="mini">
-		<v-list dense nav>
+		<v-list nav>
 			<v-list-item v-for="menuItem in menuItems" :key="menuItem.id" :to="menuItem.to">
-				<v-list-item-icon>
+				<v-list-item-icon small>
 					<v-icon>{{ menuItem.icon }}</v-icon>
 				</v-list-item-icon>
 

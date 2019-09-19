@@ -15,7 +15,7 @@ class ForeignKeys extends Migration
     {
         Schema::table('category_product', function (Blueprint $table) {
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('restrict');
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('restrict'); 
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('restrict');
         });
 
         Schema::table('product_store', function (Blueprint $table) {
@@ -46,12 +46,16 @@ class ForeignKeys extends Migration
             $table->foreign('product_id')->references('id')->on('products')->onDelete('restrict');
         });
 
-        Schema::table('shippings', function (Blueprint $table){
+        Schema::table('shippings', function (Blueprint $table) {
             $table->foreign('price_id')->references('id')->on('prices')->onDelete('restrict');
         });
 
-        Schema::table('stores', function (Blueprint $table){
+        Schema::table('stores', function (Blueprint $table) {
             $table->foreign('address_id')->references('id')->on('addresses')->onDelete('restrict');
+        });
+
+        Schema::table('prices', function (Blueprint $table) {
+            $table->foreign('discount_id')->references('id')->on('discounts')->onDelete('restrict');
         });
     }
 
@@ -92,12 +96,16 @@ class ForeignKeys extends Migration
             $table->dropForeign(['product_id']);
         });
 
-        Schema::table('shippings', function (Blueprint $table){
+        Schema::table('shippings', function (Blueprint $table) {
             $table->dropForeign(['price_id']);
         });
 
-        Schema::table('stores', function (Blueprint $table){
-            $table->dropForeign('address_id');
+        Schema::table('stores', function (Blueprint $table) {
+            $table->dropForeign(['address_id']);
+        });
+
+        Schema::table('prices', function (Blueprint $table) {
+            $table->dropForeign(['discount_id']);
         });
     }
 }
