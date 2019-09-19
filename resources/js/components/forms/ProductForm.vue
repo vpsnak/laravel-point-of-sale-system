@@ -13,7 +13,7 @@
       color="deep-purple"
       label
     >
-      <v-icon left>fab fa-product-hunt</i> </v-icon>
+      <v-icon left>fab fa-product-hunt</v-icon>
      Product Form 
     </v-chip>
     </div>
