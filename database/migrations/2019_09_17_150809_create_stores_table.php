@@ -16,13 +16,13 @@ class CreateStoresTable extends Migration
         Schema::create('stores', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
+            $table->unsignedBigInteger('address_id');
             $table->timestamps();
-            // foreign key address_id
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Reverse the mig rations.
      *
      * @return void
      */

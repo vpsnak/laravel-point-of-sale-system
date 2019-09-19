@@ -49,6 +49,10 @@ class ForeignKeys extends Migration
         Schema::table('shippings', function (Blueprint $table){
             $table->foreign('price_id')->references('id')->on('prices')->onDelete('restrict');
         });
+
+        Schema::table('stores', function (Blueprint $table){
+            $table->foreign('address_id')->references('id')->on('addresses')->onDelete('restrict');
+        });
     }
 
     /**
@@ -90,6 +94,10 @@ class ForeignKeys extends Migration
 
         Schema::table('shippings', function (Blueprint $table){
             $table->dropForeign(['price_id']);
+        });
+
+        Schema::table('stores', function (Blueprint $table){
+            $table->dropForeign('address_id');
         });
     }
 }

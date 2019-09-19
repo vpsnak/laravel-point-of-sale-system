@@ -15,4 +15,9 @@ class Product extends Model
     {
         return $this->belongsToMany(\App\Store::class)->withPivot('qty');
     }
+
+    public function carts()
+    {
+        return $this->belongsToMany(\App\Cart::class)->withPivot('qty');
+    }
 }
