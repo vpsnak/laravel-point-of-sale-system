@@ -27,46 +27,61 @@
 			</v-row>
 			<v-row style="height: 33vh; overflow-y: auto;">
 				<v-col>
-					<v-list dense>
+					<v-list dense style="height:60vh; overflow-y:auto;">
 						<v-list-group v-for="cartProduct in cartProducts" :key="cartProduct.id">
 							<template v-slot:activator>
 								<v-list-item dense>
-									<v-list-item-content>
-										<v-list-item-title>{{ cartProduct.name }}</v-list-item-title>
-										<v-list-item-subtitle>$ {{ cartProduct.qty * cartProduct.price }}</v-list-item-subtitle>
-									</v-list-item-content>
-									<v-list-item-action>
-										<v-btn icon @click.stop="decreaseQty(cartProduct)">
-											<v-icon color="grey lighten-1">remove</v-icon>
-										</v-btn>
-									</v-list-item-action>
-									<v-list-item-action>
-										<v-chip filter @click.stop>
-											<span>{{ cartProduct.qty }}</span>
-										</v-chip>
-									</v-list-item-action>
-									<v-list-item-action>
-										<v-btn icon @click.stop="increaseQty(cartProduct)">
-											<v-icon color="grey lighten-1">add</v-icon>
-										</v-btn>
-									</v-list-item-action>
-									<v-list-item-action>
-										<v-btn icon @click.stop="removeItem(cartProduct)">
-											<v-icon color="grey lighten-1">delete</v-icon>
-										</v-btn>
-									</v-list-item-action>
+									<v-layout row>
+										<v-list-item-content>
+											<v-list-item-title>{{ cartProduct.name }}</v-list-item-title>
+											<v-list-item-subtitle>$ {{ cartProduct.qty * cartProduct.price }}</v-list-item-subtitle>
+										</v-list-item-content>
+										<v-list-item-action>
+											<v-btn icon @click.stop="decreaseQty(cartProduct)">
+												<v-icon color="grey lighten-1">remove</v-icon>
+											</v-btn>
+										</v-list-item-action>
+										<v-list-item-action>
+											<v-chip filter @click.stop>
+												<span>{{ cartProduct.qty }}</span>
+											</v-chip>
+										</v-list-item-action>
+										<v-list-item-action>
+											<v-btn icon @click.stop="increaseQty(cartProduct)">
+												<v-icon color="grey lighten-1">add</v-icon>
+											</v-btn>
+										</v-list-item-action>
+										<v-list-item-action>
+											<v-btn icon @click.stop="removeItem(cartProduct)">
+												<v-icon color="grey lighten-1">delete</v-icon>
+											</v-btn>
+										</v-list-item-action>
+									</v-layout>
 								</v-list-item>
 							</template>
-							<v-list-item style="height:60vh; overflow-y:auto;">
-								<v-col cols="2">
-									<v-text-field type="number" label="Qty" v-model="cartProduct.qty" min="1"></v-text-field>
-								</v-col>
-								<v-col cols="4">
-									<v-select :items="discountTypes" label="Discount" item-text="label" item-value="value"></v-select>
-								</v-col>
-								<v-col cols="4">
-									<v-text-field type="number" label="Amount"></v-text-field>
-								</v-col>
+							<v-list-item>
+								<v-layout row>
+									<v-col cols="12" md="3">
+										<v-text-field type="number" label="Qty" v-model="cartProduct.qty" min="1"></v-text-field>
+									</v-col>
+									<v-col cols="12" md="5">
+										<v-select :items="discountTypes" label="Discount" item-text="label" item-value="value"></v-select>
+									</v-col>
+									<v-col cols="12" md="4">
+										<v-text-field type="number" label="Amount"></v-text-field>
+									</v-col>
+
+									<v-col cols="12" md="12">
+										<v-textarea
+											:v-model="true"
+											rows="3"
+											label="Notes"
+											:hint="'For product: ' + cartProduct.name"
+											counter
+											no-resize
+										></v-textarea>
+									</v-col>
+								</v-layout>
 							</v-list-item>
 						</v-list-group>
 					</v-list>

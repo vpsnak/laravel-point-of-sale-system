@@ -26,11 +26,11 @@
 			</v-row>
 			<v-row align="center" justify="center">
 				<v-btn-toggle>
-					<v-btn :disabled="disableFilters" @click="applyFilter()" text>
+					<v-btn :disabled="disableFilters" @click="applyFilter('value')" text>
 						<v-icon left small>fas fa-heart</v-icon>
 						<span class="hidden-sm-and-down">Favourites</span>
 					</v-btn>
-					<v-btn :disabled="disableFilters" @click="applyFilter()" text>
+					<v-btn :disabled="disableFilters" @click="applyFilter('value')" text>
 						<v-icon left small>fas fa-sort-numeric-up</v-icon>
 						<span class="hidden-sm-and-down">Best Sellers</span>
 					</v-btn>
@@ -38,59 +38,42 @@
 						<v-icon left small>fas fa-spa</v-icon>
 						<span class="hidden-sm-and-down">Roses</span>
 					</v-btn>
-					<v-btn :disabled="disableFilters" @click="applyFilter()" text>
+					<v-btn :disabled="disableFilters" @click="applyFilter('value')" text>
 						<v-icon left small>fas fa-seedling</v-icon>
 						<span class="hidden-sm-and-down">Succulents</span>
 					</v-btn>
 				</v-btn-toggle>
 			</v-row>
 			<v-row v-if="productList.length" align="center" style="height:58vh; overflow-y:auto;">
-				<v-col v-for="product in productList" :key="product.id" cols="12" md="6" lg="4" xl="3">
-					<v-card>
-						<v-img
-							:src="product.photo_url"
-							class="white--text"
-							height="125px"
-							gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-						>
-							<v-card-title class="fill-height align-end" v-text="product.name"></v-card-title>
-						</v-img>
-
-						<v-card-actions>
-							<v-tooltip bottom>
-								<template v-slot:activator="{ on }">
-									<v-btn icon class="ml-1" @click="addCartProduct(product)">
-										<v-icon>add_shopping_cart</v-icon>
-									</v-btn>
-								</template>
-								<span>Add to shopping cart</span>
-							</v-tooltip>
-							<v-tooltip bottom>
-								<template v-slot:activator="{ on }">
-									<v-btn icon v-on="on" class="ml-1">
-										<v-icon>mdi-heart</v-icon>
-									</v-btn>
-								</template>
-								<span>Add to favorites</span>
-							</v-tooltip>
+				<v-col v-for="product in productList" :key="product.id" cols="12" md="6" lg="4">
+					<v-card height="300px" @click="addCartProduct(product)" :img="product.photo_url">
+						<v-card-title class="indigo white--text pa-0" @click.stop>
+							<h6 class="px-2">{{product.name}}</h6>
 							<div class="flex-grow-1"></div>
-							<v-tooltip bottom>
+
+							<v-menu bottom left>
 								<template v-slot:activator="{ on }">
-									<v-btn icon v-on="on" class="ml-1">
-										<v-icon>remove_red_eye</v-icon>
+									<v-btn dark icon v-on="on">
+										<v-icon>mdi-dots-vertical</v-icon>
 									</v-btn>
 								</template>
-								<span>View product</span>
-							</v-tooltip>
-							<v-tooltip bottom>
-								<template v-slot:activator="{ on }">
-									<v-btn icon v-on="on" class="ml-1">
-										<v-icon>edit</v-icon>
-									</v-btn>
-								</template>
-								<span>Edit product</span>
-							</v-tooltip>
-						</v-card-actions>
+
+								<v-list>
+									<v-list-item @click>
+										<v-icon class="pr-2">mdi-heart</v-icon>
+										<h5>Add to favorites</h5>
+									</v-list-item>
+									<v-list-item @click>
+										<v-icon class="pr-2">remove_red_eye</v-icon>
+										<h5>View</h5>
+									</v-list-item>
+									<v-list-item @click>
+										<v-icon class="pr-2">edit</v-icon>
+										<h5>Edit</h5>
+									</v-list-item>
+								</v-list>
+							</v-menu>
+						</v-card-title>
 					</v-card>
 				</v-col>
 			</v-row>
