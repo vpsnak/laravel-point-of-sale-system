@@ -94,28 +94,28 @@
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Sub total</span>
-						<span class="pa-2">{{ subTotal }}</span>
+						<span class="pa-2">${{ subTotal }}</span>
 					</div>
 
 					<v-divider />
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Tax</span>
-						<span class="pa-2">12 {{ }}</span>
+						<span class="pa-2"> ${{ tax}}</span>
 					</div>
 
 					<v-divider />
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Total discount</span>
-						<span class="pa-2">12 {{ }}</span>
+						<span class="pa-2"> ${{totalDiscount}}</span>
 					</div>
 
 					<v-divider />
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Total</span>
-						<span class="pa-2">12 {{ }}</span>
+						<span class="pa-2"> ${{ total}}</span>
 					</div>
 
 					<v-divider />
@@ -174,6 +174,15 @@ export default {
 			});
 
 			return subTotal;
+		},
+		tax(){
+			return this.subTotal * 0.24;
+		},
+		totalDiscount(){
+			return 0;
+		},
+		total(){
+			return this.subTotal + this.tax - this.totalDiscount;
 		},
 		cartProducts: {
 			get() {
