@@ -17,6 +17,9 @@ export default {};
 </script>
 
 <style>
+a {
+	text-decoration: none;
+}
 html {
 	overflow-y: hidden;
 }
