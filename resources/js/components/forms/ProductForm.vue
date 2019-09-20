@@ -46,7 +46,6 @@
         label="Store"
         required
       ></v-select>
-      </v-row>
   </v-form>
 </template>
 

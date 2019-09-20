@@ -1,6 +1,4 @@
 <template>
-<div id="app">
-  <v-app id="inspire">
     <v-card>
       <v-card-title>
         Products
@@ -31,8 +29,6 @@
         </v-alert>
       </v-data-table>
     </v-card>
-  </v-app>
-</div>
 </template>
 
 
