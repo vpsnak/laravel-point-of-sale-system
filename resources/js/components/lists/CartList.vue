@@ -28,30 +28,30 @@
 			<v-row style="height: 33vh; overflow-y: auto;">
 				<v-col>
 					<v-list dense>
-						<v-list-group v-for="item in items" :key="item.id">
+						<v-list-group v-for="cartProduct in cartProducts" :key="cartProduct.id">
 							<template v-slot:activator>
 								<v-list-item dense>
 									<v-list-item-content>
-										<v-list-item-title>{{ item.name }}</v-list-item-title>
-										<v-list-item-subtitle>$ {{ item.qty * item.price }}</v-list-item-subtitle>
+										<v-list-item-title>{{ cartProduct.name }}</v-list-item-title>
+										<v-list-item-subtitle>$ {{ cartProduct.qty * cartProduct.price }}</v-list-item-subtitle>
 									</v-list-item-content>
 									<v-list-item-action>
-										<v-btn icon @click.stop="decreaseQty(item)">
+										<v-btn icon @click.stop="decreaseQty(cartProduct)">
 											<v-icon color="grey lighten-1">remove</v-icon>
 										</v-btn>
 									</v-list-item-action>
 									<v-list-item-action>
 										<v-chip filter @click.stop>
-											<span>{{ item.qty }}</span>
+											<span>{{ cartProduct.qty }}</span>
 										</v-chip>
 									</v-list-item-action>
 									<v-list-item-action>
-										<v-btn icon @click.stop="increaseQty(item)">
+										<v-btn icon @click.stop="increaseQty(cartProduct)">
 											<v-icon color="grey lighten-1">add</v-icon>
 										</v-btn>
 									</v-list-item-action>
 									<v-list-item-action>
-										<v-btn icon @click.stop="removeItem(item)">
+										<v-btn icon @click.stop="removeItem(cartProduct)">
 											<v-icon color="grey lighten-1">delete</v-icon>
 										</v-btn>
 									</v-list-item-action>
@@ -59,7 +59,7 @@
 							</template>
 							<v-list-item style="height:60vh; overflow-y:auto;">
 								<v-col cols="2">
-									<v-text-field type="number" label="Qty" v-model="item.qty" min="1"></v-text-field>
+									<v-text-field type="number" label="Qty" v-model="cartProduct.qty" min="1"></v-text-field>
 								</v-col>
 								<v-col cols="4">
 									<v-select :items="discountTypes" label="Discount" item-text="label" item-value="value"></v-select>
@@ -163,16 +163,14 @@ export default {
 	},
 
 	methods: {
-		decreaseQty(item) {
-			if (item.qty > 1) {
-				cartProducts.qty--;
-			}
+		decreaseQty(cartProduct) {
+			this.$store.commit("decreaseCartProductQty", cartProduct);
 		},
-		increaseQty(item) {
-			cartProducts.qty++;
+		increaseQty(cartProduct) {
+			this.$store.commit("increaseCartProductQty", cartProduct);
 		},
-		removeItem(item) {
-			this.cartProducts.splice(item, 1);
+		removeItem(cartProduct) {
+			this.cartProducts.splice(cartProduct, 1);
 		}
 	}
 };

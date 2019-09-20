@@ -8,7 +8,7 @@ export default new Vuex.Store({
     state: {
         baseUrl: "http://plantshed.test/api/",
         productList: [],
-        cartList: []
+        cartProducts: []
         // Current state of the application lies here.
     },
     getters: {
@@ -19,11 +19,22 @@ export default new Vuex.Store({
         setProductList(state, products) {
             state.productList = products;
         },
-        setCartList(state, products) {
-            state.cartList = products;
+        addCartProduct(state, cartProduct) {
+            if (_.includes(state.cartProducts, cartProduct)) {
+                let index = _.findIndex(state.cartProducts, cartProduct);
+                state.cartProducts[index].qty++;
+            } else {
+                Vue.set(cartProduct, "qty", 1);
+                state.cartProducts.push(cartProduct);
+            }
         },
-        addCartList(state, product) {
-            state.cartList.push(product);
+        increaseCartProductQty(state, cartProduct) {
+            let index = _.findIndex(state.cartProducts, cartProduct);
+            state.cartProducts[index].qty++;
+        },
+        decreaseCartProductQty(state, cartProduct) {
+            let index = _.findIndex(state.cartProducts, cartProduct);
+            state.cartProducts[index].qty--;
         }
     },
     actions: {

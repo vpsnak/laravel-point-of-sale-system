@@ -26,19 +26,19 @@
 			</v-row>
 			<v-row align="center" justify="center">
 				<v-btn-toggle>
-					<v-btn :disabled="disableFilters" @click text value="favorites">
+					<v-btn :disabled="disableFilters" @click="applyFilter()" text>
 						<v-icon left small>fas fa-heart</v-icon>
 						<span class="hidden-sm-and-down">Favourites</span>
 					</v-btn>
-					<v-btn :disabled="disableFilters" @click text value="center">
+					<v-btn :disabled="disableFilters" @click="applyFilter()" text>
 						<v-icon left small>fas fa-sort-numeric-up</v-icon>
 						<span class="hidden-sm-and-down">Best Sellers</span>
 					</v-btn>
-					<v-btn :disabled="disableFilters" text value="right">
+					<v-btn :disabled="disableFilters" text>
 						<v-icon left small>fas fa-spa</v-icon>
 						<span class="hidden-sm-and-down">Roses</span>
 					</v-btn>
-					<v-btn :disabled="disableFilters" @click text value="succulents">
+					<v-btn :disabled="disableFilters" @click="applyFilter()" text>
 						<v-icon left small>fas fa-seedling</v-icon>
 						<span class="hidden-sm-and-down">Succulents</span>
 					</v-btn>
@@ -59,7 +59,7 @@
 						<v-card-actions>
 							<v-tooltip bottom>
 								<template v-slot:activator="{ on }">
-									<v-btn icon v-on="on" class="ml-1">
+									<v-btn icon class="ml-1" @click="addCartProduct(product)">
 										<v-icon>add_shopping_cart</v-icon>
 									</v-btn>
 								</template>
@@ -127,6 +127,7 @@ export default {
 		}
 	},
 	methods: {
+		applyFilter(filter) {},
 		initiateLoadingSearchResults(loading) {
 			if (loading) {
 				this.loader = true;
@@ -173,6 +174,9 @@ export default {
 						this.initiateLoadingSearchResults(false);
 					});
 			}
+		},
+		addCartProduct(product) {
+			this.$store.commit("addCartProduct", product);
 		}
 	}
 };
