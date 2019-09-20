@@ -17,7 +17,6 @@ class CreateProductsTable extends Migration
             $table->bigIncrements('id');
             $table->string('sku')->unique()->index();
             $table->string('name');
-            $table->unsignedBigInteger('price_id');
             $table->string('photo_url');
             $table->softDeletes();
             $table->timestamps();

@@ -18,6 +18,9 @@ class CreatePricesTable extends Migration
             $table->decimal('tax', 4)->unsigned()->default(0);
             $table->decimal('amount');
             $table->unsignedBigInteger('discount_id')->nullable();
+
+            $table->unsignedBigInteger('priceable_id');
+            $table->string('priceable_type');
             $table->timestamps();
         });
     }

@@ -23,6 +23,6 @@ class Product extends Model
 
     public function price()
     {
-        return $this->hasOne(\App\Price::class);
+        return $this->morphOne('App\Price', 'priceable');
     }
 }

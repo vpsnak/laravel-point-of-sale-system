@@ -9,7 +9,9 @@ class ProductController extends Controller
 {
     public function all()
     {
-        return response(Product::with('stores')->get());
+        $product = \App\Product::find(1);
+
+        return response(Product::with(['stores', 'price'])->get());
     }
 
     public function create(Request $request)

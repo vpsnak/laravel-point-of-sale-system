@@ -34,7 +34,7 @@
 									<v-layout row>
 										<v-list-item-content>
 											<v-list-item-title>{{ cartProduct.name }}</v-list-item-title>
-											<v-list-item-subtitle>$ {{ cartProduct.qty * cartProduct.price }}</v-list-item-subtitle>
+											<v-list-item-subtitle>$ {{ cartProduct.qty * cartProduct.price.amount }}</v-list-item-subtitle>
 										</v-list-item-content>
 										<v-list-item-action>
 											<v-btn icon @click.stop="decreaseQty(cartProduct)">
