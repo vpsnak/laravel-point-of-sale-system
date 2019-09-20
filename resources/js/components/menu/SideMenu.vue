@@ -15,74 +15,74 @@
 </template>
 
 <script>
-export default {
-	data() {
-		return {
-			mini: false,
-			menuItems: [
-				{
-					id: 1,
-					title: "Dashboard",
-					icon: "dashboard",
-					to: "/"
-				},
-				{
-					id: 2,
-					title: "Sales",
-					icon: "shopping_cart",
-					to: "sales"
-				},
-				{
-					id: 3,
-					title: "Forms",
-					icon: "fab fa-python",
-					to: "forms"
-				},
-				{
-					id: 4,
-					title: "Orders",
-					icon: "fas fa-clone",
-					to: "orders"
-				},
-				{
-					id: 5,
-					title: "Customers",
-					icon: "fas fa-user-friends",
-					to: "customers"
-				},
-				{
-					id: 6,
-					title: "Products",
-					icon: "fas fa-coins",
-					to: "products"
-				},
-				{
-					id: 7,
-					title: "Categories",
-					icon: "fas fa-th-list",
-					to: "categories"
-				},
-				{
-					id: 8,
-					title: "Stores",
-					icon: "fas fa-store",
-					to: "stores"
-				},
-				{
-					id: 9,
-					title: "Users",
-					icon: "fas fa-users",
-					to: "users"
-				},
-				{
-					id: 10,
-					title: "Chris",
-					icon: "fa-cannabis",
-					to: "chris"
-				}
-			]
-		};
-	},
-	methods: {}
-};
+	export default {
+		data() {
+			return {
+				mini: false,
+				menuItems: [
+					{
+						id: 1,
+						title: "Dashboard",
+						icon: "dashboard",
+						to: "/"
+					},
+					{
+						id: 2,
+						title: "Sales",
+						icon: "shopping_cart",
+						to: "sales"
+					},
+					{
+						id: 3,
+						title: "Forms",
+						icon: "fab fa-python",
+						to: "forms"
+					},
+					{
+						id: 4,
+						title: "Orders",
+						icon: "bookmark_border",
+						to: "orders"
+					},
+					{
+						id: 5,
+						title: "Customers",
+						icon: "people",
+						to: "customers"
+					},
+					{
+						id: 6,
+						title: "Products",
+						icon: "fa-dice-d6",
+						to: "products"
+					},
+					{
+						id: 7,
+						title: "Categories",
+						icon: "category",
+						to: "categories"
+					},
+					{
+						id: 8,
+						title: "Stores",
+						icon: "store",
+						to: "stores"
+					},
+					{
+						id: 9,
+						title: "Users",
+						icon: "supervised_user_circle",
+						to: "users"
+					},
+					{
+						id: 10,
+						title: "Chris",
+						icon: "fa-cannabis",
+						to: "chris"
+					}
+				]
+			};
+		},
+		methods: {}
+	};
 </script>

@@ -8,6 +8,7 @@ export default new Vuex.Store({
     state: {
         baseUrl: "http://plantshed.test/api/",
         productList: [],
+        customerList: [],
         cartProducts: []
         // Current state of the application lies here.
     },
@@ -18,6 +19,9 @@ export default new Vuex.Store({
         // Mutate the current state
         setProductList(state, products) {
             state.productList = products;
+        },
+        setCustomerList(state, customers) {
+            state.customerList = customers;
         },
         addCartProduct(state, cartProduct) {
             if (_.includes(state.cartProducts, cartProduct)) {
