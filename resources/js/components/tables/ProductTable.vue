@@ -5,15 +5,7 @@
 			<v-spacer></v-spacer>
 			<v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
 		</v-card-title>
-		<v-data-table :headers="headers" :items="productList" :search="search">
-			<template slot="items" slot-scope="props">
-				<td>{{ props.item.name }}</td>
-				<td class="text-xs-right">{{ props.item.id }}</td>
-				<td class="text-xs-right">{{ props.item.photo_url }}</td>
-				<td class="text-xs-right">{{ props.item.sku }}</td>
-				<td class="text-xs-right">{{ props.item.price_id }}</td>
-				<td class="text-xs-right">{{ props.item.name }}</td>
-			</template>
+		<v-data-table :headers="headers" :items="productList" :search="search" :loading="loader">
 			<v-alert
 				slot="no-results"
 				:value="true"
@@ -88,6 +80,26 @@
 						this.initiateLoadingSearchResults(false);
 						console.log(error);
 					});
+			},
+			searchProduct() {
+				if (this.keyword.length > 0) {
+					this.initiateLoadingSearchResults(true);
+
+					let payload = {
+						model: "products",
+						mutation: "setProductList",
+						keyword: this.keyword
+					};
+
+					this.$store
+						.dispatch("search", payload)
+						.then(result => {
+							this.initiateLoadingSearchResults(false);
+						})
+						.catch(error => {
+							this.initiateLoadingSearchResults(false);
+						});
+				}
 			}
 		}
 	};
