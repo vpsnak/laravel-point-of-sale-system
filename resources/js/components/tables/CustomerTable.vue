@@ -5,14 +5,12 @@
 			<v-spacer></v-spacer>
 			<v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
 		</v-card-title>
-		<v-data-table :headers="headers" :items="customerList" :search="search">
-			<template slot="items" slot-scope="props">
-				<td>{{ props.item.name }}</td>
-				<td class="text-xs-right">{{ props.item.id }}</td>
-				<td class="text-xs-right">{{ props.item.photo_url }}</td>
-				<td class="text-xs-right">{{ props.item.sku }}</td>
-				<td class="text-xs-right">{{ props.item.price_id }}</td>
-				<td class="text-xs-right">{{ props.item.name }}</td>
+		<v-data-table :headers="headers" :items="customerList" :search="search" :loading="loader">
+			<template v-slot:item.email="{item}">
+				<a :href="'mailto:' + item.email">{{ item.email }}</a>
+			</template>
+			<template v-slot:item.phone="{item}">
+				<a :href="'tel:' + item.phone">{{ item.phone }}</a>
 			</template>
 			<v-alert
 				slot="no-results"
@@ -26,69 +24,80 @@
 
 
 <script>
-	export default {
-		data() {
-			return {
-				loader: false,
-				disableFilters: false,
-				model: "customers",
-				keyword: "",
-				search: "",
-				headers: [
-					{
-						text: "Customers",
-						align: "left",
-						sortable: false,
-						value: "name"
-					},
-					{ text: "Id", value: "id" },
-					{ text: "Sku", value: "sku" },
-					{ text: "Photo url", value: "photo_url" },
-					{ text: "Price_id", value: "price_id" }
-				]
-			};
-		},
-		mounted() {
-			this.getAllCustomers();
-		},
-		computed: {
-			customertList: {
-				get() {
-					return this.$store.state.customerList;
+export default {
+	data() {
+		return {
+			loader: false,
+			disableFilters: false,
+			model: "customers",
+			keyword: "",
+			search: "",
+			headers: [
+				{
+					text: "Id",
+					value: "id"
 				},
-				set(value) {
-					this.$store.state.customerList = value;
+				{
+					text: "First name",
+					value: "first_name"
+				},
+				{
+					text: "Last name",
+					value: "last_name"
+				},
+				{
+					text: "E-mail",
+					value: "email",
+					sortable: false
+				},
+				{
+					text: "Phone",
+					value: "phone",
+					sortable: false
 				}
-			}
-		},
-		methods: {
-			applyFilter(filter) {},
-			initiateLoadingSearchResults(loading) {
-				if (loading) {
-					this.loader = true;
-					this.customerList = [];
-				} else {
-					this.loader = false;
-				}
+			]
+		};
+	},
+	mounted() {
+		this.getAllCustomers();
+	},
+	computed: {
+		customerList: {
+			get() {
+				return this.$store.state.customerList;
 			},
-			getAllCustomers() {
-				this.initiateLoadingSearchResults(true);
-
-				let payload = {
-					model: "customers",
-					mutation: "setCustomerList"
-				};
-				this.$store
-					.dispatch("getAll", payload)
-					.then(result => {
-						this.initiateLoadingSearchResults(false);
-					})
-					.catch(error => {
-						this.initiateLoadingSearchResults(false);
-						console.log(error);
-					});
-				console.log(this.customerList);
+			set(value) {
+				this.$store.state.customerList = value;
 			}
 		}
-	};
+	},
+	methods: {
+		applyFilter(filter) {},
+		initiateLoadingSearchResults(loading) {
+			if (loading) {
+				this.loader = true;
+				this.customerList = [];
+			} else {
+				this.loader = false;
+			}
+		},
+		getAllCustomers() {
+			this.initiateLoadingSearchResults(true);
+
+			let payload = {
+				model: "customers",
+				mutation: "setCustomerList"
+			};
+			this.$store
+				.dispatch("getAll", payload)
+				.then(result => {
+					this.initiateLoadingSearchResults(false);
+				})
+				.catch(error => {
+					this.initiateLoadingSearchResults(false);
+					console.log(error);
+				});
+		}
+	}
+};
 </script>

@@ -7,12 +7,12 @@ use App\Customer;
 
 class CustomerController extends Controller
 {
-    protected $crud;
+    // protected $crud;
 
-    public function __construct(\CRUDController $CRUDController)
-    {
-        $this->crud = $CRUDController;
-    }
+    // public function __construct(\CRUDController $CRUDController)
+    // {
+    //     $this->crud = $CRUDController;
+    // }
 
     public function getAll()
     {

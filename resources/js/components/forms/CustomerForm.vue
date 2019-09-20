@@ -91,9 +91,11 @@
 
 <script>
   export default {
-    data: () => ({
-      countries: ['Afghanistan', 'Albania', 'Algeria', 
-      'Andorra', 'Angola', 'Anguilla', 'Antigua &amp; Barbuda',
+    data(){
+      return {
+      countries: [
+        'Afghanistan', 'Albania', 'Algeria', 
+        'Andorra', 'Angola', 'Anguilla', 'Antigua &amp; Barbuda',
        'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria', 
        'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 
        'Belarus', 'Belgium', 'Belize', 'Benin', 'Bermuda', 'Bhutan', 
@@ -130,13 +132,16 @@
                        'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand', "Timor L'Este", 'Togo', 'Tonga', 'Trinidad &amp; Tobago', 
                        'Tunisia', 'Turkey', 'Turkmenistan', 'Turks &amp; Caicos', 'Uganda', 'Ukraine', 'United Arab Emirates', 
                        'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Venezuela', 'Vietnam', 'Virgin Islands (US)', 
-                       'Yemen', 'Zambia', 'Zimbabwe'],
+                       'Yemen', 'Zambia', 'Zimbabwe'
+                       ],
+     
       errorMessages: '',
       firstname: null,
       lastname: null,
       company_name: null,
       formHasErrors: false,
-    }),
+       }
+    },
 
     computed: {
       form () {
