@@ -94,7 +94,7 @@
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Sub total</span>
-						<span class="pa-2">12 {{ }}</span>
+						<span class="pa-2">{{ subTotal }}</span>
 					</div>
 
 					<v-divider />
@@ -167,6 +167,14 @@ export default {
 	},
 
 	computed: {
+		subTotal() {
+			let subTotal = 0;
+			this.cartProducts.forEach(element => {
+				subTotal += element.qty * parseInt(element.price.amount);
+			});
+
+			return subTotal;
+		},
 		cartProducts: {
 			get() {
 				return this.$store.state.cartProducts;
