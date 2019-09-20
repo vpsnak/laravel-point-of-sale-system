@@ -1,6 +1,12 @@
 <template>
 	<v-card>
 		<v-card-text>
+			<v-row align="center" justify="center">
+				<v-col align="center" justify="center">
+					<v-icon>shopping_cart</v-icon>
+					<h3 class="text-center">Shopping cart</h3>
+				</v-col>
+			</v-row>
 			<v-row>
 				<v-col>
 					<v-toolbar flat>
@@ -17,8 +23,11 @@
 						</v-tooltip>
 					</v-toolbar>
 					<v-divider />
-					<v-list subheader dense>
-						<v-subheader>Shopping cart</v-subheader>
+				</v-col>
+			</v-row>
+			<v-row style="height: 33vh; overflow-y: auto;">
+				<v-col>
+					<v-list dense>
 						<v-list-group v-for="item in items" :key="item.id">
 							<template v-slot:activator>
 								<v-list-item dense>
@@ -48,7 +57,7 @@
 									</v-list-item-action>
 								</v-list-item>
 							</template>
-							<v-list-item>
+							<v-list-item style="height:60vh; overflow-y:auto;">
 								<v-col cols="2">
 									<v-text-field type="number" label="Qty" v-model="item.qty" min="1"></v-text-field>
 								</v-col>
@@ -129,32 +138,6 @@
 export default {
 	data() {
 		return {
-			products: [
-				{
-					id: "1",
-					name: "Cotton Long Sleeve T-shirt",
-					price: "44",
-					image: "https://cdn.vuetifyjs.com/images/lists/3.jpg",
-					sku: "123",
-					qty: "3"
-				},
-				{
-					id: "2",
-					name: "Recipes",
-					price: "4",
-					image: "https://cdn.vuetifyjs.com/images/lists/4.jpg",
-					sku: "456",
-					qty: "5"
-				},
-				{
-					id: "3",
-					name: "Work",
-					price: "7",
-					image: "https://cdn.vuetifyjs.com/images/lists/5.jpg",
-					sku: "789",
-					qty: "1"
-				}
-			],
 			discountTypes: [
 				{
 					label: "Flat",
@@ -169,12 +152,12 @@ export default {
 	},
 
 	computed: {
-		items: {
+		cartProducts: {
 			get() {
-				return this.products;
+				return this.$store.state.cartProducts;
 			},
 			set(value) {
-				this.products = value;
+				this.$store.state.cartProducts = value;
 			}
 		}
 	},
@@ -182,14 +165,14 @@ export default {
 	methods: {
 		decreaseQty(item) {
 			if (item.qty > 1) {
-				item.qty--;
+				cartProducts.qty--;
 			}
 		},
 		increaseQty(item) {
-			item.qty++;
+			cartProducts.qty++;
 		},
 		removeItem(item) {
-			this.items.splice(item, 1);
+			this.cartProducts.splice(item, 1);
 		}
 	}
 };

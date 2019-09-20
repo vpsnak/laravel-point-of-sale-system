@@ -13,10 +13,11 @@
 </template>
 
 <script>
-export default {
-	data() {
-		return {};
-	},
-	mounted() {}
-};
+export default {};
 </script>
+
+<style>
+html {
+	overflow-y: hidden;
+}
+</style>

@@ -7,7 +7,8 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     state: {
         baseUrl: "http://plantshed.test/api/",
-        products: []
+        productList: [],
+        cartList: []
         // Current state of the application lies here.
     },
     getters: {
@@ -15,10 +16,34 @@ export default new Vuex.Store({
     },
     mutations: {
         // Mutate the current state
+        setProductList(state, products) {
+            state.productList = products;
+        },
+        setCartList(state, products) {
+            state.cartList = products;
+        },
+        addCartList(state, product) {
+            state.cartList.push(product);
+        }
     },
     actions: {
+        getAll(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(this.state.baseUrl + payload.model)
+                    .then(response => {
+                        console.log(response);
+                        resolve(
+                            context.commit(payload.mutation, response.data)
+                        );
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        reject(error);
+                    });
+            });
+        },
         search(context, payload) {
-            console.log(payload);
             return new Promise((resolve, reject) => {
                 axios
                     .post(
@@ -27,7 +52,9 @@ export default new Vuex.Store({
                     )
                     .then(response => {
                         console.log(response);
-                        resolve(response.data);
+                        resolve(
+                            context.commit(payload.mutation, response.data)
+                        );
                     })
                     .catch(error => {
                         console.log(error);
