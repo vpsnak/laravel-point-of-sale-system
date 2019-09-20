@@ -5,6 +5,7 @@
 				<v-col>
 					<v-toolbar flat>
 						<v-text-field
+						    v-model="keyword"
 							placeholder="Search product"
 							class="grey--text"
 						>
@@ -150,6 +151,9 @@
 			</v-row>
 		</v-card-text>
 		<v-card-actions></v-card-actions>
+		<div>
+		<v-btn @click="fire"></v-btn>
+	</div>
 	</v-card>
 </template>
 
@@ -162,6 +166,8 @@
 				loading2: false,
 				loading3: false,
 				loading4: false,
+				model: "products",
+				keyword: "",
 				cards: [
 					{
 						id: "1",
@@ -199,6 +205,16 @@
 
 				this.loader = null;
 			}
+		},
+		methods: {
+		fire() {
+			let payload = {
+				model: "products",
+				keyword: this.keyword
+			};
+
+			this.$store.dispatch("search", payload);
 		}
+	}
 	};
 </script>

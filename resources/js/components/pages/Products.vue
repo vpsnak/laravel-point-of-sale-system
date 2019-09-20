@@ -1,8 +1,9 @@
 <template>
 	<v-container fluid>
       <v-row>
-         <v-col cols="3">
-           Products
+         <v-col>
+           <ProductTable>
+           </ProductTable>
          </v-col>
       </v-row>
    </v-container>

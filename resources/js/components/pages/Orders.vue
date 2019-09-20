@@ -1,8 +1,9 @@
 <template>
 	<v-container fluid>
       <v-row>
-         <v-col cols="3">
-           Orders
+         <v-col>
+           <orderTable>
+           </orderTable>
          </v-col>
       </v-row>
    </v-container>
