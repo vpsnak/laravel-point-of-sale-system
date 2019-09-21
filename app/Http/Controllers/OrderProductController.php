@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\OrderProduct;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class OrderProductController extends BaseController
 {
@@ -12,33 +11,16 @@ class OrderProductController extends BaseController
 
     public function create(Request $request)
     {
-        $response = $this->insert($request->all());
-
-        if ($response) {
-            return response(true, 200);
-        } else {
-            return response(false, 500);
-        }
-    }
-
-    public function insert($data)
-    {
-        $validatedData = Validator::make($data, [
+        $validatedData = $request->validate([
             'order_id' => 'required|numeric',
             'name' => 'required|string',
             'sku' => 'required|string',
             'price' => 'required|numeric',
-            'qty' => 'required|string',
+            'qty' => 'required|numeric',
             'discount_type' => 'required|string',
             'discount' => 'required|numeric',
         ]);
 
-        $insert = OrderProduct::create($validatedData);
-
-        if (!empty($insert)) {
-            return true;
-        } else {
-            return false;
-        }
+        return response($this->model::store($validatedData), 201);
     }
 }
