@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-class CartController extends Controller
+class CartController extends BaseController
 {
     //
 }

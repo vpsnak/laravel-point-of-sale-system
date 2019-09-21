@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-class PriceController extends Controller
+class PriceController extends BaseController
 {
     //
 }

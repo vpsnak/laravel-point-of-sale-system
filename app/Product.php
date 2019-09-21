@@ -23,4 +23,9 @@ class Product extends BaseModel
     {
         return $this->morphOne('App\Price', 'priceable');
     }
+
+    public static function allData()
+    {
+        return get_called_class()::with(['stores', 'price'])->get();
+    }
 }
