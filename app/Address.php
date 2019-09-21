@@ -8,11 +8,11 @@ class Address extends Model
 {
     public function areaCode()
     {
-        return $this->hasOne(App\AreaCode::class);
+        return $this->hasOne(AreaCode::class);
     }
 
     public function customers()
     {
-        return $this->belongsToMany(App\Customer::class);
+        return $this->belongsToMany(Customer::class);
     }
 }

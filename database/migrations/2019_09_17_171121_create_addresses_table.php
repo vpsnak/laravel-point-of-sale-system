@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateAddressesTable extends Migration
 {
@@ -16,6 +16,14 @@ class CreateAddressesTable extends Migration
         Schema::create('addresses', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedInteger('area_code_id');
+            $table->string('first_name', 100);
+            $table->string('last_name', 100);
+            $table->string('street', 100);
+            $table->string('city', 100);
+            $table->string('country_id', 100);
+            $table->string('region', 100);
+            $table->string('postcode', 100);
+            $table->string('phone', 100);
             $table->timestamps();
         });
     }

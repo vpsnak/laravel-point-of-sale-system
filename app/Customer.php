@@ -15,6 +15,6 @@ class Customer extends Model
 
     public function addresses()
     {
-        return $this->belongsToMany(App\Address::class);
+        return $this->belongsToMany(Address::class);
     }
 }

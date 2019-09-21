@@ -6,7 +6,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        baseUrl: "http://plantshed.test/api/",
+        baseUrl: "/api/",
         productList: [],
         customerList: [],
         cartProducts: []
@@ -55,8 +55,8 @@ export default new Vuex.Store({
                     .catch(error => {
                         console.log(error);
                         reject(error);
-                    });
-            });
+        })
+        })
         },
         search(context, payload) {
             return new Promise((resolve, reject) => {
@@ -74,8 +74,8 @@ export default new Vuex.Store({
                     .catch(error => {
                         console.log(error);
                         reject(error);
-                    });
-            });
+        })
+        })
         }
     }
 });
