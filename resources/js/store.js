@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import "es6-promise/auto";
+import { ENGINE_METHOD_PKEY_ASN1_METHS } from "constants";
 
 Vue.use(Vuex);
 
@@ -23,6 +24,8 @@ export default new Vuex.Store({
         setCustomerList(state, customers) {
             state.customerList = customers;
         },
+
+        // shopping cart mutations
         addCartProduct(state, cartProduct) {
             if (_.includes(state.cartProducts, cartProduct)) {
                 let index = _.findIndex(state.cartProducts, cartProduct);
@@ -38,7 +41,10 @@ export default new Vuex.Store({
         },
         decreaseCartProductQty(state, cartProduct) {
             let index = _.findIndex(state.cartProducts, cartProduct);
-            state.cartProducts[index].qty--;
+
+            if (state.cartProducts[index].qty > 1) {
+                state.cartProducts[index].qty--;
+            }
         }
     },
     actions: {
@@ -55,8 +61,8 @@ export default new Vuex.Store({
                     .catch(error => {
                         console.log(error);
                         reject(error);
-        })
-        })
+                    });
+            });
         },
         search(context, payload) {
             return new Promise((resolve, reject) => {
@@ -74,8 +80,8 @@ export default new Vuex.Store({
                     .catch(error => {
                         console.log(error);
                         reject(error);
-        })
-        })
+                    });
+            });
         }
     }
 });

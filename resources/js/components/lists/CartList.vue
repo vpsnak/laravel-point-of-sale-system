@@ -65,15 +65,26 @@
 										<v-text-field type="number" label="Qty" v-model="cartProduct.qty" min="1"></v-text-field>
 									</v-col>
 									<v-col cols="12" md="5">
-										<v-select :items="discountTypes" label="Discount" item-text="label" item-value="value"></v-select>
+										<v-select
+											:items="discountTypes"
+											v-model="cartProduct.discount_type"
+											label="Discount"
+											item-text="label"
+											item-value="value"
+										></v-select>
 									</v-col>
 									<v-col cols="12" md="4">
-										<v-text-field type="number" label="Amount"></v-text-field>
+										<v-text-field
+											type="number"
+											label="Amount"
+											v-model="cartProduct.discount_amount"
+											:value="0"
+										></v-text-field>
 									</v-col>
 
 									<v-col cols="12" md="12">
 										<v-textarea
-											:v-model="true"
+											v-model="cartProduct.notes"
 											rows="3"
 											label="Notes"
 											:hint="'For product: ' + cartProduct.name"
@@ -94,33 +105,33 @@
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Sub total</span>
-						<span class="pa-2">${{ subTotal }}</span>
+						<span class="pa-2">$ {{ subTotal }}</span>
 					</div>
 
 					<v-divider />
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Tax</span>
-						<span class="pa-2"> ${{ tax}}</span>
+						<span class="pa-2">$ {{ tax}}</span>
 					</div>
 
 					<v-divider />
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Total discount</span>
-						<span class="pa-2"> ${{totalDiscount}}</span>
+						<span class="pa-2">$ {{totalDiscount}}</span>
 					</div>
 
 					<v-divider />
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Total</span>
-						<span class="pa-2"> ${{ total}}</span>
+						<span class="pa-2">$ {{ total}}</span>
 					</div>
 
 					<v-divider />
 
-					<v-btn block class="my-2">Checkout</v-btn>
+					<v-btn block class="my-2" @click="checkout">Checkout</v-btn>
 
 					<v-divider />
 				</v-col>
@@ -175,13 +186,13 @@ export default {
 
 			return subTotal;
 		},
-		tax(){
+		tax() {
 			return this.subTotal * 0.24;
 		},
-		totalDiscount(){
+		totalDiscount() {
 			return 0;
 		},
-		total(){
+		total() {
 			return this.subTotal + this.tax - this.totalDiscount;
 		},
 		cartProducts: {
@@ -203,6 +214,11 @@ export default {
 		},
 		removeItem(cartProduct) {
 			this.cartProducts.splice(cartProduct, 1);
+		},
+
+		checkout() {
+			console.log("---- CHECKOUT! ----");
+			console.log(this.cartProducts);
 		}
 	}
 };
