@@ -1,7 +1,7 @@
 <template>
 	<v-card>
 		<v-toolbar>
-			<v-btn icon dark @click="close">
+			<v-btn icon @click="close">
 				<v-icon>mdi-close</v-icon>
 			</v-btn>
 			<v-toolbar-title>Checkout</v-toolbar-title>
@@ -74,7 +74,7 @@
 				<v-col cols="9">
 					<v-card class="mb-4">
 						<v-card-text>
-							<v-stepper>
+							<!-- <v-stepper>
 								<v-stepper-header>
 									<template v-for="n in steps">
 										<v-stepper-step :key="`${n}-step`" :complete="e1 > n" :step="n" editable>Step {{ n }}</v-stepper-step>
@@ -92,7 +92,7 @@
 										<v-btn text>Cancel</v-btn>
 									</v-stepper-content>
 								</v-stepper-items>
-							</v-stepper>
+							</v-stepper>-->
 						</v-card-text>
 					</v-card>
 				</v-col>

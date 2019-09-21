@@ -24,7 +24,7 @@
 					<span>Add product</span>
 				</v-btn>
 			</v-row>
-			<v-row>
+			<v-row justify="center">
 				<v-btn-toggle>
 					<v-btn :disabled="disableFilters" @click="applyFilter('value')" text>
 						<v-icon left small>fas fa-heart</v-icon>
