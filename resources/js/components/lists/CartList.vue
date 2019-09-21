@@ -138,9 +138,34 @@
 			</v-row>
 			<v-row>
 				<v-col cols="4" class="text-center">
-					<v-btn icon>
-						<v-icon>fa-recycle</v-icon>
-					</v-btn>
+					<div class="text-center">
+						<v-dialog v-model="dialog" width="500">
+							<template v-slot:activator="{ on }">
+								<v-btn icon v-on="on">
+									<v-icon>fa-recycle</v-icon>
+								</v-btn>
+							</template>
+							<v-card>
+								<v-card-title primary-title>Products</v-card-title>
+								<v-card-text>
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+									sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+									Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+									nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit
+									in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
+									sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
+									anim id est laborum.
+								</v-card-text>
+
+								<v-divider></v-divider>
+
+								<v-card-actions>
+									<div class="flex-grow-1"></div>
+									<v-btn color="primary" text @click="dialog = false">Add to cart</v-btn>
+								</v-card-actions>
+							</v-card>
+						</v-dialog>
+					</div>
 				</v-col>
 
 				<v-col cols="4" class="text-center">
@@ -161,69 +186,70 @@
 </template>
 
 <script>
-export default {
-	data() {
-		return {
-			discountTypes: [
-				{
-					label: "Flat",
-					value: "flat"
-				},
-				{
-					label: "Percentage",
-					value: "percentage"
-				}
-			]
-		};
-	},
+	export default {
+		data() {
+			return {
+				dialog: false,
+				discountTypes: [
+					{
+						label: "Flat",
+						value: "flat"
+					},
+					{
+						label: "Percentage",
+						value: "percentage"
+					}
+				]
+			};
+		},
 
-	computed: {
-		subTotal() {
-			let subTotal = 0;
-			this.cartProducts.forEach(element => {
-				subTotal += element.qty * parseInt(element.price.amount);
-			});
+		computed: {
+			subTotal() {
+				let subTotal = 0;
+				this.cartProducts.forEach(element => {
+					subTotal += element.qty * parseInt(element.price.amount);
+				});
 
-			return subTotal;
-		},
-		tax() {
-			return this.subTotal * 0.24;
-		},
-		totalDiscount() {
-			return 0;
-		},
-		total() {
-			return this.subTotal + this.tax - this.totalDiscount;
-		},
-		cartProducts: {
-			get() {
-				return this.$store.state.cartProducts;
+				return subTotal;
 			},
-			set(value) {
-				this.$store.state.cartProducts = value;
+			tax() {
+				return this.subTotal * 0.24;
+			},
+			totalDiscount() {
+				return 0;
+			},
+			total() {
+				return this.subTotal + this.tax - this.totalDiscount;
+			},
+			cartProducts: {
+				get() {
+					return this.$store.state.cartProducts;
+				},
+				set(value) {
+					this.$store.state.cartProducts = value;
+				}
+			}
+		},
+
+		methods: {
+			decreaseQty(cartProduct) {
+				this.$store.commit("decreaseCartProductQty", cartProduct);
+			},
+			increaseQty(cartProduct) {
+				this.$store.commit("increaseCartProductQty", cartProduct);
+			},
+			removeItem(cartProduct) {
+				this.cartProducts.splice(cartProduct, 1);
+			},
+			removeAll(cartProducts) {
+				confirm("Are you sure you want to delete the cart?") &&
+					this.cartProducts.splice(0);
+			},
+
+			checkout() {
+				console.log("---- CHECKOUT! ----");
+				console.log(this.cartProducts);
 			}
 		}
-	},
-
-	methods: {
-		decreaseQty(cartProduct) {
-			this.$store.commit("decreaseCartProductQty", cartProduct);
-		},
-		increaseQty(cartProduct) {
-			this.$store.commit("increaseCartProductQty", cartProduct);
-		},
-		removeItem(cartProduct) {
-			this.cartProducts.splice(cartProduct, 1);
-		},
-		removeAll(cartProducts) {
-			confirm("Are you sure you want to delete the cart?") &&
-				this.cartProducts.splice(0);
-		},
-
-		checkout() {
-			console.log("---- CHECKOUT! ----");
-			console.log(this.cartProducts);
-		}
-	}
-};
+	};
 </script>
