@@ -2,12 +2,10 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Order extends Model
+class Order extends BaseModel
 {
     public function payments()
     {
-        return $this->belongsToMany(App\Payment::class);
+        return $this->belongsToMany(Payment::class);
     }
 }
