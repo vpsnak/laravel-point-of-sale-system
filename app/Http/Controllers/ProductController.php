@@ -16,22 +16,15 @@ class ProductController extends BaseController
             'sku' => 'required|string',
         ]);
 
-        $response = $this->crud->create(Product::class, $validatedData);
-
-        return $response;
+        return response($this->model::store($validatedData), 201);
     }
 
     public function search(Request $request)
     {
         $validatedData = $request->validate([
-            'keyword' => 'required'
+            'keyword' => 'required|string'
         ]);
 
-        return response(
-            Product::where('sku', 'like', "%{$validatedData['keyword']}%")
-                ->orWhere('name', 'like', "%{$validatedData['keyword']}%")
-                ->get(),
-            200
-        );
+        return $this->searchResult(['sku', 'name'], $validatedData['keyword']);
     }
 }

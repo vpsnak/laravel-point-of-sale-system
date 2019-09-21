@@ -11,12 +11,14 @@
 |
 */
 
-// Customers 
-Route::get('/customers', 'CustomerController@getAll');
-Route::post('/customers/create', 'CustomerController@create');
-Route::post('/customers/search', 'CustomerController@search');
+$baseRoutes = [
+    'customers' => 'CustomerController',
+    'address' => 'AddressController',
+    'products' => 'ProductController',
+];
 
-// Products 
-Route::get('/products', 'ProductController@all');
-Route::post('/products/search', 'ProductController@create');
-Route::post('/products/search', 'ProductController@search');
+foreach ($baseRoutes as $route => $controller) {
+    Route::get("/$route", "$controller@all");
+    Route::post("/$route/create", "$controller@create");
+    Route::post("/$route/search", "$controller@search");
+}
