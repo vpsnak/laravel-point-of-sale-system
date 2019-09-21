@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-class MagentoOrderController extends Controller
+class MagentoOrderController extends BaseController
 {
     //
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-class PaymentController extends Controller
+class PaymentController extends BaseController
 {
     //
 }

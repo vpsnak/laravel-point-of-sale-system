@@ -2,12 +2,10 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
-class AreaCode extends Model
+class AreaCode extends BaseModel
 {
     public function addresses()
     {
-        return $this->hasMany(App\Addresses::class);
+        return $this->hasMany(Address::class);
     }
 }

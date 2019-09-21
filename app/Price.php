@@ -2,9 +2,7 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Price extends Model
+class Price extends BaseModel
 {
     public function priceable()
     {
