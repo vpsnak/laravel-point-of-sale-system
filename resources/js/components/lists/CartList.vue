@@ -25,9 +25,9 @@
 					<v-divider />
 				</v-col>
 			</v-row>
-			<v-row style="height: 33vh; overflow-y: auto;">
+			<v-row>
 				<v-col>
-					<v-list dense style="height:60vh; overflow-y:auto;">
+					<v-list dense style="height:30vh; overflow-y:auto;">
 						<v-list-group v-for="cartProduct in cartProducts" :key="cartProduct.id">
 							<template v-slot:activator>
 								<v-list-item dense>
@@ -65,15 +65,26 @@
 										<v-text-field type="number" label="Qty" v-model="cartProduct.qty" min="1"></v-text-field>
 									</v-col>
 									<v-col cols="12" md="5">
-										<v-select :items="discountTypes" label="Discount" item-text="label" item-value="value"></v-select>
+										<v-select
+											:items="discountTypes"
+											v-model="cartProduct.discount_type"
+											label="Discount"
+											item-text="label"
+											item-value="value"
+										></v-select>
 									</v-col>
 									<v-col cols="12" md="4">
-										<v-text-field type="number" label="Amount"></v-text-field>
+										<v-text-field
+											type="number"
+											label="Amount"
+											v-model="cartProduct.discount_amount"
+											:value="0"
+										></v-text-field>
 									</v-col>
 
 									<v-col cols="12" md="12">
 										<v-textarea
-											:v-model="true"
+											v-model="cartProduct.notes"
 											rows="3"
 											label="Notes"
 											:hint="'For product: ' + cartProduct.name"
@@ -94,120 +105,165 @@
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Sub total</span>
-						<span class="pa-2">${{ subTotal }}</span>
+						<span class="pa-2">$ {{ subTotal }}</span>
 					</div>
 
 					<v-divider />
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Tax</span>
-						<span class="pa-2">${{ tax}}</span>
+						<span class="pa-2">$ {{ tax }}</span>
 					</div>
 
 					<v-divider />
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Total discount</span>
-						<span class="pa-2">${{totalDiscount}}</span>
+						<span class="pa-2">$ {{ totalDiscount }}</span>
 					</div>
 
 					<v-divider />
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Total</span>
-						<span class="pa-2">${{ total}}</span>
+						<span class="pa-2">$ {{ total }}</span>
 					</div>
 
 					<v-divider />
 
-					<v-btn block class="my-2">Checkout</v-btn>
+					<v-dialog
+						v-model="checkoutDialog"
+						fullscreen
+						hide-overlay
+						transition="dialog-bottom-transition"
+					>
+						<template v-slot:activator="{ on }">
+							<v-btn block class="my-2" @click="checkout" v-on="on" :disabled="totalCartProducts">Checkout</v-btn>
+						</template>
+
+						<checkoutWizard />>
+					</v-dialog>
 
 					<v-divider />
 				</v-col>
 			</v-row>
+		</v-card-text>
+		<v-card-actions>
 			<v-row>
 				<v-col cols="4" class="text-center">
-					<v-btn icon>
-						<v-icon>fa-recycle</v-icon>
-					</v-btn>
+					<div class="text-center">
+						<v-dialog v-model="restoreCartDialog" width="500">
+							<template v-slot:activator="{ on }">
+								<v-badge color="purple">
+									<template v-slot:badge>
+										<span>6</span>
+									</template>
+									<v-btn icon v-on="on">
+										<v-icon>fa-recycle</v-icon>
+									</v-btn>
+								</v-badge>
+							</template>
+							<v-card>
+								<v-card-title primary-title>Products</v-card-title>
+								<v-card-text>asd</v-card-text>
+
+								<v-divider></v-divider>
+
+								<v-card-actions>
+									<div class="flex-grow-1"></div>
+									<v-btn color="primary" text @click="restoreCartDialog = false">Add to cart</v-btn>
+								</v-card-actions>
+							</v-card>
+						</v-dialog>
+					</div>
 				</v-col>
 
 				<v-col cols="4" class="text-center">
-					<v-btn icon>
+					<v-btn icon :disabled="totalCartProducts">
 						<v-icon>pause</v-icon>
 					</v-btn>
 				</v-col>
 
 				<v-col cols="4" class="text-center">
-					<v-btn icon @click.stop="removeAll(cartProducts)">
+					<v-btn icon @click.stop="removeAll(cartProducts)" :disabled="totalCartProducts">
 						<v-icon>delete</v-icon>
 					</v-btn>
 				</v-col>
 			</v-row>
-		</v-card-text>
-		<v-card-actions></v-card-actions>
+		</v-card-actions>
 	</v-card>
 </template>
 
 <script>
-	export default {
-		data() {
-			return {
-				discountTypes: [
-					{
-						label: "Flat",
-						value: "flat"
-					},
-					{
-						label: "Percentage",
-						value: "percentage"
-					}
-				]
-			};
-		},
-
-		computed: {
-			subTotal() {
-				let subTotal = 0;
-				this.cartProducts.forEach(element => {
-					subTotal += element.qty * parseInt(element.price.amount);
-				});
-
-				return subTotal;
-			},
-			tax() {
-				return this.subTotal * 0.24;
-			},
-			totalDiscount() {
-				return 0;
-			},
-			total() {
-				return this.subTotal + this.tax - this.totalDiscount;
-			},
-			cartProducts: {
-				get() {
-					return this.$store.state.cartProducts;
+export default {
+	data() {
+		return {
+			restoreCartDialog: false,
+			checkoutDialog: false,
+			discountTypes: [
+				{
+					label: "Flat",
+					value: "flat"
 				},
-				set(value) {
-					this.$store.state.cartProducts = value;
+				{
+					label: "Percentage",
+					value: "percentage"
 				}
-			}
-		},
+			]
+		};
+	},
 
-		methods: {
-			decreaseQty(cartProduct) {
-				this.$store.commit("decreaseCartProductQty", cartProduct);
+	computed: {
+		subTotal() {
+			let subTotal = 0;
+			this.cartProducts.forEach(element => {
+				subTotal += element.qty * parseInt(element.price.amount);
+			});
+
+			return subTotal;
+		},
+		tax() {
+			return this.subTotal * 0.24;
+		},
+		totalDiscount() {
+			return 0;
+		},
+		total() {
+			return this.subTotal + this.tax - this.totalDiscount;
+		},
+		totalCartProducts() {
+			return _.size(this.cartProducts) ? false : true;
+		},
+		cartProducts: {
+			get() {
+				return this.$store.state.cartProducts;
 			},
-			increaseQty(cartProduct) {
-				this.$store.commit("increaseCartProductQty", cartProduct);
-			},
-			removeItem(cartProduct) {
-				this.cartProducts.splice(cartProduct, 1);
-			},
-			removeAll(cartProducts) {
-				confirm("Are you sure you want to delete the cart?") &&
-					this.cartProducts.splice(0);
+			set(value) {
+				this.$store.state.cartProducts = value;
 			}
 		}
-	};
+	},
+
+	methods: {
+		decreaseQty(cartProduct) {
+			this.$store.commit("decreaseCartProductQty", cartProduct);
+		},
+		increaseQty(cartProduct) {
+			this.$store.commit("increaseCartProductQty", cartProduct);
+		},
+		removeItem(cartProduct) {
+			this.cartProducts.splice(cartProduct, 1);
+		},
+		removeAll(cartProducts) {
+			confirm("Are you sure you want to delete the cart?") &&
+				this.cartProducts.splice(0);
+		},
+
+		checkout() {
+			this.checkoutDialog = true;
+			console.log("---- CHECKOUT! ----");
+			console.log(this.cartProducts);
+		}
+	}
+};
 </script>
