@@ -40,11 +40,11 @@ class ForeignKeys extends Migration
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('restrict');
             $table->foreign('payment_id')->references('id')->on('payments')->onDelete('restrict');
         });
-
-        Schema::table('cart_product', function (Blueprint $table) {
-            $table->foreign('cart_id')->references('id')->on('carts')->onDelete('restrict');
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('restrict');
-        });
+//deleted table
+//        Schema::table('cart_product', function (Blueprint $table) {
+//            $table->foreign('cart_id')->references('id')->on('carts')->onDelete('restrict');
+//            $table->foreign('product_id')->references('id')->on('products')->onDelete('restrict');
+//        });
 
         Schema::table('shippings', function (Blueprint $table) {
             $table->foreign('price_id')->references('id')->on('prices')->onDelete('restrict');
@@ -71,10 +71,9 @@ class ForeignKeys extends Migration
             $table->dropForeign(['store_id']);
         });
 
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropForeign(['price_id']);
-        });
-
+//        Schema::table('products', function (Blueprint $table) {
+//            $table->dropForeign(['price_id']);
+//        });
 
         Schema::table('category_product', function (Blueprint $table) {
             $table->dropForeign(['category_id']);
@@ -95,11 +94,11 @@ class ForeignKeys extends Migration
             $table->dropForeign(['order_id']);
             $table->dropForeign(['payment_id']);
         });
-
-        Schema::table('cart_product', function (Blueprint $table) {
-            $table->dropForeign(['cart_id']);
-            $table->dropForeign(['product_id']);
-        });
+//deleted table
+//        Schema::table('cart_product', function (Blueprint $table) {
+//            $table->dropForeign(['cart_id']);
+//            $table->dropForeign(['product_id']);
+//        });
 
         Schema::table('shippings', function (Blueprint $table) {
             $table->dropForeign(['price_id']);

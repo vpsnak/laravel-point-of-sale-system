@@ -56,7 +56,7 @@ class BaseModel extends Model
         return get_called_class()::select($fields)->where($column, $value)->first();
     }
 
-    public static function getAll($fields, $column, $value)
+    public static function getAll($column, $value, $fields = '*')
     {
         return get_called_class()::select($fields)->where($column, $value)->get();
     }

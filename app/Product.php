@@ -11,12 +11,12 @@ class Product extends BaseModel
 
     public function stores()
     {
-        return $this->belongsToMany(\App\Store::class)->withPivot('qty');
+        return $this->belongsToMany(Store::class)->withPivot('qty');
     }
 
     public function carts()
     {
-        return $this->belongsToMany(\App\Cart::class)->withPivot('qty');
+        return $this->belongsToMany(Cart::class)->withPivot('qty');
     }
 
     public function price()

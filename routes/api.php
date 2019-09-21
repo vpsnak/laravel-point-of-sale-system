@@ -15,6 +15,7 @@ $baseRoutes = [
     'customers' => 'CustomerController',
     'address' => 'AddressController',
     'products' => 'ProductController',
+    'carts' => 'CartController',
 ];
 
 foreach ($baseRoutes as $route => $controller) {
@@ -22,3 +23,6 @@ foreach ($baseRoutes as $route => $controller) {
     Route::post("/$route/create", "$controller@create");
     Route::post("/$route/search", "$controller@search");
 }
+
+Route::get('/carts/hold', "{$baseRoutes['carts']}@getHold");
+Route::get('/carts/{model}', "{$baseRoutes['carts']}@delete");
