@@ -8,11 +8,12 @@ export default new Vuex.Store({
     state: {
         baseUrl: "/api/",
         restoreCartDialog: false,
+        checkoutDialog: false,
 
         productList: [],
         customerList: [],
         cartProducts: [],
-        cartsOnHold: [],
+        cartsOnHold: []
         // Current state of the application lies here.
     },
     getters: {
@@ -91,12 +92,9 @@ export default new Vuex.Store({
         create(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(
-                        this.state.baseUrl + payload.model + "/create", {
+                    .post(this.state.baseUrl + payload.model + "/create", {
                         data: payload.data
-                    }
-
-                    )
+                    })
                     .then(response => {
                         console.log(response);
                         resolve(response.data);
@@ -106,8 +104,7 @@ export default new Vuex.Store({
                         reject(error);
                     });
             });
-        },
-
+        }
     }
 });
 

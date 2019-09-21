@@ -25,9 +25,9 @@
 					<v-divider />
 				</v-col>
 			</v-row>
-			<v-row style="height: 33vh; overflow-y: auto;">
+			<v-row style="height: 33vh; overflow-y:auto;">
 				<v-col>
-					<v-list dense style="height:60vh; overflow-y:auto;">
+					<v-list dense>
 						<v-list-group v-for="cartProduct in cartProducts" :key="cartProduct.id">
 							<template v-slot:activator>
 								<v-list-item dense>
@@ -81,7 +81,7 @@
 										<v-text-field type="number" label="Amount" min="1" v-model="cartProduct.discount_amount"></v-text-field>
 									</v-col>
 
-									<v-col cols="12" md="12">
+									<v-col cols="12">
 										<v-textarea
 											v-model="cartProduct.notes"
 											rows="3"
@@ -130,22 +130,13 @@
 
 					<v-divider />
 
-					<v-dialog
-						v-model="checkoutDialog"
-						fullscreen
-						hide-overlay
-						transition="dialog-bottom-transition"
-					>
-						<template v-slot:activator="{ on }">
-							<v-btn block class="my-2" @click="checkout" v-on="on" :disabled="totalCartProducts">Checkout</v-btn>
-						</template>
-
-						<checkoutWizard />>
-					</v-dialog>
+					<v-btn block class="my-2" @click="checkout" :disabled="totalCartProducts">Checkout</v-btn>
 
 					<v-divider />
 				</v-col>
 			</v-row>
+		</v-card-text>
+		<v-card-actions>
 			<v-row>
 				<v-col cols="4" class="text-center">
 					<div class="text-center">
@@ -172,9 +163,11 @@
 					</v-btn>
 				</v-col>
 			</v-row>
-		</v-card-text>
-		<v-card-actions></v-card-actions>
+		</v-card-actions>
 
+		<v-dialog v-model="checkoutDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+			<checkoutWizard />
+		</v-dialog>
 		<v-dialog v-model="restoreCartDialog" width="500">
 			<restoreCartDialog />
 		</v-dialog>
@@ -192,17 +185,25 @@ export default {
 				},
 				{
 					label: "Flat",
-					value: "Flat"
+					value: "flat"
 				},
 				{
 					label: "Percentage",
-					value: "Percentage"
+					value: "percentage"
 				}
 			]
 		};
 	},
 
 	computed: {
+		checkoutDialog: {
+			get() {
+				return this.$store.state.checkoutDialog;
+			},
+			set(value) {
+				this.$store.state.checkoutDialog = value;
+			}
+		},
 		restoreCartDialog: {
 			get() {
 				return this.$store.state.restoreCartDialog;
