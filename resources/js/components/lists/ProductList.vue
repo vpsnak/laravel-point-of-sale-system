@@ -59,15 +59,15 @@
 								</template>
 
 								<v-list>
-									<v-list-item @click>
+									<v-list-item @click="addToFavorites(product)">
 										<v-icon class="pr-2">mdi-heart</v-icon>
 										<h5>Add to favorites</h5>
 									</v-list-item>
-									<v-list-item @click>
+									<v-list-item @click="viewProduct(product)">
 										<v-icon class="pr-2">remove_red_eye</v-icon>
 										<h5>View</h5>
 									</v-list-item>
-									<v-list-item @click>
+									<v-list-item @click="editProduct(product)">
 										<v-icon class="pr-2">edit</v-icon>
 										<h5>Edit</h5>
 									</v-list-item>
@@ -110,6 +110,9 @@ export default {
 		}
 	},
 	methods: {
+		addToFavorites(product) {},
+		viewProduct(product) {},
+		editProduct(product) {},
 		applyFilter(filter) {},
 		initiateLoadingSearchResults(loading) {
 			if (loading) {
