@@ -24,7 +24,7 @@
 					<span>Add product</span>
 				</v-btn>
 			</v-row>
-			<v-row align="center" justify="center">
+			<v-row>
 				<v-btn-toggle>
 					<v-btn :disabled="disableFilters" @click="applyFilter('value')" text>
 						<v-icon left small>fas fa-heart</v-icon>
@@ -44,7 +44,7 @@
 					</v-btn>
 				</v-btn-toggle>
 			</v-row>
-			<v-row v-if="productList.length" align="center" style="height:58vh; overflow-y:auto;">
+			<v-row v-if="productList.length" style="height:58vh; overflow-y:auto;">
 				<v-col v-for="product in productList" :key="product.id" cols="12" md="6" lg="4">
 					<v-card height="300px" @click="addCartProduct(product)" :img="product.photo_url">
 						<v-card-title class="indigo white--text pa-0" @click.stop>

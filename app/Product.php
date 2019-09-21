@@ -2,9 +2,7 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Product extends Model
+class Product extends BaseModel
 {
     public function altSku()
     {
@@ -24,5 +22,10 @@ class Product extends Model
     public function price()
     {
         return $this->morphOne('App\Price', 'priceable');
+    }
+
+    public static function allData()
+    {
+        return get_called_class()::with(['stores', 'price'])->get();
     }
 }

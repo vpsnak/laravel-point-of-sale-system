@@ -23,9 +23,9 @@ class ForeignKeys extends Migration
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('restrict');
         });
 
-        Schema::table('addresses', function (Blueprint $table) {
-            $table->foreign('area_code_id')->references('id')->on('area_codes')->onDelete('restrict');
-        });
+//        Schema::table('addresses', function (Blueprint $table) {
+//            $table->foreign('area_code_id')->references('id')->on('area_codes')->onDelete('restrict');
+//        });
 
         Schema::table('address_customer', function (Blueprint $table) {
             $table->foreign('address_id')->references('id')->on('addresses')->onDelete('restrict');
@@ -80,9 +80,9 @@ class ForeignKeys extends Migration
             $table->dropForeign(['category_id']);
             $table->dropForeign(['product_id']);
         });
-        Schema::table('addresses', function (Blueprint $table) {
-            $table->dropForeign(['area_code_id']);
-        });
+//        Schema::table('addresses', function (Blueprint $table) {
+//            $table->dropForeign(['area_code_id']);
+//        });
         Schema::table('address_customer', function (Blueprint $table) {
             $table->dropForeign(['address_id']);
             $table->dropForeign(['customer_id']);

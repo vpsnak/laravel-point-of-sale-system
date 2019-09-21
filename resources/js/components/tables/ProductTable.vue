@@ -36,7 +36,7 @@
 					{ text: "Id", value: "id" },
 					{ text: "Sku", value: "sku" },
 					{ text: "Photo url", value: "photo_url" },
-					{ text: "Price_id", value: "price_id" }
+					{ text: "Price", value: "price.amount" }
 				]
 			};
 		},

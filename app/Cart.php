@@ -2,12 +2,10 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Cart extends Model
+class Cart extends BaseModel
 {
     public function products()
     {
-        return $this->belongsToMany(App\Products::class);
+        return $this->belongsToMany(Product::class);
     }
 }

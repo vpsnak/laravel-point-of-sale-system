@@ -5,14 +5,9 @@ namespace App\Http\Controllers;
 use App\Product;
 use Illuminate\Http\Request;
 
-class ProductController extends Controller
+class ProductController extends BaseController
 {
-    public function all()
-    {
-        $product = \App\Product::find(1);
-
-        return response(Product::with(['stores', 'price'])->get());
-    }
+    protected $model = Product::class;
 
     public function create(Request $request)
     {

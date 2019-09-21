@@ -2,9 +2,7 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Customer extends Model
+class Customer extends BaseModel
 {
     protected $fillable = [
         'first_name',
@@ -13,8 +11,14 @@ class Customer extends Model
         'phone'
     ];
 
+    public static function allData()
+    {
+        return get_called_class()::with('addresses')->get();
+    }
+
     public function addresses()
     {
-        return $this->belongsToMany(App\Address::class);
+        return $this->belongsToMany(Address::class);
     }
+
 }

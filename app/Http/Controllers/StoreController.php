@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-class StoreController extends Controller
+class StoreController extends BaseController
 {
     //
 }

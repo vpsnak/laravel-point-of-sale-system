@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-class ShippingController extends Controller
+class ShippingController extends BaseController
 {
     //
 }

@@ -2,12 +2,10 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Store extends Model
+class Store extends BaseModel
 {
     public function products()
     {
-        $this->belongsToMany(App\Product::class);
+        $this->belongsToMany(Product::class);
     }
 }

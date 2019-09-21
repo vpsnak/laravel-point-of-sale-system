@@ -65,15 +65,26 @@
 										<v-text-field type="number" label="Qty" v-model="cartProduct.qty" min="1"></v-text-field>
 									</v-col>
 									<v-col cols="12" md="5">
-										<v-select :items="discountTypes" label="Discount" item-text="label" item-value="value"></v-select>
+										<v-select
+											:items="discountTypes"
+											v-model="cartProduct.discount_type"
+											label="Discount"
+											item-text="label"
+											item-value="value"
+										></v-select>
 									</v-col>
 									<v-col cols="12" md="4">
-										<v-text-field type="number" label="Amount"></v-text-field>
+										<v-text-field
+											type="number"
+											label="Amount"
+											v-model="cartProduct.discount_amount"
+											:value="0"
+										></v-text-field>
 									</v-col>
 
 									<v-col cols="12" md="12">
 										<v-textarea
-											:v-model="true"
+											v-model="cartProduct.notes"
 											rows="3"
 											label="Notes"
 											:hint="'For product: ' + cartProduct.name"
@@ -94,33 +105,37 @@
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Sub total</span>
-						<span class="pa-2">${{ subTotal }}</span>
+						<span class="pa-2">$ {{ subTotal }}</span>
 					</div>
 
 					<v-divider />
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Tax</span>
+<<<<<<< HEAD
 						<span class="pa-2"> ${{ taxes }}</span>
+=======
+						<span class="pa-2">$ {{ tax }}</span>
+>>>>>>> b9025e46b871323a8a38a66862fb688152866a75
 					</div>
 
 					<v-divider />
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Total discount</span>
-						<span class="pa-2"> ${{totalDiscount}}</span>
+						<span class="pa-2">$ {{ totalDiscount }}</span>
 					</div>
 
 					<v-divider />
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Total</span>
-						<span class="pa-2"> ${{ total}}</span>
+						<span class="pa-2">$ {{ total }}</span>
 					</div>
 
 					<v-divider />
 
-					<v-btn block class="my-2">Checkout</v-btn>
+					<v-btn block class="my-2" @click="checkout">Checkout</v-btn>
 
 					<v-divider />
 				</v-col>
@@ -139,7 +154,7 @@
 				</v-col>
 
 				<v-col cols="4" class="text-center">
-					<v-btn icon>
+					<v-btn icon @click.stop="removeAll(cartProducts)">
 						<v-icon>delete</v-icon>
 					</v-btn>
 				</v-col>
@@ -175,9 +190,10 @@ export default {
 
 			return subTotal;
 		},
-		tax(){
+		tax() {
 			return this.subTotal * 0.24;
 		},
+<<<<<<< HEAD
 		taxes(){
 			return (this.tax).toFixed(2);
 		},
@@ -186,6 +202,13 @@ export default {
 		},
 		total(){
 			return (this.subTotal + this.tax - this.totalDiscount).toFixed(2);
+=======
+		totalDiscount() {
+			return 0;
+		},
+		total() {
+			return this.subTotal + this.tax - this.totalDiscount;
+>>>>>>> b9025e46b871323a8a38a66862fb688152866a75
 		},
 		cartProducts: {
 			get() {
@@ -193,6 +216,42 @@ export default {
 			},
 			set(value) {
 				this.$store.state.cartProducts = value;
+			}
+		}
+	},
+
+	computed: {
+		subTotal() {
+			let subTotal = 0;
+			this.cartProducts.forEach(element => {
+				subTotal += element.qty * parseInt(element.price.amount);
+			});
+
+			return subTotal;
+		},
+		tax() {
+			return this.subTotal * 0.24;
+		},
+		totalDiscount() {
+			return 0;
+		},
+		total() {
+			return this.subTotal + this.tax - this.totalDiscount;
+		},
+
+		methods: {
+			decreaseQty(cartProduct) {
+				this.$store.commit("decreaseCartProductQty", cartProduct);
+			},
+			increaseQty(cartProduct) {
+				this.$store.commit("increaseCartProductQty", cartProduct);
+			},
+			removeItem(cartProduct) {
+				this.cartProducts.splice(cartProduct, 1);
+			},
+			removeAll(cartProducts) {
+				confirm("Are you sure you want to delete the cart?") &&
+					this.cartProducts.splice(0);
 			}
 		}
 	},
@@ -206,6 +265,11 @@ export default {
 		},
 		removeItem(cartProduct) {
 			this.cartProducts.splice(cartProduct, 1);
+		},
+
+		checkout() {
+			console.log("---- CHECKOUT! ----");
+			console.log(this.cartProducts);
 		}
 	}
 };

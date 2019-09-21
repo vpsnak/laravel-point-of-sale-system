@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Customer;
+use Illuminate\Http\Request;
 
-class CustomerController extends Controller
+class CustomerController extends BaseController
 {
     // protected $crud;
 
@@ -16,7 +16,7 @@ class CustomerController extends Controller
 
     public function getAll()
     {
-        return response(Customer::all());
+        return response(Customer::allData());
     }
 
     public function create(Request $request)
