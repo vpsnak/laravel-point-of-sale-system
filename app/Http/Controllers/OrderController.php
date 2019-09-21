@@ -6,7 +6,7 @@ use App\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class OrderController extends Controller
+class OrderController extends BaseController
 {
     public function create(Request $request)
     {

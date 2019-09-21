@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-class AreaCodeController extends Controller
+class AreaCodeController extends BaseController
 {
     //
 }

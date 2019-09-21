@@ -11,14 +11,14 @@ class Customer extends BaseModel
         'phone'
     ];
 
-    public function addresses()
-    {
-        return $this->belongsToMany(Address::class);
-    }
-
     public static function allData()
     {
         return get_called_class()::with('addresses')->get();
+    }
+
+    public function addresses()
+    {
+        return $this->belongsToMany(Address::class);
     }
 
 }

@@ -24,80 +24,90 @@
 
 
 <script>
-export default {
-	data() {
-		return {
-			loader: false,
-			disableFilters: false,
-			model: "customers",
-			keyword: "",
-			search: "",
-			headers: [
-				{
-					text: "Id",
-					value: "id"
+	export default {
+		data() {
+			return {
+				loader: false,
+				disableFilters: false,
+				model: "customers",
+				keyword: "",
+				search: "",
+				headers: [
+					{
+						text: "Id",
+						value: "id"
+					},
+					{
+						text: "First name",
+						value: "first_name"
+					},
+					{
+						text: "Last name",
+						value: "last_name"
+					},
+					{
+						text: "E-mail",
+						value: "email",
+						sortable: false
+					},
+					{
+						text: "Phone",
+						value: "phone",
+						sortable: false
+					},
+					{
+						text: "Company name",
+						value: "company_name",
+						sortable: false
+					},
+					{
+						text: "Address",
+						value: "addresses[0].street",
+						sortable: false
+					}
+				]
+			};
+		},
+		mounted() {
+			this.getAllCustomers();
+		},
+		computed: {
+			customerList: {
+				get() {
+					return this.$store.state.customerList;
 				},
-				{
-					text: "First name",
-					value: "first_name"
-				},
-				{
-					text: "Last name",
-					value: "last_name"
-				},
-				{
-					text: "E-mail",
-					value: "email",
-					sortable: false
-				},
-				{
-					text: "Phone",
-					value: "phone",
-					sortable: false
+				set(value) {
+					this.$store.state.customerList = value;
 				}
-			]
-		};
-	},
-	mounted() {
-		this.getAllCustomers();
-	},
-	computed: {
-		customerList: {
-			get() {
-				return this.$store.state.customerList;
-			},
-			set(value) {
-				this.$store.state.customerList = value;
-			}
-		}
-	},
-	methods: {
-		applyFilter(filter) {},
-		initiateLoadingSearchResults(loading) {
-			if (loading) {
-				this.loader = true;
-				this.customerList = [];
-			} else {
-				this.loader = false;
 			}
 		},
-		getAllCustomers() {
-			this.initiateLoadingSearchResults(true);
+		methods: {
+			applyFilter(filter) {},
+			initiateLoadingSearchResults(loading) {
+				if (loading) {
+					this.loader = true;
+					this.customerList = [];
+				} else {
+					this.loader = false;
+				}
+			},
+			getAllCustomers() {
+				this.initiateLoadingSearchResults(true);
 
-			let payload = {
-				model: "customers",
-				mutation: "setCustomerList"
-			};
-			this.$store
-				.dispatch("getAll", payload)
-				.then(result => {
-					this.initiateLoadingSearchResults(false);
-				})
-				.catch(error => {
-					this.initiateLoadingSearchResults(false);
-					console.log(error);
-				});
+				let payload = {
+					model: "customers",
+					mutation: "setCustomerList"
+				};
+				this.$store
+					.dispatch("getAll", payload)
+					.then(result => {
+						this.initiateLoadingSearchResults(false);
+					})
+					.catch(error => {
+						this.initiateLoadingSearchResults(false);
+						console.log(error);
+					});
+			}
 		}
-	}
-};
+	};
 </script>

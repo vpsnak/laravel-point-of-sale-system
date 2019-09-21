@@ -2,12 +2,10 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Shipping extends Model
+class Shipping extends BaseModel
 {
     public function price()
     {
-        return $this->morphOne(\App\Price::class, 'priceable');
+        return $this->morphOne(Price::class, 'priceable');
     }
 }

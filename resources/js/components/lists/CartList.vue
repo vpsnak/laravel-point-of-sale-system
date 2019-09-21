@@ -112,21 +112,21 @@
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Tax</span>
-						<span class="pa-2">$ {{ tax}}</span>
+						<span class="pa-2">$ {{ tax }}</span>
 					</div>
 
 					<v-divider />
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Total discount</span>
-						<span class="pa-2">$ {{totalDiscount}}</span>
+						<span class="pa-2">$ {{ totalDiscount }}</span>
 					</div>
 
 					<v-divider />
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Total</span>
-						<span class="pa-2">$ {{ total}}</span>
+						<span class="pa-2">$ {{ total }}</span>
 					</div>
 
 					<v-divider />
@@ -150,7 +150,7 @@
 				</v-col>
 
 				<v-col cols="4" class="text-center">
-					<v-btn icon>
+					<v-btn icon @click.stop="removeAll(cartProducts)">
 						<v-icon>delete</v-icon>
 					</v-btn>
 				</v-col>
@@ -201,6 +201,42 @@ export default {
 			},
 			set(value) {
 				this.$store.state.cartProducts = value;
+			}
+		}
+	},
+
+	computed: {
+		subTotal() {
+			let subTotal = 0;
+			this.cartProducts.forEach(element => {
+				subTotal += element.qty * parseInt(element.price.amount);
+			});
+
+			return subTotal;
+		},
+		tax() {
+			return this.subTotal * 0.24;
+		},
+		totalDiscount() {
+			return 0;
+		},
+		total() {
+			return this.subTotal + this.tax - this.totalDiscount;
+		},
+
+		methods: {
+			decreaseQty(cartProduct) {
+				this.$store.commit("decreaseCartProductQty", cartProduct);
+			},
+			increaseQty(cartProduct) {
+				this.$store.commit("increaseCartProductQty", cartProduct);
+			},
+			removeItem(cartProduct) {
+				this.cartProducts.splice(cartProduct, 1);
+			},
+			removeAll(cartProducts) {
+				confirm("Are you sure you want to delete the cart?") &&
+					this.cartProducts.splice(0);
 			}
 		}
 	},
