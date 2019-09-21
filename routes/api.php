@@ -12,7 +12,7 @@
 */
 
 // Customers 
-Route::get('/customers', 'CustomerController@getAll');
+Route::get('/customers', 'CustomerController@all');
 Route::post('/customers/create', 'CustomerController@create');
 Route::post('/customers/search', 'CustomerController@search');
 

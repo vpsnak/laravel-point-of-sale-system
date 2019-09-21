@@ -7,17 +7,7 @@ use Illuminate\Http\Request;
 
 class CustomerController extends BaseController
 {
-    // protected $crud;
-
-    // public function __construct(\CRUDController $CRUDController)
-    // {
-    //     $this->crud = $CRUDController;
-    // }
-
-    public function getAll()
-    {
-        return response(Customer::allData());
-    }
+    protected $model = Customer::class;
 
     public function create(Request $request)
     {
