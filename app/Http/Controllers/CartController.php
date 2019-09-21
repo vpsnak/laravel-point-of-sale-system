@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Cart;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class CartController extends BaseController
@@ -13,16 +14,16 @@ class CartController extends BaseController
     {
         $validatedData = $request->validate([
             // 'customer_id' => 'required|exists:id,customers',
-            // 'name' => 'required|string',
-            'data' => 'required|json',
+            'name' => 'string',
+            'cart' => 'required|array',
         ]);
-
-        // var_dump($request->all());
-        // die;
-
+        $validatedData['cart'] = json_encode($validatedData['cart']);
         $validatedData['customer_id'] = 1;
-        $validatedData['name'] = 'asdasd';
 
+        if (empty($validatedData['name'])) {
+            $validatedData['name'] = 'Operator - ' . Carbon::now()->toDateString();
+        }
+//        dd($validatedData);
 
         return response($this->model::store($validatedData), 201);
     }

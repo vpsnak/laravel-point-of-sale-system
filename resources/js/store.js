@@ -66,8 +66,8 @@ export default new Vuex.Store({
                     .catch(error => {
                         console.log(error);
                         reject(error);
-                    });
-            });
+        })
+        })
         },
         search(context, payload) {
             return new Promise((resolve, reject) => {
@@ -85,16 +85,14 @@ export default new Vuex.Store({
                     .catch(error => {
                         console.log(error);
                         reject(error);
-                    });
-            });
+        })
+        })
         },
         create(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
                     .post(
-                        this.state.baseUrl + payload.model + "/create", {
-                        data: payload.data
-                    }
+                        this.state.baseUrl + payload.model + "/create", payload.data
 
                     )
                     .then(response => {
@@ -104,8 +102,8 @@ export default new Vuex.Store({
                     .catch(error => {
                         console.log(error);
                         reject(error);
-                    });
-            });
+        })
+        })
         },
 
     }

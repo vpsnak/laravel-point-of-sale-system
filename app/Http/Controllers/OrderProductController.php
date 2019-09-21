@@ -12,7 +12,7 @@ class OrderProductController extends BaseController
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'order_id' => 'required|numeric',
+            'order_id' => 'required|exists:id,orders',
             'name' => 'required|string',
             'sku' => 'required|string',
             'price' => 'required|numeric',

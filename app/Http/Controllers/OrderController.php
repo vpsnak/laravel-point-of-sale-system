@@ -14,7 +14,7 @@ class OrderController extends BaseController
     {
         $validatedData = $request->validate([
             'customer_id' => 'numeric|nullable',
-            'user_id' => 'required|numeric',
+            'user_id' => 'required|exists:id,users',
             'discount_type' => 'required|string',
             'discount' => 'required|numeric',
             'shipping_type' => 'required|string',

@@ -178,6 +178,9 @@
 		<v-dialog v-model="restoreCartDialog" width="500">
 			<restoreCartDialog />
 		</v-dialog>
+		<v-btn @click="submitCart">
+			Submit
+		</v-btn>
 	</v-card>
 </template>
 
@@ -215,9 +218,8 @@ export default {
 			let subTotal = 0;
 			this.cartProducts.forEach(element => {
 				subTotal += element.qty * parseInt(element.price.amount);
-			});
-
-			return subTotal;
+        })
+            return subTotal;
 		},
 		tax() {
 			return this.subTotal * 0.24;
@@ -267,8 +269,9 @@ export default {
 		},
 
 		showRestoredCarts() {
-			this.cartlist.forEach(cartProducts => console.log(cartProducts));
-		},
+            this.cartlist.forEach(cartProducts = > console.log(cartProducts);
+        )
+        },
 		checkout() {
 			this.checkoutDialog = true;
 			console.log("---- CHECKOUT! ----");
@@ -277,10 +280,23 @@ export default {
 		holdCart() {
 			let payload = {
 				model: "carts",
-				data: this.cartProducts
+                data: {
+                    customer_id: 1,
+                    cart: this.cartProducts
+                }
 			};
 			this.$store.dispatch("create", payload);
-		}
+        },
+        submitCart() {
+            let payload = {
+                model: "orders",
+                data: {
+                    customer_id: 1,
+                    items: this.cartProducts
+                }
+            };
+            this.$store.dispatch("create", payload);
+        }
 	}
 };
 </script>

@@ -19,7 +19,7 @@ class CreateCartsTable extends Migration
             $table->bigInteger('customer_id')->unsigned()->nullable();
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('restrict');
             $table->string('name');
-            $table->text('data');
+            $table->text('cart');
             $table->timestamps();
             // discount_id
         });
