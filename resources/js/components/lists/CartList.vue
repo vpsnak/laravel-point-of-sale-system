@@ -101,21 +101,21 @@
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Tax</span>
-						<span class="pa-2"> ${{ tax}}</span>
+						<span class="pa-2">${{ tax}}</span>
 					</div>
 
 					<v-divider />
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Total discount</span>
-						<span class="pa-2"> ${{totalDiscount}}</span>
+						<span class="pa-2">${{totalDiscount}}</span>
 					</div>
 
 					<v-divider />
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Total</span>
-						<span class="pa-2"> ${{ total}}</span>
+						<span class="pa-2">${{ total}}</span>
 					</div>
 
 					<v-divider />
@@ -150,60 +150,60 @@
 </template>
 
 <script>
-export default {
-	data() {
-		return {
-			discountTypes: [
-				{
-					label: "Flat",
-					value: "flat"
-				},
-				{
-					label: "Percentage",
-					value: "percentage"
-				}
-			]
-		};
-	},
+	export default {
+		data() {
+			return {
+				discountTypes: [
+					{
+						label: "Flat",
+						value: "flat"
+					},
+					{
+						label: "Percentage",
+						value: "percentage"
+					}
+				]
+			};
+		},
 
-	computed: {
-		subTotal() {
-			let subTotal = 0;
-			this.cartProducts.forEach(element => {
-				subTotal += element.qty * parseInt(element.price.amount);
-			});
+		computed: {
+			subTotal() {
+				let subTotal = 0;
+				this.cartProducts.forEach(element => {
+					subTotal += element.qty * parseInt(element.price.amount);
+				});
 
-			return subTotal;
-		},
-		tax(){
-			return this.subTotal * 0.24;
-		},
-		totalDiscount(){
-			return 0;
-		},
-		total(){
-			return this.subTotal + this.tax - this.totalDiscount;
-		},
-		cartProducts: {
-			get() {
-				return this.$store.state.cartProducts;
+				return subTotal;
 			},
-			set(value) {
-				this.$store.state.cartProducts = value;
+			tax() {
+				return this.subTotal * 0.24;
+			},
+			totalDiscount() {
+				return 0;
+			},
+			total() {
+				return this.subTotal + this.tax - this.totalDiscount;
+			},
+			cartProducts: {
+				get() {
+					return this.$store.state.cartProducts;
+				},
+				set(value) {
+					this.$store.state.cartProducts = value;
+				}
+			}
+		},
+
+		methods: {
+			decreaseQty(cartProduct) {
+				this.$store.commit("decreaseCartProductQty", cartProduct);
+			},
+			increaseQty(cartProduct) {
+				this.$store.commit("increaseCartProductQty", cartProduct);
+			},
+			removeItem(cartProduct) {
+				this.cartProducts.splice(cartProduct, 1);
 			}
 		}
-	},
-
-	methods: {
-		decreaseQty(cartProduct) {
-			this.$store.commit("decreaseCartProductQty", cartProduct);
-		},
-		increaseQty(cartProduct) {
-			this.$store.commit("increaseCartProductQty", cartProduct);
-		},
-		removeItem(cartProduct) {
-			this.cartProducts.splice(cartProduct, 1);
-		}
-	}
-};
+	};
 </script>
