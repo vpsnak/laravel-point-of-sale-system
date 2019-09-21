@@ -1,21 +1,18 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import "es6-promise/auto";
-import { ENGINE_METHOD_PKEY_ASN1_METHS } from "constants";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
         baseUrl: "/api/",
+        restoreCartDialog: false,
+
         productList: [],
         customerList: [],
         cartProducts: [],
-
-        // dialogs
-        checkoutDialog: false,
-        restoreCartDialog: false
-
+        cartsOnHold: [],
         // Current state of the application lies here.
     },
     getters: {
@@ -28,6 +25,9 @@ export default new Vuex.Store({
         },
         setCustomerList(state, customers) {
             state.customerList = customers;
+        },
+        setCart(state, products) {
+            state.cart = products;
         },
 
         // shopping cart mutations
@@ -87,7 +87,27 @@ export default new Vuex.Store({
                         reject(error);
                     });
             });
-        }
+        },
+        create(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(
+                        this.state.baseUrl + payload.model + "/create", {
+                        data: payload.data
+                    }
+
+                    )
+                    .then(response => {
+                        console.log(response);
+                        resolve(response.data);
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        reject(error);
+                    });
+            });
+        },
+
     }
 });
 

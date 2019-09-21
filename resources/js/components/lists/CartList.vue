@@ -25,9 +25,9 @@
 					<v-divider />
 				</v-col>
 			</v-row>
-			<v-row>
+			<v-row style="height: 33vh; overflow-y: auto;">
 				<v-col>
-					<v-list dense style="height:30vh; overflow-y:auto;">
+					<v-list dense style="height:60vh; overflow-y:auto;">
 						<v-list-group v-for="cartProduct in cartProducts" :key="cartProduct.id">
 							<template v-slot:activator>
 								<v-list-item dense>
@@ -129,49 +129,39 @@
 					</div>
 
 					<v-divider />
-					<v-btn
-						block
-						class="my-2"
-						@click.stop="checkoutDialog = true"
-						:disabled="totalCartProducts"
-					>Checkout</v-btn>
+
+					<v-dialog
+						v-model="checkoutDialog"
+						fullscreen
+						hide-overlay
+						transition="dialog-bottom-transition"
+					>
+						<template v-slot:activator="{ on }">
+							<v-btn block class="my-2" @click="checkout" v-on="on" :disabled="totalCartProducts">Checkout</v-btn>
+						</template>
+
+						<checkoutWizard />>
+					</v-dialog>
 
 					<v-divider />
 				</v-col>
 			</v-row>
-		</v-card-text>
-		<v-card-actions>
 			<v-row>
 				<v-col cols="4" class="text-center">
 					<div class="text-center">
-						<v-dialog v-model="restoreCartDialog" width="500">
-							<template v-slot:activator="{ on }">
-								<v-badge color="purple">
-									<template v-slot:badge>
-										<span>6</span>
-									</template>
-									<v-btn icon v-on="on">
-										<v-icon>fa-recycle</v-icon>
-									</v-btn>
-								</v-badge>
+						<v-badge overlap color="purple">
+							<template v-slot:badge>
+								<span>{{cartsOnHoldSize}}</span>
 							</template>
-							<v-card>
-								<v-card-title primary-title>Products</v-card-title>
-								<v-card-text>asd</v-card-text>
-
-								<v-divider></v-divider>
-
-								<v-card-actions>
-									<div class="flex-grow-1"></div>
-									<v-btn color="primary" text @click="restoreCartDialog = false">Add to cart</v-btn>
-								</v-card-actions>
-							</v-card>
-						</v-dialog>
+							<v-btn icon @click="restoreCartDialog = true" :disabled="cartsOnHoldSize ? false : true">
+								<v-icon>fa-recycle</v-icon>
+							</v-btn>
+						</v-badge>
 					</div>
 				</v-col>
 
 				<v-col cols="4" class="text-center">
-					<v-btn icon :disabled="totalCartProducts">
+					<v-btn icon :disabled="totalCartProducts" @click="holdCart">
 						<v-icon>pause</v-icon>
 					</v-btn>
 				</v-col>
@@ -182,9 +172,11 @@
 					</v-btn>
 				</v-col>
 			</v-row>
-		</v-card-actions>
-		<v-dialog v-model="checkoutDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
-			<checkoutWizard />
+		</v-card-text>
+		<v-card-actions></v-card-actions>
+
+		<v-dialog v-model="restoreCartDialog" width="500">
+			<restoreCartDialog />
 		</v-dialog>
 	</v-card>
 </template>
@@ -211,6 +203,14 @@ export default {
 	},
 
 	computed: {
+		restoreCartDialog: {
+			get() {
+				return this.$store.state.restoreCartDialog;
+			},
+			set(value) {
+				this.$store.state.restoreCartDialog = value;
+			}
+		},
 		subTotal() {
 			let subTotal = 0;
 			this.cartProducts.forEach(element => {
@@ -231,28 +231,18 @@ export default {
 		totalCartProducts() {
 			return _.size(this.cartProducts) ? false : true;
 		},
+		cartsOnHold() {
+			return this.$store.state.cartsOnHold;
+		},
+		cartsOnHoldSize() {
+			return _.size(this.cartsOnHold);
+		},
 		cartProducts: {
 			get() {
 				return this.$store.state.cartProducts;
 			},
 			set(value) {
 				this.$store.state.cartProducts = value;
-			}
-		},
-		restoreCartDialog: {
-			get() {
-				return this.$store.state.restoreCartDialog;
-			},
-			set(value) {
-				this.$store.state.restoreCartDialog = value;
-			}
-		},
-		checkoutDialog: {
-			get() {
-				return this.$store.state.checkoutDialog;
-			},
-			set(value) {
-				this.$store.state.checkoutDialog = value;
 			}
 		}
 	},
@@ -270,6 +260,26 @@ export default {
 		removeAll(cartProducts) {
 			confirm("Are you sure you want to delete the cart?") &&
 				this.cartProducts.splice(0);
+		},
+		addAll(cart) {
+			this.cartProducts.splice(0);
+			this.cartProducts = cart;
+		},
+
+		showRestoredCarts() {
+			this.cartlist.forEach(cartProducts => console.log(cartProducts));
+		},
+		checkout() {
+			this.checkoutDialog = true;
+			console.log("---- CHECKOUT! ----");
+			console.log(this.cartProducts);
+		},
+		holdCart() {
+			let payload = {
+				model: "carts",
+				data: this.cartProducts
+			};
+			this.$store.dispatch("create", payload);
 		}
 	}
 };
