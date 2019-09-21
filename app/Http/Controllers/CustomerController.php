@@ -17,9 +17,7 @@ class CustomerController extends BaseController
             'email' => 'required|email|unique:customers,email'
         ]);
 
-        $response = $this->crud->create(Customer::class, $validatedData);
-
-        return $response;
+        return response($this->model::store($validatedData), 201);
     }
 
     public function search(Request $request)
@@ -28,9 +26,6 @@ class CustomerController extends BaseController
             'keyword' => 'required'
         ]);
 
-        return response(Product::where('name', 'like', "%{$validatedData['keyword']}%")
-            ->orWhere('email', 'like', "%{$validatedData['keyword']}%")
-            ->orWhere('phone', 'like', "%{$validatedData['keyword']}%")
-            ->get(), 200);
+        return $this->searchResult(['name', 'email', 'phone'], $validatedData['keyword']);
     }
 }

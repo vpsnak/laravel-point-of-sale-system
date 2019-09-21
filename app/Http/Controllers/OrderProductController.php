@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Validator;
 
 class OrderProductController extends BaseController
 {
+    protected $model = OrderProduct::class;
+
     public function create(Request $request)
     {
         $response = $this->insert($request->all());
