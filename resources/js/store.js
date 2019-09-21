@@ -10,7 +10,12 @@ export default new Vuex.Store({
         baseUrl: "/api/",
         productList: [],
         customerList: [],
-        cartProducts: []
+        cartProducts: [],
+
+        // dialogs
+        checkoutDialog: false,
+        restoreCartDialog: false
+
         // Current state of the application lies here.
     },
     getters: {

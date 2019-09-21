@@ -130,19 +130,12 @@
 					</div>
 
 					<v-divider />
-
-					<v-dialog
-						v-model="checkoutDialog"
-						fullscreen
-						hide-overlay
-						transition="dialog-bottom-transition"
-					>
-						<template v-slot:activator="{ on }">
-							<v-btn block class="my-2" @click="checkout" v-on="on" :disabled="totalCartProducts">Checkout</v-btn>
-						</template>
-
-						<checkoutWizard />>
-					</v-dialog>
+					<v-btn
+						block
+						class="my-2"
+						@click.stop="checkoutDialog = true"
+						:disabled="totalCartProducts"
+					>Checkout</v-btn>
 
 					<v-divider />
 				</v-col>
@@ -191,6 +184,9 @@
 				</v-col>
 			</v-row>
 		</v-card-actions>
+		<v-dialog v-model="checkoutDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+			<checkoutWizard />
+		</v-dialog>
 	</v-card>
 </template>
 
@@ -198,8 +194,6 @@
 export default {
 	data() {
 		return {
-			restoreCartDialog: false,
-			checkoutDialog: false,
 			discountTypes: [
 				{
 					label: "Flat",
@@ -241,6 +235,22 @@ export default {
 			set(value) {
 				this.$store.state.cartProducts = value;
 			}
+		},
+		restoreCartDialog: {
+			get() {
+				return this.$store.state.restoreCartDialog;
+			},
+			set(value) {
+				this.$store.state.restoreCartDialog = value;
+			}
+		},
+		checkoutDialog: {
+			get() {
+				return this.$store.state.checkoutDialog;
+			},
+			set(value) {
+				this.$store.state.checkoutDialog = value;
+			}
 		}
 	},
 
@@ -257,12 +267,6 @@ export default {
 		removeAll(cartProducts) {
 			confirm("Are you sure you want to delete the cart?") &&
 				this.cartProducts.splice(0);
-		},
-
-		checkout() {
-			this.checkoutDialog = true;
-			console.log("---- CHECKOUT! ----");
-			console.log(this.cartProducts);
 		}
 	}
 };
