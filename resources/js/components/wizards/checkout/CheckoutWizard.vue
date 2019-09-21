@@ -1,7 +1,7 @@
 <template>
 	<v-card>
 		<v-toolbar>
-			<v-btn icon dark @click="close">
+			<v-btn icon @click="close">
 				<v-icon>mdi-close</v-icon>
 			</v-btn>
 			<v-toolbar-title>Checkout</v-toolbar-title>
