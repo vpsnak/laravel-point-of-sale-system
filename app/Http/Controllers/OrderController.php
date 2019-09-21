@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Order;
+use App\OrderProduct;
 use Illuminate\Http\Request;
 
 class OrderController extends BaseController
@@ -25,7 +26,12 @@ class OrderController extends BaseController
         $validatedData['user_id'] = 1;
 
         $order_items = $request->validate([
-            'items' => 'array',
+            'items.*.name' => 'required|string',
+            'items.*.sku' => 'required|string',
+            'items.*.price' => 'required|numeric',
+            'items.*.qty' => 'required|numeric',
+            'items.*.discount_type' => 'required|string',
+            'items.*.discount' => 'required|numeric',
         ]);
 
         $order = $this->model::store($validatedData);
@@ -33,12 +39,11 @@ class OrderController extends BaseController
             return response($order, 500);
         }
 
-        $itemController = new OrderProductController();
         foreach ($order_items['items'] as $item) {
             $item['order_id'] = $order->id;
-            $itemController->create((new Request())->replace($item));
+            OrderProduct::store($item);
         }
 
-        return response($this->model::store($validatedData), 201);
+        return response($order, 201);
     }
 }

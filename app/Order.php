@@ -17,6 +17,11 @@ class Order extends BaseModel
         'note',
     ];
 
+    public function items()
+    {
+        return $this->hasMany(OrderProduct::class);
+    }
+
     public function payments()
     {
         return $this->belongsToMany(Payment::class);
