@@ -73,13 +73,12 @@
 											item-value="value"
 										></v-select>
 									</v-col>
-									<v-col cols="12" md="4">
-										<v-text-field
-											type="number"
-											label="Amount"
-											v-model="cartProduct.discount_amount"
-											:value="0"
-										></v-text-field>
+									<v-col
+										cols="12"
+										md="4"
+										v-if="cartProduct.discount_type && cartProduct.discount_type != 'None'"
+									>
+										<v-text-field type="number" label="Amount" min="1" v-model="cartProduct.discount_amount"></v-text-field>
 									</v-col>
 
 									<v-col cols="12" md="12">
@@ -196,12 +195,16 @@ export default {
 		return {
 			discountTypes: [
 				{
+					label: "None",
+					value: "None"
+				},
+				{
 					label: "Flat",
-					value: "flat"
+					value: "Flat"
 				},
 				{
 					label: "Percentage",
-					value: "percentage"
+					value: "Percentage"
 				}
 			]
 		};
