@@ -101,7 +101,7 @@
 
 					<div class="d-flex justify-space-between">
 						<span class="pa-2">Tax</span>
-						<span class="pa-2"> ${{ tax}}</span>
+						<span class="pa-2"> ${{ taxes }}</span>
 					</div>
 
 					<v-divider />
@@ -178,11 +178,14 @@ export default {
 		tax(){
 			return this.subTotal * 0.24;
 		},
+		taxes(){
+			return (this.tax).toFixed(2);
+		},
 		totalDiscount(){
 			return 0;
 		},
 		total(){
-			return this.subTotal + this.tax - this.totalDiscount;
+			return (this.subTotal + this.tax - this.totalDiscount).toFixed(2);
 		},
 		cartProducts: {
 			get() {
