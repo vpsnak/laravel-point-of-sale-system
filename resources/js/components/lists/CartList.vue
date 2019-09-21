@@ -139,7 +139,7 @@
 				</v-col>
 
 				<v-col cols="4" class="text-center">
-					<v-btn icon>
+					<v-btn icon @click.stop="removeAll(cartProducts)">
 						<v-icon>delete</v-icon>
 					</v-btn>
 				</v-col>
@@ -203,6 +203,10 @@
 			},
 			removeItem(cartProduct) {
 				this.cartProducts.splice(cartProduct, 1);
+			},
+			removeAll(cartProducts) {
+				confirm("Are you sure you want to delete the cart?") &&
+					this.cartProducts.splice(0);
 			}
 		}
 	};
