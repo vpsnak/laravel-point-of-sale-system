@@ -12,10 +12,17 @@ class CartController extends BaseController
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'customer_id' => 'required|integer',
-            'name' => 'required|string',
-            'data' => 'required|string',
+            // 'customer_id' => 'required|exists:id,customers',
+            // 'name' => 'required|string',
+            'data' => 'required|json',
         ]);
+
+        // var_dump($request->all());
+        // die;
+
+        $validatedData['customer_id'] = 1;
+        $validatedData['name'] = 'asdasd';
+
 
         return response($this->model::store($validatedData), 201);
     }
