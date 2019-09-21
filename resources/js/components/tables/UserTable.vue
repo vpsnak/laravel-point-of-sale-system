@@ -1,9 +1,26 @@
 <template>
-  <v-data-table :headers="headers" :items="users" sort-by="calories" class="elevation-1">
+  <v-data-table
+    :headers="headers"
+    :items="users"
+    :search="search"
+    sort-by="calories"
+    class="elevation-1"
+  >
     <template v-slot:top>
       <v-toolbar flat>
         <v-toolbar-title>Users</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
+        <v-text-field
+          class="mx-4"
+          v-model="search"
+          append-icon="search"
+          label="Search"
+          single-line
+          hide-details
+        ></v-text-field>
+        <template v-slot:activator="{ on }">
+          <v-btn color="primary" dark class="mb-2" v-on="on">New User</v-btn>
+        </template>
         <div class="flex-grow-1"></div>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on }">
@@ -59,6 +76,7 @@
 <script>
 export default {
   data: () => ({
+    search: "",
     dialog: false,
     headers: [
       {
