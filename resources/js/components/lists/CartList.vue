@@ -25,9 +25,9 @@
 					<v-divider />
 				</v-col>
 			</v-row>
-			<v-row style="height: 33vh; overflow-y: auto;">
+			<v-row>
 				<v-col>
-					<v-list dense style="height:60vh; overflow-y:auto;">
+					<v-list dense style="height:30vh; overflow-y:auto;">
 						<v-list-group v-for="cartProduct in cartProducts" :key="cartProduct.id">
 							<template v-slot:activator>
 								<v-list-item dense>
@@ -147,6 +147,8 @@
 					<v-divider />
 				</v-col>
 			</v-row>
+		</v-card-text>
+		<v-card-actions>
 			<v-row>
 				<v-col cols="4" class="text-center">
 					<div class="text-center">
@@ -188,81 +190,80 @@
 					</v-btn>
 				</v-col>
 			</v-row>
-		</v-card-text>
-		<v-card-actions></v-card-actions>
+		</v-card-actions>
 	</v-card>
 </template>
 
 <script>
-	export default {
-		data() {
-			return {
-				restoreCartDialog: false,
-				checkoutDialog: false,
-				discountTypes: [
-					{
-						label: "Flat",
-						value: "flat"
-					},
-					{
-						label: "Percentage",
-						value: "percentage"
-					}
-				]
-			};
-		},
-
-		computed: {
-			subTotal() {
-				let subTotal = 0;
-				this.cartProducts.forEach(element => {
-					subTotal += element.qty * parseInt(element.price.amount);
-				});
-
-				return subTotal;
-			},
-			tax() {
-				return this.subTotal * 0.24;
-			},
-			totalDiscount() {
-				return 0;
-			},
-			total() {
-				return this.subTotal + this.tax - this.totalDiscount;
-			},
-			totalCartProducts() {
-				return _.size(this.cartProducts) ? false : true;
-			},
-			cartProducts: {
-				get() {
-					return this.$store.state.cartProducts;
+export default {
+	data() {
+		return {
+			restoreCartDialog: false,
+			checkoutDialog: false,
+			discountTypes: [
+				{
+					label: "Flat",
+					value: "flat"
 				},
-				set(value) {
-					this.$store.state.cartProducts = value;
+				{
+					label: "Percentage",
+					value: "percentage"
 				}
-			}
+			]
+		};
+	},
+
+	computed: {
+		subTotal() {
+			let subTotal = 0;
+			this.cartProducts.forEach(element => {
+				subTotal += element.qty * parseInt(element.price.amount);
+			});
+
+			return subTotal;
 		},
-
-		methods: {
-			decreaseQty(cartProduct) {
-				this.$store.commit("decreaseCartProductQty", cartProduct);
+		tax() {
+			return this.subTotal * 0.24;
+		},
+		totalDiscount() {
+			return 0;
+		},
+		total() {
+			return this.subTotal + this.tax - this.totalDiscount;
+		},
+		totalCartProducts() {
+			return _.size(this.cartProducts) ? false : true;
+		},
+		cartProducts: {
+			get() {
+				return this.$store.state.cartProducts;
 			},
-			increaseQty(cartProduct) {
-				this.$store.commit("increaseCartProductQty", cartProduct);
-			},
-			removeItem(cartProduct) {
-				this.cartProducts.splice(cartProduct, 1);
-			},
-			removeAll(cartProducts) {
-				confirm("Are you sure you want to delete the cart?") &&
-					this.cartProducts.splice(0);
-			},
-
-			checkout() {
-				this.checkoutDialog = true;
-				console.log("---- CHECKOUT! ----");
-				console.log(this.cartProducts);
+			set(value) {
+				this.$store.state.cartProducts = value;
 			}
 		}
-	};
+	},
+
+	methods: {
+		decreaseQty(cartProduct) {
+			this.$store.commit("decreaseCartProductQty", cartProduct);
+		},
+		increaseQty(cartProduct) {
+			this.$store.commit("increaseCartProductQty", cartProduct);
+		},
+		removeItem(cartProduct) {
+			this.cartProducts.splice(cartProduct, 1);
+		},
+		removeAll(cartProducts) {
+			confirm("Are you sure you want to delete the cart?") &&
+				this.cartProducts.splice(0);
+		},
+
+		checkout() {
+			this.checkoutDialog = true;
+			console.log("---- CHECKOUT! ----");
+			console.log(this.cartProducts);
+		}
+	}
+};
 </script>
