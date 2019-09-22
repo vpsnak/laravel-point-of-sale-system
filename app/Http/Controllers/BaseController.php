@@ -79,4 +79,14 @@ class BaseController extends Controller
         
         return response($query->get(), 200);
     }
+    
+    public function delete($id)
+    {
+        if (!isset($this->model)) {
+            return response('Model not found', 404);
+        }
+        
+        $deleted = $this->model::deleteData($id);
+        return response($deleted, 200);
+    }
 }

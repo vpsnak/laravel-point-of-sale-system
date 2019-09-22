@@ -17,7 +17,7 @@
             ></v-autocomplete>
         </div>
         <div class="d-flex flex-grow-1" style="max-height: 44vh; overflow-y: auto">
-            <v-expansion-panels class="d-block">
+            <v-expansion-panels class="d-block" accordion>
                 <v-expansion-panel
                     v-for="cartProduct in cartProducts"
                     :key="cartProduct.id"
@@ -136,7 +136,7 @@
             <v-btn
                 icon
                 @click="restoreCartDialog = true"
-                :disabled="cartsOnHoldSize ? false : false"
+                :disabled="cartsOnHoldSize ? false : true"
                 class="flex-grow-1"
                 tile
             >

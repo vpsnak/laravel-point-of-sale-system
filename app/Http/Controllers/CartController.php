@@ -36,10 +36,4 @@ class CartController extends BaseController
 
         return response($this->model::getAll('customer_id', $validatedData['user']));
     }
-
-    public function delete($id)
-    {
-        $deleted = $this->model::deleteData($id);
-        return response($deleted, 200);
-    }
 }
