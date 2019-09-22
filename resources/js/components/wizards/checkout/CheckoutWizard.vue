@@ -2,8 +2,8 @@
 	<v-card>
 		<v-toolbar>
 			<v-btn
-				icon
 				@click="close"
+				icon
 			>
 				<v-icon>mdi-close</v-icon>
 			</v-btn>
@@ -14,8 +14,8 @@
 				<v-col cols="3">
 					<v-card class="pa-2">
 						<v-card-title
-							class="justify-center"
 							align="center"
+							class="justify-center"
 						>
 							<v-row
 								align="center"
@@ -33,14 +33,13 @@
 						<v-card-text>
 							<v-divider></v-divider>
 							<v-list
-								subheader
-								dense
 								class="pt-2"
+								dense
+								subheader
 							>
 								<v-subheader class="justify-center">
 									<v-icon>person</v-icon>
 								</v-subheader>
-
 								<v-list-item>
 									<v-list-item-content class="text-center">
 										<v-list-item-title>Φλοριάνα Πετροπούλου</v-list-item-title>
@@ -52,24 +51,25 @@
 							<v-divider></v-divider>
 							<v-list
 								class="pt-2"
-								subheader
 								dense
 								style="height:60vh; overflow-y:auto;"
+								subheader
 							>
 								<v-subheader class="justify-center">
 									<v-icon>shopping_cart</v-icon>
 								</v-subheader>
-
 								<v-list-group
-									v-for="cartProduct in cartProducts"
 									:key="cartProduct.id"
+									v-for="cartProduct in cartProducts"
 								>
 									<template v-slot:activator>
 										<v-list-item dense>
 											<v-row>
 												<v-list-item-content>
 													<v-list-item-title>{{ cartProduct.name }}</v-list-item-title>
-													<v-list-item-subtitle>$ {{ cartProduct.qty * cartProduct.price.amount }}</v-list-item-subtitle>
+													<v-list-item-subtitle>$ {{ cartProduct.qty *
+														cartProduct.price.amount }}
+													</v-list-item-subtitle>
 												</v-list-item-content>
 											</v-row>
 										</v-list-item>
@@ -81,10 +81,10 @@
 												md="3"
 											>
 												<v-text-field
-													type="number"
-													label="Qty"
-													v-model="cartProduct.qty"
 													disabled
+													label="Qty"
+													type="number"
+													v-model="cartProduct.qty"
 												></v-text-field>
 											</v-col>
 											<v-col
@@ -92,9 +92,9 @@
 												md="5"
 											>
 												<v-text-field
-													label="Discount"
 													:value="cartProduct.discount_type ? cartProduct.discount_type : 'None'"
 													disabled
+													label="Discount"
 												></v-text-field>
 											</v-col>
 											<v-col
@@ -103,26 +103,25 @@
 												v-if="cartProduct.discount_amount"
 											>
 												<v-text-field
-													type="number"
-													label="Amount"
 													:value="cartProduct.discount_amount"
 													disabled
+													label="Amount"
+													type="number"
 												></v-text-field>
 											</v-col>
-
 											<v-col
 												cols="12"
 												md="12"
 												v-if="cartProduct.notes"
 											>
 												<v-textarea
-													:value="cartProduct.notes"
-													rows="3"
-													label="Notes"
 													:hint="'For product: ' + cartProduct.name"
+													:value="cartProduct.notes"
 													counter
-													no-resize
 													disabled
+													label="Notes"
+													no-resize
+													rows="3"
 												></v-textarea>
 											</v-col>
 										</v-row>
@@ -137,46 +136,35 @@
 						<v-card-text>
 							<v-stepper>
 								<v-stepper-header>
-
 									<v-stepper-step
-										step="1"
 										:complete="false"
 										complete-icon="local_shipping"
 										edit-icon="local_shipping"
+										step="1"
 									>Shipping options
 									</v-stepper-step>
-
 									<v-divider></v-divider>
-
 									<v-stepper-step
-										step="2"
 										:complete="false"
 										complete-icon="payment"
 										edit-icon="payment"
+										step="2"
 									>Payment
 									</v-stepper-step>
-
 									<v-divider></v-divider>
-
 									<v-stepper-step
-										step="3"
 										:complete="false"
 										editable
+										step="3"
 									>Completion
 									</v-stepper-step>
-
 								</v-stepper-header>
-
 								<v-stepper-items>
 									<v-stepper-content step="1">
-
 										<shippingStep />
-
 									</v-stepper-content>
 									<v-stepper-content step="2">
-
 										<paymentStep />
-
 									</v-stepper-content>
 								</v-stepper-items>
 							</v-stepper>
