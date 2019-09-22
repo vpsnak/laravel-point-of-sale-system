@@ -13,7 +13,7 @@
 				no-filter
 				v-model="keyword"
 				@click:prepend="searchCustomer"
-				@input="searchCustomer"
+				@update:search-input="searchCustomer"
 				clearable
 				dense
 				:items="customerList"
