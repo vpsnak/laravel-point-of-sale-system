@@ -1,6 +1,6 @@
 <template>
 	<v-card>
-		<v-card-text>
+		<v-card-title>
 			<v-row
 				align="center"
 				justify="center"
@@ -10,34 +10,30 @@
 					justify="center"
 				>
 					<v-icon>shopping_cart</v-icon>
-					<h3 class="text-center">Shopping cart</h3>
+					<h5 class="text-center">Shopping cart</h5>
 				</v-col>
 			</v-row>
-			<v-row>
-				<v-col>
-					<v-toolbar flat>
-						<v-text-field
-							placeholder="Search customer"
-							class="grey--text"
-						>
-							<v-icon slot="prepend">mdi-magnify</v-icon>
-						</v-text-field>
-						<v-tooltip bottom>
-							<template v-slot:activator="{ on }">
-								<v-btn
-									icon
-									v-on="on"
-									class="ml-1"
-								>
-									<v-icon>person_add</v-icon>
-								</v-btn>
-							</template>
-							<span>Add customer</span>
-						</v-tooltip>
-					</v-toolbar>
-					<v-divider />
-				</v-col>
-			</v-row>
+		</v-card-title>
+		<v-card-text>
+			<v-autocomplete
+				clearable
+				dense
+				v-model="customerSearch"
+				:items="customerList"
+				:item-text="getCustomerFullname"
+				label="Select customer"
+				prepend-icon="account_circle"
+			>
+				<!-- <template v-slot:selection="data">
+					{{ data.item.first_name }} {{ data.item.last_name }}
+				</template>
+				<template v-slot:item="data">
+					{{ data.item.first_name }} {{ data.item.last_name }}
+				</template> -->
+			</v-autocomplete>
+
+			<v-divider />
+
 			<v-row style="height: 33vh; overflow-y:auto;">
 				<v-col>
 					<v-list dense>
@@ -252,9 +248,7 @@
 		>
 			<restoreCartDialog />
 		</v-dialog>
-		<v-btn @click="submitCart">
-			Submit
-		</v-btn>
+
 	</v-card>
 </template>
 
@@ -262,6 +256,8 @@
 	export default {
 		data() {
 			return {
+				isEditing: false,
+				customerSearch: null,
 				discountTypes: [
 					{
 						label: "None",
@@ -278,7 +274,9 @@
 				]
 			};
 		},
-
+		mounted() {
+			this.getAllCustomers();
+		},
 		computed: {
 			checkoutDialog: {
 				get() {
@@ -328,10 +326,22 @@
 				set(value) {
 					this.$store.state.cartProducts = value;
 				}
+			},
+			customerList: {
+				get() {
+					return this.$store.state.customerList;
+				},
+				set(value) {
+					this.$store.state.customerList = value;
+				}
 			}
 		},
 
 		methods: {
+			getCustomerFullname(item) {
+				return item.first_name + " " + item.last_name;
+			},
+
 			decreaseQty(cartProduct) {
 				this.$store.commit("decreaseCartProductQty", cartProduct);
 			},
@@ -377,6 +387,18 @@
 					}
 				};
 				this.$store.dispatch("create", payload);
+			},
+			getAllCustomers() {
+				let payload = {
+					model: "customers",
+					mutation: "setCustomerList"
+				};
+				this.$store
+					.dispatch("getAll", payload)
+					.then(result => {})
+					.catch(error => {
+						console.log(error);
+					});
 			}
 		}
 	};
