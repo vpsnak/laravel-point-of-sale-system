@@ -24,12 +24,6 @@
 				label="Select customer"
 				prepend-icon="account_circle"
 			>
-				<!-- <template v-slot:selection="data">
-					{{ data.item.first_name }} {{ data.item.last_name }}
-				</template>
-				<template v-slot:item="data">
-					{{ data.item.first_name }} {{ data.item.last_name }}
-				</template> -->
 			</v-autocomplete>
 
 			<v-divider />
