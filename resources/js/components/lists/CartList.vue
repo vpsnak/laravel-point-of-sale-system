@@ -377,6 +377,14 @@
 					model: "orders",
 					data: {
 						customer_id: 1,
+                      user_id: 1,
+                      discount: this.totalDiscount,
+                      // discount_type: 'none',
+                      shipping_type: 'shipping',
+                      shipping_cost: 0,
+                      tax: this.tax,
+                      subtotal: this.subTotal,
+                      note: '',
 						items: this.cartProducts
 					}
 				};
