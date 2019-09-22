@@ -12,6 +12,8 @@ export default new Vuex.Store({
 
         productList: [],
         customerList: [],
+        categoryList: [],
+        storeList: [],
         orderCustomers: [],
         cartProducts: [],
         cartsOnHold: []
@@ -30,6 +32,12 @@ export default new Vuex.Store({
         },
         setCustomerList(state, customers) {
             state.customerList = customers;
+        },
+        setCategoryList(state, categories) {
+            state.categoryList = categories;
+        },
+        setStoreList(state, stores) {
+            state.storeList = stores;
         },
         // shopping cart mutations
         addCartProduct(state, cartProduct) {
