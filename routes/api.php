@@ -13,6 +13,7 @@
 
 $baseRoutes = [
     'customers' => 'CustomerController',
+    'users' => 'UserController',
     'address' => 'AddressController',
     'products' => 'ProductController',
     'carts' => 'CartController',

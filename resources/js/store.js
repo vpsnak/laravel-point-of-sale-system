@@ -12,6 +12,7 @@ export default new Vuex.Store({
 
         productList: [],
         customerList: [],
+        userList: [],
         categoryList: [],
         storeList: [],
         orderCustomers: [],
@@ -32,6 +33,9 @@ export default new Vuex.Store({
         },
         setCustomerList(state, customers) {
             state.customerList = customers;
+        },
+        setUserList(state, users) {
+            state.userList = users;
         },
         setCategoryList(state, categories) {
             state.categoryList = categories;

@@ -22,11 +22,6 @@ export default [
         component: Sales
     },
     {
-        name: "Forms",
-        path: "/forms",
-        component: Forms
-    },
-    {
         name: "Orders",
         path: "/orders",
         component: Orders
@@ -60,5 +55,10 @@ export default [
         name: "testc",
         path: "/chris",
         component: CTest
-    }
+    },
+    {
+        name: "Forms",
+        path: "/forms",
+        component: Forms
+    },
 ];

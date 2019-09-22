@@ -1,3 +1,9 @@
 <template>
-	<h2>asd</h2>
+    <v-container fluid>
+        <v-row>
+            <v-col>
+                <testTable></testTable>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
