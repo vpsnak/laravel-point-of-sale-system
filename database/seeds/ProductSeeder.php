@@ -1,5 +1,8 @@
 <?php
 
+use App\Price;
+use App\Product;
+use App\Store;
 use Illuminate\Database\Seeder;
 
 class ProductSeeder extends Seeder
@@ -11,12 +14,15 @@ class ProductSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Product::class, 10)->make()->each(function ($product) {
-            //            $product->save(factory(App\Post::class)->make());
-
-            $price = factory(App\Price::class)->create();
-
+        factory(Product::class, 100)->make()->each(function ($product) {
             $product->save();
+            factory(Price::class)->create([
+                'priceable_id' => $product->id,
+                'priceable_type' => Product::class
+            ]);
+            foreach (Store::all() as $store) {
+                $product->stores()->attach($store, ['qty' => rand(-100, 200)]);
+            }
         });
     }
 }
