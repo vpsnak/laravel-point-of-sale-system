@@ -24,6 +24,7 @@ $baseRoutes = [
 
 foreach ($baseRoutes as $route => $controller) {
     Route::get("/$route", "$controller@all");
+    Route::get("/$route/{id}", "$controller@get");
     Route::post("/$route/create", "$controller@create");
     Route::post("/$route/search", "$controller@search");
 }

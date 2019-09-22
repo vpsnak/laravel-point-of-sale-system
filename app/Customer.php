@@ -15,10 +15,14 @@ class Customer extends BaseModel
     {
         return get_called_class()::with('addresses')->get();
     }
+    
+    public static function getOne($id)
+    {
+        return get_called_class()::with('addresses')->find($id);
+    }
 
     public function addresses()
     {
         return $this->belongsToMany(Address::class);
     }
-
 }
