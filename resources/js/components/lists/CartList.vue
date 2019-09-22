@@ -225,7 +225,7 @@ export default {
             return subTotal;
         },
         tax() {
-            return (this.subTotal * 0.24).toFixed(2);
+            return this.subTotal * 0.24;
         },
         totalDiscount() {
             return 0;
