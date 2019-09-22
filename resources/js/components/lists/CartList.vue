@@ -1,20 +1,10 @@
 <template>
-	<v-card>
-		<v-card-title>
-			<v-row
-				align="center"
-				justify="center"
-			>
-				<v-col
-					align="center"
-					justify="center"
-				>
-					<v-icon>shopping_cart</v-icon>
-					<h5 class="text-center">Shopping cart</h5>
-				</v-col>
-			</v-row>
-		</v-card-title>
-		<v-card-text>
+	<v-sheet class="pa-3 d-flex flex-column" style="height:100%">
+		<div class="d-flex align-center justify-center">
+			<v-icon>shopping_cart</v-icon>
+			<h5 class="text-center title-2 ml-2">Shopping cart</h5>
+		</div>
+		<div class="d-flex">
 			<v-autocomplete
 				clearable
 				dense
@@ -25,209 +15,186 @@
 				prepend-icon="account_circle"
 			>
 			</v-autocomplete>
+		</div>
+		<div class="d-flex flex-grow-1" style="max-height: 44vh; overflow-y: auto">
+			<v-expansion-panels class="d-block">
+				<v-expansion-panel
+						v-for="cartProduct in cartProducts"
+						:key="cartProduct.id"
+						class="secondary lighten-1"
+				>
+					<v-expansion-panel-header class="pa-3" ripple>
+						<v-row no-gutters>
+							<v-col cols="6" class="d-flex flex-column">
+								<span class="subtitle-2">{{ cartProduct.name }}</span>
+								<span class="body-2">$ {{ cartProduct.qty * cartProduct.price.amount }}</span>
+							</v-col>
+							<v-col
+									cols="6"
+									class="d-flex align-center justify-end"
+							>
+								<v-btn
+										icon
+										@click.stop="decreaseQty(cartProduct)"
+								>
+									<v-icon color="grey lighten-1">remove</v-icon>
+								</v-btn>
+									<v-chip
+											filter
+											@click.stop
+									>
+										<span>{{ cartProduct.qty }}</span>
+									</v-chip>
+									<v-btn
+											icon
+											@click.stop="increaseQty(cartProduct)"
+									>
+										<v-icon color="grey lighten-1">add</v-icon>
+									</v-btn>
+								<v-btn
+										icon
+										@click.stop="removeItem(cartProduct)"
+										class="mx-1"
+								>
+									<v-icon color="grey lighten-1">delete</v-icon>
+								</v-btn>
+							</v-col>
+						</v-row>
+					</v-expansion-panel-header>
+					<v-expansion-panel-content class="pa-0">
+						<v-divider/>
+						<v-row>
+							<v-col
+									cols="12"
+									md="3"
+							>
+								<v-text-field
+										type="number"
+										label="Qty"
+										v-model="cartProduct.qty"
+										min="1"
+								></v-text-field>
+							</v-col>
+							<v-col
+									cols="12"
+									md="5"
+							>
+								<v-select
+										:items="discountTypes"
+										v-model="cartProduct.discount_type"
+										label="Discount"
+										item-text="label"
+										item-value="value"
+								></v-select>
+							</v-col>
+							<v-col
+									cols="12"
+									md="4"
+									v-if="cartProduct.discount_type && cartProduct.discount_type != 'None'"
+							>
+								<v-text-field
+										type="number"
+										label="Amount"
+										min="1"
+										v-model="cartProduct.discount_amount"
+								></v-text-field>
+							</v-col>
+						</v-row>
+						<v-row>
+							<v-col cols="12">
+								<v-textarea
+										v-model="cartProduct.notes"
+										rows="3"
+										label="Notes"
+										:hint="'For product: ' + cartProduct.name"
+										counter
+										no-resize
+								></v-textarea>
+							</v-col>
+						</v-row>
+					</v-expansion-panel-content>
+				</v-expansion-panel>
+			</v-expansion-panels>
+		</div>
+
+		<div class="d-flex flex-column">
+			<v-divider />
+
+			<div class="d-flex justify-space-between pa-2">
+				<span>Sub total</span>
+				<span>$ {{ subTotal }}</span>
+			</div>
 
 			<v-divider />
 
-			<v-row style="height: 33vh; overflow-y:auto;">
-				<v-col>
-					<v-list dense>
-						<v-list-group
-							v-for="cartProduct in cartProducts"
-							:key="cartProduct.id"
-						>
-							<template v-slot:activator>
-								<v-list-item dense>
-									<v-layout row>
-										<v-list-item-content>
-											<v-list-item-title>{{ cartProduct.name }}</v-list-item-title>
-											<v-list-item-subtitle>$ {{ cartProduct.qty * cartProduct.price.amount }}</v-list-item-subtitle>
-										</v-list-item-content>
-										<v-list-item-action>
-											<v-btn
-												icon
-												@click.stop="decreaseQty(cartProduct)"
-											>
-												<v-icon color="grey lighten-1">remove</v-icon>
-											</v-btn>
-										</v-list-item-action>
-										<v-list-item-action>
-											<v-chip
-												filter
-												@click.stop
-											>
-												<span>{{ cartProduct.qty }}</span>
-											</v-chip>
-										</v-list-item-action>
-										<v-list-item-action>
-											<v-btn
-												icon
-												@click.stop="increaseQty(cartProduct)"
-											>
-												<v-icon color="grey lighten-1">add</v-icon>
-											</v-btn>
-										</v-list-item-action>
-										<v-list-item-action>
-											<v-btn
-												icon
-												@click.stop="removeItem(cartProduct)"
-											>
-												<v-icon color="grey lighten-1">delete</v-icon>
-											</v-btn>
-										</v-list-item-action>
-									</v-layout>
-								</v-list-item>
-							</template>
-							<v-list-item>
-								<v-layout row>
-									<v-col
-										cols="12"
-										md="3"
-									>
-										<v-text-field
-											type="number"
-											label="Qty"
-											v-model="cartProduct.qty"
-											min="1"
-										></v-text-field>
-									</v-col>
-									<v-col
-										cols="12"
-										md="5"
-									>
-										<v-select
-											:items="discountTypes"
-											v-model="cartProduct.discount_type"
-											label="Discount"
-											item-text="label"
-											item-value="value"
-										></v-select>
-									</v-col>
-									<v-col
-										cols="12"
-										md="4"
-										v-if="cartProduct.discount_type && cartProduct.discount_type != 'None'"
-									>
-										<v-text-field
-											type="number"
-											label="Amount"
-											min="1"
-											v-model="cartProduct.discount_amount"
-										></v-text-field>
-									</v-col>
+			<div class="d-flex justify-space-between pa-2 bb-1">
+				<span>Tax</span>
+				<span>$ {{ tax }}</span>
+			</div>
 
-									<v-col cols="12">
-										<v-textarea
-											v-model="cartProduct.notes"
-											rows="3"
-											label="Notes"
-											:hint="'For product: ' + cartProduct.name"
-											counter
-											no-resize
-										></v-textarea>
-									</v-col>
-								</v-layout>
-							</v-list-item>
-						</v-list-group>
-					</v-list>
-				</v-col>
-			</v-row>
+			<v-divider />
 
-			<v-row>
-				<v-col>
-					<v-divider />
+			<div class="d-flex justify-space-between pa-2">
+				<span>Total discount</span>
+				<span>$ {{ totalDiscount }}</span>
+			</div>
 
-					<div class="d-flex justify-space-between">
-						<span class="pa-2">Sub total</span>
-						<span class="pa-2">$ {{ subTotal }}</span>
-					</div>
+			<v-divider />
 
-					<v-divider />
+			<div class="d-flex justify-space-between pa-2">
+				<span>Total</span>
+				<span>$ {{ total }}</span>
+			</div>
 
-					<div class="d-flex justify-space-between">
-						<span class="pa-2">Tax</span>
-						<span class="pa-2">$ {{ tax }}</span>
-					</div>
+			<v-divider />
 
-					<v-divider />
+			<v-btn
+				block
+				class="my-2"
+				@click="checkout"
+				:disabled="totalCartProducts"
+			>Checkout</v-btn>
 
-					<div class="d-flex justify-space-between">
-						<span class="pa-2">Total discount</span>
-						<span class="pa-2">$ {{ totalDiscount }}</span>
-					</div>
-
-					<v-divider />
-
-					<div class="d-flex justify-space-between">
-						<span class="pa-2">Total</span>
-						<span class="pa-2">$ {{ total }}</span>
-					</div>
-
-					<v-divider />
-
-					<v-btn
-						block
-						class="my-2"
-						@click="checkout"
-						:disabled="totalCartProducts"
-					>Checkout</v-btn>
-
-					<v-divider />
-				</v-col>
-			</v-row>
-		</v-card-text>
-		<v-card-actions>
-			<v-row>
-				<v-col
-					cols="4"
-					class="text-center"
+			<v-divider />
+		</div>
+		<div class="d-flex align-center justify-center pa-2">
+			<v-btn
+				icon
+				@click="restoreCartDialog = true"
+				:disabled="cartsOnHoldSize ? false : false"
+				class="flex-grow-1"
+				tile
+			>
+				<v-icon>fa-recycle</v-icon>
+				<v-badge
+						overlap
+						color="purple"
+						style="position: absolute; top: 0;right:38%;"
 				>
-					<div class="text-center">
-						<v-badge
-							overlap
-							color="purple"
-						>
-							<template v-slot:badge>
-								<span>{{cartsOnHoldSize}}</span>
-							</template>
-							<v-btn
-								icon
-								@click="restoreCartDialog = true"
-								:disabled="cartsOnHoldSize ? false : true"
-							>
-								<v-icon>fa-recycle</v-icon>
-							</v-btn>
-						</v-badge>
-					</div>
-				</v-col>
-
-				<v-col
-					cols="4"
-					class="text-center"
-				>
-					<v-btn
-						icon
-						:disabled="totalCartProducts"
-						@click="holdCart"
-					>
-						<v-icon>pause</v-icon>
-					</v-btn>
-				</v-col>
-
-				<v-col
-					cols="4"
-					class="text-center"
-				>
-					<v-btn
-						icon
-						@click.stop="removeAll(cartProducts)"
-						:disabled="totalCartProducts"
-					>
-						<v-icon>delete</v-icon>
-					</v-btn>
-				</v-col>
-			</v-row>
-		</v-card-actions>
-
+					<template v-slot:badge>
+						<span>{{cartsOnHoldSize}}</span>
+					</template>
+				</v-badge>
+			</v-btn>
+			<v-btn
+				icon
+				:disabled="totalCartProducts"
+				@click="holdCart"
+				class="flex-grow-1"
+				tile
+			>
+				<v-icon>pause</v-icon>
+			</v-btn>
+			<v-btn
+				icon
+				@click.stop="removeAll(cartProducts)"
+				:disabled="totalCartProducts"
+				class="flex-grow-1"
+				tile
+			>
+				<v-icon>delete</v-icon>
+			</v-btn>
+		</div>
 		<v-dialog
 			v-model="checkoutDialog"
 			fullscreen
@@ -242,8 +209,7 @@
 		>
 			<restoreCartDialog />
 		</v-dialog>
-
-	</v-card>
+	</v-sheet>
 </template>
 
 <script>
