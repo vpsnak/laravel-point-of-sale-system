@@ -130,10 +130,8 @@ export default new Vuex.Store({
         delete(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(
-                        this.state.baseUrl + payload.model + "/delete" + id,
-                        payload.data
-                    )
+                    .delete(
+                        this.state.baseUrl + payload.model + "/delete" + payload.id)
                     .then(response => {
                         console.log(response);
                         resolve(response.data);
