@@ -1,13 +1,15 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import "es6-promise/auto";
-import payment from './modules/payment';
+import Vue from 'vue'
+import Vuex from 'vuex'
+import 'es6-promise/auto'
+import payment from './modules/payment'
+import endpoints from './modules/endpoints'
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     modules: {
-        payment
+        payment,
+        endpoints
     },
     state: {
         baseUrl: "/api/",
@@ -112,7 +114,7 @@ export default new Vuex.Store({
                         console.log(response.data);
                         context.commit(payload.mutation, response.data);
                         resolve(response.data);
-                        return;
+
                     })
                     .catch(error => {
                         console.log(error);

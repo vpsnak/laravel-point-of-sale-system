@@ -20,6 +20,7 @@ $baseRoutes = [
     'orders' => 'OrderController',
     'categories' => 'CategoryController',
     'stores' => 'StoreController',
+    'payments' => 'PaymentController',
 ];
 
 foreach ($baseRoutes as $route => $controller) {
