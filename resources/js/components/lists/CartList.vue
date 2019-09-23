@@ -123,7 +123,7 @@
 			<v-divider />
 		</div>
 		<div class="d-flex align-center justify-center pa-2">
-			<v-btn icon @click="restoreCartDialog = true" class="flex-grow-1" tile>
+			<v-btn icon @click="showRestoreOnHoldCartDialog" class="flex-grow-1" tile>
 				<v-icon>fa-recycle</v-icon>
 				<v-badge overlap color="purple" style="position: absolute; top: 0;right:38%;">
 					<template v-slot:badge>
@@ -136,7 +136,7 @@
 			</v-btn>
 			<v-btn
 				icon
-				@click.stop="removeAll(cartProducts)"
+				@click.stop="emptyCart(cartProducts)"
 				:disabled="totalCartProducts"
 				class="flex-grow-1"
 				tile
@@ -246,6 +246,18 @@
 		},
 
 		methods: {
+			showRestoreOnHoldCartDialog() {
+				this.getCartsOnHold();
+				this.restoreCartDialog = true;
+			},
+			getCartsOnHold() {
+				let a;
+				let payload = {
+					model: "carts",
+					mutation: "setCartsOnHold"
+				};
+				this.$store.dispatch("getAll", payload);
+			},
 			getCustomerFullname(item) {
 				return item.first_name + " " + item.last_name;
 			},
@@ -259,17 +271,13 @@
 			removeItem(cartProduct) {
 				this.cartProducts.splice(cartProduct, 1);
 			},
-			removeAll(cartProducts) {
+			emptyCart(cartProducts) {
 				confirm("Are you sure you want to delete the cart?") &&
 					this.cartProducts.splice(0);
 			},
 			addAll(cart) {
 				this.cartProducts.splice(0);
 				this.cartProducts = cart;
-			},
-
-			showRestoredCarts() {
-				this.cartlist.forEach(cartProducts => console.log(cartProducts));
 			},
 			checkout() {
 				this.checkoutDialog = true;
@@ -283,7 +291,7 @@
 						cart: this.cartProducts
 					}
 				};
-				this.$store.dispatch("create", payload);
+				this.$store.dispatch("create", payload).then(this.deleteAll());
 			},
 			submitCart() {
 				let payload = {
@@ -305,7 +313,7 @@
 			},
 			searchCustomer(keyword) {
 				this.isLoading = true;
-				let payload = {
+				const payload = {
 					model: "customers",
 					mutation: "setCustomerList",
 					keyword: keyword

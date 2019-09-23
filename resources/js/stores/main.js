@@ -15,10 +15,9 @@ export default new Vuex.Store({
         userList: [],
         categoryList: [],
         storeList: [],
-        cartList: [],
+        cartsOnHold: [],
         cartCustomer: undefined,
         cartProducts: [],
-        cartsOnHold: []
         // Current state of the application lies here.
     },
     getters: {
@@ -44,8 +43,8 @@ export default new Vuex.Store({
         setStoreList(state, stores) {
             state.storeList = stores;
         },
-        setCartList(state, carts) {
-            state.cartList = carts;
+        setCartsOnHold(state, cartsOnHold) {
+            state.cartsOnHold = cartsOnHold;
         },
         // shopping cart mutations
         addCartProduct(state, cartProduct) {
@@ -72,6 +71,11 @@ export default new Vuex.Store({
             let orderCustomers = state.orderCustomers;
             orderCustomers.push(orderCustomer);
             Vue.set(state, "orderCustomers", orderCustomers);
+        },
+        removeCartOnHold(state, id) {
+            _.remove(state.cartsOnHold, function (cartOnHold) {
+                return cartOnHold.id === id;
+            });
         }
     },
     actions: {
@@ -81,9 +85,11 @@ export default new Vuex.Store({
                     .get(this.state.baseUrl + payload.model)
                     .then(response => {
                         console.log(response);
-                        resolve(
-                            context.commit(payload.mutation, response.data)
-                        );
+                        if (_.has(payload, 'mutation')) {
+                            console.log('fire mutation!');
+                            context.commit(payload.mutation, response.data);
+                        }
+                        resolve(response.data);
                     })
                     .catch(error => {
                         console.log(error);
@@ -118,7 +124,6 @@ export default new Vuex.Store({
                         payload.data
                     )
                     .then(response => {
-                        console.log(response);
                         resolve(response.data);
                     })
                     .catch(error => {
@@ -131,9 +136,12 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 axios
                     .delete(
-                        this.state.baseUrl + payload.model + "/delete" + payload.id)
+                        this.state.baseUrl + payload.model + "/" + payload.id)
                     .then(response => {
-                        console.log(response);
+                        if (_.has(payload, 'mutation')) {
+                            console.log('fire mutation!');
+                            context.commit(payload.mutation, payload.id);
+                        }
                         resolve(response.data);
                     })
                     .catch(error => {

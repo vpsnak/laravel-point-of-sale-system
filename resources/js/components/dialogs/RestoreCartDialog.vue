@@ -2,20 +2,25 @@
 	<v-card>
 		<v-card-title primary-title>Products</v-card-title>
 		<v-chip-group multiple column active-class="primary--text">
-			<v-chip class="d-flex justify-center pa-2" v-for="cart in cartList" :key="cart.id">
+			<v-chip
+				class="d-flex justify-center pa-2"
+				v-for="cartOnHold in cartsOnHold"
+				:key="cartOnHold.id"
+				close
+				@click="restoreCart(cartOnHold)"
+				@click:close="nukeCart(cartOnHold)"
+			>
 				<span>
-					{{cart.id}}
-					<v-icon left>mdi-cart</v-icon>
-					{{ cart.created_at }}
+					{{cartOnHold.id}}
+					<v-icon left>mdi-cartOnHold</v-icon>
+					{{ cartOnHold.created_at }}
 				</span>
 			</v-chip>
 		</v-chip-group>
-		<v-card-text>{{showRestoredCarts() }}</v-card-text>
 		<v-divider></v-divider>
 
 		<v-card-actions>
 			<div class="flex-grow-1"></div>
-			<v-btn color="primary" text @click="restoreCartDialog = false">Restore</v-btn>
 			<v-btn color="primary" text @click="close">Close</v-btn>
 		</v-card-actions>
 	</v-card>
@@ -23,22 +28,13 @@
 
 <script>
 	export default {
-		mounted() {
-			this.getAllCarts();
-		},
 		computed: {
-			allcarts() {
-				this.getAllCarts();
-			},
-			cartsOnHold() {
-				return this.$store.state.cartsOnHold;
-			},
-			cartList: {
+			cartsOnHold: {
 				get() {
-					return this.$store.state.cartList;
+					return this.$store.state.cartsOnHold;
 				},
 				set(value) {
-					this.$store.state.cartList = value;
+					this.$store.state.cartsOnHold = value;
 				}
 			}
 		},
@@ -46,19 +42,21 @@
 			close() {
 				this.$store.state.restoreCartDialog = false;
 			},
-			showRestoredCarts() {},
-			addAll() {},
-			getAllCarts() {
-				let payload = {
+			restoreCart(cartOnHold) {
+				this.$store.state.cartProducts = JSON.parse(cartOnHold.cart);
+				this.nukeCart(cartOnHold);
+				this.close();
+			},
+			nukeCart(cartOnHold) {
+				console.log(cartOnHold);
+				const payload = {
 					model: "carts",
-					mutation: "setCartList"
+					mutation: "removeCartOnHold",
+					id: cartOnHold.id
 				};
-				this.$store
-					.dispatch("getAll", payload)
-					.then(result => {})
-					.catch(error => {
-						console.log(error);
-					});
+				this.$store.dispatch("delete", payload).then(response => {
+					this.cartsOnHold.splice(cartOnHold, 1);
+				});
 			}
 		}
 	};
