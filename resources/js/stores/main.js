@@ -1,10 +1,14 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import "es6-promise/auto";
+import payment from './modules/payment';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+    modules: {
+        payment
+    },
     state: {
         baseUrl: "/api/",
         restoreCartDialog: false,
