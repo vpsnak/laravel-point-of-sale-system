@@ -7,14 +7,14 @@
 		<div class="d-flex">
 			<v-autocomplete
 				prepend-icon="account_circle"
-				v-model="keyword"
+				v-model="orderCustomer"
 				clearable
 				dense
 				:items="customerList"
 				:item-text="getCustomerFullname"
 				item-value="id"
+				return-object
 				label="Select customer"
-				lazy
 			></v-autocomplete>
 		</div>
 		<div class="d-flex flex-grow-1" style="max-height: 44vh; overflow-y: auto">
@@ -159,7 +159,6 @@ export default {
 	data() {
 		return {
 			model: "customers",
-			keyword: "",
 			isEditing: false,
 			discountTypes: [
 				{
@@ -237,6 +236,14 @@ export default {
 			set(value) {
 				this.$store.state.customerList = value;
 			}
+		},
+		orderCustomer: {
+			get() {
+				return this.$store.state.orderCustomer;
+			},
+			set(value) {
+				this.$store.state.orderCustomer = value;
+			}
 		}
 	},
 
@@ -267,6 +274,7 @@ export default {
 			this.cartlist.forEach(cartProducts => console.log(cartProducts));
 		},
 		checkout() {
+			console.log(this.keyword);
 			this.checkoutDialog = true;
 			console.log("---- CHECKOUT! ----");
 			console.log(this.cartProducts);
