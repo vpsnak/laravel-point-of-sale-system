@@ -1,19 +1,25 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import "es6-promise/auto";
+
+//modules
+import topMenu from './menu/topMenu';
 import payment from './modules/payment';
 
 Vue.use(Vuex);
 
+const namespaced = true;
+
 export default new Vuex.Store({
+    namespaced,
     modules: {
+        topMenu,
         payment
     },
     state: {
         baseUrl: "/api/",
         restoreCartDialog: false,
         checkoutDialog: false,
-
         productList: [],
         customerList: [],
         userList: [],
@@ -25,9 +31,6 @@ export default new Vuex.Store({
         // Current state of the application lies here.
     },
     getters: {
-        getCustomerById: state => id => {
-            return state.customerList.find(customer => customer.id === id);
-        }
         // Compute derived state based on the current state. More like computed property.
     },
     mutations: {

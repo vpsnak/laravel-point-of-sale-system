@@ -16,15 +16,22 @@
 </template>
 
 <script>
+	import { mapState } from "vuex";
+
 	export default {
-		data() {
-			return {
-				mini: false
-			};
-		},
 		methods: {
 			invertTheme() {
 				this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+			}
+		},
+		computed: {
+			mini: {
+				get() {
+					return this.$store.state.topMenu.mini;
+				},
+				set() {
+					this.$store.commit("topMenu/toggleMini");
+				}
 			}
 		}
 	};
