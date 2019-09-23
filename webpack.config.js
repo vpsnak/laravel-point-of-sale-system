@@ -4,3 +4,6 @@ module.exports = {
         new VuetifyLoaderPlugin(),
     ]
 };
+
+const mix = require('laravel-mix')
+mix.browserSync('localhost:8000')

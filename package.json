@@ -21,6 +21,8 @@
     "devDependencies": {
         "@mdi/font": "^4.4.95",
         "axios": "^0.19",
+        "browser-sync": "^2.26.7",
+        "browser-sync-webpack-plugin": "^2.0.1",
         "cross-env": "^6.0.0",
         "laravel-mix": "^4.1.4",
         "lodash": "^4.17.15",
