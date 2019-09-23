@@ -326,24 +326,22 @@ export default {
 				});
 		},
 		searchCustomer(keyword) {
-			if (keyword.length > 0) {
-				this.isLoading = true;
-				let payload = {
-					model: "customers",
-					mutation: "setCustomerList",
-					keyword: keyword
-				};
+			this.isLoading = true;
+			let payload = {
+				model: "customers",
+				mutation: "setCustomerList",
+				keyword: keyword
+			};
 
-				this.$store
-					.dispatch("search", payload)
-					.then(result => {
-						this.customers = result;
-					})
-					.catch(error => {
-						console.log(error);
-					})
-					.finally(() => (this.isLoading = false));
-			}
+			this.$store
+				.dispatch("search", payload)
+				.then(result => {
+					this.customers = result;
+				})
+				.catch(error => {
+					console.log(error);
+				})
+				.finally(() => (this.isLoading = false));
 		}
 	},
 	watch: {
@@ -351,12 +349,12 @@ export default {
 			if (!keyword) {
 				this.customers = undefined;
 				return;
+			} else {
+				if (keyword.length > 4) {
+					if (this.isLoading) return;
+					this.searchCustomer(keyword);
+				}
 			}
-
-			// Items have already been requested
-			if (this.isLoading) return;
-
-			this.searchCustomer(keyword);
 		}
 	}
 };
