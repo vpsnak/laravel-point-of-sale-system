@@ -22,9 +22,15 @@ class ProductController extends BaseController
     public function search(Request $request)
     {
         $validatedData = $request->validate([
-            'keyword' => 'required|string'
+            'keyword' => 'required|string',
+            'per_page' => 'nullable|numeric',
+            'page' => 'nullable|numeric',
         ]);
 
-        return $this->searchResult(['sku', 'name'], $validatedData['keyword']);
+        return $this->searchResult(['sku', 'name'],
+            $validatedData['keyword'],
+            array_key_exists('per_page', $validatedData) ? $validatedData['per_page'] : 0,
+            array_key_exists('page', $validatedData) ? $validatedData['page'] : 0
+        );
     }
 }
