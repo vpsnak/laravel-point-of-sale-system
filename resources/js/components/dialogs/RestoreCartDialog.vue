@@ -1,6 +1,6 @@
 <template>
 	<v-card>
-		<v-card-title primary-title>Products</v-card-title>
+		<v-card-title primary-title>Carts on Hold</v-card-title>
 		<v-chip-group multiple column active-class="primary--text">
 			<v-chip
 				class="d-flex justify-center pa-2"
@@ -55,7 +55,7 @@
 					id: cartOnHold.id
 				};
 				this.$store.dispatch("delete", payload).then(response => {
-					this.cartsOnHold.splice(cartOnHold, 1);
+					this.cartsOnHold.splice(cartOnHold, 0);
 				});
 			}
 		}
