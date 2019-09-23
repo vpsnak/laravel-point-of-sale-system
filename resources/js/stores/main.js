@@ -15,15 +15,15 @@ export default new Vuex.Store({
         userList: [],
         categoryList: [],
         storeList: [],
-        orderCustomers: [],
+        orderCustomer: [],
         cartProducts: [],
         cartsOnHold: []
         // Current state of the application lies here.
     },
     getters: {
         getCustomerById: state => id => {
-            return state.customerList.find(customer => customer.id === id)
-        },
+            return state.customerList.find(customer => customer.id === id);
+        }
         // Compute derived state based on the current state. More like computed property.
     },
     mutations: {
@@ -67,8 +67,8 @@ export default new Vuex.Store({
         addOrderCustomer(state, orderCustomer) {
             let orderCustomers = state.orderCustomers;
             orderCustomers.push(orderCustomer);
-            Vue.set(state, 'orderCustomers', orderCustomers);
-        },
+            Vue.set(state, "orderCustomers", orderCustomers);
+        }
     },
     actions: {
         getAll(context, payload) {
@@ -110,8 +110,8 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 axios
                     .post(
-                        this.state.baseUrl + payload.model + "/create", payload.data
-
+                        this.state.baseUrl + payload.model + "/create",
+                        payload.data
                     )
                     .then(response => {
                         console.log(response);
@@ -120,10 +120,9 @@ export default new Vuex.Store({
                     .catch(error => {
                         console.log(error);
                         reject(error);
-                    })
-            })
-        },
-
+                    });
+            });
+        }
     }
 });
 
