@@ -95,10 +95,10 @@ export default new Vuex.Store({
                         payload
                     )
                     .then(response => {
-                        console.log(response);
-                        resolve(
-                            context.commit(payload.mutation, response.data)
-                        );
+                        console.log(response.data);
+                        context.commit(payload.mutation, response.data);
+                        resolve(response.data);
+                        return;
                     })
                     .catch(error => {
                         console.log(error);
