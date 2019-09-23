@@ -15,6 +15,7 @@ export default new Vuex.Store({
         userList: [],
         categoryList: [],
         storeList: [],
+        cartList: [],
         cartCustomer: undefined,
         cartProducts: [],
         cartsOnHold: []
@@ -42,6 +43,9 @@ export default new Vuex.Store({
         },
         setStoreList(state, stores) {
             state.storeList = stores;
+        },
+        setCartList(state, carts) {
+            state.cartList = carts;
         },
         // shopping cart mutations
         addCartProduct(state, cartProduct) {
@@ -111,6 +115,23 @@ export default new Vuex.Store({
                 axios
                     .post(
                         this.state.baseUrl + payload.model + "/create",
+                        payload.data
+                    )
+                    .then(response => {
+                        console.log(response);
+                        resolve(response.data);
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        reject(error);
+                    });
+            });
+        },
+        delete(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(
+                        this.state.baseUrl + payload.model + "/delete" + id,
                         payload.data
                     )
                     .then(response => {

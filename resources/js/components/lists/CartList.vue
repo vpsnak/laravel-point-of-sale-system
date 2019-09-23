@@ -123,13 +123,7 @@
 			<v-divider />
 		</div>
 		<div class="d-flex align-center justify-center pa-2">
-			<v-btn
-				icon
-				@click="restoreCartDialog = true"
-				:disabled="cartsOnHoldSize ? false : true"
-				class="flex-grow-1"
-				tile
-			>
+			<v-btn icon @click="restoreCartDialog = true" class="flex-grow-1" tile>
 				<v-icon>fa-recycle</v-icon>
 				<v-badge overlap color="purple" style="position: absolute; top: 0;right:38%;">
 					<template v-slot:badge>
@@ -160,189 +154,189 @@
 </template>
 
 <script>
-export default {
-	data() {
-		return {
-			model: "customers",
-			search: null,
-			isLoading: false,
-			customers: undefined,
-			discountTypes: [
-				{
-					label: "None",
-					value: "None"
-				},
-				{
-					label: "Flat",
-					value: "flat"
-				},
-				{
-					label: "Percentage",
-					value: "percentage"
-				}
-			]
-		};
-	},
-	computed: {
-		checkoutDialog: {
-			get() {
-				return this.$store.state.checkoutDialog;
-			},
-			set(value) {
-				this.$store.state.checkoutDialog = value;
-			}
-		},
-		restoreCartDialog: {
-			get() {
-				return this.$store.state.restoreCartDialog;
-			},
-			set(value) {
-				this.$store.state.restoreCartDialog = value;
-			}
-		},
-		subTotal() {
-			let subTotal = 0;
-			this.cartProducts.forEach(element => {
-				subTotal += element.qty * parseInt(element.price.amount);
-			});
-			return subTotal;
-		},
-		tax() {
-			return this.subTotal * 0.24;
-		},
-		totalDiscount() {
-			return 0;
-		},
-		total() {
-			return this.subTotal + this.tax - this.totalDiscount;
-		},
-		totalCartProducts() {
-			return _.size(this.cartProducts) ? false : true;
-		},
-		cartsOnHold() {
-			return this.$store.state.cartsOnHold;
-		},
-		cartsOnHoldSize() {
-			return _.size(this.cartsOnHold);
-		},
-		cartProducts: {
-			get() {
-				return this.$store.state.cartProducts;
-			},
-			set(value) {
-				this.$store.state.cartProducts = value;
-			}
-		},
-		customerList: {
-			get() {
-				return this.$store.state.customerList;
-			},
-			set(value) {
-				this.$store.state.customerList = value;
-			}
-		},
-		cartCustomer: {
-			get() {
-				return this.$store.state.cartCustomer;
-			},
-			set(value) {
-				this.$store.state.cartCustomer = value;
-			}
-		}
-	},
-
-	methods: {
-		getCustomerFullname(item) {
-			return item.first_name + " " + item.last_name;
-		},
-
-		decreaseQty(cartProduct) {
-			this.$store.commit("decreaseCartProductQty", cartProduct);
-		},
-		increaseQty(cartProduct) {
-			this.$store.commit("increaseCartProductQty", cartProduct);
-		},
-		removeItem(cartProduct) {
-			this.cartProducts.splice(cartProduct, 1);
-		},
-		removeAll(cartProducts) {
-			confirm("Are you sure you want to delete the cart?") &&
-				this.cartProducts.splice(0);
-		},
-		addAll(cart) {
-			this.cartProducts.splice(0);
-			this.cartProducts = cart;
-		},
-
-		showRestoredCarts() {
-			this.cartlist.forEach(cartProducts => console.log(cartProducts));
-		},
-		checkout() {
-			this.checkoutDialog = true;
-			console.log("---- CHECKOUT! ----");
-		},
-		holdCart() {
-			let payload = {
-				model: "carts",
-				data: {
-					customer_id: 1,
-					cart: this.cartProducts
-				}
-			};
-			this.$store.dispatch("create", payload);
-		},
-		submitCart() {
-			let payload = {
-				model: "orders",
-				data: {
-					customer_id: 1,
-					user_id: 1,
-					discount: this.totalDiscount,
-					// discount_type: 'none',
-					shipping_type: "shipping",
-					shipping_cost: 0,
-					tax: this.tax,
-					subtotal: this.subTotal,
-					note: "",
-					items: this.cartProducts
-				}
-			};
-			this.$store.dispatch("create", payload);
-		},
-		searchCustomer(keyword) {
-			this.isLoading = true;
-			let payload = {
+	export default {
+		data() {
+			return {
 				model: "customers",
-				mutation: "setCustomerList",
-				keyword: keyword
+				search: null,
+				isLoading: false,
+				customers: undefined,
+				discountTypes: [
+					{
+						label: "None",
+						value: "None"
+					},
+					{
+						label: "Flat",
+						value: "flat"
+					},
+					{
+						label: "Percentage",
+						value: "percentage"
+					}
+				]
 			};
+		},
+		computed: {
+			checkoutDialog: {
+				get() {
+					return this.$store.state.checkoutDialog;
+				},
+				set(value) {
+					this.$store.state.checkoutDialog = value;
+				}
+			},
+			restoreCartDialog: {
+				get() {
+					return this.$store.state.restoreCartDialog;
+				},
+				set(value) {
+					this.$store.state.restoreCartDialog = value;
+				}
+			},
+			subTotal() {
+				let subTotal = 0;
+				this.cartProducts.forEach(element => {
+					subTotal += element.qty * parseInt(element.price.amount);
+				});
+				return subTotal;
+			},
+			tax() {
+				return this.subTotal * 0.24;
+			},
+			totalDiscount() {
+				return 0;
+			},
+			total() {
+				return this.subTotal + this.tax - this.totalDiscount;
+			},
+			totalCartProducts() {
+				return _.size(this.cartProducts) ? false : true;
+			},
+			cartsOnHold() {
+				return this.$store.state.cartsOnHold;
+			},
+			cartsOnHoldSize() {
+				return _.size(this.cartsOnHold);
+			},
+			cartProducts: {
+				get() {
+					return this.$store.state.cartProducts;
+				},
+				set(value) {
+					this.$store.state.cartProducts = value;
+				}
+			},
+			customerList: {
+				get() {
+					return this.$store.state.customerList;
+				},
+				set(value) {
+					this.$store.state.customerList = value;
+				}
+			},
+			cartCustomer: {
+				get() {
+					return this.$store.state.cartCustomer;
+				},
+				set(value) {
+					this.$store.state.cartCustomer = value;
+				}
+			}
+		},
 
-			this.$store
-				.dispatch("search", payload)
-				.then(result => {
-					this.customers = result;
-				})
-				.catch(error => {
-					console.log(error);
-				})
-				.finally(() => (this.isLoading = false));
-		}
-	},
-	watch: {
-		search(keyword) {
-			if (keyword) {
-				if (keyword.length > 4) {
-					if (this.isLoading) {
-						return;
-					} else {
-						this.searchCustomer(keyword);
-						return;
+		methods: {
+			getCustomerFullname(item) {
+				return item.first_name + " " + item.last_name;
+			},
+
+			decreaseQty(cartProduct) {
+				this.$store.commit("decreaseCartProductQty", cartProduct);
+			},
+			increaseQty(cartProduct) {
+				this.$store.commit("increaseCartProductQty", cartProduct);
+			},
+			removeItem(cartProduct) {
+				this.cartProducts.splice(cartProduct, 1);
+			},
+			removeAll(cartProducts) {
+				confirm("Are you sure you want to delete the cart?") &&
+					this.cartProducts.splice(0);
+			},
+			addAll(cart) {
+				this.cartProducts.splice(0);
+				this.cartProducts = cart;
+			},
+
+			showRestoredCarts() {
+				this.cartlist.forEach(cartProducts => console.log(cartProducts));
+			},
+			checkout() {
+				this.checkoutDialog = true;
+				console.log("---- CHECKOUT! ----");
+			},
+			holdCart() {
+				let payload = {
+					model: "carts",
+					data: {
+						customer_id: 1,
+						cart: this.cartProducts
+					}
+				};
+				this.$store.dispatch("create", payload);
+			},
+			submitCart() {
+				let payload = {
+					model: "orders",
+					data: {
+						customer_id: 1,
+						user_id: 1,
+						discount: this.totalDiscount,
+						// discount_type: 'none',
+						shipping_type: "shipping",
+						shipping_cost: 0,
+						tax: this.tax,
+						subtotal: this.subTotal,
+						note: "",
+						items: this.cartProducts
+					}
+				};
+				this.$store.dispatch("create", payload);
+			},
+			searchCustomer(keyword) {
+				this.isLoading = true;
+				let payload = {
+					model: "customers",
+					mutation: "setCustomerList",
+					keyword: keyword
+				};
+
+				this.$store
+					.dispatch("search", payload)
+					.then(result => {
+						this.customers = result;
+					})
+					.catch(error => {
+						console.log(error);
+					})
+					.finally(() => (this.isLoading = false));
+			}
+		},
+		watch: {
+			search(keyword) {
+				if (keyword) {
+					if (keyword.length > 4) {
+						if (this.isLoading) {
+							return;
+						} else {
+							this.searchCustomer(keyword);
+							return;
+						}
 					}
 				}
+				this.cartCustomer = undefined;
+				return;
 			}
-			this.cartCustomer = undefined;
-			return;
 		}
-	}
-};
+	};
 </script>
