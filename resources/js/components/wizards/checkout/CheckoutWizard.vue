@@ -121,19 +121,19 @@
 </template>
 
 <script>
-export default {
-	computed: {
-		cartProducts() {
-			return this.$store.state.cartProducts;
+	export default {
+		computed: {
+			cartProducts() {
+				return this.$store.state.cartProducts;
+			},
+			cartCustomer() {
+				return this.$store.state.cartCustomer;
+			}
 		},
-		cartCustomer() {
-			return this.$store.state.cartCustomer;
+		methods: {
+			close() {
+				this.$store.state.checkoutDialog = false;
+			}
 		}
-	},
-	methods: {
-		close() {
-			this.$store.state.checkoutDialog = false;
-		}
-	}
-};
+	};
 </script>
