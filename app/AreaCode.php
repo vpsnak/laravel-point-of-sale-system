@@ -4,7 +4,7 @@ namespace App;
 
 class AreaCode extends BaseModel
 {
-    protected $with = ['addresses'];
+//    protected $with = ['addresses'];
 
     public function addresses()
     {

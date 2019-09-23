@@ -4,7 +4,7 @@ namespace App;
 
 class Store extends BaseModel
 {
-    protected $with = ['products'];
+//    protected $with = ['products'];
 
     public function products()
     {

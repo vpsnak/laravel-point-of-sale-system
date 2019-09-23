@@ -4,7 +4,8 @@ namespace App;
 
 class Address extends BaseModel
 {
-    protected $with = ['areaCode', 'customers'];
+//    protected $with = ['areaCode', 'customers'];
+//    protected $with = ['customers'];
 
     public function areaCode()
     {
