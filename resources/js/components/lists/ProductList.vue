@@ -20,16 +20,10 @@
 					class="mx-2"
 					@keyup.enter="searchProduct"
 				></v-text-field>
-
-				<v-btn class="mx-2">
-					<v-icon>add</v-icon>
-					<span>Add product</span>
-				</v-btn>
 			</v-row>
 			<v-row justify="center">
 				<v-btn-toggle v-for="category in categoryList" :key="category.id">
-					<v-btn :disabled="disableFilters" @click="applyFilter('value')" text>
-						<v-icon left small>fas fa-heart</v-icon>
+					<v-btn :disabled="disableFilters" @click="setProductListByCategoryProducts(category)" text>
 						<span class="hidden-sm-and-down">{{category.name}}</span>
 					</v-btn>
 				</v-btn-toggle>
@@ -122,6 +116,10 @@
 					this.loader = false;
 					this.disableFilters = false;
 				}
+			},
+
+			setProductListByCategoryProducts(category) {
+				this.productList = category.products;
 			},
 			getAllProducts() {
 				this.initiateLoadingSearchResults(true);

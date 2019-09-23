@@ -10,4 +10,9 @@ class Category extends BaseModel
     {
         return $this->belongsToMany(Product::class);
     }
+    
+    public static function allData()
+    {
+        return get_called_class()::with(['products'])->get();
+    }
 }
