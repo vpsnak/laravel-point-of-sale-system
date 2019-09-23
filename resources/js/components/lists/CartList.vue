@@ -6,15 +6,20 @@
 		</div>
 		<div class="d-flex">
 			<v-autocomplete
-				prepend-icon="account_circle"
 				v-model="orderCustomer"
 				clearable
 				dense
-				:items="customerList"
+				:items="customers"
+				:loading="isLoading"
+				:search-input.sync="search"
+				color="white"
+				hide-no-data
+				hide-selected
 				:item-text="getCustomerFullname"
-				item-value="id"
-				return-object
 				label="Select customer"
+				placeholder="Start typing to Search"
+				prepend-icon="mdi-database-search"
+				return-object
 			></v-autocomplete>
 		</div>
 		<div class="d-flex flex-grow-1" style="max-height: 44vh; overflow-y: auto">
@@ -159,7 +164,9 @@ export default {
 	data() {
 		return {
 			model: "customers",
-			isEditing: false,
+			search: null,
+			isLoading: false,
+			customers: undefined,
 			discountTypes: [
 				{
 					label: "None",
@@ -274,10 +281,9 @@ export default {
 			this.cartlist.forEach(cartProducts => console.log(cartProducts));
 		},
 		checkout() {
-			console.log(this.keyword);
 			this.checkoutDialog = true;
 			console.log("---- CHECKOUT! ----");
-			console.log(this.cartProducts);
+			console.log(this.orderCustomer);
 		},
 		holdCart() {
 			let payload = {
@@ -319,19 +325,38 @@ export default {
 					console.log(error);
 				});
 		},
-		searchCustomer() {
-			if (this.keyword.length > 0) {
+		searchCustomer(keyword) {
+			if (keyword.length > 0) {
+				this.isLoading = true;
 				let payload = {
 					model: "customers",
 					mutation: "setCustomerList",
-					keyword: this.keyword
+					keyword: keyword
 				};
 
 				this.$store
 					.dispatch("search", payload)
-					.then(result => {})
-					.catch(error => {});
+					.then(result => {
+						this.customers = result;
+					})
+					.catch(error => {
+						console.log(error);
+					})
+					.finally(() => (this.isLoading = false));
 			}
+		}
+	},
+	watch: {
+		search(keyword) {
+			if (!keyword) {
+				this.customers = undefined;
+				return;
+			}
+
+			// Items have already been requested
+			if (this.isLoading) return;
+
+			this.searchCustomer(keyword);
 		}
 	}
 };

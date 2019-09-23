@@ -26,6 +26,6 @@ class CustomerController extends BaseController
             'keyword' => 'required'
         ]);
 
-        return $this->searchResult(['name', 'email', 'phone'], $validatedData['keyword']);
+        return $this->searchResult(['first_name', 'last_name', 'email', 'phone'], $validatedData['keyword']);
     }
 }
