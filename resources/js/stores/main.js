@@ -15,7 +15,7 @@ export default new Vuex.Store({
         userList: [],
         categoryList: [],
         storeList: [],
-        orderCustomer: [],
+        cartCustomer: undefined,
         cartProducts: [],
         cartsOnHold: []
         // Current state of the application lies here.

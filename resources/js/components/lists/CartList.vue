@@ -6,7 +6,7 @@
 		</div>
 		<div class="d-flex">
 			<v-autocomplete
-				v-model="orderCustomer"
+				v-model="cartCustomer"
 				clearable
 				dense
 				:items="customers"
@@ -183,9 +183,6 @@ export default {
 			]
 		};
 	},
-	mounted() {
-		this.getAllCustomers();
-	},
 	computed: {
 		checkoutDialog: {
 			get() {
@@ -244,12 +241,12 @@ export default {
 				this.$store.state.customerList = value;
 			}
 		},
-		orderCustomer: {
+		cartCustomer: {
 			get() {
-				return this.$store.state.orderCustomer;
+				return this.$store.state.cartCustomer;
 			},
 			set(value) {
-				this.$store.state.orderCustomer = value;
+				this.$store.state.cartCustomer = value;
 			}
 		}
 	},
@@ -283,7 +280,6 @@ export default {
 		checkout() {
 			this.checkoutDialog = true;
 			console.log("---- CHECKOUT! ----");
-			console.log(this.orderCustomer);
 		},
 		holdCart() {
 			let payload = {
@@ -313,18 +309,6 @@ export default {
 			};
 			this.$store.dispatch("create", payload);
 		},
-		getAllCustomers() {
-			let payload = {
-				model: "customers",
-				mutation: "setCustomerList"
-			};
-			this.$store
-				.dispatch("getAll", payload)
-				.then(result => {})
-				.catch(error => {
-					console.log(error);
-				});
-		},
 		searchCustomer(keyword) {
 			this.isLoading = true;
 			let payload = {
@@ -346,15 +330,18 @@ export default {
 	},
 	watch: {
 		search(keyword) {
-			if (!keyword) {
-				this.customers = undefined;
-				return;
-			} else {
+			if (keyword) {
 				if (keyword.length > 4) {
-					if (this.isLoading) return;
-					this.searchCustomer(keyword);
+					if (this.isLoading) {
+						return;
+					} else {
+						this.searchCustomer(keyword);
+						return;
+					}
 				}
 			}
+			this.cartCustomer = undefined;
+			return;
 		}
 	}
 };
