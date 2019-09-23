@@ -2,7 +2,7 @@
 	<div>
 		<v-list-item :key="payment.id" v-for="payment in payments">
 			<v-list-item-content>
-				<v-list-item-title @click="removePayment(payment)">{{ payment.type + ' - ' + payment.amount }}$
+				<v-list-item-title @click="handlePaymentRemove(payment)">{{ payment.type + ' - ' + payment.amount }}$
 				</v-list-item-title>
 			</v-list-item-content>
 		</v-list-item>
@@ -18,7 +18,7 @@
 		<v-divider />
 		<v-row class="d-flex justify-space-between pa-2" no-gutters>
 			<span>Remains</span>
-			<span>$ {{ getRemainingAmount() }}</span>
+			<span>$ {{ remainingAmount }}</span>
 		</v-row>
 		<v-divider />
 		<v-row no-gutters>
@@ -30,24 +30,22 @@
 			/>
 		</v-row>
 		<v-row no-gutters>
-			<v-btn :disabled="getRemainingAmount() <= 0"
+			<v-btn :disabled="remainingAmount <= 0"
 				   @click="handlePaymentButton"
 			>Cash
 			</v-btn>
-			<v-btn :disabled="getRemainingAmount() <= 0"
+			<v-btn :disabled="remainingAmount <= 0"
 				   @click="handlePaymentButton"
 			>Card
 			</v-btn>
-			<v-btn :disabled="getRemainingAmount() <= 0"
+			<v-btn :disabled="remainingAmount <= 0"
 				   @click="handlePaymentButton"
 			>Coupon
 			</v-btn>
-			<v-btn :disabled="getRemainingAmount() <= 0"
+			<v-btn :disabled="remainingAmount <= 0"
 				   @click="handlePaymentButton"
 			>GiftCard
 			</v-btn>
-			{{getPaymentAmount()}}
-			<v-btn @click="setPayments([])">Clear</v-btn>
 		</v-row>
 	</div>
 </template>
@@ -57,23 +55,25 @@
   export default {
     data() {
       return {
-        remaining_amount: this.getRemainingAmount()
+        payment_amount: this.payAmount | this.remainingAmount
       }
     },
     props: ['totalAmount', 'payAmount'],
     mounted() {
       this.fetchPayments()
       this.setTotal(this.totalAmount)
-      this.payment_amount = this.payAmount | this.totalAmount
     },
     computed: {
-      payment_amount: {
+      remainingAmount: {
         get() {
-          return this.getRemainingAmount()
+          return this.total - this.totalPaid
         },
         set(value) {
-          console.log(value)
-          return value
+          if (value > this.remainingAmount) {
+            this.payment_amount = this.remainingAmount
+          } else {
+            this.payment_amount = value
+          }
         }
       },
       ...mapState('payment', {
@@ -84,19 +84,26 @@
         totalPaid: 'getTotalPaid'
       })
     },
+    watch: {
+      payment_amount(value) {
+        if (value > this.remainingAmount) {
+          this.payment_amount = this.remainingAmount
+        } else {
+          this.payment_amount = value
+        }
+      }
+    },
     methods: {
-      getRemainingAmount() {
-        return this.total - this.totalPaid
-      },
-      getPaymentAmount() {
-        this.payment_amount = this.getRemainingAmount()
-      },
       handlePaymentAmountInput(value) {
-        console.log(value)
-        this.payment_amount = this.getPaymentAmount(value)
+          this.payment_amount = value
       },
       handlePaymentButton(event) {
         this.addPayment({id: event.timeStamp, type: event.target.innerText, amount: this.payment_amount})
+        this.payment_amount = this.remainingAmount
+      },
+      handlePaymentRemove(payment) {
+        this.removePayment(payment)
+        this.payment_amount = this.remainingAmount
       },
       ...mapActions('payment', {
         fetchPayments: 'fetchPayments',
