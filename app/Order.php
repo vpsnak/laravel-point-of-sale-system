@@ -17,6 +17,8 @@ class Order extends BaseModel
         'note',
     ];
 
+    protected $with = ['items', 'payments'];
+
     public function items()
     {
         return $this->hasMany(OrderProduct::class);

@@ -27,7 +27,7 @@ foreach ($baseRoutes as $route => $controller) {
     Route::get("/$route/{id}", "$controller@get");
     Route::post("/$route/create", "$controller@create");
     Route::post("/$route/search", "$controller@search");
-    Route::get("/$route/{id}", "$controller@delete");
+    Route::delete("/$route/{id}", "$controller@delete");
 }
 
 Route::get('/carts/hold', "{$baseRoutes['carts']}@getHold");

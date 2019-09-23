@@ -11,15 +11,7 @@ class Customer extends BaseModel
         'phone'
     ];
 
-    public static function allData()
-    {
-        return get_called_class()::with('addresses')->get();
-    }
-    
-    public static function getOne($id)
-    {
-        return get_called_class()::with('addresses')->find($id);
-    }
+    protected $with = ['addresses'];
 
     public function addresses()
     {
