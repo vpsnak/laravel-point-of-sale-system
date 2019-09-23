@@ -29,8 +29,8 @@ class ProductController extends BaseController
 
         return $this->searchResult(['sku', 'name'],
             $validatedData['keyword'],
-            $validatedData['per_page'],
-            $validatedData['page']
+            array_key_exists('per_page', $validatedData) ? $validatedData['per_page'] : 0,
+            array_key_exists('page', $validatedData) ? $validatedData['page'] : 0
         );
     }
 }

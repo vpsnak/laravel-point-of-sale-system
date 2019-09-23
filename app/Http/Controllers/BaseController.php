@@ -74,15 +74,18 @@ class BaseController extends Controller
         if (empty($columns) || empty($keyword)) {
             return response('Did not found columns or keyword to search', 404);
         }
-        $page = !empty($page) ? $page : 1;
-        $perPage = !empty($perPage) ? $perPage : 20;
 
         $query = $this->model::query();
         foreach ($columns as $column) {
             $query->orWhere($column, 'like', "%$keyword%");
         }
 
-        return response($query->paginate($perPage, ['*'], 'page', $page), 200);
+        if (!empty($perPage)) {
+            $page = !empty($page) ? $page : 1;
+            return response($query->paginate($perPage, ['*'], 'page', $page), 200);
+        } else {
+            return response($query->get(), 200);
+        }
     }
 
     public function delete($id)

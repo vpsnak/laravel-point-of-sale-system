@@ -30,8 +30,8 @@ class CustomerController extends BaseController
 
         return $this->searchResult(['first_name', 'last_name', 'email', 'phone'],
             $validatedData['keyword'],
-            $validatedData['per_page'],
-            $validatedData['page']
+            array_key_exists('per_page', $validatedData) ? $validatedData['per_page'] : 0,
+            array_key_exists('page', $validatedData) ? $validatedData['page'] : 0
         );
     }
 }
