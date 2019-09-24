@@ -1,13 +1,13 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import "es6-promise/auto";
-
+import Vue from 'vue'
+import Vuex from 'vuex'
+import 'es6-promise/auto'
 //modules
-import topMenu from "./menu/topMenu";
-import checkout from "./modules/checkout";
-import cart from "./modules/cart";
-import payment from "./modules/payment";
-import endpoints from "./modules/endpoints";
+import topMenu from './menu/topMenu'
+import checkout from './modules/checkout'
+import cart from './modules/cart'
+import payment from './modules/payment'
+import endpoints from './modules/endpoints'
+import datatable from './modules/datatable'
 
 Vue.use(Vuex);
 
@@ -20,6 +20,7 @@ export default new Vuex.Store({
         checkout,
         cart,
         payment,
+        datatable,
         endpoints
     },
     state: {
@@ -166,7 +167,43 @@ export default new Vuex.Store({
                         reject(error);
                     });
             });
-        }
+        },
+        getRequest (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(this.state.baseUrl + payload.url)
+                    .then(response => {
+                        if (_.has(payload, 'mutation')) {
+                            console.log('mutation: ' + payload.mutation)
+                            context.commit(payload.mutation, response.data, {root: true})
+                        }
+                        resolve(response.data)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        reject(error)
+                    })
+            })
+        },
+        deleteRequest (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .delete(
+                        this.state.baseUrl + payload.url
+                    )
+                    .then(response => {
+                        if (_.has(payload, 'mutation')) {
+                            console.log('mutation: ' + payload.mutation)
+                            context.commit(payload.mutation, response.data, {root: true})
+                        }
+                        resolve(response.data)
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        reject(error)
+                    })
+            })
+        },
     }
 });
 

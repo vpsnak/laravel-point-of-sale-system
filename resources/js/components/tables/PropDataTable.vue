@@ -1,0 +1,91 @@
+<template>
+    <v-card>
+        <v-card-title>
+            {{ this.title }}
+            <v-spacer></v-spacer>
+            <v-text-field
+                append-icon="search"
+                hide-details
+                label="Search"
+                single-line
+                v-model="search"
+            ></v-text-field>
+        </v-card-title>
+        <v-data-table :headers="headers" :items="rows" :loading="loading" :search="search">
+            <template v-slot:item.email="{item}">
+                <a :href="'mailto:' + item.email">{{ item.email }}</a>
+            </template>
+            
+            <!--            <template v-slot:item="{ item }">-->
+            <!--                <component :is="checkoutStep.component" :item="item"/>-->
+            <!--            </template>-->
+            
+            <template v-slot:item.action="{ item }">
+                <v-icon @click="editItem(item)" class="mr-2" small>edit</v-icon>
+                <v-icon @click="deleteItem(item)" small>delete</v-icon>
+            </template>
+            
+            <v-alert
+                :value="true"
+                color="error"
+                icon="warning"
+                slot="no-results"
+            >Your search for "{{ search }}" found no results.
+            </v-alert>
+        </v-data-table>
+    </v-card>
+</template>
+
+
+<script>
+  import { mapActions, mapMutations, mapState } from 'vuex'
+
+  export default {
+    data () {
+      return {
+        search: '',
+      }
+    },
+    props: ['tableTitle', 'tableHeaders', 'dataUrl'],
+    mounted () {
+      this.setHeaders(this.tableHeaders)
+      this.getRows({
+        url: this.dataUrl
+      })
+      this.setTitle(this.tableTitle)
+    },
+    computed: {
+      ...mapState('datatable', {
+        title: 'title',
+        headers: 'headers',
+        rows: 'rows',
+        loading: 'loading',
+      })
+    },
+    methods: {
+      editItem (item) {
+        this.editedIndex = this.rows.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        this.dialog = true
+      },
+
+      deleteItem (item) {
+        confirm('Are you sure you want to delete this item?') &&
+        this.deleteRow({
+          url: 'customers/' + item.id,
+          data: {
+            id: item.id
+          }
+        })
+      },
+      ...mapActions('datatable', {
+        getRows: 'getRows',
+        deleteRow: 'deleteRow'
+      }),
+      ...mapMutations('datatable', {
+        setHeaders: 'setHeaders',
+        setTitle: 'setTitle'
+      })
+    }
+  }
+</script>
