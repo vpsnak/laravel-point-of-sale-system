@@ -355,8 +355,10 @@
 				if (showPrompt) {
 					confirm("Are you sure you want to delete the cart?") &&
 						this.cartProducts.splice(0);
+					this.cartCustomer = null;
 				} else {
 					this.cartProducts.splice(0);
+					this.cartCustomer = null;
 				}
 			},
 			addAll(cart) {
