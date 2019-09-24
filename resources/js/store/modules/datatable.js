@@ -2,7 +2,7 @@
 const state = {
     title: 'DataTable',
     headers: [],
-    data: [],
+    rows: [],
     loading: false,
 }
 
@@ -11,28 +11,31 @@ const getters = {}
 
 // actions
 const actions = {
-    getData ({dispatch, commit}) {
+    getRows ({dispatch, commit}, payload) {
         commit('setLoading', true)
-        let payload = {
-            model: 'customers',
-            // mutation: 'setUserList'
-        }
-        dispatch('getAll', payload)
+        dispatch('getRequest', payload, {root: true})
             .then(result => {
                 commit('setLoading', false)
-                commit(result.data)
+                commit('setRows', result)
             })
             .catch(error => {
                 commit('setLoading', false)
                 console.log(error)
             })
     },
-    initiateLoadingSearchResults (loading) {
-        if (loading) {
-            this.loader = true
-        } else {
-            this.loader = false
-        }
+    deleteRow ({dispatch, commit}, payload) {
+        commit('setLoading', true)
+        dispatch('deleteRequest', payload, {root: true})
+            .then(result => {
+                commit('setLoading', false)
+                if (result === 1) {
+                    commit('deleteRow', payload.data.id)
+                }
+            })
+            .catch(error => {
+                commit('setLoading', false)
+                console.log(error)
+            })
     },
 }
 
@@ -44,8 +47,14 @@ const mutations = {
     setLoading (state, loading) {
         state.loading = loading
     },
-    setData (state, data) {
-        state.data = data
+    setTitle (state, title) {
+        state.title = title
+    },
+    setRows (state, rows) {
+        state.rows = rows
+    },
+    deleteRow (state, id) {
+        state.rows = _.filter(state.rows, (row) => { return row.id !== id })
     },
 }
 
