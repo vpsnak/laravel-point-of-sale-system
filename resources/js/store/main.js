@@ -82,11 +82,6 @@ export default new Vuex.Store({
             let orderCustomers = state.orderCustomers;
             orderCustomers.push(orderCustomer);
             Vue.set(state, "orderCustomers", orderCustomers);
-        },
-        removeCartOnHold(state, id) {
-            _.remove(state.cartsOnHold, function(cartOnHold) {
-                return cartOnHold.id === id;
-            });
         }
     },
     actions: {

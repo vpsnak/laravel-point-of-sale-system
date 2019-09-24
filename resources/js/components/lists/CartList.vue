@@ -175,6 +175,7 @@
 </template>
 
 <script>
+  import { mapActions } from 'vuex'
 	export default {
 		data() {
 			return {
@@ -202,6 +203,9 @@
 				]
 			};
 		},
+      mounted(){
+		  this.getHolds()
+      },
 		computed: {
 			retail: {
 				get() {
@@ -293,9 +297,14 @@
 			totalCartProducts() {
 				return _.size(this.cartProducts) ? false : true;
 			},
-			cartsOnHold() {
-				return this.$store.state.cartsOnHold;
-			},
+          cartsOnHold: {
+            get () {
+              return this.$store.state.cartsOnHold
+            },
+            set (value) {
+              this.$store.state.cartsOnHold = value
+            }
+          },
 			cartsOnHoldSize() {
 				return _.size(this.cartsOnHold);
 			},
@@ -377,7 +386,10 @@
 						cart: this.cartProducts
 					}
 				};
-				this.$store.dispatch("create", payload); //.then(this.emptyCart(false));
+				this.create(payload).then(() => {
+				  this.emptyCart(false)
+                  this.getHolds()
+				});
 			},
 			submitCart() {
 				let payload = {
@@ -414,7 +426,21 @@
 						console.log(error);
 					})
 					.finally(() => (this.isLoading = false));
-			}
+			},
+          getHolds () {
+            this.getAll({
+              model: 'carts',
+            }).then((carts) => {
+              console.log(carts)
+              this.cartsOnHold = carts
+            })
+          },
+          ...mapActions({
+            getAll: 'getAll',
+            getOne: 'getOne',
+            create: 'create',
+            delete: 'delete',
+          })
 		},
 		watch: {
 			search(keyword) {
