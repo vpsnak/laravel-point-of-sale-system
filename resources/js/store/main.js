@@ -3,9 +3,10 @@ import Vuex from "vuex";
 import "es6-promise/auto";
 
 //modules
-import topMenu from './menu/topMenu';
-import payment from './modules/payment';
-import endpoints from './modules/endpoints'
+import topMenu from "./menu/topMenu";
+import cart from "./modules/cart";
+import payment from "./modules/payment";
+import endpoints from "./modules/endpoints";
 
 Vue.use(Vuex);
 
@@ -15,6 +16,7 @@ export default new Vuex.Store({
     namespaced,
     modules: {
         topMenu,
+        cart,
         payment,
         endpoints
     },
@@ -29,7 +31,7 @@ export default new Vuex.Store({
         storeList: [],
         cartsOnHold: [],
         cartCustomer: undefined,
-        cartProducts: [],
+        cartProducts: []
         // Current state of the application lies here.
     },
     getters: {
@@ -82,7 +84,7 @@ export default new Vuex.Store({
             Vue.set(state, "orderCustomers", orderCustomers);
         },
         removeCartOnHold(state, id) {
-            _.remove(state.cartsOnHold, function (cartOnHold) {
+            _.remove(state.cartsOnHold, function(cartOnHold) {
                 return cartOnHold.id === id;
             });
         }
@@ -135,7 +137,6 @@ export default new Vuex.Store({
                             context.commit(payload.mutation, response.data, {root: true})
                         }
                         resolve(response.data);
-
                     })
                     .catch(error => {
                         console.log(error);
@@ -167,7 +168,8 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 axios
                     .delete(
-                        this.state.baseUrl + payload.model + "/" + payload.id)
+                        this.state.baseUrl + payload.model + "/" + payload.id
+                    )
                     .then(response => {
                         if (_.has(payload, 'mutation')) {
                             console.log('mutation: ' + payload.mutation)

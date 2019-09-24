@@ -36,6 +36,14 @@
 				set(value) {
 					this.$store.state.cartsOnHold = value;
 				}
+			},
+			cartCustomer: {
+				get() {
+					return this.$store.state.cartCustomer;
+				},
+				set(value) {
+					this.$store.state.cartCustomer = value;
+				}
 			}
 		},
 		methods: {
@@ -43,6 +51,7 @@
 				this.$store.state.restoreCartDialog = false;
 			},
 			restoreCart(cartOnHold) {
+				this.$store.state.cartCustomer = JSON.parse(cartOnHold.customer_id);
 				this.$store.state.cartProducts = JSON.parse(cartOnHold.cart);
 				this.nukeCart(cartOnHold);
 				this.close();

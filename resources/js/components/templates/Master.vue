@@ -8,7 +8,7 @@
 			<router-view></router-view>
 		</v-content>
 
-		<footerMenu />
+		<!-- <footerMenu /> -->
 	</v-app>
 </template>
 
