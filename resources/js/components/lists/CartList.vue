@@ -1,8 +1,11 @@
 <template>
 	<v-sheet class="pa-3 d-flex flex-column" style="height:100%">
-		<div class="d-flex align-center justify-center">
-			<v-icon>shopping_cart</v-icon>
-			<h5 class="text-center title-2 ml-2">Shopping cart</h5>
+		<div class="d-flex align-center justify-space-between">
+			<div class="d-flex">
+				<v-icon>shopping_cart</v-icon>
+				<h5 class="text-center title-2 ml-2">Shopping cart</h5>
+			</div>
+			<v-switch label="Retail" v-model="retail"></v-switch>
 		</div>
 		<div class="d-flex">
 			<v-autocomplete
@@ -65,7 +68,7 @@
 							<v-col
 								cols="12"
 								md="4"
-								v-if="cartProduct.discount_type && cartProduct.discount_type != 'None'"
+								v-if="cartProduct.discount_type && cartProduct.discount_type !== 'none'"
 							>
 								<v-text-field type="number" label="Amount" min="1" v-model="cartProduct.discount_amount"></v-text-field>
 							</v-col>
@@ -88,6 +91,30 @@
 		</div>
 
 		<div class="d-flex flex-column">
+			<v-divider />
+			<div class="d-flex justify-space-between align-center">
+				<v-col cols="3" class="px-2 py-0">
+					<v-label>Cart discount</v-label>
+				</v-col>
+				<v-col cols="6" class="px-2 py-0">
+					<v-select
+						v-model="cartDiscount.type"
+						:items="discountTypes"
+						label="Discount"
+						item-text="label"
+						item-value="value"
+					></v-select>
+				</v-col>
+				<v-col cols="3" class="px-2 py-0">
+					<v-text-field
+						v-if="cartDiscount.type && cartDiscount.type !== 'none'"
+						v-model="cartDiscount.amount"
+						type="number"
+						label="Amount"
+						min="1"
+					></v-text-field>
+				</v-col>
+			</div>
 			<v-divider />
 
 			<div class="d-flex justify-space-between pa-2">
@@ -155,10 +182,14 @@ export default {
 			search: null,
 			isLoading: false,
 			customers: undefined,
+			cartDiscount: {
+				type: undefined,
+				amount: undefined
+			},
 			discountTypes: [
 				{
 					label: "None",
-					value: "None"
+					value: "none"
 				},
 				{
 					label: "Flat",
@@ -172,6 +203,14 @@ export default {
 		};
 	},
 	computed: {
+		retail: {
+			get() {
+				return this.$store.state.cart.retail;
+			},
+			set() {
+				this.$store.commit("cart/toggleRetail");
+			}
+		},
 		checkoutDialog: {
 			get() {
 				return this.$store.state.checkoutDialog;
@@ -190,9 +229,11 @@ export default {
 		},
 		subTotal() {
 			let subTotal = 0;
+
 			this.cartProducts.forEach(element => {
 				subTotal += element.qty * parseInt(element.price.amount);
 			});
+
 			return subTotal;
 		},
 		tax() {
@@ -205,6 +246,7 @@ export default {
 			let totalFlatDiscount = 0;
 			let totalPercentageDiscount = 0;
 			this.cartProducts.forEach(cartProduct => {
+				// cart items discount calculation
 				if (
 					_.has(cartProduct, "discount_type") &&
 					_.has(cartProduct, "discount_amount")
@@ -223,6 +265,18 @@ export default {
 					}
 				}
 			});
+
+			// total cart discount calculation
+
+			if (this.cartDiscount.type === "flat" && this.cartDiscount.amount > 0) {
+				totalFlatDiscount += parseInt(this.cartDiscount.amount);
+			} else if (
+				this.cartDiscount.type === "percentage" &&
+				this.cartDiscount.amount > 0
+			) {
+				totalPercentageDiscount +=
+					(this.subTotal * this.cartDiscount.amount) / 100;
+			}
 
 			return totalFlatDiscount + totalPercentageDiscount;
 		},
