@@ -1,16 +1,14 @@
 <template>
-	<div>
-		<v-card
-			class="pa-2"
-			height="200px"
-		></v-card>
-
-		<v-btn color="primary">Continue</v-btn>
-
-		<v-btn text>Cancel</v-btn>
-	</div>
+	<v-row>
+		<v-col>payment here</v-col>
+	</v-row>
 </template>
 
 <script>
-	export default {};
+export default {
+	props: {
+		currentStep: Object
+	},
+	methods: {}
+};
 </script>
