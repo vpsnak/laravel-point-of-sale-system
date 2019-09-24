@@ -71,113 +71,113 @@
 </template>
 
 <script>
-	export default {
-		data() {
-			return {
-				loader: false,
-				disableFilters: false,
-				model: "products",
-				keyword: ""
-			};
-		},
-		mounted() {
-			this.getAllProducts();
-			this.getAllCategories();
-		},
-		computed: {
-			productList: {
-				get() {
-					return this.$store.state.productList;
-				},
-				set(value) {
-					this.$store.state.productList = value;
-				}
+export default {
+	data() {
+		return {
+			loader: false,
+			disableFilters: false,
+			model: "products",
+			keyword: ""
+		};
+	},
+	mounted() {
+		this.getAllProducts();
+		this.getAllCategories();
+	},
+	computed: {
+		productList: {
+			get() {
+				return this.$store.state.productList;
 			},
-			categoryList: {
-				get() {
-					return this.$store.state.categoryList;
-				},
-				set(value) {
-					this.$store.state.categoryList = value;
-				}
+			set(value) {
+				this.$store.state.productList = value;
 			}
 		},
-		methods: {
-			addToFavorites(product) {},
-			viewProduct(product) {},
-			editProduct(product) {},
-			applyFilter(filter) {},
-			initiateLoadingSearchResults(loading) {
-				if (loading) {
-					this.loader = true;
-					this.disableFilters = true;
-					this.productList = [];
-				} else {
-					this.loader = false;
-					this.disableFilters = false;
-				}
+		categoryList: {
+			get() {
+				return this.$store.state.categoryList;
 			},
+			set(value) {
+				this.$store.state.categoryList = value;
+			}
+		}
+	},
+	methods: {
+		addToFavorites(product) {},
+		viewProduct(product) {},
+		editProduct(product) {},
+		applyFilter(filter) {},
+		initiateLoadingSearchResults(loading) {
+			if (loading) {
+				this.loader = true;
+				this.disableFilters = true;
+				this.productList = [];
+			} else {
+				this.loader = false;
+				this.disableFilters = false;
+			}
+		},
 
-			setProductListByCategoryProducts(category) {
-				this.productList = category.products;
-			},
-			getAllProducts() {
+		setProductListByCategoryProducts(category) {
+			this.productList = category.products;
+		},
+		getAllProducts() {
+			this.initiateLoadingSearchResults(true);
+
+			let payload = {
+				model: "products",
+				mutation: "setProductList"
+			};
+			this.$store
+				.dispatch("getAll", payload)
+				.then(result => {
+					this.initiateLoadingSearchResults(false);
+				})
+				.catch(error => {
+					this.initiateLoadingSearchResults(false);
+					console.log(error);
+				});
+		},
+		getAllCategories() {
+			this.initiateLoadingSearchResults(true);
+
+			let payload = {
+				model: "categories",
+				mutation: "setCategoryList"
+			};
+			this.$store
+				.dispatch("getAll", payload)
+				.then(result => {
+					this.initiateLoadingSearchResults(false);
+				})
+				.catch(error => {
+					this.initiateLoadingSearchResults(false);
+					console.log(error);
+				});
+		},
+		searchProduct() {
+			if (this.keyword.length > 0) {
 				this.initiateLoadingSearchResults(true);
 
 				let payload = {
 					model: "products",
-					mutation: "setProductList"
+					mutation: "setProductList",
+					keyword: this.keyword
 				};
+
 				this.$store
-					.dispatch("getAll", payload)
+					.dispatch("search", payload)
 					.then(result => {
 						this.initiateLoadingSearchResults(false);
 					})
 					.catch(error => {
 						this.initiateLoadingSearchResults(false);
-						console.log(error);
 					});
-			},
-			getAllCategories() {
-				this.initiateLoadingSearchResults(true);
-
-				let payload = {
-					model: "categories",
-					mutation: "setCategoryList"
-				};
-				this.$store
-					.dispatch("getAll", payload)
-					.then(result => {
-						this.initiateLoadingSearchResults(false);
-					})
-					.catch(error => {
-						this.initiateLoadingSearchResults(false);
-						console.log(error);
-					});
-			},
-			searchProduct() {
-				if (this.keyword.length > 0) {
-					this.initiateLoadingSearchResults(true);
-
-					let payload = {
-						model: "products",
-						mutation: "setProductList",
-						keyword: this.keyword
-					};
-
-					this.$store
-						.dispatch("search", payload)
-						.then(result => {
-							this.initiateLoadingSearchResults(false);
-						})
-						.catch(error => {
-							this.initiateLoadingSearchResults(false);
-						});
-				}
-			},
-			addCartProduct(product) {
-				this.$store.commit("addCartProduct", product);
 			}
+		},
+		addCartProduct(product) {
+			this.$store.commit("cart/addCartProduct", product);
 		}
-	};
+	}
+};
 </script>

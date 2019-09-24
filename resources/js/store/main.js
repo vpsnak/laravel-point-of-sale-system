@@ -32,8 +32,8 @@ export default new Vuex.Store({
         categoryList: [],
         storeList: [],
         cartsOnHold: [],
-        cartCustomer: undefined,
-        cartProducts: []
+        cartCustomer: undefined
+
         // Current state of the application lies here.
     },
     getters: {
@@ -58,32 +58,6 @@ export default new Vuex.Store({
         },
         setCartsOnHold(state, cartsOnHold) {
             state.cartsOnHold = cartsOnHold;
-        },
-        // shopping cart mutations
-        addCartProduct(state, cartProduct) {
-            if (_.includes(state.cartProducts, cartProduct)) {
-                let index = _.findIndex(state.cartProducts, cartProduct);
-                state.cartProducts[index].qty++;
-            } else {
-                Vue.set(cartProduct, "qty", 1);
-                state.cartProducts.push(cartProduct);
-            }
-        },
-        increaseCartProductQty(state, cartProduct) {
-            let index = _.findIndex(state.cartProducts, cartProduct);
-            state.cartProducts[index].qty++;
-        },
-        decreaseCartProductQty(state, cartProduct) {
-            let index = _.findIndex(state.cartProducts, cartProduct);
-
-            if (state.cartProducts[index].qty > 1) {
-                state.cartProducts[index].qty--;
-            }
-        },
-        addOrderCustomer(state, orderCustomer) {
-            let orderCustomers = state.orderCustomers;
-            orderCustomers.push(orderCustomer);
-            Vue.set(state, "orderCustomers", orderCustomers);
         }
     },
     actions: {
@@ -92,9 +66,11 @@ export default new Vuex.Store({
                 axios
                     .get(this.state.baseUrl + payload.model)
                     .then(response => {
-                        if (_.has(payload, 'mutation')) {
-                            console.log('mutation: ' + payload.mutation)
-                            context.commit(payload.mutation, response.data, {root: true})
+                        if (_.has(payload, "mutation")) {
+                            console.log("mutation: " + payload.mutation);
+                            context.commit(payload.mutation, response.data, {
+                                root: true
+                            });
                         }
                         resolve(response.data);
                     })
@@ -107,11 +83,18 @@ export default new Vuex.Store({
         getOne(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(this.state.baseUrl + payload.model + "/" + payload.data.id)
+                    .get(
+                        this.state.baseUrl +
+                            payload.model +
+                            "/" +
+                            payload.data.id
+                    )
                     .then(response => {
-                        if (_.has(payload, 'mutation')) {
-                            console.log('mutation: ' + payload.mutation)
-                            context.commit(payload.mutation, response.data, {root: true})
+                        if (_.has(payload, "mutation")) {
+                            console.log("mutation: " + payload.mutation);
+                            context.commit(payload.mutation, response.data, {
+                                root: true
+                            });
                         }
                         resolve(response.data);
                     })
@@ -129,9 +112,10 @@ export default new Vuex.Store({
                         payload
                     )
                     .then(response => {
-                        if (_.has(payload, 'mutation')) {
-                            console.log('mutation: ' + payload.mutation)
-                            context.commit(payload.mutation, response.data, {root: true})
+                        if (_.has(payload, "mutation")) {
+                            context.commit(payload.mutation, response.data, {
+                                root: true
+                            });
                         }
                         resolve(response.data);
                     })
@@ -149,9 +133,11 @@ export default new Vuex.Store({
                         payload.data
                     )
                     .then(response => {
-                        if (_.has(payload, 'mutation')) {
-                            console.log('mutation: ' + payload.mutation)
-                            context.commit(payload.mutation, response.data, {root: true})
+                        if (_.has(payload, "mutation")) {
+                            console.log("mutation: " + payload.mutation);
+                            context.commit(payload.mutation, response.data, {
+                                root: true
+                            });
                         }
                         resolve(response.data);
                     })
@@ -168,9 +154,10 @@ export default new Vuex.Store({
                         this.state.baseUrl + payload.model + "/" + payload.id
                     )
                     .then(response => {
-                        if (_.has(payload, 'mutation')) {
-                            console.log('mutation: ' + payload.mutation)
-                            context.commit(payload.mutation, response.data, {root: true})
+                        if (_.has(payload, "mutation")) {
+                            context.commit(payload.mutation, response.data, {
+                                root: true
+                            });
                         }
                         resolve(response.data);
                     })

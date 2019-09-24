@@ -5,12 +5,12 @@
 				<productList />
 			</v-col>
 			<v-col cols="4">
-				<cartList />
+				<cart />
 			</v-col>
 		</v-layout>
 	</v-container>
 </template>
 
 <script>
-	export default {};
+export default {};
 </script>
