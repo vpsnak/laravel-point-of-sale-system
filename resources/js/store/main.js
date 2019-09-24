@@ -7,6 +7,7 @@ import topMenu from "./menu/topMenu";
 import cart from "./modules/cart";
 import payment from "./modules/payment";
 import endpoints from "./modules/endpoints";
+import datatable from "./modules/datatable";
 
 Vue.use(Vuex);
 
@@ -18,6 +19,7 @@ export default new Vuex.Store({
         topMenu,
         cart,
         payment,
+        datatable,
         endpoints
     },
     state: {
