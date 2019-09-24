@@ -22,7 +22,7 @@
 				></v-text-field>
 			</v-row>
 			<v-row justify="center">
-				<v-btn-toggle v-for="category in categoryList" :key="category.id">
+				<v-btn-toggle v-model="toggle_one" v-for="category in categoryList" :key="category.id">
 					<v-btn :disabled="disableFilters" @click="setProductListByCategoryProducts(category)" text>
 						<span class="hidden-sm-and-down">{{category.name}}</span>
 					</v-btn>
@@ -77,7 +77,8 @@
 				loader: false,
 				disableFilters: false,
 				model: "products",
-				keyword: ""
+				keyword: "",
+				toggle_one: undefined
 			};
 		},
 		mounted() {
