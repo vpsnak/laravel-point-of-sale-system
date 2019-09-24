@@ -95,20 +95,41 @@
 				<v-col cols="9">
 					<v-card class="pa-2">
 						<v-card-text>
-							<v-stepper>
+							<v-stepper v-model="currentCheckoutStep">
 								<v-stepper-header>
-									<v-stepper-step step="1">Shipping options</v-stepper-step>
-									<v-divider></v-divider>
-									<v-stepper-step step="2">Payment</v-stepper-step>
-									<v-divider></v-divider>
-									<v-stepper-step step="3">Completion</v-stepper-step>
+									<v-stepper-step
+										v-for="(checkoutStep, index) in getCheckoutSteps"
+										:key="index"
+										:step="++index"
+										:complete="checkoutStep.completed"
+									>
+										{{ checkoutStep.name }}
+										<v-divider></v-divider>
+									</v-stepper-step>
 								</v-stepper-header>
 								<v-stepper-items>
-									<v-stepper-content step="1">
-										<shippingStep />
-									</v-stepper-content>
-									<v-stepper-content step="2">
-										<paymentStep />
+									<v-stepper-content
+										v-for="(checkoutStep, index) in getCheckoutSteps"
+										:key="index"
+										:step="++index"
+									>
+										<v-card class="pa-2">
+											<v-card-title class="justify-center" align="center">
+												<v-row align="center" justify="center">
+													<v-col align="center" justify="center">
+														<v-icon>{{ checkoutStep.icon }}</v-icon>
+														<h5 class="text-center">{{ checkoutStep.name }}</h5>
+													</v-col>
+												</v-row>
+											</v-card-title>
+											<v-card-text>
+												<component :is="checkoutStep.component" />
+											</v-card-text>
+											<v-card-actions>
+												<div class="flex-grow-1"></div>
+												<v-btn color="primary" @click="completeStep(checkoutStep)">Continue</v-btn>
+											</v-card-actions>
+										</v-card>
 									</v-stepper-content>
 								</v-stepper-items>
 							</v-stepper>
@@ -121,19 +142,31 @@
 </template>
 
 <script>
-	export default {
-		computed: {
-			cartProducts() {
-				return this.$store.state.cartProducts;
-			},
-			cartCustomer() {
-				return this.$store.state.cartCustomer;
-			}
+import { mapGetters } from "vuex";
+
+export default {
+	computed: {
+		...mapGetters("cart", ["getCheckoutSteps"]),
+		cartProducts() {
+			return this.$store.state.cartProducts;
 		},
-		methods: {
-			close() {
-				this.$store.state.checkoutDialog = false;
-			}
+		cartCustomer() {
+			return this.$store.state.cartCustomer;
+		},
+		currentCheckoutStep() {
+			return this.$store.state.cart.currentCheckoutStep;
 		}
-	};
+	},
+	methods: {
+		close() {
+			this.$store.state.checkoutDialog = false;
+		},
+		completeStep(checkoutStep) {
+			this.$store.dispatch("cart/completeStep", checkoutStep);
+		}
+	},
+	mounted() {
+		console.log(this.getCheckoutSteps);
+	}
+};
 </script>
