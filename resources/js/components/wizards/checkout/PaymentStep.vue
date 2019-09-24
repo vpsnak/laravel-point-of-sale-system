@@ -1,13 +1,17 @@
 <template>
-	<v-row>
-		<v-col>payment here</v-col>
-	</v-row>
+	<payment :totalAmount="total" />
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
 	props: {
 		currentStep: Object
+	},
+	computed: {
+		...mapState("cart", {
+			total: "total"
+		})
 	},
 	methods: {}
 };

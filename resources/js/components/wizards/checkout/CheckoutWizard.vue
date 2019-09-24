@@ -146,7 +146,7 @@ import { mapGetters } from "vuex";
 
 export default {
 	computed: {
-		...mapGetters("cart", ["getCheckoutSteps"]),
+		...mapGetters("checkout", ["getCheckoutSteps"]),
 		cartProducts() {
 			return this.$store.state.cartProducts;
 		},
@@ -154,7 +154,7 @@ export default {
 			return this.$store.state.cartCustomer;
 		},
 		currentCheckoutStep() {
-			return this.$store.state.cart.currentCheckoutStep;
+			return this.$store.state.checkout.currentCheckoutStep;
 		}
 	},
 	methods: {
@@ -162,11 +162,8 @@ export default {
 			this.$store.state.checkoutDialog = false;
 		},
 		completeStep(checkoutStep) {
-			this.$store.dispatch("cart/completeStep", checkoutStep);
+			this.$store.dispatch("checkout/completeStep", checkoutStep);
 		}
-	},
-	mounted() {
-		console.log(this.getCheckoutSteps);
 	}
 };
 </script>
