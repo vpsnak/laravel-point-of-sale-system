@@ -9,7 +9,7 @@
 			<v-text-field
 				ref="firstname"
 				v-model="firstname"
-				:rules="[() => !!name || 'This field is required']"
+				:rules="[() => !!firstname || 'This field is required']"
 				:error-messages="errorMessages"
 				label="First name"
 				placeholder="Panos"
@@ -18,7 +18,7 @@
 			<v-text-field
 				ref="lastname"
 				v-model="lastname"
-				:rules="[() => !!name || 'This field is required']"
+				:rules="[() => !!lastname || 'This field is required']"
 				:error-messages="errorMessages"
 				label="Last name"
 				placeholder="Meletis"
@@ -294,7 +294,10 @@
 				firstname: null,
 				lastname: null,
 				company_name: null,
-				formHasErrors: false
+				formHasErrors: false,
+				email: "",
+				company_name: "",
+				country: ""
 			};
 		},
 
