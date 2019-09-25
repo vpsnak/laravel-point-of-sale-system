@@ -44,7 +44,7 @@
 			</div>
 
 			<v-divider />
-
+   
 			<div class="d-flex justify-space-between pa-2">
 				<span>Total</span>
 				<span>$ {{ total }}</span>
@@ -82,11 +82,11 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState, mapGetters } from "vuex";
 export default {
 	data() {
 		return {
-			model: "customers"
+			model: "customers",
 		};
 	},
 	mounted() {
@@ -205,7 +205,7 @@ export default {
 			set(value) {
 				this.$store.state.customerList = value;
 			}
-		}
+		},
 	},
 
 	methods: {
@@ -226,10 +226,10 @@ export default {
 			if (showPrompt) {
 				confirm("Are you sure you want to delete the cart?") &&
 					this.cartProducts.splice(0);
-				this.cartCustomer = null;
+              this.$store.commit('cart/setCustomer',undefined);
 			} else {
 				this.cartProducts.splice(0);
-				this.cartCustomer = null;
+				this.$store.commit('cart/setCustomer',undefined);
 			}
 		},
 		addAll(cart) {
@@ -238,12 +238,16 @@ export default {
 		},
 		checkout() {
 			this.checkoutDialog = true;
+			this.submitOrder().then(() => {console.log('spinn')})
+              .catch((error) => {
+              console.log('eased')
+            })
 		},
 		holdCart() {
 			let payload = {
 				model: "carts",
 				data: {
-					customer_id: this.cartCustomer.id,
+					customer_id: this.$store.state.cart.customer.id,
 					cart: this.cartProducts
 				}
 			};
@@ -251,23 +255,6 @@ export default {
 				this.emptyCart(false);
 				this.getHolds();
 			});
-		},
-		submitCart() {
-			let payload = {
-				model: "orders",
-				data: {
-					customer_id: 1,
-					user_id: 1,
-					discount: this.totalDiscount,
-					shipping_type: "shipping",
-					shipping_cost: 0,
-					tax: this.tax,
-					subtotal: this.subTotal,
-					note: "",
-					items: this.cartProducts
-				}
-			};
-			this.$store.dispatch("create", payload);
 		},
 		getHolds() {
 			this.getAll({
@@ -281,7 +268,10 @@ export default {
 			getOne: "getOne",
 			create: "create",
 			delete: "delete"
-		})
+		}),
+      ...mapActions('cart',{
+        submitOrder: 'submitOrder'
+      })
 	}
 };
 </script>

@@ -40,10 +40,10 @@
       },
       cartCustomer: {
         get () {
-          return this.$store.state.cartCustomer
+          return this.$store.state.cart.customer
         },
         set (value) {
-          this.$store.state.cartCustomer = value
+          this.$store.state.cart.customer = value
         }
       }
     },
@@ -58,9 +58,8 @@
             id: cartOnHold.customer_id
           }
         }).then((customer) => {
-          console.log(this.$store.state)
-          this.$store.state.cartCustomer = customer
-          this.$store.state.cartProducts = JSON.parse(cartOnHold.cart)
+          this.$store.commit('cart/setCustomer', customer);
+          this.$store.state.cart.cartProducts = JSON.parse(cartOnHold.cart)
           this.nukeCart(cartOnHold).then(() => {
             this.close()
           })
@@ -71,12 +70,9 @@
           model: 'carts',
           id: cartOnHold.id
         }).then(() => {
-          console.log(this.cartsOnHold)
           this.cartsOnHold = this.cartsOnHold.filter((cart) => {
-            console.log(cart.id !== cartOnHold.id)
             return cart.id !== cartOnHold.id
           })
-          console.log(this.cartsOnHold)
         })
       },
       ...mapActions({
