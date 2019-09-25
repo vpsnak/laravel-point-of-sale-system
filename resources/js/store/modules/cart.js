@@ -18,6 +18,10 @@ export default {
         ],
         customer: undefined,
         cartProducts: [],
+        subtotal: 0,
+        discount: 0,
+        order: undefined,
+        shipping: ''
     },
 
     getters: {
