@@ -3,7 +3,7 @@
 		<v-col cols="6" class="px-2 py-0">
 			<v-select
 				:key="model.id"
-				v-model="model.discount_type"
+				v-model="discountType"
 				:items="discountTypes"
 				label="Discount"
 				item-text="label"
@@ -13,12 +13,11 @@
 		<v-col cols="6" class="px-2 py-0">
 			<v-text-field
 				:key="model.id"
-				v-if="model.discount_type && model.discount_type !== 'none'"
-				v-model="model.discount_amount"
+				v-if="discountType && discountType !== 'none'"
+				v-model="discountAmount"
 				type="number"
 				label="Amount"
 				min="1"
-				@input="setDiscount"
 			></v-text-field>
 		</v-col>
 	</div>
@@ -26,18 +25,34 @@
 
 <script>
 import { mapState } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
 	props: {
 		model: Array | Object
 	},
 	computed: {
-		...mapState("cart", ["discountTypes"])
+		...mapState("cart", ["discountTypes"]),
+		discountType: {
+			get() {
+				return this.$props.model.discount_type;
+			},
+			set(value) {
+				this.$set(this.$props.model, "discount_type", value);
+			}
+		},
+		discountAmount: {
+			get() {
+				return this.$props.model.discount_amount;
+			},
+			set(value) {
+				this.$set(this.$props.model, "discount_amount", value);
+				this.$store.commit("cart/setDiscount", this.$props.model);
+			}
+		}
 	},
 	methods: {
-		setDiscount() {
-			this.$store.commit("cart/setDiscount", this.$props.model);
-		}
+		setDiscount() {}
 	}
 };
 </script>

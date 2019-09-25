@@ -21,13 +21,13 @@
 					@keyup.enter="searchProduct"
 				></v-text-field>
 			</v-row>
-			<v-row justify="center">
+			<!-- <v-row justify="center">
 				<v-btn-toggle v-model="toggle_one" v-for="category in categoryList" :key="category.id">
 					<v-btn :disabled="disableFilters" @click="setProductListByCategoryProducts(category)" text>
 						<span class="hidden-sm-and-down">{{category.name}}</span>
 					</v-btn>
 				</v-btn-toggle>
-			</v-row>
+			</v-row>-->
 			<v-row v-if="productList.length" style="height:58vh; overflow-y:auto;">
 				<v-col v-for="product in productList" :key="product.id" cols="12" md="6" lg="4">
 					<v-card :img="product.photo_url" @click="addCartProduct(product)" height="170px">

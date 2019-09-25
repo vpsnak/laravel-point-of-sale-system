@@ -1,62 +1,64 @@
 // initial state
 const state = {
-    title: 'DataTable',
+    title: "DataTable",
     headers: [],
     rows: [],
-    loading: false,
-}
+    loading: false
+};
 
 // getters
-const getters = {}
+const getters = {};
 
 // actions
 const actions = {
-    getRows ({dispatch, commit}, payload) {
-        commit('setLoading', true)
-        dispatch('getRequest', payload, {root: true})
+    getRows({ dispatch, commit }, payload) {
+        commit("setLoading", true);
+        dispatch("getRequest", payload, { root: true })
             .then(result => {
-                commit('setLoading', false)
-                commit('setRows', result)
+                commit("setLoading", false);
+                commit("setRows", result);
             })
             .catch(error => {
-                commit('setLoading', false)
-                console.log(error)
-            })
+                commit("setLoading", false);
+                console.log(error);
+            });
     },
-    deleteRow ({dispatch, commit}, payload) {
-        commit('setLoading', true)
-        dispatch('deleteRequest', payload, {root: true})
+    deleteRow({ dispatch, commit }, payload) {
+        commit("setLoading", true);
+        dispatch("deleteRequest", payload, { root: true })
             .then(result => {
-                commit('setLoading', false)
+                commit("setLoading", false);
                 if (result === 1) {
-                    commit('deleteRow', payload.data.id)
+                    commit("deleteRow", payload.data.id);
                 }
             })
             .catch(error => {
-                commit('setLoading', false)
-                console.log(error)
-            })
-    },
-}
+                commit("setLoading", false);
+                console.log(error);
+            });
+    }
+};
 
 // mutations
 const mutations = {
-    setHeaders (state, headers) {
-        state.headers = headers
+    setHeaders(state, headers) {
+        state.headers = headers;
     },
-    setLoading (state, loading) {
-        state.loading = loading
+    setLoading(state, loading) {
+        state.loading = loading;
     },
-    setTitle (state, title) {
-        state.title = title
+    setTitle(state, title) {
+        state.title = title;
     },
-    setRows (state, rows) {
-        state.rows = rows
+    setRows(state, rows) {
+        state.rows = rows;
     },
-    deleteRow (state, id) {
-        state.rows = _.filter(state.rows, (row) => { return row.id !== id })
-    },
-}
+    deleteRow(state, id) {
+        state.rows = _.filter(state.rows, row => {
+            return row.id !== id;
+        });
+    }
+};
 
 export default {
     namespaced: true,
@@ -64,4 +66,4 @@ export default {
     getters,
     actions,
     mutations
-}
+};

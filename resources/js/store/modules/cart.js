@@ -56,9 +56,13 @@ export default {
                     "discount_amount",
                     model.discount_amount
                 );
-            }
+            } else {
+                let index = _.findIndex(state.cartProducts, iterator => {
+                    return iterator.id === model.id;
+                });
 
-            console.log(state.cartProducts);
+                state.cartProducts[index] = model;
+            }
         }
     }
 };
