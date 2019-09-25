@@ -15,13 +15,19 @@ class StoreSeeder extends Seeder
         DB::table('stores')->insert([
             [
                 'name' => 'Plantshed Central',
-                'address_id' => factory(App\Address::class)->create()->id
+                'taxable' => 1,
+                'is_default' => 1,
+                'tax_id' => 1,
+                'created_by' => 1,
             ]
         ]);
         DB::table('stores')->insert([
             [
                 'name' => 'Plantshed Eshop',
-                'address_id' => factory(App\Address::class)->create()->id
+                'taxable' => 1,
+                'is_default' => 1,
+                'tax_id' => 1,
+                'created_by' => 1,
             ]
         ]);
     }

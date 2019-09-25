@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePaymentsTable extends Migration
+class CreateTaxesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreatePaymentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('taxes', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->enum('type', ['cash', 'card']);
-            $table->decimal('amount');
+            $table->string('name');
+            $table->double('percentage')->default(0);
+            $table->tinyInteger('is_default')->default(0);
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ class CreatePaymentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('taxes');
     }
 }
