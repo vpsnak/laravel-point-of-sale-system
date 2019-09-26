@@ -8,8 +8,6 @@
 				<cart
 					icon="shopping_cart"
 					title="Shopping cart"
-					:toggleTaxes="true"
-					:toggleRetail="true"
 					:editable="true"
 					:actions="true"
 					:toggles="true"

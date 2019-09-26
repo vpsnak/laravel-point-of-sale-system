@@ -9,16 +9,16 @@
 							<span class="body-2">$ {{ cartProduct.qty * cartProduct.price.amount }}</span>
 						</v-col>
 						<v-col cols="6" class="d-flex align-center justify-end">
-							<v-btn icon @click.stop="decreaseQty(cartProduct)">
+							<v-btn v-if="editable" icon @click.stop="decreaseQty(cartProduct)">
 								<v-icon color="grey lighten-1">remove</v-icon>
 							</v-btn>
 							<v-chip filter @click.stop>
 								<span>{{ cartProduct.qty }}</span>
 							</v-chip>
-							<v-btn icon @click.stop="increaseQty(cartProduct)">
+							<v-btn icon v-if="editable" @click.stop="increaseQty(cartProduct)">
 								<v-icon color="grey lighten-1">add</v-icon>
 							</v-btn>
-							<v-btn icon @click.stop="removeItem(cartProduct)" class="mx-1">
+							<v-btn v-if="editable" icon @click.stop="removeItem(cartProduct)" class="mx-1">
 								<v-icon color="grey lighten-1">delete</v-icon>
 							</v-btn>
 						</v-col>
@@ -56,7 +56,8 @@
 import { mapState } from "vuex";
 export default {
 	props: {
-		cartProducts: Array
+		cartProducts: Array,
+		editable: Boolean
 	},
 	computed: {
 		...mapState("cart", ["discountTypes"])

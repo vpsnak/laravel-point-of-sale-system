@@ -1,66 +1,37 @@
 <template>
-	<v-sheet
-		class="pa-3 d-flex flex-column"
-		style="height:100%"
-	>
+	<v-sheet class="pa-3 d-flex flex-column" style="height:100%">
 		<div class="d-flex align-center justify-space-between">
 			<div class="d-flex align-center">
 				<v-icon>{{ icon }}</v-icon>
 				<h5 class="title-2 ml-2">{{ title }}</h5>
 			</div>
 
-			<div
-				v-if="toggles"
-				class="d-flex align-center justify-space-between"
-			>
-				<v-switch
-					label="Retail"
-					v-model="retail"
-					class="px-2"
-				></v-switch>
-				<v-switch
-					label="Taxes"
-					v-model="taxes"
-					class="px-2"
-				></v-switch>
+			<div v-if="toggles" class="d-flex align-center justify-space-between">
+				<v-switch label="Retail" v-model="retail" class="px-2"></v-switch>
+				<v-switch label="Taxes" v-model="taxes" class="px-2"></v-switch>
 			</div>
 		</div>
 
 		<v-divider />
 
-		<customerSearch
-			:editable="editable"
-			:keywordLength="1"
-		></customerSearch>
+		<customerSearch :editable="editable" :keywordLength="1"></customerSearch>
 
-		<cartProducts :cartProducts="cartProducts"></cartProducts>
+		<cartProducts :cartProducts="cartProducts" :editable="editable"></cartProducts>
 
 		<v-divider />
 		<div class="d-flex flex-column">
-			<v-row
-				v-if="editable"
-				class="d-flex justify-space-between align-center"
-			>
-				<v-col
-					cols="4"
-					class="px-5 py-0"
-				>
+			<v-row v-if="editable" class="d-flex justify-space-between align-center">
+				<v-col cols="4" class="px-5 py-0">
 					<v-label>Cart discount</v-label>
 				</v-col>
-				<v-col
-					cols="8"
-					class="px-2 py-0"
-				>
+				<v-col cols="8" class="px-2 py-0">
 					<cartDiscount :model="cartProducts"></cartDiscount>
 				</v-col>
 			</v-row>
 
 			<v-divider />
 
-			<cartTotals
-				:cartProducts="cartProducts"
-				:taxes="taxes"
-			/>
+			<cartTotals :cartProducts="cartProducts" :taxes="taxes" />
 
 			<div v-if="actions">
 				<cartActions :disabled="totalCartProducts" />
@@ -72,66 +43,66 @@
 </template>
 
 <script>
-	import { mapActions, mapState, mapGetters } from "vuex";
+import { mapActions, mapState, mapGetters } from "vuex";
 
-	export default {
-		props: {
-			title: String,
-			icon: String | undefined,
-			editable: Boolean | undefined,
-			actions: Boolean | undefined,
-			toggles: Boolean | undefined
-		},
-		computed: {
-			retail: {
-				get() {
-					return this.$store.state.cart.retail;
-				},
-				set() {
-					this.$store.commit("cart/toggleRetail");
-				}
+export default {
+	props: {
+		title: String,
+		icon: String | undefined,
+		editable: Boolean | undefined,
+		actions: Boolean | undefined,
+		toggles: Boolean | undefined
+	},
+	computed: {
+		retail: {
+			get() {
+				return this.$store.state.cart.retail;
 			},
-			taxes: {
-				get() {
-					return this.$store.state.cart.taxes;
-				},
-				set() {
-					this.$store.commit("cart/toggleTaxes");
-				}
-			},
-			cartProducts: {
-				get() {
-					return this.$store.state.cart.cartProducts;
-				},
-				set(value) {
-					this.$store.state.cart.cartProducts = value;
-				}
-			},
-			customerList: {
-				get() {
-					return this.$store.state.customerList;
-				},
-				set(value) {
-					this.$store.state.customerList = value;
-				}
-			},
-			totalCartProducts() {
-				return _.size(this.cartProducts) ? false : true;
+			set() {
+				this.$store.commit("cart/toggleRetail");
 			}
 		},
-
-		methods: {
-			addAll(cart) {
-				this.cartProducts.splice(0);
-				this.cartProducts = cart;
+		taxes: {
+			get() {
+				return this.$store.state.cart.taxes;
 			},
-
-			...mapActions({
-				getAll: "getAll",
-				getOne: "getOne",
-				create: "create",
-				delete: "delete"
-			})
+			set() {
+				this.$store.commit("cart/toggleTaxes");
+			}
+		},
+		cartProducts: {
+			get() {
+				return this.$store.state.cart.cartProducts;
+			},
+			set(value) {
+				this.$store.state.cart.cartProducts = value;
+			}
+		},
+		customerList: {
+			get() {
+				return this.$store.state.customerList;
+			},
+			set(value) {
+				this.$store.state.customerList = value;
+			}
+		},
+		totalCartProducts() {
+			return _.size(this.cartProducts) ? false : true;
 		}
-	};
+	},
+
+	methods: {
+		addAll(cart) {
+			this.cartProducts.splice(0);
+			this.cartProducts = cart;
+		},
+
+		...mapActions({
+			getAll: "getAll",
+			getOne: "getOne",
+			create: "create",
+			delete: "delete"
+		})
+	}
+};
 </script>
