@@ -12,9 +12,17 @@
 							<v-btn v-if="editable" icon @click.stop="decreaseQty(cartProduct)">
 								<v-icon color="grey lighten-1">remove</v-icon>
 							</v-btn>
-							<v-chip filter @click.stop>
-								<span>{{ cartProduct.qty }}</span>
-							</v-chip>
+
+							<v-text-field
+								v-if="editable"
+								type="number"
+								label="Qty"
+								v-model="cartProduct.qty"
+								min="1"
+								@click.stop
+								style="max-width:50px; text-center"
+							></v-text-field>
+
 							<v-btn icon v-if="editable" @click.stop="increaseQty(cartProduct)">
 								<v-icon color="grey lighten-1">add</v-icon>
 							</v-btn>
@@ -25,13 +33,9 @@
 					</v-row>
 				</v-expansion-panel-header>
 				<v-expansion-panel-content class="pa-0">
-					<v-divider />
 					<v-row>
-						<v-col cols="3">
-							<v-text-field type="number" label="Qty" v-model="cartProduct.qty" min="1"></v-text-field>
-						</v-col>
-						<v-col cols="9">
-							<cartDiscount :model="cartProduct"></cartDiscount>
+						<v-col cols="12">
+							<cartDiscount :model="cartProduct" :editable="editable"></cartDiscount>
 						</v-col>
 					</v-row>
 					<v-row>
@@ -43,6 +47,7 @@
 								:hint="'For product: ' + cartProduct.name"
 								counter
 								no-resize
+								:disabled="!editable"
 							></v-textarea>
 						</v-col>
 					</v-row>
