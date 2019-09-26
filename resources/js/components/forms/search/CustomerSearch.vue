@@ -1,6 +1,7 @@
 <template>
 	<div class="d-flex">
 		<v-autocomplete
+			v-if="editable"
 			v-model="cartCustomer"
 			clearable
 			dense
@@ -16,70 +17,81 @@
 			prepend-icon="mdi-database-search"
 			return-object
 		></v-autocomplete>
+		<v-text-field
+			v-else
+			:value="getCustomerFullname(cartCustomer)"
+			disabled
+			prepend-icon="person"
+		>
+		</v-text-field>
 	</div>
 </template>
-
 <script>
-export default {
-	props: {
-		keywordLength: Number
-	},
-
-	data() {
-		return {
-			loading: false,
-			search: null,
-			customers: undefined
-		};
-	},
-	computed: {
-		cartCustomer: {
-			get() {
-				return this.$store.state.cartCustomer;
-			},
-			set(value) {
-				this.$store.state.cartCustomer = value;
-			}
-		}
-	},
-	methods: {
-		getCustomerFullname(item) {
-			return item.first_name + " " + item.last_name;
+	export default {
+		props: {
+			keywordLength: Number,
+			editable: Boolean | undefined
 		},
-		searchCustomer(keyword) {
-			this.loading = true;
-			const payload = {
-				model: "customers",
-				mutation: "setCustomerList",
-				keyword: keyword
-			};
 
-			this.$store
-				.dispatch("search", payload)
-				.then(result => {
-					this.customers = result;
-				})
-				.catch(error => {
-					console.log(error);
-				})
-				.finally(() => (this.loading = false));
-		}
-	},
-	watch: {
-		search(keyword) {
-			if (keyword) {
-				if (keyword.length > this.$props.keywordLength) {
-					if (this.loading) {
-						return;
-					} else {
-						this.searchCustomer(keyword);
-						return;
-					}
+		data() {
+			return {
+				loading: false,
+				search: null,
+				customers: undefined
+			};
+		},
+		computed: {
+			cartCustomer: {
+				get() {
+					return this.$store.state.cartCustomer;
+				},
+				set(value) {
+					this.$store.state.cartCustomer = value;
 				}
 			}
-			this.cartCustomer = undefined;
-			return;
+		},
+		methods: {
+			getCustomerFullname(item) {
+				if (item) {
+					return item.first_name + " " + item.last_name;
+				} else {
+					return "Guest";
+				}
+			},
+			searchCustomer(keyword) {
+				this.loading = true;
+				const payload = {
+					model: "customers",
+					mutation: "setCustomerList",
+					keyword: keyword
+				};
+
+				this.$store
+					.dispatch("search", payload)
+					.then(result => {
+						this.customers = result;
+					})
+					.catch(error => {
+						console.log(error);
+					})
+					.finally(() => (this.loading = false));
+			}
+		},
+		watch: {
+			search(keyword) {
+				if (keyword) {
+					if (keyword.length > this.$props.keywordLength) {
+						if (this.loading) {
+							return;
+						} else {
+							this.searchCustomer(keyword);
+							return;
+						}
+					}
+				}
+				this.cartCustomer = undefined;
+				return;
+			}
 		}
-	}
-};
+	};
 </script>

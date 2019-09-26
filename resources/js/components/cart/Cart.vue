@@ -29,7 +29,7 @@
 		<v-divider />
 
 		<customerSearch
-			v-if="editable"
+			:editable="editable"
 			:keywordLength="1"
 		></customerSearch>
 
