@@ -5,15 +5,15 @@ export default {
         discountTypes: [
             {
                 label: "None",
-                value: "none"
+                value: "None"
             },
             {
                 label: "Flat",
-                value: "flat"
+                value: "Flat"
             },
             {
                 label: "Percentage",
-                value: "percentage"
+                value: "Percentage"
             }
         ],
         customer: undefined,

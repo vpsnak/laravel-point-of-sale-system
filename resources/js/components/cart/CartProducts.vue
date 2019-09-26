@@ -4,41 +4,44 @@
 			<v-expansion-panel v-for="cartProduct in cartProducts" :key="cartProduct.id">
 				<v-expansion-panel-header class="pa-3" ripple>
 					<v-row no-gutters>
-						<v-col cols="6" class="d-flex flex-column">
+						<v-col cols="8" class="d-flex flex-column">
 							<span class="subtitle-2">{{ cartProduct.name }}</span>
 							<span class="body-2">$ {{ cartProduct.qty * cartProduct.price.amount }}</span>
 						</v-col>
-						<v-col cols="6" class="d-flex align-center justify-end">
+						<v-col cols="1" class="d-flex align-center justify-center pa-1">
 							<v-btn v-if="editable" icon @click.stop="decreaseQty(cartProduct)">
 								<v-icon color="grey lighten-1">remove</v-icon>
 							</v-btn>
-
+						</v-col>
+						<v-col cols="1" class="d-flex align-center justify-center pa-1">
 							<v-text-field
-								v-if="editable"
+								:disabled="!editable"
 								type="number"
 								label="Qty"
 								v-model="cartProduct.qty"
 								min="1"
 								@click.stop
-								style="max-width:50px; text-center"
 							></v-text-field>
-
+						</v-col>
+						<v-col cols="1" class="d-flex align-center justify-center pa-1">
 							<v-btn icon v-if="editable" @click.stop="increaseQty(cartProduct)">
 								<v-icon color="grey lighten-1">add</v-icon>
 							</v-btn>
-							<v-btn v-if="editable" icon @click.stop="removeItem(cartProduct)" class="mx-1">
+						</v-col>
+						<v-col cols="1" class="d-flex align-center justify-center pa-1">
+							<v-btn v-if="editable" icon @click.stop="removeItem(cartProduct)">
 								<v-icon color="grey lighten-1">delete</v-icon>
 							</v-btn>
 						</v-col>
 					</v-row>
 				</v-expansion-panel-header>
-				<v-expansion-panel-content class="pa-0">
-					<v-row>
+				<v-expansion-panel-content class="pa-3">
+					<v-row no-gutters>
 						<v-col cols="12">
 							<cartDiscount :model="cartProduct" :editable="editable"></cartDiscount>
 						</v-col>
 					</v-row>
-					<v-row>
+					<v-row no-gutters>
 						<v-col cols="12">
 							<v-textarea
 								v-model="cartProduct.notes"

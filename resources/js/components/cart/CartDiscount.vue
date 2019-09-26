@@ -1,6 +1,6 @@
 <template>
 	<div class="d-flex">
-		<v-col cols="6" class="px-2 py-0">
+		<v-col cols="6" class="pa-0 pr-2">
 			<v-select
 				v-if="editable"
 				:key="model.id"
@@ -10,12 +10,12 @@
 				item-text="label"
 				item-value="value"
 			></v-select>
-			<v-text-field v-else-if="!editable" :value="discountType" label="Discount"></v-text-field>
+			<v-text-field v-else-if="!editable" :value="discountType" label="Discount" disabled></v-text-field>
 		</v-col>
-		<v-col cols="6" class="px-2 py-0">
+		<v-col cols="6" class="pa-0 pl-2">
 			<v-text-field
 				:key="model.id"
-				v-if="discountType && discountType != 'none'"
+				v-if="discountType && discountType !== 'None'"
 				v-model="discountAmount"
 				type="number"
 				label="Amount"

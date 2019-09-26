@@ -20,12 +20,12 @@
 
 		<v-divider />
 		<div class="d-flex flex-column">
-			<v-row v-if="editable" class="d-flex justify-space-between align-center">
+			<v-row class="d-flex justify-space-between align-center">
 				<v-col cols="4" class="px-5 py-0">
 					<v-label>Cart discount</v-label>
 				</v-col>
 				<v-col cols="8" class="px-2 py-0">
-					<cartDiscount :model="cartProducts"></cartDiscount>
+					<cartDiscount :model="cartProducts" :editable="editable"></cartDiscount>
 				</v-col>
 			</v-row>
 
