@@ -5,15 +5,15 @@ export default {
         discountTypes: [
             {
                 label: "None",
-                value: "none"
+                value: "None"
             },
             {
                 label: "Flat",
-                value: "flat"
+                value: "Flat"
             },
             {
                 label: "Percentage",
-                value: "percentage"
+                value: "Percentage"
             }
         ],
         customer: undefined,
@@ -29,7 +29,7 @@ export default {
     getters: {
         getOrderData(state) {
             return {
-                customer_id: state.customer.id,
+                // customer_id: state.customer.id,
                 user_id: 1,
                 // discount: this.totalDiscount,
                 shipping_type: "shipping",
