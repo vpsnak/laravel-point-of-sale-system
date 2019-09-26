@@ -8,9 +8,12 @@
 
 		<v-divider />
 
-		<div class="d-flex justify-space-between pa-2 bb-1">
+		<div
+			v-if="taxes"
+			class="d-flex justify-space-between pa-2 bb-1"
+		>
 			<span>Tax</span>
-			<span>$ {{ taxes }}</span>
+			<span>$ {{ tax }}</span>
 		</div>
 
 		<v-divider />
@@ -31,9 +34,11 @@
 </template>
 
 <script>
+	import { parse } from "path";
 	export default {
 		props: {
-			cartProducts: Array
+			cartProducts: Array,
+			taxes: Boolean | undefined
 		},
 
 		computed: {
@@ -48,10 +53,7 @@
 			},
 			tax() {
 				// @TODO: pending configurable taxing
-				return this.subTotal * 0.24;
-			},
-			taxes() {
-				return this.tax.toFixed(2);
+				return parseFloat((this.subTotal * 0.24).toFixed(2));
 			},
 			totalDiscount() {
 				let totalFlatDiscount = 0;
@@ -102,7 +104,13 @@
 				return totalFlatDiscount + totalPercentageDiscount;
 			},
 			total() {
-				return (this.subTotal + this.tax - this.totalDiscount).toFixed(2);
+				if (this.$props.taxes) {
+					return (this.subTotal + this.tax - this.totalDiscount).toFixed(
+						2
+					);
+				} else {
+					return (this.subTotal - this.totalDiscount).toFixed(2);
+				}
 			}
 		}
 	};
