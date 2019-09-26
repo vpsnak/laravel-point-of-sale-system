@@ -22,9 +22,8 @@
 				<v-icon>delete</v-icon>
 			</v-btn>
 		</div>
-		<v-dialog v-model="checkoutDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
-			<checkoutWizard />
-		</v-dialog>
+
+		<checkoutDialog :show="checkoutDialog" />
 		<v-dialog v-model="restoreCartDialog" width="500">
 			<restoreCartDialog />
 		</v-dialog>
