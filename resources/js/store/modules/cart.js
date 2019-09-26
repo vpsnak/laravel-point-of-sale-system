@@ -21,11 +21,13 @@ export default {
         subtotal: 0,
         discount: 0,
         order: undefined,
-        shipping: ''
+        shipping: '',
+        retail: true,
+        taxes: true
     },
 
     getters: {
-        getOrderData (state) {
+        getOrderData(state) {
             return {
                 customer_id: customer.id,
                 user_id: 1,
@@ -41,7 +43,16 @@ export default {
     },
 
     mutations: {
-        addCartProduct (state, cartProduct) {
+        emptyCart(state) {
+            state.cartProducts = []
+        },
+        toggleRetail(state) {
+            state.retail = !state.retail
+        },
+        toggleTaxes(state) {
+            state.taxes = !state.taxes
+        },
+        addCartProduct(state, cartProduct) {
             if (_.includes(state.cartProducts, cartProduct)) {
                 let index = _.findIndex(state.cartProducts, cartProduct)
                 state.cartProducts[index].qty++
@@ -50,21 +61,19 @@ export default {
                 state.cartProducts.push(cartProduct)
             }
         },
-        increaseCartProductQty (state, cartProduct) {
+        increaseCartProductQty(state, cartProduct) {
             let index = _.findIndex(state.cartProducts, cartProduct)
             state.cartProducts[index].qty++
         },
-        decreaseCartProductQty (state, cartProduct) {
+        decreaseCartProductQty(state, cartProduct) {
             let index = _.findIndex(state.cartProducts, cartProduct)
 
             if (state.cartProducts[index].qty > 1) {
                 state.cartProducts[index].qty--
             }
         },
-        setDiscount (state, model) {
-            console.log(model)
-
-            if (isArray(model)) {
+        setDiscount(state, model) {
+            if (Array.isArray(model)) {
                 Vue.set(
                     state.cartProducts,
                     'discount_type',
@@ -83,17 +92,17 @@ export default {
                 state.cartProducts[index] = model
             }
         },
-        setCustomer (state, customer) {
+        setCustomer(state, customer) {
             state.customer = customer
         }
     },
     actions: {
-        submitOrder ({dispatch}) {
+        submitOrder({ dispatch }) {
             return new Promise((resolve, reject) => {
                 dispatch('create', {
                     model: 'orders',
                     data: this.getOrderData
-                }, {root: true})
+                }, { root: true })
                     .then(() => {
                         console.log('success')
                         resolve()

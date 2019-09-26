@@ -1,16 +1,25 @@
 <template>
 	<v-container fluid>
-		<v-layout row>
+		<v-row>
 			<v-col cols="8">
 				<productList />
 			</v-col>
 			<v-col cols="4">
-				<cart />
+				<cart
+					icon="shopping_cart"
+					title="Shopping cart"
+					:toggleTaxes="true"
+					:toggleRetail="true"
+					:editable="true"
+					:actions="true"
+					:toggles="true"
+				/>
 			</v-col>
-		</v-layout>
+		</v-row>
+
 	</v-container>
 </template>
 
 <script>
-export default {};
+	export default {};
 </script>
