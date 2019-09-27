@@ -88,6 +88,12 @@
 						title: "Chris",
 						icon: "fa-cannabis",
 						to: "chris"
+					},
+					{
+						id: 11,
+						title: "List Data",
+						icon: "fa-cannabis",
+						to: "list-data"
 					}
 				]
 			};

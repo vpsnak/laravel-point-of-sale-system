@@ -8,6 +8,7 @@ import Categories from "./components/pages/Categories";
 import Stores from "./components/pages/Stores";
 import Users from "./components/pages/Users";
 import CTest from "./components/pages/CTest";
+import ListData from "./components/pages/ListData";
 
 
 export default [
@@ -60,5 +61,10 @@ export default [
         name: "Forms",
         path: "/forms",
         component: Forms
+    },
+    {
+        name: "ListData",
+        path: "/list-data",
+        component: ListData
     },
 ];
