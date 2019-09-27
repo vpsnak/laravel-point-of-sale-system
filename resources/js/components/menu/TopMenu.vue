@@ -6,12 +6,73 @@
 
 		<div class="flex-grow-1"></div>
 
-		<v-btn
-			icon
-			@click="invertTheme"
+		<v-menu
+			left
+			bottom
+			offset-x
+			transition="scale-transition"
 		>
-			<v-icon>person</v-icon>
-		</v-btn>
+			<template v-slot:activator="{ on }">
+				<v-btn
+					icon
+					v-on="on"
+				>
+					<v-icon>account_circle</v-icon>
+				</v-btn>
+			</template>
+
+			<v-list
+				dense
+				avatar
+			>
+				<v-list-item-group>
+					<v-list-item
+						inactive
+						two-line
+					>
+						<v-list-item-avatar>
+							<v-icon>mdi-account</v-icon>
+						</v-list-item-avatar>
+						<v-list-item-content>
+							<v-list-item-title>{{ user.name }}</v-list-item-title>
+							<v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
+						</v-list-item-content>
+					</v-list-item>
+					<v-divider />
+					<v-list-item>
+						<v-list-item-avatar>
+							<v-icon>mdi-logout-variant</v-icon>
+						</v-list-item-avatar>
+						<v-list-item-content>
+							<v-list-item-title>Sign out</v-list-item-title>
+						</v-list-item-content>
+					</v-list-item>
+					<v-list-item>
+						<v-list-item-avatar>
+							<v-icon>mdi-key</v-icon>
+						</v-list-item-avatar>
+						<v-list-item-content>
+							<v-list-item-title>Change password</v-list-item-title>
+						</v-list-item-content>
+					</v-list-item>
+					<v-divider />
+					<v-list-item
+						inactive
+						@click.stop
+					>
+						<v-list-item-avatar>
+							<v-icon>mdi-brightness-4</v-icon>
+						</v-list-item-avatar>
+						<v-list-item-content>
+							<v-list-item-title>Dark mode</v-list-item-title>
+						</v-list-item-content>
+						<v-list-item-action>
+							<v-switch v-model="darkMode"></v-switch>
+						</v-list-item-action>
+					</v-list-item>
+				</v-list-item-group>
+			</v-list>
+		</v-menu>
 	</v-app-bar>
 </template>
 
@@ -25,6 +86,19 @@
 			}
 		},
 		computed: {
+			user: {
+				get() {
+					return this.$store.state.user;
+				}
+			},
+			darkMode: {
+				get() {
+					return this.$vuetify.theme.dark;
+				},
+				set() {
+					this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+				}
+			},
 			mini: {
 				get() {
 					return this.$store.state.topMenu.mini;

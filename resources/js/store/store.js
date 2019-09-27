@@ -26,6 +26,12 @@ export default new Vuex.Store({
     },
     state: {
         baseUrl: "/api/",
+        user: {
+            id: 1,
+            name: 'Mega Lola',
+            email: 'example@example.com',
+            token: null
+        },
         restoreCartDialog: false,
         checkoutDialog: false,
         productList: [],
@@ -33,19 +39,16 @@ export default new Vuex.Store({
         categoryList: [],
         storeList: [],
         cartsOnHold: []
-
-        // Current state of the application lies here.
     },
     getters: {
         // Compute derived state based on the current state. More like computed property.
     },
     mutations: {
-        // Mutate the current state
+        setUser(state, users) {
+            state.userList = users;
+        },
         setProductList(state, products) {
             state.productList = products;
-        },
-        setUserList(state, users) {
-            state.userList = users;
         },
         setCategoryList(state, categories) {
             state.categoryList = categories;
@@ -82,9 +85,9 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                            payload.model +
-                            "/" +
-                            payload.data.id
+                        payload.model +
+                        "/" +
+                        payload.data.id
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
