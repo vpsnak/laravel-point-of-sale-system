@@ -2,19 +2,18 @@
 const state = {
   total: 0,
   payments: [
-    {id: 1, type: 'Cash', amount: 10},
-    {id: 2, type: 'Cash', amount: 11},
-    {id: 3, type: 'Cash', amount: 12},
-    {id: 4, type: 'Cash', amount: 13},
-    {id: 5, type: 'Cash', amount: 14},
-    {id: 6, type: 'Cash', amount: 15}
+    { id: 1, type: 'Cash', amount: 10 },
+    { id: 2, type: 'Cash', amount: 11 },
+    { id: 3, type: 'Cash', amount: 12 },
+    { id: 4, type: 'Cash', amount: 13 },
+    { id: 5, type: 'Cash', amount: 14 },
+    { id: 6, type: 'Cash', amount: 15 }
   ]
 }
 
 // getters
 const getters = {
   paymentEntries: (state) => {
-    console.log('removePayment getter')
     return state.payments
   },
   getTotalPaid: (state) => {
@@ -29,19 +28,18 @@ const getters = {
 
 // actions
 const actions = {
-  removePayment({commit, state}, payment) {
-    console.log('removePayment action')
+  removePayment({ commit, state }, payment) {
     commit('removePayment', payment)
   },
-  addPayment({commit}, payment) {
+  addPayment({ commit }, payment) {
     commit('addPayment', payment)
   },
-  fetchPayments({dispatch}) {
+  fetchPayments({ dispatch }) {
     let payload = {
       model: 'payments',
       mutation: 'payment/setPayments'
     }
-    dispatch('endpoints/getAll', payload, {root: true})
+    dispatch('endpoints/getAll', payload, { root: true })
   }
 }
 
@@ -51,11 +49,9 @@ const mutations = {
     state.payments.push(payment)
   },
   removePayment(state, payment) {
-    console.log('removePayment mutation')
     state.payments = state.payments.filter((paymentEntry) => { return paymentEntry !== payment })
   },
   setPayments(state, payments) {
-    console.log('removePayment mutation')
     state.payments = payments
   },
   setTotal(state, total) {

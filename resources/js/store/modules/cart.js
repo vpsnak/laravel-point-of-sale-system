@@ -82,12 +82,13 @@ export default {
     actions: {
         submitOrder({ commit, dispatch }) {
             return new Promise((resolve, reject) => {
+                let payload = {
+                    model: "orders",
+                    data: { ...this.state, user_id: this.state.user.id }
+                }
+
                 dispatch(
-                    "create",
-                    {
-                        model: "orders",
-                        data: { ...this.state }
-                    },
+                    "create", payload,
                     {
                         root: true
                     }
