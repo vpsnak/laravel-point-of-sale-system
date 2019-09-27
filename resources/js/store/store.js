@@ -29,12 +29,10 @@ export default new Vuex.Store({
         restoreCartDialog: false,
         checkoutDialog: false,
         productList: [],
-        customerList: [],
         userList: [],
         categoryList: [],
         storeList: [],
-        cartsOnHold: [],
-        cartCustomer: undefined
+        cartsOnHold: []
 
         // Current state of the application lies here.
     },
@@ -45,9 +43,6 @@ export default new Vuex.Store({
         // Mutate the current state
         setProductList(state, products) {
             state.productList = products;
-        },
-        setCustomerList(state, customers) {
-            state.customerList = customers;
         },
         setUserList(state, users) {
             state.userList = users;

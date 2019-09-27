@@ -45,11 +45,8 @@ import { mapGetters } from "vuex";
 export default {
 	computed: {
 		...mapGetters("checkout", ["getCheckoutSteps"]),
-		cartProducts() {
-			return this.$store.state.cartProducts;
-		},
-		cartCustomer() {
-			return this.$store.state.cartCustomer;
+		customer() {
+			return this.$store.state.cart.customer;
 		},
 		currentCheckoutStep() {
 			return this.$store.state.checkout.currentCheckoutStep;

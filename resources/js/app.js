@@ -8,7 +8,7 @@ require("./includes");
 
 import routes from "./routes";
 import vuetify from "./plugins/vuetify"; // path to vuetify export
-import store from "./store/main";
+import store from "./store/store";
 import VueRouter from "vue-router";
 
 window.Vue = require("vue");

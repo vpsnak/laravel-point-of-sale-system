@@ -72,7 +72,7 @@ export default {
 	methods: {
 		checkout() {
 			this.checkoutDialog = true;
-			// this.submitOrder();
+			this.submitOrder("alvanakos");
 		},
 		emptyCart(showPrompt) {
 			if (showPrompt) {
@@ -80,7 +80,7 @@ export default {
 					this.$store.commit("cart/emptyCart");
 				this.$store.commit("cart/setCustomer", undefined);
 			} else {
-				this.cartProducts.splice(0);
+				this.products.splice(0);
 				this.$store.commit("cart/setCustomer", undefined);
 			}
 		},
@@ -89,7 +89,7 @@ export default {
 				model: "carts",
 				data: {
 					customer_id: this.$store.state.cart.customer.id,
-					cart: this.cartProducts
+					cart: this.products
 				}
 			};
 			this.create(payload).then(() => {

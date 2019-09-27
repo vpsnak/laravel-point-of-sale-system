@@ -4,7 +4,7 @@
 			<v-select
 				v-if="editable"
 				:key="model.id"
-				v-model="discountType"
+				v-model="type"
 				:items="discountTypes"
 				label="Discount"
 				item-text="label"
@@ -15,8 +15,8 @@
 		<v-col cols="6" class="pa-0 pl-2">
 			<v-text-field
 				:key="model.id"
-				v-if="discountType && discountType !== 'None'"
-				v-model="discountAmount"
+				v-if="type && type !== 'None'"
+				v-model="amount"
 				type="number"
 				label="Amount"
 				min="1"
@@ -37,7 +37,7 @@ export default {
 	},
 	computed: {
 		...mapState("cart", ["discountTypes"]),
-		discountType: {
+		type: {
 			get() {
 				return this.$props.model.discount_type
 					? this.$props.model.discount_type
@@ -47,7 +47,7 @@ export default {
 				this.$set(this.$props.model, "discount_type", value);
 			}
 		},
-		discountAmount: {
+		amount: {
 			get() {
 				return this.$props.model.discount_amount;
 			},

@@ -2,6 +2,9 @@ export default {
     namespaced: true,
 
     state: {
+        retail: true,
+        taxes: true,
+
         discountTypes: [
             {
                 label: "None",
@@ -16,35 +19,21 @@ export default {
                 value: "Percentage"
             }
         ],
-        customer: undefined,
-        cartProducts: [],
-        subtotal: 0,
-        discount: 0,
-        order: undefined,
-        shipping: "",
-        retail: true,
-        taxes: true
-    },
 
-    getters: {
-        getOrderData(state) {
-            return {
-                // customer_id: state.customer.id,
-                user_id: 1,
-                // discount: this.totalDiscount,
-                shipping_type: "shipping",
-                shipping_cost: 0,
-                // tax: this.tax,
-                // subtotal: this.subTotal,
-                note: "",
-                items: state.cartProducts
-            };
-        }
+        customer: undefined,
+        products: [],
+
+        discount_type: "",
+        discount_amount: 0,
+
+        shipping: {},
+
+        order: undefined
     },
 
     mutations: {
         emptyCart(state) {
-            state.cartProducts = [];
+            state.products = [];
         },
         toggleRetail(state) {
             state.retail = !state.retail;
@@ -52,44 +41,38 @@ export default {
         toggleTaxes(state) {
             state.taxes = !state.taxes;
         },
-        addCartProduct(state, cartProduct) {
-            if (_.includes(state.cartProducts, cartProduct)) {
-                let index = _.findIndex(state.cartProducts, cartProduct);
-                state.cartProducts[index].qty++;
+        addProduct(state, product) {
+            if (_.includes(state.products, product)) {
+                let index = _.findIndex(state.products, product);
+                state.products[index].qty++;
             } else {
-                Vue.set(cartProduct, "qty", 1);
-                state.cartProducts.push(cartProduct);
+                Vue.set(product, "qty", 1);
+                state.products.push(product);
             }
         },
-        increaseCartProductQty(state, cartProduct) {
-            let index = _.findIndex(state.cartProducts, cartProduct);
-            state.cartProducts[index].qty++;
-        },
-        decreaseCartProductQty(state, cartProduct) {
-            let index = _.findIndex(state.cartProducts, cartProduct);
+        increaseProductQty(state, product) {
+            let index = _.findIndex(state.products, product);
 
-            if (state.cartProducts[index].qty > 1) {
-                state.cartProducts[index].qty--;
+            state.products[index].qty++;
+        },
+        decreaseProductQty(state, product) {
+            let index = _.findIndex(state.products, product);
+
+            if (state.products[index].qty > 1) {
+                state.products[index].qty--;
             }
         },
         setDiscount(state, model) {
             if (Array.isArray(model)) {
-                Vue.set(
-                    state.cartProducts,
-                    "discount_type",
-                    model.discount_type
-                );
-                Vue.set(
-                    state.cartProducts,
-                    "discount_amount",
-                    model.discount_amount
-                );
+                state.discount_type = model.discount_type;
+                state.discount_amount = model.discount_amount;
             } else {
-                let index = _.findIndex(state.cartProducts, iterator => {
+                let index = _.findIndex(state.products, iterator => {
                     return iterator.id === model.id;
                 });
 
-                state.cartProducts[index] = model;
+                state.products[index].discount_type = model.discount_type;
+                state.products[index].discount_amount = model.discount_amount;
             }
         },
         setCustomer(state, customer) {
@@ -97,23 +80,25 @@ export default {
         }
     },
     actions: {
-        submitOrder({ dispatch }) {
+        submitOrder({ commit, dispatch }) {
             return new Promise((resolve, reject) => {
                 dispatch(
                     "create",
                     {
                         model: "orders",
-                        data: this.getOrderData
+                        data: { ...this.state }
                     },
-                    { root: true }
+                    {
+                        root: true
+                    }
                 )
-                    .then(() => {
-                        console.log("success");
-                        resolve();
+                    .then(response => {
+                        console.log(response);
+                        resolve(response);
                     })
-                    .catch(e => {
-                        console.log("fail");
-                        reject();
+                    .catch(error => {
+                        console.log(error);
+                        reject(error);
                     });
             });
         }

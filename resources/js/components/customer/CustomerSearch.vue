@@ -56,7 +56,6 @@
 				this.loading = true;
 				const payload = {
 					model: "customers",
-					mutation: "setCustomerList",
 					keyword: keyword
 				};
 

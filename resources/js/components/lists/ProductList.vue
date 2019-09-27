@@ -30,7 +30,7 @@
 			</v-row>
 			<v-row v-if="productList.length" style="height:58vh; overflow-y:auto;">
 				<v-col v-for="product in productList" :key="product.id" cols="12" md="6" lg="4">
-					<v-card :img="product.photo_url" @click="addCartProduct(product)" height="170px">
+					<v-card :img="product.photo_url" @click="addProduct(product)" height="170px">
 						<v-card-title class="indigo white--text pa-0" @click.stop>
 							<h6 class="px-2">{{product.name}}</h6>
 							<div class="flex-grow-1"></div>
@@ -176,8 +176,8 @@ export default {
 					});
 			}
 		},
-		addCartProduct(product) {
-			this.$store.commit("cart/addCartProduct", product);
+		addProduct(product) {
+			this.$store.commit("cart/addProduct", product);
 		}
 	}
 };

@@ -16,7 +16,7 @@
 
 		<customerSearch :editable="editable" :keywordLength="1"></customerSearch>
 
-		<cartProducts :cartProducts="cartProducts" :editable="editable"></cartProducts>
+		<cartProducts :products="products" :editable="editable"></cartProducts>
 
 		<v-divider />
 		<div class="d-flex flex-column">
@@ -25,16 +25,16 @@
 					<v-label>Cart discount</v-label>
 				</v-col>
 				<v-col cols="8" class="px-2 py-0">
-					<cartDiscount :model="cartProducts" :editable="editable"></cartDiscount>
+					<cartDiscount :model="products" :editable="editable"></cartDiscount>
 				</v-col>
 			</v-row>
 
 			<v-divider />
 
-			<cartTotals :cartProducts="cartProducts" :taxes="taxes" />
+			<cartTotals :products="products" :taxes="taxes" :cart="cartDiscount" />
 
 			<div v-if="actions">
-				<cartActions :disabled="totalCartProducts" />
+				<cartActions :disabled="totalProducts" />
 
 				<v-divider />
 			</div>
@@ -70,12 +70,19 @@ export default {
 				this.$store.commit("cart/toggleTaxes");
 			}
 		},
-		cartProducts: {
+		cartDiscount() {
+			let discount = {
+				discount_type: this.$store.state.cart.discount_type,
+				discount_amount: this.$store.state.cart.discount_amount
+			};
+			return discount;
+		},
+		products: {
 			get() {
-				return this.$store.state.cart.cartProducts;
+				return this.$store.state.cart.products;
 			},
 			set(value) {
-				this.$store.state.cart.cartProducts = value;
+				this.$store.state.cart.products = value;
 			}
 		},
 		customerList: {
@@ -86,15 +93,15 @@ export default {
 				this.$store.state.customerList = value;
 			}
 		},
-		totalCartProducts() {
-			return _.size(this.cartProducts) ? false : true;
+		totalProducts() {
+			return _.size(this.products) ? false : true;
 		}
 	},
 
 	methods: {
 		addAll(cart) {
-			this.cartProducts.splice(0);
-			this.cartProducts = cart;
+			this.products.splice(0);
+			this.products = cart;
 		},
 
 		...mapActions({
