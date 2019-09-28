@@ -17,11 +17,12 @@ class CreatePaymentsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('payment_type');
             $table->decimal('amount');
-            $table->integer('order_id');
+            $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('cash_register_id')->nullable();
             $table->timestamps();
-            $table->foreign('payment_type')->references('id')->on('payment_types')->onDelete('cascade');
-            $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('cascade');
+            $table->foreign('payment_type')->references('id')->on('payment_types')->onDelete('restrict');
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('restrict');
+            $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('restrict');
         });
     }
 

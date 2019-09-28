@@ -19,10 +19,10 @@ $baseRoutes = [
     'carts' => 'CartController',
     'orders' => 'OrderController',
     'categories' => 'CategoryController',
-    'payments' => 'PaymentController',
 
     'stores' => 'StoreController',
     'taxes' => 'TaxController',
+    'payments' => 'PaymentController',
     'payment-types' => 'PaymentTypeController',
     'cash-registers' => 'CashRegisterController',
     'cash-register-logs' => 'CashRegisterLogsController',
