@@ -69,6 +69,9 @@ export default {
     mutations: {
         emptyCart(state) {
             state.products = [];
+            state.products = [];
+            state.discount_type = null;
+            state.discount_amount = null;
         },
         toggleRetail(state) {
             state.retail = !state.retail;
@@ -121,6 +124,9 @@ export default {
         },
         nextCheckoutStep(state) {
             state.currentCheckoutStep++;
+        },
+        setOrder(state, order) {
+            state.order = order;
         }
     },
     actions: {
@@ -129,7 +135,7 @@ export default {
                 let payload = {
                     model: "orders",
                     data: {
-                        customer_id: state.customer ? state.customer.id : '',
+                        customer_id: state.customer ? state.customer.id : "",
                         created_by: this.state.user.id,
                         store_id: this.state.store.id,
                         status: "pending",
@@ -144,11 +150,11 @@ export default {
                     root: true
                 })
                     .then(response => {
-                        console.log(response);
+                        commit("setOrder", response.data);
+                        commit("emptyCart");
                         resolve(response);
                     })
                     .catch(error => {
-                        console.log(error);
                         reject(error);
                     });
             });
