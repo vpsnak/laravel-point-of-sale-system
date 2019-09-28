@@ -1,40 +1,73 @@
 <template>
-    <prop-data-table
-        :tableHeaders="headers"
-        dataUrl="orders"
-        tableTitle="Orders"
-    />
+	<prop-data-table :tableHeaders="headers" data-url="orders" tableTitle="Orders" />
 </template>
 
 <script>
-  import { mapMutations } from 'vuex'
+	import { mapMutations } from "vuex";
 
-  export default {
-    data () {
-      return {
+	export default {
+		data() {
+			return {
 				headers: [
 					{
-						text: "Orders",
-						align: "left",
-						sortable: false,
-						value: "name"
+						text: "Customer id",
+						value: "customer_id"
 					},
-					{ text: "Calories", value: "calories" },
-					{ text: "Fat (g)", value: "fat" },
-					{ text: "Carbs (g)", value: "carbs" },
-					{ text: "Protein (g)", value: "protein" },
-                  {text: 'Iron (%)', value: 'iron'},
-                  {text: 'Actions', value: 'action', sortable: false}
-                ],
-      }
-    },
-    mounted () {
-      this.setRows([])
-    },
-    methods: {
-      ...mapMutations('datatable', {
-        setRows: 'setRows'
-      })
-    }
-  }
+					{
+						text: "Store id",
+						value: "store_id"
+					},
+					{
+						text: "Created_by",
+						value: "created_by"
+					},
+					{
+						text: "Items",
+						value: "items"
+					},
+					{
+						text: "Discount type",
+						value: "discount_type"
+					},
+					{
+						text: "Discount amount",
+						value: "discount_amount"
+					},
+					{
+						text: "Shipping type",
+						value: "shipping_type"
+					},
+					{
+						text: "Shipping cost",
+						value: "shipping_cost"
+					},
+					{
+						text: "tax",
+						value: "tax"
+					},
+					{
+						text: "Subtotal",
+						value: "subtotal"
+					},
+					{
+						text: "Note",
+						value: "note"
+					},
+					{
+						text: "Actions",
+						value: "action",
+						sortable: false
+					}
+				]
+			};
+		},
+		mounted() {
+			this.setRows([]);
+		},
+		methods: {
+			...mapMutations("datatable", {
+				setRows: "setRows"
+			})
+		}
+	};
 </script>

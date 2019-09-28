@@ -1,15 +1,7 @@
 <template>
-	<v-navigation-drawer
-		app
-		overflow
-		:mini-variant="mini"
-	>
+	<v-navigation-drawer app overflow :mini-variant="mini">
 		<v-list nav>
-			<v-list-item
-				v-for="menuItem in menuItems"
-				:key="menuItem.id"
-				:to="menuItem.to"
-			>
+			<v-list-item v-for="menuItem in menuItems" :key="menuItem.id" :to="menuItem.to">
 				<v-list-item-icon small>
 					<v-icon>{{ menuItem.icon }}</v-icon>
 				</v-list-item-icon>
@@ -73,27 +65,33 @@
 					},
 					{
 						id: 8,
+						title: "Taxes",
+						icon: "fas fa-funnel-dollar",
+						to: "taxes"
+					},
+					{
+						id: 9,
 						title: "Users",
 						icon: "fas fa-users",
 						to: "users"
 					},
 					{
-						id: 9,
-						title: "Forms",
-						icon: "fas fa-motorcycle",
-						to: "forms"
-					},
-					{
 						id: 10,
-						title: "Chris",
-						icon: "fa-cannabis",
-						to: "chris"
+						title: "Forms",
+						icon: "fas fa-cat",
+						to: "forms"
 					},
 					{
 						id: 11,
 						title: "List Data",
-						icon: "fa-cannabis",
+						icon: "fas fa-female",
 						to: "list-data"
+					},
+					{
+						id: 12,
+						title: "Chris",
+						icon: "fa-cannabis",
+						to: "chris"
 					}
 				]
 			};
