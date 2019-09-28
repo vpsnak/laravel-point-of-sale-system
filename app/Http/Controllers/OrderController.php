@@ -12,8 +12,6 @@ class OrderController extends BaseController
 
     public function create(Request $request)
     {
-        return response($request->all());
-
         $validatedData = $request->validate([
             'customer_id' => 'nullable|exists:customers,id',
             'status' => 'required|in:pending,pending_payment,paid,complete',
