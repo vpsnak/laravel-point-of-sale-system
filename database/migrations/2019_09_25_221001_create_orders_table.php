@@ -16,18 +16,21 @@ class CreateOrdersTable extends Migration
         // @TODO order status
         Schema::create('orders', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('customer_id')->unsigned()->nullable();
-            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('restrict');
-            $table->bigInteger('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
+            $table->unsignedBigInteger('customer_id')->nullable();
+            $table->enum('status', ['pending', 'pending_payment', 'paid', 'complete'])->nullable();
             $table->enum('discount_type', ['flat', 'percent'])->nullable();
-            $table->smallInteger('discount')->unsigned()->default(0);
+            $table->unsignedSmallInteger('discount')->default(0);
             $table->string('shipping_type');
-            $table->tinyInteger('shipping_cost')->unsigned()->default(0);
+            $table->unsignedTinyInteger('shipping_cost')->default(0);
             $table->decimal('tax', 4)->unsigned();
             $table->decimal('subtotal');
             $table->string('note')->nullable();
+            $table->unsignedBigInteger('store_id');
+            $table->unsignedBigInteger('created_by');
             $table->timestamps();
+            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('restrict');
+            $table->foreign('store_id')->references('id')->on('stores')->onDelete('restrict');
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('restrict');
         });
     }
 
