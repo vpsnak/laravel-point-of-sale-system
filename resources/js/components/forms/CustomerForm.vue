@@ -1,155 +1,86 @@
 <template>
-	<v-card ref="form">
-		<div class="text-center">
-			<v-chip class="mb-n8 mx-auto" elevation="5" color="primary" label>
-				<v-icon left>fas fa-user-astronaut</v-icon>Customer Form
-			</v-chip>
-		</div>
-		<v-card-text>
-			<v-text-field
-				ref="firstname"
-				v-model="firstname"
-				:rules="[() => !!firstname || 'This field is required']"
-				:error-messages="errorMessages"
-				label="First name"
-				placeholder="Panos"
-				required
-			></v-text-field>
-			<v-text-field
-				ref="lastname"
-				v-model="lastname"
-				:rules="[() => !!lastname || 'This field is required']"
-				:error-messages="errorMessages"
-				label="Last name"
-				placeholder="Meletis"
-				required
-			></v-text-field>
-			<v-text-field
-				ref="email"
-				v-model="email"
-				:rules="[ v => !!v || 'E-mail is required',
-        v => /.+@.+/.test(v) || 'E-mail must be valid']"
-				:error-messages="errorMessages"
-				label="Email"
-				placeholder="Email"
-				required
-			></v-text-field>
-			<v-text-field
-				ref="company_name"
-				v-model="company_name"
-				:rules="[
-              () => !!company_name || 'This field is required',
-              () => !!company_name && company_name.length <= 25 || 'Company name must be less than 25 characters',
-               lengthCheck
-            ]"
-				label="Company name"
-				placeholder="Web O2"
-				counter="25"
-				required
-			></v-text-field>
-			<v-autocomplete
-				ref="country"
-				v-model="country"
-				:rules="[() => !!country || 'This field is required']"
-				:items="countries"
-				label="Country"
-				placeholder="Select..."
-				required
-			></v-autocomplete>
+	<div>
+		<v-form>
+			<div class="text-center">
+				<v-chip color="primary" label>
+					<v-icon left>fas fa-user</v-icon>Customer Form
+				</v-chip>
+			</div>
+			<v-text-field v-model="first_name" label="First name" required></v-text-field>
+			<v-text-field v-model="last_name" label="Last name" required></v-text-field>
+			<v-text-field v-model="email" label="Email" required></v-text-field>
+			<v-text-field v-model="phone" label="Phone" required></v-text-field>
+			<v-text-field v-model="company_name" label="Company name" required></v-text-field>
 			<addressForm @address="watchAddress($event)"></addressForm>
-		</v-card-text>
-		<v-divider class="mt-12"></v-divider>
-		<v-card-actions>
-			<v-btn text>Cancel</v-btn>
-			<div class="flex-grow-1"></div>
-			<v-slide-x-reverse-transition>
-				<v-tooltip v-if="formHasErrors" left>
-					<template v-slot:activator="{ on }">
-						<v-btn icon class="my-0" @click="resetForm" v-on="on">
-							<v-icon>mdi-refresh</v-icon>
-						</v-btn>
-					</template>
-					<span>Refresh form</span>
-				</v-tooltip>
-			</v-slide-x-reverse-transition>
-			<v-btn color="primary" text @click="submit">Submit</v-btn>
-		</v-card-actions>
-	</v-card>
+			<v-btn class="mr-4" @click="submit">submit</v-btn>
+			<v-btn @click="clear">clear</v-btn>
+		</v-form>
+		<v-alert v-if="savingSuccessful === true" class="mt-4" type="success">Form submitted successfully!</v-alert>
+	</div>
 </template>
-
 <script>
+	import { mapActions, mapState, mapGetters } from "vuex";
+
 	export default {
 		data() {
 			return {
-				firstname: null,
-				lastname: null,
+				savingSuccessful: false,
+				first_name: null,
+				last_name: null,
 				company_name: null,
 				email: null,
-				company_name: null,
-				country: null,
-				countries: [
-					"Afghanistan",
-					"Albania",
-					"Australia",
-					"Venezuela",
-					"Vietnam",
-					"Virgin Islands (US)",
-					"Yemen",
-					"Zambia",
-					"Zimbabwe"
-				],
-				formHasErrors: false,
-				errorMessages: ""
+				phone: null,
+				address: {
+					area_code_id: "",
+					last_name: "",
+					first_name: "",
+					street: "",
+					city: "",
+					country_id: "",
+					region: "",
+					postcode: "",
+					phone: ""
+				}
 			};
 		},
 
-		computed: {
-			form() {
-				return {
-					firstname: this.firstname,
-					lastname: this.lastname,
-					company_name: this.company_name,
-					country: this.country,
-					email: this.email
-				};
-			}
-		},
-
-		watch: {
-			name() {
-				this.errorMessages = "";
-			}
-		},
-
+		computed: {},
 		methods: {
-			watchAddress(message) {
-				console.log(message);
-			},
-			lengthCheck() {
-				this.errorMessages =
-					this.company_name && !this.firstname
-						? "Hey! I'm required (den to phre)"
-						: "";
-
-				return true;
-			},
-			resetForm() {
-				this.errorMessages = [];
-				this.formHasErrors = false;
-
-				Object.keys(this.form).forEach(f => {
-					this.$refs[f].reset();
-				});
+			watchAddress(current_address) {
+				console.log(current_address);
+				this.address = current_address;
 			},
 			submit() {
-				this.formHasErrors = false;
-
-				Object.keys(this.form).forEach(f => {
-					if (!this.form[f]) this.formHasErrors = true;
-
-					this.$refs[f].validate(true);
+				console.log(this.address);
+				let payload = {
+					model: "customers",
+					data: {
+						first_name: this.first_name,
+						last_name: this.last_name,
+						company_name: this.company_name,
+						email: this.email,
+						phone: this.phone,
+						addresses: this.address
+					}
+				};
+				this.create(payload).then(() => {
+					this.clear();
+					this.savingSuccessful = true;
 				});
-			}  
+			},
+			clear() {
+				this.firstname = "";
+				this.lastname = "";
+				this.company_name = "";
+				this.email = "";
+				this.phone = "";
+			},
+			...mapActions({
+				getAll: "getAll",
+				getOne: "getOne",
+				create: "create",
+				delete: "delete"
+			})
 		}
 	};
 </script>

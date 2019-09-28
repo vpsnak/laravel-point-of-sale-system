@@ -13,10 +13,10 @@
 		<v-text-field v-model="address.country_id" counter label="Country id" required></v-text-field>
 		<v-text-field v-model="address.region" counter label="Region" required></v-text-field>
 		<v-text-field v-model="address.postcode" counter label="Postcode" required></v-text-field>
-		<v-text-field v-model="address.phone" counter label="Country id" required></v-text-field>
-		<v-text-field v-model="address.customer_id" counter label="Customer id" required></v-text-field>
+		<v-text-field v-model="address.phone" counter label="Phone" required></v-text-field>
 		<v-btn class="mr-4" @click="submit">submit</v-btn>
 		<v-btn @click="clear">clear</v-btn>
+		<v-alert v-if="savingSuccessful === true" class="mt-4" type="success">Form submitted successfully!</v-alert>
 	</v-form>
 </template>
 
@@ -26,6 +26,7 @@
 	export default {
 		data() {
 			return {
+				savingSuccessful: false,
 				address: {
 					area_code_id: "",
 					last_name: "",
@@ -35,8 +36,7 @@
 					country_id: "",
 					region: "",
 					postcode: "",
-					phone: "",
-					customer_id: ""
+					phone: ""
 				}
 			};
 		},
@@ -56,31 +56,32 @@
 				let payload = {
 					model: "address",
 					data: {
-						area_code_id: this.area_code_id,
-						last_name: this.last_name,
-						first_name: this.first_name,
-						street: this.street,
-						city: this.city,
-						country_id: this.country_id,
-						region: this.region,
-						postcode: this.postcode,
-						phone: this.phone,
-						customer_id: this.customer_id
+						area_code_id: this.address.area_code_id,
+						last_name: this.address.last_name,
+						first_name: this.address.first_name,
+						street: this.address.street,
+						city: this.address.city,
+						country_id: this.address.country_id,
+						region: this.address.region,
+						postcode: this.address.postcode,
+						phone: this.address.phone
 					}
 				};
-				this.create(payload).then(() => {});
+				this.create(payload).then(() => {
+					this.clear();
+					this.savingSuccessful = true;
+				});
 			},
 			clear() {
-				address.area_code_id = "";
-				address.last_name = "";
-				address.first_name = "";
-				address.street = "";
-				address.city = "";
-				address.country_id = "";
-				address.region = "";
-				address.postcode = "";
-				address.phone = "";
-				address.customer_id = "";
+				this.address.area_code_id = "";
+				this.address.last_name = "";
+				this.address.first_name = "";
+				this.address.street = "";
+				this.address.city = "";
+				this.address.country_id = "";
+				this.address.region = "";
+				this.address.postcode = "";
+				this.address.phone = "";
 			},
 			...mapActions({
 				create: "create"
