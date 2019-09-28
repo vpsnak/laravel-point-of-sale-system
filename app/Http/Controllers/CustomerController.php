@@ -13,13 +13,28 @@ class CustomerController extends BaseController
     {
         $validatedData = $request->validate([
             'email' => 'required|email|unique:customers,email',
-            'first_name' => 'required|alpha',
-            'last_name' => 'required|alpha',
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
             'phone' => 'required|numeric|unique:customers,phone',
-            'company_name' => 'required|alpha',
+            'company_name' => 'required|string',
         ]);
 
-        return response($this->model::store($validatedData), 201);
+        $address = $request->validate([
+//            'addresses.area_code_id' => 'required|nullable|string',
+            'addresses.first_name' => 'required|string',
+            'addresses.last_name' => 'required|string',
+            'addresses.street' => 'required|string',
+//            'addresses.city' => 'required|string',
+//            'addresses.county_id' => 'nullable|string',
+            'addresses.region' => 'required|string',
+            'addresses.postcode' => 'required|string',
+            'addresses.phone' => 'required|numeric',
+        ]);
+
+        $customer = $this->model::store($validatedData);
+        $customer->addresses()->attach($address);
+
+        return response($customer, 201);
     }
 
     public function search(Request $request)
