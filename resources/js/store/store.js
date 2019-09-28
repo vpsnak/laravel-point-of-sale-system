@@ -32,6 +32,14 @@ export default new Vuex.Store({
             token: null
         },
 
+        store: {
+            id: 1
+        },
+
+        cashRegister: {
+            id: 1
+        },
+
         // notification
         notification: {
             msg: "",
@@ -165,7 +173,7 @@ export default new Vuex.Store({
                     })
                     .catch(error => {
                         let notification = {
-                            msg: error,
+                            msg: error.message,
                             type: "error"
                         };
                         context.commit("setNotification", notification);

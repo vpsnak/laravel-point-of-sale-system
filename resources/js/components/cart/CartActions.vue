@@ -36,6 +36,14 @@ export default {
 		disabled: Boolean
 	},
 	computed: {
+		products: {
+			get() {
+				return this.$store.state.cart;
+			},
+			set() {
+				this.$store.commit("cart/emptyCart");
+			}
+		},
 		checkoutDialog: {
 			get() {
 				return this.$store.state.checkoutDialog;
@@ -56,9 +64,7 @@ export default {
 			return _.size(this.cartsOnHold);
 		}
 	},
-	mounted() {
-		this.getHolds();
-	},
+	mounted() {},
 	methods: {
 		checkout() {
 			this.checkoutDialog = true;
@@ -70,7 +76,7 @@ export default {
 					this.$store.commit("cart/emptyCart");
 				this.$store.commit("cart/setCustomer", undefined);
 			} else {
-				this.products.splice(0);
+				this.products = null;
 				this.$store.commit("cart/setCustomer", undefined);
 			}
 		},
@@ -78,33 +84,26 @@ export default {
 			let payload = {
 				model: "carts",
 				data: {
-					customer_id: this.$store.state.cart.customer
-						? this.$store.state.cart.customer.id
-						: null,
+					user_id: this.$store.state.user.id,
 					cart: this.products
 				}
 			};
 			this.create(payload).then(() => {
 				this.emptyCart(false);
-				this.getHolds();
-			});
-		},
-		getHolds() {
-			this.getAll({
-				model: "carts"
-			}).then(carts => {
-				this.cartsOnHold = carts;
+				this.$store.commit("setNotification", {
+					msg: "Cart added on hold list",
+					type: "info"
+				});
 			});
 		},
 		showRestoreOnHoldCartDialog() {
 			this.getCartsOnHold();
-			this.restoreCartDialog = true;
+			this.cartRestoreDialog = true;
 		},
 		getCartsOnHold() {
 			let a;
 			let payload = {
-				model: "carts",
-				mutation: "setCartsOnHold"
+				model: "carts"
 			};
 			this.$store.dispatch("getAll", payload);
 		},

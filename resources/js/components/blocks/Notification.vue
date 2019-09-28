@@ -8,8 +8,14 @@
 <script>
 export default {
 	computed: {
-		show() {
-			return this.$store.state.notification.msg ? true : false;
+		show: {
+			get() {
+				return this.$store.state.notification.msg ? true : false;
+			},
+			set() {
+				this.$store.state.notification.msg = "";
+				this.$store.state.notification.type = undefined;
+			}
 		},
 		message() {
 			return this.$store.state.notification.msg;

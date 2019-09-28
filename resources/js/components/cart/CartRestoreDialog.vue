@@ -41,12 +41,29 @@ export default {
 	},
 
 	computed: {
-		cartsOnHold() {
-			return this.onHold;
+		cartsOnHold: {
+			get() {
+				return this.onHold;
+			},
+			set(value) {
+				this.onHold = value;
+			}
 		}
 	},
 
+	mounted() {
+		this.getCartsOnHold();
+	},
+
 	methods: {
+		getCartsOnHold() {
+			let payload = {
+				model: "carts"
+			};
+			this.$store.dispatch("getAll", payload).then(response => {
+				this.cartsOnHold = response;
+			});
+		},
 		close() {
 			this.$store.state.cartRestoreDialog = false;
 		},
