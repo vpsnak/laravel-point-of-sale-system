@@ -1,4 +1,6 @@
 import Dashboard from "./components/pages/Dashboard";
+import Login from "./components/auth/Login";
+import Logout from "./components/auth/Logout";
 import Sales from "./components/pages/Sales";
 import Forms from "./components/pages/Forms";
 import Orders from "./components/pages/Orders";
@@ -16,6 +18,16 @@ export default [
         name: "dashboard",
         path: "/",
         component: Dashboard
+    },
+    {
+        name: 'login',
+        path: '/login',
+        component: Login
+    },
+    {
+        name: 'logout',
+        path: '/logout',
+        component: Logout
     },
     {
         name: "sales",
