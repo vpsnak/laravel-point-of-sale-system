@@ -35,8 +35,6 @@
 
 			<div v-if="actions">
 				<cartActions :disabled="totalProducts" />
-
-				<v-divider />
 			</div>
 		</div>
 	</v-sheet>

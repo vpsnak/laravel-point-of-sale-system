@@ -1,5 +1,6 @@
 <template>
 	<v-app id="app">
+		<notification />
 		<sideMenu />
 
 		<topMenu />

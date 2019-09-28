@@ -24,19 +24,36 @@ export default new Vuex.Store({
     },
     state: {
         baseUrl: "/api/",
+
         user: {
             id: 1,
-            name: 'Mega Lola',
-            email: 'example@example.com',
+            name: "Mega Lola",
+            email: "example@example.com",
             token: null
         },
-        restoreCartDialog: false,
+
+        store: {
+            id: 1
+        },
+
+        cashRegister: {
+            id: 1
+        },
+
+        // notification
+        notification: {
+            msg: "",
+            type: undefined
+        },
+
+        // dialogs
+        cartRestoreDialog: false,
         checkoutDialog: false,
+
         productList: [],
         userList: [],
         categoryList: [],
-        storeList: [],
-        cartsOnHold: []
+        storeList: []
     },
     getters: {
         // Compute derived state based on the current state. More like computed property.
@@ -44,6 +61,9 @@ export default new Vuex.Store({
     mutations: {
         setUser(state, users) {
             state.userList = users;
+        },
+        setNotification(state, notification) {
+            state.notification = notification;
         },
         setProductList(state, products) {
             state.productList = products;
@@ -53,9 +73,6 @@ export default new Vuex.Store({
         },
         setStoreList(state, stores) {
             state.storeList = stores;
-        },
-        setCartsOnHold(state, cartsOnHold) {
-            state.cartsOnHold = cartsOnHold;
         }
     },
     actions: {
@@ -73,6 +90,11 @@ export default new Vuex.Store({
                         resolve(response.data);
                     })
                     .catch(error => {
+                        let notification = {
+                            msg: error,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
                         console.log(error);
                         reject(error);
                     });
@@ -83,9 +105,9 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                        payload.model +
-                        "/" +
-                        payload.data.id
+                            payload.model +
+                            "/" +
+                            payload.data.id
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -97,6 +119,11 @@ export default new Vuex.Store({
                         resolve(response.data);
                     })
                     .catch(error => {
+                        let notification = {
+                            msg: error,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
                         console.log(error);
                         reject(error);
                     });
@@ -118,6 +145,11 @@ export default new Vuex.Store({
                         resolve(response.data);
                     })
                     .catch(error => {
+                        let notification = {
+                            msg: error,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
                         console.log(error);
                         reject(error);
                     });
@@ -140,6 +172,11 @@ export default new Vuex.Store({
                         resolve(response.data);
                     })
                     .catch(error => {
+                        let notification = {
+                            msg: error.message,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
                         console.log(error);
                         reject(error);
                     });
@@ -160,6 +197,11 @@ export default new Vuex.Store({
                         resolve(response.data);
                     })
                     .catch(error => {
+                        let notification = {
+                            msg: error,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
                         console.log(error);
                         reject(error);
                     });
@@ -179,6 +221,11 @@ export default new Vuex.Store({
                         resolve(response.data);
                     })
                     .catch(error => {
+                        let notification = {
+                            msg: error,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
                         console.log(error);
                         reject(error);
                     });
@@ -198,6 +245,11 @@ export default new Vuex.Store({
                         resolve(response.data);
                     })
                     .catch(error => {
+                        let notification = {
+                            msg: error,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
                         console.log(error);
                         reject(error);
                     });

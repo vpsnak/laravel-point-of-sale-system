@@ -60,12 +60,11 @@ export default {
         getCheckoutSteps(state) {
             return state.retail
                 ? state.checkoutSteps.filter(
-                    checkoutStep => checkoutStep.showIfRetail
-                )
+                      checkoutStep => checkoutStep.showIfRetail
+                  )
                 : state.checkoutSteps;
         }
     },
-
 
     mutations: {
         emptyCart(state) {
@@ -130,14 +129,11 @@ export default {
                 let payload = {
                     model: "orders",
                     data: { ...this.state, user_id: this.state.user.id }
-                }
+                };
 
-                dispatch(
-                    "create", payload,
-                    {
-                        root: true
-                    }
-                )
+                dispatch("create", payload, {
+                    root: true
+                })
                     .then(response => {
                         console.log(response);
                         resolve(response);

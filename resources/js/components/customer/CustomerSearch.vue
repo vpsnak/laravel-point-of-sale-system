@@ -21,70 +21,70 @@
 	</div>
 </template>
 <script>
-	export default {
-		props: {
-			keywordLength: Number,
-			editable: Boolean | undefined
-		},
+export default {
+	props: {
+		keywordLength: Number,
+		editable: Boolean | undefined
+	},
 
-		data() {
-			return {
-				loading: false,
-				search: null,
-				customers: undefined
-			};
-		},
-		computed: {
-			cartCustomer: {
-				get() {
-					return this.$store.state.cartCustomer;
-				},
-				set(value) {
-					this.$store.state.cartCustomer = value;
-				}
-			}
-		},
-		methods: {
-			getCustomerFullname(item) {
-				if (item) {
-					return item.first_name + " " + item.last_name;
-				} else {
-					return "Guest";
-				}
+	data() {
+		return {
+			loading: false,
+			search: null,
+			customers: undefined
+		};
+	},
+	computed: {
+		cartCustomer: {
+			get() {
+				return this.$store.state.cart.customer;
 			},
-			searchCustomer(keyword) {
-				this.loading = true;
-				const payload = {
-					model: "customers",
-					keyword: keyword
-				};
-
-				this.$store
-					.dispatch("search", payload)
-					.then(result => {
-						this.customers = result;
-					})
-					.catch(error => {
-						console.log(error);
-					})
-					.finally(() => (this.loading = false));
-			}
-		},
-		watch: {
-			search(keyword) {
-				if (keyword) {
-					if (keyword.length >= this.$props.keywordLength) {
-						if (this.loading) {
-							return;
-						} else {
-							this.searchCustomer(keyword);
-							return;
-						}
-					}
-				}
-				this.cartCustomer = undefined;
-				return;
+			set(value) {
+				this.$store.commit("cart/setCustomer", value);
 			}
 		}
-	};
+	},
+	methods: {
+		getCustomerFullname(item) {
+			if (item) {
+				return item.first_name + " " + item.last_name;
+			} else {
+				return "Guest";
+			}
+		},
+		searchCustomer(keyword) {
+			this.loading = true;
+			const payload = {
+				model: "customers",
+				keyword: keyword
+			};
+
+			this.$store
+				.dispatch("search", payload)
+				.then(result => {
+					this.customers = result;
+				})
+				.catch(error => {
+					console.log(error);
+				})
+				.finally(() => (this.loading = false));
+		}
+	},
+	watch: {
+		search(keyword) {
+			if (keyword) {
+				if (keyword.length >= this.$props.keywordLength) {
+					if (this.loading) {
+						return;
+					} else {
+						this.searchCustomer(keyword);
+						return;
+					}
+				}
+			}
+			this.cartCustomer = undefined;
+			return;
+		}
+	}
+};
 </script>
