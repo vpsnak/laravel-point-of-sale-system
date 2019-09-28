@@ -1,5 +1,5 @@
 <template>
-	<prop-data-table :tableHeaders="headers" data-url="taxes" tableTitle="Taxes" />
+	<prop-data-table :tableHeaders="headers" data-url="orders" tableTitle="Orders" />
 </template>
 
 <script>
