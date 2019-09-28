@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\CashRegister;
 
-class CashRegisterController extends Controller
+class CashRegisterController extends BaseController
 {
     protected $model = CashRegister::class;
 }
