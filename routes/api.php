@@ -19,9 +19,10 @@ $baseRoutes = [
     'carts' => 'CartController',
     'orders' => 'OrderController',
     'categories' => 'CategoryController',
-    'stores' => 'StoreController',
     'payments' => 'PaymentController',
+    'stores' => 'StoreController',
     'taxes' => 'TaxController',
+    'payment-types' => 'PaymentTypeController',
 ];
 
 foreach ($baseRoutes as $route => $controller) {

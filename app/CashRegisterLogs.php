@@ -2,11 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
-class CashRegisterLogs extends Model
+class CashRegisterLogs extends BaseModel
 {
-    
+
     protected $fillable = [
         'user_id',
         'cash_register_id',

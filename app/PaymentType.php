@@ -2,9 +2,13 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
-class PaymentType extends Model
+class PaymentType extends BaseModel
 {
-    //
+    protected $fillable = [
+        'name',
+        'type',
+        'status',
+        'is_default',
+        'created_by',
+    ];
 }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Tax;
 use Illuminate\Http\Request;
 
-class TaxController extends Controller
+class TaxController extends BaseController
 {
     protected $model = Tax::class;
 
