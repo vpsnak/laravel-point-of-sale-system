@@ -4,7 +4,6 @@ import "es6-promise/auto";
 
 //modules
 import topMenu from "./menu/topMenu";
-import checkout from "./modules/checkout";
 import cart from "./modules/cart";
 import payment from "./modules/payment";
 import endpoints from "./modules/endpoints";
@@ -18,7 +17,6 @@ export default new Vuex.Store({
     namespaced,
     modules: {
         topMenu,
-        checkout,
         cart,
         payment,
         datatable,
