@@ -35,13 +35,11 @@ export default {
 	props: {
 		disabled: Boolean
 	},
+
 	computed: {
 		products: {
 			get() {
 				return this.$store.state.cart;
-			},
-			set() {
-				this.$store.commit("cart/emptyCart");
 			}
 		},
 		checkoutDialog: {
@@ -64,7 +62,7 @@ export default {
 			return _.size(this.cartsOnHold);
 		}
 	},
-	mounted() {},
+
 	methods: {
 		checkout() {
 			this.submitOrder().then(response => {
@@ -76,10 +74,8 @@ export default {
 			if (showPrompt) {
 				confirm("Are you sure you want to delete the cart?") &&
 					this.$store.commit("cart/emptyCart");
-				this.$store.commit("cart/setCustomer", undefined);
 			} else {
-				this.products = null;
-				this.$store.commit("cart/setCustomer", undefined);
+				this.$store.commit("cart/emptyCart");
 			}
 		},
 		holdCart() {
@@ -87,7 +83,12 @@ export default {
 				model: "carts",
 				data: {
 					user_id: this.$store.state.user.id,
-					cart: this.products
+					cart: {
+						products: this.products,
+						customer_id: this.$store.state.cart.customer
+							? this.$store.state.cart.customer.id
+							: null
+					}
 				}
 			};
 			this.create(payload).then(() => {
