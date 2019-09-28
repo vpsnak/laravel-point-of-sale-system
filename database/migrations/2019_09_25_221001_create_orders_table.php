@@ -18,13 +18,13 @@ class CreateOrdersTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->enum('status', ['pending', 'pending_payment', 'paid', 'complete'])->nullable();
-            $table->enum('discount_type', ['flat', 'percent'])->nullable();
+            $table->enum('discount_type', ['flat', 'percentage'])->nullable();
             $table->unsignedSmallInteger('discount_amount')->default(0);
             $table->string('shipping_type')->nullable();
             $table->unsignedTinyInteger('shipping_cost')->nullable()->default(0);
             $table->decimal('tax', 4)->unsigned();
             $table->decimal('subtotal');
-            $table->string('note')->nullable();
+            $table->string('notes')->nullable();
             $table->unsignedBigInteger('store_id');
             $table->unsignedBigInteger('created_by');
             $table->timestamps();

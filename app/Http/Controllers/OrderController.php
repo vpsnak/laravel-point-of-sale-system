@@ -21,7 +21,7 @@ class OrderController extends BaseController
             'shipping_cost' => 'numeric|nullable',
             'tax' => 'required|numeric',
             // 'subtotal' => 'required|numeric',
-            'note' => 'string|nullable',
+            'notes' => 'string|nullable',
             'store_id' => 'required|exists:stores,id',
             'created_by' => 'required|exists:users,id',
         ]);
@@ -30,11 +30,11 @@ class OrderController extends BaseController
             'products' => 'required|array',
             'products.*.name' => 'required|string',
             'products.*.sku' => 'required|string',
-            'products.*.price' => 'required|numeric',
+            'products.*.final_price' => 'required|numeric',
             'products.*.qty' => 'required|numeric',
             'products.*.discount_type' => 'string|nullable',
             'products.*.discount_amount' => 'numeric|nullable',
-            'products.*.note' => 'string|nullable',
+            'products.*.notes' => 'string|nullable',
         ]);
 
         $validatedData['subtotal'] = 0; // @TODO: calculate subtotal
@@ -46,6 +46,8 @@ class OrderController extends BaseController
 
         foreach ($order_items['products'] as $product) {
             $product['order_id'] = $order->id;
+            $product['price'] = $product['final_price'];
+            unset($product['final_price']);
             OrderProduct::store($product);
         }
 

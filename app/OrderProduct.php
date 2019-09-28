@@ -12,7 +12,7 @@ class OrderProduct extends BaseModel
         'qty',
         'discount_type',
         'discount_amount',
-        'note'
+        'notes'
     ];
 
     public function order()

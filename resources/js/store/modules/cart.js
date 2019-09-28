@@ -129,6 +129,7 @@ export default {
                 let payload = {
                     model: "orders",
                     data: {
+                        customer_id: state.customer ? state.customer.id : '',
                         created_by: this.state.user.id,
                         store_id: this.state.store.id,
                         status: "pending",

@@ -8,6 +8,7 @@ class Order extends BaseModel
         'customer_id',
         'store_id',
         'created_by',
+        'status',
         'items',
         'discount_type',
         'discount_amount',
@@ -15,7 +16,7 @@ class Order extends BaseModel
         'shipping_cost',
         'tax',
         'subtotal',
-        'note',
+        'notes',
     ];
 
     protected $with = ['items', 'payments'];
