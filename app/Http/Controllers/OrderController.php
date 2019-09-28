@@ -13,37 +13,40 @@ class OrderController extends BaseController
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'customer_id' => 'required|exists:customers,id',
+            'customer_id' => 'nullable|exists:customers,id',
             'status' => 'required|in:pending,pending_payment,paid,complete',
             'discount_type' => 'string|nullable',
-            'discount' => 'numeric|nullable',
+            'discount_amount' => 'numeric|nullable',
             'shipping_type' => 'string|nullable',
             'shipping_cost' => 'numeric|nullable',
             'tax' => 'required|numeric',
-            'subtotal' => 'required|numeric',
+            // 'subtotal' => 'required|numeric',
             'note' => 'string|nullable',
             'store_id' => 'required|exists:stores,id',
             'created_by' => 'required|exists:users,id',
         ]);
 
         $order_items = $request->validate([
-            'items.*.name' => 'required|string',
-            'items.*.sku' => 'required|string',
-            'items.*.price' => 'required|numeric',
-            'items.*.qty' => 'required|numeric',
-            'items.*.discount_type' => 'string|nullable',
-            'items.*.discount' => 'numeric|nullable',
-            'items.*.note' => 'string|nullable',
+            'products' => 'required|array',
+            'products.*.name' => 'required|string',
+            'products.*.sku' => 'required|string',
+            'products.*.price' => 'required|numeric',
+            'products.*.qty' => 'required|numeric',
+            'products.*.discount_type' => 'string|nullable',
+            'products.*.discount_amount' => 'numeric|nullable',
+            'products.*.note' => 'string|nullable',
         ]);
+
+        $validatedData['subtotal'] = 0; // @TODO: calculate subtotal
 
         $order = $this->model::store($validatedData);
         if (empty($order)) {
             return response($order, 500);
         }
 
-        foreach ($order_items['items'] as $item) {
-            $item['order_id'] = $order->id;
-            OrderProduct::store($item);
+        foreach ($order_items['products'] as $product) {
+            $product['order_id'] = $order->id;
+            OrderProduct::store($product);
         }
 
         return response($order, 201);

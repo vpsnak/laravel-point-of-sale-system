@@ -13,8 +13,8 @@ class CartController extends BaseController
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'customer_id' => 'required|exists:customers,id',
-            'name' => 'string',
+            'user_id' => 'required|exists:users,id',
+            'name' => 'nullable|string',
             'cart' => 'required|array',
         ]);
         $validatedData['cart'] = json_encode($validatedData['cart']);
@@ -23,7 +23,7 @@ class CartController extends BaseController
         if (empty($validatedData['name'])) {
             $validatedData['name'] = 'Operator - ' . Carbon::now()->toDateString();
         }
-//        dd($validatedData);
+        //        dd($validatedData);
 
         return response($this->model::store($validatedData), 201);
     }

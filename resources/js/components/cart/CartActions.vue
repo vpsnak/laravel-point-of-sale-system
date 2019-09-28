@@ -67,8 +67,10 @@ export default {
 	mounted() {},
 	methods: {
 		checkout() {
-			this.checkoutDialog = true;
-			this.submitOrder();
+			this.submitOrder().then(response => {
+				console.log(response);
+				this.checkoutDialog = true;
+			});
 		},
 		emptyCart(showPrompt) {
 			if (showPrompt) {
@@ -101,7 +103,6 @@ export default {
 			this.cartRestoreDialog = true;
 		},
 		getCartsOnHold() {
-			let a;
 			let payload = {
 				model: "carts"
 			};

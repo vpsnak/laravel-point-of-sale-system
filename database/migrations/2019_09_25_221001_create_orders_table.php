@@ -19,9 +19,9 @@ class CreateOrdersTable extends Migration
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->enum('status', ['pending', 'pending_payment', 'paid', 'complete'])->nullable();
             $table->enum('discount_type', ['flat', 'percent'])->nullable();
-            $table->unsignedSmallInteger('discount')->default(0);
-            $table->string('shipping_type');
-            $table->unsignedTinyInteger('shipping_cost')->default(0);
+            $table->unsignedSmallInteger('discount_amount')->default(0);
+            $table->string('shipping_type')->nullable();
+            $table->unsignedTinyInteger('shipping_cost')->nullable()->default(0);
             $table->decimal('tax', 4)->unsigned();
             $table->decimal('subtotal');
             $table->string('note')->nullable();
