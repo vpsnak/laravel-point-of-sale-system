@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3f43a645b4cb3d85ae04049046b0845a",
+    "content-hash": "8558a7111abca23d3d4ceda08014a9f2",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -379,6 +379,53 @@
                 "trusted proxy"
             ],
             "time": "2019-09-03T16:45:42+00:00"
+        },
+        {
+            "name": "giberti/ext-oauth-shim",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/giberti/ext-oauth-shim.git",
+                "reference": "e088f6e2fbc1704ab3824cde11e6b175230dc121"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/giberti/ext-oauth-shim/zipball/e088f6e2fbc1704ab3824cde11e6b175230dc121",
+                "reference": "e088f6e2fbc1704ab3824cde11e6b175230dc121",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "giberti/phpunit-local-server": "^1.0",
+                "phpunit/phpunit": "^7.0 || ^8.0"
+            },
+            "suggest": {
+                "ext-oauth": "You should use the pecl OAuth extension, install with `pecl install oauth`",
+                "ext-openssl": "Required to use the OAUTH_SIG_METHOD_RSASHA1 signing method"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/classes.php",
+                    "src/constants.php",
+                    "src/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Erik Giberti",
+                    "homepage": "https://github.com/giberti"
+                }
+            ],
+            "description": "An implementation of the pecl OAuth extension in PHP for shared hosts that don't provide it",
+            "time": "2019-08-03T17:31:23+00:00"
         },
         {
             "name": "jakub-onderka/php-console-color",
