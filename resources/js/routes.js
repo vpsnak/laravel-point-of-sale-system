@@ -11,6 +11,7 @@ import Stores from "./components/pages/Stores";
 import Users from "./components/pages/Users";
 import CTest from "./components/pages/CTest";
 import ListData from "./components/pages/ListData";
+import Taxes from "./components/pages/Taxes";
 
 
 export default [
@@ -79,4 +80,9 @@ export default [
         path: "/list-data",
         component: ListData
     },
+    {
+        name: "Taxes",
+        path: "/taxes",
+        component: Taxes
+    }
 ];

@@ -14,6 +14,7 @@
 			</v-col>
 			<v-col cols="3">
 				<userForm></userForm>
+				<taxForm class="mt-6"></taxForm>
 			</v-col>
 		</v-row>
 	</v-container>
