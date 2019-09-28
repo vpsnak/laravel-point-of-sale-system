@@ -19,7 +19,7 @@ class CreateCashRegisterLogsTable extends Migration
             $table->unsignedBigInteger('cash_register_id');
             $table->double('opening_amount')->nullable();
             $table->double('closing_amount')->nullable();
-            $table->string('status');
+            $table->boolean('status')->default(0);
             $table->dateTime('opening_time')->nullable();
             $table->dateTime('closing_time')->nullable();
             $table->unsignedBigInteger('opened_by')->nullable();
@@ -32,7 +32,7 @@ class CreateCashRegisterLogsTable extends Migration
             $table->foreign('closed_by')->references('id')->on('users')->onDelete('cascade');
         });
     }
-    
+
     /**
      * Reverse the migrations.
      *
