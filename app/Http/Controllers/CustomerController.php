@@ -12,9 +12,11 @@ class CustomerController extends BaseController
     public function create(Request $request)
     {
         $validatedData = $request->validate([
+            'email' => 'required|email|unique:customers,email',
             'first_name' => 'required|alpha',
             'last_name' => 'required|alpha',
-            'email' => 'required|email|unique:customers,email'
+            'phone' => 'required|numeric|unique:customers,phone',
+            'company_name' => 'required|alpha',
         ]);
 
         return response($this->model::store($validatedData), 201);
