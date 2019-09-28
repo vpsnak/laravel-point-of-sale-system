@@ -1,37 +1,44 @@
 <template>
-	<v-form v-model="valid">
-		<div class="text-center">
-			<v-chip color="blue-grey darken-4" label>
-				<v-icon left>fas fa-warehouse</v-icon>Store Form
-			</v-chip>
-		</div>
-		<v-text-field v-model="name" :rules="nameRules" :counter="10" label="Name" required></v-text-field>
-		<v-row justify="space-around">
-			<v-switch v-model="taxable" :label="`Taxable : ${taxable.toString()}`"></v-switch>
-			<v-switch v-model="is_default" :label="`Default : ${is_default.toString()}`"></v-switch>
-		</v-row>
-		<v-select
-			v-model="tax"
-			:items="taxes"
-			:rules="[v => !!v || 'Tax is required']"
-			label="Taxes"
-			required
-		></v-select>
+	<div>
+		<v-form v-model="valid">
+			<div class="text-center">
+				<v-chip color="blue-grey darken-4" label>
+					<v-icon left>fas fa-warehouse</v-icon>Store Form
+				</v-chip>
+			</div>
+			<v-text-field v-model="name" :rules="nameRules" :counter="10" label="Name" required></v-text-field>
+			<v-row justify="space-around">
+				<v-switch v-model="taxable" :label="`Taxable : ${taxable.toString()}`"></v-switch>
+				<v-switch v-model="is_default" :label="`Default : ${is_default.toString()}`"></v-switch>
+			</v-row>
+			<v-select
+				v-model="tax_id"
+				:items="taxes"
+				:rules="[v => !!v || 'Tax is required']"
+				label="Taxes"
+				required
+				item-text="name"
+				item-value="id"
+			></v-select>
 
-		<v-btn class="mr-4" @click="submit">submit</v-btn>
-		<v-btn @click="clear">clear</v-btn>
-	</v-form>
+			<v-btn class="mr-4" @click="submit">submit</v-btn>
+			<v-btn @click="clear">clear</v-btn>
+		</v-form>
+		<v-alert v-if="savingSuccessful === true" class="mt-4" type="success">Form submitted successfully!</v-alert>
+	</div>
 </template>
 
 <script>
 	import { mapActions, mapState, mapGetters } from "vuex";
 	export default {
 		data: () => ({
-			tax: null,
+			savingSuccessful: false,
+			tax_id: null,
 			valid: false,
 			name: "",
 			taxable: false,
 			is_default: false,
+			created_by: null,
 			taxes: [],
 			nameRules: [
 				v => !!v || "Name is required",
@@ -42,9 +49,7 @@
 			this.getAll({
 				model: "taxes"
 			}).then(taxes => {
-				for (let tax in taxes) {
-					this.taxes.push(tax);
-				}
+				this.taxes = taxes;
 			});
 		},
 		methods: {
@@ -55,18 +60,21 @@
 						name: this.name,
 						taxable: this.taxable,
 						is_default: this.is_default,
-						tax_id: this.tax
+						tax_id: this.tax_id,
+						created_by: this.user_id
 					}
 				};
+				console.log(this.tax);
 				this.create(payload).then(() => {
-					console.log("To phre");
+					this.clear();
+					this.savingSuccessful = true;
 				});
 			},
 			clear() {
 				this.name = "";
 				this.taxable = false;
 				this.isdefault = false;
-				this.taxt = null;
+				this.tax_id = null;
 			},
 			getAllTaxes() {
 				this.getAll({
@@ -81,6 +89,13 @@
 				create: "create",
 				delete: "delete"
 			})
+		},
+		computed: {
+			user_id: {
+				get() {
+					return this.$store.state.user.id;
+				}
+			}
 		}
 	};
 </script>
