@@ -11,6 +11,12 @@ class OrderProduct extends BaseModel
         'price',
         'qty',
         'discount_type',
-        'discount',
+        'discount_amount',
+        'note'
     ];
+
+    public function order()
+    {
+        return $this->belongsTo(\App\Order::class);
+    }
 }

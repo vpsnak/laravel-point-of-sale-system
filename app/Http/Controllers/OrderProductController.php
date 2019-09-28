@@ -18,7 +18,7 @@ class OrderProductController extends BaseController
             'price' => 'required|numeric',
             'qty' => 'required|numeric',
             'discount_type' => 'required|string',
-            'discount' => 'required|numeric',
+            'discount_amount' => 'required|numeric',
         ]);
 
         return response($this->model::store($validatedData), 201);

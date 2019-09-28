@@ -21,7 +21,7 @@ class CreateOrderProductTable extends Migration
             $table->unsignedDecimal('price');
             $table->smallInteger('qty');
             $table->enum('discount_type', ['flat', 'percent'])->nullable();
-            $table->smallInteger('discount')->unsigned()->default(0);
+            $table->smallInteger('discount_amount')->unsigned()->default(0);
             $table->string('note')->nullable();
             $table->timestamps();
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('restrict');

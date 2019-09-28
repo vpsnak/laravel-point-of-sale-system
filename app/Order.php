@@ -6,10 +6,11 @@ class Order extends BaseModel
 {
     protected $fillable = [
         'customer_id',
-        'user_id',
+        'store_id',
+        'created_by',
         'items',
         'discount_type',
-        'discount',
+        'discount_amount',
         'shipping_type',
         'shipping_cost',
         'tax',

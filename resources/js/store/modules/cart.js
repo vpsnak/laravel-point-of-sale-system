@@ -125,10 +125,20 @@ export default {
     },
     actions: {
         submitOrder({ commit, dispatch }) {
+            console.log(this.state.products);
+
             return new Promise((resolve, reject) => {
                 let payload = {
                     model: "orders",
-                    data: { ...this.state, user_id: this.state.user.id }
+                    data: {
+                        created_by: this.state.user.id,
+                        store_id: this.state.store.id,
+                        status: "pending",
+                        discount_type: this.state.discount_type,
+                        discount_amount: this.state.discount_amount,
+                        products: this.state.products,
+                        tax: 5 // @TODO: needs reevaluation
+                    }
                 };
 
                 dispatch("create", payload, {
