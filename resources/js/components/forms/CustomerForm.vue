@@ -149,7 +149,7 @@
 
 					this.$refs[f].validate(true);
 				});
-			}
+			}  
 		}
 	};
 </script>
