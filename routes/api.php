@@ -19,7 +19,7 @@ $baseRoutes = [
     'carts' => 'CartController',
     'orders' => 'OrderController',
     'categories' => 'CategoryController',
-
+    
     'stores' => 'StoreController',
     'taxes' => 'TaxController',
     'payments' => 'PaymentController',
@@ -37,3 +37,5 @@ foreach ($baseRoutes as $route => $controller) {
 }
 
 Route::get('/carts/hold', "{$baseRoutes['carts']}@getHold");
+
+Route::get('/magento/authorize', 'Auth\MagentoOAuthController@authorizeMagento');
