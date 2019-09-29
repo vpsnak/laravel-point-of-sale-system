@@ -1,15 +1,17 @@
 <template>
     <prop-data-table
         :tableHeaders="headers"
-        dataUrl="products"
+        data-url="products"
         tableTitle="Products"
+        tableBtnTitle="New Product"
+        tableForm="productForm"
     />
 </template>
 
 <script>
-  import { mapMutations } from 'vuex'
+import { mapMutations } from "vuex";
 
-  export default {
+export default {
     data() {
         return {
             headers: [
@@ -22,18 +24,19 @@
                 { text: "Id", value: "id" },
                 { text: "Sku", value: "sku" },
                 { text: "Photo url", value: "photo_url" },
-              {text: 'Price', value: 'price.amount'},
-              {text: 'Actions', value: 'action', sortable: false}
-            ],
-        }
+                { text: "Price", value: "price.amount" },
+                { text: "Actions", value: "action", sortable: false }
+            ]
+        };
     },
-    mounted () {
-      this.setRows([])
+    mounted() {
+        this.setRows([]);
     },
     methods: {
-      ...mapMutations('datatable', {
-        setRows: 'setRows'
-      })
+        ...mapMutations("datatable", {
+            setRows: "setRows",
+            deleteRow: "deleteRow"
+        })
     }
-  }
+};
 </script>

@@ -18,8 +18,8 @@
             label="Store"
             required
         ></v-select>
-        <v-btn class="mr-4" @click="submit">submit</v-btn>
-        <v-btn @click="clear">clear</v-btn>
+        <!-- <v-btn class="mr-4" @click="submit">submit</v-btn>
+        <v-btn @click="clear">clear</v-btn>-->
     </v-form>
 </template>
 

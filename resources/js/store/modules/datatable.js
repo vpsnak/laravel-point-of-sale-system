@@ -1,9 +1,12 @@
 // initial state
 const state = {
     title: "DataTable",
+    btnTitle: "New Item",
     headers: [],
     rows: [],
-    loading: false
+    loading: false,
+    form: "Form",
+    showDialog: false,
 };
 
 // getters
@@ -49,6 +52,15 @@ const mutations = {
     },
     setTitle(state, title) {
         state.title = title;
+    },
+    setBtnTitle(state, btnTitle) {
+        state.btnTitle = btnTitle;
+    },
+    setForm(state, form) {
+        state.form = form;
+    },
+    setShowDialog(state, showDialog) {
+        state.showDialog = showDialog;
     },
     setRows(state, rows) {
         state.rows = rows;

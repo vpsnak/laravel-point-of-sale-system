@@ -1,17 +1,19 @@
 <template>
     <prop-data-table
         :tableHeaders="headers"
-        dataUrl="categories"
+        data-url="categories"
         tableTitle="Categories"
+        tableBtnTitle="New Category"
+        tableForm="categoryForm"
     />
 </template>
 
 <script>
-  import { mapMutations } from 'vuex'
+import { mapMutations } from "vuex";
 
-  export default {
+export default {
     data() {
-      return {
+        return {
             headers: [
                 {
                     text: "Id",
@@ -21,17 +23,17 @@
                     text: "Name",
                     value: "name"
                 },
-              {text: 'Actions', value: 'action', sortable: false}
-            ],
-      }
+                { text: "Actions", value: "action", sortable: false }
+            ]
+        };
     },
-    mounted () {
-      this.setRows([])
+    mounted() {
+        this.setRows([]);
     },
     methods: {
-      ...mapMutations('datatable', {
-        setRows: 'setRows'
-      })
+        ...mapMutations("datatable", {
+            setRows: "setRows"
+        })
     }
-  }
+};
 </script>
