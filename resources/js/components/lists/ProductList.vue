@@ -143,15 +143,15 @@ export default {
 			this.initiateLoadingSearchResults(true);
 
 			let payload = {
-				model: "categories",
+              url: 'categories/filterable',
 				mutation: "setCategoryList"
 			};
 			this.$store
-				.dispatch("getAll", payload)
-				.then(result => {
+                .dispatch('getRequest', payload, {root: true})
+                .then(result => {
 					this.initiateLoadingSearchResults(false);
 				})
-				.catch(error => {
+                .catch(error => {
 					this.initiateLoadingSearchResults(false);
 					console.log(error);
 				});

@@ -13,7 +13,7 @@ class CartController extends BaseController
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'cash_register_id' => 'required|exists:cash_registers,id',
             'name' => 'nullable|string',
             'cart' => 'required|array',
         ]);
@@ -31,9 +31,9 @@ class CartController extends BaseController
     public function getHold(Request $request)
     {
         $validatedData = $request->validate([
-            'user' => 'required|int'
+            'cash_register_id' => 'required|int'
         ]);
-
-        return response($this->model::getAll('customer_id', $validatedData['user']));
+    
+        return response($this->model::getAll('cash_register_id', $validatedData['cash_register_id']));
     }
 }

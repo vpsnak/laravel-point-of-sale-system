@@ -29,9 +29,9 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapGetters } from "vuex";
+  import {mapActions} from 'vuex'
 
-export default {
+  export default {
 	props: {
 		disabled: Boolean
 	},
@@ -82,7 +82,7 @@ export default {
 			let payload = {
 				model: "carts",
 				data: {
-					user_id: this.$store.state.user.id,
+                  cash_register_id: this.$store.state.cashRegister.id,
 					cart: {
 						products: this.products,
 						customer_id: this.$store.state.cart.customer

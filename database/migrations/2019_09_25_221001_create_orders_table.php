@@ -13,7 +13,6 @@ class CreateOrdersTable extends Migration
      */
     public function up()
     {
-        // @TODO order status
         Schema::create('orders', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('customer_id')->nullable();

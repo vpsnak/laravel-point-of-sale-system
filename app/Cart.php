@@ -5,8 +5,8 @@ namespace App;
 class Cart extends BaseModel
 {
     protected $fillable = [
-        'customer_id',
+        'cash_register_id',
         'name',
-        'cart'
+        'cart',
     ];
 }

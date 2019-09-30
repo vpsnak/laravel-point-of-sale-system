@@ -37,5 +37,7 @@ foreach ($baseRoutes as $route => $controller) {
 }
 
 Route::get('/carts/hold', "{$baseRoutes['carts']}@getHold");
+//@TODO make it work....something is crushing (empty response)
+Route::get('/categories/filterable', "{$baseRoutes['categories']}@productListingCategories");
 
 Route::get('/magento/authorize', 'Auth\MagentoOAuthController@authorizeMagento');

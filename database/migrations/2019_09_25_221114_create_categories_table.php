@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCartsTable extends Migration
+class CreateCategoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,11 @@ class CreateCartsTable extends Migration
      */
     public function up()
     {
-        // @TODO map carts to loggedin user instead of customer
-        Schema::create('carts', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('customer_id')->unsigned()->nullable();
-            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('restrict');
             $table->string('name');
-            $table->text('cart');
+            $table->boolean('in_product_listing')->default(0);
             $table->timestamps();
-            // discount_id
         });
     }
 
@@ -32,6 +28,6 @@ class CreateCartsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('carts');
+        Schema::dropIfExists('categories');
     }
 }

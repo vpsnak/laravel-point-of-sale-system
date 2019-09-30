@@ -60,6 +60,11 @@ class BaseModel extends Model
     {
         return get_called_class()::select($fields)->where($column, $value)->get();
     }
+    
+    public static function getAllPaginate($column, $value, $per_page = 10, $fields = '*')
+    {
+        return get_called_class()::select($fields)->where($column, $value)->paginate($per_page);
+    }
 
     public static function deleteRecord($column, $value)
     {
