@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class OrderController extends BaseController
 {
     protected $model = Order::class;
-
+    
     public function create(Request $request)
     {
         $validatedData = $request->validate([
@@ -20,12 +20,11 @@ class OrderController extends BaseController
             'shipping_type' => 'string|nullable',
             'shipping_cost' => 'numeric|nullable',
             'tax' => 'required|numeric',
-            // 'subtotal' => 'required|numeric',
             'notes' => 'string|nullable',
             'store_id' => 'required|exists:stores,id',
             'created_by' => 'required|exists:users,id',
         ]);
-
+    
         $order_items = $request->validate([
             'products' => 'required|array',
             'products.*.name' => 'required|string',
@@ -36,21 +35,23 @@ class OrderController extends BaseController
             'products.*.discount_amount' => 'numeric|nullable',
             'products.*.notes' => 'string|nullable',
         ]);
-
-        $validatedData['subtotal'] = 0; // @TODO: calculate subtotal
-
+    
+        $validatedData['subtotal'] = 0;
+        foreach ($order_items['products'] as $product) {
+            $validatedData['subtotal'] += $product['final_price'];
+        }
         $order = $this->model::store($validatedData);
         if (empty($order)) {
             return response($order, 500);
         }
-
+    
         foreach ($order_items['products'] as $product) {
             $product['order_id'] = $order->id;
             $product['price'] = $product['final_price'];
             unset($product['final_price']);
             OrderProduct::store($product);
         }
-
-        return response($order, 201);
+    
+        return response($this->model::getOne($order->id), 201);
     }
 }
