@@ -1,6 +1,7 @@
 // initial state
 const state = {
   total: 0,
+  payment_types: [],
   payments: []
 }
 
@@ -21,26 +22,40 @@ const getters = {
 
 // actions
 const actions = {
-  removePayment({ commit, state, dispatch }, payment) {
-    commit('removePayment', payment)
-  },
-  addPayment({ commit,dispatch }, payment) {
+  removePayment({commit, state, dispatch}, payment) {
     let payload = {
       model: 'payments',
-      mutation: 'payment/setPayments',
+      id: payment.id
+    }
+    dispatch('delete', payload, {root: true})
+      .then(() => {
+        dispatch('fetchPayments')
+      })
+  },
+  addPayment({commit, dispatch}, payment) {
+    let payload = {
+      model: 'payments',
       data: payment
     }
-    dispatch('create', payload, { root: true }).then((response)=>{
-      commit('addPayment', payment)
-    })
+    dispatch('create', payload, {root: true})
+      .then(() => {
+        dispatch('fetchPayments')
+      })
   },
-  fetchPayments({ dispatch }) {
+  fetchPayments({dispatch}) {
     let payload = {
       model: 'payments',
       mutation: 'payment/setPayments',
       keyword: '1'
     }
-    dispatch('search', payload, { root: true })
+    dispatch('search', payload, {root: true})
+  },
+  getPaymentTypes({dispatch}) {
+    let payload = {
+      model: 'payment-types',
+      mutation: 'payment/setPaymentTypes'
+    }
+    dispatch('getAll', payload, {root: true})
   }
 }
 
@@ -54,6 +69,9 @@ const mutations = {
   },
   setPayments(state, payments) {
     state.payments = payments
+  },
+  setPaymentTypes(state, payment_types) {
+    state.payment_types = payment_types
   },
   setTotal(state, total) {
     state.total = total

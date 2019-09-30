@@ -26,17 +26,19 @@
 			<v-text-field label="Amount" prefix="$" type="number" v-model="payment_amount" />
 		</v-row>
 		<v-row no-gutters>
-			<v-btn :disabled="remainingAmount <= 0" @click="handlePaymentButton">Cash</v-btn>
-			<v-btn :disabled="remainingAmount <= 0" @click="handlePaymentButton">Card</v-btn>
-			<v-btn :disabled="remainingAmount <= 0" @click="handlePaymentButton">Coupon</v-btn>
-			<v-btn :disabled="remainingAmount <= 0" @click="handlePaymentButton">GiftCard</v-btn>
+			<v-btn :disabled="remainingAmount <= 0"
+				   :type="payment_type.type"
+				   @click="handlePaymentButton(payment_type)"
+				   v-for="payment_type in payment_types"
+			>{{payment_type.name}}
+			</v-btn>
 		</v-row>
 	</div>
 </template>
 <script>
-import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
+  import {mapActions, mapGetters, mapMutations, mapState} from 'vuex'
 
-export default {
+  export default {
 	data() {
 		return {
 			payment_amount: this.payAmount | this.remainingAmount
@@ -44,6 +46,7 @@ export default {
 	},
 	props: ["totalAmount", "payAmount"],
 	mounted() {
+      this.getPaymentTypes()
 		this.fetchPayments();
 		this.setTotal(this.totalAmount);
 	},
@@ -61,6 +64,7 @@ export default {
 			}
 		},
 		...mapState("payment", {
+          payment_types: 'payment_types',
 			payments: "payments",
 			total: "total"
 		}),
@@ -81,10 +85,9 @@ export default {
 		handlePaymentAmountInput(value) {
 			this.payment_amount = value;
 		},
-		handlePaymentButton(event) {
+      handlePaymentButton(payment_type) {
 			this.addPayment({
-				id: event.timeStamp,
-				payment_type: event.target.innerText,
+              payment_type: payment_type.type,
 				amount: this.payment_amount,
 				cash_register_id: 1,
 				order_id: 1,
@@ -97,6 +100,7 @@ export default {
 			this.payment_amount = this.remainingAmount;
 		},
 		...mapActions("payment", {
+          getPaymentTypes: 'getPaymentTypes',
 			fetchPayments: "fetchPayments",
 			removePayment: "removePayment",
 			addPayment: "addPayment"
