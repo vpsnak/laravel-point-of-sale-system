@@ -14,19 +14,11 @@
             <v-btn color="primary" @click="showFormDialog">{{this.btnTitle }}</v-btn>
         </v-card-title>
         <v-data-table :headers="headers" :items="rows" :loading="loading" :search="search">
-            <template v-slot:item.email="{item}">
-                <a :href="'mailto:' + item.email">{{ item.email }}</a>
-            </template>
-
-            <!--            <template v-slot:item="{ item }">-->
-            <!--                <component :is="checkoutStep.component" :item="item"/>-->
-            <!--            </template>-->
-
+            <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope"><slot :name="slot" v-bind="scope"/></template>
             <template v-slot:item.action="{ item }">
                 <v-icon @click="editItem(item)" class="mr-2" small>edit</v-icon>
                 <v-icon @click="deleteItem(item)" small>delete</v-icon>
             </template>
-
             <v-alert
                 :value="true"
                 color="error"
@@ -52,7 +44,6 @@
         </v-dialog>
     </v-card>
 </template>
-
 
 <script>
     import {mapActions, mapMutations, mapState} from 'vuex'
