@@ -4,7 +4,7 @@
 			<v-list-item-content>
 				<v-list-item-title
 					@click="handlePaymentRemove(payment)"
-				>{{ payment.type + ' - ' + payment.amount }}$</v-list-item-title>
+				>{{ payment.payment_type.name + ' - ' + payment.amount }}$</v-list-item-title>
 			</v-list-item-content>
 		</v-list-item>
 		<v-row class="d-flex justify-space-between pa-2" no-gutters>
@@ -84,8 +84,11 @@ export default {
 		handlePaymentButton(event) {
 			this.addPayment({
 				id: event.timeStamp,
-				type: event.target.innerText,
-				amount: this.payment_amount
+				payment_type: event.target.innerText,
+				amount: this.payment_amount,
+				cash_register_id: 1,
+				order_id: 1,
+				created_by: 1,
 			});
 			this.payment_amount = this.remainingAmount;
 		},

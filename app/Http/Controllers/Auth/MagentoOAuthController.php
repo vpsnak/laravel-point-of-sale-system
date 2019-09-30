@@ -40,9 +40,9 @@ class MagentoOAuthController extends Controller
         if (!MagentoOAuth::checkExists('key', 'secret')) {
             MagentoOAuth::store(['key' => 'secret']);
         }
-        $this->state = MagentoOAuth::getFirst('*', 'key', 'state');
-        $this->token = MagentoOAuth::getFirst('*', 'key', 'token');
-        $this->secret = MagentoOAuth::getFirst('*', 'key', 'secret');
+        $this->state = MagentoOAuth::getFirst('key', 'state');
+        $this->token = MagentoOAuth::getFirst('key', 'token');
+        $this->secret = MagentoOAuth::getFirst('key', 'secret');
         
         $auth_type = ($this->state->value == 2) ? OAUTH_AUTH_TYPE_AUTHORIZATION : OAUTH_AUTH_TYPE_URI;
         try {

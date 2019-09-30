@@ -51,7 +51,7 @@ class BaseModel extends Model
         return get_called_class()::where($column, $id)->exists();
     }
 
-    public static function getFirst($fields, $column, $value)
+    public static function getFirst($column, $value, $fields = ['*'])
     {
         return get_called_class()::select($fields)->where($column, $value)->first();
     }

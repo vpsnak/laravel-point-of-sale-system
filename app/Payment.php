@@ -4,10 +4,23 @@ namespace App;
 
 class Payment extends BaseModel
 {
-    protected $with = ['orders'];
-
-    public function orders()
+    protected $with = ['paymentType','order'];
+    
+    protected $fillable = [
+        'payment_type',
+        'amount',
+        'cash_register_id',
+        'order_id',
+        'created_by',
+    ];
+    
+    public function paymentType()
     {
-        return $this->belongsToMany(Order::class);
+        return $this->belongsTo(PaymentType::class, 'payment_type');
+    }
+    
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
     }
 }

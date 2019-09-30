@@ -1,14 +1,7 @@
 // initial state
 const state = {
   total: 0,
-  payments: [
-    { id: 1, type: 'Cash', amount: 10 },
-    { id: 2, type: 'Cash', amount: 11 },
-    { id: 3, type: 'Cash', amount: 12 },
-    { id: 4, type: 'Cash', amount: 13 },
-    { id: 5, type: 'Cash', amount: 14 },
-    { id: 6, type: 'Cash', amount: 15 }
-  ]
+  payments: []
 }
 
 // getters
@@ -28,18 +21,26 @@ const getters = {
 
 // actions
 const actions = {
-  removePayment({ commit, state }, payment) {
+  removePayment({ commit, state, dispatch }, payment) {
     commit('removePayment', payment)
   },
-  addPayment({ commit }, payment) {
-    commit('addPayment', payment)
+  addPayment({ commit,dispatch }, payment) {
+    let payload = {
+      model: 'payments',
+      mutation: 'payment/setPayments',
+      data: payment
+    }
+    dispatch('create', payload, { root: true }).then((response)=>{
+      commit('addPayment', payment)
+    })
   },
   fetchPayments({ dispatch }) {
     let payload = {
       model: 'payments',
-      mutation: 'payment/setPayments'
+      mutation: 'payment/setPayments',
+      keyword: '1'
     }
-    dispatch('endpoints/getAll', payload, { root: true })
+    dispatch('search', payload, { root: true })
   }
 }
 
