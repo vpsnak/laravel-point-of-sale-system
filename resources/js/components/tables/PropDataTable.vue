@@ -34,15 +34,30 @@
                 slot="no-results"
             >Your search for "{{ search }}" found no results.</v-alert>
         </v-data-table>
-        <formDialog :form="this.form" :show="this.showDialog" />
+        <v-dialog max-width="600px" transition="dialog-bottom-transition" v-model="showDialog">
+            <v-card>
+                <v-card-title>
+                    <span class="headline">Form</span>
+                </v-card-title>
+                <v-card-text>
+                    <v-container>
+                        <v-row>
+                            <v-col>
+                                <v-form :is="form" />
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
     </v-card>
 </template>
 
 
 <script>
-import { mapActions, mapMutations, mapState } from "vuex";
+    import {mapActions, mapMutations, mapState} from 'vuex'
 
-export default {
+    export default {
     data() {
         return {
             search: ""
@@ -75,10 +90,10 @@ export default {
         }),
         showDialog: {
             get() {
-                return this.$store.state.showDialog;
+                return this.$store.state.datatable.showDialog
             },
             set(value) {
-                this.$store.state.showDialog = value;
+                this.$store.state.datatable.showDialog = value
             }
         }
     },
