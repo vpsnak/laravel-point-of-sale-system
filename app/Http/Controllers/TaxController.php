@@ -12,7 +12,7 @@ class TaxController extends BaseController
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required|alpha',
+            'name' => 'required|string',
             'percentage' => 'required|numeric',
             'is_default' => 'required|boolean',
         ]);

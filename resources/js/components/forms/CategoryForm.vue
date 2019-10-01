@@ -16,9 +16,9 @@
 </template>
 
 <script>
-	import { mapActions } from "vuex";
+  import { mapActions } from 'vuex'
 
-	export default {
+  export default {
 		data: () => ({
 			in_product_listing: false,
 			valid: false,
@@ -37,10 +37,14 @@
 						in_product_listing: this.in_product_listing
 					}
 				};
-				this.create(payload).then(() => {});
+              this.create(payload).then(() => {
+                this.clear()
+                window.location.reload()
+              })
 			},
 			clear() {
 				this.name = "";
+              this.in_product_listing = false
 			},
 			...mapActions({
 				create: "create"

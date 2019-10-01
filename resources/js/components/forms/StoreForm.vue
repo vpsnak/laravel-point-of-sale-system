@@ -29,8 +29,9 @@
 </template>
 
 <script>
-	import { mapActions, mapState, mapGetters } from "vuex";
-	export default {
+  import { mapActions } from 'vuex'
+
+  export default {
 		data: () => ({
 			savingSuccessful: false,
 			tax_id: null,
@@ -68,6 +69,7 @@
 				this.create(payload).then(() => {
 					this.clear();
 					this.savingSuccessful = true;
+                  window.location.reload()
 				});
 			},
 			clear() {
