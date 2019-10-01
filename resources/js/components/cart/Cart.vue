@@ -1,7 +1,7 @@
 <template>
 	<v-sheet class="pa-3 d-flex flex-column" style="height:100%">
 		<div class="d-flex align-center justify-space-between">
-			<div class="d-flex align-center">
+			<div :class="titleClass">
 				<v-icon>{{ icon }}</v-icon>
 				<h5 class="title-2 ml-2">{{ title }}</h5>
 			</div>
@@ -53,6 +53,11 @@ export default {
 		toggles: Boolean | null
 	},
 	computed: {
+		titleClass() {
+			return this.$props.toggles
+				? "d-flex align-center pb-5"
+				: "d-flex align-center";
+		},
 		retail: {
 			get() {
 				return this.$store.state.cart.retail;

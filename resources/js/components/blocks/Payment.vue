@@ -5,7 +5,7 @@
 				<h3 class="mb-3">Payment history</h3>
 				<v-data-table
 					:headers="headers"
-					:items="paymentHistory"
+					:items="paymentHistory()"
 					class="elevation-1"
 					disable-pagination
 					disable-filtering
@@ -42,8 +42,12 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 export default {
-	props: {},
+	props: {
+		order_id: Number
+	},
 	data() {
 		return {
 			paymentTypes: [],
@@ -66,7 +70,7 @@ export default {
 				},
 				{
 					text: "Date",
-					value: "date"
+					value: "created_at"
 				},
 				{
 					text: "Type",
@@ -76,25 +80,25 @@ export default {
 					text: "Amount (USD)",
 					value: "amount"
 				}
-			],
-			paymentHistory: [
-				{
-					store: "store name / address",
-					cashier: "cashier name/number",
-					operator: "user: first_name + last_name",
-					date: "12/31/2020 14:30 PM",
-					type: "Cash",
-					amount: 30
-				},
-				{
-					store: "store name / address",
-					cashier: "cashier name/number",
-					operator: "user: first_name + last_name",
-					date: "12/31/2020 14:30 PM",
-					type: "Credit card",
-					amount: 70
-				}
 			]
+			// paymentHistory: [
+			// 	{
+			// 		store: "store name / address",
+			// 		cashier: "cashier name/number",
+			// 		operator: "user: first_name + last_name",
+			// 		date: "12/31/2020 14:30 PM",
+			// 		type: "Cash",
+			// 		amount: 30
+			// 	},
+			// 	{
+			// 		store: "store name / address",
+			// 		cashier: "cashier name/number",
+			// 		operator: "user: first_name + last_name",
+			// 		date: "12/31/2020 14:30 PM",
+			// 		type: "Credit card",
+			// 		amount: 70
+			// 	}
+			// ]
 		};
 	},
 
@@ -121,9 +125,26 @@ export default {
 		this.$store
 			.dispatch("getAll", { model: "payment-types" })
 			.then(response => {
-				console.log(response);
 				this.paymentTypes = response;
 			});
-	}
+
+		this.paymentHistory();
+	},
+
+	methods: {
+		paymentHistory() {
+			let payload = {
+				model: "payments",
+				keyword: "1"
+			};
+
+			this.search(payload).then(response => {
+				console.log(response);
+				return response;
+			});
+		}
+	},
+
+	...mapActions(["search"])
 };
 </script>
