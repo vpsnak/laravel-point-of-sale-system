@@ -34,14 +34,14 @@
 		data: () => ({
 			savingSuccessful: false,
 			tax_id: null,
-			valid: false,
+			valid: true,
 			name: "",
 			taxable: false,
 			is_default: false,
 			created_by: null,
 			taxes: [],
 			nameRules: [
-				v => !!v || "Name is required",
+				// v => !!v || "Name is required",
 				v => v.length <= 10 || "Name must be less than 10 characters"
 			]
 		}),
@@ -75,6 +75,7 @@
 				this.taxable = false;
 				this.isdefault = false;
 				this.tax_id = null;
+				this.valid = false;
 			},
 			getAllTaxes() {
 				this.getAll({

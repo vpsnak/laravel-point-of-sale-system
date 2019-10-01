@@ -5,15 +5,15 @@
 			<v-spacer></v-spacer>
 			<v-text-field append-icon="search" hide-details label="Search" single-line v-model="search"></v-text-field>
 			<v-divider class="mx-4" inset vertical></v-divider>
-			<v-btn color="primary" @click="showFormDialog">{{this.btnTitle }}</v-btn>
+			<v-btn :disabled="btnDisable" color="primary" @click="showFormDialog">{{this.btnTitle }}</v-btn>
 		</v-card-title>
 		<v-data-table :headers="headers" :items="rows" :loading="loading" :search="search">
 			<template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
 				<slot :name="slot" v-bind="scope" />
 			</template>
 			<template v-slot:item.action="{ item }">
-				<v-icon @click="editItem(item)" class="mr-2" small>edit</v-icon>
-				<v-icon @click="deleteItem(item)" small>delete</v-icon>
+				<v-icon :disabled="btnDisable" @click="editItem(item)" class="mr-2" small>edit</v-icon>
+				<v-icon :disabled="btnDisable" @click="deleteItem(item)" small>delete</v-icon>
 			</template>
 			<v-alert
 				:value="true"
@@ -55,7 +55,8 @@
 			"tableHeaders",
 			"dataUrl",
 			"tableBtnTitle",
-			"tableForm"
+			"tableForm",
+			"tableBtnDisable"
 		],
 		mounted() {
 			this.setHeaders(this.tableHeaders);
@@ -64,6 +65,7 @@
 			});
 			this.setTitle(this.tableTitle);
 			this.setBtnTitle(this.tableBtnTitle);
+			this.setBtnDisable(this.tableBtnDisable);
 			this.setForm(this.tableForm);
 		},
 		computed: {
@@ -73,7 +75,8 @@
 				rows: "rows",
 				loading: "loading",
 				btnTitle: "btnTitle",
-				form: "form"
+				form: "form",
+				btnDisable: "btnDisable"
 			}),
 			showDialog: {
 				get() {
@@ -114,7 +117,8 @@
 				setTitle: "setTitle",
 				setBtnTitle: "setBtnTitle",
 				setForm: "setForm",
-				setShowDialog: "setShowDialog"
+				setShowDialog: "setShowDialog",
+				setBtnDisable: "setBtnDisable"
 			})
 		}
 	};

@@ -6,7 +6,9 @@
 					<v-row no-gutters>
 						<v-col cols="8" class="d-flex flex-column">
 							<span class="subtitle-2">{{ product.name }}</span>
-							<span class="body-2">$ {{ product.qty * product.price.amount }}</span>
+							<span
+								class="body-2"
+							>$ {{ product.qty * product.final_price ? product.final_price : product.price }}</span>
 						</v-col>
 						<v-col cols="1" class="d-flex align-center justify-center pa-1">
 							<v-btn v-if="editable" icon @click.stop="decreaseQty(product)">

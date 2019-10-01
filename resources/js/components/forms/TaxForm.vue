@@ -44,7 +44,7 @@
 			clear() {
 				this.name = "";
 				this.percentage = "";
-				this.default = "";
+				this.default1 = "";
 			},
 			...mapActions({
 				create: "create"

@@ -7,6 +7,7 @@ const state = {
     loading: false,
     form: "Form",
     showDialog: false,
+    btnDisable: false,
 };
 
 // getters
@@ -61,6 +62,9 @@ const mutations = {
     },
     setShowDialog(state, showDialog) {
         state.showDialog = showDialog;
+    },
+    setBtnDisable(state, btnDisable) {
+        state.btnDisable = btnDisable;
     },
     setRows(state, rows) {
         state.rows = rows;

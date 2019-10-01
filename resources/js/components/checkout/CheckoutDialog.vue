@@ -16,7 +16,7 @@
 			<v-container fluid>
 				<v-row>
 					<v-col cols="3">
-						<cart icon="fa_list_alt" title="Order summary" :items="items" />
+						<cart icon="mdi-clipboard-list" title="Order summary" :items="items" />
 					</v-col>
 					<v-col cols="9">
 						<v-card class="pa-2">

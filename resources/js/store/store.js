@@ -162,6 +162,10 @@ export default new Vuex.Store({
         },
         create(context, payload) {
             return new Promise((resolve, reject) => {
+                payload.data.created_by = this.state.user.id;
+
+                console.log(payload.data);
+
                 axios
                     .post(
                         this.state.baseUrl + payload.model + "/create",
