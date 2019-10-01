@@ -28,7 +28,15 @@ class PaymentController extends BaseController
             ], 400);
         }
         $validatedData['payment_type'] = $stored_payment_type->id;
-        return response($this->model::store($validatedData), 201);
+        $payment = $this->model::store($validatedData);
+        if (!empty($payment)) {
+        
+            return response([
+                'total' => $payment->order->total,
+                'total_paid' => $payment->order->total_paid,
+                'payment' => $payment
+            ], 201);
+        }
     }
     
     public function search(Request $request)

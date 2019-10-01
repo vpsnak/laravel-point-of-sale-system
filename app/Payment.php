@@ -4,7 +4,7 @@ namespace App;
 
 class Payment extends BaseModel
 {
-    protected $with = ['paymentType', 'order', 'created_by'];
+    protected $with = ['paymentType', 'created_by'];
 
     protected $fillable = [
         'payment_type',
