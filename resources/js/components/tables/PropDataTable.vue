@@ -25,7 +25,10 @@
 		<v-dialog max-width="600px" transition="dialog-bottom-transition" v-model="showDialog">
 			<v-card>
 				<v-card-title>
-					<span class="headline">Form</span>
+					<span class="headline">
+						<i class="fas fa-seedling"></i>
+						{{ this.btnTitle }}
+					</span>
 				</v-card-title>
 				<v-card-text>
 					<v-container>
@@ -42,9 +45,9 @@
 </template>
 
 <script>
-  import { mapActions, mapMutations, mapState } from 'vuex'
+	import { mapActions, mapMutations, mapState } from "vuex";
 
-  export default {
+	export default {
 		data() {
 			return {
 				search: ""
@@ -97,7 +100,7 @@
 			deleteItem(item) {
 				confirm("Are you sure you want to delete this item?") &&
 					this.deleteRow({
-                      url: this.dataUrl + '/' + item.id,
+						url: this.dataUrl + "/" + item.id,
 						data: {
 							id: item.id
 						}

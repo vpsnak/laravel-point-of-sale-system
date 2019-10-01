@@ -2,7 +2,7 @@
 	<div>
 		<v-form v-model="valid">
 			<div class="text-center">
-				<v-chip color="blue-grey darken-4" label>
+				<v-chip color="blue-grey" label>
 					<v-icon left>fas fa-warehouse</v-icon>Store Form
 				</v-chip>
 			</div>

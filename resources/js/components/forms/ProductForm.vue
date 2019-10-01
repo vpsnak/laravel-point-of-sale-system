@@ -1,7 +1,7 @@
 <template>
 	<v-form v-model="valid">
 		<div class="text-center">
-			<v-chip color="deep-purple" label>
+			<v-chip color="purple" label>
 				<v-icon left>fab fa-product-hunt</v-icon>Product Form
 			</v-chip>
 		</div>

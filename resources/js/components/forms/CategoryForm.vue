@@ -1,7 +1,7 @@
 <template>
 	<v-form v-model="valid">
 		<div class="text-center">
-			<v-chip color="teal darken-4" label>
+			<v-chip color="primary" label>
 				<v-icon left>fas fa-bars</v-icon>Category Form
 			</v-chip>
 		</div>

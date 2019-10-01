@@ -1,7 +1,7 @@
 <template>
 	<v-form>
 		<div class="text-center">
-			<v-chip color="indigo darken-4" label>
+			<v-chip color="primary" label>
 				<v-icon left>fas fa-address-card</v-icon>Address Form
 			</v-chip>
 		</div>
