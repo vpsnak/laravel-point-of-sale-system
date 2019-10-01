@@ -6,6 +6,10 @@
 			</v-chip>
 		</div>
 		<v-text-field v-model="name" :rules="nameRules" :counter="10" label="Name" required></v-text-field>
+		<v-switch
+			v-model="in_product_listing"
+			:label="`In Product listing : ${in_product_listing.toString()}`"
+		></v-switch>
 		<v-btn class="mr-4" @click="submit">submit</v-btn>
 		<v-btn @click="clear">clear</v-btn>
 	</v-form>
@@ -16,6 +20,7 @@
 
 	export default {
 		data: () => ({
+			in_product_listing: false,
 			valid: false,
 			name: "",
 			nameRules: [
@@ -28,7 +33,8 @@
 				let payload = {
 					model: "categories",
 					data: {
-						name: "sfeseafteswtewtsf"
+						name: this.name,
+						in_product_listing: this.in_product_listing
 					}
 				};
 				this.create(payload).then(() => {});
