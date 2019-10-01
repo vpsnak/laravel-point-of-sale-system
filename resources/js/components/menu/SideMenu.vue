@@ -21,12 +21,12 @@
 		data() {
 			return {
 				menuItems: [
-					{
-						id: 1,
-						title: "Dashboard",
-						icon: "dashboard",
-						to: "/"
-					},
+					// {
+					// 	id: 1,
+					// 	title: "Dashboard",
+					// 	icon: "dashboard",
+					// 	to: "/"
+					// },
 					{
 						id: 2,
 						title: "Sales",
@@ -81,18 +81,18 @@
 						icon: "fas fa-cat",
 						to: "forms"
 					},
-					{
-						id: 11,
-						title: "List Data",
-						icon: "fas fa-female",
-						to: "list-data"
-					},
-					{
-						id: 12,
-						title: "Chris",
-						icon: "fa-cannabis",
-						to: "chris"
-					}
+					// {
+					// 	id: 11,
+					// 	title: "List Data",
+					// 	icon: "fas fa-female",
+					// 	to: "list-data"
+					// },
+					// {
+					// 	id: 12,
+					// 	title: "Chris",
+					// 	icon: "fa-cannabis",
+					// 	to: "chris"
+					// }
 				]
 			};
 		},
