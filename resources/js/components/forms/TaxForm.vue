@@ -7,7 +7,7 @@
 		</div>
 		<v-text-field v-model="name" counter label="Name" required></v-text-field>
 		<v-text-field v-model="percentage" counter label="Percentage" required></v-text-field>
-		<v-text-field v-model="default1" counter label="Default" required></v-text-field>
+		<v-switch v-model="is_default" :label="`Default : ${is_default.toString()}`"></v-switch>
 		<v-btn class="mr-4" @click="submit">submit</v-btn>
 		<v-btn @click="clear">clear</v-btn>
 		<v-alert v-if="savingSuccessful === true" class="mt-4" type="success">Form submitted successfully!</v-alert>
@@ -23,17 +23,17 @@
 				savingSuccessful: false,
 				name: "",
 				percentage: "",
-				default1: ""
+				is_default: false
 			};
 		},
 		methods: {
 			submit() {
 				let payload = {
-					model: "tax",
+					model: "taxes",
 					data: {
 						name: this.name,
 						percentage: this.percentage,
-						default: this.default1
+						is_default: this.is_default
 					}
 				};
 				this.create(payload).then(() => {
@@ -44,7 +44,7 @@
 			clear() {
 				this.name = "";
 				this.percentage = "";
-				this.default1 = "";
+				this.is_default = true;
 			},
 			...mapActions({
 				create: "create"
