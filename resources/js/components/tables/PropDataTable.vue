@@ -42,80 +42,80 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from "vuex";
+	import { mapActions, mapMutations, mapState } from "vuex";
 
-export default {
-	data() {
-		return {
-			search: ""
-		};
-	},
-	props: [
-		"tableTitle",
-		"tableHeaders",
-		"dataUrl",
-		"tableBtnTitle",
-		"tableForm"
-	],
-	mounted() {
-		this.setHeaders(this.tableHeaders);
-		this.getRows({
-			url: this.dataUrl
-		});
-		this.setTitle(this.tableTitle);
-		this.setBtnTitle(this.tableBtnTitle);
-		this.setForm(this.tableForm);
-	},
-	computed: {
-		...mapState("datatable", {
-			title: "title",
-			headers: "headers",
-			rows: "rows",
-			loading: "loading",
-			btnTitle: "btnTitle",
-			form: "form"
-		}),
-		showDialog: {
-			get() {
-				return this.$store.state.datatable.showDialog;
-			},
-			set(value) {
-				this.setShowDialog(value);
+	export default {
+		data() {
+			return {
+				search: ""
+			};
+		},
+		props: [
+			"tableTitle",
+			"tableHeaders",
+			"dataUrl",
+			"tableBtnTitle",
+			"tableForm"
+		],
+		mounted() {
+			this.setHeaders(this.tableHeaders);
+			this.getRows({
+				url: this.dataUrl
+			});
+			this.setTitle(this.tableTitle);
+			this.setBtnTitle(this.tableBtnTitle);
+			this.setForm(this.tableForm);
+		},
+		computed: {
+			...mapState("datatable", {
+				title: "title",
+				headers: "headers",
+				rows: "rows",
+				loading: "loading",
+				btnTitle: "btnTitle",
+				form: "form"
+			}),
+			showDialog: {
+				get() {
+					return this.$store.state.datatable.showDialog;
+				},
+				set(value) {
+					this.setShowDialog(value);
+				}
 			}
+		},
+		methods: {
+			editItem(item) {
+				this.editedIndex = this.rows.indexOf(item);
+				this.editedItem = Object.assign({}, item);
+				this.showDialog = true;
+			},
+
+			deleteItem(item) {
+				confirm("Are you sure you want to delete this item?") &&
+					this.deleteRow({
+						url: "customers/" + item.id,
+						data: {
+							id: item.id
+						}
+					});
+			},
+
+			showFormDialog() {
+				this.showDialog = true;
+			},
+
+			...mapActions("datatable", {
+				getRows: "getRows",
+				deleteRow: "deleteRow"
+			}),
+			...mapMutations("datatable", {
+				setHeaders: "setHeaders",
+				setTitle: "setTitle",
+				setBtnTitle: "setBtnTitle",
+				setForm: "setForm",
+				setShowDialog: "setShowDialog"
+			})
 		}
-	},
-	methods: {
-		editItem(item) {
-			this.editedIndex = this.rows.indexOf(item);
-			this.editedItem = Object.assign({}, item);
-			this.dialog = true;
-		},
-
-		deleteItem(item) {
-			confirm("Are you sure you want to delete this item?") &&
-				this.deleteRow({
-					url: "customers/" + item.id,
-					data: {
-						id: item.id
-					}
-				});
-		},
-
-		showFormDialog() {
-			this.showDialog = true;
-		},
-
-		...mapActions("datatable", {
-			getRows: "getRows",
-			deleteRow: "deleteRow"
-		}),
-		...mapMutations("datatable", {
-			setHeaders: "setHeaders",
-			setTitle: "setTitle",
-			setBtnTitle: "setBtnTitle",
-			setForm: "setForm",
-			setShowDialog: "setShowDialog"
-		})
-	}
-};
+	};
 </script>
