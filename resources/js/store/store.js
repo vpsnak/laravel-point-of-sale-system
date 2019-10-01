@@ -73,6 +73,11 @@ export default new Vuex.Store({
         },
         setStoreList(state, stores) {
             state.storeList = stores;
+        },
+
+        closeAllDialogs(state) {
+            state.cartRestoreDialog = false;
+            state.checkoutDialog = false;
         }
     },
     actions: {
