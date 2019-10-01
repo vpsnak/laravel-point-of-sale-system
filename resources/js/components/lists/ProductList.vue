@@ -143,8 +143,7 @@ export default {
 			this.initiateLoadingSearchResults(true);
 
 			let payload = {
-              url: 'product-listing/categories',
-				mutation: "setCategoryList"
+              url: 'product-listing/categories'
 			};
 			this.$store
                 .dispatch('getRequest', payload, {root: true})
