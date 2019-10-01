@@ -1,5 +1,5 @@
 <template>
-	<v-dialog v-model="show" width="500">
+	<v-dialog :value="show" width="500" @click:outside="close">
 		<v-card>
 			<v-card-title primary-title>Carts on Hold</v-card-title>
 			<v-chip-group multiple column active-class="primary--text">
@@ -12,7 +12,7 @@
 					@click:close="removeCart(cartOnHold)"
 				>
 					<span>
-						{{cartOnHold.name}}
+						{{ cartOnHold.name }}
 						<v-icon left>mdi-cartOnHold</v-icon>
 					</span>
 				</v-chip>

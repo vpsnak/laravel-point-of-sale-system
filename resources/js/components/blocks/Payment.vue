@@ -2,23 +2,29 @@
 	<div>
 		<v-row>
 			<v-col cols="12">
-				<h3>Payment history</h3>
-				<v-data-table :headers="headers" :items="desserts" :items-per-page="5" class="elevation-1"></v-data-table>
+				<h3 class="mb-3">Payment history</h3>
+				<v-data-table
+					:headers="headers"
+					:items="paymentHistory"
+					class="elevation-1"
+					disable-pagination
+					disable-filtering
+					hide-default-footer
+				></v-data-table>
 			</v-col>
 		</v-row>
 		<v-divider></v-divider>
 		<v-row>
-			<v-col cols="6">
-				<v-select
-					prepend-icon="mdi-cash-multiple"
-					label="Payment type"
-					v-model="paymentType"
-					:items="paymentTypes"
-					item-text="name"
-					item-value="type"
-				></v-select>
+			<v-col cols="12">
+				<h3 class="mb-3">Order payment</h3>
 			</v-col>
-			<v-col cols="6">
+			<v-col cols="8">
+				<h4 class="mb-3">Payment Type</h4>
+				<v-btn-toggle v-model="paymentType" mandatory>
+					<v-btn v-for="(paymentType, index) in paymentTypes" :key="index">{{ paymentType.name }}</v-btn>
+				</v-btn-toggle>
+			</v-col>
+			<v-col cols="4">
 				<v-text-field
 					label="Amount"
 					type="number"
@@ -45,13 +51,38 @@ export default {
 				type: null,
 				amount: null
 			},
-			headers: ["Store", "Cashier", "Operator", "Date", "Type", "Amount (USD)"],
-			items: [
+			headers: [
+				{
+					text: "Store",
+					value: "store"
+				},
+				{
+					text: "Cashier",
+					value: "cashier"
+				},
+				{
+					text: "Operator",
+					value: "operator"
+				},
+				{
+					text: "Date",
+					value: "date"
+				},
+				{
+					text: "Type",
+					value: "type"
+				},
+				{
+					text: "Amount (USD)",
+					value: "amount"
+				}
+			],
+			paymentHistory: [
 				{
 					store: "store name / address",
 					cashier: "cashier name/number",
 					operator: "user: first_name + last_name",
-					date: Date.now,
+					date: "12/31/2020 14:30 PM",
 					type: "Cash",
 					amount: 30
 				},
@@ -59,7 +90,7 @@ export default {
 					store: "store name / address",
 					cashier: "cashier name/number",
 					operator: "user: first_name + last_name",
-					date: Date.now,
+					date: "12/31/2020 14:30 PM",
 					type: "Credit card",
 					amount: 70
 				}
