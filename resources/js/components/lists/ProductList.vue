@@ -143,12 +143,13 @@ export default {
 			this.initiateLoadingSearchResults(true);
 
 			let payload = {
-              url: 'categories/filterable',
+              url: 'product-listing/categories',
 				mutation: "setCategoryList"
 			};
 			this.$store
                 .dispatch('getRequest', payload, {root: true})
                 .then(result => {
+                  this.$store.commit('setCategoryList', result.data)
 					this.initiateLoadingSearchResults(false);
 				})
                 .catch(error => {
