@@ -1,10 +1,11 @@
 <template>
 	<prop-data-table
-		:tableHeaders="headers"
-		data-url="customers"
-		tableTitle="Customers"
-		tableBtnTitle="New Customer"
-		tableForm="customerForm"
+        :tableHeaders="headers"
+        data-url="customers"
+        tableTitle="Customers"
+        tableBtnTitle="New Customer"
+        tableForm="customerForm"
+        tableBtnDisable="true"
 	>
 		<template v-slot:item.email="{item}">
 			<a :href="'mailto:' + item.email">{{ item.email }}</a>
@@ -16,9 +17,9 @@
 </template>
 
 <script>
-	import { mapMutations } from "vuex";
+  import { mapMutations } from 'vuex'
 
-	export default {
+  export default {
 		data() {
 			return {
 				headers: [

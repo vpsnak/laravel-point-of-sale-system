@@ -5,13 +5,14 @@
         tableTitle="Users"
         tableBtnTitle="New User"
         tableForm="userForm"
+        tableBtnDisable="true"
     />
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+  import { mapMutations } from 'vuex'
 
-export default {
+  export default {
     data() {
         return {
             headers: [

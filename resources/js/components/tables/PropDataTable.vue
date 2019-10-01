@@ -42,9 +42,9 @@
 </template>
 
 <script>
-	import { mapActions, mapMutations, mapState } from "vuex";
+  import { mapActions, mapMutations, mapState } from 'vuex'
 
-	export default {
+  export default {
 		data() {
 			return {
 				search: ""
@@ -97,7 +97,7 @@
 			deleteItem(item) {
 				confirm("Are you sure you want to delete this item?") &&
 					this.deleteRow({
-						url: "customers/" + item.id,
+                      url: this.dataUrl + '/' + item.id,
 						data: {
 							id: item.id
 						}

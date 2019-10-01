@@ -1,17 +1,18 @@
 <template>
 	<prop-data-table
-		:tableHeaders="headers"
-		data-url="products"
-		tableTitle="Products"
-		tableBtnTitle="New Product"
-		tableForm="productForm"
+        :tableHeaders="headers"
+        data-url="products"
+        tableTitle="Products"
+        tableBtnTitle="New Product"
+        tableForm="productForm"
+        tableBtnDisable="true"
 	/>
 </template>
 
 <script>
-	import { mapMutations } from "vuex";
+  import { mapMutations } from 'vuex'
 
-	export default {
+  export default {
 		data() {
 			return {
 				headers: [
