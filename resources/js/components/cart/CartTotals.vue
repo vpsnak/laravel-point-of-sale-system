@@ -40,8 +40,10 @@ export default {
 		subTotal() {
 			let subTotal = 0;
 
-			this.$props.products.forEach(element => {
-				subTotal += element.qty * parseInt(element.price.amount);
+			this.$props.products.forEach(product => {
+				subTotal +=
+					product.qty *
+					parseInt(product.price.amount ? product.price.amount : product.price);
 			});
 
 			return subTotal;

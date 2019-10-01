@@ -150,7 +150,7 @@ export default {
                     root: true
                 })
                     .then(response => {
-                        commit("setOrder", response.data);
+                        commit("setOrder", response);
                         commit("emptyCart");
                         resolve(response);
                     })

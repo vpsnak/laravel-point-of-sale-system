@@ -16,7 +16,7 @@
 
 		<customerSearch :editable="editable" :keywordLength="1"></customerSearch>
 
-		<cartProducts :products="products" :editable="editable"></cartProducts>
+		<cartProducts :products="items ? items : products" :editable="editable"></cartProducts>
 
 		<v-divider />
 		<div class="d-flex flex-column">
@@ -31,7 +31,7 @@
 
 			<v-divider />
 
-			<cartTotals :products="products" :taxes="taxes" :cart="cartDiscount" />
+			<cartTotals :products="items ? items : products" :taxes="taxes" :cart="cartDiscount" />
 
 			<div v-if="actions">
 				<cartActions :disabled="totalProducts" />
@@ -41,15 +41,16 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapGetters } from "vuex";
+import { mapActions } from "vuex";
 
 export default {
 	props: {
+		items: Array | null,
 		title: String,
-		icon: String | undefined,
-		editable: Boolean | undefined,
-		actions: Boolean | undefined,
-		toggles: Boolean | undefined
+		icon: String | null,
+		editable: Boolean | null,
+		actions: Boolean | null,
+		toggles: Boolean | null
 	},
 	computed: {
 		retail: {
@@ -73,6 +74,7 @@ export default {
 				discount_type: this.$store.state.cart.discount_type,
 				discount_amount: this.$store.state.cart.discount_amount
 			};
+
 			return discount;
 		},
 		products: {
