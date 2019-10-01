@@ -18,18 +18,9 @@
 				:step="++index"
 			>
 				<v-card class="pa-2">
-					<v-card-title
-						class="justify-center"
-						align="center"
-					>
-						<v-row
-							align="center"
-							justify="center"
-						>
-							<v-col
-								align="center"
-								justify="center"
-							>
+					<v-card-title class="justify-center" align="center">
+						<v-row align="center" justify="center">
+							<v-col align="center" justify="center">
 								<v-icon>{{ checkoutStep.icon }}</v-icon>
 								<h5 class="text-center">{{ checkoutStep.name }}</h5>
 							</v-col>
@@ -40,10 +31,7 @@
 					</v-card-text>
 					<v-card-actions>
 						<div class="flex-grow-1"></div>
-						<v-btn
-							color="primary"
-							@click="completeStep(checkoutStep)"
-						>Continue</v-btn>
+						<v-btn color="primary" @click="completeStep(checkoutStep)">Continue</v-btn>
 					</v-card-actions>
 				</v-card>
 			</v-stepper-content>
@@ -52,22 +40,22 @@
 </template>
 
 <script>
-	import { mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 
-	export default {
-		computed: {
-			...mapGetters("cart", ["getCheckoutSteps"]),
-			customer() {
-				return this.$store.state.cart.customer;
-			},
-			currentCheckoutStep() {
-				return this.$store.state.cart.currentCheckoutStep;
-			}
+export default {
+	computed: {
+		...mapGetters("cart", ["getCheckoutSteps"]),
+		customer() {
+			return this.$store.state.cart.customer;
 		},
-		methods: {
-			completeStep(checkoutStep) {
-				this.$store.dispatch("cart/completeStep", checkoutStep);
-			}
+		currentCheckoutStep() {
+			return this.$store.state.cart.currentCheckoutStep;
 		}
-	};
+	},
+	methods: {
+		completeStep(checkoutStep) {
+			this.$store.dispatch("cart/completeStep", checkoutStep);
+		}
+	}
+};
 </script>
