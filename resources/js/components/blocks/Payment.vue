@@ -10,6 +10,7 @@
 					disable-pagination
 					disable-filtering
 					hide-default-footer
+					:loading="historyLoading"
 				></v-data-table>
 			</v-col>
 		</v-row>
@@ -21,7 +22,11 @@
 			<v-col cols="8">
 				<h4 class="mb-3">Payment Type</h4>
 				<v-btn-toggle v-model="paymentType" mandatory>
-					<v-btn v-for="(paymentType, index) in paymentTypes" :key="index">{{ paymentType.name }}</v-btn>
+					<v-btn
+						v-for="(paymentType, index) in paymentTypes"
+						:key="index"
+						:value="paymentType.type"
+					>{{ paymentType.name }}</v-btn>
 				</v-btn-toggle>
 			</v-col>
 			<v-col cols="4">
@@ -35,7 +40,12 @@
 		</v-row>
 		<v-row>
 			<v-col cols="12">
-				<v-btn block @click="sendPayment">Send payment</v-btn>
+				<v-btn
+					block
+					@click="sendPayment"
+					:loading="paymentLoading"
+					:disabled="paymentLoading"
+				>Send payment</v-btn>
 			</v-col>
 		</v-row>
 	</div>
@@ -50,6 +60,10 @@ export default {
 	},
 	data() {
 		return {
+			historyLoading: false,
+			paymentLoading: false,
+
+			orderHistory: [],
 			paymentTypes: [],
 			payment: {
 				type: null,
@@ -57,16 +71,8 @@ export default {
 			},
 			headers: [
 				{
-					text: "Store",
-					value: "store"
-				},
-				{
-					text: "Cashier",
-					value: "cashier"
-				},
-				{
 					text: "Operator",
-					value: "operator"
+					value: "created_by.name"
 				},
 				{
 					text: "Date",
@@ -74,37 +80,24 @@ export default {
 				},
 				{
 					text: "Type",
-					value: "type"
+					value: "payment_type.name"
 				},
 				{
 					text: "Amount (USD)",
 					value: "amount"
 				}
 			]
-			// paymentHistory: [
-			// 	{
-			// 		store: "store name / address",
-			// 		cashier: "cashier name/number",
-			// 		operator: "user: first_name + last_name",
-			// 		created_at: "12/31/2020 14:30 PM",
-			// 		type: "Cash",
-			// 		amount: 30
-			// 	},
-			// 	{
-			// 		store: "store name / address",
-			// 		cashier: "cashier name/number",
-			// 		operator: "user: first_name + last_name",
-			// 		created_at: "12/31/2020 14:30 PM",
-			// 		type: "Credit card",
-			// 		amount: 70
-			// 	}
-			// ]
 		};
 	},
 
 	computed: {
-		paymentHistory() {
-			return this.getPaymentHistory();
+		paymentHistory: {
+			get() {
+				return this.orderHistory;
+			},
+			set(value) {
+				this.orderHistory = value;
+			}
 		},
 		paymentType: {
 			get() {
@@ -125,15 +118,14 @@ export default {
 	},
 
 	mounted() {
-		this.$store
-			.dispatch("getAll", { model: "payment-types" })
-			.then(response => {
-				this.paymentTypes = response;
-			});
+		this.getPaymentHistory();
+		this.getPaymentTypes();
 	},
 
 	methods: {
 		sendPayment() {
+			this.paymentLoading = true;
+
 			let payload = {
 				model: "payments",
 				data: {
@@ -144,20 +136,39 @@ export default {
 				}
 			};
 
-			this.create(payload).then(response => {
-				console.log(response);
-			});
+			this.create(payload)
+				.then(response => {
+					this.getPaymentHistory();
+				})
+				.finally(() => {
+					this.paymentLoading = false;
+				});
 		},
 
 		getPaymentHistory() {
+			this.historyLoading = true;
+
+			let paymentHistory;
 			let payload = {
 				model: "payments",
 				keyword: "1"
 			};
-			this.search(payload).then(response => {
-				console.log(response);
-				return response;
-			});
+			this.search(payload)
+				.then(response => {
+					this.paymentHistory = response;
+				})
+				.finally(() => {
+					this.historyLoading = false;
+				});
+		},
+
+		getPaymentTypes() {
+			this.$store
+				.dispatch("getAll", { model: "payment-types" })
+				.then(response => {
+					this.paymentTypes = response;
+					console.log(response);
+				});
 		},
 
 		...mapActions(["search", "create"])

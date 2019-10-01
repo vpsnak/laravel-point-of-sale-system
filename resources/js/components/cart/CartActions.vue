@@ -2,7 +2,13 @@
 	<div>
 		<v-divider />
 
-		<v-btn block class="my-2" @click="checkout" :disabled="disabled">Checkout</v-btn>
+		<v-btn
+			block
+			class="my-2"
+			@click="checkout"
+			:disabled="disabled"
+			:loading="checkoutLoading"
+		>Checkout</v-btn>
 
 		<v-divider />
 
@@ -29,9 +35,14 @@
 </template>
 
 <script>
-  import {mapActions} from 'vuex'
+import { mapActions } from "vuex";
 
-  export default {
+export default {
+	data() {
+		return {
+			checkoutLoading: false
+		};
+	},
 	props: {
 		disabled: Boolean
 	},
@@ -65,10 +76,15 @@
 
 	methods: {
 		checkout() {
-			this.submitOrder().then(response => {
-				console.log(response);
-				this.checkoutDialog = true;
-			});
+			this.checkoutLoading = true;
+
+			this.submitOrder()
+				.then(response => {
+					this.checkoutDialog = true;
+				})
+				.finally(() => {
+					this.checkoutLoading = false;
+				});
 		},
 		emptyCart(showPrompt) {
 			if (showPrompt) {
@@ -82,7 +98,7 @@
 			let payload = {
 				model: "carts",
 				data: {
-                  cash_register_id: this.$store.state.cashRegister.id,
+					cash_register_id: this.$store.state.cashRegister.id,
 					cart: {
 						products: this.products,
 						customer_id: this.$store.state.cart.customer
