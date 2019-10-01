@@ -20,32 +20,32 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+	import { mapActions } from "vuex";
 
-export default {
-	computed: {},
-	methods: {
-		close() {}
-	},
-	props: {
-		form: String,
-		show: Boolean
-	},
-	submit() {
-		let payload = {
-			model: "products",
-			data: {
-				sku: this.sku,
-				name: this.name,
-				photo_url: this.photo_url
-			}
-		};
-		this.create(payload).then(() => {});
-	},
-	clear() {
-		this.sku = "";
-		this.name = "";
-		this.photo_url = "";
-	}
-};
+	export default {
+		computed: {},
+		methods: {
+			close() {}
+		},
+		props: {
+			form: String,
+			show: Boolean
+		},
+		submit() {
+			let payload = {
+				model: "products",
+				data: {
+					sku: this.sku,
+					name: this.name,
+					photo_url: this.photo_url
+				}
+			};
+			this.create(payload).then(() => {});
+		},
+		clear() {
+			this.sku = "";
+			this.name = "";
+			this.photo_url = "";
+		}
+	};
 </script>

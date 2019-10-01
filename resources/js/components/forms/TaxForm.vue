@@ -1,7 +1,7 @@
 <template>
 	<v-form>
 		<div class="text-center">
-			<v-chip color="indigo darken-4" label>
+			<v-chip color="primary" label>
 				<v-icon left>fas fa-money-bill-wave</v-icon>Tax Form
 			</v-chip>
 		</div>
