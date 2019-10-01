@@ -5,7 +5,7 @@
 				<h3 class="mb-3">Payment history</h3>
 				<v-data-table
 					:headers="headers"
-					:items="paymentHistory()"
+					:items="paymentHistory"
 					class="elevation-1"
 					disable-pagination
 					disable-filtering
@@ -35,7 +35,7 @@
 		</v-row>
 		<v-row>
 			<v-col cols="12">
-				<v-btn block>Send payment</v-btn>
+				<v-btn block @click="sendPayment">Send payment</v-btn>
 			</v-col>
 		</v-row>
 	</div>
@@ -86,7 +86,7 @@ export default {
 			// 		store: "store name / address",
 			// 		cashier: "cashier name/number",
 			// 		operator: "user: first_name + last_name",
-			// 		date: "12/31/2020 14:30 PM",
+			// 		created_at: "12/31/2020 14:30 PM",
 			// 		type: "Cash",
 			// 		amount: 30
 			// 	},
@@ -94,7 +94,7 @@ export default {
 			// 		store: "store name / address",
 			// 		cashier: "cashier name/number",
 			// 		operator: "user: first_name + last_name",
-			// 		date: "12/31/2020 14:30 PM",
+			// 		created_at: "12/31/2020 14:30 PM",
 			// 		type: "Credit card",
 			// 		amount: 70
 			// 	}
@@ -103,6 +103,9 @@ export default {
 	},
 
 	computed: {
+		paymentHistory() {
+			return this.getPaymentHistory();
+		},
 		paymentType: {
 			get() {
 				return this.payment.type;
@@ -127,24 +130,37 @@ export default {
 			.then(response => {
 				this.paymentTypes = response;
 			});
-
-		this.paymentHistory();
 	},
 
 	methods: {
-		paymentHistory() {
+		sendPayment() {
+			let payload = {
+				model: "payments",
+				data: {
+					payment_type: this.paymentType,
+					amount: this.paymentAmount,
+					order_id: 1,
+					cash_register_id: 1
+				}
+			};
+
+			this.create(payload).then(response => {
+				console.log(response);
+			});
+		},
+
+		getPaymentHistory() {
 			let payload = {
 				model: "payments",
 				keyword: "1"
 			};
-
 			this.search(payload).then(response => {
 				console.log(response);
 				return response;
 			});
-		}
-	},
+		},
 
-	...mapActions(["search"])
+		...mapActions(["search", "create"])
+	}
 };
 </script>
