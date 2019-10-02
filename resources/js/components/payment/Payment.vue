@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapMutations } from "vuex";
 
 export default {
 	props: {
@@ -125,6 +125,12 @@ export default {
 
 			this.create(payload)
 				.then(response => {
+					let notification = {
+						msg: "Payment received",
+						type: "success"
+					};
+					this.setNotification(notification);
+
 					this.init();
 				})
 				.finally(() => {
@@ -133,7 +139,8 @@ export default {
 				});
 		},
 
-		...mapActions(["search", "create", "getAll", "getOne"])
+		...mapActions(["search", "create", "getAll", "getOne"]),
+		...mapMutations(["setNotification"])
 	}
 };
 </script>
