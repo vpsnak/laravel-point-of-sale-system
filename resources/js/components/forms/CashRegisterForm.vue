@@ -42,10 +42,10 @@
 		methods: {
 			submit() {
 				let payload = {
-					model: "stores",
+					model: "cash-registers",
 					data: {
 						name: this.name,
-						store_id: this.tax_id
+						store_id: this.store_id
 					}
 				};
 				console.log(this.tax);
