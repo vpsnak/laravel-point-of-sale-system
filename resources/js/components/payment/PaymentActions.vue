@@ -27,23 +27,30 @@
 					style="max-width:300px;"
 				></v-text-field>
 
-				<v-text-field
-					v-else-if="paymentType === 'card'"
-					label="Amount"
-					type="number"
-					prepend-inner-icon="mdi-currency-usd"
-					v-model="paymentAmount"
-					style="max-width:300px;"
-				></v-text-field>
+				<div v-else-if="paymentType === 'card'">
+					<v-text-field
+						label="Card number"
+						type="number"
+						prepend-inner-icon="mdi-credit-card"
+						v-model="paymentAmount"
+						style="max-width:300px;"
+					></v-text-field>
+					<v-text-field
+						label="Security code"
+						type="number"
+						v-model="paymentAmount"
+						style="max-width:300px;"
+					></v-text-field>
+					<v-text-field label="Exp date" v-model="paymentAmount" style="max-width:300px;"></v-text-field>
+				</div>
 
-				<v-text-field
-					v-else-if="paymentType === 'giftcard'"
-					label="Amount"
-					type="number"
-					prepend-inner-icon="mdi-currency-usd"
-					v-model="paymentAmount"
+				<v-autocomplete
+					v-else-if="paymentType === 'coupon' || paymentType === 'giftcard'"
+					label="Code"
+					:prepend-inner-icon="getCouponGiftCardIcon()"
+					v-model="code"
 					style="max-width:300px;"
-				></v-text-field>
+				></v-autocomplete>
 
 				<v-spacer></v-spacer>
 
@@ -66,7 +73,8 @@ export default {
 	data() {
 		return {
 			paymentAmount: null,
-			paymentType: null
+			paymentType: null,
+			code: null
 		};
 	},
 
@@ -80,6 +88,14 @@ export default {
 			};
 
 			this.$emit("sendPayment", payload);
+		},
+
+		getCouponGiftCardIcon() {
+			if (this.paymentType === "coupon") {
+				return "mdi-ticket";
+			} else {
+				return "mdi-ticket-account";
+			}
 		}
 	},
 	beforeDestroy() {
