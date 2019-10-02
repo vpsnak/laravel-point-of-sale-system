@@ -32,6 +32,8 @@
 </template>
 
 <script>
+import { mapMutations } from "vuex";
+
 export default {
 	props: {
 		show: Boolean
@@ -46,8 +48,11 @@ export default {
 	},
 	methods: {
 		close() {
+			this.resetState;
 			this.$store.state.checkoutDialog = false;
-		}
+		},
+
+		...mapMutations("cart", ["resetState"])
 	}
 };
 </script>

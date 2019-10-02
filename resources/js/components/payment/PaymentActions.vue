@@ -5,13 +5,14 @@
 		</v-col>
 		<v-col cols="12">
 			<v-toolbar prominent class="d-flex justify-space-between flex-column pt-5">
-				<v-toolbar-title class="title">Remaining: ${{ remaining }}</v-toolbar-title>
-				<v-btn-toggle v-model="paymentType" mandatory group dense>
+				<v-toolbar-title class="title">Remaining: $ {{ remaining }}</v-toolbar-title>
+				<v-btn-toggle v-model="paymentType" mandatory>
 					<v-btn
 						v-for="(paymentType, index) in types"
 						:key="index"
 						:value="paymentType.type"
 						:disabled="loading"
+						text
 					>{{ paymentType.name }}</v-btn>
 				</v-btn-toggle>
 
@@ -22,7 +23,7 @@
 					type="number"
 					prepend-inner-icon="mdi-currency-usd"
 					v-model="paymentAmount"
-					style="max-width:300px"
+					style="max-width:300px;"
 				></v-text-field>
 
 				<v-spacer></v-spacer>
