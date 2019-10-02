@@ -1,5 +1,5 @@
 <template>
-	<payment :order_id="order.id" />
+	<payment :order_id="order.id" history actions />
 </template>
 
 <script>
