@@ -77,24 +77,36 @@ export default {
                 },
                 {
                     id: 10,
+                    title: "Gift Cards",
+                    icon: "fas fa-gifts",
+                    to: "gift-cards"
+                },
+                {
+                    id: 11,
+                    title: "Coupons",
+                    icon: "fas fa-ticket-alt",
+                    to: "coupons"
+                },
+                {
+                    id: 12,
                     title: "Users",
                     icon: "fas fa-users",
                     to: "users"
                 },
                 {
-                    id: 11,
+                    id: 13,
                     title: "Forms",
                     icon: "fas fa-cat",
                     to: "forms"
                 }
                 // {
-                // 	id: 11,
+                // 	id: 14,
                 // 	title: "List Data",
                 // 	icon: "fas fa-female",
                 // 	to: "list-data"
                 // },
                 // {
-                // 	id: 12,
+                // 	id: 15,
                 // 	title: "Chris",
                 // 	icon: "fa-cannabis",
                 // 	to: "chris"
