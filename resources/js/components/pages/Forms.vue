@@ -6,6 +6,7 @@
 			</v-col>
 			<v-col cols="3">
 				<addressForm></addressForm>
+				<cashRegisterForm class="mt-6"></cashRegisterForm>
 			</v-col>
 			<v-col cols="3">
 				<productForm></productForm>

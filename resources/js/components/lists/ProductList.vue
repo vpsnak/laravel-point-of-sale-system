@@ -1,5 +1,10 @@
 <template>
 	<v-card>
+		<div class="d-flex flex-row">
+			<p class="pa-2">Stores</p>
+			<p class="pa-2">/</p>
+			<p class="pa-2">Cash registers</p>
+		</div>
 		<v-card-title>
 			<v-row align="center" justify="center">
 				<v-col align="center" justify="center">
@@ -71,114 +76,126 @@
 </template>
 
 <script>
-export default {
-	data() {
-		return {
-			loader: false,
-			disableFilters: false,
-			model: "products",
-			keyword: "",
-			toggle_one: undefined
-		};
-	},
-	mounted() {
-		this.getAllProducts();
-		this.getAllCategories();
-	},
-	computed: {
-		productList: {
-			get() {
-				return this.$store.state.productList;
-			},
-			set(value) {
-				this.$store.state.productList = value;
-			}
-		},
-		categoryList: {
-			get() {
-				return this.$store.state.categoryList;
-			},
-			set(value) {
-				this.$store.state.categoryList = value;
-			}
-		}
-	},
-	methods: {
-		addToFavorites(product) {},
-		viewProduct(product) {},
-		editProduct(product) {},
-		applyFilter(filter) {},
-		initiateLoadingSearchResults(loading) {
-			if (loading) {
-				this.loader = true;
-				this.disableFilters = true;
-				this.productList = [];
-			} else {
-				this.loader = false;
-				this.disableFilters = false;
-			}
-		},
-
-		setProductListByCategoryProducts(category) {
-			this.productList = category.products;
-		},
-		getAllProducts() {
-			this.initiateLoadingSearchResults(true);
-
-			let payload = {
+	export default {
+		data() {
+			return {
+				loader: false,
+				disableFilters: false,
 				model: "products",
-				mutation: "setProductList"
+				keyword: "",
+				toggle_one: undefined,
+				items: [
+					{
+						text: "Stores",
+						disabled: false,
+						href: "breadcrumbs_dashboard"
+					},
+					{
+						text: "Cash registers",
+						disabled: false,
+						href: "breadcrumbs_link_1"
+					}
+				]
 			};
-			this.$store
-				.dispatch("getAll", payload)
-				.then(result => {
-					this.initiateLoadingSearchResults(false);
-				})
-				.catch(error => {
-					this.initiateLoadingSearchResults(false);
-					console.log(error);
-				});
 		},
-		getAllCategories() {
-			this.initiateLoadingSearchResults(true);
+		mounted() {
+			this.getAllProducts();
+			this.getAllCategories();
+		},
+		computed: {
+			productList: {
+				get() {
+					return this.$store.state.productList;
+				},
+				set(value) {
+					this.$store.state.productList = value;
+				}
+			},
+			categoryList: {
+				get() {
+					return this.$store.state.categoryList;
+				},
+				set(value) {
+					this.$store.state.categoryList = value;
+				}
+			}
+		},
+		methods: {
+			addToFavorites(product) {},
+			viewProduct(product) {},
+			editProduct(product) {},
+			applyFilter(filter) {},
+			initiateLoadingSearchResults(loading) {
+				if (loading) {
+					this.loader = true;
+					this.disableFilters = true;
+					this.productList = [];
+				} else {
+					this.loader = false;
+					this.disableFilters = false;
+				}
+			},
 
-			let payload = {
-              url: 'product-listing/categories'
-			};
-			this.$store
-                .dispatch('getRequest', payload, {root: true})
-                .then(result => {
-                  this.$store.commit('setCategoryList', result.data)
-					this.initiateLoadingSearchResults(false);
-				})
-                .catch(error => {
-					this.initiateLoadingSearchResults(false);
-					console.log(error);
-				});
-		},
-		searchProduct() {
-			if (this.keyword.length > 0) {
+			setProductListByCategoryProducts(category) {
+				this.productList = category.products;
+			},
+			getAllProducts() {
 				this.initiateLoadingSearchResults(true);
 
 				let payload = {
 					model: "products",
-					mutation: "setProductList",
-					keyword: this.keyword
+					mutation: "setProductList"
 				};
-
 				this.$store
-					.dispatch("search", payload)
+					.dispatch("getAll", payload)
 					.then(result => {
 						this.initiateLoadingSearchResults(false);
 					})
 					.catch(error => {
 						this.initiateLoadingSearchResults(false);
+						console.log(error);
 					});
+			},
+			getAllCategories() {
+				this.initiateLoadingSearchResults(true);
+
+				let payload = {
+					url: "product-listing/categories"
+				};
+				this.$store
+					.dispatch("getRequest", payload, { root: true })
+					.then(result => {
+						this.$store.commit("setCategoryList", result.data);
+						this.initiateLoadingSearchResults(false);
+					})
+					.catch(error => {
+						this.initiateLoadingSearchResults(false);
+						console.log(error);
+					});
+			},
+			searchProduct() {
+				if (this.keyword.length > 0) {
+					this.initiateLoadingSearchResults(true);
+
+					let payload = {
+						model: "products",
+						mutation: "setProductList",
+						keyword: this.keyword
+					};
+
+					this.$store
+						.dispatch("search", payload)
+						.then(result => {
+							this.initiateLoadingSearchResults(false);
+						})
+						.catch(error => {
+							this.initiateLoadingSearchResults(false);
+						});
+				}
+			},
+			addProduct(product) {
+				this.$store.commit("cart/addProduct", product);
 			}
-		},
-		addProduct(product) {
-			this.$store.commit("cart/addProduct", product);
 		}
-	}
-};
+	};
 </script>

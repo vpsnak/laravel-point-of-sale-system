@@ -71,16 +71,22 @@
 					},
 					{
 						id: 9,
+						title: "CashRegisters",
+						icon: "fas fa-cash-register",
+						to: "cash-registers"
+					},
+					{
+						id: 10,
 						title: "Users",
 						icon: "fas fa-users",
 						to: "users"
 					},
 					{
-						id: 10,
+						id: 11,
 						title: "Forms",
 						icon: "fas fa-cat",
 						to: "forms"
-					},
+					}
 					// {
 					// 	id: 11,
 					// 	title: "List Data",

@@ -12,6 +12,7 @@ import Users from "./components/pages/Users";
 import CTest from "./components/pages/CTest";
 import ListData from "./components/pages/ListData";
 import Taxes from "./components/pages/Taxes";
+import CashRegisters from "./components/pages/CashRegisters";
 
 
 export default [
@@ -84,5 +85,10 @@ export default [
         name: "Taxes",
         path: "/taxes",
         component: Taxes
+    },
+    {
+        name: "CashRegisters",
+        path: "/cash-registers",
+        component: CashRegisters
     }
 ];
