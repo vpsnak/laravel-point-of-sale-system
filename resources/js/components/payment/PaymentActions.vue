@@ -19,6 +19,25 @@
 				<v-spacer></v-spacer>
 
 				<v-text-field
+					v-if="paymentType === 'cash'"
+					label="Amount"
+					type="number"
+					prepend-inner-icon="mdi-currency-usd"
+					v-model="paymentAmount"
+					style="max-width:300px;"
+				></v-text-field>
+
+				<v-text-field
+					v-else-if="paymentType === 'card'"
+					label="Amount"
+					type="number"
+					prepend-inner-icon="mdi-currency-usd"
+					v-model="paymentAmount"
+					style="max-width:300px;"
+				></v-text-field>
+
+				<v-text-field
+					v-else-if="paymentType === 'giftcard'"
 					label="Amount"
 					type="number"
 					prepend-inner-icon="mdi-currency-usd"
@@ -51,6 +70,8 @@ export default {
 		};
 	},
 
+	mounted() {},
+
 	methods: {
 		sendPayment() {
 			let payload = {
@@ -60,6 +81,9 @@ export default {
 
 			this.$emit("sendPayment", payload);
 		}
+	},
+	beforeDestroy() {
+		this.$off("sendPayment", this.address);
 	}
 };
 </script>
