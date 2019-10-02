@@ -68,9 +68,7 @@ export default {
 			this.$store.state.cartRestoreDialog = false;
 		},
 		restoreCart(cartOnHold) {
-			console.log(cartOnHold);
 			let cart = JSON.parse(cartOnHold.cart);
-			console.log(cart);
 			this.$store.state.cart.products = cart.products;
 			this.removeCart(cartOnHold).then(() => {
 				this.close();

@@ -1,5 +1,5 @@
 <template>
-	<payment :totalAmount="total" />
+	<payment :order_id="order.id" />
 </template>
 
 <script>
@@ -9,9 +9,7 @@ export default {
 		currentStep: Object
 	},
 	computed: {
-		...mapState("cart", {
-			total: "total"
-		})
+		...mapState("cart", ["order"])
 	},
 	methods: {}
 };

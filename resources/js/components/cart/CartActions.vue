@@ -6,14 +6,20 @@
 			block
 			class="my-2"
 			@click="checkout"
-			:disabled="disabled"
+			:disabled="disabled || checkoutLoading"
 			:loading="checkoutLoading"
 		>Checkout</v-btn>
 
 		<v-divider />
 
 		<div class="d-flex align-center justify-center pa-2">
-			<v-btn icon @click="showRestoreOnHoldCartDialog" class="flex-grow-1" tile>
+			<v-btn
+				icon
+				@click="showRestoreOnHoldCartDialog"
+				:disabled="checkoutLoading"
+				class="flex-grow-1"
+				tile
+			>
 				<v-icon>fa-recycle</v-icon>
 				<v-badge overlap color="purple" style="position: absolute; top: 0;right:38%;">
 					<template v-slot:badge>
@@ -21,10 +27,16 @@
 					</template>
 				</v-badge>
 			</v-btn>
-			<v-btn icon :disabled="disabled" @click="holdCart" class="flex-grow-1" tile>
+			<v-btn icon :disabled="disabled || checkoutLoading" @click="holdCart" class="flex-grow-1" tile>
 				<v-icon>pause</v-icon>
 			</v-btn>
-			<v-btn icon @click.stop="emptyCart(true)" :disabled="disabled" class="flex-grow-1" tile>
+			<v-btn
+				icon
+				@click.stop="emptyCart(true)"
+				:disabled="disabled || checkoutLoading"
+				class="flex-grow-1"
+				tile
+			>
 				<v-icon>delete</v-icon>
 			</v-btn>
 		</div>

@@ -17,35 +17,35 @@
 		<v-divider></v-divider>
 		<v-row>
 			<v-col cols="12">
-				<h3 class="mb-3">Order payment</h3>
+				<h3>Order payment</h3>
 			</v-col>
-			<v-col cols="8">
-				<h4 class="mb-3">Payment Type</h4>
-				<v-btn-toggle v-model="paymentType" mandatory>
-					<v-btn
-						v-for="(paymentType, index) in paymentTypes"
-						:key="index"
-						:value="paymentType.type"
-					>{{ paymentType.name }}</v-btn>
-				</v-btn-toggle>
-			</v-col>
-			<v-col cols="4">
-				<v-text-field
-					label="Amount"
-					type="number"
-					prepend-inner-icon="mdi-currency-usd"
-					v-model="paymentAmount"
-				></v-text-field>
-			</v-col>
-		</v-row>
-		<v-row>
-			<v-col cols="12">
-				<v-btn
-					block
-					@click="sendPayment"
-					:loading="paymentLoading"
-					:disabled="paymentLoading"
-				>Send payment</v-btn>
+			<v-col>
+				<v-toolbar prominent class="d-flex justify-space-between flex-column pt-5">
+					<v-toolbar-title class="title">Remaining: ${{ remaining }}</v-toolbar-title>
+					<v-btn-toggle v-model="paymentType" mandatory group dense>
+						<v-btn
+							v-for="(paymentType, index) in paymentTypes"
+							:key="index"
+							:value="paymentType.type"
+						>{{ paymentType.name }}</v-btn>
+					</v-btn-toggle>
+
+					<!-- <div class="flex-grow-1"></div> -->
+					<v-spacer></v-spacer>
+
+					<v-text-field
+						label="Amount"
+						type="number"
+						prepend-inner-icon="mdi-currency-usd"
+						v-model="paymentAmount"
+						style="max-width:300px"
+					></v-text-field>
+
+					<!-- <div class="flex-grow-1"></div> -->
+					<v-spacer></v-spacer>
+					<v-btn @click="sendPayment" :loading="paymentLoading" :disabled="paymentLoading">Send payment</v-btn>
+					<v-spacer></v-spacer>
+				</v-toolbar>
 			</v-col>
 		</v-row>
 	</div>
@@ -62,6 +62,7 @@ export default {
 		return {
 			historyLoading: false,
 			paymentLoading: false,
+			order: {},
 
 			orderHistory: [],
 			paymentTypes: [],
@@ -91,6 +92,9 @@ export default {
 	},
 
 	computed: {
+		remaining() {
+			return this.order.total - this.order.total_paid;
+		},
 		paymentHistory: {
 			get() {
 				return this.orderHistory;
@@ -118,11 +122,26 @@ export default {
 	},
 
 	mounted() {
-		this.getPaymentHistory();
-		this.getPaymentTypes();
+		this.init();
 	},
 
 	methods: {
+		init() {
+			this.getOrder();
+			this.getPaymentHistory();
+			this.getPaymentTypes();
+		},
+		getOrder() {
+			let payload = {
+				model: "orders",
+				data: { id: this.$props.order_id }
+			};
+			this.getOne(payload).then(response => {
+				this.order = response;
+				console.log("get order");
+				console.log(response);
+			});
+		},
 		sendPayment() {
 			this.paymentLoading = true;
 
@@ -131,16 +150,20 @@ export default {
 				data: {
 					payment_type: this.paymentType,
 					amount: this.paymentAmount,
-					order_id: 1,
+					order_id: this.$props.order_id,
 					cash_register_id: 1
 				}
 			};
 
 			this.create(payload)
 				.then(response => {
-					this.getPaymentHistory();
+					console.log("send payment");
+
+					console.log(response);
+					this.init();
 				})
 				.finally(() => {
+					this.paymentAmount = null;
 					this.paymentLoading = false;
 				});
 		},
@@ -151,10 +174,13 @@ export default {
 			let paymentHistory;
 			let payload = {
 				model: "payments",
-				keyword: "1"
+				keyword: this.$props.order_id
 			};
 			this.search(payload)
 				.then(response => {
+					console.log("paymentHistory");
+
+					console.log(response);
 					this.paymentHistory = response;
 				})
 				.finally(() => {
@@ -163,15 +189,13 @@ export default {
 		},
 
 		getPaymentTypes() {
-			this.$store
-				.dispatch("getAll", { model: "payment-types" })
-				.then(response => {
-					this.paymentTypes = response;
-					console.log(response);
-				});
+			this.getAll({ model: "payment-types" }).then(response => {
+				this.paymentTypes = response;
+				console.log(response);
+			});
 		},
 
-		...mapActions(["search", "create"])
+		...mapActions(["search", "create", "getAll", "getOne"])
 	}
 };
 </script>
