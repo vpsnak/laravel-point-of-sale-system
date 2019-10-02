@@ -19,6 +19,9 @@
                 <taxForm class="mt-6"></taxForm>
                 <couponForm class="mt-6"></couponForm>
             </v-col>
+            <v-col cols="3">
+                <storeRegForm></storeRegForm>
+            </v-col>
         </v-row>
     </v-container>
 </template>

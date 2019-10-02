@@ -35,7 +35,11 @@ export default {
                     text: "Amount",
                     value: "amount"
                 },
-                { text: "Actions", value: "action", sortable: false }
+                {
+                    text: "Actions",
+                    value: "action",
+                    sortable: false
+                }
             ]
         };
     },

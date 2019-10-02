@@ -35,7 +35,11 @@ export default {
                     text: "Discount ID",
                     value: "discount_id"
                 },
-                { text: "Actions", value: "action", sortable: false }
+                {
+                    text: "Actions",
+                    value: "action",
+                    sortable: false
+                }
             ]
         };
     },
