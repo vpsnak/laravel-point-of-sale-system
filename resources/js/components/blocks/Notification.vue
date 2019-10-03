@@ -2,17 +2,12 @@
 	<v-snackbar v-model="show" :color="type" :type="type" top absolute>
 		<v-icon v-if="show" large>{{ icon() }}</v-icon>
 
-		<span class="pl-3">{{ message }}</span>
-
-		<div class="flex-grow-1"></div>
-
-		<v-btn icon @click="show = null">
-			<v-icon>mdi-close</v-icon>
-		</v-btn>
+		<span class="pl-3" v-html="displayErrors()"></span>
 	</v-snackbar>
 </template>
 
 <script>
+import { isArray } from "util";
 export default {
 	data() {
 		return {
@@ -56,6 +51,25 @@ export default {
 	methods: {
 		icon() {
 			return _.find(this.icons, { name: this.type }).icon;
+		},
+		displayErrors() {
+			if (typeof this.message === "object") {
+				let errors = "";
+
+				for (const [key, value] of Object.entries(this.message)) {
+					errors +=
+						"<strong>" +
+						_.capitalize(key) +
+						"</strong>" +
+						": " +
+						value +
+						"<br>";
+				}
+
+				return errors;
+			} else {
+				return _.capitalize(this.message);
+			}
 		}
 	}
 };

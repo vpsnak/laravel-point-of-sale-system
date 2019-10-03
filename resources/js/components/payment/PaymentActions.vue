@@ -130,6 +130,7 @@ export default {
 						paymentAmount: this.paymentAmount,
 						paymentType: this.paymentType
 					};
+
 					break;
 				default:
 					break;
