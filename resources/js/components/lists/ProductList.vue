@@ -4,6 +4,7 @@
             <p class="pa-2">Stores</p>
             <p class="pa-2">/</p>
             <p class="pa-2">Cash registers</p>
+            <storeCashRegDialog></storeCashRegDialog>
         </div>
         <v-card-title>
             <v-row align="center" justify="center">
@@ -80,7 +81,6 @@
             </v-row>
         </v-card-text>
         <v-card-actions></v-card-actions>
-        <storeCashRegDialog></storeCashRegDialog>
     </v-card>
 </template>
 

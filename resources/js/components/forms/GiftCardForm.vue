@@ -6,7 +6,6 @@
                     <v-icon left>fas fa-gifts</v-icon>Gift Card Form
                 </v-chip>
             </div>
-            <v-text-field v-model="id" type="number" label="ID" required></v-text-field>
             <v-text-field v-model="name" label="Name" required></v-text-field>
             <v-text-field v-model="code" label="Code" required></v-text-field>
             <v-switch v-model="enabled" :label="`Enabled : ${enabled.toString()}`"></v-switch>
@@ -28,7 +27,6 @@ import { mapActions } from "vuex";
 export default {
     data: () => ({
         savingSuccessful: false,
-        id: null,
         name: null,
         code: null,
         enabled: false,
@@ -39,7 +37,6 @@ export default {
             let payload = {
                 model: "gift-cards",
                 data: {
-                    id: this.id,
                     name: this.name,
                     code: this.code,
                     enabled: this.enabled,
@@ -53,7 +50,6 @@ export default {
             });
         },
         clear() {
-            this.id = null;
             this.name = null;
             this.code = null;
             this.enabled = null;
