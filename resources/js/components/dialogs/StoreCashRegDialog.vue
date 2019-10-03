@@ -48,58 +48,58 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+	import { mapActions } from "vuex";
 
-export default {
-	data: () => ({
-		show: true,
-		cash_register_id: null,
-		store_id: null,
-		stores: [],
-		cash_registers: [],
-		alert: false
-	}),
-	mounted() {
-		this.getAll({
-			model: "stores"
-		}).then(stores => {
-			this.stores = stores;
-		});
-		this.getAll({
-			model: "cash-registers"
-		}).then(cash_registers => {
-			this.cash_registers = cash_registers;
-		});
-	},
-	computed: {},
-	methods: {
-		close() {
-			if (this.store_id != null && this.cash_register_id != null) {
-				this.show = false;
-			} else {
-				this.alert = true;
-			}
-		},
-		getAllStores() {
+	export default {
+		data: () => ({
+			show: true,
+			cash_register_id: null,
+			store_id: null,
+			stores: [],
+			cash_registers: [],
+			alert: false
+		}),
+		mounted() {
 			this.getAll({
 				model: "stores"
 			}).then(stores => {
 				this.stores = stores;
 			});
-		},
-		getAllCashRegisters() {
 			this.getAll({
 				model: "cash-registers"
 			}).then(cash_registers => {
 				this.cash_registers = cash_registers;
 			});
 		},
-		...mapActions({
-			getAll: "getAll",
-			getOne: "getOne",
-			create: "create",
-			delete: "delete"
-		})
-	}
-};
+		computed: {},
+		methods: {
+			close() {
+				if (this.store_id != null && this.cash_register_id != null) {
+					this.show = false;
+				} else {
+					this.alert = true;
+				}
+			},
+			getAllStores() {
+				this.getAll({
+					model: "stores"
+				}).then(stores => {
+					this.stores = stores;
+				});
+			},
+			getAllCashRegisters() {
+				this.getAll({
+					model: "cash-registers"
+				}).then(cash_registers => {
+					this.cash_registers = cash_registers;
+				});
+			},
+			...mapActions({
+				getAll: "getAll",
+				getOne: "getOne",
+				create: "create",
+				delete: "delete"
+			})
+		}
+	};
 </script>
