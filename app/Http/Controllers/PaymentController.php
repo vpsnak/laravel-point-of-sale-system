@@ -64,7 +64,7 @@ class PaymentController extends BaseController
                     ], 403);
                 }
 
-                $validatedData['amount'] = calcDiscount($order->subtotal, $coupon->discount->amount, $coupon->discount->type);
+                $validatedData['amount'] = self::calcDiscount($order->subtotal, $coupon->discount->amount, $coupon->discount->type);
                 break;
 
             case 'giftcard':
@@ -126,7 +126,7 @@ class PaymentController extends BaseController
     }
 
     // @TODO: maybe you want to move this function
-    protected static function calcDiscount($price, $type, $amount)
+    protected static function calcDiscount($price, $amount, $type)
     {
         if ($type === 'flat') {
             return $price - $amount;
