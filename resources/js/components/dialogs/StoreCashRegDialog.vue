@@ -1,5 +1,5 @@
 <template>
-	<v-dialog v-model="show" persistent max-width="600px" transition="dialog-bottom-transition">
+	<v-dialog v-model="show" max-width="600px" transition="dialog-bottom-transition">
 		<v-card>
 			<v-card-title>
 				<div class="text-center">
@@ -14,7 +14,6 @@
 				<v-select
 					v-model="store_id"
 					:items="stores"
-					:rules="[v => !!v || 'Store is required']"
 					label="Stores"
 					required
 					item-text="name"
@@ -23,7 +22,6 @@
 				<v-select
 					v-model="cash_register_id"
 					:items="cash_registers"
-					:rules="[v => !!v || 'Cash Register is required']"
 					label="Cash Register"
 					required
 					item-text="name"
@@ -48,58 +46,60 @@
 </template>
 
 <script>
-	import { mapActions } from "vuex";
+import { mapActions } from "vuex";
 
-	export default {
-		data: () => ({
-			show: true,
+export default {
+	data() {
+		return {
+			show: false,
 			cash_register_id: null,
 			store_id: null,
 			stores: [],
 			cash_registers: [],
 			alert: false
-		}),
-		mounted() {
+		};
+	},
+	mounted() {
+		this.getAll({
+			model: "stores"
+		}).then(stores => {
+			this.stores = stores;
+		});
+		this.getAll({
+			model: "cash-registers"
+		}).then(cash_registers => {
+			this.cash_registers = cash_registers;
+		});
+	},
+	computed: {},
+	methods: {
+		close() {
+			if (this.store_id != null && this.cash_register_id != null) {
+				this.show = false;
+			} else {
+				this.alert = true;
+			}
+		},
+		getAllStores() {
 			this.getAll({
 				model: "stores"
 			}).then(stores => {
 				this.stores = stores;
 			});
+		},
+		getAllCashRegisters() {
 			this.getAll({
 				model: "cash-registers"
 			}).then(cash_registers => {
 				this.cash_registers = cash_registers;
 			});
 		},
-		computed: {},
-		methods: {
-			close() {
-				if (this.store_id != null && this.cash_register_id != null) {
-					this.show = false;
-				} else {
-					this.alert = true;
-				}
-			},
-			getAllStores() {
-				this.getAll({
-					model: "stores"
-				}).then(stores => {
-					this.stores = stores;
-				});
-			},
-			getAllCashRegisters() {
-				this.getAll({
-					model: "cash-registers"
-				}).then(cash_registers => {
-					this.cash_registers = cash_registers;
-				});
-			},
-			...mapActions({
-				getAll: "getAll",
-				getOne: "getOne",
-				create: "create",
-				delete: "delete"
-			})
-		}
-	};
+		...mapActions({
+			getAll: "getAll",
+			getOne: "getOne",
+			create: "create",
+			delete: "delete"
+		})
+	}
+};
 </script>
