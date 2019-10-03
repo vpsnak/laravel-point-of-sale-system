@@ -17,7 +17,7 @@ class CreateCouponsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('code');
-            $table->integer('uses')->default(0)->nullable();
+            $table->integer('uses')->default(0);
             $table->unsignedBigInteger('discount_id');
             $table->date('from')->nullable();
             $table->date('to')->nullable();
