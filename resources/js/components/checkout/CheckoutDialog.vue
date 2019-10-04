@@ -1,7 +1,14 @@
 <template>
-	<v-dialog :value="show" fullscreen hide-overlay transition="dialog-bottom-transition" @click.stop>
-
-		<interactiveDialog title="Cancel order?" content="Are you sure you want to <strong>cancel</strong> the current order?" @confirmation="confirmation" actions persistent />
+	<v-dialog v-model="show" fullscreen hide-overlay transition="dialog-bottom-transition" @click.stop>
+		<interactiveDialog
+			v-if="closePrompt"
+			:show="closePrompt"
+			title="Cancel order?"
+			content="Are you sure you want to <strong>cancel</strong> the current order?"
+			@confirmation="confirmation"
+			actions
+			persistent
+		/>
 
 		<v-card>
 			<v-toolbar>
@@ -35,7 +42,20 @@ export default {
 	props: {
 		show: Boolean
 	},
+	data() {
+		return {
+			interactiveDialog: false
+		};
+	},
 	computed: {
+		closePrompt: {
+			get() {
+				return this.interactiveDialog;
+			},
+			set(value) {
+				this.interactiveDialog = value;
+			}
+		},
 		items() {
 			if (this.$store.state.cart.order) {
 				return this.$store.state.cart.order.items;
@@ -45,9 +65,11 @@ export default {
 	},
 	methods: {
 		close() {
-			this.$store.state.interactiveDialog = true;
+			this.closePrompt = true;
 		},
 		confirmation(event) {
+			this.closePrompt = false;
+
 			if (event) {
 				this.resetState;
 				this.$store.state.checkoutDialog = false;
