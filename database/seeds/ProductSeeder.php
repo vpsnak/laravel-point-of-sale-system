@@ -14,7 +14,7 @@ class ProductSeeder extends Seeder
      */
     public function run()
     {
-        factory(Product::class, 100)->make()->each(function ($product) {
+        factory(Product::class, 30)->make()->each(function ($product) {
             $product->save();
             factory(Price::class)->create([
                 'priceable_id' => $product->id,

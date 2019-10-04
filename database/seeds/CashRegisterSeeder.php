@@ -19,7 +19,24 @@ class CashRegisterSeeder extends Seeder
                 'created_by' => 1,
                 'created_at' => now()
             ],
-        
+            [
+                'name' => 'Main Cash Register 2',
+                'store_id' => 1,
+                'created_by' => 1,
+                'created_at' => now()
+            ],
+            [
+                'name' => 'Main Cash Register 3',
+                'store_id' => 1,
+                'created_by' => 1,
+                'created_at' => now()
+            ],
+            [
+                'name' => 'Main Cash Register 666',
+                'store_id' => 2,
+                'created_by' => 1,
+                'created_at' => now()
+            ],
         ]);
     }
 }

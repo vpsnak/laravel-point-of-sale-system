@@ -5,7 +5,7 @@ namespace App;
 class Coupon extends BaseModel
 {
     protected $with = ['discount'];
-    
+
     protected $fillable = [
         'name',
         'code',
@@ -14,11 +14,11 @@ class Coupon extends BaseModel
         'from',
         'to',
     ];
-    
+
     protected $dates = ['from', 'to'];
-    
+
     public function discount()
     {
-        return $this->hasOne(Discount::class);
+        return $this->belongsTo(Discount::class);
     }
 }

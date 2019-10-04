@@ -17,4 +17,9 @@ class CashRegisterLogs extends BaseModel
         'closed_by',
         'note',
     ];
+    
+    public function cash_register()
+    {
+        return $this->belongsTo(CashRegister::class);
+    }
 }

@@ -85,7 +85,6 @@ export default new Vuex.Store({
                     .get(this.state.baseUrl + payload.model)
                     .then(response => {
                         if (_.has(payload, "mutation")) {
-                            console.log("mutation: " + payload.mutation);
                             context.commit(payload.mutation, response.data, {
                                 root: true
                             });
@@ -94,11 +93,10 @@ export default new Vuex.Store({
                     })
                     .catch(error => {
                         let notification = {
-                            msg: error,
+                            msg: error.response.data.errors,
                             type: "error"
                         };
                         context.commit("setNotification", notification);
-                        console.log(error);
                         reject(error);
                     });
             });
@@ -114,7 +112,6 @@ export default new Vuex.Store({
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
-                            console.log("mutation: " + payload.mutation);
                             context.commit(payload.mutation, response.data, {
                                 root: true
                             });
@@ -123,11 +120,10 @@ export default new Vuex.Store({
                     })
                     .catch(error => {
                         let notification = {
-                            msg: error,
+                            msg: error.response.data.errors,
                             type: "error"
                         };
                         context.commit("setNotification", notification);
-                        console.log(error);
                         reject(error);
                     });
             });
@@ -149,11 +145,10 @@ export default new Vuex.Store({
                     })
                     .catch(error => {
                         let notification = {
-                            msg: error,
+                            msg: error.response.data.errors,
                             type: "error"
                         };
                         context.commit("setNotification", notification);
-                        console.log(error);
                         reject(error);
                     });
             });
@@ -169,7 +164,6 @@ export default new Vuex.Store({
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
-                            console.log("mutation: " + payload.mutation);
                             context.commit(payload.mutation, response.data, {
                                 root: true
                             });
@@ -178,11 +172,10 @@ export default new Vuex.Store({
                     })
                     .catch(error => {
                         let notification = {
-                            msg: error.message,
+                            msg: error.response.data.errors,
                             type: "error"
                         };
                         context.commit("setNotification", notification);
-                        console.log(error);
                         reject(error);
                     });
             });
@@ -203,11 +196,10 @@ export default new Vuex.Store({
                     })
                     .catch(error => {
                         let notification = {
-                            msg: error,
+                            msg: error.response.data.errors,
                             type: "error"
                         };
                         context.commit("setNotification", notification);
-                        console.log(error);
                         reject(error);
                     });
             });
@@ -218,7 +210,6 @@ export default new Vuex.Store({
                     .get(this.state.baseUrl + payload.url)
                     .then(response => {
                         if (_.has(payload, "mutation")) {
-                            console.log("mutation: " + payload.mutation);
                             context.commit(payload.mutation, response.data, {
                                 root: true
                             });
@@ -227,11 +218,10 @@ export default new Vuex.Store({
                     })
                     .catch(error => {
                         let notification = {
-                            msg: error,
+                            msg: error.response.data.errors,
                             type: "error"
                         };
                         context.commit("setNotification", notification);
-                        console.log(error);
                         reject(error);
                     });
             });
@@ -242,7 +232,6 @@ export default new Vuex.Store({
                     .delete(this.state.baseUrl + payload.url)
                     .then(response => {
                         if (_.has(payload, "mutation")) {
-                            console.log("mutation: " + payload.mutation);
                             context.commit(payload.mutation, response.data, {
                                 root: true
                             });
@@ -251,11 +240,10 @@ export default new Vuex.Store({
                     })
                     .catch(error => {
                         let notification = {
-                            msg: error,
+                            msg: error.response.data.errors,
                             type: "error"
                         };
                         context.commit("setNotification", notification);
-                        console.log(error);
                         reject(error);
                     });
             });

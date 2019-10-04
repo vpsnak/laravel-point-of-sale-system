@@ -26,6 +26,8 @@ $baseRoutes = [
     'payment-types' => 'PaymentTypeController',
     'cash-registers' => 'CashRegisterController',
     'cash-register-logs' => 'CashRegisterLogsController',
+    'gift-cards' => 'GiftCardController',
+    'coupons' => 'CouponController',
 ];
 
 foreach ($baseRoutes as $route => $controller) {

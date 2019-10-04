@@ -117,11 +117,24 @@ export default {
 				model: "payments",
 				data: {
 					payment_type: event.paymentType,
-					amount: event.paymentAmount,
+					amount: event.paymentAmount ? event.paymentAmount : null,
 					order_id: this.$props.order_id,
 					cash_register_id: 1
 				}
 			};
+
+			switch (event.paymentType) {
+				default:
+				case "cash":
+					break;
+				case "card":
+					payload.data["card"] = event.card;
+					break;
+				case "coupon":
+				case "giftcard":
+					payload.data["code"] = event.code;
+					break;
+			}
 
 			this.create(payload)
 				.then(response => {

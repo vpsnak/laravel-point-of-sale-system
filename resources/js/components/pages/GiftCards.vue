@@ -2,7 +2,7 @@
     <v-container fluid>
         <v-row>
             <v-col>
-                <categoryTable></categoryTable>
+                <giftCardTable></giftCardTable>
             </v-col>
         </v-row>
     </v-container>

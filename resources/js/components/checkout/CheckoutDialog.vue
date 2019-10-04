@@ -1,11 +1,5 @@
 <template>
-	<v-dialog
-		:value="show"
-		fullscreen
-		hide-overlay
-		transition="dialog-bottom-transition"
-		@click:outside="close"
-	>
+	<v-dialog :value="show" fullscreen hide-overlay transition="dialog-bottom-transition" @click.stop>
 		<v-card>
 			<v-toolbar>
 				<v-btn @click="close" icon>
