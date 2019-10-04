@@ -26,7 +26,7 @@
 				slot="no-results"
 			>Your search for "{{ search }}" found no results.</v-alert>
 		</v-data-table>
-		<interactiveDialog :title="this.btnTitle" :width="600" :component="form"></interactiveDialog>
+		<interactiveDialog :title="this.btnTitle" :width="600" :component="form" :model="testObject2"></interactiveDialog>
 	</v-card>
 </template>
 
@@ -36,6 +36,10 @@
 	export default {
 		data() {
 			return {
+				testObject2: {
+					name: "GAMWTOSPITI2",
+					in_product_listing: false
+				},
 				search: ""
 			};
 		},
@@ -78,6 +82,16 @@
 		},
 		methods: {
 			editItem(item) {
+				this.getOne({
+					model: "categories",
+					data: {
+						id: item.id
+					}
+				}).then(category => {
+					this.name = category.name;
+					this.in_product_listing = category.in_product_listing;
+				});
+
 				this.editedIndex = this.rows.indexOf(item);
 				this.editedItem = Object.assign({}, item);
 				this.showFormDialog();
@@ -107,6 +121,12 @@
 				setBtnTitle: "setBtnTitle",
 				setForm: "setForm",
 				setBtnDisable: "setBtnDisable"
+			}),
+			...mapActions({
+				getAll: "getAll",
+				getOne: "getOne",
+				create: "create",
+				delete: "delete"
 			})
 		}
 	};

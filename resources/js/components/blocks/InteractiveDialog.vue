@@ -71,27 +71,17 @@ export default {
 				this.display = value;
 			}
 		},
-		maxWidth() {
-			return this.$props.width || 450;
-		},
-		cancelBtn() {
-			return this.$props.cancelBtnTxt || "Cancel";
-		},
-		confirmationBtn() {
-			return this.$props.confirmationBtnTxt || "OK";
-		}
-	},
 
-	methods: {
-		confirmation(confirmed) {
-			this.$emit("confirmation", confirmed);
+		methods: {
+			confirmation(confirmed) {
+				this.$emit("confirmation", confirmed);
 
 			this.visibility = false;
 		}
 	},
 
-	beforeDestroy() {
-		this.$off("confirmation");
-	}
-};
+		beforeDestroy() {
+			this.$off("confirmation");
+		}
+	};
 </script>
