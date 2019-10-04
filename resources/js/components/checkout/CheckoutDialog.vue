@@ -1,11 +1,5 @@
 <template>
-	<v-dialog
-		:value="show"
-		fullscreen
-		hide-overlay
-		transition="dialog-bottom-transition"
-		@click:outside="close"
-	>
+	<v-dialog :value="show" fullscreen hide-overlay transition="dialog-bottom-transition" @click.stop>
 		<v-card>
 			<v-toolbar>
 				<v-btn @click="close" icon>
@@ -32,6 +26,8 @@
 </template>
 
 <script>
+import { mapMutations } from "vuex";
+
 export default {
 	props: {
 		show: Boolean
@@ -46,8 +42,11 @@ export default {
 	},
 	methods: {
 		close() {
+			this.resetState;
 			this.$store.state.checkoutDialog = false;
-		}
+		},
+
+		...mapMutations("cart", ["resetState"])
 	}
 };
 </script>

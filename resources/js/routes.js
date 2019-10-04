@@ -12,6 +12,10 @@ import Users from "./components/pages/Users";
 import CTest from "./components/pages/CTest";
 import ListData from "./components/pages/ListData";
 import Taxes from "./components/pages/Taxes";
+import CashRegisters from "./components/pages/CashRegisters";
+import GiftCards from "./components/pages/GiftCards";
+import Coupons from "./components/pages/Coupons";
+
 
 
 export default [
@@ -84,5 +88,20 @@ export default [
         name: "Taxes",
         path: "/taxes",
         component: Taxes
+    },
+    {
+        name: "CashRegisters",
+        path: "/cash-registers",
+        component: CashRegisters
+    },
+    {
+        name: "GiftCards",
+        path: "/gift-cards",
+        component: GiftCards
+    },
+    {
+        name: "Coupons",
+        path: "/coupons",
+        component: Coupons
     }
 ];

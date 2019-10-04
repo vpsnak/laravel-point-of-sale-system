@@ -4,7 +4,11 @@ namespace App;
 
 class Store extends BaseModel
 {
-//    protected $with = ['products'];
+    protected $with = [
+        'cash_registers',
+        'tax'
+    ];
+    
     protected $fillable = [
         'name',
         'taxable',
@@ -12,9 +16,19 @@ class Store extends BaseModel
         'tax_id',
         'created_by',
     ];
-
+    
     public function products()
     {
-        $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class);
+    }
+    
+    public function cash_registers()
+    {
+        return $this->hasMany(CashRegister::class);
+    }
+    
+    public function tax()
+    {
+        return $this->belongsTo(Tax::class);
     }
 }

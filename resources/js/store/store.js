@@ -5,7 +5,6 @@ import "es6-promise/auto";
 //modules
 import topMenu from "./menu/topMenu";
 import cart from "./modules/cart";
-import payment from "./modules/payment";
 import endpoints from "./modules/endpoints";
 import datatable from "./modules/datatable";
 
@@ -18,7 +17,6 @@ export default new Vuex.Store({
     modules: {
         topMenu,
         cart,
-        payment,
         datatable,
         endpoints
     },
@@ -87,7 +85,6 @@ export default new Vuex.Store({
                     .get(this.state.baseUrl + payload.model)
                     .then(response => {
                         if (_.has(payload, "mutation")) {
-                            console.log("mutation: " + payload.mutation);
                             context.commit(payload.mutation, response.data, {
                                 root: true
                             });
@@ -96,11 +93,10 @@ export default new Vuex.Store({
                     })
                     .catch(error => {
                         let notification = {
-                            msg: error,
+                            msg: error.response.data.errors,
                             type: "error"
                         };
                         context.commit("setNotification", notification);
-                        console.log(error);
                         reject(error);
                     });
             });
@@ -116,7 +112,6 @@ export default new Vuex.Store({
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
-                            console.log("mutation: " + payload.mutation);
                             context.commit(payload.mutation, response.data, {
                                 root: true
                             });
@@ -125,11 +120,10 @@ export default new Vuex.Store({
                     })
                     .catch(error => {
                         let notification = {
-                            msg: error,
+                            msg: error.response.data.errors,
                             type: "error"
                         };
                         context.commit("setNotification", notification);
-                        console.log(error);
                         reject(error);
                     });
             });
@@ -151,11 +145,10 @@ export default new Vuex.Store({
                     })
                     .catch(error => {
                         let notification = {
-                            msg: error,
+                            msg: error.response.data.errors,
                             type: "error"
                         };
                         context.commit("setNotification", notification);
-                        console.log(error);
                         reject(error);
                     });
             });
@@ -171,7 +164,6 @@ export default new Vuex.Store({
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
-                            console.log("mutation: " + payload.mutation);
                             context.commit(payload.mutation, response.data, {
                                 root: true
                             });
@@ -180,11 +172,10 @@ export default new Vuex.Store({
                     })
                     .catch(error => {
                         let notification = {
-                            msg: error.message,
+                            msg: error.response.data.errors,
                             type: "error"
                         };
                         context.commit("setNotification", notification);
-                        console.log(error);
                         reject(error);
                     });
             });
@@ -205,11 +196,10 @@ export default new Vuex.Store({
                     })
                     .catch(error => {
                         let notification = {
-                            msg: error,
+                            msg: error.response.data.errors,
                             type: "error"
                         };
                         context.commit("setNotification", notification);
-                        console.log(error);
                         reject(error);
                     });
             });
@@ -220,7 +210,6 @@ export default new Vuex.Store({
                     .get(this.state.baseUrl + payload.url)
                     .then(response => {
                         if (_.has(payload, "mutation")) {
-                            console.log("mutation: " + payload.mutation);
                             context.commit(payload.mutation, response.data, {
                                 root: true
                             });
@@ -229,11 +218,10 @@ export default new Vuex.Store({
                     })
                     .catch(error => {
                         let notification = {
-                            msg: error,
+                            msg: error.response.data.errors,
                             type: "error"
                         };
                         context.commit("setNotification", notification);
-                        console.log(error);
                         reject(error);
                     });
             });
@@ -244,7 +232,6 @@ export default new Vuex.Store({
                     .delete(this.state.baseUrl + payload.url)
                     .then(response => {
                         if (_.has(payload, "mutation")) {
-                            console.log("mutation: " + payload.mutation);
                             context.commit(payload.mutation, response.data, {
                                 root: true
                             });
@@ -253,11 +240,10 @@ export default new Vuex.Store({
                     })
                     .catch(error => {
                         let notification = {
-                            msg: error,
+                            msg: error.response.data.errors,
                             type: "error"
                         };
                         context.commit("setNotification", notification);
-                        console.log(error);
                         reject(error);
                     });
             });

@@ -127,6 +127,20 @@ export default {
         },
         setOrder(state, order) {
             state.order = order;
+        },
+
+        resetState(state) {
+            state.currentCheckoutStep = 1;
+            state.customer = undefined;
+            state.products = [];
+            state.discount_type = "";
+            state.discount_amount = 0;
+            state.shipping = {};
+            state.order = undefined;
+
+            state.checkoutSteps.forearch(checkoutStep => {
+                checkoutStep.completed = false;
+            });
         }
     },
     actions: {
