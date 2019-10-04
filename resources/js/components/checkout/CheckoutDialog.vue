@@ -3,6 +3,7 @@
 		<interactiveDialog
 			v-if="closePrompt"
 			:show="closePrompt"
+			action="confirmation"
 			title="Cancel order?"
 			content="Are you sure you want to <strong>cancel</strong> the current order?"
 			@confirmation="confirmation"

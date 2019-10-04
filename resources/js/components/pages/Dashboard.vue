@@ -4,11 +4,11 @@
 
 		<interactiveDialog
 			v-if="visibility"
+			action="confirmation"
 			:show="visibility"
-			title="Alvanos"
+			title="Test confirmation"
 			component="paymentActions"
 			@confirmation="confirmation"
-			actions
 			persistent
 		/>
 	</div>
