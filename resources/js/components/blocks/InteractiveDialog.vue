@@ -70,18 +70,19 @@ export default {
 			set(value) {
 				this.display = value;
 			}
-		},
+		}
+	},
 
-		methods: {
-			confirmation(confirmed) {
-				this.$emit("confirmation", confirmed);
+	methods: {
+		confirmation(confirmed) {
+			this.$emit("confirmation", confirmed);
 
 			this.visibility = false;
 		}
 	},
 
-		beforeDestroy() {
-			this.$off("confirmation");
-		}
-	};
+	beforeDestroy() {
+		this.$off("confirmation");
+	}
+};
 </script>
