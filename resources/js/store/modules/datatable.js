@@ -6,7 +6,6 @@ const state = {
     rows: [],
     loading: false,
     form: "Form",
-    showDialog: false,
     btnDisable: false,
 };
 
@@ -59,9 +58,6 @@ const mutations = {
     },
     setForm(state, form) {
         state.form = form;
-    },
-    setShowDialog(state, showDialog) {
-        state.showDialog = showDialog;
     },
     setBtnDisable(state, btnDisable) {
         state.btnDisable = btnDisable;

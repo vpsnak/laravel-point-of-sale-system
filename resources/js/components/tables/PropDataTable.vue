@@ -12,8 +12,12 @@
 				<slot :name="slot" v-bind="scope" />
 			</template>
 			<template v-slot:item.action="{ item }">
-				<v-icon :disabled="btnDisable" @click="editItem(item)" class="mr-2" small>edit</v-icon>
-				<v-icon :disabled="btnDisable" @click="deleteItem(item)" small>delete</v-icon>
+				<v-btn :disabled="btnDisable" @click="editItem(item)" class="mr-2" icon>
+					<v-icon small>edit</v-icon>
+				</v-btn>
+				<v-btn :disabled="btnDisable" @click="deleteItem(item)" icon>
+					<v-icon small>delete</v-icon>
+				</v-btn>
 			</template>
 			<v-alert
 				:value="true"
@@ -22,25 +26,7 @@
 				slot="no-results"
 			>Your search for "{{ search }}" found no results.</v-alert>
 		</v-data-table>
-		<v-dialog max-width="600px" transition="dialog-bottom-transition" v-model="showDialog">
-			<v-card>
-				<v-card-title>
-					<span class="headline">
-						<i class="fas fa-seedling"></i>
-						{{ this.btnTitle }}
-					</span>
-				</v-card-title>
-				<v-card-text>
-					<v-container>
-						<v-row>
-							<v-col>
-								<component :is="form" />
-							</v-col>
-						</v-row>
-					</v-container>
-				</v-card-text>
-			</v-card>
-		</v-dialog>
+		<interactiveDialog :title="this.btnTitle" :width="600" :component="form"></interactiveDialog>
 	</v-card>
 </template>
 
@@ -94,7 +80,7 @@
 			editItem(item) {
 				this.editedIndex = this.rows.indexOf(item);
 				this.editedItem = Object.assign({}, item);
-				this.showDialog = true;
+				this.showFormDialog();
 			},
 
 			deleteItem(item) {
@@ -108,7 +94,7 @@
 			},
 
 			showFormDialog() {
-				this.showDialog = true;
+				this.$store.state.interactiveDialog = true;
 			},
 
 			...mapActions("datatable", {
@@ -120,7 +106,6 @@
 				setTitle: "setTitle",
 				setBtnTitle: "setBtnTitle",
 				setForm: "setForm",
-				setShowDialog: "setShowDialog",
 				setBtnDisable: "setBtnDisable"
 			})
 		}

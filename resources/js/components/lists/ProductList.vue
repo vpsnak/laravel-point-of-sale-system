@@ -4,7 +4,6 @@
 			<p class="pa-2">Stores</p>
 			<p class="pa-2">/</p>
 			<p class="pa-2">Cash registers</p>
-			<storeCashRegDialog></storeCashRegDialog>
 		</div>
 		<v-card-title>
 			<v-row align="center" justify="center">

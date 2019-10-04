@@ -14,10 +14,14 @@
 				/>
 			</v-col>
 		</v-row>
-
+		<interactiveDialog title="Select store and cash register" :width="600" component="storeRegForm"></interactiveDialog>
 	</v-container>
 </template>
 
 <script>
-	export default {};
+	export default {
+		mounted() {
+			this.$store.state.interactiveDialog = true;
+		}
+	};
 </script>
