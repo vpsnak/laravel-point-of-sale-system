@@ -70,6 +70,15 @@ export default {
 			set(value) {
 				this.display = value;
 			}
+		},
+		maxWidth() {
+			return this.$props.width || 450;
+		},
+		cancelBtn() {
+			return this.$props.cancelBtnTxt || "Cancel";
+		},
+		confirmationBtn() {
+			return this.$props.confirmationBtnTxt || "OK";
 		}
 	},
 

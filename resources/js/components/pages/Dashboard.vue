@@ -35,6 +35,7 @@ export default {
 
 	methods: {
 		confirmation(event) {
+			console.log(event);
 			this.visibility = false;
 		}
 	}
