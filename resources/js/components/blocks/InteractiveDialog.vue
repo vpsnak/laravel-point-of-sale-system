@@ -4,7 +4,7 @@
 			<v-card-title class="headline">
 				{{ title }}
 				<v-spacer></v-spacer>
-				<v-btn @click="cancel" icon>
+				<v-btn @click="confirmation(false)" icon>
 					<v-icon>mdi-close</v-icon>
 				</v-btn>
 			</v-card-title>
@@ -12,15 +12,16 @@
 			<v-divider></v-divider>
 
 			<v-card-text>
-				<component :is="content"></component>
+				<component :is="component" v-if="component"></component>
+				<div v-else v-html="content" :class="'pt-5' + contentClass"></div>
 			</v-card-text>
 
-			<v-card-actions>
+			<v-card-actions v-if="actions" class="d-flex align-center my-5">
 				<div class="flex-grow-1"></div>
 
-				<v-btn @click="cancel" text color="error">{{ cancelBtn }}</v-btn>
+				<v-btn @click="confirmation(false)" text color="error">{{ cancelBtn }}</v-btn>
 
-				<v-btn @click="ok" text color="success">{{ confirmationBtn }}</v-btn>
+				<v-btn @click="confirmation(true)" text color="success">{{ confirmationBtn }}</v-btn>
 			</v-card-actions>
 		</v-card>
 	</v-dialog>
@@ -32,7 +33,10 @@ export default {
 		persistent: Boolean || undefined,
 		width: Number || undefined,
 		title: String,
-		content: String,
+		actions: Boolean,
+		content: String || undefined,
+		contentClass: String || '',
+		component: String,
 		fullscreen: Boolean,
 		cancelBtnTxt: String || "",
 		confirmationBtnTxt: String || ""
@@ -41,14 +45,14 @@ export default {
 	computed: {
 		show: {
 			get() {
-				return this.$store.state.confirmationDialog;
+				return this.$store.state.interactiveDialog;
 			},
 			set(value) {
-				this.$store.state.confirmationDialog = value;
+				this.$store.state.interactiveDialog = value;
 			}
 		},
 		maxWidth() {
-			return this.$props.width || 600;
+			return this.$props.width || 450;
 		},
 		cancelBtn() {
 			return this.$props.cancelBtnTxt || "Cancel";
@@ -59,12 +63,11 @@ export default {
 	},
 
 	methods: {
-		cancel() {
-			this.$emit("confirmation", false);
+		confirmation(confirmed) {
+			this.$emit("confirmation", confirmed);
+
+			this.show = false;
 		},
-		ok() {
-			this.$emit("confirmation", true);
-		}
 	},
 
 	beforeDestroy() {

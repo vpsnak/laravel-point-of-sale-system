@@ -2,12 +2,7 @@
 	<div>
 		<v-btn @click="fire">Dialog</v-btn>
 
-		<confirmationDialog
-			title="Alvanos"
-			content="paymentActions"
-			@confirmation="confirmation"
-			confirmationBtnTxt="alvanos"
-		/>
+		<confirmationDialog title="Alvanos" component="paymentActions" @confirmation="confirmation" actions persistent />
 	</div>
 </template>
 
@@ -19,9 +14,12 @@ export default {
 		};
 	},
 
+	mounted() {
+		this.fire();
+	},
+
 	methods: {
 		confirmation(event) {
-			console.log(event);
 			this.$store.state.confirmationDialog = false;
 		},
 		fire() {

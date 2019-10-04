@@ -45,7 +45,7 @@ export default new Vuex.Store({
         },
 
         // dialogs
-        confirmationDialog: false,
+        interactiveDialog: false,
         cartRestoreDialog: false,
         checkoutDialog: false,
 
