@@ -21,7 +21,7 @@
 				<div v-else v-html="content" :class="contentClass || ''"></div>
 			</v-card-text>
 
-			<v-card-actions v-if="actions" class="d-flex align-center mt-5">
+			<v-card-actions v-if="action === 'confirmation'" class="d-flex align-center mt-5">
 				<div class="flex-grow-1"></div>
 
 				<v-btn @click="confirmation(false)" text color="error">{{ cancelBtn }}</v-btn>
@@ -39,13 +39,17 @@ export default {
 		persistent: Boolean || undefined,
 		width: Number || undefined,
 		title: String,
-		actions: Boolean,
+
 		content: String || undefined,
 		contentClass: String || "",
 		component: String,
 		fullscreen: Boolean,
 		cancelBtnTxt: String || "",
-		confirmationBtnTxt: String || ""
+		confirmationBtnTxt: String || "",
+
+		// model CRUD props
+		model: Object,
+		action: String // Possible values: create, read, update, delete, confirmation
 	},
 
 	data() {
