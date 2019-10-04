@@ -1,8 +1,9 @@
 <template>
-	<v-snackbar v-model="show" :color="type" :type="type" top absolute>
+	<v-snackbar v-model="show" :color="type" :type="type" top absolute class="d-flex align-center">
 		<v-icon v-if="show" large>{{ icon() }}</v-icon>
-
 		<span class="pl-3" v-html="displayErrors()"></span>
+
+		<div class="flex-grow-1"></div>
 	</v-snackbar>
 </template>
 

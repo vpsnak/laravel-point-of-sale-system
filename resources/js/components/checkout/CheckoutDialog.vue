@@ -9,15 +9,15 @@
 			</v-toolbar>
 			<v-container fluid>
 				<v-row>
-					<v-col cols="3">
-						<cart icon="mdi-clipboard-list" title="Order summary" :items="items" />
-					</v-col>
 					<v-col cols="9">
 						<v-card class="pa-2">
 							<v-card-text>
 								<checkoutStepper />
 							</v-card-text>
 						</v-card>
+					</v-col>
+					<v-col cols="3">
+						<cart icon="mdi-clipboard-list" title="Order summary" :items="items" />
 					</v-col>
 				</v-row>
 			</v-container>

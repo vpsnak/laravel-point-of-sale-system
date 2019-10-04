@@ -30,6 +30,7 @@
 						<component :is="checkoutStep.component" />
 					</v-card-text>
 					<v-card-actions>
+						<v-btn color="secondary" @click="prevStep()">Back</v-btn>
 						<div class="flex-grow-1"></div>
 						<v-btn color="primary" @click="completeStep(checkoutStep)">Continue</v-btn>
 					</v-card-actions>
@@ -55,6 +56,9 @@ export default {
 	methods: {
 		completeStep(checkoutStep) {
 			this.$store.dispatch("cart/completeStep", checkoutStep);
+		},
+		prevStep() {
+			this.$store.state.cart.currentCheckoutStep--;
 		}
 	}
 };

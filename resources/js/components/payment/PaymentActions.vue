@@ -98,8 +98,6 @@ export default {
 		};
 	},
 
-	mounted() {},
-
 	methods: {
 		sendPayment() {
 			let payload;
@@ -144,7 +142,7 @@ export default {
 		}
 	},
 	beforeDestroy() {
-		this.$off("sendPayment", this.address);
+		this.$off("sendPayment", this.sendPayment);
 	}
 };
 </script>

@@ -1,27 +1,32 @@
 <template>
-  <div>
-    <v-text-field v-model="keyword"></v-text-field>
-    <v-btn @click="fire"></v-btn>
-  </div>
+	<div>
+		<v-btn @click="fire">Dialog</v-btn>
+
+		<confirmationDialog
+			title="Alvanos"
+			content="paymentActions"
+			@confirmation="confirmation"
+			confirmationBtnTxt="alvanos"
+		/>
+	</div>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      model: "products",
-      keyword: ""
-    };
-  },
-  methods: {
-    fire() {
-      let payload = {
-        model: "products",
-        keyword: this.keyword
-      };
+	data() {
+		return {
+			show: false
+		};
+	},
 
-      this.$store.dispatch("search", payload);
-    }
-  }
+	methods: {
+		confirmation(event) {
+			console.log(event);
+			this.$store.state.confirmationDialog = false;
+		},
+		fire() {
+			this.$store.state.confirmationDialog = true;
+		}
+	}
 };
 </script>
