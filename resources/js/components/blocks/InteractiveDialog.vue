@@ -1,5 +1,10 @@
 <template>
-	<v-dialog v-model="show" :persistent="persistent" :max-width="maxWidth" :fullscreen="fullscreen">
+	<v-dialog
+		v-model="visibility"
+		:persistent="persistent"
+		:max-width="maxWidth"
+		:fullscreen="fullscreen"
+	>
 		<v-card>
 			<v-card-title class="headline">
 				{{ title }}
@@ -16,7 +21,7 @@
 				<div v-else v-html="content" :class="'pt-5' + contentClass"></div>
 			</v-card-text>
 
-			<v-card-actions v-if="actions" class="d-flex align-center my-5">
+			<v-card-actions v-if="actions" class="d-flex align-center mt-5">
 				<div class="flex-grow-1"></div>
 
 				<v-btn @click="confirmation(false)" text color="error">{{ cancelBtn }}</v-btn>
@@ -30,25 +35,36 @@
 <script>
 export default {
 	props: {
+		show: Boolean,
 		persistent: Boolean || undefined,
 		width: Number || undefined,
 		title: String,
 		actions: Boolean,
 		content: String || undefined,
-		contentClass: String || '',
+		contentClass: String || "",
 		component: String,
 		fullscreen: Boolean,
 		cancelBtnTxt: String || "",
 		confirmationBtnTxt: String || ""
 	},
 
+	data() {
+		return {
+			display: false
+		};
+	},
+
+	mounted() {
+		this.display = this.$props.show;
+	},
+
 	computed: {
-		show: {
+		visibility: {
 			get() {
-				return this.$store.state.interactiveDialog;
+				return this.display;
 			},
 			set(value) {
-				this.$store.state.interactiveDialog = value;
+				this.display = value;
 			}
 		},
 		maxWidth() {
@@ -66,8 +82,8 @@ export default {
 		confirmation(confirmed) {
 			this.$emit("confirmation", confirmed);
 
-			this.show = false;
-		},
+			this.visibility = false;
+		}
 	},
 
 	beforeDestroy() {

@@ -1,8 +1,10 @@
 <template>
 	<div>
-		<v-btn @click="fire">Dialog</v-btn>
+		<v-btn @click.stop="visibility = true">Dialog</v-btn>
 
 		<interactiveDialog
+			v-if="visibility"
+			:show="visibility"
 			title="Alvanos"
 			component="paymentActions"
 			@confirmation="confirmation"
@@ -13,24 +15,28 @@
 </template>
 
 <script>
-	export default {
-		data() {
-			return {
-				show: false
-			};
-		},
+export default {
+	data() {
+		return {
+			showInteractiveDialog: false
+		};
+	},
 
-		mounted() {
-			this.fire();
-		},
-
-		methods: {
-			confirmation(event) {
-				this.$store.state.interactiveDialog = false;
+	computed: {
+		visibility: {
+			get() {
+				return this.showInteractiveDialog;
 			},
-			fire() {
-				this.$store.state.interactiveDialog = true;
+			set(value) {
+				this.showInteractiveDialog = value;
 			}
 		}
-	};
+	},
+
+	methods: {
+		confirmation(event) {
+			this.visibility = false;
+		}
+	}
+};
 </script>

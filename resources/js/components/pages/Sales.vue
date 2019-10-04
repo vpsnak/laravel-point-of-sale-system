@@ -14,14 +14,25 @@
 				/>
 			</v-col>
 		</v-row>
-		<interactiveDialog title="Select store and cash register" :width="600" component="storeRegForm"></interactiveDialog>
+		<interactiveDialog
+			v-if="visibility"
+			:show="visibility"
+			title="Select store and cash register"
+			:width="600"
+			component="storeRegForm"
+		></interactiveDialog>
 	</v-container>
 </template>
 
 <script>
-	export default {
-		mounted() {
-			this.$store.state.interactiveDialog = true;
-		}
-	};
+export default {
+	data() {
+		return {
+			visibility: false
+		};
+	},
+	mounted() {
+		this.visibility = true;
+	}
+};
 </script>
