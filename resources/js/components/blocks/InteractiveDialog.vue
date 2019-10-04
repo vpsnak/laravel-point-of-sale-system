@@ -28,50 +28,50 @@
 </template>
 
 <script>
-export default {
-	props: {
-		persistent: Boolean || undefined,
-		width: Number || undefined,
-		title: String,
-		actions: Boolean,
-		content: String || undefined,
-		contentClass: String || '',
-		component: String,
-		fullscreen: Boolean,
-		cancelBtnTxt: String || "",
-		confirmationBtnTxt: String || ""
-	},
+	export default {
+		props: {
+			persistent: Boolean || undefined,
+			width: Number || undefined,
+			title: String,
+			actions: Boolean,
+			content: String || undefined,
+			contentClass: String || "",
+			component: String,
+			fullscreen: Boolean,
+			cancelBtnTxt: String || "",
+			confirmationBtnTxt: String || ""
+		},
 
-	computed: {
-		show: {
-			get() {
-				return this.$store.state.interactiveDialog;
+		computed: {
+			show: {
+				get() {
+					return this.$store.state.interactiveDialog;
+				},
+				set(value) {
+					this.$store.state.interactiveDialog = value;
+				}
 			},
-			set(value) {
-				this.$store.state.interactiveDialog = value;
+			maxWidth() {
+				return this.$props.width || 450;
+			},
+			cancelBtn() {
+				return this.$props.cancelBtnTxt || "Cancel";
+			},
+			confirmationBtn() {
+				return this.$props.confirmationBtnTxt || "OK";
 			}
 		},
-		maxWidth() {
-			return this.$props.width || 450;
+
+		methods: {
+			confirmation(confirmed) {
+				this.$emit("confirmation", confirmed);
+
+				this.show = false;
+			}
 		},
-		cancelBtn() {
-			return this.$props.cancelBtnTxt || "Cancel";
-		},
-		confirmationBtn() {
-			return this.$props.confirmationBtnTxt || "OK";
+
+		beforeDestroy() {
+			this.$off("confirmation");
 		}
-	},
-
-	methods: {
-		confirmation(confirmed) {
-			this.$emit("confirmation", confirmed);
-
-			this.show = false;
-		},
-	},
-
-	beforeDestroy() {
-		this.$off("confirmation");
-	}
-};
+	};
 </script>
