@@ -9,16 +9,16 @@
 			<v-card-title class="headline">
 				{{ title }}
 				<v-spacer></v-spacer>
-				<v-btn @click="confirmation(false)" icon>
+				<v-btn @click.stop="confirmation(false)" icon>
 					<v-icon>mdi-close</v-icon>
 				</v-btn>
 			</v-card-title>
 
-			<v-divider></v-divider>
+			<v-divider class="mb-3"></v-divider>
 
 			<v-card-text>
 				<component :is="component" v-if="component"></component>
-				<div v-else v-html="content" :class="'pt-5' + contentClass"></div>
+				<div v-else v-html="content" :class="contentClass || ''"></div>
 			</v-card-text>
 
 			<v-card-actions v-if="actions" class="d-flex align-center mt-5">

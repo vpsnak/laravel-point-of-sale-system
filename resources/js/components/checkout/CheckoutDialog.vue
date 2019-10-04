@@ -44,10 +44,18 @@ export default {
 	},
 	data() {
 		return {
-			closePrompt: false
+			interactiveDialog: false
 		};
 	},
 	computed: {
+		closePrompt: {
+			get() {
+				return this.interactiveDialog;
+			},
+			set(value) {
+				this.interactiveDialog = value;
+			}
+		},
 		items() {
 			if (this.$store.state.cart.order) {
 				return this.$store.state.cart.order.items;
@@ -60,9 +68,11 @@ export default {
 			this.closePrompt = true;
 		},
 		confirmation(event) {
+			this.closePrompt = false;
+
 			if (event) {
 				this.resetState;
-				this.closePrompt = false;
+				this.$store.state.checkoutDialog = false;
 			}
 		},
 
