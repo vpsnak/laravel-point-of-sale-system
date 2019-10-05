@@ -68,14 +68,16 @@
 				this.create(payload).then(() => {
 					this.clear();
 					this.savingSuccessful = true;
-					window.location.reload();
 				});
 			},
 			clear() {
 				this.formFields = { ...this.defaultValues };
 			},
 			...mapActions({
-				create: "create"
+				getAll: "getAll",
+				getOne: "getOne",
+				create: "create",
+				delete: "delete"
 			})
 		}
 	};

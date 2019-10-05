@@ -70,8 +70,6 @@
 				this.create(payload).then(() => {
 					this.clear();
 					this.savingSuccessful = true;
-
-					window.location.reload();
 				});
 			},
 			clear() {
