@@ -53,7 +53,6 @@
 				};
 				this.create(payload).then(() => {
 					this.clear();
-					window.location.reload();
 				});
 			},
 			clear() {

@@ -41,64 +41,43 @@ class Test extends Command
     {
         // oob
         $callback_url = 'https://httpbin.org/get';
-        $customer = \App\Customer::find(9);
         $client = new Customer();
-//        $res = $client->create([
-//            'website_id' => 1,
-//            'group_id' => 1,
-//            'firstname' => $customer->first_name,
-//            'lastname' => $customer->last_name,
-//            'email' => $customer->email,
-//            'password' => 'asd123123',
-//            'eponymia' => $customer->company_name,
-//        ]);
-        $res = $client->getByField('email', $customer->email);
-        var_dump($res);
-    }
-
-    public function getMagentoFormKey($token, $url)
-    {
-        $client = new Client();
-        $result = $client->get($url, [
-            'query' => [
-                'oauth_token' => $token
-            ]
-        ]);
-        $form_html = $result->getBody()->getContents();
-        preg_match('/<input name="form_key" type="hidden" value="(.*?)"/s', $form_html, $form_key);
-        preg_match('/<form method="post" action="(.*?)"/s', $form_html, $form_action);
-        return [
-            'form_key' => $form_key[1],
-            'form_action' => $form_action[1]
-        ];
-    }
-
-    public function confirmAuthorization($token, $url)
-    {
-        $user = 'dev';
-        $password = 'admin123!@#';
-        $authorization_url = 'http://silver.readytogo.gr/admin/oauth_authorize';
-        $authorization_confirm_url = 'http://silver.readytogo.gr/admin/oauth_authorize/confirm';
-        $form_data = $this->getMagentoFormKey($token, $authorization_url);
-        var_dump($form_data);
-
-
-        $client = new Client();
-        $result = $client->post($authorization_confirm_url, [
-            'query' => [
-                'oauth_token' => $token,
-                'login[username]' => $user,
-                'login[password]' => $password,
-                'form_key' => $form_data['form_key'],
-            ],
-            'form_params' => [
-                'oauth_token' => $token,
-                'login[username]' => $user,
-                'login[password]' => $password,
-                'form_key' => $form_data['form_key'],
-            ]
-        ]);
-        preg_match('/<div class="login-form"(.*?)class="legal"/s', $result->getBody()->getContents(), $form_result);
-        return $form_result[1];
+        foreach (\App\Customer::all() as $customer) {
+            $res = $client->sendCustomer([
+                'firstname' => $customer->first_name,
+                'lastname' => $customer->last_name,
+                'email' => $customer->email,
+                'taxvat' => '151581515',
+            ]);
+            if (!isset($res->id)) {
+                return;
+            }
+            echo 'Customer send with magento id: ' . $res->id . PHP_EOL;
+            $customer->magento_id = $res->id;
+            $customer->save();
+            foreach ($customer->addresses as $address) {
+                $res = $client->sendAddress($customer->magento_id, [
+                    'address_code' => $address->id,
+                    'firstname' => $address->first_name,
+                    'lastname' => $address->last_name,
+                    'company' => 'webo2',
+                    'street' => [$address->street],
+                    'city' => $address->city,
+                    'country_id' => $address->country_id,
+                    'region' => $address->region,
+                    'postcode' => $address->postcode,
+                    'phone' => $address->phone,
+                    'vat_id' => '151581515',
+                    'is_default_billing' => 1,
+                    'is_default_shipping' => 1
+                ]);
+                if (!isset($res->id)) {
+                    continue;
+                }
+                echo 'Address send with magento id: ' . $res->id . PHP_EOL;
+                $address->magento_id = $res->id;
+                $address->save();
+            }
+        }
     }
 }

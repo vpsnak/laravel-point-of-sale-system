@@ -24,9 +24,13 @@
 	import { mapActions } from "vuex";
 
 	export default {
+		props: {
+			model: Object || undefined
+		},
 		data() {
 			return {
 				savingSuccessful: false,
+				defaultValues: {},
 				address: {
 					area_code_id: "",
 					last_name: "",
@@ -39,6 +43,14 @@
 					phone: ""
 				}
 			};
+		},
+		mounted() {
+			this.defaultValues = this.address;
+			if (this.$props.model) {
+				this.address = {
+					...this.$props.model
+				};
+			}
 		},
 		watch: {
 			address: {
@@ -55,17 +67,7 @@
 			submit() {
 				let payload = {
 					model: "address",
-					data: {
-						area_code_id: this.address.area_code_id,
-						last_name: this.address.last_name,
-						first_name: this.address.first_name,
-						street: this.address.street,
-						city: this.address.city,
-						country_id: this.address.country_id,
-						region: this.address.region,
-						postcode: this.address.postcode,
-						phone: this.address.phone
-					}
+					data: { ...this.address }
 				};
 				this.create(payload).then(() => {
 					this.clear();
@@ -73,16 +75,9 @@
 				});
 			},
 			clear() {
-				this.address.area_code_id = "";
-				this.address.last_name = "";
-				this.address.first_name = "";
-				this.address.street = "";
-				this.address.city = "";
-				this.address.country_id = "";
-				this.address.region = "";
-				this.address.postcode = "";
-				this.address.phone = "";
+				this.address = { ...this.defaultValues };
 			},
+
 			...mapActions({
 				create: "create"
 			})

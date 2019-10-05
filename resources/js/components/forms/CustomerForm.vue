@@ -6,11 +6,11 @@
 					<v-icon left>fas fa-user</v-icon>Customer Form
 				</v-chip>
 			</div>
-			<v-text-field v-model="first_name" label="First name" required></v-text-field>
-			<v-text-field v-model="last_name" label="Last name" required></v-text-field>
-			<v-text-field v-model="email" label="Email" required></v-text-field>
-			<v-text-field v-model="phone" label="Phone" required></v-text-field>
-			<v-text-field v-model="company_name" label="Company name" required></v-text-field>
+			<v-text-field v-model="formFields.first_name" label="First name" required></v-text-field>
+			<v-text-field v-model="formFields.last_name" label="Last name" required></v-text-field>
+			<v-text-field v-model="formFields.email" label="Email" required></v-text-field>
+			<v-text-field v-model="formFields.phone" label="Phone" required></v-text-field>
+			<v-text-field v-model="formFields.company_name" label="Company name" required></v-text-field>
 			<addressForm @address="watchAddress($event)"></addressForm>
 			<v-btn class="mr-4" @click="submit">submit</v-btn>
 			<v-btn @click="clear">clear</v-btn>
@@ -22,46 +22,50 @@
 	import { mapActions, mapState, mapGetters } from "vuex";
 
 	export default {
+		props: {
+			model: Object || undefined
+		},
 		data() {
 			return {
 				savingSuccessful: false,
-				first_name: null,
-				last_name: null,
-				company_name: null,
-				email: null,
-				phone: null,
-				address: {
-					area_code_id: "",
-					last_name: "",
-					first_name: "",
-					street: "",
-					city: "",
-					country_id: "",
-					region: "",
-					postcode: "",
-					phone: ""
+				defaultValues: {},
+				formFields: {
+					first_name: null,
+					last_name: null,
+					company_name: null,
+					email: null,
+					phone: null,
+					addresses: {
+						area_code_id: null,
+						last_name: null,
+						first_name: null,
+						street: null,
+						city: null,
+						country_id: null,
+						region: null,
+						postcode: null,
+						phone: null
+					}
 				}
 			};
 		},
-
-		computed: {},
+		mounted() {
+			this.defaultValues = this.formFields;
+			if (this.$props.model) {
+				this.formFields = {
+					...this.$props.model
+				};
+			}
+		},
 		methods: {
 			watchAddress(current_address) {
-				console.log(current_address);
-				this.address = current_address;
+				this.formFields.addresses = current_address;
+				console.log(this.formFields);
 			},
 			submit() {
-				console.log(this.address);
 				let payload = {
 					model: "customers",
-					data: {
-						first_name: this.first_name,
-						last_name: this.last_name,
-						company_name: this.company_name,
-						email: this.email,
-						phone: this.phone,
-						addresses: this.address
-					}
+					data: { ...this.formFields }
 				};
 				this.create(payload).then(() => {
 					this.clear();
@@ -69,11 +73,8 @@
 				});
 			},
 			clear() {
-				this.firstname = "";
-				this.lastname = "";
-				this.company_name = "";
-				this.email = "";
-				this.phone = "";
+				console.log(this.formFields);
+				this.formFields = { ...this.defaultValues };
 			},
 			...mapActions({
 				getAll: "getAll",
