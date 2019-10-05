@@ -24,8 +24,16 @@
 						value: "name"
 					},
 					{
-						text: "Address Id",
-						value: "address_id"
+						text: "Tax Id",
+						value: "tax_id"
+					},
+					{
+						text: "Taxable",
+						value: "taxable"
+					},
+					{
+						text: "Created by",
+						value: "created_by"
 					},
 					{
 						text: "Actions",
