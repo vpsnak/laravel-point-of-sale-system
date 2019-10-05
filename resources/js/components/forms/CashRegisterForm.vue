@@ -6,9 +6,9 @@
 					<v-icon left>fas fa-cash-register</v-icon>Cash Register Form
 				</v-chip>
 			</div>
-			<v-text-field v-model="name" label="Name" required></v-text-field>
+			<v-text-field v-model="formFields.name" label="Name" required></v-text-field>
 			<v-select
-				v-model="store_id"
+				v-model="formFields.store_id"
 				:items="stores"
 				:rules="[v => !!v || 'Store is required']"
 				label="Stores"
@@ -26,11 +26,17 @@
 	import { mapActions } from "vuex";
 
 	export default {
+		props: {
+			model: Object || undefined
+		},
 		data() {
 			return {
 				savingSuccessful: false,
-				name: null,
-				store_id: null,
+				defaultValues: {},
+				formFields: {
+					name: null,
+					store_id: null
+				},
 				stores: []
 			};
 		},
@@ -40,17 +46,19 @@
 			}).then(stores => {
 				this.stores = stores;
 			});
+			this.defaultValues = this.formFields;
+			if (this.$props.model) {
+				this.formFields = {
+					...this.$props.model
+				};
+			}
 		},
 		methods: {
 			submit() {
 				let payload = {
 					model: "cash-registers",
-					data: {
-						name: this.name,
-						store_id: this.store_id
-					}
+					data: { ...this.formFields }
 				};
-				console.log(this.tax);
 				this.create(payload).then(() => {
 					this.clear();
 					this.savingSuccessful = true;
@@ -58,8 +66,7 @@
 				});
 			},
 			clear() {
-				this.name = "";
-				this.store_id = null;
+				this.formFields = { ...this.defaultValues };
 			},
 			getAllStores() {
 				this.getAll({
