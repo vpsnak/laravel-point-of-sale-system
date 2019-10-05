@@ -1,6 +1,11 @@
 <template>
 	<div>
-		<paymentHistory :paymentHistory="paymentHistory" :loading="paymentHistoryLoading" v-if="history"></paymentHistory>
+		<paymentHistory
+			:paymentHistory="paymentHistory"
+			:loading="paymentHistoryLoading"
+			v-if="history"
+			@refund="refundNotification"
+		></paymentHistory>
 
 		<v-divider></v-divider>
 
@@ -150,6 +155,15 @@ export default {
 					this.paymentAmount = null;
 					this.paymentActionsLoading = false;
 				});
+		},
+		refundNotification(event) {
+			let notification = {
+				msg: event.msg,
+				type: event.status
+			};
+			this.setNotification(notification);
+
+			this.init();
 		},
 
 		...mapActions(["search", "create", "getAll", "getOne"]),

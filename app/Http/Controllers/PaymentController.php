@@ -8,6 +8,7 @@ use App\Coupon;
 use App\Giftcard;
 use App\Order;
 use Illuminate\Http\Request;
+use SimpleXMLElement;
 
 class PaymentController extends BaseController
 {
@@ -24,8 +25,9 @@ class PaymentController extends BaseController
 
             // card validation
             'card.number' => 'nullable|required_if:payment_type,card|numeric',
-            'card.security_code' => 'nullable|required_if:payment_type,card|digits_between:3,4',
+            'card.cvc' => 'nullable|required_if:payment_type,card|digits_between:3,4',
             'card.exp_date' => 'nullable|required_if:payment_type,card|after_or_equal:today',
+            'card.holder' => 'nullable|required_if:payment_type,card|string',
 
             // coupon/giftcard validation
             'code' => 'required_if:payment_type,coupon|required_if:payment_type,giftcard'
@@ -38,7 +40,7 @@ class PaymentController extends BaseController
 
             case 'card':
                 // @TODO: 
-
+                self::ccPayment($validatedData);
                 break;
 
             case 'coupon':
@@ -126,13 +128,80 @@ class PaymentController extends BaseController
         );
     }
 
+    public function delete($id)
+    {
+        if (!isset($this->model)) {
+            return response('Model not found', 404);
+        }
+
+        $payment = Payment::findOrFail($id);
+
+        switch ($payment->type) {
+            default:
+            case 'cash':
+                break;
+            case 'card':
+                die('Missing refund for cards');
+                break;
+            case 'coupon':
+                die('Missing refund for coupon');
+                break;
+            case 'giftcard':
+                die('Missing refund for giftcard');
+                break;
+        }
+
+        $this->model::deleteData($id);
+
+        return response(['msg' => 'Refund completed successfully!', 'status' => 'success'], 200);
+    }
+
     // @TODO: maybe you want to move this function
-    protected static function calcDiscount($price, $amount, $type)
+    private static function calcDiscount($price, $amount, $type)
     {
         if ($type === 'flat') {
             return $price - $amount;
         } else {
             return $price * $amount / 100;
         }
+    }
+
+    private static function ccPayment($validatedData)
+    {
+        $client = new \GuzzleHttp\Client();
+
+        $url = 'https://api.demo.convergepay.com/VirtualMerchantDemo/processxml.do';
+
+        $payload = [
+            'ssl_merchant_id' => '009710',
+            'ssl_user_id' => 'convergeapi',
+            'ssl_pin' => 'LWUY8K81466BXK4Y6I7FERJMOLDRM1XL37JPP4ATK3JORDUMAYDRICE9H7QVL6M8',
+            'ssl_test_mode' => 'true',
+            'ssl_transaction_type' => 'ccsale',
+            'ssl_card_number' => $validatedData['card']['number'],
+            'ssl_exp_date' => $validatedData['card']['exp_date'],
+            'ssl_amount' => $validatedData['amount'],
+            'ssl_cvv2cvc2_indicator' => '1',
+            'ssl_cvv2cvc2' => $validatedData['card']['cvc'],
+            'ssl_first_name' => $validatedData['card']['holder'],
+            'ssl_show_form' => 'false'
+        ];
+
+        $payload = array_flip($payload);
+
+        $xmlPayload = new SimpleXMLElement('<txn/>');
+        array_walk_recursive($xmlPayload, array($payload, 'addChild'));
+
+        $response = $client->post($url, [
+            'headers' => [
+                'Content-Type' => 'application/x-www-form-urlencoded'
+            ],
+            'form_params' => ['xmldata' => $xmlPayload]
+        ]);
+
+        echo $response->getStatusCode();
+        echo $response->getHeaderLine('content-type');
+        echo $response->getBody();
+        die;
     }
 }

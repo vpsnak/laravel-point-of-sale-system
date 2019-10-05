@@ -28,10 +28,10 @@
 						style="max-width:300px;"
 					></v-text-field>
 					<v-text-field
-						label="Security code"
+						label="CVC/CVV"
 						type="number"
 						prepend-inner-icon="mdi-lock"
-						v-model="card.security_code"
+						v-model="card.cvc"
 						style="max-width:300px;"
 					></v-text-field>
 					<v-text-field
@@ -39,6 +39,12 @@
 						v-model="card.exp_date"
 						style="max-width:300px;"
 						prepend-inner-icon="mdi-calendar"
+					></v-text-field>
+					<v-text-field
+						label="Card holder"
+						v-model="card.holder"
+						style="max-width:300px;"
+						prepend-inner-icon="mdi-account"
 					></v-text-field>
 				</div>
 
@@ -92,8 +98,9 @@ export default {
 
 			card: {
 				number: null,
-				security_code: null,
-				exp_date: null
+				cvc: null,
+				exp_date: null,
+				holder: null
 			}
 		};
 	},
