@@ -8,8 +8,8 @@
 		<v-card>
 			<v-card-title class="headline">
 				{{ title }}
-				<v-spacer></v-spacer>
-				<v-btn @click.stop="fire(false)" icon>
+				<v-spacer v-if="titleCloseBtn"></v-spacer>
+				<v-btn v-if="titleCloseBtn" @click.stop="fire(false)" icon>
 					<v-icon>mdi-close</v-icon>
 				</v-btn>
 			</v-card-title>
@@ -40,6 +40,7 @@ export default {
 		persistent: Boolean || undefined,
 		width: Number || undefined,
 		title: String,
+		titleCloseBtn: Boolean,
 
 		content: String || undefined,
 		contentClass: String || "",
@@ -86,21 +87,24 @@ export default {
 	methods: {
 		fire(confirmation) {
 			switch (this.$props.action) {
+				default:
 				case "confirmation":
-					this.$emit("action", confirmation);
 					break;
 				case "create":
+					break;
+				case "read":
 					break;
 				case "update":
 					break;
 			}
-
+			this.$emit("action", confirmation);
 			this.visibility = false;
 		}
 	},
 
 	beforeDestroy() {
-		this.$off("confirmation");
+		this.visibility = false;
+		this.$off("action");
 	}
 };
 </script>

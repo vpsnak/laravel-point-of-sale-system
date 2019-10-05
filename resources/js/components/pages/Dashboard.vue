@@ -1,39 +1,41 @@
 <template>
 	<div>
-		<v-btn @click.stop="visibility = true">Confirmation dialog</v-btn>
+		<v-btn @click.stop="showConfirmationDialog = true">Confirmation dialog</v-btn>
 
 		<interactiveDialog
-			v-if="visibility"
+			v-if="showConfirmationDialog"
 			action="confirmation"
-			:show="visibility"
-			title="Test confirmation"
-			component="paymentActions"
-			@action="result"
+			:show="showConfirmationDialog"
+			title="Confirmation dialog"
+			content="Confirmation dialog <h2><s>html</s></h2> content"
+			@action="confirmationResult"
 			persistent
+			cancelBtnTxt="No"
+			confirmationBtnTxt="Yes"
 		/>
 
-		<v-btn @click.stop="visibility = true">Dialog</v-btn>
+		<v-btn @click.stop="showReadDialog = true">Read dialog</v-btn>
 
 		<interactiveDialog
-			v-if="visibility"
-			action="confirmation"
-			:show="visibility"
-			title="Test confirmation"
-			component="paymentActions"
-			@action="result"
-			persistent
+			v-if="showReadDialog"
+			action="read"
+			:show="showReadDialog"
+			title="Read dialog"
+			component="categoryForm"
+			:model="category"
+			@action="readResult"
+			cancelBtnTxt="Close"
 		/>
 
-		<v-btn @click.stop="visibility = true">Dialog</v-btn>
+		<v-btn @click.stop="showUpdateDialog = true">Update dialog</v-btn>
 
 		<interactiveDialog
-			v-if="visibility"
-			action="confirmation"
-			:show="visibility"
-			title="Test confirmation"
+			v-if="showUpdateDialog"
+			action="update"
+			:show="showUpdateDialog"
+			title="Update dialog"
 			component="paymentActions"
-			@action="result"
-			persistent
+			@action="updateResult"
 		/>
 	</div>
 </template>
@@ -42,25 +44,29 @@
 export default {
 	data() {
 		return {
-			showInteractiveDialog: false
+			showConfirmationDialog: false,
+			showReadDialog: false,
+			showUpdateDialog: false,
+
+			category: {
+				name: "Category 1",
+				in_product_listing: true
+			}
 		};
 	},
 
-	computed: {
-		visibility: {
-			get() {
-				return this.showInteractiveDialog;
-			},
-			set(value) {
-				this.showInteractiveDialog = value;
-			}
-		}
-	},
-
 	methods: {
-		result(event) {
-			console.log(event);
-			this.visibility = false;
+		confirmationResult(event) {
+			console.log("confirmation dialog result: " + event);
+			this.showConfirmationDialog = false;
+		},
+		readResult(event) {
+			console.log("read dialog result: " + event);
+			this.showReadDialog = false;
+		},
+		updateResult(event) {
+			console.log("update dialog result: " + event);
+			this.showUpdateDialog = false;
 		}
 	}
 };
