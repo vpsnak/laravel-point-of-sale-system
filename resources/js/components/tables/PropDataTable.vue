@@ -5,7 +5,7 @@
 			<v-spacer></v-spacer>
 			<v-text-field append-icon="search" hide-details label="Search" single-line v-model="search"></v-text-field>
 			<v-divider class="mx-4" inset vertical></v-divider>
-			<v-btn :disabled="btnDisable" color="primary" @click="showFormDialog">{{this.btnTitle }}</v-btn>
+			<v-btn :disabled="btnDisable" color="primary" @click="showInteractiveDialog">{{this.btnTitle }}</v-btn>
 		</v-card-title>
 		<v-data-table :headers="headers" :items="rows" :loading="loading" :search="search">
 			<template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
@@ -33,8 +33,9 @@
 			:width="600"
 			:component="form"
 			:model="testObject2"
-			@confirmation="confirmation"
+			@action="result"
 			persistent
+			action="confirmation"
 		></interactiveDialog>
 	</v-card>
 </template>
@@ -46,10 +47,7 @@
 		data() {
 			return {
 				showInteractiveDialog: false,
-				testObject2: {
-					name: "GAMWTOSPITI2",
-					in_product_listing: false
-				},
+				testObject2: {},
 				search: ""
 			};
 		},
@@ -93,12 +91,12 @@
 		methods: {
 			editItem(item) {
 				this.getOne({
-					model: "categories",
+					model: this.dataUrl,
 					data: {
 						id: item.id
 					}
-				}).then(category => {
-					this.testObject2 = { ...category };
+				}).then(object => {
+					this.testObject2 = { ...object };
 					this.visibility = true;
 				});
 				this.editedIndex = this.rows.indexOf(item);
@@ -114,7 +112,7 @@
 						}
 					});
 			},
-			confirmation(event) {
+			result(event) {
 				console.log(event);
 				this.visibility = false;
 			},
