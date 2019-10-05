@@ -17,6 +17,10 @@ class Address extends BaseModel
         'phone',
     ];
 
+    protected $hidden = [
+        'magento_id'
+    ];
+
     public function areaCode()
     {
         return $this->hasOne(AreaCode::class);

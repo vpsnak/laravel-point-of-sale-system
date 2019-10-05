@@ -25,6 +25,11 @@ class MagentoClient
 
     public function __construct()
     {
+        $this->initClient();
+    }
+
+    public function initClient()
+    {
         $this->state = MagentoOAuth::getFirst('key', 'state');
         $this->token = MagentoOAuth::getFirst('key', 'token');
         $this->secret = MagentoOAuth::getFirst('key', 'secret');
@@ -35,6 +40,7 @@ class MagentoClient
                 $auth_type);
             $this->oauth_client->enableDebug();
             $this->oauth_client->setSSLChecks(OAUTH_SSLCHECK_NONE);
+            $this->oauth_client->setToken($this->token->value, $this->secret->value);
         } catch (OAuthException $e) {
             print_r($e->getMessage());
         }
@@ -47,13 +53,12 @@ class MagentoClient
 
     public function request($method, $url, $options = [])
     {
+        $this->initClient();
         echo $method . ' ' . $url . PHP_EOL;
         try {
-            $this->oauth_client->setToken($this->token->value, $this->secret->value);
-            echo 'token set' . PHP_EOL;
             $this->oauth_client->fetch(
                 $this->baseUrl . $url,
-                json_encode($options),
+                $options,
                 $method,
                 ['Content-Type' => 'application/json', 'Accept' => 'application/json']
             );
@@ -61,6 +66,7 @@ class MagentoClient
             $response = $this->oauth_client->getLastResponse();
             return json_decode($response);
         } catch (Exception $e) {
+            die($e);
             print_r($e->getMessage());
             return false;
         }
@@ -76,23 +82,4 @@ class MagentoClient
         return $this->request('PUT', $url, json_encode($data));
     }
 
-    public function request2($method, $url, $options = "")
-    {
-        try {
-            $this->oauth_client->setToken($this->token->value, $this->secret->value);
-            echo 'token set' . PHP_EOL;
-            $this->oauth_client->fetch(
-                $this->baseUrl . $url,
-                json_encode($options),
-                $method,
-                ['Content-Type' => 'application/json', 'Accept' => 'application/json']
-            );
-            echo 'request send' . PHP_EOL;
-            $response = $this->oauth_client->getLastResponse();
-            return json_decode($response);
-        } catch (Exception $e) {
-            print_r($e->getMessage());
-            return false;
-        }
-    }
 }

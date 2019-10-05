@@ -13,6 +13,10 @@ class Customer extends BaseModel
 
     ];
 
+    protected $hidden = [
+        'magento_id'
+    ];
+
     protected $with = ['addresses'];
 
     public function addresses()

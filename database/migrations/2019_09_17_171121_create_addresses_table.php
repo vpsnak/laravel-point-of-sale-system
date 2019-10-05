@@ -15,6 +15,7 @@ class CreateAddressesTable extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedBigInteger('magento_id')->default(0);
             $table->unsignedInteger('area_code_id');
             $table->string('first_name', 100);
             $table->string('last_name', 100);

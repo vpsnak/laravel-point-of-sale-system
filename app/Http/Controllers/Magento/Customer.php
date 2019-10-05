@@ -8,6 +8,12 @@ use App\Magento\MagentoClient;
 
 class Customer extends MagentoClient
 {
+
+    public function getall()
+    {
+        return $this->get('customers?limit=100', []);
+    }
+
     /**
      * "2": {
      * "entity_id": "2",
@@ -28,14 +34,30 @@ class Customer extends MagentoClient
      * "gender": "1"
      * },
      */
-    public function create($data)
+    public function sendCustomer($data)
     {
-        return $this->post('customers', $data);
+        return $this->put('w2/customers', $data);
     }
 
-    public function getall()
+    /**
+     * "entity_id": "4",
+     * "firstname": "asd",
+     * "lastname": "lol",
+     * "company": "asdasdas",
+     * "city": "asdasdasd",
+     * "country_id": "GR",
+     * "region": "region",
+     * "postcode": "15122",
+     * "vat_id": "651445851451",
+     * "street": [
+     * "sadasdads"
+     * ],
+     * "is_default_billing": 1,
+     * "is_default_shipping": 0
+     */
+    public function sendAddress($customer_id, $data)
     {
-        return $this->get('customers?limit=100', []);
+        return $this->put("w2/customers/$customer_id/addresses", $data);
     }
 
     public function getByField($field, $value)
@@ -47,6 +69,6 @@ class Customer extends MagentoClient
                 'eq' => $value
             ]
         ];
-        return $this->request2('GET', 'customers', $params);
+        return $this->request('GET', 'customers', $params);
     }
 }
