@@ -6,14 +6,14 @@
 			action="confirmation"
 			title="Cancel order?"
 			content="Are you sure you want to <strong>cancel</strong> the current order?"
-			@confirmation="confirmation"
+			@action="confirmation"
 			actions
 			persistent
 		/>
 
 		<v-card>
 			<v-toolbar>
-				<v-btn @click="close" icon>
+				<v-btn @click="closePrompt = true" icon>
 					<v-icon>mdi-close</v-icon>
 				</v-btn>
 				<v-toolbar-title>Checkout</v-toolbar-title>
@@ -45,18 +45,10 @@ export default {
 	},
 	data() {
 		return {
-			interactiveDialog: false
+			closePrompt: false
 		};
 	},
 	computed: {
-		closePrompt: {
-			get() {
-				return this.interactiveDialog;
-			},
-			set(value) {
-				this.interactiveDialog = value;
-			}
-		},
 		items() {
 			if (this.$store.state.cart.order) {
 				return this.$store.state.cart.order.items;
@@ -65,16 +57,13 @@ export default {
 		}
 	},
 	methods: {
-		close() {
-			this.closePrompt = true;
-		},
 		confirmation(event) {
-			this.closePrompt = false;
-
 			if (event) {
 				this.resetState;
 				this.$store.state.checkoutDialog = false;
 			}
+
+			this.closePrompt = false;
 		},
 
 		...mapMutations("cart", ["resetState"])
