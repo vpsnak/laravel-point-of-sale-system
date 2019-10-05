@@ -6,7 +6,7 @@
 					<v-icon left>fas fa-warehouse</v-icon>Store Form
 				</v-chip>
 			</div>
-			<v-text-field v-model="formFields.name" :rules="nameRules" :counter="10" label="Name" required></v-text-field>
+			<v-text-field v-model="formFields.name" :counter="10" label="Name" required></v-text-field>
 			<v-row justify="space-around">
 				<v-switch v-model="formFields.taxable" :label="`Taxable : ${formFields.taxable.toString()}`"></v-switch>
 				<v-switch
@@ -43,12 +43,9 @@
 				valid: true,
 				savingSuccessful: false,
 				taxes: [],
-				nameRules: [
-					// v => !!v || "Name is required",
-					v => v.length <= 10 || "Name must be less than 10 characters"
-				],
 				defaultValues: {},
 				formFields: {
+					id: 0,
 					name: null,
 					tax_id: null,
 					taxable: false,
