@@ -17,7 +17,7 @@
 			<v-divider class="mb-3"></v-divider>
 
 			<v-card-text>
-				<component :is="component" v-if="component"></component>
+				<component :is="component" v-if="component" :model="model"></component>
 				<div v-else v-html="content" :class="contentClass || ''"></div>
 			</v-card-text>
 
@@ -33,65 +33,65 @@
 </template>
 
 <script>
-export default {
-	props: {
-		show: Boolean,
-		persistent: Boolean || undefined,
-		width: Number || undefined,
-		title: String,
+	export default {
+		props: {
+			show: Boolean,
+			persistent: Boolean || undefined,
+			width: Number || undefined,
+			title: String,
 
-		content: String || undefined,
-		contentClass: String || "",
-		component: String,
-		fullscreen: Boolean,
-		cancelBtnTxt: String || "",
-		confirmationBtnTxt: String || "",
+			content: String || undefined,
+			contentClass: String || "",
+			component: String,
+			fullscreen: Boolean,
+			cancelBtnTxt: String || "",
+			confirmationBtnTxt: String || "",
 
-		// model CRUD props
-		model: Object,
-		action: String // Possible values: create, read, update, delete, confirmation
-	},
+			// model CRUD props
+			model: Object,
+			action: String // Possible values: create, read, update, delete, confirmation
+		},
 
-	data() {
-		return {
-			display: false
-		};
-	},
+		data() {
+			return {
+				display: false
+			};
+		},
 
-	mounted() {
-		this.display = this.$props.show;
-	},
+		mounted() {
+			this.display = this.$props.show;
+		},
 
-	computed: {
-		visibility: {
-			get() {
-				return this.display;
+		computed: {
+			visibility: {
+				get() {
+					return this.display;
+				},
+				set(value) {
+					this.display = value;
+				}
 			},
-			set(value) {
-				this.display = value;
+			maxWidth() {
+				return this.$props.width || 450;
+			},
+			cancelBtn() {
+				return this.$props.cancelBtnTxt || "Cancel";
+			},
+			confirmationBtn() {
+				return this.$props.confirmationBtnTxt || "OK";
 			}
 		},
-		maxWidth() {
-			return this.$props.width || 450;
+
+		methods: {
+			confirmation(confirmed) {
+				this.$emit("confirmation", confirmed);
+
+				this.visibility = false;
+			}
 		},
-		cancelBtn() {
-			return this.$props.cancelBtnTxt || "Cancel";
-		},
-		confirmationBtn() {
-			return this.$props.confirmationBtnTxt || "OK";
+
+		beforeDestroy() {
+			this.$off("confirmation");
 		}
-	},
-
-	methods: {
-		confirmation(confirmed) {
-			this.$emit("confirmation", confirmed);
-
-			this.visibility = false;
-		}
-	},
-
-	beforeDestroy() {
-		this.$off("confirmation");
-	}
-};
+	};
 </script>
