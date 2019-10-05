@@ -4,6 +4,8 @@
 		:persistent="persistent"
 		:max-width="maxWidth"
 		:fullscreen="fullscreen"
+		@click:outside="closeEvent"
+		@keydown.esc="closeEvent"
 	>
 		<v-card>
 			<v-card-title class="headline">
@@ -17,7 +19,7 @@
 			<v-divider class="mb-3"></v-divider>
 
 			<v-card-text>
-				<component :is="component" v-if="component" :model="model"></component>
+				<component :is="component" v-if="component" :model="model" :readOnly="readOnly"></component>
 				<div v-else v-html="content" :class="contentClass || ''"></div>
 			</v-card-text>
 
@@ -81,6 +83,9 @@ export default {
 		},
 		confirmationBtn() {
 			return this.$props.confirmationBtnTxt || "OK";
+		},
+		readOnly() {
+			return this.$props.action === "read" ? true : false;
 		}
 	},
 
@@ -99,11 +104,16 @@ export default {
 			}
 			this.$emit("action", confirmation);
 			this.visibility = false;
+		},
+		closeEvent() {
+			if (!this.$props.persistent) {
+				this.$emit("action", false);
+				this.visibility = false;
+			}
 		}
 	},
 
 	beforeDestroy() {
-		this.visibility = false;
 		this.$off("action");
 	}
 };
