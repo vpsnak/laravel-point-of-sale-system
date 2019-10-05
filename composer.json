@@ -9,12 +9,13 @@
     "license": "MIT",
     "require": {
         "php": "^7.2",
-      "ext-json": "^1.5",
+        "ext-json": "^1.5",
         "fideloper/proxy": "^4.0",
         "giberti/ext-oauth-shim": "^1.0",
-      "guzzlehttp/guzzle": "^6.3",
+        "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "^6.0",
-        "laravel/tinker": "^1.0"
+        "laravel/tinker": "^1.0",
+        "rodenastyle/stream-parser": "^1.2"
     },
     "require-dev": {
         "facade/ignition": "^1.4",

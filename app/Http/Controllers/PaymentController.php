@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Payment;
-use App\PaymentType;
 use App\Coupon;
 use App\Giftcard;
 use App\Order;
+use App\Payment;
+use App\PaymentType;
 use Illuminate\Http\Request;
-use SimpleXMLElement;
 
 class PaymentController extends BaseController
 {
@@ -39,8 +38,24 @@ class PaymentController extends BaseController
                 break;
 
             case 'card':
-                // @TODO: 
-                self::ccPayment($validatedData);
+                $paymentResponse = CreditCardController::cardPayment(
+                    $validatedData['card']['number'],
+                    $validatedData['card']['exp_date'],
+                    $validatedData['card']['cvc'],
+                    $validatedData['card']['holder'],
+                    $validatedData['amount']
+                );
+                if (isset($paymentResponse->errorCode)) {
+                    return response([
+                        'errors' => ["Error $paymentResponse->errorCode" => ["$paymentResponse->errorName"]],
+                        'message' => $paymentResponse
+                    ], 500);
+                }
+                // @TODO fix error and success display with notification @ payments
+                return response([
+                    'errors' => ['Credit Card' => [json_encode($paymentResponse)]],
+                    'message' => $paymentResponse
+                ], 200);
                 break;
 
             case 'coupon':
@@ -58,16 +73,23 @@ class PaymentController extends BaseController
                         'errors' => ['Coupon' => ['This coupon has expired']],
                         'message' => 'This coupon has expired'
                     ], 403);
-                } else if ($coupon->from > date('Y-m-d H:i:s')) {
-                    return response([
-                        'errors' => ['Coupon' => ['Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))]],
-                        'message' => 'Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))
-                    ], 403);
+                } else {
+                    if ($coupon->from > date('Y-m-d H:i:s')) {
+                        return response([
+                            'errors' => [
+                                'Coupon' => [
+                                    'Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))
+                                ]
+                            ],
+                            'message' => 'Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))
+                        ], 403);
+                    }
                 }
 
                 $order = Order::findOrFail($validatedData['order_id']);
 
-                $validatedData['amount'] = self::calcDiscount($order->subtotal, $coupon->discount->amount, $coupon->discount->type);
+                $validatedData['amount'] = self::calcDiscount($order->subtotal, $coupon->discount->amount,
+                    $coupon->discount->type);
                 break;
 
             case 'giftcard':
@@ -78,23 +100,20 @@ class PaymentController extends BaseController
                         'errors' => ['Gift card' => ['This gift card is inactive']],
                         'message' => 'This gift card is inactive'
                     ], 403);
-                } else if ($giftcard->amount < $validatedData['amount']) {
-                    return response([
-                        'errors' => ['Gift card' => ['This gift card has insufficient balance to complete the transaction']],
-                        'message' => 'This gift card has insufficient balance to complete the transaction'
-                    ], 403);
                 } else {
-                    // subtract the payed amount from giftcard
+                    if ($giftcard->amount < $validatedData['amount']) {
+                        return response([
+                            'errors' => ['Gift card' => ['This gift card has insufficient balance to complete the transaction']],
+                            'message' => 'This gift card has insufficient balance to complete the transaction'
+                        ], 403);
+                    } else {
+                        // subtract the payed amount from giftcard
 
-                    $giftcard->amount -= $validatedData['amount'];
+                        $giftcard->amount -= $validatedData['amount'];
 
-                    $giftcard->save();
+                        $giftcard->save();
+                    }
                 }
-
-                break;
-
-            case 'card':
-                // @TODO: 
 
                 break;
         }
@@ -111,6 +130,17 @@ class PaymentController extends BaseController
             ], 201);
         }
     }
+
+    private static function calcDiscount($price, $amount, $type)
+    {
+        if ($type === 'flat') {
+            return $price - $amount;
+        } else {
+            return $price * $amount / 100;
+        }
+    }
+
+    // @TODO: maybe you want to move this function
 
     public function search(Request $request)
     {
@@ -154,54 +184,5 @@ class PaymentController extends BaseController
         $this->model::deleteData($id);
 
         return response(['msg' => 'Refund completed successfully!', 'status' => 'success'], 200);
-    }
-
-    // @TODO: maybe you want to move this function
-    private static function calcDiscount($price, $amount, $type)
-    {
-        if ($type === 'flat') {
-            return $price - $amount;
-        } else {
-            return $price * $amount / 100;
-        }
-    }
-
-    private static function ccPayment($validatedData)
-    {
-        $client = new \GuzzleHttp\Client();
-
-        $url = 'https://api.demo.convergepay.com/VirtualMerchantDemo/processxml.do';
-
-        $payload = [
-            'ssl_merchant_id' => '009710',
-            'ssl_user_id' => 'convergeapi',
-            'ssl_pin' => 'LWUY8K81466BXK4Y6I7FERJMOLDRM1XL37JPP4ATK3JORDUMAYDRICE9H7QVL6M8',
-            'ssl_test_mode' => 'true',
-            'ssl_transaction_type' => 'ccsale',
-            'ssl_card_number' => $validatedData['card']['number'],
-            'ssl_exp_date' => $validatedData['card']['exp_date'],
-            'ssl_amount' => $validatedData['amount'],
-            'ssl_cvv2cvc2_indicator' => '1',
-            'ssl_cvv2cvc2' => $validatedData['card']['cvc'],
-            'ssl_first_name' => $validatedData['card']['holder'],
-            'ssl_show_form' => 'false'
-        ];
-
-        $payload = array_flip($payload);
-
-        $xmlPayload = new SimpleXMLElement('<txn/>');
-        array_walk_recursive($xmlPayload, array($payload, 'addChild'));
-
-        $response = $client->post($url, [
-            'headers' => [
-                'Content-Type' => 'application/x-www-form-urlencoded'
-            ],
-            'form_params' => ['xmldata' => $xmlPayload]
-        ]);
-
-        echo $response->getStatusCode();
-        echo $response->getHeaderLine('content-type');
-        echo $response->getBody();
-        die;
     }
 }
