@@ -5,7 +5,11 @@
 			<v-spacer></v-spacer>
 			<v-text-field append-icon="search" hide-details label="Search" single-line v-model="search"></v-text-field>
 			<v-divider class="mx-4" inset vertical></v-divider>
-			<v-btn :disabled="btnDisable" color="primary" @click="showCreateDialog = true">{{this.btnTitle }}</v-btn>
+			<v-btn
+				:disabled="btnDisable"
+				color="primary"
+				@click.stop="showCreateDialog = true"
+			>{{this.btnTitle }}</v-btn>
 		</v-card-title>
 		<v-data-table :headers="headers" :items="rows" :loading="loading" :search="search">
 			<template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
@@ -15,7 +19,7 @@
 				<v-btn :disabled="btnDisable" @click.stop="editItem(item)" class="mr-2" icon>
 					<v-icon small>edit</v-icon>
 				</v-btn>
-				<v-btn :disabled="btnDisable" @click="deleteItem(item)" icon>
+				<v-btn :disabled="btnDisable" @click.stop="deleteItem(item)" icon>
 					<v-icon small>delete</v-icon>
 				</v-btn>
 			</template>
@@ -39,6 +43,15 @@
 			persistent
 			action="edit"
 			titleCloseBtn
+		></interactiveDialog>
+
+		<interactiveDialog
+			v-if="showCreateDialog"
+			:show="showCreateDialog"
+			:component="form"
+			:title="btnTitle"
+			@action="result"
+			cancelBtnTxt="Close"
 		></interactiveDialog>
 	</v-card>
 </template>
