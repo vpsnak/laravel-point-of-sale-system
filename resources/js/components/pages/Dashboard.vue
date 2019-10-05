@@ -1,5 +1,17 @@
 <template>
 	<div>
+		<v-btn @click.stop="visibility = true">Confirmation dialog</v-btn>
+
+		<interactiveDialog
+			v-if="visibility"
+			action="confirmation"
+			:show="visibility"
+			title="Test confirmation"
+			component="paymentActions"
+			@action="result"
+			persistent
+		/>
+
 		<v-btn @click.stop="visibility = true">Dialog</v-btn>
 
 		<interactiveDialog
@@ -8,7 +20,19 @@
 			:show="visibility"
 			title="Test confirmation"
 			component="paymentActions"
-			@confirmation="confirmation"
+			@action="result"
+			persistent
+		/>
+
+		<v-btn @click.stop="visibility = true">Dialog</v-btn>
+
+		<interactiveDialog
+			v-if="visibility"
+			action="confirmation"
+			:show="visibility"
+			title="Test confirmation"
+			component="paymentActions"
+			@action="result"
 			persistent
 		/>
 	</div>
@@ -34,7 +58,7 @@ export default {
 	},
 
 	methods: {
-		confirmation(event) {
+		result(event) {
 			console.log(event);
 			this.visibility = false;
 		}
