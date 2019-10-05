@@ -33,6 +33,8 @@
 			:width="600"
 			:component="form"
 			:model="testObject2"
+			@confirmation="confirmation"
+			persistent
 		></interactiveDialog>
 	</v-card>
 </template>
@@ -90,17 +92,15 @@
 		},
 		methods: {
 			editItem(item) {
-				this.visibility = true;
 				this.getOne({
 					model: "categories",
 					data: {
 						id: item.id
 					}
 				}).then(category => {
-					this.name = category.name;
-					this.in_product_listing = category.in_product_listing;
+					this.testObject2 = { ...category };
+					this.visibility = true;
 				});
-
 				this.editedIndex = this.rows.indexOf(item);
 				this.editedItem = Object.assign({}, item);
 			},
@@ -114,9 +114,9 @@
 						}
 					});
 			},
-
-			showFormDialog() {
-				this.show = true;
+			confirmation(event) {
+				console.log(event);
+				this.visibility = false;
 			},
 
 			...mapActions("datatable", {
