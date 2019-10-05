@@ -8,7 +8,7 @@
 		<v-text-field v-model="formFields.name" :rules="nameRules" :counter="13" label="Name" required></v-text-field>
 		<v-switch
 			v-model="formFields.in_product_listing"
-			:label="`In Product listing : ${in_product_listing.toString()}`"
+			:label="`In Product listing : ${formFields.in_product_listing.toString()}`"
 		></v-switch>
 		<v-btn class="mr-4" @click="submit">submit</v-btn>
 		<v-btn class="mr-4" @click="clear">clear</v-btn>
@@ -25,9 +25,7 @@
 		},
 		data() {
 			return {
-				in_product_listing: false,
 				valid: false,
-				name: "",
 				nameRules: [
 					// v => !!v || "Name is required",
 					v => v.length <= 15 || "Name must be less than 10 characters"
@@ -47,20 +45,6 @@
 				};
 			}
 		},
-
-		computed: {
-			// edit() {
-			// 	this.getOne({
-			// 		model: "categories",
-			// 		data: {
-			// 			id: 2
-			// 		}
-			// 	}).then(category => {
-			// 		this.name = this.category.name;
-			// 		this.in_product_listing = this.category.in_product_listing;
-			// 	});
-			// }
-		},
 		methods: {
 			submit() {
 				let payload = {
@@ -75,11 +59,6 @@
 			clear() {
 				this.formFields = { ...this.defaultValues };
 			},
-			// edit() {
-			// 	this.name = this.testObject.name;
-			// 	this.in_product_listing = this.testObject.in_product_listing;
-			// },
-
 			edit() {
 				this.getOne({
 					model: "categories",

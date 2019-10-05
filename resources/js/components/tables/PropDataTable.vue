@@ -12,7 +12,7 @@
 				<slot :name="slot" v-bind="scope" />
 			</template>
 			<template v-slot:item.action="{ item }">
-				<v-btn :disabled="btnDisable" @click="editItem(item)" class="mr-2" icon>
+				<v-btn :disabled="btnDisable" @click.stop="editItem(item)" class="mr-2" icon>
 					<v-icon small>edit</v-icon>
 				</v-btn>
 				<v-btn :disabled="btnDisable" @click="deleteItem(item)" icon>
@@ -26,7 +26,14 @@
 				slot="no-results"
 			>Your search for "{{ search }}" found no results.</v-alert>
 		</v-data-table>
-		<interactiveDialog :title="this.btnTitle" :width="600" :component="form" :model="testObject2"></interactiveDialog>
+		<interactiveDialog
+			v-if="visibility"
+			:show="visibility"
+			:title="this.btnTitle"
+			:width="600"
+			:component="form"
+			:model="testObject2"
+		></interactiveDialog>
 	</v-card>
 </template>
 
@@ -36,6 +43,7 @@
 	export default {
 		data() {
 			return {
+				showInteractiveDialog: false,
 				testObject2: {
 					name: "GAMWTOSPITI2",
 					in_product_listing: false
@@ -71,17 +79,18 @@
 				form: "form",
 				btnDisable: "btnDisable"
 			}),
-			showDialog: {
+			visibility: {
 				get() {
-					return this.$store.state.datatable.showDialog;
+					return this.showInteractiveDialog;
 				},
 				set(value) {
-					this.setShowDialog(value);
+					this.showInteractiveDialog = value;
 				}
 			}
 		},
 		methods: {
 			editItem(item) {
+				this.visibility = true;
 				this.getOne({
 					model: "categories",
 					data: {
@@ -94,7 +103,6 @@
 
 				this.editedIndex = this.rows.indexOf(item);
 				this.editedItem = Object.assign({}, item);
-				this.showFormDialog();
 			},
 
 			deleteItem(item) {
@@ -108,7 +116,7 @@
 			},
 
 			showFormDialog() {
-				this.$store.state.interactiveDialog = true;
+				this.show = true;
 			},
 
 			...mapActions("datatable", {

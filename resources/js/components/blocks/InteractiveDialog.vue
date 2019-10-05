@@ -17,7 +17,7 @@
 			<v-divider class="mb-3"></v-divider>
 
 			<v-card-text>
-				<component :is="component" v-if="component"></component>
+				<component :is="component" v-if="component" :model="model"></component>
 				<div v-else v-html="content" :class="contentClass || ''"></div>
 			</v-card-text>
 
