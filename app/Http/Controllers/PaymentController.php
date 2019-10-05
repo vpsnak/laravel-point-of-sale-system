@@ -43,7 +43,6 @@ class PaymentController extends BaseController
 
             case 'coupon':
                 $coupon = Coupon::getFirst('code', $validatedData['code']);
-                $order = Order::findOrFail($validatedData['order_id']);
 
                 if (empty($coupon)) {
                     return response([
@@ -63,6 +62,8 @@ class PaymentController extends BaseController
                         'message' => 'Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))
                     ], 403);
                 }
+
+                $order = Order::findOrFail($validatedData['order_id']);
 
                 $validatedData['amount'] = self::calcDiscount($order->subtotal, $coupon->discount->amount, $coupon->discount->type);
                 break;
