@@ -24,12 +24,15 @@
 			</v-card-text>
 
 			<!-- confirmation actions -->
-			<v-card-actions class="d-flex align-center mt-5">
+			<v-card-actions
+				class="d-flex align-center mt-5"
+				v-if="action === 'confirmation' || action === 'info'"
+			>
 				<div class="flex-grow-1"></div>
 
-				<v-btn @click="fire(false)" text color="error">{{ cancelBtn }}</v-btn>
+				<v-btn v-if="action === 'confirmation' " @click="fire(false)" text color="error">{{ cancelBtn }}</v-btn>
 
-				<v-btn v-if="action !== 'read'" @click="fire(true)" text color="success">{{ confirmationBtn }}</v-btn>
+				<v-btn @click="fire(true)" text color="success">{{ confirmationBtn }}</v-btn>
 			</v-card-actions>
 		</v-card>
 	</v-dialog>
@@ -53,7 +56,7 @@ export default {
 
 		// model CRUD props
 		model: Object,
-		action: String // Possible values: create, read, update, confirmation
+		action: String // Possible values: edit, read, confirmation, info
 	},
 
 	data() {
@@ -91,17 +94,6 @@ export default {
 
 	methods: {
 		fire(confirmation) {
-			switch (this.$props.action) {
-				default:
-				case "confirmation":
-					break;
-				case "create":
-					break;
-				case "read":
-					break;
-				case "update":
-					break;
-			}
 			this.$emit("action", confirmation);
 			this.visibility = false;
 		},

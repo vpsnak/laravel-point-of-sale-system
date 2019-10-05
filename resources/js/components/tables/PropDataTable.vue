@@ -5,7 +5,7 @@
 			<v-spacer></v-spacer>
 			<v-text-field append-icon="search" hide-details label="Search" single-line v-model="search"></v-text-field>
 			<v-divider class="mx-4" inset vertical></v-divider>
-			<v-btn :disabled="btnDisable" color="primary" @click="showInteractiveDialog">{{this.btnTitle }}</v-btn>
+			<v-btn :disabled="btnDisable" color="primary" @click="showCreateDialog = true">{{this.btnTitle }}</v-btn>
 		</v-card-title>
 		<v-data-table :headers="headers" :items="rows" :loading="loading" :search="search">
 			<template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
@@ -26,114 +26,107 @@
 				slot="no-results"
 			>Your search for "{{ search }}" found no results.</v-alert>
 		</v-data-table>
+
+		<!-- view/edit dialog -->
 		<interactiveDialog
-			v-if="visibility"
-			:show="visibility"
-			:title="this.btnTitle"
+			v-if="showEditDialog"
+			:show="showEditDialog"
+			title="Edit item"
 			:width="600"
 			:component="form"
 			:model="testObject2"
 			@action="result"
 			persistent
-			action="confirmation"
+			action="edit"
+			titleCloseBtn
 		></interactiveDialog>
 	</v-card>
 </template>
 
 <script>
-	import { mapActions, mapMutations, mapState } from "vuex";
+import { mapActions, mapMutations, mapState } from "vuex";
 
-	export default {
-		data() {
-			return {
-				showInteractiveDialog: false,
-				testObject2: {},
-				search: ""
-			};
+export default {
+	data() {
+		return {
+			showCreateDialog: false,
+			showEditDialog: false,
+
+			action: "",
+			testObject2: {},
+			search: ""
+		};
+	},
+	props: [
+		"tableTitle",
+		"tableHeaders",
+		"dataUrl",
+		"tableBtnTitle",
+		"tableForm",
+		"tableBtnDisable"
+	],
+	mounted() {
+		this.setHeaders(this.tableHeaders);
+		this.getRows({
+			url: this.dataUrl
+		});
+		this.setTitle(this.tableTitle);
+		this.setBtnTitle(this.tableBtnTitle);
+		this.setBtnDisable(this.tableBtnDisable);
+		this.setForm(this.tableForm);
+	},
+	computed: {
+		...mapState("datatable", {
+			title: "title",
+			headers: "headers",
+			rows: "rows",
+			loading: "loading",
+			btnTitle: "btnTitle",
+			form: "form",
+			btnDisable: "btnDisable"
+		})
+	},
+	methods: {
+		editItem(item) {
+			this.testObject2 = item;
+
+			this.action = "edit";
+			this.showEditDialog = true;
 		},
-		props: [
-			"tableTitle",
-			"tableHeaders",
-			"dataUrl",
-			"tableBtnTitle",
-			"tableForm",
-			"tableBtnDisable"
-		],
-		mounted() {
-			this.setHeaders(this.tableHeaders);
-			this.getRows({
-				url: this.dataUrl
-			});
-			this.setTitle(this.tableTitle);
-			this.setBtnTitle(this.tableBtnTitle);
-			this.setBtnDisable(this.tableBtnDisable);
-			this.setForm(this.tableForm);
-		},
-		computed: {
-			...mapState("datatable", {
-				title: "title",
-				headers: "headers",
-				rows: "rows",
-				loading: "loading",
-				btnTitle: "btnTitle",
-				form: "form",
-				btnDisable: "btnDisable"
-			}),
-			visibility: {
-				get() {
-					return this.showInteractiveDialog;
-				},
-				set(value) {
-					this.showInteractiveDialog = value;
-				}
-			}
-		},
-		methods: {
-			editItem(item) {
-				this.getOne({
-					model: this.dataUrl,
+
+		deleteItem(item) {
+			confirm("Are you sure you want to delete this item?") &&
+				this.deleteRow({
+					url: this.dataUrl + "/" + item.id,
 					data: {
 						id: item.id
 					}
-				}).then(object => {
-					this.testObject2 = { ...object };
-					this.visibility = true;
 				});
-				this.editedIndex = this.rows.indexOf(item);
-				this.editedItem = Object.assign({}, item);
-			},
+		},
+		result(event) {
+			console.log(event);
+			this.showCreateDialog = false;
+			this.showEditDialog = false;
+			this.showDeleteDialog = false;
+		},
 
-			deleteItem(item) {
-				confirm("Are you sure you want to delete this item?") &&
-					this.deleteRow({
-						url: this.dataUrl + "/" + item.id,
-						data: {
-							id: item.id
-						}
-					});
-			},
-			result(event) {
-				console.log(event);
-				this.visibility = false;
-			},
-
-			...mapActions("datatable", {
-				getRows: "getRows",
-				deleteRow: "deleteRow"
-			}),
-			...mapMutations("datatable", {
-				setHeaders: "setHeaders",
-				setTitle: "setTitle",
-				setBtnTitle: "setBtnTitle",
-				setForm: "setForm",
-				setBtnDisable: "setBtnDisable"
-			}),
-			...mapActions({
-				getAll: "getAll",
-				getOne: "getOne",
-				create: "create",
-				delete: "delete"
-			})
-		}
-	};
+		...mapActions("datatable", {
+			getRows: "getRows",
+			deleteRow: "deleteRow"
+		}),
+		...mapMutations("datatable", {
+			setHeaders: "setHeaders",
+			setTitle: "setTitle",
+			setBtnTitle: "setBtnTitle",
+			setForm: "setForm",
+			setBtnDisable: "setBtnDisable"
+		}),
+		...mapActions({
+			getAll: "getAll",
+			getOne: "getOne",
+			create: "create",
+			delete: "delete"
+		})
+	}
+};
 </script>

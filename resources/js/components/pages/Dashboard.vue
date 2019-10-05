@@ -14,6 +14,17 @@
 			confirmationBtnTxt="Yes"
 		/>
 
+		<v-btn @click.stop="showInfoDialog = true">Update dialog</v-btn>
+
+		<interactiveDialog
+			v-if="showInfoDialog"
+			action="update"
+			:show="showInfoDialog"
+			title="Update dialog"
+			component="paymentActions"
+			@action="editDialog"
+		/>
+
 		<v-btn @click.stop="showReadDialog = true">Read dialog</v-btn>
 
 		<interactiveDialog
@@ -27,15 +38,15 @@
 			cancelBtnTxt="Close"
 		/>
 
-		<v-btn @click.stop="showUpdateDialog = true">Update dialog</v-btn>
+		<v-btn @click.stop="showEditDialog = true">Update dialog</v-btn>
 
 		<interactiveDialog
-			v-if="showUpdateDialog"
+			v-if="showEditDialog"
 			action="update"
-			:show="showUpdateDialog"
+			:show="showEditDialog"
 			title="Update dialog"
 			component="paymentActions"
-			@action="updateResult"
+			@action="editDialog"
 		/>
 	</div>
 </template>
@@ -46,7 +57,8 @@ export default {
 		return {
 			showConfirmationDialog: false,
 			showReadDialog: false,
-			showUpdateDialog: false,
+			showEditDialog: false,
+			showInfoDialog: false,
 
 			category: {
 				name: "Category 1",
@@ -64,9 +76,9 @@ export default {
 			console.log("read dialog result: " + event);
 			this.showReadDialog = false;
 		},
-		updateResult(event) {
+		editDialog(event) {
 			console.log("update dialog result: " + event);
-			this.showUpdateDialog = false;
+			this.showEditDialog = false;
 		}
 	}
 };
