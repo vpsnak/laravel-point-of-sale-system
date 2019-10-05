@@ -5,9 +5,12 @@
 				<v-icon left>fas fa-money-bill-wave</v-icon>Tax Form
 			</v-chip>
 		</div>
-		<v-text-field v-model="name" counter label="Name" required></v-text-field>
-		<v-text-field v-model="percentage" counter label="Percentage" required></v-text-field>
-		<v-switch v-model="is_default" :label="`Default : ${is_default.toString()}`"></v-switch>
+		<v-text-field v-model="formFields.name" counter label="Name" required></v-text-field>
+		<v-text-field v-model="formFields.percentage" counter label="Percentage" required></v-text-field>
+		<v-switch
+			v-model="formFields.is_default"
+			:label="`Default : ${formFields.is_default.toString()}`"
+		></v-switch>
 		<v-btn class="mr-4" @click="submit">submit</v-btn>
 		<v-btn @click="clear">clear</v-btn>
 		<v-alert v-if="savingSuccessful === true" class="mt-4" type="success">Form submitted successfully!</v-alert>
@@ -15,16 +18,30 @@
 </template>
 
 <script>
-  import { mapActions } from 'vuex'
+	import { mapActions } from "vuex";
 
-  export default {
+	export default {
+		props: {
+			model: Object || undefined
+		},
 		data() {
 			return {
 				savingSuccessful: false,
-				name: "",
-				percentage: "",
-				is_default: false
+				defaultValues: {},
+				formFields: {
+					name: "",
+					percentage: "",
+					is_default: false
+				}
 			};
+		},
+		mounted() {
+			this.defaultValues = this.formFields;
+			if (this.$props.model) {
+				this.formFields = {
+					...this.$props.model
+				};
+			}
 		},
 		methods: {
 			submit() {
@@ -39,13 +56,23 @@
 				this.create(payload).then(() => {
 					this.clear();
 					this.savingSuccessful = true;
-                  window.location.reload()
+					window.location.reload();
+				});
+			},
+
+			submit() {
+				let payload = {
+					model: "taxes",
+					data: { ...this.formFields }
+				};
+				this.create(payload).then(() => {
+					this.clear();
+					this.savingSuccessful = true;
+					window.location.reload();
 				});
 			},
 			clear() {
-				this.name = "";
-				this.percentage = "";
-				this.is_default = true;
+				this.formFields = { ...this.defaultValues };
 			},
 			...mapActions({
 				create: "create"
