@@ -7,11 +7,12 @@ class Address extends BaseModel
 //    protected $with = ['areaCode', 'customers'];
 //    protected $with = ['customers'];
     protected $fillable = [
+        'area_code_id',
         'first_name',
         'last_name',
         'street',
         'city',
-        'county_id',
+        'country_id',
         'region',
         'postcode',
         'phone',
