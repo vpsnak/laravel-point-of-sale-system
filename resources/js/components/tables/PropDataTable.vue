@@ -5,17 +5,21 @@
 			<v-spacer></v-spacer>
 			<v-text-field append-icon="search" hide-details label="Search" single-line v-model="search"></v-text-field>
 			<v-divider class="mx-4" inset vertical></v-divider>
-			<v-btn :disabled="btnDisable" color="primary" @click="showFormDialog">{{this.btnTitle }}</v-btn>
+			<v-btn
+				:disabled="btnDisable"
+				color="primary"
+				@click.stop="showCreateDialog = true"
+			>{{this.btnTitle }}</v-btn>
 		</v-card-title>
 		<v-data-table :headers="headers" :items="rows" :loading="loading" :search="search">
 			<template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
 				<slot :name="slot" v-bind="scope" />
 			</template>
 			<template v-slot:item.action="{ item }">
-				<v-btn :disabled="btnDisable" @click="editItem(item)" class="mr-2" icon>
+				<v-btn :disabled="btnDisable" @click.stop="editItem(item)" class="mr-2" icon>
 					<v-icon small>edit</v-icon>
 				</v-btn>
-				<v-btn :disabled="btnDisable" @click="deleteItem(item)" icon>
+				<v-btn :disabled="btnDisable" @click.stop="deleteItem(item)" icon>
 					<v-icon small>delete</v-icon>
 				</v-btn>
 			</template>
@@ -26,7 +30,29 @@
 				slot="no-results"
 			>Your search for "{{ search }}" found no results.</v-alert>
 		</v-data-table>
-		<interactiveDialog :title="this.btnTitle" :width="600" :component="form" :model="testObject2"></interactiveDialog>
+
+		<!-- view/edit dialog -->
+		<interactiveDialog
+			v-if="showEditDialog"
+			:show="showEditDialog"
+			title="Edit item"
+			:width="600"
+			:component="form"
+			:model="defaultObject"
+			@action="result"
+			persistent
+			action="edit"
+			titleCloseBtn
+		></interactiveDialog>
+
+		<interactiveDialog
+			v-if="showCreateDialog"
+			:show="showCreateDialog"
+			:component="form"
+			:title="btnTitle"
+			@action="result"
+			cancelBtnTxt="Close"
+		></interactiveDialog>
 	</v-card>
 </template>
 
@@ -36,10 +62,11 @@
 	export default {
 		data() {
 			return {
-				testObject2: {
-					name: "GAMWTOSPITI2",
-					in_product_listing: false
-				},
+				showCreateDialog: false,
+				showEditDialog: false,
+
+				action: "",
+				testObject2: {},
 				search: ""
 			};
 		},
@@ -70,31 +97,14 @@
 				btnTitle: "btnTitle",
 				form: "form",
 				btnDisable: "btnDisable"
-			}),
-			showDialog: {
-				get() {
-					return this.$store.state.datatable.showDialog;
-				},
-				set(value) {
-					this.setShowDialog(value);
-				}
-			}
+			})
 		},
 		methods: {
 			editItem(item) {
-				this.getOne({
-					model: "categories",
-					data: {
-						id: item.id
-					}
-				}).then(category => {
-					this.name = category.name;
-					this.in_product_listing = category.in_product_listing;
-				});
+				this.defaultObject = item;
 
-				this.editedIndex = this.rows.indexOf(item);
-				this.editedItem = Object.assign({}, item);
-				this.showFormDialog();
+				this.action = "edit";
+				this.showEditDialog = true;
 			},
 
 			deleteItem(item) {
@@ -106,9 +116,11 @@
 						}
 					});
 			},
-
-			showFormDialog() {
-				this.$store.state.interactiveDialog = true;
+			result(event) {
+				console.log(event);
+				this.showCreateDialog = false;
+				this.showEditDialog = false;
+				this.showDeleteDialog = false;
 			},
 
 			...mapActions("datatable", {

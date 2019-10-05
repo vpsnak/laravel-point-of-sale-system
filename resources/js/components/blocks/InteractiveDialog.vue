@@ -4,12 +4,14 @@
 		:persistent="persistent"
 		:max-width="maxWidth"
 		:fullscreen="fullscreen"
+		@click:outside="closeEvent"
+		@keydown.esc="closeEvent"
 	>
 		<v-card>
 			<v-card-title class="headline">
 				{{ title }}
-				<v-spacer></v-spacer>
-				<v-btn @click.stop="confirmation(false)" icon>
+				<v-spacer v-if="titleCloseBtn"></v-spacer>
+				<v-btn v-if="titleCloseBtn" @click.stop="fire(false)" icon>
 					<v-icon>mdi-close</v-icon>
 				</v-btn>
 			</v-card-title>
@@ -17,16 +19,20 @@
 			<v-divider class="mb-3"></v-divider>
 
 			<v-card-text>
-				<component :is="component" v-if="component"></component>
+				<component :is="component" v-if="component" :model="model" :readOnly="readOnly"></component>
 				<div v-else v-html="content" :class="contentClass || ''"></div>
 			</v-card-text>
 
-			<v-card-actions v-if="action === 'confirmation'" class="d-flex align-center mt-5">
+			<!-- confirmation actions -->
+			<v-card-actions
+				class="d-flex align-center mt-5"
+				v-if="action === 'confirmation' || action === 'info'"
+			>
 				<div class="flex-grow-1"></div>
 
-				<v-btn @click="confirmation(false)" text color="error">{{ cancelBtn }}</v-btn>
+				<v-btn v-if="action === 'confirmation' " @click="fire(false)" text color="error">{{ cancelBtn }}</v-btn>
 
-				<v-btn @click="confirmation(true)" text color="success">{{ confirmationBtn }}</v-btn>
+				<v-btn @click="fire(true)" text color="success">{{ confirmationBtn }}</v-btn>
 			</v-card-actions>
 		</v-card>
 	</v-dialog>
@@ -39,6 +45,7 @@ export default {
 		persistent: Boolean || undefined,
 		width: Number || undefined,
 		title: String,
+		titleCloseBtn: Boolean,
 
 		content: String || undefined,
 		contentClass: String || "",
@@ -49,7 +56,7 @@ export default {
 
 		// model CRUD props
 		model: Object,
-		action: String // Possible values: create, read, update, delete, confirmation
+		action: String // Possible values: edit, read, confirmation, info
 	},
 
 	data() {
@@ -79,19 +86,27 @@ export default {
 		},
 		confirmationBtn() {
 			return this.$props.confirmationBtnTxt || "OK";
+		},
+		readOnly() {
+			return this.$props.action === "read" ? true : false;
 		}
 	},
 
 	methods: {
-		confirmation(confirmed) {
-			this.$emit("confirmation", confirmed);
-
+		fire(confirmation) {
+			this.$emit("action", confirmation);
 			this.visibility = false;
+		},
+		closeEvent() {
+			if (!this.$props.persistent) {
+				this.$emit("action", false);
+				this.visibility = false;
+			}
 		}
 	},
 
 	beforeDestroy() {
-		this.$off("confirmation");
+		this.$off("action");
 	}
 };
 </script>
