@@ -23,20 +23,22 @@
 		props: {
 			model: Object || undefined
 		},
-		data: () => ({
-			in_product_listing: false,
-			valid: false,
-			name: "",
-			nameRules: [
-				// v => !!v || "Name is required",
-				v => v.length <= 15 || "Name must be less than 10 characters"
-			],
-			defaultValues: {},
-			formFields: {
+		data() {
+			return {
+				in_product_listing: false,
+				valid: false,
 				name: "",
-				in_product_listing: false
-			}
-		}),
+				nameRules: [
+					// v => !!v || "Name is required",
+					v => v.length <= 15 || "Name must be less than 10 characters"
+				],
+				defaultValues: {},
+				formFields: {
+					name: "",
+					in_product_listing: false
+				}
+			};
+		},
 		mounted() {
 			this.defaultValues = this.formFields;
 			if (this.$props.model) {

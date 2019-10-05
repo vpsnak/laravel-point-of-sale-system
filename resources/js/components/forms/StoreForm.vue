@@ -29,23 +29,25 @@
 </template>
 
 <script>
-  import { mapActions } from 'vuex'
+	import { mapActions } from "vuex";
 
-  export default {
-		data: () => ({
-			savingSuccessful: false,
-			tax_id: null,
-			valid: true,
-			name: "",
-			taxable: false,
-			is_default: false,
-			created_by: null,
-			taxes: [],
-			nameRules: [
-				// v => !!v || "Name is required",
-				v => v.length <= 10 || "Name must be less than 10 characters"
-			]
-		}),
+	export default {
+		data() {
+			return {
+				savingSuccessful: false,
+				tax_id: null,
+				valid: true,
+				name: "",
+				taxable: false,
+				is_default: false,
+				created_by: null,
+				taxes: [],
+				nameRules: [
+					// v => !!v || "Name is required",
+					v => v.length <= 10 || "Name must be less than 10 characters"
+				]
+			};
+		},
 		mounted() {
 			this.getAll({
 				model: "taxes"
@@ -69,7 +71,7 @@
 				this.create(payload).then(() => {
 					this.clear();
 					this.savingSuccessful = true;
-                  window.location.reload()
+					window.location.reload();
 				});
 			},
 			clear() {

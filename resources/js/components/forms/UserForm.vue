@@ -27,25 +27,27 @@
 	import { mapActions } from "vuex";
 
 	export default {
-		data: () => ({
-			valid: false,
-			name: "",
-			nameRules: [
-				// v => !!v || "Name is required",
-				v => v.length <= 10 || "Name must be less than 10 characters"
-			],
-			email: "",
-			emailRules: [
-				// v => !!v || "E-mail is required",
-				v => /.+@.+/.test(v) || "E-mail must be valid"
-			],
-			show: false,
-			password: "Password",
-			passwordRules: {
-				required: value => !!value || "Required.",
-				min: v => v.length >= 8 || "Min 8 characters"
-			}
-		}),
+		data() {
+			return {
+				valid: false,
+				name: "",
+				nameRules: [
+					// v => !!v || "Name is required",
+					v => v.length <= 10 || "Name must be less than 10 characters"
+				],
+				email: "",
+				emailRules: [
+					// v => !!v || "E-mail is required",
+					v => /.+@.+/.test(v) || "E-mail must be valid"
+				],
+				show: false,
+				password: "Password",
+				passwordRules: {
+					required: value => !!value || "Required.",
+					min: v => v.length >= 8 || "Min 8 characters"
+				}
+			};
+		},
 		methods: {
 			submit() {
 				let payload = {

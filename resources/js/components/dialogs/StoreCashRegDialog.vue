@@ -53,14 +53,16 @@
 	import { mapActions } from "vuex";
 
 	export default {
-		data: () => ({
-			show: false,
-			cash_register_id: null,
-			store_id: null,
-			stores: [],
-			cash_registers: [],
-			alert: false
-		}),
+		data() {
+			return {
+				show: false,
+				cash_register_id: null,
+				store_id: null,
+				stores: [],
+				cash_registers: [],
+				alert: false
+			};
+		},
 		mounted() {
 			this.getAll({
 				model: "stores"

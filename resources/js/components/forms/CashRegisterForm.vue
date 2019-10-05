@@ -26,12 +26,14 @@
 	import { mapActions } from "vuex";
 
 	export default {
-		data: () => ({
-			savingSuccessful: false,
-			name: null,
-			store_id: null,
-			stores: []
-		}),
+		data() {
+			return {
+				savingSuccessful: false,
+				name: null,
+				store_id: null,
+				stores: []
+			};
+		},
 		mounted() {
 			this.getAll({
 				model: "stores"

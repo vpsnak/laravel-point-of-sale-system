@@ -27,19 +27,21 @@
 	import { mapActions } from "vuex";
 
 	export default {
-		data: () => ({
-			valid: false,
-			sku: "",
-			name: "",
-			photo_url: "",
-			nameRules: [
-				v => v.length <= 10 || "Name must be less than 10 characters"
-			],
-			email: "",
-			emailRules: [v => /.+@.+/.test(v) || "E-mail must be valid"],
-			select: null,
-			items: ["Store 1", "Store 2", "Store 3", "Store 4"]
-		}),
+		data() {
+			return {
+				valid: false,
+				sku: "",
+				name: "",
+				photo_url: "",
+				nameRules: [
+					v => v.length <= 10 || "Name must be less than 10 characters"
+				],
+				email: "",
+				emailRules: [v => /.+@.+/.test(v) || "E-mail must be valid"],
+				select: null,
+				items: ["Store 1", "Store 2", "Store 3", "Store 4"]
+			};
+		},
 		methods: {
 			submit() {
 				let payload = {
