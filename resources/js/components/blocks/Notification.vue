@@ -8,7 +8,6 @@
 </template>
 
 <script>
-import { isArray } from "util";
 export default {
 	data() {
 		return {

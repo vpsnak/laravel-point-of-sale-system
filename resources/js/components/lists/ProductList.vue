@@ -158,17 +158,9 @@ export default {
 				model: "products",
 				mutation: "setProductList"
 			};
-			this.$store
-				.dispatch("getAll", payload)
-				.then(result => {
-					console.log(result);
-				})
-				.catch(error => {
-					console.log(error);
-				})
-				.finally(() => {
-					this.initiateLoadingSearchResults(false);
-				});
+			this.$store.dispatch("getAll", payload).finally(() => {
+				this.initiateLoadingSearchResults(false);
+			});
 		},
 		getAllCategories() {
 			this.initiateLoadingSearchResults(true);
@@ -180,11 +172,9 @@ export default {
 				.dispatch("getRequest", payload, { root: true })
 				.then(result => {
 					this.$store.commit("setCategoryList", result.data);
-					this.initiateLoadingSearchResults(false);
 				})
-				.catch(error => {
+				.finally(() => {
 					this.initiateLoadingSearchResults(false);
-					console.log(error);
 				});
 		},
 		searchProduct() {
@@ -197,14 +187,9 @@ export default {
 					keyword: this.keyword
 				};
 
-				this.$store
-					.dispatch("search", payload)
-					.then(result => {
-						this.initiateLoadingSearchResults(false);
-					})
-					.catch(error => {
-						this.initiateLoadingSearchResults(false);
-					});
+				this.$store.dispatch("search", payload).finally(() => {
+					this.initiateLoadingSearchResults(false);
+				});
 			}
 		},
 		addProduct(product) {

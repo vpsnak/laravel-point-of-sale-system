@@ -1,10 +1,11 @@
 <template>
 	<v-dialog
-		v-model="show"
+		v-model="state"
 		fullscreen
 		hide-overlay
 		transition="dialog-bottom-transition"
 		@click.stop
+		@click:outside="false"
 		persistent
 	>
 		<interactiveDialog
@@ -20,7 +21,7 @@
 
 		<v-card>
 			<v-toolbar>
-				<v-btn @click="closePrompt = true" icon>
+				<v-btn @click.stop="closePrompt = true" icon>
 					<v-icon>mdi-close</v-icon>
 				</v-btn>
 				<v-toolbar-title>Checkout</v-toolbar-title>
@@ -56,6 +57,9 @@ export default {
 		};
 	},
 	computed: {
+		state() {
+			return this.$props.show;
+		},
 		items() {
 			if (this.$store.state.cart.order) {
 				return this.$store.state.cart.order.items;
