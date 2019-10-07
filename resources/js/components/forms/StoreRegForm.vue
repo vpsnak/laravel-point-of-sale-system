@@ -60,9 +60,9 @@ export default {
 			this.clear();
 		},
 		changeCashRegisters() {
-			for (const stra of this.stores) {
-				if (stra.id == this.store_id) {
-					this.cash_registers = stra.cash_registers;
+			for (const store of this.stores) {
+				if (store.id == this.store_id) {
+					this.cash_registers = store.cash_registers;
 				}
 			}
 		},

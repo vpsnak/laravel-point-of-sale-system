@@ -20,6 +20,7 @@
 			title="Select store and cash register"
 			:width="600"
 			component="storeRegForm"
+			:titleCloseBtn="true"
 		></interactiveDialog>
 	</v-container>
 </template>
@@ -33,6 +34,12 @@ export default {
 	},
 	mounted() {
 		this.visibility = true;
+	},
+	methods: {
+		readResult(event) {
+			console.log("read dialog result: " + event);
+			this.visibility = false;
+		}
 	}
 };
 </script>
