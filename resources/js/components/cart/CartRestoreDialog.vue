@@ -43,6 +43,8 @@ export default {
 	computed: {
 		cartsOnHold: {
 			get() {
+				this.getCartsOnHold();
+
 				return this.onHold;
 			},
 			set(value) {
@@ -68,7 +70,8 @@ export default {
 			this.$store.state.cartRestoreDialog = false;
 		},
 		restoreCart(cartOnHold) {
-			let cart = JSON.parse(cartOnHold.cart);
+			let cart = JSON.parse(cartOnHold.cart).products;
+
 			this.$store.state.cart.products = cart.products;
 			this.removeCart(cartOnHold).then(() => {
 				this.close();

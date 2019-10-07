@@ -80,8 +80,11 @@ export default {
             state.taxes = !state.taxes;
         },
         addProduct(state, product) {
-            if (_.includes(state.products, product)) {
-                let index = _.findIndex(state.products, product);
+            let index = _.findIndex(state.products, productState => {
+                return productState.id === product.id;
+            });
+
+            if (index != -1) {
                 state.products[index].qty++;
             } else {
                 Vue.set(product, "qty", 1);
@@ -89,14 +92,20 @@ export default {
             }
         },
         increaseProductQty(state, product) {
-            let index = _.findIndex(state.products, product);
+            let index = _.findIndex(state.products, productState => {
+                return productState.id === product.id;
+            });
 
-            state.products[index].qty++;
+            if (index != -1) {
+                state.products[index].qty++;
+            }
         },
         decreaseProductQty(state, product) {
-            let index = _.findIndex(state.products, product);
+            let index = _.findIndex(state.products, productState => {
+                return productState.id === product.id;
+            });
 
-            if (state.products[index].qty > 1) {
+            if (index != -1) {
                 state.products[index].qty--;
             }
         },
