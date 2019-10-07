@@ -47,6 +47,7 @@
 		<interactiveDialog
 			v-if="showCreateDialog"
 			:show="showCreateDialog"
+			:model="newDefaultObject"
 			:component="form"
 			:title="btnTitle"
 			@action="result"
@@ -77,6 +78,7 @@ export default {
 			deleteConfirmation: false,
 			action: "",
 			defaultObject: {},
+			newDefaultObject: {},
 			search: "",
 			selectedItem: {}
 		};
