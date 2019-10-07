@@ -8,8 +8,14 @@
 			</div>
 			<v-text-field v-model="formFields.name" label="Name" required></v-text-field>
 			<v-text-field v-model="formFields.code" label="Code" required></v-text-field>
-			<v-text-field v-model="formFields.uses" label="Uses" required></v-text-field>
-			<v-text-field v-model="formFields.discount_id" type="number" label="Discount ID" required></v-text-field>
+			<v-text-field v-model="formFields.uses" type="number" label="Uses" required></v-text-field>
+			<v-text-field v-model="formFields.discount_type" label="Discount Type" required></v-text-field>
+			<v-text-field
+				v-model="formFields.discount_amount"
+				type="number"
+				label="Discount amount"
+				required
+			></v-text-field>
 			<v-menu
 				v-model="menu1"
 				:close-on-content-click="false"
@@ -44,56 +50,57 @@
 	</div>
 </template>
 <script>
-	import { mapActions } from "vuex";
+import { mapActions } from "vuex";
 
-	export default {
-		props: {
-			model: Object || undefined
-		},
-		data() {
-			return {
-				defaultValues: {},
-				savingSuccessful: false,
-				formFields: {
-					name: null,
-					code: null,
-					uses: null,
-					discount_id: null,
-					from: null,
-					to: null
-				},
-				menu1: false,
-				menu2: false
+export default {
+	props: {
+		model: Object || undefined
+	},
+	data() {
+		return {
+			defaultValues: {},
+			savingSuccessful: false,
+			formFields: {
+				name: null,
+				code: null,
+				uses: null,
+				discount_type: null,
+				discount_amount: null,
+				from: null,
+				to: null
+			},
+			menu1: false,
+			menu2: false
+		};
+	},
+	mounted() {
+		this.defaultValues = this.formFields;
+		if (this.$props.model) {
+			this.formFields = {
+				...this.$props.model
 			};
-		},
-		mounted() {
-			this.defaultValues = this.formFields;
-			if (this.$props.model) {
-				this.formFields = {
-					...this.$props.model
-				};
-			}
-		},
-		methods: {
-			submit() {
-				let payload = {
-					model: "coupons",
-					data: { ...this.formFields }
-				};
-				this.create(payload).then(() => {
-					this.clear();
-				});
-			},
-
-			clear() {
-				this.formFields = { ...this.defaultValues };
-			},
-			...mapActions({
-				getAll: "getAll",
-				getOne: "getOne",
-				create: "create",
-				delete: "delete"
-			})
 		}
-	};
+	},
+	methods: {
+		submit() {
+			let payload = {
+				model: "coupons",
+				data: { ...this.formFields }
+			};
+			this.create(payload).then(() => {
+				this.clear();
+			});
+		},
+
+		clear() {
+			this.formFields = { ...this.defaultValues };
+		},
+		...mapActions({
+			getAll: "getAll",
+			getOne: "getOne",
+			create: "create",
+			delete: "delete"
+		})
+	}
+};
 </script>
