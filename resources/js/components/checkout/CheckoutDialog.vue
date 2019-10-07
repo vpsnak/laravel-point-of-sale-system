@@ -1,5 +1,12 @@
 <template>
-	<v-dialog v-model="show" fullscreen hide-overlay transition="dialog-bottom-transition" @click.stop>
+	<v-dialog
+		v-model="show"
+		fullscreen
+		hide-overlay
+		transition="dialog-bottom-transition"
+		@click.stop
+		persistent
+	>
 		<interactiveDialog
 			v-if="closePrompt"
 			:show="closePrompt"

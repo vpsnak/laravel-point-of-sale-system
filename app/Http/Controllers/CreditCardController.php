@@ -43,7 +43,7 @@ class CreditCardController extends Controller
             'ssl_merchant_id' => self::$merchant_id,
             'ssl_user_id' => self::$user_id,
             'ssl_pin' => self::$pin,
-            'ssl_test_mode' => 'true',
+            'ssl_test_mode' => 'false',
             'ssl_transaction_type' => 'ccsale',
             'ssl_card_number' => $card_number,
             'ssl_exp_date' => $exp_date,
@@ -66,4 +66,3 @@ class CreditCardController extends Controller
         return $dom->saveHTML();
     }
 }
-
