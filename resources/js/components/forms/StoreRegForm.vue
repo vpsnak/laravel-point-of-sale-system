@@ -2,6 +2,7 @@
 	<div>
 		<v-select
 			v-model="store_id"
+			:disabled="storeDisabled"
 			:items="stores"
 			:rules="[v => !!v || 'Store is required']"
 			label="Stores"
@@ -12,7 +13,7 @@
 			v-on:input="enableCashRegisters"
 		></v-select>
 		<v-select
-			:disabled="disabled"
+			:disabled="cashRegisterdisabled"
 			v-model="cash_register_id"
 			:items="cash_registers"
 			:rules="[v => !!v || 'Cash Register is required']"
@@ -35,7 +36,8 @@ export default {
 			store_id: null,
 			stores: [],
 			cash_registers: [],
-			disabled: true
+			storeDisabled: true,
+			cashRegisterdisabled: true
 		};
 	},
 	mounted() {
@@ -43,15 +45,20 @@ export default {
 			model: "stores"
 		}).then(stores => {
 			this.stores = stores;
+			this.storeDisabled = false;
 		});
-		this.getAll({
-			model: "cash-registers"
-		}).then(cash_registers => {
-			this.cash_registers = cash_registers;
-		});
+		// this.getAll({
+		// 	model: "cash-registers"
+		// }).then(cash_registers => {
+		// 	this.cash_registers = cash_registers;
+		// });
 	},
 	methods: {
-		submit() {},
+		submit() {
+			// this.$store.state.store = store_id;
+			// this.$store.state.cashRegister = cash_register_id;
+			this.clear();
+		},
 		changeCashRegisters() {
 			for (const stra of this.stores) {
 				if (stra.id == this.store_id) {
@@ -60,7 +67,7 @@ export default {
 			}
 		},
 		enableCashRegisters() {
-			this.disabled = false;
+			this.cashRegisterdisabled = false;
 		},
 		clear() {
 			this.cash_register_id = null;
