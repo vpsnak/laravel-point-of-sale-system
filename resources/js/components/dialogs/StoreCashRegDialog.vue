@@ -22,6 +22,7 @@
 						item-value="id"
 					></v-select>
 					<v-select
+						:disabled="disabled"
 						v-model="cash_register_id"
 						:items="cash_registers"
 						:rules="[v => !!v || 'Cash Register is required']"
@@ -50,61 +51,62 @@
 </template>
 
 <script>
-	import { mapActions } from "vuex";
+import { mapActions } from "vuex";
 
-	export default {
-		data() {
-			return {
-				show: false,
-				cash_register_id: null,
-				store_id: null,
-				stores: [],
-				cash_registers: [],
-				alert: false
-			};
+export default {
+	data() {
+		return {
+			show: false,
+			cash_register_id: null,
+			store_id: null,
+			stores: [],
+			cash_registers: [],
+			alert: false,
+			disabled: true
+		};
+	},
+	mounted() {
+		this.getAll({
+			model: "stores"
+		}).then(stores => {
+			this.stores = stores;
+		});
+		this.getAll({
+			model: "cash-registers"
+		}).then(cash_registers => {
+			this.cash_registers = cash_registers;
+		});
+		this.show = true;
+	},
+	computed: {},
+	methods: {
+		close() {
+			if (this.store_id != null && this.cash_register_id != null) {
+				this.show = false;
+			} else {
+				this.alert = true;
+			}
 		},
-		mounted() {
+		getAllStores() {
 			this.getAll({
 				model: "stores"
 			}).then(stores => {
 				this.stores = stores;
 			});
+		},
+		getAllCashRegisters() {
 			this.getAll({
 				model: "cash-registers"
 			}).then(cash_registers => {
 				this.cash_registers = cash_registers;
 			});
-			this.show = true;
 		},
-		computed: {},
-		methods: {
-			close() {
-				if (this.store_id != null && this.cash_register_id != null) {
-					this.show = false;
-				} else {
-					this.alert = true;
-				}
-			},
-			getAllStores() {
-				this.getAll({
-					model: "stores"
-				}).then(stores => {
-					this.stores = stores;
-				});
-			},
-			getAllCashRegisters() {
-				this.getAll({
-					model: "cash-registers"
-				}).then(cash_registers => {
-					this.cash_registers = cash_registers;
-				});
-			},
-			...mapActions({
-				getAll: "getAll",
-				getOne: "getOne",
-				create: "create",
-				delete: "delete"
-			})
-		}
-	};
+		...mapActions({
+			getAll: "getAll",
+			getOne: "getOne",
+			create: "create",
+			delete: "delete"
+		})
+	}
+};
 </script>
