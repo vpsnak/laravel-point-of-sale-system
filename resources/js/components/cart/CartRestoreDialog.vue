@@ -43,8 +43,6 @@ export default {
 	computed: {
 		cartsOnHold: {
 			get() {
-				this.getCartsOnHold();
-
 				return this.onHold;
 			},
 			set(value) {
