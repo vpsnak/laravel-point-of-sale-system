@@ -88,8 +88,15 @@ class PaymentController extends BaseController
 
                 $order = Order::findOrFail($validatedData['order_id']);
 
-                $validatedData['amount'] = self::calcDiscount($order->subtotal, $coupon->discount->amount,
-                    $coupon->discount->type);
+                $validatedData['amount'] = self::calcDiscount(
+                    $order->subtotal,
+                    $coupon->discount->amount,
+                    $coupon->discount->type
+                );
+
+                $coupon->uses++;
+                $coupon->save();
+
                 break;
 
             case 'giftcard':
@@ -123,6 +130,7 @@ class PaymentController extends BaseController
         $payment = $this->model::store($validatedData);
 
         if (!empty($payment)) {
+
             return response([
                 'total' => $payment->order->total,
                 'total_paid' => $payment->order->total_paid,
