@@ -14,10 +14,10 @@ class CreditCardController extends Controller
 
     protected static $enviroment_url = 'https://api.demo.convergepay.com/VirtualMerchantDemo/processxml.do';
 
-    public static function cardPayment($card_number, $exp_date, $cvc, $card_holder, $amount)
+    public static function cardPayment($card_number, $exp_date, $cvc, $amount)
     {
         $client = new Client();
-        $xml = self::getCardPaymentPayload($card_number, $exp_date, $cvc, $card_holder, $amount);
+        $xml = self::getCardPaymentPayload($card_number, $exp_date, $cvc, $amount);
 
         Log::debug('CreditCard Payment Payload:' . json_encode($xml));
         $response = $client->post(self::$enviroment_url, [
@@ -36,7 +36,6 @@ class CreditCardController extends Controller
         $card_number,
         $exp_date,
         $cvc,
-        $card_holder,
         $amount
     ) {
         $payload = [
@@ -50,7 +49,56 @@ class CreditCardController extends Controller
             'ssl_amount' => $amount,
             'ssl_cvv2cvc2_indicator' => '1',
             'ssl_cvv2cvc2' => $cvc,
-            'ssl_first_name' => $card_holder,
+            'ssl_show_form' => 'false'
+        ];
+
+        $dom = new DOMDocument();
+        $dom->preserveWhiteSpace = false;
+        $dom->formatOutput = false;
+
+        $new_tag = $dom->createElement('txn');
+        foreach ($payload as $key => $value) {
+            $new_tag->appendChild($dom->createElement($key, $value));
+        }
+        $dom->appendChild($new_tag);
+        return $dom->saveHTML();
+    }
+
+    public static function cardRefund($card_number, $exp_date, $cvc, $amount)
+    {
+        $client = new Client();
+        $xml = self::getCardRefundPayload($card_number, $exp_date, $cvc, $amount);
+
+        Log::debug('CreditCard Refund Payload:' . json_encode($xml));
+        $response = $client->post(self::$enviroment_url, [
+            'headers' => [
+                'Content-Type' => 'application/x-www-form-urlencoded'
+            ],
+            'form_params' => ['xmldata' => $xml]
+        ]);
+
+        $responseToXml = simplexml_load_string($response->getBody());
+        Log::debug('CreditCard Refund Response:' . json_encode($responseToXml));
+        return $responseToXml;
+    }
+
+    public static function getCardRefundPayload(
+        $card_number,
+        $exp_date,
+        $cvc,
+        $amount
+    ) {
+        $payload = [
+            'ssl_merchant_id' => self::$merchant_id,
+            'ssl_user_id' => self::$user_id,
+            'ssl_pin' => self::$pin,
+            'ssl_test_mode' => 'false',
+            'ssl_transaction_type' => 'cccredit',
+            'ssl_card_number' => $card_number,
+            'ssl_exp_date' => $exp_date,
+            'ssl_amount' => $amount,
+            'ssl_cvv2cvc2_indicator' => '1',
+            'ssl_cvv2cvc2' => $cvc,
             'ssl_show_form' => 'false'
         ];
 

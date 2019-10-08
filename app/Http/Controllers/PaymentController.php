@@ -26,13 +26,15 @@ class PaymentController extends BaseController
             'card.number' => 'nullable|required_if:payment_type,card|numeric',
             'card.cvc' => 'nullable|required_if:payment_type,card|digits_between:3,4',
             'card.exp_date' => 'nullable|required_if:payment_type,card|after_or_equal:today',
-            'card.holder' => 'nullable|required_if:payment_type,card|string',
 
             // coupon/giftcard validation
             'code' => 'required_if:payment_type,coupon|required_if:payment_type,giftcard'
         ]);
 
         switch ($validatedData['payment_type']) {
+            default:
+                return response(['msg' => 'This payment method does not exist. ', 'status' => 'error'], 500);
+                break;
             case 'cash':
                 // nothing to do here, move on
                 break;
@@ -42,7 +44,6 @@ class PaymentController extends BaseController
                     $validatedData['card']['number'],
                     $validatedData['card']['exp_date'],
                     $validatedData['card']['cvc'],
-                    $validatedData['card']['holder'],
                     $validatedData['amount']
                 );
                 if (isset($paymentResponse->errorCode)) {
@@ -51,11 +52,7 @@ class PaymentController extends BaseController
                         'message' => $paymentResponse
                     ], 500);
                 }
-                // @TODO fix error and success display with notification @ payments
-                return response([
-                    'errors' => ['Credit Card' => [json_encode($paymentResponse)]],
-                    'message' => $paymentResponse
-                ], 200);
+
                 break;
 
             case 'coupon':
@@ -115,13 +112,10 @@ class PaymentController extends BaseController
                         ], 403);
                     } else {
                         // subtract the payed amount from giftcard
-
                         $giftcard->amount -= $validatedData['amount'];
-
                         $giftcard->save();
                     }
                 }
-
                 break;
         }
 
@@ -134,7 +128,7 @@ class PaymentController extends BaseController
             return response([
                 'total' => $payment->order->total,
                 'total_paid' => $payment->order->total_paid,
-                'payment' => $payment
+                'payment' => $payment,
             ], 201);
         }
     }
@@ -174,18 +168,37 @@ class PaymentController extends BaseController
 
         $payment = Payment::findOrFail($id);
 
-        switch ($payment->type) {
+        switch ($payment->paymentType->type) {
             default:
+                return response(['msg' => 'This payment method does not exist. ', 'status' => 'error'], 500);
+                break;
             case 'cash':
+                // nothing to do here, move on
                 break;
             case 'card':
-                die('Missing refund for cards');
+                $paymentResponse = CreditCardController::cardPayment(
+                    '5472063333333330',
+                    '1224',
+                    '123',
+                    $payment->amount
+                );
+                if (isset($paymentResponse->errorCode)) {
+                    return response([
+                        'errors' => ["Error $paymentResponse->errorCode" => ["$paymentResponse->errorName"]],
+                        'message' => $paymentResponse
+                    ], 500);
+                }
+
                 break;
             case 'coupon':
-                die('Missing refund for coupon');
+                $coupon = Coupon::whereCode($payment['code'])->first();
+                $coupon->uses--;
+                $coupon->save();
                 break;
             case 'giftcard':
-                die('Missing refund for giftcard');
+                $giftcard = Giftcard::whereCode($payment['code']);
+                $giftcard->amount += $payment['amount'];
+                $giftcard->save();
                 break;
         }
 

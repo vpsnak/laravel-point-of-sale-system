@@ -147,7 +147,7 @@ export default {
             state.shipping = {};
             state.order = undefined;
 
-            state.checkoutSteps.forearch(checkoutStep => {
+            state.checkoutSteps.forEach(checkoutStep => {
                 checkoutStep.completed = false;
             });
         }

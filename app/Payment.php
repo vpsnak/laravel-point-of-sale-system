@@ -9,6 +9,7 @@ class Payment extends BaseModel
     protected $fillable = [
         'payment_type',
         'amount',
+        'code',
         'cash_register_id',
         'order_id',
         'created_by',

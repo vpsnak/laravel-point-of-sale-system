@@ -40,12 +40,6 @@
 						style="max-width:300px;"
 						prepend-inner-icon="mdi-calendar"
 					></v-text-field>
-					<v-text-field
-						label="Card holder"
-						v-model="card.holder"
-						style="max-width:300px;"
-						prepend-inner-icon="mdi-account"
-					></v-text-field>
 				</div>
 
 				<v-spacer></v-spacer>
@@ -99,8 +93,7 @@ export default {
 			card: {
 				number: null,
 				cvc: null,
-				exp_date: null,
-				holder: null
+				exp_date: null
 			}
 		};
 	},
