@@ -5,7 +5,7 @@
 		<v-btn
 			block
 			class="my-2"
-			@click="checkout"
+			@click.stop="checkout"
 			:disabled="disabled || checkoutLoading"
 			:loading="checkoutLoading"
 		>Checkout</v-btn>

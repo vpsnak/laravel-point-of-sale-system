@@ -1,16 +1,14 @@
 <template>
 	<v-app id="app">
-		<notification />
-
 		<sideMenu />
 
 		<topMenu />
 
+		<notification />
+
 		<v-content>
 			<router-view></router-view>
 		</v-content>
-
-		<!-- <footerMenu /> -->
 	</v-app>
 </template>
 

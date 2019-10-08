@@ -16,10 +16,23 @@
 				<slot :name="slot" v-bind="scope" />
 			</template>
 			<template v-slot:item.action="{ item }">
-				<v-btn :disabled="btnDisable" @click.stop="editItem(item)" class="mr-2" icon>
+				<v-tooltip bottom>
+					<template v-slot:activator="{ on }">
+						<v-btn :disabled="btnDisable" v-if="tableForm === 'giftCardForm'" class="my-1" icon v-on="on">
+							<v-icon small>mdi-credit-card-plus</v-icon>
+						</v-btn>
+					</template>
+					<span>Recharge</span>
+				</v-tooltip>
+				<v-btn :disabled="btnDisable" @click.stop="editItem(item)" class="my-1" icon>
 					<v-icon small>edit</v-icon>
 				</v-btn>
-				<v-btn :disabled="btnDisable" @click="deleteConfirmation = true , selectedItem=item" icon>
+				<v-btn
+					:disabled="btnDisable"
+					@click="deleteConfirmation = true , selectedItem=item"
+					class="my-1"
+					icon
+				>
 					<v-icon small>delete</v-icon>
 				</v-btn>
 			</template>
@@ -76,7 +89,6 @@ export default {
 			showCreateDialog: false,
 			showEditDialog: false,
 			deleteConfirmation: false,
-			action: "",
 			defaultObject: {},
 			newDefaultObject: {},
 			search: "",

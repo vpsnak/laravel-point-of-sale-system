@@ -1,13 +1,5 @@
 <template>
-	<v-dialog
-		v-model="state"
-		fullscreen
-		hide-overlay
-		transition="dialog-bottom-transition"
-		@click.stop
-		@click:outside="false"
-		persistent
-	>
+	<v-dialog v-model="state" fullscreen transition="dialog-bottom-transition" persistent>
 		<interactiveDialog
 			v-if="closePrompt"
 			:show="closePrompt"
@@ -48,17 +40,19 @@
 import { mapMutations } from "vuex";
 
 export default {
-	props: {
-		show: Boolean
-	},
 	data() {
 		return {
 			closePrompt: false
 		};
 	},
 	computed: {
-		state() {
-			return this.$props.show;
+		state: {
+			get() {
+				return this.$store.state.checkoutDialog;
+			},
+			set(value) {
+				this.$store.state.checkoutDialog = value;
+			}
 		},
 		items() {
 			if (this.$store.state.cart.order) {
@@ -71,7 +65,7 @@ export default {
 		confirmation(event) {
 			if (event) {
 				this.resetState;
-				this.$store.state.checkoutDialog = false;
+				this.state = false;
 			}
 
 			this.closePrompt = false;
