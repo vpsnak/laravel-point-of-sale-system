@@ -11,7 +11,7 @@
             <v-text-field v-model="formFields.email" label="Email" required></v-text-field>
             <v-text-field v-model="formFields.phone" label="Phone" required></v-text-field>
             <v-text-field v-model="formFields.company_name" label="Company name" required></v-text-field>
-            <addressForm @address="watchAddress($event)"></addressForm>
+            <addressForm @address="watchAddress($event)" :addressClear="addressClear"></addressForm>
             <v-btn class="mr-4" @click="submit">submit</v-btn>
             <v-btn @click="clear">clear</v-btn>
         </v-form>
@@ -26,6 +26,7 @@ export default {
     },
     data() {
         return {
+            addressClear: false,
             savingSuccessful: false,
             defaultValues: {},
             formFields: {
@@ -71,12 +72,14 @@ export default {
                 this.$emit("submit", "users");
             });
         },
-        beforeDestroy() {
-            this.$off("submit");
-        },
         clear() {
             console.log(this.formFields);
             this.formFields = { ...this.defaultValues };
+            this.addressClear = true;
+        },
+        beforeDestroy() {
+            this.$off("clearAddress");
+            this.$off("submit");
         },
         ...mapActions({
             getAll: "getAll",

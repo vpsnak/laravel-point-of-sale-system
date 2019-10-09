@@ -132,10 +132,6 @@ export default {
         closeEvent() {
             this.$emit("action", false);
             this.visibility = false;
-        },
-        submitEvent() {
-            this.$emit("action", true);
-            this.visibility = false;
         }
     },
 

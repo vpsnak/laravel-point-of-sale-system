@@ -14,8 +14,8 @@
         <v-text-field v-model="address.region" counter label="Region" required></v-text-field>
         <v-text-field v-model="address.postcode" counter label="Postcode" required></v-text-field>
         <v-text-field v-model="address.phone" counter label="Phone" required></v-text-field>
-        <!-- <v-btn class="mr-4" @click="submit">submit</v-btn>
-        <v-btn @click="clear">clear</v-btn>-->
+        <!-- <v-btn class="mr-4" @click="submit">submit</v-btn>-->
+        <!-- <v-btn v-if="addressClear == true" @click="clear">clear</v-btn> -->
         <v-alert
             v-if="savingSuccessful === true"
             class="mt-4"
@@ -29,6 +29,7 @@ import { mapActions } from "vuex";
 
 export default {
     props: {
+        addressClear: false,
         model: Object || undefined
     },
     data() {
@@ -36,15 +37,15 @@ export default {
             savingSuccessful: false,
             defaultValues: {},
             address: {
-                area_code_id: "",
-                last_name: "",
-                first_name: "",
-                street: "",
-                city: "",
-                country_id: "",
-                region: "",
-                postcode: "",
-                phone: ""
+                area_code_id: null,
+                last_name: null,
+                first_name: null,
+                street: null,
+                city: null,
+                country_id: null,
+                region: null,
+                postcode: null,
+                phone: null
             }
         };
     },
@@ -57,6 +58,11 @@ export default {
         }
     },
     watch: {
+        addressClear() {
+            if (this.addressClear) {
+                this.clear();
+            }
+        },
         address: {
             handler() {
                 this.$emit("address", this.address);
@@ -81,8 +87,18 @@ export default {
         beforeDestroy() {
             this.$off("submit");
         },
+
         clear() {
-            this.address = { ...this.defaultValues };
+            // this.address = { ...this.defaultValues };
+            this.address.area_code_id = "";
+            this.address.last_name = "";
+            this.address.first_name = "";
+            this.address.street = "";
+            this.address.city = "";
+            this.address.country_id = "";
+            this.address.region = "";
+            this.address.postcode = "";
+            this.address.phone = "";
         },
 
         ...mapActions({

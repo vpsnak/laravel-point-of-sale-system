@@ -7,10 +7,7 @@
         </div>
         <v-text-field v-model="formFields.name" counter label="Name" required></v-text-field>
         <v-text-field v-model="formFields.percentage" counter label="Percentage" required></v-text-field>
-        <v-switch
-            v-model="formFields.is_default"
-            :label="`Default : ${formFields.is_default.toString()}`"
-        ></v-switch>
+        <v-switch v-model="formFields.is_default" label="Default"></v-switch>
         <v-btn class="mr-4" @click="submit">submit</v-btn>
         <v-btn @click="clear">clear</v-btn>
     </v-form>
