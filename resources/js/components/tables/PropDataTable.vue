@@ -63,7 +63,7 @@
 			:model="newDefaultObject"
 			:component="form"
 			:title="btnTitle"
-			@action="result"
+			@action="submitEvent"
 			cancelBtnTxt="Close"
 		></interactiveDialog>
 
@@ -76,6 +76,7 @@
 			cancelBtnTxt="No"
 			confirmationBtnTxt="Yes"
 			@action="deleteEvent"
+			:submit="submit"
 		/>
 	</v-card>
 </template>
@@ -125,6 +126,14 @@ export default {
 		})
 	},
 	methods: {
+		submitEvent(event) {
+			if (event) {
+				this.getRows({
+					url: this.dataUrl
+				});
+			}
+		},
+
 		editItem(item) {
 			this.defaultObject = item;
 			this.action = "edit";

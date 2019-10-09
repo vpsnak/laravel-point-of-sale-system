@@ -19,7 +19,13 @@
 			<v-divider class="mb-3"></v-divider>
 
 			<v-card-text>
-				<component :is="component" v-if="component" :model="model" :readOnly="readOnly"></component>
+				<component
+					:is="component"
+					v-if="component"
+					:model="model"
+					:readOnly="readOnly"
+					@submit="submit"
+				></component>
 				<div v-else v-html="content" :class="contentClass || ''"></div>
 			</v-card-text>
 
@@ -53,7 +59,6 @@ export default {
 		fullscreen: Boolean,
 		cancelBtnTxt: String || "",
 		confirmationBtnTxt: String || "",
-
 		// model CRUD props
 		model: Object,
 		action: String // Possible values: edit, read, confirmation, info
@@ -93,15 +98,29 @@ export default {
 	},
 
 	methods: {
+		submit(event) {
+			this.submit = event;
+			if (this.submit == true) {
+				this.closeEvent();
+			}
+			console.log(this.submit);
+			this.$store.commit("setNotification", {
+				msg: "Store added in Database",
+				type: "success"
+			});
+		},
+
 		fire(confirmation) {
 			this.$emit("action", confirmation);
 			this.visibility = false;
 		},
 		closeEvent() {
-			if (!this.$props.persistent) {
-				this.$emit("action", false);
-				this.visibility = false;
-			}
+			this.$emit("action", false);
+			this.visibility = false;
+		},
+		submitEvent() {
+			this.$emit("action", true);
+			this.visibility = false;
 		}
 	},
 

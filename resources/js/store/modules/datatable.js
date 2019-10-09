@@ -69,7 +69,7 @@ const mutations = {
         state.rows = _.filter(state.rows, row => {
             return row.id !== id;
         });
-    }
+    },
 };
 
 export default {

@@ -32,75 +32,76 @@
 </template>
 
 <script>
-	import { mapActions } from "vuex";
+import { mapActions } from "vuex";
 
-	export default {
-		props: {
-			model: Object || undefined
-		},
-		data() {
-			return {
-				valid: true,
-				savingSuccessful: false,
-				taxes: [],
-				defaultValues: {},
-				formFields: {
-					id: 0,
-					name: null,
-					tax_id: null,
-					taxable: false,
-					is_default: false,
-					created_by: null
-				}
+export default {
+	props: {
+		model: Object || undefined
+	},
+	data() {
+		return {
+			valid: true,
+			savingSuccessful: false,
+			taxes: [],
+			defaultValues: {},
+			formFields: {
+				id: 0,
+				name: null,
+				tax_id: null,
+				taxable: false,
+				is_default: false,
+				created_by: null
+			}
+		};
+	},
+	mounted() {
+		this.getAll({
+			model: "taxes"
+		}).then(taxes => {
+			this.taxes = taxes;
+		});
+		this.defaultValues = this.formFields;
+		if (this.$props.model) {
+			this.formFields = {
+				...this.$props.model
 			};
+		}
+	},
+	methods: {
+		submit() {
+			let payload = {
+				model: "stores",
+				data: { ...this.formFields }
+			};
+			this.create(payload).then(() => {
+				this.clear();
+				this.savingSuccessful = true;
+				this.$emit("submit", true);
+			});
 		},
-		mounted() {
+		clear() {
+			this.formFields = { ...this.defaultValues };
+		},
+		getAllTaxes() {
 			this.getAll({
 				model: "taxes"
 			}).then(taxes => {
 				this.taxes = taxes;
 			});
-			this.defaultValues = this.formFields;
-			if (this.$props.model) {
-				this.formFields = {
-					...this.$props.model
-				};
-			}
 		},
-		methods: {
-			submit() {
-				let payload = {
-					model: "stores",
-					data: { ...this.formFields }
-				};
-				this.create(payload).then(() => {
-					this.clear();
-					this.savingSuccessful = true;
-				});
-			},
-			clear() {
-				this.formFields = { ...this.defaultValues };
-			},
-			getAllTaxes() {
-				this.getAll({
-					model: "taxes"
-				}).then(taxes => {
-					this.taxes = taxes;
-				});
-			},
-			...mapActions({
-				getAll: "getAll",
-				getOne: "getOne",
-				create: "create",
-				delete: "delete"
-			})
-		},
-		computed: {
-			user_id: {
-				get() {
-					return this.$store.state.user.id;
-				}
+		...mapActions({
+			getAll: "getAll",
+			getOne: "getOne",
+			create: "create",
+			delete: "delete"
+		})
+	},
+	computed: {
+		user_id: {
+			get() {
+				return this.$store.state.user.id;
 			}
 		}
-	};
+	}
+};
 </script>
