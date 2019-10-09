@@ -99,6 +99,7 @@ export default {
             this.address.region = "";
             this.address.postcode = "";
             this.address.phone = "";
+            this.addressClear = false;
         },
 
         ...mapActions({
