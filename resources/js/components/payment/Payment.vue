@@ -14,6 +14,8 @@
 			:types="paymentTypes"
 			:remaining="remaining"
 			:loading="paymentActionsLoading"
+			title="Order payment"
+			paymentBtnTxt="Send payment"
 			v-if="actions"
 			@sendPayment="sendPayment"
 		></paymentActions>
@@ -21,9 +23,9 @@
 </template>
 
 <script>
-  import { mapActions, mapMutations } from 'vuex'
+import { mapActions, mapMutations } from "vuex";
 
-  export default {
+export default {
 	props: {
 		order_id: Number,
 		history: Boolean,
@@ -143,7 +145,7 @@
 
 			this.create(payload)
 				.then(response => {
-                  console.log(response)
+					console.log(response);
 					let notification = {
 						msg: "Payment received",
 						type: "success"

@@ -1,7 +1,7 @@
 <template>
 	<v-row>
 		<v-col cols="12">
-			<h3>Order payment</h3>
+			<h3>{{ title }}</h3>
 		</v-col>
 		<v-col cols="12">
 			<div class="d-flex justify-space-evenly align-center">
@@ -67,9 +67,9 @@
 			</div>
 		</v-col>
 		<v-col cols="12">
-			<v-btn @click="sendPayment" :loading="loading" :disabled="loading" block>Send payment</v-btn>
+			<v-btn @click="sendPayment" :loading="loading" :disabled="loading" block>{{ paymentBtnTxt }}</v-btn>
 		</v-col>
-		<v-col cols="12">
+		<v-col cols="12" v-if="remaining">
 			<span class="title">Remaining: $ {{ remaining }}</span>
 		</v-col>
 	</v-row>
@@ -80,6 +80,8 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
+		title: String,
+		paymentBtnTxt: String,
 		types: Array,
 		remaining: Number,
 		loading: Boolean

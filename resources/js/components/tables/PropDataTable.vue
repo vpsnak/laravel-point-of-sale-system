@@ -18,7 +18,14 @@
 			<template v-slot:item.action="{ item }">
 				<v-tooltip bottom>
 					<template v-slot:activator="{ on }">
-						<v-btn :disabled="btnDisable" v-if="tableForm === 'giftCardForm'" class="my-1" icon v-on="on">
+						<v-btn
+							@click="rechargeGiftcardDialog = true, selectedItem = item"
+							:disabled="btnDisable"
+							v-if="tableForm === 'giftCardForm'"
+							class="my-1"
+							icon
+							v-on="on"
+						>
 							<v-icon small>mdi-credit-card-plus</v-icon>
 						</v-btn>
 					</template>
@@ -29,7 +36,7 @@
 				</v-btn>
 				<v-btn
 					:disabled="btnDisable"
-					@click="deleteConfirmation = true , selectedItem=item"
+					@click="deleteConfirmation = true, selectedItem = item"
 					class="my-1"
 					icon
 				>
@@ -77,6 +84,17 @@
 			confirmationBtnTxt="Yes"
 			@action="deleteEvent"
 		/>
+
+		<interactiveDialog
+			v-if="rechargeGiftcardDialog"
+			:show="rechargeGiftcardDialog"
+			:model="selectedItem"
+			:width="800"
+			:title="'Recharge gift card #' + selectedItem.id"
+			component="rechargeGiftcard"
+			action="edit"
+			@action="rechargeEvent"
+		/>
 	</v-card>
 </template>
 
@@ -89,6 +107,7 @@ export default {
 			showCreateDialog: false,
 			showEditDialog: false,
 			deleteConfirmation: false,
+			rechargeGiftcardDialog: false,
 			defaultObject: {},
 			newDefaultObject: {},
 			search: "",
@@ -129,6 +148,10 @@ export default {
 			this.defaultObject = item;
 			this.action = "edit";
 			this.showEditDialog = true;
+		},
+
+		rechargeEvent(event) {
+			this.rechargeGiftcardDialog = false;
 		},
 
 		deleteEvent(event) {
