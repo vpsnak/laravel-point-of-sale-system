@@ -11,7 +11,11 @@
             <v-text-field v-model="formFields.email" label="Email" required></v-text-field>
             <v-text-field v-model="formFields.phone" label="Phone" required></v-text-field>
             <v-text-field v-model="formFields.company_name" label="Company name" required></v-text-field>
-            <addressForm @address="watchAddress($event)" :addressClear="addressClear"></addressForm>
+            <addressForm
+                @address="watchAddress($event)"
+                :addressClear="addressClear"
+                :addressData="formFields.addresses"
+            ></addressForm>
             <v-btn class="mr-4" @click="submit">submit</v-btn>
             <v-btn @click="clear">clear</v-btn>
         </v-form>

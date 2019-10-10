@@ -8,19 +8,12 @@
             </div>
             <v-text-field v-model="formFields.name" :counter="10" label="Name" required></v-text-field>
             <v-row justify="space-around">
-                <v-switch
-                    v-model="formFields.taxable"
-                    :label="`Taxable : ${formFields.taxable.toString()}`"
-                ></v-switch>
-                <v-switch
-                    v-model="formFields.is_default"
-                    :label="`Default : ${formFields.is_default.toString()}`"
-                ></v-switch>
+                <v-switch v-model="formFields.taxable" label="Taxable"></v-switch>
+                <v-switch v-model="formFields.is_default" label="Default"></v-switch>
             </v-row>
             <v-select
                 v-model="formFields.tax_id"
                 :items="taxes"
-                :rules="[v => !!v || 'Tax is required']"
                 label="Taxes"
                 required
                 item-text="name"
