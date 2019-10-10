@@ -1,15 +1,15 @@
 <template>
 	<div class="d-flex flex-column">
 		<div class="d-flex justify-space-between pa-2">
-			<span>Sub total</span>
-			<span>$ {{ subTotal }}</span>
+			<span>Sub total w/ discount</span>
+			<span>$ {{ (subTotal - totalDiscount).toFixed(2) }}</span>
 		</div>
 
 		<v-divider />
 
 		<div v-if="taxes" class="d-flex justify-space-between pa-2 bb-1">
 			<span>Tax</span>
-			<span>$ {{ tax }}</span>
+			<span>$ {{ tax.toFixed(2) }}</span>
 		</div>
 
 		<v-divider />
@@ -38,12 +38,14 @@ export default {
 
 	computed: {
 		subTotal() {
-			let subTotal = 0;
+			let subTotal = 0.0;
 
 			this.$props.products.forEach(product => {
 				subTotal +=
 					product.qty *
-					parseInt(product.price.amount ? product.price.amount : product.price);
+					parseFloat(
+						product.price.amount ? product.price.amount : product.price
+					);
 			});
 
 			return subTotal;
@@ -62,7 +64,7 @@ export default {
 					_.has(product, "discount_amount")
 				) {
 					if (product.discount_type === "Flat" && product.discount_amount > 0) {
-						totalFlatDiscount += parseInt(product.discount_amount);
+						totalFlatDiscount += parseFloat(product.discount_amount);
 					} else if (
 						product.discount_type === "Percentage" &&
 						product.discount_amount > 0
@@ -79,7 +81,9 @@ export default {
 				this.$props.cart.discount_type === "Flat" &&
 				this.$props.cart.discount_amount > 0
 			) {
-				totalFlatDiscount += parseInt(this.$props.cart.discount_amount);
+				totalFlatDiscount += parseFloat(
+					this.$props.cart.discount_amount
+				).toFixed(2);
 			} else if (
 				this.$props.cart.discount_type === "Percentage" &&
 				this.$props.cart.discount_amount > 0
@@ -88,7 +92,7 @@ export default {
 					(this.subTotal * this.$props.cart.discount_amount) / 100;
 			}
 
-			return totalFlatDiscount + totalPercentageDiscount;
+			return parseFloat(totalFlatDiscount + totalPercentageDiscount).toFixed(2);
 		},
 		total() {
 			if (this.$props.taxes) {
