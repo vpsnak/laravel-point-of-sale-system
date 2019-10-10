@@ -6,19 +6,30 @@
 			</v-chip>
 		</div>
 		<v-text-field v-model="formFields.name" counter label="Name" required></v-text-field>
-		<v-text-field v-model="formFields.sku" counter label="Sku" required></v-text-field>
+		<v-text-field type="number" v-model="formFields.sku" counter label="Sku" required></v-text-field>
 		<v-text-field v-model="formFields.photo_url" counter label="Photo url" required></v-text-field>
-		<v-text-field v-model="formFields.final_price" counter label="Final price" required></v-text-field>
-		<v-text-field v-model="formFields.stock" counter label="Stock" required></v-text-field>
-		<v-combobox
+		<v-text-field type="number" v-model="formFields.final_price" counter label="Final price" required></v-text-field>
+		<v-text-field type="number" v-model="formFields.stock" counter label="Stock" required></v-text-field>
+		<!-- <v-combobox
 			v-model="selectedCategories"
 			:items="categories"
 			item-text="name"
+			hide-selected
 			clearable
 			chips
 			label="Categories"
 			multiple
-		></v-combobox>
+		></v-combobox>-->
+		<v-select
+			v-model="selectedCategories"
+			:items="categories"
+			chips
+			label="Categories"
+			multiple
+			item-text="name"
+			item-value="id"
+			clearable
+		></v-select>
 		<v-select
 			v-model="formFields.store_id"
 			:items="stores"
