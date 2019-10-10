@@ -5,10 +5,9 @@
 		tableTitle="Products"
 		tableBtnTitle="New Product"
 		tableForm="productForm"
-		:tableBtnDisable="true"
+		:tableBtnDisable="false"
 	/>
 </template>
-
 <script>
 import { mapMutations } from "vuex";
 
@@ -16,16 +15,13 @@ export default {
 	data() {
 		return {
 			headers: [
-				{
-					text: "Products",
-					align: "left",
-					sortable: false,
-					value: "name"
-				},
 				{ text: "Id", value: "id" },
+				{ text: "Name", value: "name" },
 				{ text: "Sku", value: "sku" },
-				{ text: "Photo url", value: "photo_url" },
-				{ text: "Price", value: "price.amount" },
+				// { text: "Photo url", value: "photo_url" },
+				// { text: "Price", value: "price.amount" },
+				{ text: "Price", value: "final_price" },
+				{ text: "Stock", value: "stock" },
 				{ text: "Actions", value: "action", sortable: false }
 			]
 		};
