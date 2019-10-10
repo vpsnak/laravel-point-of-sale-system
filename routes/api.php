@@ -42,3 +42,5 @@ Route::get('/carts/hold', "{$baseRoutes['carts']}@getHold");
 Route::get('/product-listing/categories', "CategoryController@productListingCategories");
 
 Route::get('/magento/authorize', 'Auth\MagentoOAuthController@authorizeMagento');
+
+Route::post('/pos', 'PosTerminalController@makePayment');
