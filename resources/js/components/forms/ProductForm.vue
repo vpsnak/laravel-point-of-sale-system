@@ -6,7 +6,7 @@
 			</v-chip>
 		</div>
 		<v-text-field v-model="formFields.name" counter label="Name" required></v-text-field>
-		<v-text-field type="number" v-model="formFields.sku" counter label="Sku" required></v-text-field>
+		<v-text-field v-model="formFields.sku" counter label="Sku" required></v-text-field>
 		<v-text-field v-model="formFields.photo_url" counter label="Photo url" required></v-text-field>
 		<v-text-field type="number" v-model="formFields.final_price" counter label="Final price" required></v-text-field>
 		<v-text-field type="number" v-model="formFields.stock" counter label="Stock" required></v-text-field>
