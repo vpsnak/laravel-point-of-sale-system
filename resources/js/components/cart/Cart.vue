@@ -1,5 +1,5 @@
 <template>
-	<v-sheet class="pa-3 d-flex flex-column" style="height:100%">
+	<v-card class="pa-3 d-flex flex-column" style="max-height: 90vh;">
 		<div class="d-flex align-center justify-space-between">
 			<div :class="titleClass">
 				<v-icon>{{ icon }}</v-icon>
@@ -14,7 +14,7 @@
 
 		<v-divider />
 
-		<customerSearch :editable="editable" :keywordLength="1"></customerSearch>
+		<customerSearch :editable="editable" :keywordLength="1" class="my-3"></customerSearch>
 
 		<cartProducts :products="items ? items : products" :editable="editable"></cartProducts>
 
@@ -37,7 +37,7 @@
 				<cartActions :disabled="totalProducts" />
 			</div>
 		</div>
-	</v-sheet>
+	</v-card>
 </template>
 
 <script>
@@ -55,7 +55,7 @@ export default {
 	computed: {
 		titleClass() {
 			return this.$props.toggles
-				? "d-flex align-center pb-5"
+				? "d-flex align-center pb-2"
 				: "d-flex align-center";
 		},
 		retail: {

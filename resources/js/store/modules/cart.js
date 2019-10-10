@@ -53,7 +53,7 @@ export default {
 
         shipping: {},
 
-        order: undefined
+        order: {}
     },
 
     getters: {
@@ -67,12 +67,6 @@ export default {
     },
 
     mutations: {
-        emptyCart(state) {
-            state.products = [];
-            state.products = [];
-            state.discount_type = null;
-            state.discount_amount = null;
-        },
         toggleRetail(state) {
             state.retail = !state.retail;
         },
@@ -145,7 +139,7 @@ export default {
             state.discount_type = "";
             state.discount_amount = 0;
             state.shipping = {};
-            state.order = undefined;
+            state.order = {};
 
             state.checkoutSteps.forEach(checkoutStep => {
                 checkoutStep.completed = false;
@@ -174,7 +168,6 @@ export default {
                 })
                     .then(response => {
                         commit("setOrder", response);
-                        commit("emptyCart");
                         resolve(response);
                     })
                     .catch(error => {

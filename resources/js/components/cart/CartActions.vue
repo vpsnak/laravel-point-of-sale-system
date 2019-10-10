@@ -101,9 +101,9 @@ export default {
 		emptyCart(showPrompt) {
 			if (showPrompt) {
 				confirm("Are you sure you want to delete the cart?") &&
-					this.$store.commit("cart/emptyCart");
+					this.$store.commit("cart/resetState");
 			} else {
-				this.$store.commit("cart/emptyCart");
+				this.$store.commit("cart/resetState");
 			}
 		},
 		holdCart() {

@@ -1,5 +1,5 @@
 <template>
-	<div class="d-flex flex-grow-1" style="max-height: 44vh; overflow-y: auto">
+	<div class="d-flex flex-grow-1" style="height: 38vh; overflow-y: auto">
 		<v-expansion-panels class="d-block" accordion>
 			<v-expansion-panel v-for="product in products" :key="product.id">
 				<v-expansion-panel-header class="pa-3" ripple>

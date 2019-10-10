@@ -71,16 +71,17 @@ export default {
 			let cart = JSON.parse(cartOnHold.cart).products;
 
 			this.$store.state.cart.products = cart.products;
-			this.removeCart(cartOnHold).then(() => {
-				this.close();
-			});
+			this.removeCart(cartOnHold).then(response => {});
 
 			this.getOne({
 				model: "customers",
 				data: {
-					id: cartOnHold.cart.customer_id
+					id: JSON.parse(cartOnHold.cart).customer_id
 				},
 				mutation: "cart/setCustomer"
+			}).then(response => {
+				console.log(JSON.parse(cartOnHold.cart).customer_id);
+				this.close();
 			});
 		},
 		removeCart(cartOnHold) {

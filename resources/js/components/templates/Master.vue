@@ -21,7 +21,7 @@ a {
 	text-decoration: none;
 }
 html {
-	overflow-y: auto;
+	overflow-y: hidden;
 }
 
 input[type="number"] {

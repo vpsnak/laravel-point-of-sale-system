@@ -1,5 +1,5 @@
 <template>
-	<v-card>
+	<v-card style="max-height: 90vh;">
 		<v-card-title>
 			<v-row align="center" justify="center">
 				<v-col align="center" justify="center">
@@ -37,7 +37,7 @@
 					></v-combobox>
 				</v-col>
 			</v-row>
-			<v-row v-if="productList.length" style="height:58vh; overflow-y:auto;">
+			<v-row v-if="productList.length" style="height:60vh%; overflow-y:auto;">
 				<v-col v-for="product in productList" :key="product.id" cols="12" md="6" lg="4">
 					<v-card :img="product.photo_url" @click="addProduct(product)" height="170px">
 						<v-card-title class="indigo white--text pa-0" @click.stop>

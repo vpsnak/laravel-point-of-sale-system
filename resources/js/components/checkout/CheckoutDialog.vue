@@ -64,7 +64,7 @@ export default {
 	methods: {
 		confirmation(event) {
 			if (event) {
-				this.resetState;
+				this.resetState();
 				this.state = false;
 			}
 
