@@ -5,7 +5,7 @@
 		tableTitle="Products"
 		tableBtnTitle="New Product"
 		tableForm="productForm"
-		:tableBtnDisable="true"
+		:tableBtnDisable="false"
 	/>
 </template>
 
