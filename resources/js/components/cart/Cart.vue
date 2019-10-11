@@ -31,7 +31,7 @@
 
 			<v-divider />
 
-			<cartTotals :products="items ? items : products" :taxes="taxes" :cart="cartDiscount" />
+			<cartTotals :products="items ? items : products" :cart="cartDiscount" />
 
 			<div v-if="actions">
 				<cartActions :disabled="totalProducts" />
