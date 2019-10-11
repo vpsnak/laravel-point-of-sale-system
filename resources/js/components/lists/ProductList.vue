@@ -20,6 +20,14 @@
 					class="mx-2"
 					@keyup.enter="searchProduct"
 				></v-text-field>
+				<v-tooltip bottom>
+					<template v-slot:activator="{ on }">
+						<v-btn @click="showCreateDialog = true" class="my-1" v-on="on" icon>
+							<v-icon small>fas fa-plus</v-icon>
+						</v-btn>
+					</template>
+					<span>Add dummy product</span>
+				</v-tooltip>
 			</v-row>
 
 			<v-row align="center" justify="center">
@@ -76,6 +84,17 @@
 			</v-row>
 		</v-card-text>
 		<v-card-actions></v-card-actions>
+		<interactiveDialog
+			v-if="showCreateDialog"
+			:show="showCreateDialog"
+			:model="defaultObject"
+			component="dummyProductForm"
+			title="Add a dummy product"
+			@action="result"
+			cancelBtnTxt="Close"
+			persistent
+			titleCloseBtn
+		></interactiveDialog>
 	</v-card>
 </template>
 
@@ -83,6 +102,8 @@
 export default {
 	data() {
 		return {
+			defaultObject: {},
+			showCreateDialog: false,
 			loader: false,
 			disableFilters: false,
 			model: "products",
@@ -194,6 +215,10 @@ export default {
 		},
 		addProduct(product) {
 			this.$store.commit("cart/addProduct", product);
+		},
+		result(event) {
+			console.log(event);
+			this.showCreateDialog = false;
 		}
 	}
 };

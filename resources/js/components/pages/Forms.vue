@@ -42,6 +42,13 @@
 					</v-card-text>
 				</v-card>
 			</v-slide-item>
+			<v-slide-item>
+				<v-card width="400px" class="ma-4">
+					<v-card-text>
+						<dummyProductForm></dummyProductForm>
+					</v-card-text>
+				</v-card>
+			</v-slide-item>
 		</v-slide-group>
 	</v-container>
 </template>
