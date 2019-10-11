@@ -1,15 +1,15 @@
 <template>
-	<v-navigation-drawer app overflow :mini-variant="mini">
-		<v-list nav>
+	<v-navigation-drawer clipped app overflow :mini-variant="mini">
+		<v-list>
 			<v-list-item v-for="menuItem in menuItems" :key="menuItem.id" :to="menuItem.to">
-				<v-list-item-icon small>
+				<v-list-item-icon>
 					<v-icon>{{ menuItem.icon }}</v-icon>
 				</v-list-item-icon>
-
 				<v-list-item-content>
 					<v-list-item-title>{{ menuItem.title }}</v-list-item-title>
 				</v-list-item-content>
 			</v-list-item>
+			<v-divider dark class="my-4"></v-divider>
 		</v-list>
 	</v-navigation-drawer>
 </template>

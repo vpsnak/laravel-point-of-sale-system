@@ -1,5 +1,5 @@
 <template>
-	<v-app-bar app>
+	<v-app-bar app clipped-left>
 		<v-app-bar-nav-icon @click.stop="mini = !mini"></v-app-bar-nav-icon>
 
 		<v-toolbar-title>Plantshed</v-toolbar-title>
