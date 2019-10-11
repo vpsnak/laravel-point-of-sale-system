@@ -3,7 +3,6 @@ export default {
 
     state: {
         retail: true,
-        taxes: true,
 
         discountTypes: [
             {
@@ -69,9 +68,6 @@ export default {
     mutations: {
         toggleRetail(state) {
             state.retail = !state.retail;
-        },
-        toggleTaxes(state) {
-            state.taxes = !state.taxes;
         },
         addProduct(state, product) {
             let index = _.findIndex(state.products, productState => {

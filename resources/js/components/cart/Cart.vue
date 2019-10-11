@@ -3,12 +3,11 @@
 		<div class="d-flex align-center justify-space-between">
 			<div :class="titleClass">
 				<v-icon>{{ icon }}</v-icon>
-				<h5 class="title-2 ml-2">{{ title }}</h5>
+				<h4 class="title-2 ml-2">{{ title }}</h4>
 			</div>
 
 			<div v-if="toggles" class="d-flex align-center justify-space-between">
 				<v-switch label="Retail" v-model="retail" class="px-2"></v-switch>
-				<v-switch label="Taxes" v-model="taxes" class="px-2"></v-switch>
 			</div>
 		</div>
 
@@ -19,6 +18,7 @@
 		<cartProducts :products="items ? items : products" :editable="editable"></cartProducts>
 
 		<v-divider />
+
 		<div class="d-flex flex-column">
 			<v-row class="d-flex justify-space-between align-center">
 				<v-col cols="4" class="px-5 py-0">
@@ -64,14 +64,6 @@ export default {
 			},
 			set() {
 				this.$store.commit("cart/toggleRetail");
-			}
-		},
-		taxes: {
-			get() {
-				return this.$store.state.cart.taxes;
-			},
-			set() {
-				this.$store.commit("cart/toggleTaxes");
 			}
 		},
 		cartDiscount() {

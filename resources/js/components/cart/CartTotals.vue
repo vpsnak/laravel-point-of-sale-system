@@ -7,9 +7,9 @@
 
 		<v-divider />
 
-		<div v-if="taxes" class="d-flex justify-space-between pa-2 bb-1">
+		<div class="d-flex justify-space-between pa-2 bb-1">
 			<span>Tax</span>
-			<span>$ {{ tax.toFixed(2) }}</span>
+			<span>$ {{ tax }}</span>
 		</div>
 
 		<v-divider />
@@ -32,8 +32,7 @@
 export default {
 	props: {
 		cart: Object | undefined,
-		products: Array | undefined,
-		taxes: Boolean | undefined
+		products: Array | undefined
 	},
 
 	computed: {
@@ -95,11 +94,7 @@ export default {
 			return parseFloat(totalFlatDiscount + totalPercentageDiscount).toFixed(2);
 		},
 		total() {
-			if (this.$props.taxes) {
-				return (this.subTotal + this.tax - this.totalDiscount).toFixed(2);
-			} else {
-				return (this.subTotal - this.totalDiscount).toFixed(2);
-			}
+			return (this.subTotal + this.tax - this.totalDiscount).toFixed(2);
 		}
 	}
 };

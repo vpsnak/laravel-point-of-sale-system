@@ -10,13 +10,13 @@
 						</div>
 						<v-spacer />
 						<div class="d-flex justify-content-center align-center">
-							<v-btn class="px-1" v-if="editable" icon @click.stop="decreaseQty(product)">
-								<v-icon color="grey lighten-1">remove</v-icon>
+							<v-btn v-if="editable" small icon @click.stop="decreaseQty(product)">
+								<v-icon small class="px-1">remove</v-icon>
 							</v-btn>
 
 							<v-text-field
 								class="px-1"
-								style="max-width:50px;"
+								style="max-width:45px;"
 								:disabled="!editable"
 								type="number"
 								label="Qty"
@@ -27,12 +27,12 @@
 								@keyup="limits(product)"
 							></v-text-field>
 
-							<v-btn class="px-1" icon v-if="editable" @click.stop="increaseQty(product)">
-								<v-icon color="grey lighten-1">add</v-icon>
+							<v-btn icon small v-if="editable" @click.stop="increaseQty(product)">
+								<v-icon small class="px-1">add</v-icon>
 							</v-btn>
 
-							<v-btn class="px-1" v-if="editable" icon @click.stop="removeItem(product)">
-								<v-icon color="grey lighten-1">delete</v-icon>
+							<v-btn v-if="editable" small icon @click.stop="removeItem(product)">
+								<v-icon small class="px-1">delete</v-icon>
 							</v-btn>
 						</div>
 					</div>

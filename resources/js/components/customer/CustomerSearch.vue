@@ -14,7 +14,7 @@
 			:item-text="getCustomerFullname"
 			label="Select customer"
 			placeholder="Start typing to Search"
-			prepend-icon="mdi-database-search"
+			prepend-icon="mdi-account-search"
 			return-object
 		></v-combobox>
 		<v-text-field v-else :value="getCustomerFullname(cartCustomer)" disabled prepend-icon="person"></v-text-field>
