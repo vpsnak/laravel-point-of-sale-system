@@ -80,7 +80,6 @@ export default {
 				},
 				mutation: "cart/setCustomer"
 			}).then(response => {
-				console.log(JSON.parse(cartOnHold.cart).customer_id);
 				this.close();
 			});
 		},

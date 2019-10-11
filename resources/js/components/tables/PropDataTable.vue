@@ -193,7 +193,6 @@ export default {
 			});
 		},
 		result(event) {
-			console.log(event);
 			this.showCreateDialog = false;
 			this.showEditDialog = false;
 			this.showDeleteDialog = false;

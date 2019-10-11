@@ -1,7 +1,7 @@
 <template>
 	<div class="d-flex flex-grow-1" style="height: 38vh; overflow-y: auto">
 		<v-expansion-panels class="d-block" accordion>
-			<v-expansion-panel v-for="product in products" :key="product.id">
+			<v-expansion-panel v-for="(product, index) in products" :key="index">
 				<v-expansion-panel-header class="pa-3" ripple>
 					<v-row no-gutters>
 						<v-col cols="8" class="d-flex flex-column">
@@ -80,7 +80,8 @@ export default {
 			this.$store.commit("cart/increaseProductQty", product);
 		},
 		removeItem(product) {
-			this.products.splice(product, 1);
+			const index = this.products.indexOf(product);
+			this.products.splice(index, 1);
 		}
 	}
 };

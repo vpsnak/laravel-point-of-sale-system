@@ -217,7 +217,6 @@ export default {
 			this.$store.commit("cart/addProduct", product);
 		},
 		result(event) {
-			console.log(event);
 			this.showCreateDialog = false;
 		}
 	}

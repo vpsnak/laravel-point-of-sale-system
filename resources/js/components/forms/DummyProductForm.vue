@@ -1,9 +1,9 @@
 <template>
 	<v-form>
-		<v-text-field v-model="formFields.name" label="Name" required></v-text-field>
-		<v-text-field v-model="formFields.sku" label="Sku" required></v-text-field>
-		<v-text-field type="number" v-model="formFields.price.amount" label="Price" required></v-text-field>
-		<v-btn class="mr-4" @click="addProduct(formFields)">Add to cart</v-btn>
+		<v-text-field v-model="dummyProduct.name" label="Name" required></v-text-field>
+		<v-text-field v-model="dummyProduct.sku" label="Sku" required></v-text-field>
+		<v-text-field type="number" v-model="dummyProduct.price.amount" label="Price" required></v-text-field>
+		<v-btn class="mr-4" @click="addProduct()">Add to cart</v-btn>
 		<v-btn @click="clear">clear</v-btn>
 	</v-form>
 </template>
@@ -13,23 +13,25 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
-		model: Object || undefined
+		model: Object
 	},
 	data() {
 		return {
-			formFields: {
+			dummyProduct: {
 				name: "",
 				sku: null,
 				price: {
 					amount: null
-				}
+				},
+				final_price: null
 			}
 		};
 	},
 
 	methods: {
-		addProduct(product) {
-			this.$store.commit("cart/addProduct", product);
+		addProduct() {
+			this.dummyProduct.final_price = this.dummyProduct.price.amount;
+			this.$store.commit("cart/addProduct", this.dummyProduct);
 			this.$emit("addtocart", "cart");
 		},
 		beforeDestroy() {
@@ -39,11 +41,11 @@ export default {
 			this.$off("addtocart");
 		},
 		clear() {
-			this.formFields = {
+			this.dummyProduct = {
 				name: "",
 				sku: null,
 				price: {
-					amount: 0
+					amount: null
 				}
 			};
 		}

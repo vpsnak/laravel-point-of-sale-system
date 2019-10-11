@@ -65,7 +65,7 @@ class PaymentController extends BaseController
                     ], 404);
                 }
 
-                if (date('Y-m-d H:i:s') > $coupon->to) {
+                if (date('Y-m-d H:i:s') > $coupon->to || $coupon->uses === 0) {
                     return response([
                         'errors' => ['Coupon' => ['This coupon has expired']],
                         'message' => 'This coupon has expired'
@@ -91,7 +91,7 @@ class PaymentController extends BaseController
                     $coupon->discount->type
                 );
 
-                $coupon->uses++;
+                $coupon->uses--;
                 $coupon->save();
 
                 break;
@@ -192,7 +192,7 @@ class PaymentController extends BaseController
                 break;
             case 'coupon':
                 $coupon = Coupon::whereCode($payment['code'])->first();
-                $coupon->uses--;
+                $coupon->uses++;
                 $coupon->save();
                 break;
             case 'giftcard':

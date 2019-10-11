@@ -160,4 +160,91 @@ class PosTerminalController extends Controller
 
         return response();
     }
+
+    public function linkedRefund(Request $request)
+    {
+        $request = [
+            "method" => "startPaymenTransaction",
+            "requestId" => "2143090732",
+            "targetType" => "paymentGatewayConverge",
+            "version" => "1.0",
+            "parameters" => [
+                "paymentGatewayId" => "e9b2f3cd-ad49-482b-9982-d39d76a79a7f",
+                "originalTransId" => "070316A15-0A81D9AD-6700-4E07-A82D-DF17E41F91A6",
+                "transactionType" => "LINKED_REFUND",
+                "tenderType" => "CARD",
+                "baseTransactionAmount" => [
+                    "value" => 2500,
+                    "currencyCode" => "USD"
+                ],
+            ]
+        ];
+
+        $response = [
+            "requestId" => "2143090734",
+            "statusDetails" => "REQUEST_ACCEPTED",
+            "data" => [
+                "paymentGatewayCommand" => [
+                    "completed" => true,
+                    "eventQueue" => [],
+                    "chanId" => "9689c81c-c976-48bf-83d2-60dca06b1b39",
+                    "paymentTransactionData" => [
+                        "result" => "APPROVED",
+                        "authCode" => null,
+                        "date" => "Mon Mar 07 12=>48=>24 MST 2016",
+                        "cardEntryType" => "UNKNOWN",
+                        "resultMessage" => "APPROVED",
+                        "cardScheme" => "VISA",
+                        "amount" => [
+                            "currencyCode" => "USD",
+                            "value" => 2500
+                        ],
+                        "id" => "070316A15-EB815E1F-4D49-4E3E-953B-7DAEF0C43315",
+                        "transactionType" => "LINKED_REFUND",
+                        "approved" => "yes",
+                        "errors" => [],
+                        "maskedPan" => "******",
+                        "tenderType" => "CARD",
+                        "balanceDue" => [
+                            "currencyCode" => "UNKNOWN",
+                            "value" => 0
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        return response();
+    }
+
+    public function cancelTransaction()
+    {
+        $request = [
+            "method" => "cancelPaymentTransaction",
+            "requestId" => "1574338436",
+            "targetType" => "paymentGatewayConverge",
+            "version" => "1.0",
+            "parameters" => [
+                "paymentGatewayId" => "4f4912f4-9d24-4c0d-9e0c-dad8de366999",
+                "chanId" => "b8428b3c-b84e-42c2-9fc6-39a834ecac27"
+            ]
+        ];
+
+        $response = [
+            "requestId" => "1574338436",
+            "statusDetails" => "REQUEST_ACCEPTED",
+            "data" => [
+                "paymentGatewayCommand" => [
+                    "completed" => true,
+                    "eventQueue" => [],
+                    "chanId" => "b8428b3c-b84e-42c2-9fc6-39a834ecac27",
+                    "paymentTransactionData" => [
+                        "result" => "CANCELED"
+                    ]
+                ]
+            ]
+        ];
+
+        return response();
+    }
 }
