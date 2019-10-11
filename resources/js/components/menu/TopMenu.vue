@@ -6,32 +6,19 @@
 
 		<div class="flex-grow-1"></div>
 
-		<v-menu
-			left
-			bottom
-			offset-x
-			transition="scale-transition"
-		>
+		<v-menu left bottom offset-x transition="scale-transition">
 			<template v-slot:activator="{ on }">
-				<v-btn
-					icon
-					v-on="on"
-				>
+				<v-btn icon v-on="on">
 					<v-icon>account_circle</v-icon>
 				</v-btn>
 			</template>
 
-			<v-list
-				dense
-				avatar
-			>
+			<v-list dense :avatar="avatar">
 				<v-list-item-group>
-					<v-list-item
-						inactive
-						two-line
-					>
+					<v-list-item inactive two-line>
 						<v-list-item-avatar>
-							<v-icon>mdi-account</v-icon>
+							<v-img :src="avatar"></v-img>
+							<!-- <v-icon>mdi-account</v-icon> -->
 						</v-list-item-avatar>
 						<v-list-item-content>
 							<v-list-item-title>{{ user.name }}</v-list-item-title>
@@ -56,10 +43,7 @@
 						</v-list-item-content>
 					</v-list-item>
 					<v-divider />
-					<v-list-item
-						inactive
-						@click.stop
-					>
+					<v-list-item inactive @click.stop>
 						<v-list-item-avatar>
 							<v-icon>mdi-brightness-4</v-icon>
 						</v-list-item-avatar>
@@ -77,36 +61,41 @@
 </template>
 
 <script>
-	import { mapState } from "vuex";
+import { mapState } from "vuex";
 
-	export default {
-		methods: {
-			invertTheme() {
+export default {
+	data() {
+		return {
+			avatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg"
+		};
+	},
+	methods: {
+		invertTheme() {
+			this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+		}
+	},
+	computed: {
+		user: {
+			get() {
+				return this.$store.state.user;
+			}
+		},
+		darkMode: {
+			get() {
+				return this.$vuetify.theme.dark;
+			},
+			set() {
 				this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
 			}
 		},
-		computed: {
-			user: {
-				get() {
-					return this.$store.state.user;
-				}
+		mini: {
+			get() {
+				return this.$store.state.topMenu.mini;
 			},
-			darkMode: {
-				get() {
-					return this.$vuetify.theme.dark;
-				},
-				set() {
-					this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-				}
-			},
-			mini: {
-				get() {
-					return this.$store.state.topMenu.mini;
-				},
-				set() {
-					this.$store.commit("topMenu/toggleMini");
-				}
+			set() {
+				this.$store.commit("topMenu/toggleMini");
 			}
 		}
-	};
+	}
+};
 </script>
