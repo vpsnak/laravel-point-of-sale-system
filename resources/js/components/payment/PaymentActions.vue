@@ -50,6 +50,7 @@
 					type="number"
 					prepend-inner-icon="mdi-currency-usd"
 					v-model="amount"
+					@change="limits"
 					style="max-width:150px;"
 				></v-text-field>
 
@@ -116,6 +117,7 @@ export default {
 	},
 
 	methods: {
+		limits() {},
 		sendPayment() {
 			let payload;
 
