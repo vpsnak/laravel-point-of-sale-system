@@ -1,7 +1,7 @@
 <template>
 	<v-card class="pa-3 d-flex flex-column" style="max-height: 90vh;">
 		<div class="d-flex justify-center align-center pt-5">
-			<v-icon class="pr-2">fa-box-open</v-icon>
+			<v-icon class="pr-2">mdi-package-variant</v-icon>
 			<h4 class="title-2">Products</h4>
 		</div>
 

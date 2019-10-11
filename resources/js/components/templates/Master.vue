@@ -17,6 +17,12 @@ export default {};
 </script>
 
 <style>
+.fas,
+.fab,
+.fa {
+	font-size: 1.2em !important;
+}
+
 a {
 	text-decoration: none;
 }

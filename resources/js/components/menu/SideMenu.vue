@@ -48,7 +48,7 @@ export default {
 				{
 					id: 5,
 					title: "Products",
-					icon: "fas fa-box-open",
+					icon: "mdi-package-variant",
 					to: "products"
 				},
 				{

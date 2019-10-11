@@ -43,7 +43,7 @@
 						</v-list-item-content>
 					</v-list-item>
 					<v-divider />
-					<v-list-item inactive @click.stop>
+					<v-list-item inactive @click.stop="darkMode = !darkMode">
 						<v-list-item-avatar>
 							<v-icon>mdi-brightness-4</v-icon>
 						</v-list-item-avatar>
