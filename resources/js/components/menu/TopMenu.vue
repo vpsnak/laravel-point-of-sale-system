@@ -43,7 +43,7 @@
 						</v-list-item-content>
 					</v-list-item>
 					<v-divider />
-					<v-list-item inactive @click.stop="darkMode = !darkMode">
+					<v-list-item @click.stop="darkMode = !darkMode">
 						<v-list-item-avatar>
 							<v-icon>mdi-brightness-4</v-icon>
 						</v-list-item-avatar>
@@ -51,7 +51,7 @@
 							<v-list-item-title>Dark mode</v-list-item-title>
 						</v-list-item-content>
 						<v-list-item-action>
-							<v-switch v-model="darkMode"></v-switch>
+							<v-switch v-model="darkMode" @click.stop="darkMode = !darkMode"></v-switch>
 						</v-list-item-action>
 					</v-list-item>
 				</v-list-item-group>
@@ -84,8 +84,8 @@ export default {
 			get() {
 				return this.$vuetify.theme.dark;
 			},
-			set() {
-				this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+			set(value) {
+				this.$vuetify.theme.dark = value;
 			}
 		},
 		mini: {
