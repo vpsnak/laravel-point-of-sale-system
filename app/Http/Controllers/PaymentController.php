@@ -196,7 +196,7 @@ class PaymentController extends BaseController
                 $coupon->save();
                 break;
             case 'giftcard':
-                $giftcard = Giftcard::whereCode($payment['code']);
+                $giftcard = Giftcard::whereCode($payment['code'])->first();
                 $giftcard->amount += $payment['amount'];
                 $giftcard->save();
                 break;

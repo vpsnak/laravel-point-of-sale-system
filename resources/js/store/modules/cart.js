@@ -99,7 +99,7 @@ export default {
                 return productState.id === product.id;
             });
 
-            if (index != -1) {
+            if (index != -1 && state.products[index].qty > 1) {
                 state.products[index].qty--;
             }
         },
