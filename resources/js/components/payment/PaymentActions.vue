@@ -49,7 +49,7 @@
 					label="Amount"
 					type="number"
 					prepend-inner-icon="mdi-currency-usd"
-					v-model="paymentAmount"
+					v-model="amount"
 					style="max-width:150px;"
 				></v-text-field>
 
@@ -98,6 +98,21 @@ export default {
 				exp_date: null
 			}
 		};
+	},
+
+	computed: {
+		amount: {
+			get() {
+				return this.paymentAmount;
+			},
+			set(value) {
+				if (this.$props.remaining && value > this.$props.remaining) {
+					this.paymentAmount = this.$props.remaining;
+				} else {
+					this.paymentAmount = value;
+				}
+			}
+		}
 	},
 
 	methods: {
