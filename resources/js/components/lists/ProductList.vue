@@ -1,13 +1,10 @@
 <template>
-	<v-card style="max-height: 90vh;">
-		<v-card-title>
-			<v-row align="center" justify="center">
-				<v-col align="center" justify="center">
-					<v-icon>fa-dice-d6</v-icon>
-					<h5 class="text-center">Products</h5>
-				</v-col>
-			</v-row>
-		</v-card-title>
+	<v-card class="pa-3 d-flex flex-column" style="max-height: 90vh;">
+		<div class="d-flex justify-center align-center pt-5">
+			<v-icon class="pr-2">fa-box-open</v-icon>
+			<h4 class="title-2">Products</h4>
+		</div>
+
 		<v-card-text>
 			<v-row align="center" justify="center">
 				<v-btn icon @click="searchProduct" class="mx-2">
@@ -45,7 +42,7 @@
 					></v-combobox>
 				</v-col>
 			</v-row>
-			<v-row v-if="productList.length" style="height:60vh%; overflow-y:auto;">
+			<v-row v-if="productList.length" style="height:61vh; overflow-y:auto;">
 				<v-col v-for="product in productList" :key="product.id" cols="12" md="6" lg="4">
 					<v-card :img="product.photo_url" @click="addProduct(product)" height="170px">
 						<v-card-title class="indigo white--text pa-0" @click.stop>

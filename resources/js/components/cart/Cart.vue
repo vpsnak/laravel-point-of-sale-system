@@ -2,8 +2,8 @@
 	<v-card class="pa-3 d-flex flex-column" style="max-height: 90vh;">
 		<div class="d-flex align-center justify-space-between">
 			<div :class="titleClass">
-				<v-icon>{{ icon }}</v-icon>
-				<h4 class="title-2 ml-2">{{ title }}</h4>
+				<v-icon class="pr-2">{{ icon }}</v-icon>
+				<h4 class="title-2">{{ title }}</h4>
 			</div>
 
 			<div v-if="toggles" class="d-flex align-center justify-space-between">
