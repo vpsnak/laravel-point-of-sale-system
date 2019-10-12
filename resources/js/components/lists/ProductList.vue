@@ -92,6 +92,18 @@
 			persistent
 			titleCloseBtn
 		></interactiveDialog>
+		<interactiveDialog
+			v-if="showEditDialog"
+			:show="showEditDialog"
+			title="Edit item"
+			:width="600"
+			component="productForm"
+			:model="defaultObject"
+			@action="edit"
+			persistent
+			action="edit"
+			titleCloseBtn
+		></interactiveDialog>
 	</v-card>
 </template>
 
@@ -100,6 +112,7 @@ export default {
 	data() {
 		return {
 			defaultObject: {},
+			showEditDialog: false,
 			showCreateDialog: false,
 			loader: false,
 			disableFilters: false,
@@ -153,7 +166,12 @@ export default {
 		clearFilters() {},
 		addToFavorites(product) {},
 		viewProduct(product) {},
-		editProduct(product) {},
+
+		editProduct(product) {
+			this.defaultObject = product;
+			this.action = "edit";
+			this.showEditDialog = true;
+		},
 		applyFilter(filter) {},
 		initiateLoadingSearchResults(loading) {
 			if (loading) {
@@ -215,6 +233,10 @@ export default {
 		},
 		result(event) {
 			this.showCreateDialog = false;
+		},
+		edit(event) {
+			this.showEditDialog = false;
+			this.getAllProducts();
 		}
 	}
 };
