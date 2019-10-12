@@ -82,7 +82,6 @@
 		<interactiveDialog
 			v-if="showCreateDialog"
 			:show="showCreateDialog"
-			:model="newDefaultObject"
 			:component="form"
 			:title="btnTitle"
 			@action="result"
@@ -124,7 +123,6 @@ export default {
 			deleteConfirmation: false,
 			rechargeGiftcardDialog: false,
 			defaultObject: {},
-			newDefaultObject: {},
 			search: "",
 			selectedItem: {}
 		};
