@@ -102,14 +102,17 @@ export default {
         setDiscount(state, model) {
             if (Array.isArray(model)) {
                 state.discount_type = model.discount_type;
-                state.discount_amount = model.discount_amount;
+
+                state.discount_amount = parseFloat(model.discount_amount);
             } else {
                 let index = _.findIndex(state.products, iterator => {
                     return iterator.id === model.id;
                 });
 
                 state.products[index].discount_type = model.discount_type;
-                state.products[index].discount_amount = model.discount_amount;
+                state.products[index].discount_amount = parseFloat(
+                    model.discount_amount
+                );
             }
         },
         setCustomer(state, customer) {
@@ -154,8 +157,7 @@ export default {
                         status: "pending",
                         discount_type: state.discount_type,
                         discount_amount: state.discount_amount,
-                        products: state.products,
-                        tax: 5 // @TODO: needs reevaluation
+                        products: state.products
                     }
                 };
 
