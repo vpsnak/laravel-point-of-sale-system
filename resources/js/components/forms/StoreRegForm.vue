@@ -74,8 +74,17 @@ export default {
 	},
 	methods: {
 		submit() {
-			// this.$store.state.store = store_id;
-			// this.$store.state.cashRegister = cash_register_id;
+			for (const store of this.stores) {
+				if (store.id == this.formFields.store_id) {
+					this.$store.state.store = store;
+				}
+			}
+			for (const cash_register of this.cash_registers) {
+				if (cash_register.id == this.formFields.cash_register_id) {
+					console.log(cash_register);
+					this.$store.state.cashRegister = cash_register;
+				}
+			}
 			let payload = {
 				model: "cash-register-logs",
 				data: { ...this.formFields }
