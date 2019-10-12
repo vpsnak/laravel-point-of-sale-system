@@ -54,14 +54,6 @@ export default {
 				? "d-flex align-center pb-2"
 				: "d-flex align-center";
 		},
-		retail: {
-			get() {
-				return this.$store.state.cart.retail;
-			},
-			set() {
-				this.$store.commit("cart/toggleRetail");
-			}
-		},
 		cartDiscount() {
 			let discount = {
 				discount_type: this.$store.state.cart.discount_type,
