@@ -16,15 +16,17 @@ class PaymentObserver
 
     public function updateOrderStatus(Payment $payment)
     {
-        if ($payment->order->total - $payment->order->total_paid > 0) {
-            if ($payment->order->status != 'pending_payment') {
-                $payment->order->status = 'pending_payment';
-                $payment->order->save();
-            }
-        } else {
-            if ($payment->order->status != 'paid') {
-                $payment->order->status = 'paid';
-                $payment->order->save();
+        if ($payment->order->status != 'complete') {
+            if ($payment->order->total - $payment->order->total_paid > 0) {
+                if ($payment->order->status != 'pending_payment') {
+                    $payment->order->status = 'pending_payment';
+                    $payment->order->save();
+                }
+            } else {
+                if ($payment->order->status != 'paid') {
+                    $payment->order->status = 'paid';
+                    $payment->order->save();
+                }
             }
         }
     }
