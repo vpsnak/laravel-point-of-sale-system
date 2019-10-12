@@ -31,12 +31,14 @@ export default new Vuex.Store({
         },
 
         store: {
-            id: 1,
+            id: null,
+            name: "",
             tax: {}
         },
 
         cashRegister: {
-            id: 1
+            id: null,
+            name: "",
         },
 
         // notification

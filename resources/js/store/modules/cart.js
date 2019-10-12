@@ -23,7 +23,6 @@ export default {
                 name: "Shipping options",
                 icon: "local_shipping",
                 component: "shippingStep",
-                showIfRetail: false,
                 completed: false
             },
             {
@@ -31,7 +30,6 @@ export default {
                 name: "Payment",
                 icon: "payment",
                 component: "paymentStep",
-                showIfRetail: true,
                 completed: false
             },
             {
@@ -39,7 +37,6 @@ export default {
                 name: "Completion",
                 icon: "check_circle",
                 component: "completion",
-                showIfRetail: true,
                 completed: false
             }
         ],
