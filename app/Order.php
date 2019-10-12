@@ -5,7 +5,7 @@ namespace App;
 class Order extends BaseModel
 {
     protected $appends = ['total', 'total_paid'];
-    
+
     protected $fillable = [
         'customer_id',
         'store_id',
@@ -20,18 +20,37 @@ class Order extends BaseModel
         'subtotal',
         'notes',
     ];
-    
+
     protected $with = ['items', 'payments'];
-    
+
     public function getTotalAttribute()
     {
         $total = 0;
         foreach ($this->items as $item) {
-            $total += $item->price * $item->qty;
+            $price = $item->price * $item->qty;
+            switch ($item->discount_type) {
+                case 'percentage':
+                    $price = $price - ($price * ($item->discount_amount / 100));
+                    break;
+                case 'flat':
+                    $price = $price - $item->discount_amount;
+                    break;
+            }
+            $total += $price;
         };
-        return $total;
+
+        switch ($this->discount_type) {
+            case 'percentage':
+                $total = $total - ($total * ($item->discount_amount / 100));
+                break;
+            case 'flat':
+                $total = $total - $this->discount_amount;
+                break;
+        }
+
+        return $total + ($total * ($this->tax / 100));
     }
-    
+
     public function getTotalPaidAttribute()
     {
         $total_paid = 0;
@@ -40,12 +59,12 @@ class Order extends BaseModel
         };
         return $total_paid;
     }
-    
+
     public function items()
     {
         return $this->hasMany(OrderProduct::class);
     }
-    
+
     public function payments()
     {
         return $this->hasMany(Payment::class, 'order_id');
