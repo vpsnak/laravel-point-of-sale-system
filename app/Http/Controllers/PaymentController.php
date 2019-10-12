@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Coupon;
 use App\Giftcard;
+use App\Helper\Price;
 use App\Order;
 use App\Payment;
 use App\PaymentType;
@@ -85,10 +86,10 @@ class PaymentController extends BaseController
 
                 $order = Order::findOrFail($validatedData['order_id']);
 
-                $validatedData['amount'] = self::calcDiscount(
+                $validatedData['amount'] = $order->subtotal - Price::calculateDiscount(
                     $order->subtotal,
-                    $coupon->discount->amount,
-                    $coupon->discount->type
+                        $coupon->discount->type,
+                        $coupon->discount->amount
                 );
 
                 $coupon->uses--;
@@ -124,7 +125,6 @@ class PaymentController extends BaseController
         $payment = $this->model::store($validatedData);
 
         if (!empty($payment)) {
-
             return response([
                 'total' => $payment->order->total,
                 'total_paid' => $payment->order->total_paid,
@@ -132,17 +132,6 @@ class PaymentController extends BaseController
             ], 201);
         }
     }
-
-    private static function calcDiscount($price, $amount, $type)
-    {
-        if ($type === 'flat') {
-            return $price - $amount;
-        } else {
-            return $price * $amount / 100;
-        }
-    }
-
-    // @TODO: maybe you want to move this function
 
     public function search(Request $request)
     {
@@ -167,43 +156,12 @@ class PaymentController extends BaseController
         }
 
         $payment = Payment::findOrFail($id);
+        $deleted = $payment->delete();
 
-        switch ($payment->paymentType->type) {
-            default:
-                return response(['msg' => 'This payment method does not exist. ', 'status' => 'error'], 500);
-                break;
-            case 'cash':
-                // nothing to do here, move on
-                break;
-            case 'card':
-                $paymentResponse = CreditCardController::cardPayment(
-                    '5472063333333330',
-                    '1224',
-                    '123',
-                    $payment->amount
-                );
-                if (isset($paymentResponse->errorCode)) {
-                    return response([
-                        'errors' => ["Error $paymentResponse->errorCode" => ["$paymentResponse->errorName"]],
-                        'message' => $paymentResponse
-                    ], 500);
-                }
-
-                break;
-            case 'coupon':
-                $coupon = Coupon::whereCode($payment['code'])->first();
-                $coupon->uses++;
-                $coupon->save();
-                break;
-            case 'giftcard':
-                $giftcard = Giftcard::whereCode($payment['code'])->first();
-                $giftcard->amount += $payment['amount'];
-                $giftcard->save();
-                break;
+        if ($deleted) {
+            return response(['msg' => 'Refund completed successfully!', 'status' => 'success'], 200);
+        } else {
+            return response(['msg' => 'Refund error!', 'status' => 'error'], 404);
         }
-
-        $this->model::deleteData($id);
-
-        return response(['msg' => 'Refund completed successfully!', 'status' => 'success'], 200);
     }
 }
