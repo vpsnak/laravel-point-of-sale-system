@@ -34,6 +34,7 @@ export default {
 	data() {
 		return {
 			order: {},
+			order_remaining: undefined,
 			paymentHistory: [],
 			orderHistory: [],
 			paymentTypes: [],
@@ -49,8 +50,13 @@ export default {
 	},
 
 	computed: {
-		remaining() {
-			return this.order.total - this.order.total_paid;
+		remaining: {
+			get() {
+				return this.order_remaining;
+			},
+			set(value) {
+				this.order_remaining = value;
+			}
 		},
 		paymentType: {
 			get() {
@@ -93,6 +99,10 @@ export default {
 			};
 			this.getOne(payload).then(response => {
 				this.order = response;
+
+				if (this.remaining === undefined) {
+					this.remaining = this.order.total;
+				}
 			});
 		},
 		getPaymentHistory() {
@@ -145,7 +155,8 @@ export default {
 
 			this.create(payload)
 				.then(response => {
-					console.log(response);
+					this.order_remaining = response.total - response.total_paid;
+
 					let notification = {
 						msg: "Payment received",
 						type: "success"

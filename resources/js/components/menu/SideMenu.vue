@@ -10,6 +10,7 @@
 				</v-list-item-content>
 			</v-list-item>
 			<v-divider dark class="my-4"></v-divider>
+			<v-subheader class="mt-4 grey--text text--darken-1">Designed and developed by WebO2</v-subheader>
 		</v-list>
 	</v-navigation-drawer>
 </template>

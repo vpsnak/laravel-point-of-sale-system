@@ -31,7 +31,8 @@ export default new Vuex.Store({
         },
 
         store: {
-            id: 1
+            id: 1,
+            tax: {}
         },
 
         cashRegister: {
