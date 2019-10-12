@@ -32,13 +32,11 @@ export default new Vuex.Store({
 
         store: {
             id: 1,
-            name: "Mega Latina",
             tax: {}
         },
 
         cashRegister: {
-            id: 34,
-            name: "Mega lolitsa",
+            id: 1
         },
 
         // notification
