@@ -5,7 +5,7 @@
 				<v-icon left>fas fa-bars</v-icon>Category Form
 			</v-chip>
 		</div>
-		<v-text-field v-model="formFields.name" :rules="nameRules" :counter="13" label="Name" required></v-text-field>
+		<v-text-field v-model="formFields.name" :rules="nameRules" :counter="30" label="Name" required></v-text-field>
 		<v-switch v-model="formFields.in_product_listing" label="In Product listing"></v-switch>
 		<v-btn class="mr-4" @click="submit">submit</v-btn>
 		<v-btn class="mr-4" @click="clear">clear</v-btn>
@@ -25,7 +25,7 @@ export default {
 			valid: false,
 			nameRules: [
 				// v => !!v || "Name is required",
-				v => v.length <= 15 || "Name must be less than 10 characters"
+				v => v.length <= 30 || "Name must be less than 30 characters"
 			],
 			defaultValues: {},
 			formFields: {

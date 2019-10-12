@@ -52,8 +52,12 @@ export default {
 					value: "subtotal"
 				},
 				{
-					text: "Note",
-					value: "note"
+					text: "Notes",
+					value: "notes"
+				},
+				{
+					text: "Created at",
+					value: "created_at"
 				},
 				{
 					text: "Actions",

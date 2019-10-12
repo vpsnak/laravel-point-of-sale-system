@@ -6,7 +6,7 @@
 					<v-icon left>fas fa-warehouse</v-icon>Store Form
 				</v-chip>
 			</div>
-			<v-text-field v-model="formFields.name" :counter="10" label="Name" required></v-text-field>
+			<v-text-field v-model="formFields.name" :counter="30" label="Name" required></v-text-field>
 			<v-row justify="space-around">
 				<v-switch v-model="formFields.taxable" label="Taxable"></v-switch>
 				<v-switch v-model="formFields.is_default" label="Default"></v-switch>

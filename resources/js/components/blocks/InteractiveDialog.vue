@@ -116,7 +116,7 @@ export default {
 				url: this.submit
 			});
 			this.$store.commit("setNotification", {
-				msg: "Added in " + this.submit,
+				msg: "Saved in" + this.submit,
 				type: "success"
 			});
 		},
