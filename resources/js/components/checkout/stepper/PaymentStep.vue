@@ -1,16 +1,55 @@
 <template>
-	<payment :order_id="order.id" history actions />
+	<div>
+		<payment :order_id="order.id" history actions />
+		<v-card-actions>
+			<v-btn color="secondary" @click="prevStep()">Back</v-btn>
+			<div class="flex-grow-1"></div>
+			<v-btn
+				color="primary"
+				@click="completeStep()"
+				:loading="loading"
+				:disabled="loading"
+			>Complete order</v-btn>
+		</v-card-actions>
+	</div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 export default {
 	props: {
 		currentStep: Object
 	},
+	data() {
+		return {
+			loading: false
+		};
+	},
 	computed: {
 		...mapState("cart", ["order"])
 	},
-	methods: {}
+	methods: {
+		completeStep() {
+			this.loading = true;
+			let payload = {
+				model: "orders",
+				data: {
+					id: this.order.id,
+					status: "complete"
+				}
+			};
+
+			this.create(payload).finally(() => {
+				this.$store.dispatch("cart/completeStep").then(() => {
+					this.loading = false;
+				});
+			});
+		},
+		prevStep() {
+			this.$store.state.cart.currentCheckoutStep--;
+		},
+
+		...mapActions(["create"])
+	}
 };
 </script>

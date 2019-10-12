@@ -93,7 +93,6 @@ export default {
 			});
 
 			// total cart discount calculation
-
 			if (
 				this.$props.cart.discount_type === "Flat" &&
 				this.$props.cart.discount_amount > 0
