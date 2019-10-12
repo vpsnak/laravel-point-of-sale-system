@@ -11,7 +11,7 @@
 				@click.stop="showCreateDialog = true"
 			>{{this.btnTitle }}</v-btn>
 		</v-card-title>
-		<v-layout column style="height: 100vh">
+		<v-layout column>
 			<v-flex md10 style="overflow: auto">
 				<v-data-table dense :headers="headers" :items="rows" :loading="loading" :search="search">
 					<template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
@@ -40,6 +40,14 @@
 								</v-btn>
 							</template>
 							<span>Edit</span>
+						</v-tooltip>
+						<v-tooltip bottom>
+							<template v-slot:activator="{ on }">
+								<v-btn @click.stop="viewItem(item)" class="my-1" v-on="on" icon>
+									<v-icon small>watch</v-icon>
+								</v-btn>
+							</template>
+							<span>View</span>
 						</v-tooltip>
 						<v-tooltip bottom>
 							<template v-slot:activator="{ on }">
@@ -77,6 +85,18 @@
 			persistent
 			action="edit"
 			titleCloseBtn
+		></interactiveDialog>
+  
+		<interactiveDialog
+			v-if="showViewDialog"
+			:show="showViewDialog"
+			title="View item"
+			:fullscreen="false"
+            :width="1000"
+			:component="tableViewComponent"
+			:model="viewId"
+            @action="result"
+            cancelBtnTxt="Close"
 		></interactiveDialog>
 
 		<interactiveDialog
@@ -120,9 +140,11 @@ export default {
 		return {
 			showCreateDialog: false,
 			showEditDialog: false,
+			showViewDialog: false,
 			deleteConfirmation: false,
 			rechargeGiftcardDialog: false,
 			defaultObject: {},
+            viewId: null,
 			search: "",
 			selectedItem: {}
 		};
@@ -133,6 +155,7 @@ export default {
 		"dataUrl",
 		"tableBtnTitle",
 		"tableForm",
+		"tableViewComponent",
 		"tableBtnDisable"
 	],
 	mounted() {
@@ -171,6 +194,12 @@ export default {
 			this.showEditDialog = true;
 		},
 
+		viewItem(item) {
+			// this.defaultObject = item;
+			this.viewId = {id: item.id};
+			this.showViewDialog = true;
+		},
+
 		rechargeEvent(event) {
 			this.rechargeGiftcardDialog = false;
 		},
@@ -193,6 +222,7 @@ export default {
 		result(event) {
 			this.showCreateDialog = false;
 			this.showEditDialog = false;
+			this.showViewDialog = false;
 			this.showDeleteDialog = false;
 		},
 

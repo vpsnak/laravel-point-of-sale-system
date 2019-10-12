@@ -23,7 +23,7 @@ class Order extends BaseModel
         'notes',
     ];
 
-    protected $with = ['items', 'payments'];
+    protected $with = ['items', 'payments', 'customer_id', 'store_id', 'created_by'];
 
     public function getTotalAttribute()
     {
@@ -63,5 +63,20 @@ class Order extends BaseModel
     public function payments()
     {
         return $this->hasMany(Payment::class, 'order_id');
+    }
+
+    public function customer_id()
+    {
+        return $this->belongsTo(Customer::class,'customer_id');
+    }
+
+    public function store_id()
+    {
+        return $this->belongsTo(Store::class,'store_id');
+    }
+
+    public function created_by()
+    {
+        return $this->belongsTo(User::class,'created_by');
     }
 }
