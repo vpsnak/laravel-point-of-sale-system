@@ -17,6 +17,14 @@ class CashRegisterController extends BaseController
             'created_by' => 'required|exists:users,id',
         ]);
 
-        return response($this->model::store($validatedData), 201);
+        $validatedID = $request->validate([
+            'id' => 'nullable|exists:cash_registers,id'
+        ]);
+
+        if (!empty($validatedID)) {
+            return response($this->model::updateData($validatedID, $validatedData), 200);
+        } else {
+            return response($this->model::store($validatedData), 201);
+        }
     }
 }

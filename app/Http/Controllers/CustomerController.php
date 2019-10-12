@@ -36,6 +36,7 @@ class CustomerController extends BaseController
 //        dd($address['addresses']);
         $customer->addresses()->create($address['addresses']);
 
+        // @TODO fix update
         return response($customer, 201);
     }
 
