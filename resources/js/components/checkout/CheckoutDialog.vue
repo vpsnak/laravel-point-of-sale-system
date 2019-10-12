@@ -13,7 +13,7 @@
 
 		<v-card>
 			<v-toolbar>
-				<v-btn @click.stop="closePrompt = true" icon>
+				<v-btn @click.stop="close" icon>
 					<v-icon>mdi-close</v-icon>
 				</v-btn>
 				<v-toolbar-title>Checkout</v-toolbar-title>
@@ -65,11 +65,16 @@ export default {
 		}
 	},
 	methods: {
-		confirmation(event) {
-			console.log;
-			if (event) {
+		close() {
+			if (this.order.status !== "complete") {
+				this.closePrompt = true;
+			} else {
+				this.resetState();
 				this.state = false;
-
+			}
+		},
+		confirmation(event) {
+			if (event) {
 				let payload = {
 					model: "orders",
 					id: this.order.id
@@ -77,6 +82,7 @@ export default {
 
 				this.delete(payload).then(response => {
 					this.resetState();
+					this.state = false;
 				});
 			}
 			this.closePrompt = false;

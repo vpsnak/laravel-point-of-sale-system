@@ -66,6 +66,9 @@ export default {
 				data: { ...this.formFields }
 			};
 			this.create(payload).then(() => {
+				if (this.formFields.id == this.$store.state.store.id) {
+					this.$store.state.store = this.formFields;
+				}
 				this.clear();
 				this.$emit("submit", "stores");
 			});

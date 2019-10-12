@@ -11,8 +11,15 @@
 				<v-btn icon v-on="on">
 					<v-icon>account_circle</v-icon>
 				</v-btn>
+				<v-chip class="ma-2" color="indigo" text-color="white">
+					<v-avatar left>
+						<v-icon>fas fa-store-alt</v-icon>
+					</v-avatar>
+					{{store.name}}
+					<v-icon class="px-2">fas fa-cash-register</v-icon>
+					{{cashRegister.name}}
+				</v-chip>
 			</template>
-
 			<v-list dense :avatar="avatar">
 				<v-list-item-group>
 					<v-list-item inactive two-line>
@@ -78,6 +85,16 @@ export default {
 		user: {
 			get() {
 				return this.$store.state.user;
+			}
+		},
+		cashRegister: {
+			get() {
+				return this.$store.state.cashRegister;
+			}
+		},
+		store: {
+			get() {
+				return this.$store.state.store;
 			}
 		},
 		darkMode: {

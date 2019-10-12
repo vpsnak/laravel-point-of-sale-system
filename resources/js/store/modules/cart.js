@@ -2,8 +2,6 @@ export default {
     namespaced: true,
 
     state: {
-        retail: true,
-
         discountTypes: [
             {
                 label: "None",
@@ -21,24 +19,24 @@ export default {
 
         checkoutSteps: [
             {
+                id: 1,
                 name: "Shipping options",
                 icon: "local_shipping",
                 component: "shippingStep",
-                showIfRetail: false,
                 completed: false
             },
             {
+                id: 2,
                 name: "Payment",
                 icon: "payment",
                 component: "paymentStep",
-                showIfRetail: true,
                 completed: false
             },
             {
+                id: 3,
                 name: "Completion",
                 icon: "check_circle",
                 component: "completion",
-                showIfRetail: true,
                 completed: false
             }
         ],
@@ -55,20 +53,7 @@ export default {
         order: {}
     },
 
-    getters: {
-        getCheckoutSteps(state) {
-            return state.retail
-                ? state.checkoutSteps.filter(
-                      checkoutStep => checkoutStep.showIfRetail
-                  )
-                : state.checkoutSteps;
-        }
-    },
-
     mutations: {
-        toggleRetail(state) {
-            state.retail = !state.retail;
-        },
         addProduct(state, product) {
             let index = _.findIndex(state.products, productState => {
                 return productState.id === product.id;
@@ -118,11 +103,9 @@ export default {
         setCustomer(state, customer) {
             state.customer = customer;
         },
-        completeStep(state, currentStep) {
-            let result = _.find(state.checkoutSteps, currentStep);
-
-            result.completed = true;
-            _.merge(result, currentStep);
+        completeStep(state) {
+            let index = -1 + state.currentCheckoutStep;
+            state.checkoutSteps[index].completed = true;
         },
         nextCheckoutStep(state) {
             state.currentCheckoutStep++;
@@ -173,8 +156,8 @@ export default {
                     });
             });
         },
-        completeStep(context, currentStep) {
-            context.commit("completeStep", currentStep);
+        completeStep(context) {
+            context.commit("completeStep");
             context.commit("nextCheckoutStep");
         }
     }
