@@ -33,12 +33,14 @@ export default new Vuex.Store({
         store: {
             id: 1,
             name: "Mega Latina",
-            tax: {}
+            tax: {
+                percentage: 0
+            }
         },
 
         cashRegister: {
             id: 34,
-            name: "Mega lolitsa",
+            name: "Mega lolitsa"
         },
 
         // notification
@@ -108,9 +110,9 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                        payload.model +
-                        "/" +
-                        payload.data.id
+                            payload.model +
+                            "/" +
+                            payload.data.id
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {

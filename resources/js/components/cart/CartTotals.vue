@@ -60,9 +60,12 @@ export default {
 					this.$props.order.total - this.$props.order.subtotal
 				).toFixed(2);
 			} else {
-				// @TODO change flat discount
 				return parseFloat(
-					(parseFloat(this.subTotalwDiscount) * 0.24).toFixed(2)
+					(
+						(parseFloat(this.subTotalwDiscount) *
+							parseFloat(this.$store.state.store.tax.percentage)) /
+						100
+					).toFixed(2)
 				);
 			}
 		},
