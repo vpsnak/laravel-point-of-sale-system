@@ -28,7 +28,7 @@
 						</v-card>
 					</v-col>
 					<v-col cols="3">
-						<cart icon="mdi-clipboard-list" title="Order summary" :items="items" />
+						<cart icon="mdi-clipboard-list" title="Order summary" :items="items" :order="order" />
 					</v-col>
 				</v-row>
 			</v-container>
@@ -53,6 +53,9 @@ export default {
 			set(value) {
 				this.$store.state.checkoutDialog = value;
 			}
+		},
+		order() {
+			return this.$store.state.cart.order;
 		},
 		items() {
 			if (this.$store.state.cart.order) {

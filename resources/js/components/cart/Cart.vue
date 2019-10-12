@@ -31,7 +31,7 @@
 
 			<v-divider />
 
-			<cartTotals :products="items ? items : products" :cart="cartDiscount" />
+			<cartTotals :products="items ? items : products" :cart="cartDiscount" :order="order" />
 
 			<div v-if="actions">
 				<cartActions :disabled="totalProducts" />
@@ -45,12 +45,16 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
+		order: Array | null,
 		items: Array | null,
 		title: String,
 		icon: String | null,
 		editable: Boolean | null,
 		actions: Boolean | null,
 		toggles: Boolean | null
+	},
+	mounted() {
+		console.log(this.$props.order);
 	},
 	computed: {
 		titleClass() {

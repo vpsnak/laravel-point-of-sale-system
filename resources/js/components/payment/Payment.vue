@@ -4,7 +4,7 @@
 			:paymentHistory="paymentHistory"
 			:loading="paymentHistoryLoading"
 			v-if="history"
-			@refund="refundNotification"
+			@refund="refund"
 		></paymentHistory>
 
 		<v-divider></v-divider>
@@ -100,9 +100,7 @@ export default {
 			this.getOne(payload).then(response => {
 				this.order = response;
 
-				if (this.remaining === undefined) {
-					this.remaining = this.order.total;
-				}
+				this.remaining = this.order.total - this.order.total_paid;
 			});
 		},
 		getPaymentHistory() {
@@ -170,7 +168,7 @@ export default {
 					this.paymentActionsLoading = false;
 				});
 		},
-		refundNotification(event) {
+		refund(event) {
 			let notification = {
 				msg: event.msg,
 				type: event.status
