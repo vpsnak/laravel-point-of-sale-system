@@ -70,7 +70,7 @@
 		<v-col cols="12">
 			<v-btn @click="sendPayment" :loading="loading" :disabled="loading" block>{{ paymentBtnTxt }}</v-btn>
 		</v-col>
-		<v-col cols="12" v-if="remaining">
+		<v-col cols="12" v-if="remaining !== undefined">
 			<span class="title">Remaining: $ {{ remaining }}</span>
 		</v-col>
 	</v-row>
