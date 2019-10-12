@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations, mapActions } from "vuex";
 
 export default {
 	data() {
@@ -66,14 +66,23 @@ export default {
 	},
 	methods: {
 		confirmation(event) {
+			console.log;
 			if (event) {
-				this.resetState();
 				this.state = false;
-			}
 
+				let payload = {
+					model: "orders",
+					id: this.order.id
+				};
+
+				this.delete(payload).then(response => {
+					this.resetState();
+				});
+			}
 			this.closePrompt = false;
 		},
 
+		...mapActions(["delete"]),
 		...mapMutations("cart", ["resetState"])
 	}
 };

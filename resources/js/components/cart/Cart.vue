@@ -53,9 +53,6 @@ export default {
 		actions: Boolean | null,
 		toggles: Boolean | null
 	},
-	mounted() {
-		console.log(this.$props.order);
-	},
 	computed: {
 		titleClass() {
 			return this.$props.toggles

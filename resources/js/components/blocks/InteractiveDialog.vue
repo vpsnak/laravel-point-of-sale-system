@@ -111,7 +111,7 @@ export default {
 			if (this.submit != null) {
 				this.closeEvent();
 			}
-			console.log(this.submit);
+
 			this.getRows({
 				url: this.submit
 			});
