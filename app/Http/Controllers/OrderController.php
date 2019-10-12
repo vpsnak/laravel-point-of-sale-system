@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helper\Price;
 use App\Order;
 use App\OrderProduct;
 use App\Store;
@@ -61,8 +62,7 @@ class OrderController extends BaseController
 
         foreach ($order_items['products'] as $product) {
             $product['order_id'] = $order->id;
-            $product['price'] = $product['final_price'];
-            unset($product['final_price']);
+            $product = $this->setProductPrice($product);
             OrderProduct::store($product);
         }
 
@@ -71,10 +71,18 @@ class OrderController extends BaseController
 
     private function setSubtotal($orderData, $products)
     {
-        $orderData['subtotal'] = 0;
+        $subtotal = 0;
         foreach ($products as $product) {
-            $orderData['subtotal'] += $product['final_price'] * $product['qty'];
+            $total = $product['final_price'] * $product['qty'];
+            if (isset($product['discount_type']) && isset($product['discount_amount'])) {
+                $total = Price::calculateDiscount($total, $product['discount_type'], $product['discount_amount']);
+            }
+            $subtotal += $total;
         }
+        if (isset($orderData['discount_type']) && isset($orderData['discount_amount'])) {
+            $subtotal = Price::calculateDiscount($subtotal, $orderData['discount_type'], $orderData['discount_amount']);
+        }
+        $orderData['subtotal'] = $subtotal;
         return $orderData;
     }
 
@@ -83,6 +91,13 @@ class OrderController extends BaseController
         $store = Store::getOne($store_id);
         $orderData['tax'] = $store->tax->percentage;
         return $orderData;
+    }
+
+    private function setProductPrice($product)
+    {
+        $product['price'] = $product['final_price'];
+        unset($product['final_price']);
+        return $product;
     }
 
     public function delete($id)

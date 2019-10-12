@@ -2,9 +2,11 @@
 
 namespace App;
 
+use App\Helper\Price;
+
 class Order extends BaseModel
 {
-    protected $appends = ['total', 'total_paid'];
+    protected $appends = ['total', 'total_without_tax', 'total_paid'];
 
     protected $fillable = [
         'customer_id',
@@ -25,30 +27,23 @@ class Order extends BaseModel
 
     public function getTotalAttribute()
     {
+        $total = $this->total_without_tax;
+        $total = Price::calculateTax($total, $this->tax);
+
+        return $total;
+    }
+
+    public function getTotalWithoutTaxAttribute()
+    {
         $total = 0;
         foreach ($this->items as $item) {
             $price = $item->price * $item->qty;
-            switch ($item->discount_type) {
-                case 'percentage':
-                    $price = $price - ($price * ($item->discount_amount / 100));
-                    break;
-                case 'flat':
-                    $price = $price - $item->discount_amount;
-                    break;
-            }
-            $total += $price;
+            $total += Price::calculateDiscount($price, $item->discount_type, $item->discount_amount);
         };
 
-        switch ($this->discount_type) {
-            case 'percentage':
-                $total = $total - ($total * ($item->discount_amount / 100));
-                break;
-            case 'flat':
-                $total = $total - $this->discount_amount;
-                break;
-        }
+        $total = Price::calculateDiscount($total, $this->discount_type, $this->discount_amount);
 
-        return $total + ($total * ($this->tax / 100));
+        return $total;
     }
 
     public function getTotalPaidAttribute()
