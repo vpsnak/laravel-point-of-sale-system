@@ -8,7 +8,7 @@ class OrderObserver
 {
     public function updated(Order $order)
     {
-        if ($order->status != 'canceled') {
+        if ($order->status == 'canceled') {
             $order->payments()->delete();
         }
     }
