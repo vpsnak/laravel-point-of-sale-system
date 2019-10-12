@@ -5,7 +5,7 @@ namespace App;
 class CashRegister extends BaseModel
 {
     protected $with = [
-        'parent_store',
+//        'parent_store',
         'logs'
     ];
 
