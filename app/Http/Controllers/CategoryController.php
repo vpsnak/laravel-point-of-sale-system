@@ -29,6 +29,6 @@ class CategoryController extends BaseController
 
     public function productListingCategories()
     {
-        return response(Category::getAllPaginate('in_product_listing', 1, 2), 200);
+        return response(Category::getAllPaginate('in_product_listing', 1, 20), 200);
     }
 }

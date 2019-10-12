@@ -12,7 +12,7 @@ class PaymentTypeController extends BaseController
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required|alpha',
+            'name' => 'required|string',
             'type' => 'required|boolean',
             'status' => 'required|boolean',
             'is_default' => 'required|boolean',

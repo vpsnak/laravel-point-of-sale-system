@@ -12,7 +12,7 @@ class CashRegisterController extends BaseController
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required|alpha',
+            'name' => 'required|string',
             'store_id' => 'required|exists:stores,id',
             'created_by' => 'required|exists:users,id',
         ]);

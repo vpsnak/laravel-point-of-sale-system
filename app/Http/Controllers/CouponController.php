@@ -13,7 +13,7 @@ class CouponController extends BaseController
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required|alpha',
+            'name' => 'required|string',
             'code' => 'required|string',
             'uses' => 'nullable|numeric',
             'from' => 'nullable|date',
