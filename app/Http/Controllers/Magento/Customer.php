@@ -14,6 +14,16 @@ class Customer extends MagentoClient
         return $this->get('customers?limit=100', []);
     }
 
+    public function getAllEntries($per_page = 20, $page = 1)
+    {
+        return $this->get("/w2/customers/list?limit=$per_page&page=$page", []);
+    }
+
+    public function getAllAddresses($customer_id)
+    {
+
+    }
+
     /**
      * "2": {
      * "entity_id": "2",

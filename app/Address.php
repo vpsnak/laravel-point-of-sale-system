@@ -16,6 +16,8 @@ class Address extends BaseModel
         'region',
         'postcode',
         'phone',
+        'company',
+        'vat_id',
     ];
 
     protected $hidden = [

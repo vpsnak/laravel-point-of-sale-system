@@ -16,6 +16,11 @@ class BaseModel extends Model
         return get_called_class()::create($data);
     }
 
+//    public static function updateOrStore($uniqueColumns,$data)
+//    {
+//        return get_called_class()::updateOrCreate($uniqueColumns,$data);
+//    }
+
     public static function getOne($id)
     {
         return get_called_class()::find($id);
@@ -60,7 +65,7 @@ class BaseModel extends Model
     {
         return get_called_class()::select($fields)->where($column, $value)->get();
     }
-    
+
     public static function getAllPaginate($column, $value, $per_page = 10, $fields = '*')
     {
         return get_called_class()::select($fields)->where($column, $value)->paginate($per_page);
