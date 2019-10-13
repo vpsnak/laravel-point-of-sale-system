@@ -1,41 +1,41 @@
 <template>
-	<div class="d-flex flex-grow-1" style="max-height: 44vh; overflow-y: auto">
+	<div class="d-flex flex-grow-1" style="height:38vh; overflow-y:auto">
 		<v-expansion-panels class="d-block" accordion>
-			<v-expansion-panel v-for="product in products" :key="product.id">
-				<v-expansion-panel-header class="pa-3" ripple>
-					<v-row no-gutters>
-						<v-col cols="8" class="d-flex flex-column">
+			<v-expansion-panel v-for="(product, index) in products" :key="index">
+				<v-expansion-panel-header class="pa-3" ripple @click.stop>
+					<div class="d-flex align-center justify-space-between">
+						<div class="d-flex flex-column">
 							<span class="subtitle-2">{{ product.name }}</span>
-							<span
-								class="body-2"
-							>$ {{ product.qty * product.final_price ? product.final_price : product.price }}</span>
-						</v-col>
-						<v-col cols="1" class="d-flex align-center justify-center pa-1">
-							<v-btn v-if="editable" icon @click.stop="decreaseQty(product)">
-								<v-icon color="grey lighten-1">remove</v-icon>
+							<span class="body-2">$ {{ price(product) }}</span>
+						</div>
+						<v-spacer />
+						<div class="d-flex justify-content-center align-center">
+							<v-btn v-if="editable" small icon @click.stop="decreaseQty(product)">
+								<v-icon small class="px-1">remove</v-icon>
 							</v-btn>
-						</v-col>
-						<v-col cols="1" class="d-flex align-center justify-center pa-1">
+
 							<v-text-field
+								class="px-1"
+								style="max-width:45px;"
 								:disabled="!editable"
 								type="number"
 								label="Qty"
 								v-model="product.qty"
 								min="1"
 								@click.stop
+								@blur="limits(product)"
+								@keyup="limits(product)"
 							></v-text-field>
-						</v-col>
-						<v-col cols="1" class="d-flex align-center justify-center pa-1">
-							<v-btn icon v-if="editable" @click.stop="increaseQty(product)">
-								<v-icon color="grey lighten-1">add</v-icon>
+
+							<v-btn icon small v-if="editable" @click.stop="increaseQty(product)">
+								<v-icon small class="px-1">add</v-icon>
 							</v-btn>
-						</v-col>
-						<v-col cols="1" class="d-flex align-center justify-center pa-1">
-							<v-btn v-if="editable" icon @click.stop="removeItem(product)">
-								<v-icon color="grey lighten-1">delete</v-icon>
+
+							<v-btn v-if="editable" small icon @click.stop="removeItem(product)">
+								<v-icon small class="px-1">delete</v-icon>
 							</v-btn>
-						</v-col>
-					</v-row>
+						</div>
+					</div>
 				</v-expansion-panel-header>
 				<v-expansion-panel-content class="pa-3">
 					<v-row no-gutters>
@@ -73,6 +73,18 @@ export default {
 		...mapState("cart", ["discountTypes"])
 	},
 	methods: {
+		price(product) {
+			if (product.qty) {
+				return product.qty * product.final_price || product.qty * product.price;
+			} else {
+				return product.final_price || product.price;
+			}
+		},
+		limits(product) {
+			if (product.qty < 1) {
+				product.qty = 1;
+			}
+		},
 		decreaseQty(product) {
 			this.$store.commit("cart/decreaseProductQty", product);
 		},
@@ -80,7 +92,8 @@ export default {
 			this.$store.commit("cart/increaseProductQty", product);
 		},
 		removeItem(product) {
-			this.products.splice(product, 1);
+			const index = this.products.indexOf(product);
+			this.products.splice(index, 1);
 		}
 	}
 };

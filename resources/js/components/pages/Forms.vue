@@ -1,27 +1,54 @@
 <template>
-    <v-container fluid>
-        <v-row>
-            <v-col cols="3">
-                <customerForm></customerForm>
-            </v-col>
-            <v-col cols="3">
-                <addressForm></addressForm>
-                <cashRegisterForm class="mt-6"></cashRegisterForm>
-            </v-col>
-            <v-col cols="3">
-                <productForm></productForm>
-                <categoryForm class="mt-6"></categoryForm>
-                <storeForm class="mt-6"></storeForm>
-                <giftCardForm class="mt-6"></giftCardForm>
-            </v-col>
-            <v-col cols="3">
-                <userForm></userForm>
-                <taxForm class="mt-6"></taxForm>
-                <couponForm class="mt-6"></couponForm>
-            </v-col>
-            <v-col cols="3">
-                <storeRegForm></storeRegForm>
-            </v-col>
-        </v-row>
-    </v-container>
+	<v-container fluid>
+		<v-slide-group active-class="success" show-arrows>
+			<v-slide-item>
+				<v-card width="400px" class="ma-4">
+					<v-card-text>
+						<customerForm></customerForm>
+					</v-card-text>
+				</v-card>
+			</v-slide-item>
+			<v-slide-item>
+				<v-card width="400px" class="ma-4">
+					<v-card-text>
+						<addressForm></addressForm>
+						<userForm class="mt-6"></userForm>
+					</v-card-text>
+				</v-card>
+			</v-slide-item>
+			<v-slide-item>
+				<v-card width="400px" class="ma-4">
+					<v-card-text>
+						<cashRegisterForm></cashRegisterForm>
+						<taxForm class="mt-6"></taxForm>
+						<couponForm class="mt-6"></couponForm>
+					</v-card-text>
+				</v-card>
+			</v-slide-item>
+			<v-slide-item>
+				<v-card width="400px" class="ma-4">
+					<v-card-text>
+						<productForm></productForm>
+						<categoryForm class="mt-6"></categoryForm>
+					</v-card-text>
+				</v-card>
+			</v-slide-item>
+			<v-slide-item>
+				<v-card width="400px" class="ma-4">
+					<v-card-text>
+						<storeForm></storeForm>
+						<giftCardForm class="mt-6"></giftCardForm>
+						<storeRegForm></storeRegForm>
+					</v-card-text>
+				</v-card>
+			</v-slide-item>
+			<v-slide-item>
+				<v-card width="400px" class="ma-4">
+					<v-card-text>
+						<dummyProductForm></dummyProductForm>
+					</v-card-text>
+				</v-card>
+			</v-slide-item>
+		</v-slide-group>
+	</v-container>
 </template>

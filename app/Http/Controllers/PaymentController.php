@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Payment;
-use App\PaymentType;
 use App\Coupon;
 use App\Giftcard;
+use App\Helper\Price;
 use App\Order;
+use App\Payment;
+use App\PaymentType;
 use Illuminate\Http\Request;
 
 class PaymentController extends BaseController
@@ -24,7 +25,7 @@ class PaymentController extends BaseController
 
             // card validation
             'card.number' => 'nullable|required_if:payment_type,card|numeric',
-            'card.security_code' => 'nullable|required_if:payment_type,card|digits_between:3,4',
+            'card.cvc' => 'nullable|required_if:payment_type,card|digits_between:3,4',
             'card.exp_date' => 'nullable|required_if:payment_type,card|after_or_equal:today',
 
             // coupon/giftcard validation
@@ -32,18 +33,31 @@ class PaymentController extends BaseController
         ]);
 
         switch ($validatedData['payment_type']) {
+            default:
+                return response(['msg' => 'This payment method does not exist. ', 'status' => 'error'], 500);
+                break;
             case 'cash':
                 // nothing to do here, move on
                 break;
 
             case 'card':
-                // @TODO: 
+                $paymentResponse = CreditCardController::cardPayment(
+                    $validatedData['card']['number'],
+                    $validatedData['card']['exp_date'],
+                    $validatedData['card']['cvc'],
+                    $validatedData['amount']
+                );
+                if (isset($paymentResponse->errorCode)) {
+                    return response([
+                        'errors' => ["Error $paymentResponse->errorCode" => ["$paymentResponse->errorName"]],
+                        'message' => $paymentResponse
+                    ], 500);
+                }
 
                 break;
 
             case 'coupon':
                 $coupon = Coupon::getFirst('code', $validatedData['code']);
-                $order = Order::findOrFail($validatedData['order_id']);
 
                 if (empty($coupon)) {
                     return response([
@@ -52,19 +66,35 @@ class PaymentController extends BaseController
                     ], 404);
                 }
 
-                if (date('Y-m-d H:i:s') > $coupon->to) {
+                if (date('Y-m-d H:i:s') > $coupon->to || $coupon->uses === 0) {
                     return response([
                         'errors' => ['Coupon' => ['This coupon has expired']],
                         'message' => 'This coupon has expired'
                     ], 403);
-                } else if ($coupon->from > date('Y-m-d H:i:s')) {
-                    return response([
-                        'errors' => ['Coupon' => ['Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))]],
-                        'message' => 'Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))
-                    ], 403);
+                } else {
+                    if ($coupon->from > date('Y-m-d H:i:s')) {
+                        return response([
+                            'errors' => [
+                                'Coupon' => [
+                                    'Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))
+                                ]
+                            ],
+                            'message' => 'Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))
+                        ], 403);
+                    }
                 }
 
-                $validatedData['amount'] = self::calcDiscount($order->subtotal, $coupon->discount->amount, $coupon->discount->type);
+                $order = Order::findOrFail($validatedData['order_id']);
+
+                $validatedData['amount'] = $order->subtotal - Price::calculateDiscount(
+                    $order->subtotal,
+                        $coupon->discount->type,
+                        $coupon->discount->amount
+                );
+
+                $coupon->uses--;
+                $coupon->save();
+
                 break;
 
             case 'giftcard':
@@ -75,24 +105,18 @@ class PaymentController extends BaseController
                         'errors' => ['Gift card' => ['This gift card is inactive']],
                         'message' => 'This gift card is inactive'
                     ], 403);
-                } else if ($giftcard->amount < $validatedData['amount']) {
-                    return response([
-                        'errors' => ['Gift card' => ['This gift card has insufficient balance to complete the transaction']],
-                        'message' => 'This gift card has insufficient balance to complete the transaction'
-                    ], 403);
                 } else {
-                    // subtract the payed amount from giftcard
-
-                    $giftcard->amount -= $validatedData['amount'];
-
-                    $giftcard->save();
+                    if ($giftcard->amount < $validatedData['amount']) {
+                        return response([
+                            'errors' => ['Gift card' => ['This gift card has insufficient balance to complete the transaction']],
+                            'message' => 'This gift card has insufficient balance to complete the transaction'
+                        ], 403);
+                    } else {
+                        // subtract the payed amount from giftcard
+                        $giftcard->amount -= $validatedData['amount'];
+                        $giftcard->save();
+                    }
                 }
-
-                break;
-
-            case 'card':
-                // @TODO: 
-
                 break;
         }
 
@@ -104,7 +128,7 @@ class PaymentController extends BaseController
             return response([
                 'total' => $payment->order->total,
                 'total_paid' => $payment->order->total_paid,
-                'payment' => $payment
+                'payment' => $payment,
             ], 201);
         }
     }
@@ -125,13 +149,19 @@ class PaymentController extends BaseController
         );
     }
 
-    // @TODO: maybe you want to move this function
-    protected static function calcDiscount($price, $amount, $type)
+    public function delete($id)
     {
-        if ($type === 'flat') {
-            return $price - $amount;
+        if (!isset($this->model)) {
+            return response('Model not found', 404);
+        }
+
+        $payment = Payment::findOrFail($id);
+        $deleted = $payment->delete();
+
+        if ($deleted) {
+            return response(['msg' => 'Refund completed successfully!', 'status' => 'success'], 200);
         } else {
-            return $price * $amount / 100;
+            return response(['msg' => 'Refund error!', 'status' => 'error'], 404);
         }
     }
 }

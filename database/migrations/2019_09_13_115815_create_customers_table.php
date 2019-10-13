@@ -15,6 +15,7 @@ class CreateCustomersTable extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedBigInteger('magento_id')->default(0);
             $table->string('email')->unique()->index();
             $table->string('first_name', 100);
             $table->string('last_name', 100);

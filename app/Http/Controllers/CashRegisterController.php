@@ -12,11 +12,19 @@ class CashRegisterController extends BaseController
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required|alpha',
+            'name' => 'required|string',
             'store_id' => 'required|exists:stores,id',
             'created_by' => 'required|exists:users,id',
         ]);
 
-        return response($this->model::store($validatedData), 201);
+        $validatedID = $request->validate([
+            'id' => 'nullable|exists:cash_registers,id'
+        ]);
+
+        if (!empty($validatedID)) {
+            return response($this->model::updateData($validatedID, $validatedData), 200);
+        } else {
+            return response($this->model::store($validatedData), 201);
+        }
     }
 }

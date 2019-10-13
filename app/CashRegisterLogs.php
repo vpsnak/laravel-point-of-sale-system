@@ -4,7 +4,6 @@ namespace App;
 
 class CashRegisterLogs extends BaseModel
 {
-
     protected $fillable = [
         'user_id',
         'cash_register_id',
@@ -17,7 +16,7 @@ class CashRegisterLogs extends BaseModel
         'closed_by',
         'note',
     ];
-    
+
     public function cash_register()
     {
         return $this->belongsTo(CashRegister::class);

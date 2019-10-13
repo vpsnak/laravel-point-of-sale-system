@@ -5,50 +5,76 @@
 				<v-icon left>fas fa-bars</v-icon>Category Form
 			</v-chip>
 		</div>
-		<v-text-field v-model="name" :rules="nameRules" :counter="10" label="Name" required></v-text-field>
-		<v-switch
-			v-model="in_product_listing"
-			:label="`In Product listing : ${in_product_listing.toString()}`"
-		></v-switch>
+		<v-text-field v-model="formFields.name" :rules="nameRules" :counter="30" label="Name" required></v-text-field>
+		<v-switch v-model="formFields.in_product_listing" label="In Product listing"></v-switch>
 		<v-btn class="mr-4" @click="submit">submit</v-btn>
-		<v-btn @click="clear">clear</v-btn>
+		<v-btn class="mr-4" @click="clear">clear</v-btn>
+		<v-btn @click="edit">edit</v-btn>
 	</v-form>
 </template>
 
 <script>
-  import { mapActions } from 'vuex'
+import { mapActions } from "vuex";
 
-  export default {
-		data: () => ({
-			in_product_listing: false,
+export default {
+	props: {
+		model: Object || undefined
+	},
+	data() {
+		return {
 			valid: false,
-			name: "",
 			nameRules: [
 				// v => !!v || "Name is required",
-				v => v.length <= 10 || "Name must be less than 10 characters"
-			]
-		}),
-		methods: {
-			submit() {
-				let payload = {
-					model: "categories",
-					data: {
-						name: this.name,
-						in_product_listing: this.in_product_listing
-					}
-				};
-              this.create(payload).then(() => {
-                this.clear()
-                window.location.reload()
-              })
-			},
-			clear() {
-				this.name = "";
-              this.in_product_listing = false
-			},
-			...mapActions({
-				create: "create"
-			})
+				v => v.length <= 30 || "Name must be less than 30 characters"
+			],
+			defaultValues: {},
+			formFields: {
+				name: "",
+				in_product_listing: false
+			}
+		};
+	},
+	mounted() {
+		this.defaultValues = this.formFields;
+		if (this.$props.model) {
+			this.formFields = {
+				...this.$props.model
+			};
 		}
-	};
+	},
+	methods: {
+		submit() {
+			let payload = {
+				model: "categories",
+				data: { ...this.formFields }
+			};
+			this.create(payload).then(() => {
+				this.clear();
+				this.$emit("submit", "categories");
+			});
+		},
+		beforeDestroy() {
+			this.$off("submit");
+		},
+		clear() {
+			this.formFields = { ...this.defaultValues };
+		},
+		edit() {
+			this.getOne({
+				model: "categories",
+				data: {
+					id: 2
+				}
+			}).then(category => {
+				this.formFields = { ...category };
+			});
+		},
+		...mapActions({
+			getAll: "getAll",
+			getOne: "getOne",
+			create: "create",
+			delete: "delete"
+		})
+	}
+};
 </script>

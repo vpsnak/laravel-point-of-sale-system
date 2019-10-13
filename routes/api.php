@@ -41,4 +41,9 @@ foreach ($baseRoutes as $route => $controller) {
 Route::get('/carts/hold', "{$baseRoutes['carts']}@getHold");
 Route::get('/product-listing/categories', "CategoryController@productListingCategories");
 
+Route::post('/cash-register-logs/open', "{$baseRoutes['cash-register-logs']}@open");
+Route::post('/cash-register-logs/close', "{$baseRoutes['cash-register-logs']}@close");
+
 Route::get('/magento/authorize', 'Auth\MagentoOAuthController@authorizeMagento');
+
+Route::post('/pos', 'PosTerminalController@makePayment');

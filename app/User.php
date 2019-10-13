@@ -9,6 +9,7 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    protected $with = ['open_register'];
     /**
      * The attributes that are mass assignable.
      *
@@ -38,4 +39,13 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function open_register()
+    {
+        $openLog = $this->hasOne(CashRegisterLogs::class);
+        if (empty($openLog)) {
+            return false;
+        }
+        return $openLog->whereStatus(1);
+    }
 }

@@ -6,99 +6,99 @@
 					<v-icon left>fas fa-warehouse</v-icon>Store Form
 				</v-chip>
 			</div>
-			<v-text-field v-model="name" :rules="nameRules" :counter="10" label="Name" required></v-text-field>
+			<v-text-field v-model="formFields.name" :counter="30" label="Name" required></v-text-field>
 			<v-row justify="space-around">
-				<v-switch v-model="taxable" :label="`Taxable : ${taxable.toString()}`"></v-switch>
-				<v-switch v-model="is_default" :label="`Default : ${is_default.toString()}`"></v-switch>
+				<v-switch v-model="formFields.taxable" label="Taxable"></v-switch>
+				<v-switch v-model="formFields.is_default" label="Default"></v-switch>
 			</v-row>
 			<v-select
-				v-model="tax_id"
+				v-model="formFields.tax_id"
 				:items="taxes"
-				:rules="[v => !!v || 'Tax is required']"
 				label="Taxes"
 				required
 				item-text="name"
 				item-value="id"
 			></v-select>
-
 			<v-btn class="mr-4" @click="submit">submit</v-btn>
 			<v-btn @click="clear">clear</v-btn>
 		</v-form>
-		<v-alert v-if="savingSuccessful === true" class="mt-4" type="success">Form submitted successfully!</v-alert>
 	</div>
 </template>
 
 <script>
-  import { mapActions } from 'vuex'
+import { mapActions } from "vuex";
 
-  export default {
-		data: () => ({
-			savingSuccessful: false,
-			tax_id: null,
+export default {
+	props: {
+		model: Object || undefined
+	},
+	data() {
+		return {
 			valid: true,
-			name: "",
-			taxable: false,
-			is_default: false,
-			created_by: null,
 			taxes: [],
-			nameRules: [
-				// v => !!v || "Name is required",
-				v => v.length <= 10 || "Name must be less than 10 characters"
-			]
-		}),
-		mounted() {
+			defaultValues: {},
+			formFields: {
+				name: null,
+				tax_id: null,
+				taxable: false,
+				is_default: false,
+				created_by: null
+			}
+		};
+	},
+	mounted() {
+		this.getAll({
+			model: "taxes"
+		}).then(taxes => {
+			this.taxes = taxes;
+		});
+		this.defaultValues = this.formFields;
+		if (this.$props.model) {
+			this.formFields = {
+				...this.$props.model
+			};
+		}
+	},
+	methods: {
+		submit() {
+			let payload = {
+				model: "stores",
+				data: { ...this.formFields }
+			};
+			this.create(payload).then(() => {
+				if (this.formFields.id == this.$store.state.store.id) {
+					this.$store.state.store = this.formFields;
+				}
+				this.clear();
+				this.$emit("submit", "stores");
+			});
+		},
+		beforeDestroy() {
+			this.$off("submit");
+		},
+		clear() {
+			this.formFields = { ...this.defaultValues };
+		},
+		getAllTaxes() {
 			this.getAll({
 				model: "taxes"
 			}).then(taxes => {
 				this.taxes = taxes;
 			});
 		},
-		methods: {
-			submit() {
-				let payload = {
-					model: "stores",
-					data: {
-						name: this.name,
-						taxable: this.taxable,
-						is_default: this.is_default,
-						tax_id: this.tax_id,
-						created_by: this.user_id
-					}
-				};
-				console.log(this.tax);
-				this.create(payload).then(() => {
-					this.clear();
-					this.savingSuccessful = true;
-                  window.location.reload()
-				});
-			},
-			clear() {
-				this.name = "";
-				this.taxable = false;
-				this.isdefault = false;
-				this.tax_id = null;
-				this.valid = false;
-			},
-			getAllTaxes() {
-				this.getAll({
-					model: "taxes"
-				}).then(taxes => {
-					this.taxes = taxes;
-				});
-			},
-			...mapActions({
-				getAll: "getAll",
-				getOne: "getOne",
-				create: "create",
-				delete: "delete"
-			})
-		},
-		computed: {
-			user_id: {
-				get() {
-					return this.$store.state.user.id;
-				}
+		...mapActions({
+			getAll: "getAll",
+			getOne: "getOne",
+			create: "create",
+			delete: "delete"
+		})
+	},
+	computed: {
+		user_id: {
+			get() {
+				return this.$store.state.user.id;
 			}
 		}
-	};
+	}
+};
 </script>

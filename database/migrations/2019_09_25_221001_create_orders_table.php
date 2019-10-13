@@ -16,7 +16,7 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('customer_id')->nullable();
-            $table->enum('status', ['pending', 'pending_payment', 'paid', 'complete'])->nullable();
+            $table->enum('status', ['pending', 'pending_payment', 'paid', 'complete', 'canceled'])->nullable();
             $table->enum('discount_type', ['flat', 'percentage'])->nullable();
             $table->unsignedSmallInteger('discount_amount')->default(0)->nullable();
             $table->string('shipping_type')->nullable();

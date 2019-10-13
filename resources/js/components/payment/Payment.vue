@@ -1,6 +1,11 @@
 <template>
 	<div>
-		<paymentHistory :paymentHistory="paymentHistory" :loading="paymentHistoryLoading" v-if="history"></paymentHistory>
+		<paymentHistory
+			:paymentHistory="paymentHistory"
+			:loading="paymentHistoryLoading"
+			v-if="history"
+			@refund="refund"
+		></paymentHistory>
 
 		<v-divider></v-divider>
 
@@ -9,6 +14,8 @@
 			:types="paymentTypes"
 			:remaining="remaining"
 			:loading="paymentActionsLoading"
+			title="Order payment"
+			paymentBtnTxt="Send payment"
 			v-if="actions"
 			@sendPayment="sendPayment"
 		></paymentActions>
@@ -27,6 +34,7 @@ export default {
 	data() {
 		return {
 			order: {},
+			order_remaining: undefined,
 			paymentHistory: [],
 			orderHistory: [],
 			paymentTypes: [],
@@ -42,8 +50,13 @@ export default {
 	},
 
 	computed: {
-		remaining() {
-			return this.order.total - this.order.total_paid;
+		remaining: {
+			get() {
+				return this.order_remaining;
+			},
+			set(value) {
+				this.order_remaining = value;
+			}
 		},
 		paymentType: {
 			get() {
@@ -86,6 +99,8 @@ export default {
 			};
 			this.getOne(payload).then(response => {
 				this.order = response;
+
+				this.remaining = this.order.total - this.order.total_paid;
 			});
 		},
 		getPaymentHistory() {
@@ -138,6 +153,8 @@ export default {
 
 			this.create(payload)
 				.then(response => {
+					this.order_remaining = response.total - response.total_paid;
+
 					let notification = {
 						msg: "Payment received",
 						type: "success"
@@ -150,6 +167,15 @@ export default {
 					this.paymentAmount = null;
 					this.paymentActionsLoading = false;
 				});
+		},
+		refund(event) {
+			let notification = {
+				msg: event.msg,
+				type: event.status
+			};
+			this.setNotification(notification);
+
+			this.init();
 		},
 
 		...mapActions(["search", "create", "getAll", "getOne"]),

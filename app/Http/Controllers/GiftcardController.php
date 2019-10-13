@@ -8,18 +8,24 @@ use Illuminate\Http\Request;
 class GiftcardController extends BaseController
 {
     protected $model = Giftcard::class;
-    
+
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required|alpha',
+            'name' => 'required|string',
             'code' => 'required|string',
             'enabled' => 'required|boolean',
             'amount' => 'required|numeric',
         ]);
-        
-        $giftcard = $this->model::store($validatedData);
-        
-        return response($giftcard, 201);
+
+        $validatedID = $request->validate([
+            'id' => 'nullable|exists:giftcards,id'
+        ]);
+
+        if (!empty($validatedID)) {
+            return response($this->model::updateData($validatedID, $validatedData), 200);
+        } else {
+            return response($this->model::store($validatedData), 201);
+        }
     }
 }

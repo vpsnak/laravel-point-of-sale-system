@@ -15,11 +15,20 @@ class CategoryController extends BaseController
             'name' => 'required|string',
             'in_product_listing' => 'required|boolean',
         ]);
-        return response($this->model::store($validatedData), 201);
+
+        $validatedID = $request->validate([
+            'id' => 'nullable|exists:categories,id'
+        ]);
+
+        if (!empty($validatedID)) {
+            return response($this->model::updateData($validatedID, $validatedData), 200);
+        } else {
+            return response($this->model::store($validatedData), 201);
+        }
     }
 
     public function productListingCategories()
     {
-        return response(Category::getAllPaginate('in_product_listing', 1, 2), 200);
+        return response(Category::getAllPaginate('in_product_listing', 1, 20), 200);
     }
 }

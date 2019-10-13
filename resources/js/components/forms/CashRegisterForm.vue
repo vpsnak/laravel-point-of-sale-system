@@ -6,9 +6,9 @@
 					<v-icon left>fas fa-cash-register</v-icon>Cash Register Form
 				</v-chip>
 			</div>
-			<v-text-field v-model="name" label="Name" required></v-text-field>
+			<v-text-field v-model="formFields.name" label="Name" required></v-text-field>
 			<v-select
-				v-model="store_id"
+				v-model="formFields.store_id"
 				:items="stores"
 				:rules="[v => !!v || 'Store is required']"
 				label="Stores"
@@ -23,55 +23,69 @@
 	</div>
 </template>
 <script>
-	import { mapActions } from "vuex";
+import { mapActions } from "vuex";
 
-	export default {
-		data: () => ({
+export default {
+	props: {
+		model: Object || undefined
+	},
+	data() {
+		return {
 			savingSuccessful: false,
-			name: null,
-			store_id: null,
+			defaultValues: {},
+			formFields: {
+				name: null,
+				store_id: null
+			},
 			stores: []
-		}),
-		mounted() {
+		};
+	},
+	mounted() {
+		this.getAll({
+			model: "stores"
+		}).then(stores => {
+			this.stores = stores;
+		});
+		this.defaultValues = this.formFields;
+		if (this.$props.model) {
+			this.formFields = {
+				...this.$props.model
+			};
+		}
+	},
+	methods: {
+		submit() {
+			let payload = {
+				model: "cash-registers",
+				data: { ...this.formFields }
+			};
+			this.create(payload).then(() => {
+				if (this.formFields.id == this.$store.state.cashRegister.id) {
+					this.$store.state.cashRegister = this.formFields;
+				}
+				this.clear();
+				this.$emit("submit", "cash-registers");
+			});
+		},
+		beforeDestroy() {
+			this.$off("submit");
+		},
+		clear() {
+			this.formFields = { ...this.defaultValues };
+		},
+		getAllStores() {
 			this.getAll({
 				model: "stores"
 			}).then(stores => {
 				this.stores = stores;
 			});
 		},
-		methods: {
-			submit() {
-				let payload = {
-					model: "cash-registers",
-					data: {
-						name: this.name,
-						store_id: this.store_id
-					}
-				};
-				console.log(this.tax);
-				this.create(payload).then(() => {
-					this.clear();
-					this.savingSuccessful = true;
-					window.location.reload();
-				});
-			},
-			clear() {
-				this.name = "";
-				this.store_id = null;
-			},
-			getAllStores() {
-				this.getAll({
-					model: "stores"
-				}).then(stores => {
-					this.stores = stores;
-				});
-			},
-			...mapActions({
-				getAll: "getAll",
-				getOne: "getOne",
-				create: "create",
-				delete: "delete"
-			})
-		}
-	};
+		...mapActions({
+			getAll: "getAll",
+			getOne: "getOne",
+			create: "create",
+			delete: "delete"
+		})
+	}
+};
 </script>

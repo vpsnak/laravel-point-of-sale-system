@@ -1,24 +1,20 @@
 <template>
-	<v-sheet class="pa-3 d-flex flex-column" style="height:100%">
-		<div class="d-flex align-center justify-space-between">
+	<v-card class="pa-3 d-flex flex-column" style="max-height: 90vh;">
+		<div class="d-flex align-center justify-center py-5">
 			<div :class="titleClass">
-				<v-icon>{{ icon }}</v-icon>
-				<h5 class="title-2 ml-2">{{ title }}</h5>
-			</div>
-
-			<div v-if="toggles" class="d-flex align-center justify-space-between">
-				<v-switch label="Retail" v-model="retail" class="px-2"></v-switch>
-				<v-switch label="Taxes" v-model="taxes" class="px-2"></v-switch>
+				<v-icon class="pr-2">{{ icon }}</v-icon>
+				<h4 class="title-2">{{ title }}</h4>
 			</div>
 		</div>
 
 		<v-divider />
 
-		<customerSearch :editable="editable" :keywordLength="1"></customerSearch>
+		<customerSearch :editable="editable" :keywordLength="1" class="my-3"></customerSearch>
 
 		<cartProducts :products="items ? items : products" :editable="editable"></cartProducts>
 
 		<v-divider />
+
 		<div class="d-flex flex-column">
 			<v-row class="d-flex justify-space-between align-center">
 				<v-col cols="4" class="px-5 py-0">
@@ -31,13 +27,13 @@
 
 			<v-divider />
 
-			<cartTotals :products="items ? items : products" :taxes="taxes" :cart="cartDiscount" />
+			<cartTotals :products="items ? items : products" :cart="cartDiscount" :order="order" />
 
 			<div v-if="actions">
 				<cartActions :disabled="totalProducts" />
 			</div>
 		</div>
-	</v-sheet>
+	</v-card>
 </template>
 
 <script>
@@ -45,34 +41,18 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
+		order: Array | null,
 		items: Array | null,
 		title: String,
 		icon: String | null,
 		editable: Boolean | null,
-		actions: Boolean | null,
-		toggles: Boolean | null
+		actions: Boolean | null
 	},
 	computed: {
 		titleClass() {
 			return this.$props.toggles
-				? "d-flex align-center pb-5"
+				? "d-flex align-center pb-2"
 				: "d-flex align-center";
-		},
-		retail: {
-			get() {
-				return this.$store.state.cart.retail;
-			},
-			set() {
-				this.$store.commit("cart/toggleRetail");
-			}
-		},
-		taxes: {
-			get() {
-				return this.$store.state.cart.taxes;
-			},
-			set() {
-				this.$store.commit("cart/toggleTaxes");
-			}
 		},
 		cartDiscount() {
 			let discount = {

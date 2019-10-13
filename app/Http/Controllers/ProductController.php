@@ -16,7 +16,16 @@ class ProductController extends BaseController
             'sku' => 'required|string',
         ]);
 
-        return response($this->model::store($validatedData), 201);
+
+        $validatedID = $request->validate([
+            'id' => 'nullable|exists:products,id'
+        ]);
+
+        if (!empty($validatedID)) {
+            return response($this->model::updateData($validatedID, $validatedData), 200);
+        } else {
+            return response($this->model::store($validatedData), 201);
+        }
     }
 
     public function search(Request $request)

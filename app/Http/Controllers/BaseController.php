@@ -49,7 +49,15 @@ class BaseController extends Controller
         }
         $validatedData = $request->validate($fieldsToValidate);
 
-        return response($this->model::store($validatedData), 201);
+        $validatedID = $request->validate([
+            'id' => 'nullable|exists:' . (new $this->model)->getTable() . ',id'
+        ]);
+
+        if (!empty($validatedID)) {
+            return response($this->model::updateData($validatedID, $validatedData), 200);
+        } else {
+            return response($this->model::store($validatedData), 201);
+        }
     }
 
     public function search(Request $request)

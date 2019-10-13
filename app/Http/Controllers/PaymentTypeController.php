@@ -12,13 +12,21 @@ class PaymentTypeController extends BaseController
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required|alpha',
+            'name' => 'required|string',
             'type' => 'required|boolean',
             'status' => 'required|boolean',
             'is_default' => 'required|boolean',
             'created_by' => 'required|exists:users,id',
         ]);
 
-        return response($this->model::store($validatedData), 201);
+        $validatedID = $request->validate([
+            'id' => 'nullable|exists:payment_types,id'
+        ]);
+
+        if (!empty($validatedID)) {
+            return response($this->model::updateData($validatedID, $validatedData), 200);
+        } else {
+            return response($this->model::store($validatedData), 201);
+        }
     }
 }

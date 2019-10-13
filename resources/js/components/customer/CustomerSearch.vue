@@ -1,11 +1,11 @@
 <template>
-	<div class="d-flex">
-		<v-autocomplete
+	<div>
+		<v-combobox
 			v-if="editable"
 			v-model="cartCustomer"
 			clearable
 			dense
-			:items="customers"
+			:items="results"
 			:loading="loading"
 			:search-input.sync="search"
 			color="white"
@@ -14,9 +14,9 @@
 			:item-text="getCustomerFullname"
 			label="Select customer"
 			placeholder="Start typing to Search"
-			prepend-icon="mdi-database-search"
+			prepend-icon="mdi-account-search"
 			return-object
-		></v-autocomplete>
+		></v-combobox>
 		<v-text-field v-else :value="getCustomerFullname(cartCustomer)" disabled prepend-icon="person"></v-text-field>
 	</div>
 </template>
@@ -31,10 +31,18 @@ export default {
 		return {
 			loading: false,
 			search: null,
-			customers: undefined
+			customers: []
 		};
 	},
 	computed: {
+		results: {
+			get() {
+				return this.customers;
+			},
+			set(value) {
+				this.customers = value;
+			}
+		},
 		cartCustomer: {
 			get() {
 				return this.$store.state.cart.customer;
@@ -62,10 +70,7 @@ export default {
 			this.$store
 				.dispatch("search", payload)
 				.then(result => {
-					this.customers = result;
-				})
-				.catch(error => {
-					console.log(error);
+					this.results = result;
 				})
 				.finally(() => (this.loading = false));
 		}
@@ -82,8 +87,6 @@ export default {
 					}
 				}
 			}
-			this.cartCustomer = undefined;
-			return;
 		}
 	}
 };

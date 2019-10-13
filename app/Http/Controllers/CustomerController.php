@@ -20,20 +20,23 @@ class CustomerController extends BaseController
         ]);
 
         $address = $request->validate([
-//            'addresses.area_code_id' => 'required|nullable|string',
+            'addresses.area_code_id' => 'required|string',
             'addresses.first_name' => 'required|string',
             'addresses.last_name' => 'required|string',
             'addresses.street' => 'required|string',
-//            'addresses.city' => 'required|string',
-//            'addresses.county_id' => 'nullable|string',
+            'addresses.city' => 'required|string',
+            'addresses.country_id' => 'nullable|string',
             'addresses.region' => 'required|string',
             'addresses.postcode' => 'required|string',
             'addresses.phone' => 'required|numeric',
         ]);
 
-        $customer = $this->model::store($validatedData);
-        $customer->addresses()->attach($address);
+//        $customer = $this->model::store($validatedData);
+        $customer = $this->model::find(1);
+//        dd($address['addresses']);
+        $customer->addresses()->create($address['addresses']);
 
+        // @TODO fix update
         return response($customer, 201);
     }
 

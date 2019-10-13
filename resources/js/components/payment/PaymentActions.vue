@@ -1,7 +1,7 @@
 <template>
 	<v-row>
 		<v-col cols="12">
-			<h3>Order payment</h3>
+			<h3>{{ title }}</h3>
 		</v-col>
 		<v-col cols="12">
 			<div class="d-flex justify-space-evenly align-center">
@@ -28,10 +28,10 @@
 						style="max-width:300px;"
 					></v-text-field>
 					<v-text-field
-						label="Security code"
+						label="CVC/CVV"
 						type="number"
 						prepend-inner-icon="mdi-lock"
-						v-model="card.security_code"
+						v-model="card.cvc"
 						style="max-width:300px;"
 					></v-text-field>
 					<v-text-field
@@ -49,7 +49,8 @@
 					label="Amount"
 					type="number"
 					prepend-inner-icon="mdi-currency-usd"
-					v-model="paymentAmount"
+					v-model="amount"
+					@change="limits"
 					style="max-width:150px;"
 				></v-text-field>
 
@@ -67,9 +68,9 @@
 			</div>
 		</v-col>
 		<v-col cols="12">
-			<v-btn @click="sendPayment" :loading="loading" :disabled="loading" block>Send payment</v-btn>
+			<v-btn @click="sendPayment" :loading="loading" :disabled="loading" block>{{ paymentBtnTxt }}</v-btn>
 		</v-col>
-		<v-col cols="12">
+		<v-col cols="12" v-if="remaining !== undefined">
 			<span class="title">Remaining: $ {{ remaining }}</span>
 		</v-col>
 	</v-row>
@@ -80,6 +81,8 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
+		title: String,
+		paymentBtnTxt: String,
 		types: Array,
 		remaining: Number,
 		loading: Boolean
@@ -92,15 +95,29 @@ export default {
 
 			card: {
 				number: null,
-				security_code: null,
+				cvc: null,
 				exp_date: null
 			}
 		};
 	},
 
-	mounted() {},
+	computed: {
+		amount: {
+			get() {
+				return this.paymentAmount;
+			},
+			set(value) {
+				if (this.$props.remaining && value > this.$props.remaining) {
+					this.paymentAmount = this.$props.remaining;
+				} else {
+					this.paymentAmount = value;
+				}
+			}
+		}
+	},
 
 	methods: {
+		limits() {},
 		sendPayment() {
 			let payload;
 
@@ -144,7 +161,7 @@ export default {
 		}
 	},
 	beforeDestroy() {
-		this.$off("sendPayment", this.address);
+		this.$off("sendPayment", this.sendPayment);
 	}
 };
 </script>

@@ -2,9 +2,6 @@ export default {
     namespaced: true,
 
     state: {
-        retail: true,
-        taxes: true,
-
         discountTypes: [
             {
                 label: "None",
@@ -22,24 +19,24 @@ export default {
 
         checkoutSteps: [
             {
+                id: 1,
                 name: "Shipping options",
                 icon: "local_shipping",
                 component: "shippingStep",
-                showIfRetail: false,
                 completed: false
             },
             {
+                id: 2,
                 name: "Payment",
                 icon: "payment",
                 component: "paymentStep",
-                showIfRetail: true,
                 completed: false
             },
             {
+                id: 3,
                 name: "Completion",
                 icon: "check_circle",
                 component: "completion",
-                showIfRetail: true,
                 completed: false
             }
         ],
@@ -53,35 +50,16 @@ export default {
 
         shipping: {},
 
-        order: undefined
-    },
-
-    getters: {
-        getCheckoutSteps(state) {
-            return state.retail
-                ? state.checkoutSteps.filter(
-                      checkoutStep => checkoutStep.showIfRetail
-                  )
-                : state.checkoutSteps;
-        }
+        order: {}
     },
 
     mutations: {
-        emptyCart(state) {
-            state.products = [];
-            state.products = [];
-            state.discount_type = null;
-            state.discount_amount = null;
-        },
-        toggleRetail(state) {
-            state.retail = !state.retail;
-        },
-        toggleTaxes(state) {
-            state.taxes = !state.taxes;
-        },
         addProduct(state, product) {
-            if (_.includes(state.products, product)) {
-                let index = _.findIndex(state.products, product);
+            let index = _.findIndex(state.products, productState => {
+                return productState.id === product.id;
+            });
+
+            if (index != -1) {
                 state.products[index].qty++;
             } else {
                 Vue.set(product, "qty", 1);
@@ -89,38 +67,45 @@ export default {
             }
         },
         increaseProductQty(state, product) {
-            let index = _.findIndex(state.products, product);
+            let index = _.findIndex(state.products, productState => {
+                return productState.id === product.id;
+            });
 
-            state.products[index].qty++;
+            if (index != -1) {
+                state.products[index].qty++;
+            }
         },
         decreaseProductQty(state, product) {
-            let index = _.findIndex(state.products, product);
+            let index = _.findIndex(state.products, productState => {
+                return productState.id === product.id;
+            });
 
-            if (state.products[index].qty > 1) {
+            if (index != -1 && state.products[index].qty > 1) {
                 state.products[index].qty--;
             }
         },
         setDiscount(state, model) {
             if (Array.isArray(model)) {
                 state.discount_type = model.discount_type;
-                state.discount_amount = model.discount_amount;
+
+                state.discount_amount = parseFloat(model.discount_amount);
             } else {
                 let index = _.findIndex(state.products, iterator => {
                     return iterator.id === model.id;
                 });
 
                 state.products[index].discount_type = model.discount_type;
-                state.products[index].discount_amount = model.discount_amount;
+                state.products[index].discount_amount = parseFloat(
+                    model.discount_amount
+                );
             }
         },
         setCustomer(state, customer) {
             state.customer = customer;
         },
-        completeStep(state, currentStep) {
-            let result = _.find(state.checkoutSteps, currentStep);
-
-            result.completed = true;
-            _.merge(result, currentStep);
+        completeStep(state) {
+            let index = -1 + state.currentCheckoutStep;
+            state.checkoutSteps[index].completed = true;
         },
         nextCheckoutStep(state) {
             state.currentCheckoutStep++;
@@ -136,9 +121,9 @@ export default {
             state.discount_type = "";
             state.discount_amount = 0;
             state.shipping = {};
-            state.order = undefined;
+            state.order = {};
 
-            state.checkoutSteps.forearch(checkoutStep => {
+            state.checkoutSteps.forEach(checkoutStep => {
                 checkoutStep.completed = false;
             });
         }
@@ -155,8 +140,7 @@ export default {
                         status: "pending",
                         discount_type: state.discount_type,
                         discount_amount: state.discount_amount,
-                        products: state.products,
-                        tax: 5 // @TODO: needs reevaluation
+                        products: state.products
                     }
                 };
 
@@ -165,7 +149,6 @@ export default {
                 })
                     .then(response => {
                         commit("setOrder", response);
-                        commit("emptyCart");
                         resolve(response);
                     })
                     .catch(error => {
@@ -173,8 +156,8 @@ export default {
                     });
             });
         },
-        completeStep(context, currentStep) {
-            context.commit("completeStep", currentStep);
+        completeStep(context) {
+            context.commit("completeStep");
             context.commit("nextCheckoutStep");
         }
     }

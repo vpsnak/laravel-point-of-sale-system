@@ -81,7 +81,8 @@
 
 <script>
 export default {
-    data: () => ({
+    	data() {
+			return {
         search: "",
         dialog: false,
         headers: [
@@ -113,7 +114,7 @@ export default {
             carbs: 0,
             protein: 0
         }
-    }),
+    }},
 
     computed: {
         formTitle() {
