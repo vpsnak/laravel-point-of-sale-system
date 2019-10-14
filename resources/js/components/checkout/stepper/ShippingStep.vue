@@ -16,7 +16,9 @@
 export default {
 	data() {
 		return {
-			shipping: {}
+			shipping: {
+				method: "pickup"
+			}
 		};
 	},
 	props: {

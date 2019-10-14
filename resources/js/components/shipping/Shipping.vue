@@ -62,7 +62,7 @@ export default {
 			timePicker: false,
 			shipping: {
 				notes: "",
-				method: undefined,
+				method: "pickup",
 				date: undefined,
 				time: undefined,
 				cost: 15
