@@ -4,7 +4,10 @@
 		<v-card-actions>
 			<span class="title" v-if="shipping.cost">Shipping cost: $ {{ shipping.cost }}</span>
 			<div class="flex-grow-1"></div>
-			<v-btn color="primary" v-if="showNext()" @click="completeStep()">Continue</v-btn>
+			<v-btn color="primary" v-if="showNext()" @click="completeStep()">
+				Next
+				<v-icon small right>mdi-chevron-right</v-icon>
+			</v-btn>
 		</v-card-actions>
 	</div>
 </template>

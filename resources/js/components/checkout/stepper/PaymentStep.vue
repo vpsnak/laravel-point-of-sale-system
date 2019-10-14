@@ -1,10 +1,11 @@
 <template>
 	<div>
-		<payment :order_id="order.id" history actions />
+		<payment :order_id="order.id" history actions @amountPending="showCompleteBtn" />
 		<v-card-actions>
 			<v-btn color="secondary" @click="prevStep()">Back</v-btn>
 			<div class="flex-grow-1"></div>
 			<v-btn
+				v-if="completed"
 				color="primary"
 				@click="completeStep()"
 				:loading="loading"
@@ -22,6 +23,7 @@ export default {
 	},
 	data() {
 		return {
+			completed: false,
 			loading: false
 		};
 	},
@@ -29,6 +31,13 @@ export default {
 		...mapState("cart", ["order"])
 	},
 	methods: {
+		showCompleteBtn(event) {
+			if (event > 0) {
+				this.completed = false;
+			} else {
+				this.completed = true;
+			}
+		},
 		completeStep() {
 			this.loading = true;
 			let payload = {

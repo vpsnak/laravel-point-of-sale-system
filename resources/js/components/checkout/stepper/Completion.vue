@@ -2,7 +2,10 @@
 	<div>
 		completion
 		<v-card-actions class="justify-center">
-			<v-btn color="success" @click="close">Close</v-btn>
+			<v-btn color="success" @click="close">
+				Close
+				<v-icon right small>mdi-check</v-icon>
+			</v-btn>
 		</v-card-actions>
 	</div>
 </template>

@@ -16,7 +16,7 @@
 			:loading="paymentActionsLoading"
 			title="Order payment"
 			paymentBtnTxt="Send payment"
-			v-if="actions"
+			v-if="actions && (remaining > 0 || remaining === undefined)"
 			@sendPayment="sendPayment"
 		></paymentActions>
 	</div>
@@ -33,6 +33,7 @@ export default {
 	},
 	data() {
 		return {
+			show_actions: undefined,
 			order: {},
 			order_remaining: undefined,
 			payment_history: [],
@@ -109,6 +110,7 @@ export default {
 				this.order = response;
 
 				this.remaining = this.order.total - this.order.total_paid;
+				this.$emit("amountPending", this.remaining);
 			});
 		},
 		getPaymentHistory() {
@@ -190,6 +192,9 @@ export default {
 
 		...mapActions(["search", "create", "getAll", "getOne"]),
 		...mapMutations(["setNotification"])
+	},
+	beforeDestroy() {
+		this.$off("amountPending");
 	}
 };
 </script>

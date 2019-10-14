@@ -71,7 +71,14 @@
 			</div>
 		</v-col>
 		<v-col cols="12">
-			<v-btn @click="sendPayment" :loading="loading" :disabled="loading" block>{{ paymentBtnTxt }}</v-btn>
+			<v-btn
+				color="blue-grey"
+				@click="sendPayment"
+				:loading="loading"
+				:disabled="loading"
+				block
+				v-show="remaining > 0"
+			>{{ paymentBtnTxt }}</v-btn>
 		</v-col>
 		<v-col cols="12" v-if="remaining !== undefined">
 			<span class="title">Remaining: $ {{ remaining }}</span>

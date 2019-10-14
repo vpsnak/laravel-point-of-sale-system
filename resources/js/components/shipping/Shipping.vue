@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="d-flex justify-center align-center">
+		<div class="d-flex justify-center">
 			<v-radio-group v-model="shipping.method" @change="selectedShippingMethod" row>
 				<v-radio label="In store pickup" value="pickup"></v-radio>
 				<v-radio label="Shipping" value="shipping"></v-radio>
