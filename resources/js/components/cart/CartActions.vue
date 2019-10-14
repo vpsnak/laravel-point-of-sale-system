@@ -23,7 +23,7 @@
 				<v-icon>fa-recycle</v-icon>
 				<v-badge overlap color="purple" style="position: absolute; top: 0;right:38%;">
 					<template v-slot:badge>
-						<span>{{ cartOnHoldSize }}</span>
+						<span>{{ cartsOnHoldSize }}</span>
 					</template>
 				</v-badge>
 			</v-btn>
@@ -42,7 +42,7 @@
 		</div>
 
 		<checkoutDialog :show="checkoutDialog" />
-		<cartRestoreDialog :show="cartRestoreDialog" />
+		<cartRestoreDialog :show="cartRestoreDialog" :key="cartsOnHoldSize" />
 	</div>
 </template>
 
@@ -52,14 +52,27 @@ import { mapActions } from "vuex";
 export default {
 	data() {
 		return {
-			checkoutLoading: false
+			checkoutLoading: false,
+			carts_on_hold_size: 0
 		};
 	},
 	props: {
 		disabled: Boolean
 	},
 
+	mounted() {
+		this.getCartsOnHoldSize();
+	},
+
 	computed: {
+		cartsOnHoldSize: {
+			get() {
+				return this.carts_on_hold_size;
+			},
+			set(value) {
+				this.carts_on_hold_size = value;
+			}
+		},
 		products: {
 			get() {
 				return this.$store.state.cart;
@@ -80,9 +93,6 @@ export default {
 			set(value) {
 				this.$store.state.cartRestoreDialog = value;
 			}
-		},
-		cartOnHoldSize() {
-			return _.size(this.cartsOnHold);
 		}
 	},
 
@@ -120,7 +130,9 @@ export default {
 				}
 			};
 			this.create(payload).then(() => {
+				this.getCartsOnHoldSize();
 				this.emptyCart(false);
+
 				this.$store.commit("setNotification", {
 					msg: "Cart added on hold list",
 					type: "info"
@@ -128,14 +140,15 @@ export default {
 			});
 		},
 		showRestoreOnHoldCartDialog() {
-			this.getCartsOnHold();
 			this.cartRestoreDialog = true;
 		},
-		getCartsOnHold() {
+		getCartsOnHoldSize() {
 			let payload = {
 				model: "carts"
 			};
-			this.$store.dispatch("getAll", payload);
+			this.$store.dispatch("getAll", payload).then(response => {
+				this.cartsOnHoldSize = _.size(response);
+			});
 		},
 		...mapActions({
 			getAll: "getAll",
