@@ -2,7 +2,9 @@
 	<div>
 		<payment :order_id="order.id" history actions @amountPending="showCompleteBtn" />
 		<v-card-actions>
-			<v-btn color="secondary" @click="prevStep()">Back</v-btn>
+			<v-btn color="grey" @click="prevStep()">
+				<v-icon small left>mdi-chevron-left</v-icon>Back
+			</v-btn>
 			<div class="flex-grow-1"></div>
 			<v-btn
 				v-if="completed"

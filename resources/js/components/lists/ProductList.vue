@@ -16,6 +16,8 @@
 					placeholder="Search product"
 					class="mx-2"
 					@keyup.enter="searchProduct"
+					clearable
+					@click:clear="getAllProducts"
 				></v-text-field>
 				<v-tooltip bottom>
 					<template v-slot:activator="{ on }">
@@ -61,14 +63,6 @@
 										<v-icon class="pr-2">mdi-heart</v-icon>
 										<h5>Add to favorites</h5>
 									</v-list-item>
-									<v-list-item @click="viewProduct(product)">
-										<v-icon class="pr-2">remove_red_eye</v-icon>
-										<h5>View</h5>
-									</v-list-item>
-									<v-list-item @click="editProduct(product)">
-										<v-icon class="pr-2">edit</v-icon>
-										<h5>Edit</h5>
-									</v-list-item>
 								</v-list>
 							</v-menu>
 						</v-card-title>
@@ -84,24 +78,12 @@
 		<interactiveDialog
 			v-if="showCreateDialog"
 			:show="showCreateDialog"
-			:model="defaultObject"
+			:model="{}"
 			component="dummyProductForm"
 			title="Add a dummy product"
 			@action="result"
 			cancelBtnTxt="Close"
 			persistent
-			titleCloseBtn
-		></interactiveDialog>
-		<interactiveDialog
-			v-if="showEditDialog"
-			:show="showEditDialog"
-			title="Edit item"
-			:width="600"
-			component="productForm"
-			:model="defaultObject"
-			@action="edit"
-			persistent
-			action="edit"
 			titleCloseBtn
 		></interactiveDialog>
 	</v-card>
@@ -111,11 +93,8 @@
 export default {
 	data() {
 		return {
-			defaultObject: {},
-			showEditDialog: false,
 			showCreateDialog: false,
 			loader: false,
-			disableFilters: false,
 			model: "products",
 			keyword: "",
 			selectedCategories: []
@@ -128,6 +107,8 @@ export default {
 	computed: {
 		productList: {
 			get() {
+				return this.$store.state.productList;
+
 				if (this.selectedCategories.length) {
 					let filteredProducts = [];
 
@@ -163,29 +144,14 @@ export default {
 		}
 	},
 	methods: {
-		clearFilters() {},
 		addToFavorites(product) {},
-		viewProduct(product) {},
-
-		editProduct(product) {
-			this.defaultObject = product;
-			this.action = "edit";
-			this.showEditDialog = true;
-		},
-		applyFilter(filter) {},
 		initiateLoadingSearchResults(loading) {
 			if (loading) {
 				this.loader = true;
-				this.disableFilters = true;
 				this.productList = [];
 			} else {
 				this.loader = false;
-				this.disableFilters = false;
 			}
-		},
-
-		setProductListByCategoryProducts(category) {
-			this.productList = category.products;
 		},
 		getAllProducts() {
 			this.initiateLoadingSearchResults(true);
@@ -215,6 +181,8 @@ export default {
 		},
 		searchProduct() {
 			if (this.keyword.length > 0) {
+				this.selectedCategories = [];
+
 				this.initiateLoadingSearchResults(true);
 
 				let payload = {
