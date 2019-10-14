@@ -1,10 +1,8 @@
 <template>
 	<v-card class="pa-3 d-flex flex-column" style="max-height: 90vh;">
 		<div class="d-flex align-center justify-center py-5">
-			<div :class="titleClass">
-				<v-icon class="pr-2">{{ icon }}</v-icon>
-				<h4 class="title-2">{{ title }}</h4>
-			</div>
+			<v-icon class="pr-2">{{ icon }}</v-icon>
+			<h4 class="title-2">{{ title }}</h4>
 		</div>
 
 		<v-divider />
@@ -49,11 +47,6 @@ export default {
 		actions: Boolean | null
 	},
 	computed: {
-		titleClass() {
-			return this.$props.toggles
-				? "d-flex align-center pb-2"
-				: "d-flex align-center";
-		},
 		cartDiscount() {
 			let discount = {
 				discount_type: this.$store.state.cart.discount_type,
