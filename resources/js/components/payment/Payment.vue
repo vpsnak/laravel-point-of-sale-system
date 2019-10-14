@@ -85,7 +85,6 @@ export default {
 	},
 
 	mounted() {
-		this.paymentHistory = [];
 		this.init();
 	},
 
@@ -113,19 +112,21 @@ export default {
 			});
 		},
 		getPaymentHistory() {
-			this.paymentHistoryLoading = true;
+			if (this.$props.order_id > 0) {
+				this.paymentHistoryLoading = true;
 
-			let payload = {
-				model: "payments",
-				keyword: this.$props.order_id
-			};
-			this.search(payload)
-				.then(response => {
-					this.paymentHistory = response;
-				})
-				.finally(() => {
-					this.paymentHistoryLoading = false;
-				});
+				let payload = {
+					model: "payments",
+					keyword: this.$props.order_id
+				};
+				this.search(payload)
+					.then(response => {
+						this.paymentHistory = response;
+					})
+					.finally(() => {
+						this.paymentHistoryLoading = false;
+					});
+			}
 		},
 
 		getPaymentTypes() {
