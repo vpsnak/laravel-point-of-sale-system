@@ -1,16 +1,26 @@
 <template>
 	<div>
-		shipping here
+		<shipping @shipping="setShipping" />
 		<v-card-actions>
-			<v-btn color="secondary" @click="prevStep()">Back</v-btn>
+			<span class="title" v-if="shipping.cost">Shipping cost: $ {{ shipping.cost }}</span>
 			<div class="flex-grow-1"></div>
-			<v-btn color="primary" @click="completeStep()">Continue</v-btn>
+			<v-btn color="primary" v-if="showNext()" @click="completeStep()">
+				Next
+				<v-icon small right>mdi-chevron-right</v-icon>
+			</v-btn>
 		</v-card-actions>
 	</div>
 </template>
 
 <script>
 export default {
+	data() {
+		return {
+			shipping: {
+				method: "pickup"
+			}
+		};
+	},
 	props: {
 		currentStep: Object
 	},
@@ -21,6 +31,18 @@ export default {
 		},
 		prevStep() {
 			this.$store.state.cart.currentCheckoutStep--;
+		},
+		showNext() {
+			if (this.shipping.method === "pickup") {
+				return true;
+			} else {
+				if (this.shipping.date && this.shipping.time) {
+					return true;
+				}
+			}
+		},
+		setShipping(value) {
+			this.shipping = value;
 		}
 	}
 };

@@ -16,7 +16,7 @@
 			:loading="paymentActionsLoading"
 			title="Order payment"
 			paymentBtnTxt="Send payment"
-			v-if="actions"
+			v-if="actions && (remaining > 0 || remaining === undefined)"
 			@sendPayment="sendPayment"
 		></paymentActions>
 	</div>
@@ -33,9 +33,10 @@ export default {
 	},
 	data() {
 		return {
+			show_actions: undefined,
 			order: {},
 			order_remaining: undefined,
-			paymentHistory: [],
+			payment_history: [],
 			orderHistory: [],
 			paymentTypes: [],
 
@@ -52,7 +53,7 @@ export default {
 	computed: {
 		remaining: {
 			get() {
-				return this.order_remaining;
+				return parseFloat(this.order_remaining).toFixed(2);
 			},
 			set(value) {
 				this.order_remaining = value;
@@ -72,6 +73,14 @@ export default {
 			},
 			set(value) {
 				this.payment.amount = value;
+			}
+		},
+		paymentHistory: {
+			get() {
+				return this.payment_history;
+			},
+			set(value) {
+				this.payment_history = value;
 			}
 		}
 	},
@@ -101,22 +110,25 @@ export default {
 				this.order = response;
 
 				this.remaining = this.order.total - this.order.total_paid;
+				this.$emit("amountPending", this.remaining);
 			});
 		},
 		getPaymentHistory() {
-			this.paymentHistoryLoading = true;
+			if (this.$props.order_id > 0) {
+				this.paymentHistoryLoading = true;
 
-			let payload = {
-				model: "payments",
-				keyword: this.$props.order_id
-			};
-			this.search(payload)
-				.then(response => {
-					this.paymentHistory = response;
-				})
-				.finally(() => {
-					this.paymentHistoryLoading = false;
-				});
+				let payload = {
+					model: "payments",
+					keyword: this.$props.order_id
+				};
+				this.search(payload)
+					.then(response => {
+						this.paymentHistory = response;
+					})
+					.finally(() => {
+						this.paymentHistoryLoading = false;
+					});
+			}
 		},
 
 		getPaymentTypes() {
@@ -180,6 +192,9 @@ export default {
 
 		...mapActions(["search", "create", "getAll", "getOne"]),
 		...mapMutations(["setNotification"])
+	},
+	beforeDestroy() {
+		this.$off("amountPending");
 	}
 };
 </script>

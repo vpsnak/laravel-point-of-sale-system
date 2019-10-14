@@ -23,7 +23,7 @@
 				<v-icon>fa-recycle</v-icon>
 				<v-badge overlap color="purple" style="position: absolute; top: 0;right:38%;">
 					<template v-slot:badge>
-						<span>{{ cartOnHoldSize }}</span>
+						<span>{{ cartsOnHoldSize }}</span>
 					</template>
 				</v-badge>
 			</v-btn>
@@ -40,9 +40,19 @@
 				<v-icon>delete</v-icon>
 			</v-btn>
 		</div>
+		<interactiveDialog
+			v-if="emptyCartConfirmationDialog"
+			:show="emptyCartConfirmationDialog"
+			action="confirmation"
+			title="Empty cart"
+			content="<p>Are you sure you want to empty the cart?</p>"
+			@action="emptyConfirmation"
+			actions
+			persistent
+		/>
 
 		<checkoutDialog :show="checkoutDialog" />
-		<cartRestoreDialog :show="cartRestoreDialog" />
+		<cartRestoreDialog :show="cartRestoreDialog" :key="cartsOnHoldSize" @close="getCartsOnHoldSize" />
 	</div>
 </template>
 
@@ -52,14 +62,36 @@ import { mapActions } from "vuex";
 export default {
 	data() {
 		return {
-			checkoutLoading: false
+			empty_cart_confirmation_dialog: false,
+			checkoutLoading: false,
+			carts_on_hold_size: 0
 		};
 	},
 	props: {
 		disabled: Boolean
 	},
 
+	mounted() {
+		this.getCartsOnHoldSize();
+	},
+
 	computed: {
+		emptyCartConfirmationDialog: {
+			get() {
+				return this.empty_cart_confirmation_dialog;
+			},
+			set(value) {
+				this.empty_cart_confirmation_dialog = value;
+			}
+		},
+		cartsOnHoldSize: {
+			get() {
+				return this.carts_on_hold_size;
+			},
+			set(value) {
+				this.carts_on_hold_size = value;
+			}
+		},
 		products: {
 			get() {
 				return this.$store.state.cart;
@@ -80,9 +112,6 @@ export default {
 			set(value) {
 				this.$store.state.cartRestoreDialog = value;
 			}
-		},
-		cartOnHoldSize() {
-			return _.size(this.cartsOnHold);
 		}
 	},
 
@@ -98,10 +127,15 @@ export default {
 					this.checkoutLoading = false;
 				});
 		},
+		emptyConfirmation(event) {
+			if (event) {
+				this.$store.commit("cart/resetState");
+			}
+			this.emptyCartConfirmationDialog = false;
+		},
 		emptyCart(showPrompt) {
 			if (showPrompt) {
-				confirm("Are you sure you want to delete the cart?") &&
-					this.$store.commit("cart/resetState");
+				this.emptyCartConfirmationDialog = true;
 			} else {
 				this.$store.commit("cart/resetState");
 			}
@@ -120,7 +154,9 @@ export default {
 				}
 			};
 			this.create(payload).then(() => {
+				this.getCartsOnHoldSize();
 				this.emptyCart(false);
+
 				this.$store.commit("setNotification", {
 					msg: "Cart added on hold list",
 					type: "info"
@@ -128,14 +164,15 @@ export default {
 			});
 		},
 		showRestoreOnHoldCartDialog() {
-			this.getCartsOnHold();
 			this.cartRestoreDialog = true;
 		},
-		getCartsOnHold() {
+		getCartsOnHoldSize() {
 			let payload = {
 				model: "carts"
 			};
-			this.$store.dispatch("getAll", payload);
+			this.$store.dispatch("getAll", payload).then(response => {
+				this.cartsOnHoldSize = _.size(response);
+			});
 		},
 		...mapActions({
 			getAll: "getAll",

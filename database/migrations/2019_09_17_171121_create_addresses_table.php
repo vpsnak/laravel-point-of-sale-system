@@ -25,6 +25,8 @@ class CreateAddressesTable extends Migration
             $table->string('region', 100);
             $table->string('postcode', 100);
             $table->string('phone', 100);
+            $table->string('company', 100)->nullable();
+            $table->string('vat_id', 100)->nullable();
             $table->timestamps();
         });
     }

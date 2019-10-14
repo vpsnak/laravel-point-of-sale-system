@@ -27,7 +27,7 @@
 						</v-row>
 					</v-card-title>
 					<v-card-text>
-						<component :is="checkoutStep.component" />
+						<component :is="checkoutStep.component" :key="currentCheckoutStep" />
 					</v-card-text>
 				</v-card>
 			</v-stepper-content>
@@ -36,6 +36,8 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 export default {
 	computed: {
 		currentCheckoutStep() {
@@ -44,6 +46,14 @@ export default {
 		checkoutSteps() {
 			return this.$store.state.cart.checkoutSteps;
 		}
+	},
+	methods: {
+		uniqueKey() {
+			console.log(new Date().getTime());
+			return new Date().getTime();
+		},
+
+		...mapActions(["search", "create", "getAll", "getOne"])
 	}
 };
 </script>

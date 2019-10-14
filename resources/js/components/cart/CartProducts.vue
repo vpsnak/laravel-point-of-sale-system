@@ -21,7 +21,7 @@
 								type="number"
 								label="Qty"
 								v-model="product.qty"
-								min="1"
+								:min="1"
 								@click.stop
 								@blur="limits(product)"
 								@keyup="limits(product)"
@@ -74,11 +74,7 @@ export default {
 	},
 	methods: {
 		price(product) {
-			if (product.qty) {
-				return product.qty * product.final_price || product.qty * product.price;
-			} else {
-				return product.final_price || product.price;
-			}
+			return product.final_price || product.price;
 		},
 		limits(product) {
 			if (product.qty < 1) {

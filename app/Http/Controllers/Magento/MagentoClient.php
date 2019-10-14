@@ -12,10 +12,10 @@ class MagentoClient
     const ADMIN_TOKEN_URL = '/rest/V1/integration/admin/token';
     protected $credentials;
 
-    protected $baseUrl = 'http://silver.readytogo.gr/api/rest/';
+    protected $baseUrl;
 
-    protected $consumer_key = 'd0dfb1f1c192559714be8025e77a2a46';
-    protected $consumer_secret = 'f95380ffb53546c95929f51ea380c158';
+    protected $consumer_key;
+    protected $consumer_secret;
 
     protected $state;
     protected $token;
@@ -30,6 +30,9 @@ class MagentoClient
 
     public function initClient()
     {
+        $this->baseUrl = env('MAGENTO_URL') . '/api/rest/';
+        $this->consumer_key = env('OAUTH_CONSUMER_KEY');
+        $this->consumer_secret = env('OAUTH_CONSUMER_SECRET');
         $this->state = MagentoOAuth::getFirst('key', 'state');
         $this->token = MagentoOAuth::getFirst('key', 'token');
         $this->secret = MagentoOAuth::getFirst('key', 'secret');

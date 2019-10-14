@@ -16,11 +16,13 @@
 					placeholder="Search product"
 					class="mx-2"
 					@keyup.enter="searchProduct"
+					clearable
+					@click:clear="getAllProducts"
 				></v-text-field>
 				<v-tooltip bottom>
 					<template v-slot:activator="{ on }">
 						<v-btn @click="showCreateDialog = true" class="my-1" v-on="on" icon>
-							<v-icon small>fas fa-plus</v-icon>
+							<v-icon>mdi-plus</v-icon>
 						</v-btn>
 					</template>
 					<span>Add dummy product</span>
@@ -45,7 +47,7 @@
 			<v-row v-if="productList.length" style="height:61vh; overflow-y:auto;">
 				<v-col v-for="product in productList" :key="product.id" cols="12" md="6" lg="4">
 					<v-card :img="product.photo_url" @click="addProduct(product)" height="170px">
-						<v-card-title class="indigo white--text pa-0" @click.stop>
+						<v-card-title class="blue-grey pa-0" @click.stop>
 							<h6 class="px-2">{{product.name}}</h6>
 							<div class="flex-grow-1"></div>
 
@@ -60,14 +62,6 @@
 									<v-list-item @click="addToFavorites(product)">
 										<v-icon class="pr-2">mdi-heart</v-icon>
 										<h5>Add to favorites</h5>
-									</v-list-item>
-									<v-list-item @click="viewProduct(product)">
-										<v-icon class="pr-2">remove_red_eye</v-icon>
-										<h5>View</h5>
-									</v-list-item>
-									<v-list-item @click="editProduct(product)">
-										<v-icon class="pr-2">edit</v-icon>
-										<h5>Edit</h5>
 									</v-list-item>
 								</v-list>
 							</v-menu>
@@ -84,24 +78,12 @@
 		<interactiveDialog
 			v-if="showCreateDialog"
 			:show="showCreateDialog"
-			:model="defaultObject"
+			:model="{}"
 			component="dummyProductForm"
 			title="Add a dummy product"
 			@action="result"
 			cancelBtnTxt="Close"
 			persistent
-			titleCloseBtn
-		></interactiveDialog>
-		<interactiveDialog
-			v-if="showEditDialog"
-			:show="showEditDialog"
-			title="Edit item"
-			:width="600"
-			component="productForm"
-			:model="defaultObject"
-			@action="edit"
-			persistent
-			action="edit"
 			titleCloseBtn
 		></interactiveDialog>
 	</v-card>
@@ -111,11 +93,8 @@
 export default {
 	data() {
 		return {
-			defaultObject: {},
-			showEditDialog: false,
 			showCreateDialog: false,
 			loader: false,
-			disableFilters: false,
 			model: "products",
 			keyword: "",
 			selectedCategories: []
@@ -128,6 +107,8 @@ export default {
 	computed: {
 		productList: {
 			get() {
+				return this.$store.state.productList;
+
 				if (this.selectedCategories.length) {
 					let filteredProducts = [];
 
@@ -163,29 +144,14 @@ export default {
 		}
 	},
 	methods: {
-		clearFilters() {},
 		addToFavorites(product) {},
-		viewProduct(product) {},
-
-		editProduct(product) {
-			this.defaultObject = product;
-			this.action = "edit";
-			this.showEditDialog = true;
-		},
-		applyFilter(filter) {},
 		initiateLoadingSearchResults(loading) {
 			if (loading) {
 				this.loader = true;
-				this.disableFilters = true;
 				this.productList = [];
 			} else {
 				this.loader = false;
-				this.disableFilters = false;
 			}
-		},
-
-		setProductListByCategoryProducts(category) {
-			this.productList = category.products;
 		},
 		getAllProducts() {
 			this.initiateLoadingSearchResults(true);
@@ -215,6 +181,8 @@ export default {
 		},
 		searchProduct() {
 			if (this.keyword.length > 0) {
+				this.selectedCategories = [];
+
 				this.initiateLoadingSearchResults(true);
 
 				let payload = {
@@ -233,10 +201,6 @@ export default {
 		},
 		result(event) {
 			this.showCreateDialog = false;
-		},
-		edit(event) {
-			this.showEditDialog = false;
-			this.getAllProducts();
 		}
 	}
 };

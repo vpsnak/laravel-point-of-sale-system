@@ -10,7 +10,6 @@ class Customer extends BaseModel
         'email',
         'phone',
         'company_name'
-
     ];
 
     protected $hidden = [

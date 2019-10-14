@@ -5,7 +5,7 @@
 		</v-col>
 		<v-col cols="12">
 			<div class="d-flex justify-space-evenly align-center">
-				<v-btn-toggle v-model="paymentType" mandatory>
+				<v-btn-toggle v-model="paymentType" mandatory @change="clearState">
 					<v-btn
 						v-for="(paymentType, index) in types"
 						:key="index"
@@ -45,12 +45,15 @@
 				<v-spacer></v-spacer>
 
 				<v-text-field
+					:min="0.01"
+					:max="99999"
 					v-if="paymentType !== 'coupon'"
 					label="Amount"
 					type="number"
 					prepend-inner-icon="mdi-currency-usd"
 					v-model="amount"
-					@change="limits"
+					@keyup="limits"
+					@blur="limits"
 					style="max-width:150px;"
 				></v-text-field>
 
@@ -68,7 +71,14 @@
 			</div>
 		</v-col>
 		<v-col cols="12">
-			<v-btn @click="sendPayment" :loading="loading" :disabled="loading" block>{{ paymentBtnTxt }}</v-btn>
+			<v-btn
+				color="blue-grey"
+				@click="sendPayment"
+				:loading="loading"
+				:disabled="loading"
+				block
+				v-show="remaining > 0"
+			>{{ paymentBtnTxt }}</v-btn>
 		</v-col>
 		<v-col cols="12" v-if="remaining !== undefined">
 			<span class="title">Remaining: $ {{ remaining }}</span>
@@ -84,12 +94,12 @@ export default {
 		title: String,
 		paymentBtnTxt: String,
 		types: Array,
-		remaining: Number,
+		remaining: String,
 		loading: Boolean
 	},
 	data() {
 		return {
-			paymentAmount: null,
+			paymentAmount: Number,
 			paymentType: null,
 			code: null,
 
@@ -107,17 +117,32 @@ export default {
 				return this.paymentAmount;
 			},
 			set(value) {
-				if (this.$props.remaining && value > this.$props.remaining) {
-					this.paymentAmount = this.$props.remaining;
-				} else {
-					this.paymentAmount = value;
-				}
+				this.paymentAmount = value;
 			}
 		}
 	},
 
 	methods: {
-		limits() {},
+		limits() {
+			if (this.paymentType !== "cash") {
+				if (parseFloat(this.amount) > parseFloat(this.$props.remaining)) {
+					this.amount = this.$props.remaining;
+					return parseFloat(this.amount);
+				}
+			} else {
+				if (parseFloat(this.amount) > 99999) {
+					this.amount = 99999;
+				}
+			}
+		},
+		clearState() {
+			this.amount = null;
+			this.code = null;
+
+			this.card.number = null;
+			this.card.cvc = null;
+			this.card.exp_date = null;
+		},
 		sendPayment() {
 			let payload;
 
@@ -154,6 +179,7 @@ export default {
 			}
 
 			this.$emit("sendPayment", payload);
+			this.clearState();
 		},
 
 		getIcon() {
