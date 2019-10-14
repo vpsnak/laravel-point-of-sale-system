@@ -22,7 +22,7 @@
 				<v-tooltip bottom>
 					<template v-slot:activator="{ on }">
 						<v-btn @click="showCreateDialog = true" class="my-1" v-on="on" icon>
-							<v-icon small>fas fa-plus</v-icon>
+							<v-icon>mdi-plus</v-icon>
 						</v-btn>
 					</template>
 					<span>Add dummy product</span>
@@ -201,10 +201,6 @@ export default {
 		},
 		result(event) {
 			this.showCreateDialog = false;
-		},
-		edit(event) {
-			this.showEditDialog = false;
-			this.getAllProducts();
 		}
 	}
 };
