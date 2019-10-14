@@ -35,7 +35,7 @@ export default {
 		return {
 			order: {},
 			order_remaining: undefined,
-			paymentHistory: [],
+			payment_history: [],
 			orderHistory: [],
 			paymentTypes: [],
 
@@ -52,7 +52,7 @@ export default {
 	computed: {
 		remaining: {
 			get() {
-				return this.order_remaining;
+				return parseFloat(this.order_remaining).toFixed(2);
 			},
 			set(value) {
 				this.order_remaining = value;
@@ -73,10 +73,19 @@ export default {
 			set(value) {
 				this.payment.amount = value;
 			}
+		},
+		paymentHistory: {
+			get() {
+				return this.payment_history;
+			},
+			set(value) {
+				this.payment_history = value;
+			}
 		}
 	},
 
 	mounted() {
+		this.paymentHistory = [];
 		this.init();
 	},
 

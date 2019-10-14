@@ -21,7 +21,7 @@
 								type="number"
 								label="Qty"
 								v-model="product.qty"
-								min="1"
+								:min="1"
 								@click.stop
 								@blur="limits(product)"
 								@keyup="limits(product)"
