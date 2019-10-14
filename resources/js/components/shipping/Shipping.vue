@@ -7,7 +7,7 @@
 			</v-radio-group>
 		</div>
 		<v-row v-if="shipping.method === 'shipping'">
-			<v-col cols="6">
+			<v-col cols="6" lg="3" offset-lg="3">
 				<v-menu
 					v-model="datePicker"
 					:close-on-content-click="false"
@@ -22,7 +22,7 @@
 					<v-date-picker v-model="shipping.date" @input="datePicker = false"></v-date-picker>
 				</v-menu>
 			</v-col>
-			<v-col cols="6">
+			<v-col cols="6" lg="3">
 				<v-menu
 					ref="menu"
 					v-model="timePicker"
@@ -46,6 +46,11 @@
 				</v-menu>
 			</v-col>
 		</v-row>
+		<v-row>
+			<v-col cols="12" lg="6" offset-lg="3">
+				<v-textarea label="Notes" prepend-icon="mdi-note-text" v-model="shipping.notes" counter></v-textarea>
+			</v-col>
+		</v-row>
 	</div>
 </template>
 
@@ -56,6 +61,7 @@ export default {
 			datePicker: false,
 			timePicker: false,
 			shipping: {
+				notes: "",
 				method: undefined,
 				date: undefined,
 				time: undefined,
@@ -66,6 +72,9 @@ export default {
 	},
 	methods: {
 		selectedShippingMethod() {
+			if (this.shipping.method === "pickup") {
+				this.shipping.cost = 0;
+			}
 			this.$emit("shipping", this.shipping);
 		}
 	},
