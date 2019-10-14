@@ -40,9 +40,19 @@
 				<v-icon>delete</v-icon>
 			</v-btn>
 		</div>
+		<interactiveDialog
+			v-if="emptyCartConfirmationDialog"
+			:show="emptyCartConfirmationDialog"
+			action="confirmation"
+			title="Empty cart"
+			content="<p>Are you sure you want to empty the cart?</p>"
+			@action="emptyConfirmation"
+			actions
+			persistent
+		/>
 
 		<checkoutDialog :show="checkoutDialog" />
-		<cartRestoreDialog :show="cartRestoreDialog" :key="cartsOnHoldSize" />
+		<cartRestoreDialog :show="cartRestoreDialog" :key="cartsOnHoldSize" @close="getCartsOnHoldSize" />
 	</div>
 </template>
 
@@ -52,6 +62,7 @@ import { mapActions } from "vuex";
 export default {
 	data() {
 		return {
+			empty_cart_confirmation_dialog: false,
 			checkoutLoading: false,
 			carts_on_hold_size: 0
 		};
@@ -65,6 +76,14 @@ export default {
 	},
 
 	computed: {
+		emptyCartConfirmationDialog: {
+			get() {
+				return this.empty_cart_confirmation_dialog;
+			},
+			set(value) {
+				this.empty_cart_confirmation_dialog = value;
+			}
+		},
 		cartsOnHoldSize: {
 			get() {
 				return this.carts_on_hold_size;
@@ -108,10 +127,15 @@ export default {
 					this.checkoutLoading = false;
 				});
 		},
+		emptyConfirmation(event) {
+			if (event) {
+				this.$store.commit("cart/resetState");
+			}
+			this.emptyCartConfirmationDialog = false;
+		},
 		emptyCart(showPrompt) {
 			if (showPrompt) {
-				confirm("Are you sure you want to delete the cart?") &&
-					this.$store.commit("cart/resetState");
+				this.emptyCartConfirmationDialog = true;
 			} else {
 				this.$store.commit("cart/resetState");
 			}

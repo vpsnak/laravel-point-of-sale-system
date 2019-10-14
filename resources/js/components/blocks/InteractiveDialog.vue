@@ -8,7 +8,7 @@
 		@keydown.esc="closeEvent"
 	>
 		<v-card>
-			<v-card-title class="headline">
+			<v-card-title>
 				{{ title }}
 				<v-spacer v-if="titleCloseBtn"></v-spacer>
 				<v-btn v-if="titleCloseBtn" @click.stop="fire(false)" icon>
@@ -51,17 +51,17 @@ import { mapActions, mapMutations, mapState } from "vuex";
 export default {
 	props: {
 		show: Boolean,
-		persistent: Boolean || undefined,
-		width: Number || undefined,
+		persistent: Boolean,
+		width: Number,
 		title: String,
 		titleCloseBtn: Boolean,
 
-		content: String || undefined,
-		contentClass: String || "",
+		content: String,
+		contentClass: String,
 		component: String,
 		fullscreen: Boolean,
-		cancelBtnTxt: String || "",
-		confirmationBtnTxt: String || "",
+		cancelBtnTxt: String,
+		confirmationBtnTxt: String,
 		// model CRUD props
 		model: Object,
 		action: String // Possible values: edit, read, confirmation, info

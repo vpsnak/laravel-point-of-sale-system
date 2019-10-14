@@ -1,5 +1,16 @@
 <template>
 	<v-dialog :value="show" width="500" @click:outside="close">
+		<interactiveDialog
+			v-if="cartReplacePrompt"
+			:show="cartReplacePrompt"
+			action="confirmation"
+			title="Cart is not empty"
+			content="<p>Restoring the cart <strong>will replace</strong> items and selected customer currently in cart list.<br>Do you want to continue?</p>"
+			@action="confirmation"
+			actions
+			persistent
+		/>
+
 		<v-card>
 			<v-card-title primary-title>Carts on Hold</v-card-title>
 			<v-chip-group multiple column active-class="primary--text">
@@ -8,7 +19,7 @@
 					v-for="cartOnHold in cartsOnHold"
 					:key="cartOnHold.id"
 					close
-					@click="restoreCart(cartOnHold)"
+					@click="selectedCart=cartOnHold, restoreCart()"
 					@click:close="removeCart(cartOnHold)"
 				>
 					<span>
@@ -36,11 +47,21 @@ export default {
 
 	data() {
 		return {
-			onHold: []
+			onHold: [],
+			cart_replace_prompt: false,
+			selectedCart: {}
 		};
 	},
 
 	computed: {
+		cartReplacePrompt: {
+			get() {
+				return this.cart_replace_prompt;
+			},
+			set(value) {
+				this.cart_replace_prompt = value;
+			}
+		},
 		cartsOnHold: {
 			get() {
 				return this.onHold;
@@ -56,6 +77,13 @@ export default {
 	},
 
 	methods: {
+		confirmation(event) {
+			if (event) {
+				this.loadCart();
+			}
+
+			this.cartReplacePrompt = false;
+		},
 		getCartsOnHold() {
 			let payload = {
 				model: "carts"
@@ -65,31 +93,40 @@ export default {
 			});
 		},
 		close() {
+			this.$emit("close");
 			this.$store.state.cartRestoreDialog = false;
 		},
-		restoreCart(cartOnHold) {
-			let cart = JSON.parse(cartOnHold.cart).products;
+		restoreCart() {
+			let cart = JSON.parse(this.selectedCart.cart).products;
 
+			if (_.size(this.$store.state.cart.products)) {
+				this.cartReplacePrompt = true;
+			} else {
+				this.loadCart();
+			}
+		},
+		loadCart() {
+			let cart = JSON.parse(this.selectedCart.cart).products;
 			this.$store.state.cart.products = cart.products;
-			this.removeCart(cartOnHold).then(response => {});
 
 			this.getOne({
 				model: "customers",
 				data: {
-					id: JSON.parse(cartOnHold.cart).customer_id
+					id: JSON.parse(this.selectedCart.cart).customer_id
 				},
 				mutation: "cart/setCustomer"
 			}).then(response => {
+				this.removeCart();
 				this.close();
 			});
 		},
-		removeCart(cartOnHold) {
+		removeCart() {
 			return this.delete({
 				model: "carts",
-				id: cartOnHold.id
+				id: this.selectedCart.id
 			}).then(() => {
 				this.cartsOnHold = this.cartsOnHold.filter(cart => {
-					return cart.id !== cartOnHold.id;
+					return cart.id !== this.selectedCart.id;
 				});
 			});
 		},
@@ -97,6 +134,10 @@ export default {
 			getOne: "getOne",
 			delete: "delete"
 		})
+	},
+
+	beforeDestroy() {
+		this.$off("close");
 	}
 };
 </script>
