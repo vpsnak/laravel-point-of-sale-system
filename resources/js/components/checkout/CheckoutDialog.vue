@@ -28,7 +28,14 @@
 						</v-card>
 					</v-col>
 					<v-col cols="3">
-						<cart icon="mdi-clipboard-list" title="Order summary" :items="items" :order="order" />
+						<cart
+							:key="order ? order.id : 0"
+							icon="mdi-clipboard-list"
+							title="Order summary"
+							:items="items"
+							:order="order"
+							:editable="isEditable"
+						/>
 					</v-col>
 				</v-row>
 			</v-container>
@@ -46,6 +53,9 @@ export default {
 		};
 	},
 	computed: {
+		isEditable() {
+			return this.order ? false : true;
+		},
 		state: {
 			get() {
 				return this.$store.state.checkoutDialog;
@@ -58,18 +68,20 @@ export default {
 			return this.$store.state.cart.order;
 		},
 		items() {
-			if (this.$store.state.cart.order) {
+			if (this.order) {
 				return this.$store.state.cart.order.items;
 			}
-			return [];
+			return undefined;
 		}
 	},
 	methods: {
 		close() {
-			if (this.order.status !== "complete") {
+			if (this.order && this.order.status === "complete") {
+				this.resetState();
+				this.state = false;
+			} else if (this.order && this.order.status === "pending") {
 				this.closePrompt = true;
 			} else {
-				this.resetState();
 				this.state = false;
 			}
 		},

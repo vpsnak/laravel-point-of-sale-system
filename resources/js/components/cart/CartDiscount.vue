@@ -4,6 +4,7 @@
 			<v-select
 				v-if="editable"
 				:key="model.id"
+				@change="amount = amount"
 				v-model="discountType"
 				:items="discountTypes"
 				label="Discount"
@@ -45,6 +46,10 @@ export default {
 			},
 			set(value) {
 				this.$set(this.$props.model, "discount_type", value);
+
+				if (value === "None") {
+					this.amount = 0;
+				}
 			}
 		},
 		amount: {
@@ -52,13 +57,12 @@ export default {
 				return this.$props.model.discount_amount;
 			},
 			set(value) {
-				this.$set(this.$props.model, "discount_amount", parseFloat(value));
-				this.$store.commit("cart/setDiscount", this.$props.model);
+				if (value || value === 0) {
+					this.$set(this.$props.model, "discount_amount", parseFloat(value));
+					this.$store.commit("cart/setDiscount", this.$props.model);
+				}
 			}
 		}
-	},
-	methods: {
-		setDiscount() {}
 	}
 };
 </script>

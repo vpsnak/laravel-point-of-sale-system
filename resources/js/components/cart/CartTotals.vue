@@ -104,6 +104,10 @@ export default {
 			if (this.$props.order) {
 				return this.$props.order.total;
 			} else {
+				this.$store.commit(
+					"cart/setCartPrice",
+					this.subTotalwDiscount + this.tax
+				);
 				return this.subTotalwDiscount + this.tax;
 			}
 		}

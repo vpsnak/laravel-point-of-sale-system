@@ -44,13 +44,14 @@ export default {
 
         customer: undefined,
         products: [],
+        cart_price: 0,
 
         discount_type: "",
         discount_amount: 0,
 
         shipping: {},
 
-        order: {}
+        order: undefined
     },
 
     mutations: {
@@ -113,6 +114,9 @@ export default {
         setOrder(state, order) {
             state.order = order;
         },
+        setCartPrice(state, cartPrice) {
+            state.cart_price = cartPrice;
+        },
 
         resetState(state) {
             state.currentCheckoutStep = 1;
@@ -121,7 +125,8 @@ export default {
             state.discount_type = "";
             state.discount_amount = 0;
             state.shipping = {};
-            state.order = {};
+            state.order = undefined;
+            state.total_price = 0;
 
             state.checkoutSteps.forEach(checkoutStep => {
                 checkoutStep.completed = false;
