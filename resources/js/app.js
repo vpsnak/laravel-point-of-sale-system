@@ -10,9 +10,12 @@ import routes from "./routes";
 import vuetify from "./plugins/vuetify"; // path to vuetify export
 import store from "./store/store";
 import VueRouter from "vue-router";
+import { ValidationProvider } from "vee-validate";
 
 window.Vue = require("vue");
+
 Vue.use(VueRouter);
+Vue.component("ValidationProvider", ValidationProvider);
 
 /**
  * The following block of code may be used to automatically register your

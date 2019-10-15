@@ -2,7 +2,7 @@
 	<div class="d-flex flex-column">
 		<div class="d-flex justify-space-between pa-2">
 			<span>Sub total w/ discount</span>
-			<span>$ {{ subTotalwDiscount }}</span>
+			<span>$ {{ subTotalwDiscount.toFixed(2) }}</span>
 		</div>
 
 		<v-divider />
@@ -38,21 +38,23 @@ export default {
 
 	computed: {
 		subTotalwDiscount() {
-			return (this.subTotal - this.totalDiscount).toFixed(2);
-		},
-
-		subTotal() {
-			let subTotal = 0.0;
-
+			let subtotal = 0;
 			this.$props.products.forEach(product => {
-				subTotal +=
-					parseInt(product.qty) *
-					parseFloat(
-						product.price.amount ? product.price.amount : product.price
-					);
+				subtotal += this.calcDiscount(
+					product.price.amount * product.qty,
+					product.discount_type,
+					product.discount_amount
+				);
 			});
 
-			return subTotal;
+			subtotal -=
+				subtotal -
+				this.calcDiscount(
+					subtotal,
+					this.$props.cart.discount_type,
+					this.$props.cart.discount_amount
+				);
+			return subtotal;
 		},
 		tax() {
 			if (this.$props.order) {
@@ -62,7 +64,7 @@ export default {
 			} else {
 				return parseFloat(
 					(
-						(parseFloat(this.subTotalwDiscount) *
+						(this.subTotalwDiscount *
 							parseFloat(this.$store.state.store.tax.percentage)) /
 						100
 					).toFixed(2)
@@ -70,60 +72,30 @@ export default {
 			}
 		},
 		totalDiscount() {
-			let totalFlatDiscount = 0.0;
-			let totalPercentageDiscount = 0.0;
+			let subtotalNoDiscount = 0;
 			this.$props.products.forEach(product => {
-				// cart items discount calculation
-				if (
-					_.has(product, "discount_type") &&
-					_.has(product, "discount_amount")
-				) {
-					if (product.discount_type === "Flat" && product.discount_amount > 0) {
-						totalFlatDiscount =
-							parseFloat(totalFlatDiscount) +
-							parseFloat(product.discount_amount);
-					} else if (
-						product.discount_type === "Percentage" &&
-						product.discount_amount > 0
-					) {
-						totalPercentageDiscount =
-							parseFloat(totalPercentageDiscount) +
-							(parseFloat(product.price.amount) *
-								parseFloat(product.discount_amount)) /
-								100;
-					}
-				}
+				subtotalNoDiscount += product.price.amount * product.qty;
 			});
 
-			// total cart discount calculation
-			if (
-				this.$props.cart.discount_type === "Flat" &&
-				this.$props.cart.discount_amount > 0
-			) {
-				totalFlatDiscount =
-					parseFloat(totalFlatDiscount) +
-					parseFloat(this.$props.cart.discount_amount);
-			} else if (
-				this.$props.cart.discount_type === "Percentage" &&
-				this.$props.cart.discount_amount > 0
-			) {
-				totalPercentageDiscount =
-					parseFloat(totalPercentageDiscount) +
-					(parseFloat(this.subTotal) *
-						parseFloat(this.$props.cart.discount_amount)) /
-						100;
-			}
-
-			return (
-				parseFloat(totalFlatDiscount) + parseFloat(totalPercentageDiscount)
-			).toFixed(2);
+			return subtotalNoDiscount - this.subTotalwDiscount;
 		},
 		total() {
-			return (
-				parseFloat(this.subTotal) +
-				parseFloat(this.tax) -
-				parseFloat(this.totalDiscount)
-			).toFixed(2);
+			return (this.subTotalwDiscount + parseFloat(this.tax)).toFixed(2);
+		}
+	},
+	methods: {
+		calcDiscount(price, type, amount) {
+			if (type && amount) {
+				switch (_.lowerCase(type)) {
+					case "flat":
+						return parseFloat(price) - parseFloat(amount);
+						break;
+					case "percentage":
+						return parseFloat(price) - (parseFloat(price) * amount) / 100;
+						break;
+				}
+			}
+			return price;
 		}
 	}
 };
