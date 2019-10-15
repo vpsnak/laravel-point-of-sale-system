@@ -194,6 +194,8 @@ export default {
 				this.$store.dispatch("search", payload).finally(() => {
 					this.initiateLoadingSearchResults(false);
 				});
+			} else {
+				this.getAllProducts();
 			}
 		},
 		addProduct(product) {
