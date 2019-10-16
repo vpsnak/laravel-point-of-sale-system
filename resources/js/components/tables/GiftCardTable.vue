@@ -5,6 +5,7 @@
         tableTitle="Gift Cards"
         tableBtnTitle="New Gift Card"
         tableForm="giftCardForm"
+        tableViewComponent="giftCard"
     />
 </template>
 
@@ -29,7 +30,7 @@ export default {
                 },
                 {
                     text: "Enabled",
-                    value: "emabled"
+                    value: "enabled"
                 },
                 {
                     text: "Amount",
