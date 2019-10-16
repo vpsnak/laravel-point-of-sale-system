@@ -14,7 +14,7 @@
                     </v-card-text>
                 </v-card>
             </v-col>
-            <v-col cols="12" md="8" v-if="storeData.cash_registers">
+            <v-col cols="12" md="8" v-if="storeData.cash_registers.length > 0">
                 <v-card>
                     <v-card-title>Cash Registers</v-card-title>
                     <v-card-text>
@@ -43,6 +43,10 @@
                         </v-simple-table>
                     </v-card-text>
                 </v-card>
+            </v-col>
+            <v-col cols="12" md="8" v-else>
+                <v-card-title>Cash Registers</v-card-title>
+                <v-card-text>There are no cash register assigned to this store</v-card-text>
             </v-col>
         </v-row>
     </v-container>

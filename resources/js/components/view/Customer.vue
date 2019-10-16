@@ -19,7 +19,7 @@
                     </v-card-text>
                 </v-card>
             </v-col>
-            <v-col cols="12" v-if="customerData.addresses">
+            <v-col cols="12" v-if="customerData.addresses.length > 0">
                 <v-card>
                     <v-card-title>Addreses</v-card-title>
                     <v-card-text>
@@ -57,6 +57,10 @@
                         </v-simple-table>
                     </v-card-text>
                 </v-card>
+            </v-col>
+            <v-col cols="12" md="8" v-else>
+                <v-card-title>Addreses</v-card-title>
+                <v-card-text>There are no addresses assigned to this customer</v-card-text>
             </v-col>
         </v-row>
     </v-container>
