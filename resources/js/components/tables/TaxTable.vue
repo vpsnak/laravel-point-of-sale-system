@@ -5,6 +5,7 @@
         tableTitle="Taxes"
         tableBtnTitle="New Tax"
         tableForm="taxForm"
+        tableViewComponent="tax"
     />
 </template>
 
