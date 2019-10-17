@@ -2,28 +2,28 @@
 	<div class="d-flex flex-column">
 		<div class="d-flex justify-space-between pa-2">
 			<span>Sub total w/ discount</span>
-			<span>$ {{ subTotalwDiscount }}</span>
+			<span>$ {{ subTotalwDiscount.toFixed(2) }}</span>
 		</div>
 
 		<v-divider />
 
 		<div class="d-flex justify-space-between pa-2 bb-1">
 			<span>Tax</span>
-			<span>$ {{ tax }}</span>
+			<span>$ {{ tax.toFixed(2) }}</span>
 		</div>
 
 		<v-divider />
 
 		<div class="d-flex justify-space-between pa-2">
 			<span>Total discount</span>
-			<span>$ {{ totalDiscount }}</span>
+			<span>$ {{ totalDiscount.toFixed(2) }}</span>
 		</div>
 
 		<v-divider />
 
 		<div class="d-flex justify-space-between pa-2">
 			<span>Total</span>
-			<span>$ {{ total }}</span>
+			<span>$ {{ total.toFixed(2) }}</span>
 		</div>
 	</div>
 </template>
@@ -38,92 +38,93 @@ export default {
 
 	computed: {
 		subTotalwDiscount() {
-			return (this.subTotal - this.totalDiscount).toFixed(2);
-		},
-
-		subTotal() {
-			let subTotal = 0.0;
-
-			this.$props.products.forEach(product => {
-				subTotal +=
-					parseInt(product.qty) *
-					parseFloat(
-						product.price.amount ? product.price.amount : product.price
+			let subtotal = 0;
+			if (this.$props.order) {
+				this.$props.order.items.forEach(item => {
+					subtotal += this.calcDiscount(
+						item.price * item.qty,
+						item.discount_type,
+						item.discount_amount
 					);
-			});
+				});
 
-			return subTotal;
+				subtotal -=
+					subtotal -
+					this.calcDiscount(
+						subtotal,
+						this.$props.order.discount_type,
+						this.$props.order.discount_amount
+					);
+			} else {
+				this.$props.products.forEach(product => {
+					subtotal += this.calcDiscount(
+						product.price.amount * product.qty,
+						product.discount_type,
+						product.discount_amount
+					);
+				});
+
+				subtotal -=
+					subtotal -
+					this.calcDiscount(
+						subtotal,
+						this.$props.cart.discount_type,
+						this.$props.cart.discount_amount
+					);
+			}
+			return subtotal;
 		},
 		tax() {
 			if (this.$props.order) {
-				return parseFloat(
-					this.$props.order.total - this.$props.order.subtotal
-				).toFixed(2);
+				return parseFloat(this.$props.order.total - this.$props.order.subtotal);
 			} else {
 				return parseFloat(
-					(
-						(parseFloat(this.subTotalwDiscount) *
-							parseFloat(this.$store.state.store.tax.percentage)) /
+					(this.subTotalwDiscount *
+						parseFloat(this.$store.state.store.tax.percentage)) /
 						100
-					).toFixed(2)
 				);
 			}
 		},
 		totalDiscount() {
-			let totalFlatDiscount = 0.0;
-			let totalPercentageDiscount = 0.0;
-			this.$props.products.forEach(product => {
-				// cart items discount calculation
-				if (
-					_.has(product, "discount_type") &&
-					_.has(product, "discount_amount")
-				) {
-					if (product.discount_type === "Flat" && product.discount_amount > 0) {
-						totalFlatDiscount =
-							parseFloat(totalFlatDiscount) +
-							parseFloat(product.discount_amount);
-					} else if (
-						product.discount_type === "Percentage" &&
-						product.discount_amount > 0
-					) {
-						totalPercentageDiscount =
-							parseFloat(totalPercentageDiscount) +
-							(parseFloat(product.price.amount) *
-								parseFloat(product.discount_amount)) /
-								100;
-					}
-				}
-			});
+			let subtotalNoDiscount = 0;
 
-			// total cart discount calculation
-			if (
-				this.$props.cart.discount_type === "Flat" &&
-				this.$props.cart.discount_amount > 0
-			) {
-				totalFlatDiscount =
-					parseFloat(totalFlatDiscount) +
-					parseFloat(this.$props.cart.discount_amount);
-			} else if (
-				this.$props.cart.discount_type === "Percentage" &&
-				this.$props.cart.discount_amount > 0
-			) {
-				totalPercentageDiscount =
-					parseFloat(totalPercentageDiscount) +
-					(parseFloat(this.subTotal) *
-						parseFloat(this.$props.cart.discount_amount)) /
-						100;
+			if (this.$props.order) {
+				this.$props.order.items.forEach(item => {
+					subtotalNoDiscount += item.price * item.qty;
+				});
+			} else {
+				this.$props.products.forEach(product => {
+					subtotalNoDiscount += product.price.amount * product.qty;
+				});
 			}
 
-			return (
-				parseFloat(totalFlatDiscount) + parseFloat(totalPercentageDiscount)
-			).toFixed(2);
+			return subtotalNoDiscount - this.subTotalwDiscount;
 		},
 		total() {
-			return (
-				parseFloat(this.subTotal) +
-				parseFloat(this.tax) -
-				parseFloat(this.totalDiscount)
-			).toFixed(2);
+			if (this.$props.order) {
+				return this.$props.order.total;
+			} else {
+				this.$store.commit(
+					"cart/setCartPrice",
+					this.subTotalwDiscount + this.tax
+				);
+				return this.subTotalwDiscount + this.tax;
+			}
+		}
+	},
+	methods: {
+		calcDiscount(price, type, amount) {
+			if (type && amount) {
+				switch (_.lowerCase(type)) {
+					case "flat":
+						return parseFloat(price) - parseFloat(amount);
+						break;
+					case "percentage":
+						return parseFloat(price) - (parseFloat(price) * amount) / 100;
+						break;
+				}
+			}
+			return price;
 		}
 	}
 };

@@ -53,7 +53,7 @@ export default {
 	computed: {
 		remaining: {
 			get() {
-				return parseFloat(this.order_remaining).toFixed(2);
+				return this.order_remaining ? this.order_remaining : undefined;
 			},
 			set(value) {
 				this.order_remaining = value;

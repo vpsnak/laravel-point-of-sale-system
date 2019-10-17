@@ -117,15 +117,15 @@ export default {
 
 	methods: {
 		checkout() {
-			this.checkoutLoading = true;
-
-			this.submitOrder()
-				.then(response => {
-					this.checkoutDialog = true;
-				})
-				.finally(() => {
-					this.checkoutLoading = false;
-				});
+			this.checkoutDialog = true;
+			// this.checkoutLoading = true;
+			// this.submitOrder()
+			// 	.then(response => {
+			// 		this.checkoutDialog = true;
+			// 	})
+			// 	.finally(() => {
+			// 		this.checkoutLoading = false;
+			// 	});
 		},
 		emptyConfirmation(event) {
 			if (event) {

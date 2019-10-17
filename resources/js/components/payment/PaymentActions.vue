@@ -45,6 +45,7 @@
 				<v-spacer></v-spacer>
 
 				<v-text-field
+					:disabled="loading"
 					:min="0.01"
 					:max="99999"
 					v-if="paymentType !== 'coupon'"
@@ -63,6 +64,7 @@
 					v-if="paymentType === 'coupon' || paymentType === 'giftcard'"
 					label="Code"
 					:prepend-inner-icon="getIcon()"
+					:disabled="loading"
 					v-model="code"
 					style="max-width:300px;"
 				></v-text-field>
@@ -77,11 +79,10 @@
 				:loading="loading"
 				:disabled="loading"
 				block
-				v-show="remaining > 0"
 			>{{ paymentBtnTxt }}</v-btn>
 		</v-col>
-		<v-col cols="12" v-if="remaining !== undefined">
-			<span class="title">Remaining: $ {{ remaining }}</span>
+		<v-col cols="12" v-if="remainingAmount !== undefined">
+			<span class="title">Remaining: $ {{ remainingAmount.toFixed(2) }}</span>
 		</v-col>
 	</v-row>
 </template>
@@ -94,7 +95,7 @@ export default {
 		title: String,
 		paymentBtnTxt: String,
 		types: Array,
-		remaining: String,
+		remaining: Number,
 		loading: Boolean
 	},
 	data() {
@@ -112,6 +113,11 @@ export default {
 	},
 
 	computed: {
+		remainingAmount() {
+			return this.$props.remaining
+				? this.$props.remaining
+				: this.$store.state.cart.cart_price;
+		},
 		amount: {
 			get() {
 				return this.paymentAmount;
@@ -123,27 +129,7 @@ export default {
 	},
 
 	methods: {
-		limits() {
-			if (this.paymentType !== "cash") {
-				if (parseFloat(this.amount) > parseFloat(this.$props.remaining)) {
-					this.amount = this.$props.remaining;
-					return parseFloat(this.amount);
-				}
-			} else {
-				if (parseFloat(this.amount) > 99999) {
-					this.amount = 99999;
-				}
-			}
-		},
-		clearState() {
-			this.amount = null;
-			this.code = null;
-
-			this.card.number = null;
-			this.card.cvc = null;
-			this.card.exp_date = null;
-		},
-		sendPayment() {
+		pay() {
 			let payload;
 
 			switch (this.paymentType) {
@@ -181,6 +167,36 @@ export default {
 			this.$emit("sendPayment", payload);
 			this.clearState();
 		},
+		limits() {
+			if (this.paymentType !== "cash") {
+				if (parseFloat(this.amount) > parseFloat(this.remainingAmount)) {
+					this.amount = this.remainingAmount.toFixed(2);
+				}
+			} else {
+				if (parseFloat(this.amount) > 99999) {
+					this.amount = 99999;
+				}
+			}
+		},
+		clearState() {
+			this.amount = null;
+			this.code = null;
+
+			this.card.number = null;
+			this.card.cvc = null;
+			this.card.exp_date = null;
+		},
+		sendPayment() {
+			if (this.$store.state.cart.order === undefined) {
+				this.submitOrder().then(response => {
+					this.pay();
+				});
+			} else {
+				this.pay();
+			}
+		},
+
+		...mapActions("cart", ["submitOrder"]),
 
 		getIcon() {
 			return _.find(this.$props.types, ["type", this.paymentType]).icon;

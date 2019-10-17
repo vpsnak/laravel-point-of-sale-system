@@ -5,6 +5,7 @@
         tableTitle="Categories"
         tableBtnTitle="New Category"
         tableForm="categoryForm"
+        tableViewComponent="category"
     />
 </template>
 

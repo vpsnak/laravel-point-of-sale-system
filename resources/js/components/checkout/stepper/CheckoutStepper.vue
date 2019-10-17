@@ -48,11 +48,6 @@ export default {
 		}
 	},
 	methods: {
-		uniqueKey() {
-			console.log(new Date().getTime());
-			return new Date().getTime();
-		},
-
 		...mapActions(["search", "create", "getAll", "getOne"])
 	}
 };

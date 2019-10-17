@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<payment :order_id="order.id" history actions @amountPending="showCompleteBtn" />
+		<payment :order_id="orderId" history actions @amountPending="showCompleteBtn" />
 		<v-card-actions>
 			<v-btn color="grey" @click="prevStep()">
 				<v-icon small left>mdi-chevron-left</v-icon>Back
@@ -30,7 +30,10 @@ export default {
 		};
 	},
 	computed: {
-		...mapState("cart", ["order"])
+		...mapState("cart", ["order"]),
+		orderId() {
+			return this.order ? this.order.id : 0;
+		}
 	},
 	methods: {
 		showCompleteBtn(event) {
