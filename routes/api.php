@@ -46,4 +46,16 @@ Route::post('/cash-register-logs/close', "{$baseRoutes['cash-register-logs']}@cl
 
 Route::get('/magento/authorize', 'Auth\MagentoOAuthController@authorizeMagento');
 
-Route::post('/pos', 'PosTerminalController@makePayment');
+// POS
+
+// config
+Route::post('/pos-terminal/configure', 'PosTerminalController@startCardReaderConfiguration');
+Route::post('/pos-terminal/configure/status', 'PosTerminalController@getCommandStatusOnCardReader');
+// search - info
+Route::post('/pos-terminal/search', 'PosTerminalController@startCardReadersSearch');
+Route::post('/pos-terminal/search/status', 'PosTerminalController@getCardReadersSearchStatus');
+Route::post('/pos-terminal/info', 'PosTerminalController@getCardReaderInfo');
+// transaction 
+Route::post('/pos-terminal/transaction/gateway', 'PosTerminalController@openPaymentGateway');
+Route::post('/pos-terminal/transaction/start', 'PosTerminalController@startPaymentTransaction');
+Route::post('/pos-terminal/transaction/status', 'PosTerminalController@getPaymentTransactionStatus');
