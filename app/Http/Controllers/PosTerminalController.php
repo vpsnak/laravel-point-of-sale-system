@@ -4,11 +4,55 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
-use Storage;
 
 class PosTerminalController extends Controller
 {
-    public function startCardReaderConfiguration()
+    public static function posPayment($amount)
+    {
+        $amount *= 100;
+
+        $cardReaderInfo = json_decode(self::getCardReaderInfo(), true);
+
+        // if ($cardReaderInfo['data']['cardReaderInfo'] === null) {
+        //     // card reader is not initialized!
+
+        //     $id = json_decode(self::startCardReaderConfiguration(), true);
+
+        //     $id = $id['data']['cardReaderCommand']['id'];
+
+        //     do {
+        //         $response = json_decode(self::getCardReadersSearchStatus($id), true);
+        //     } while ($response['data']['cardReadersSearch']['completed'] === false);
+
+        //     if (!count($response['data']['cardReadersSearch']['cardReaders'])) {
+        //         return response('pos failed to init properly');
+        //     }
+        // }
+
+        // pos terminal is configured
+        $paymentGatewayId = json_decode(self::openPaymentGateway(), true);
+
+        if ($paymentGatewayId['data']['paymentGatewayCommand']['openPaymentGatewayData']['result'] !== 'SUCCESS') {
+            return response('payment gateway failed');
+        }
+
+        $paymentGatewayId = $paymentGatewayId['data']['paymentGatewayCommand']['openPaymentGatewayData']['paymentGatewayId'];
+        $chanId = json_decode(self::startPaymentTransaction($paymentGatewayId, $amount), true);
+
+        $chanId = $chanId['data']['paymentGatewayCommand']['chanId'];
+
+
+        do {
+            $response = json_decode(self::getPaymentTransactionStatus($paymentGatewayId, $chanId), true);
+        } while ($response['data']['paymentGatewayCommand']['completed'] === false);
+
+
+        if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result']) {
+            return response('payment succeded', 200);
+        }
+    }
+
+    public static function startCardReaderConfiguration()
     {
         $requestId = idate("U");
 
@@ -34,20 +78,17 @@ class PosTerminalController extends Controller
 
         $response = $client->post($url, [
             'headers' => [
+                'Content-Type' => 'application/json',
                 'Accept' => 'application/json'
             ],
             'body' => json_encode($payload)
         ]);
 
-        return response($response->getBody(), 200);
+        return $response->getBody()->getContents();
     }
 
-    public function getCommandStatusOnCardReader(Request $request)
+    public static function getCommandStatusOnCardReader($id)
     {
-        $validatedData = $request->validate([
-            'id' => 'required'
-        ]);
-
         $requestId = idate("U");
 
         $payload = [
@@ -56,7 +97,7 @@ class PosTerminalController extends Controller
             "targetType" => "cardReader",
             "version" => "1.0",
             "parameters" => [
-                "id" => $validatedData['id']
+                "id" => $id
             ]
         ];
 
@@ -65,15 +106,16 @@ class PosTerminalController extends Controller
 
         $response = $client->post($url, [
             'headers' => [
+                'Content-Type' => 'application/json',
                 'Accept' => 'application/json'
             ],
             'body' => json_encode($payload)
         ]);
 
-        return response($response->getBody(), 200);
+        return  $response->getBody()->getContents();
     }
 
-    public function startCardReadersSearch()
+    public static function startCardReadersSearch()
     {
         $requestId = idate("U");
 
@@ -85,15 +127,7 @@ class PosTerminalController extends Controller
             "parameters" => [
                 "timeout" => 9000,
                 "updateIfNecessary" => true,
-                "connect" => true,
-                "cardReaderConnection" => [
-                    "connectionMethod" => "INET",
-                    'inetAddress' => [
-                        "host" => config('elavon.posTerminal.host'),
-                        "port" => config('elavon.posTerminal.port'),
-                        "encryptionScheme" => config('elavon.posTerminal.encr')
-                    ]
-                ]
+                "connect" => true
             ]
         ];
 
@@ -102,20 +136,17 @@ class PosTerminalController extends Controller
 
         $response = $client->post($url, [
             'headers' => [
+                'Content-Type' => 'application/json',
                 'Accept' => 'application/json'
             ],
             'body' => json_encode($payload)
         ]);
 
-        return response($response->getBody(), 200);
+        return  $response->getBody()->getContents();
     }
 
-    public function getCardReadersSearchStatus(Request $request)
+    public static function getCardReadersSearchStatus($id)
     {
-        $validatedData = $request->validate([
-            'id' => 'required'
-        ]);
-
         $requestId = idate("U");
 
         $payload = [
@@ -124,7 +155,7 @@ class PosTerminalController extends Controller
             "targetType" => "cardReader",
             "version" => "1.0",
             "parameters" => [
-                "commandId" => $validatedData['id']
+                "commandId" => $id
             ]
         ];
 
@@ -133,15 +164,16 @@ class PosTerminalController extends Controller
 
         $response = $client->post($url, [
             'headers' => [
+                'Content-Type' => 'application/json',
                 'Accept' => 'application/json'
             ],
             'body' => json_encode($payload)
         ]);
 
-        return response($response->getBody(), 200);
+        return  $response->getBody()->getContents();
     }
 
-    public function getCardReaderInfo()
+    public static function getCardReaderInfo()
     {
         $requestId = idate("U");
 
@@ -156,15 +188,16 @@ class PosTerminalController extends Controller
 
         $response = $client->post($url, [
             'headers' => [
+                'Content-Type' => 'application/json',
                 'Accept' => 'application/json'
             ],
             'body' => json_encode($payload)
         ]);
 
-        return response($response->getBody(), 200);
+        return  $response->getBody()->getContents();
     }
 
-    public function openPaymentGateway()
+    public static function openPaymentGateway()
     {
         $requestId = idate("U");
 
@@ -193,21 +226,17 @@ class PosTerminalController extends Controller
 
         $response = $client->post($url, [
             'headers' => [
+                'Content-Type' => 'application/json',
                 'Accept' => 'application/json'
             ],
             'body' => json_encode($payload)
         ]);
 
-        return response($response->getBody(), 200);
+        return  $response->getBody()->getContents();
     }
 
-    public function startPaymentTransaction(Request $request)
+    public static function startPaymentTransaction($paymentGatewayId, $transactionAmount)
     {
-        $validatedData = $request->validate([
-            'paymentGatewayId' => 'required|string',
-            'transactionAmount' => 'required|numeric',
-        ]);
-
         $requestId = idate("U");
 
         $payload = [
@@ -216,10 +245,10 @@ class PosTerminalController extends Controller
             "targetType" => "paymentGatewayConverge",
             "version" => "1.0",
             "parameters" => [
-                "paymentGatewayId" => $validatedData['paymentGatewayId'],
+                "paymentGatewayId" => $paymentGatewayId,
                 "transactionType" => "SALE",
                 "baseTransactionAmount" => [
-                    "value" => (int) $validatedData['transactionAmount'],
+                    "value" => (int) $transactionAmount,
                     "currencyCode" => "USD"
                 ],
                 "tenderType" => "CARD",
@@ -234,21 +263,17 @@ class PosTerminalController extends Controller
 
         $response = $client->post($url, [
             'headers' => [
+                'Content-Type' => 'application/json',
                 'Accept' => 'application/json'
             ],
             'body' => json_encode($payload)
         ]);
 
-        return response($response->getBody(), 200);
+        return  $response->getBody()->getContents();
     }
 
-    public function getPaymentTransactionStatus(Request $request)
+    public static function getPaymentTransactionStatus($paymentGatewayId, $chanId)
     {
-        $validatedData = $request->validate([
-            "paymentGatewayId" => 'required|string',
-            "chanId" => 'required|string'
-        ]);
-
         $requestId = idate("U");
 
         $payload = [
@@ -257,8 +282,8 @@ class PosTerminalController extends Controller
             "targetType" => "paymentGatewayConverge",
             "version" => "1.0",
             "parameters" => [
-                "paymentGatewayId" => $validatedData['paymentGatewayId'],
-                "chanId" => $validatedData['chanId']
+                "paymentGatewayId" => $paymentGatewayId,
+                "chanId" => $chanId
             ]
         ];
 
@@ -267,11 +292,12 @@ class PosTerminalController extends Controller
 
         $response = $client->post($url, [
             'headers' => [
+                'Content-Type' => 'application/json',
                 'Accept' => 'application/json'
             ],
             'body' => json_encode($payload)
         ]);
 
-        return response($response->getBody(), 200);
+        return  $response->getBody()->getContents();
     }
 }

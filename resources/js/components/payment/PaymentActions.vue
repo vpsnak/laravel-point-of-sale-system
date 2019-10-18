@@ -133,6 +133,12 @@ export default {
 			let payload;
 
 			switch (this.paymentType) {
+				case "pos-terminal":
+					payload = {
+						paymentAmount: this.paymentAmount,
+						paymentType: this.paymentType
+					};
+					break;
 				case "cash":
 					payload = {
 						paymentAmount: this.paymentAmount,
