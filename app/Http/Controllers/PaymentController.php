@@ -88,8 +88,8 @@ class PaymentController extends BaseController
 
                 $validatedData['amount'] = $order->subtotal - Price::calculateDiscount(
                     $order->subtotal,
-                        $coupon->discount->type,
-                        $coupon->discount->amount
+                    $coupon->discount->type,
+                    $coupon->discount->amount
                 );
 
                 $coupon->uses--;
@@ -117,6 +117,12 @@ class PaymentController extends BaseController
                         $giftcard->save();
                     }
                 }
+                break;
+
+            case 'pos-terminal':
+                $paymentResponse = PosTerminalController::posPayment(
+                    $validatedData['amount']
+                );
                 break;
         }
 
