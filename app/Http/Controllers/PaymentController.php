@@ -123,6 +123,18 @@ class PaymentController extends BaseController
                 $paymentResponse = PosTerminalController::posPayment(
                     $validatedData['amount']
                 );
+
+                if (key_exists('errors', $paymentResponse)) {
+                    return response([
+                        'errors' => [
+                            'POS Terminal' => [
+                                $paymentResponse['errors']
+                            ]
+                        ],
+                        'message' => $paymentResponse['errors']
+                    ], 403);
+                }
+
                 break;
         }
 
