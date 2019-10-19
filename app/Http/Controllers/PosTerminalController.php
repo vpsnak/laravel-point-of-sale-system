@@ -13,27 +13,35 @@ class PosTerminalController extends Controller
 
         $cardReaderInfo = json_decode(self::getCardReaderInfo(), true);
 
-        // if ($cardReaderInfo['data']['cardReaderInfo'] === null) {
-        //     // card reader is not initialized!
+        if ($cardReaderInfo['data']['cardReaderInfo'] === null) {
+            // card reader is not initialized!
 
-        //     $id = json_decode(self::startCardReaderConfiguration(), true);
+            $id = json_decode(self::startCardReaderConfiguration(), true);
 
-        //     $id = $id['data']['cardReaderCommand']['id'];
+            if ($id['statusDetails'] === 'TARGET_UNAVAILABLE') {
+                return ['errors' => 'POS Terminal is already initialized or not available'];
+            }
 
-        //     do {
-        //         $response = json_decode(self::getCardReadersSearchStatus($id), true);
-        //     } while ($response['data']['cardReadersSearch']['completed'] === false);
+            $id = $id['data']['cardReaderCommand']['id'];
 
-        //     if (!count($response['data']['cardReadersSearch']['cardReaders'])) {
-        //         return response('pos failed to init properly');
-        //     }
-        // }
+            $id = json_decode(self::startCardReadersSearch(), true);
+            $id = $id['requestId'];
+
+            do {
+                sleep(1);
+                $response = json_decode(self::getCardReadersSearchStatus($id), true);
+            } while ($response['data']['cardReadersSearch']['completed'] === false);
+
+            if (!count($response['data']['cardReadersSearch']['cardReaders'])) {
+                return ['errors' => 'POS Terminal failed to initialize properly'];
+            }
+        }
 
         // pos terminal is configured
         $paymentGatewayId = json_decode(self::openPaymentGateway(), true);
 
         if ($paymentGatewayId['data']['paymentGatewayCommand']['openPaymentGatewayData']['result'] !== 'SUCCESS') {
-            return response('payment gateway failed');
+            return ['errors' => 'Payment gateway failed'];
         }
 
         $paymentGatewayId = $paymentGatewayId['data']['paymentGatewayCommand']['openPaymentGatewayData']['paymentGatewayId'];
@@ -41,18 +49,58 @@ class PosTerminalController extends Controller
 
         $chanId = $chanId['data']['paymentGatewayCommand']['chanId'];
 
+        set_time_limit(300);
 
         do {
+            sleep(1);
             $response = json_decode(self::getPaymentTransactionStatus($paymentGatewayId, $chanId), true);
         } while ($response['data']['paymentGatewayCommand']['completed'] === false);
 
 
-        if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result']) {
-            return response('payment succeded', 200);
+        if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'FAILED') {
+            switch ($response['data']['paymentGatewayCommand']['paymentTransactionData']['errors'][0]) {
+                case 'ECLCommerceError ECLCardReaderCanceled':
+                    return ['errors' => 'Transaction canceled'];
+                    break;
+                case 'ECLCommerceError ECLTransactionCardNeedsRemoval':
+                    return ['errors' => 'Remove the card and try again.<br>Insert the card only when prompted by the POS Terminal'];
+                    break;
+
+                case 'ECLCommerceError ECLTransactionCardRemoved':
+                    return ['errors' => 'Card has been removed before the transaction completed'];
+                    break;
+                case 'ECLCommerceError ECLCardReaderCannotConnect':
+                    return ['errors' => 'POS Terminal disconnected<br>Please verify that POS Terminal is properly connected and try again'];
+                    break;
+                case 'ECLCommerceError ECLCardReaderCardDataInvalid':
+                    return ['errors' => 'Invalid card'];
+                    break;
+                default:
+                    var_dump($response['data']['paymentGatewayCommand']['paymentTransactionData']);
+                    die;
+            }
+        } else {
+            return ['success' => $response];
         }
     }
 
-    public static function startCardReaderConfiguration()
+    private static function sendRequest($payload)
+    {
+        $url = config('elavon.hostPC.ip') . ':' . config('elavon.hostPC.port') . '/rest/command';
+        $client = new Client(['verify' => false]);
+
+        $response = $client->post($url, [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json'
+            ],
+            'body' => json_encode($payload)
+        ]);
+
+        return $response->getBody()->getContents();
+    }
+
+    private static function startCardReaderConfiguration()
     {
         $requestId = idate("U");
 
@@ -73,21 +121,10 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        $url = config('elavon.hostPC.ip') . ':' . config('elavon.hostPC.port') . '/rest/command';
-        $client = new Client(['verify' => false]);
-
-        $response = $client->post($url, [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json'
-            ],
-            'body' => json_encode($payload)
-        ]);
-
-        return $response->getBody()->getContents();
+        return self::sendRequest($payload);
     }
 
-    public static function getCommandStatusOnCardReader($id)
+    private static function getCommandStatusOnCardReader($id)
     {
         $requestId = idate("U");
 
@@ -101,21 +138,10 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        $client = new Client(['verify' => false]);
-        $url = config('elavon.hostPC.ip') . ':' . config('elavon.hostPC.port') . '/rest/command';
-
-        $response = $client->post($url, [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json'
-            ],
-            'body' => json_encode($payload)
-        ]);
-
-        return  $response->getBody()->getContents();
+        return self::sendRequest($payload);
     }
 
-    public static function startCardReadersSearch()
+    private static function startCardReadersSearch()
     {
         $requestId = idate("U");
 
@@ -125,27 +151,16 @@ class PosTerminalController extends Controller
             "targetType" => "cardReader",
             "version" => "1.0",
             "parameters" => [
-                "timeout" => 9000,
+                "timeout" => 4500,
                 "updateIfNecessary" => true,
                 "connect" => true
             ]
         ];
 
-        $client = new Client(['verify' => false]);
-        $url = config('elavon.hostPC.ip') . ':' . config('elavon.hostPC.port') . '/rest/command';
-
-        $response = $client->post($url, [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json'
-            ],
-            'body' => json_encode($payload)
-        ]);
-
-        return  $response->getBody()->getContents();
+        return self::sendRequest($payload);
     }
 
-    public static function getCardReadersSearchStatus($id)
+    private static function getCardReadersSearchStatus($id)
     {
         $requestId = idate("U");
 
@@ -159,21 +174,10 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        $client = new Client(['verify' => false]);
-        $url = config('elavon.hostPC.ip') . ':' . config('elavon.hostPC.port') . '/rest/command';
-
-        $response = $client->post($url, [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json'
-            ],
-            'body' => json_encode($payload)
-        ]);
-
-        return  $response->getBody()->getContents();
+        return self::sendRequest($payload);
     }
 
-    public static function getCardReaderInfo()
+    private static function getCardReaderInfo()
     {
         $requestId = idate("U");
 
@@ -183,21 +187,10 @@ class PosTerminalController extends Controller
             "targetType" => "api"
         ];
 
-        $client = new Client(['verify' => false]);
-        $url = config('elavon.hostPC.ip') . ':' . config('elavon.hostPC.port') . '/rest/command';
-
-        $response = $client->post($url, [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json'
-            ],
-            'body' => json_encode($payload)
-        ]);
-
-        return  $response->getBody()->getContents();
+        return self::sendRequest($payload);
     }
 
-    public static function openPaymentGateway()
+    private static function openPaymentGateway()
     {
         $requestId = idate("U");
 
@@ -221,21 +214,10 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        $client = new Client(['verify' => false]);
-        $url = config('elavon.hostPC.ip') . ':' . config('elavon.hostPC.port') . '/rest/command';
-
-        $response = $client->post($url, [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json'
-            ],
-            'body' => json_encode($payload)
-        ]);
-
-        return  $response->getBody()->getContents();
+        return self::sendRequest($payload);
     }
 
-    public static function startPaymentTransaction($paymentGatewayId, $transactionAmount)
+    private static function startPaymentTransaction($paymentGatewayId, $transactionAmount)
     {
         $requestId = idate("U");
 
@@ -258,21 +240,10 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        $client = new Client(['verify' => false]);
-        $url = config('elavon.hostPC.ip') . ':' . config('elavon.hostPC.port') . '/rest/command';
-
-        $response = $client->post($url, [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json'
-            ],
-            'body' => json_encode($payload)
-        ]);
-
-        return  $response->getBody()->getContents();
+        return self::sendRequest($payload);
     }
 
-    public static function getPaymentTransactionStatus($paymentGatewayId, $chanId)
+    private static function getPaymentTransactionStatus($paymentGatewayId, $chanId)
     {
         $requestId = idate("U");
 
@@ -287,17 +258,6 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        $client = new Client(['verify' => false]);
-        $url = config('elavon.hostPC.ip') . ':' . config('elavon.hostPC.port') . '/rest/command';
-
-        $response = $client->post($url, [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json'
-            ],
-            'body' => json_encode($payload)
-        ]);
-
-        return  $response->getBody()->getContents();
+        return self::sendRequest($payload);
     }
 }
