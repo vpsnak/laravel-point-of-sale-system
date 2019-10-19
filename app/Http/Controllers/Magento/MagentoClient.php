@@ -2,7 +2,7 @@
 
 namespace App\Magento;
 
-use App\MagentoOAuth;
+use App\Setting;
 use Exception;
 use OAuth;
 use OAuthException;
@@ -30,12 +30,12 @@ class MagentoClient
 
     public function initClient()
     {
-        $this->baseUrl = env('MAGENTO_URL') . '/api/rest/';
-        $this->consumer_key = env('OAUTH_CONSUMER_KEY');
-        $this->consumer_secret = env('OAUTH_CONSUMER_SECRET');
-        $this->state = MagentoOAuth::getFirst('key', 'state');
-        $this->token = MagentoOAuth::getFirst('key', 'token');
-        $this->secret = MagentoOAuth::getFirst('key', 'secret');
+        $this->baseUrl = config('magento.MAGENTO_URL') . '/api/rest/';
+        $this->consumer_key = config('magento.OAUTH_CONSUMER_KEY');
+        $this->consumer_secret = config('magento.OAUTH_CONSUMER_SECRET');
+        $this->state = Setting::getFirst('key', 'state');
+        $this->token = Setting::getFirst('key', 'token');
+        $this->secret = Setting::getFirst('key', 'secret');
 
         $auth_type = ($this->state->value == 2) ? OAUTH_AUTH_TYPE_AUTHORIZATION : OAUTH_AUTH_TYPE_URI;
         try {

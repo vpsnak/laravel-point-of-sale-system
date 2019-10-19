@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Http\Controllers\Magento\Customer;
-use GuzzleHttp\Client;
 use Illuminate\Console\Command;
 
 class Test extends Command
@@ -42,6 +41,7 @@ class Test extends Command
         // oob
         $callback_url = 'https://httpbin.org/get';
         $client = new Customer();
+        dd($client->getall());
         foreach (\App\Customer::all() as $customer) {
             $res = $client->sendCustomer([
                 'firstname' => $customer->first_name,

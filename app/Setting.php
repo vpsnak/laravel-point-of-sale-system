@@ -2,7 +2,7 @@
 
 namespace App;
 
-class MagentoOAuth extends BaseModel
+class Setting extends BaseModel
 {
     protected $fillable = ['key', 'value'];
 }
