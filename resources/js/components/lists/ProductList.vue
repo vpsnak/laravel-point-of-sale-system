@@ -37,7 +37,7 @@
 							v-for="category in categoryList"
 							:key="category.id"
 							:value="category.name"
-							@click="searchProduct(selectedCategory)"
+							@click="searchProduct(category.name)"
 						>{{category.name}}</v-btn>
 					</v-btn-toggle>
 					<!-- <v-combobox
