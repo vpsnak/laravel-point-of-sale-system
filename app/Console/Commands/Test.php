@@ -41,7 +41,7 @@ class Test extends Command
         // oob
         $callback_url = 'https://httpbin.org/get';
         $client = new Customer();
-        dd($client->getall());
+        dd($client->getAllEntries(1, 1));
         foreach (\App\Customer::all() as $customer) {
             $res = $client->sendCustomer([
                 'firstname' => $customer->first_name,

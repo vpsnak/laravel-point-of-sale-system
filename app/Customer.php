@@ -5,15 +5,12 @@ namespace App;
 class Customer extends BaseModel
 {
     protected $fillable = [
+        'magento_id',
         'first_name',
         'last_name',
         'email',
         'phone',
         'company_name'
-    ];
-
-    protected $hidden = [
-        'magento_id'
     ];
 
     protected $with = ['addresses'];
