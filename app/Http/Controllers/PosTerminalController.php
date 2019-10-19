@@ -76,11 +76,14 @@ class PosTerminalController extends Controller
                     return ['errors' => 'Invalid card'];
                     break;
                 default:
-                    var_dump($response['data']['paymentGatewayCommand']['paymentTransactionData']);
-                    die;
+                    return ['error' => $response['data']['paymentGatewayCommand']['paymentTransactionData']];
             }
+        } else if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'DECLINED') {
+            return ['errors' => 'Card declined by issuer'];
+        } else if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'APPROVED') {
+            return ['success' => $response['data']['paymentGatewayCommand']['eventQueue']];
         } else {
-            return ['success' => $response];
+            return ['errors' => $response];
         }
     }
 
