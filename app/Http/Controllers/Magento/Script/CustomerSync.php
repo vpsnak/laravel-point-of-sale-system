@@ -1,0 +1,143 @@
+<?php
+
+
+namespace App\Http\Controllers\Magento\Script;
+
+
+use App\Address;
+use App\Http\Controllers\Magento\Customer;
+use App\Http\Controllers\Magento\Helper;
+use Exception;
+use Illuminate\Support\Facades\Log;
+
+class CustomerSync
+{
+    protected const customerFieldsToParse = [
+        'entity_id',
+        'firstname',
+        'lastname',
+    ];
+
+    protected const customerFieldsToRename = [
+        'entity_id' => 'magento_id',
+        'firstname' => 'first_name',
+        'lastname' => 'last_name',
+    ];
+
+    protected const addressFieldsToParse = [
+        'firstname',
+        'lastname',
+        'street',
+        'city',
+        'country_id',
+        'region_id',
+        'postcode',
+        'telephone',
+        'company',
+        'vat_id',
+    ];
+    protected const addressFieldsToRename = [
+        'firstname' => 'first_name',
+        'lastname' => 'last_name',
+        'region_id' => 'region',
+        'telephone' => 'phone',
+    ];
+
+    public static function getFromMagento()
+    {
+        $client = new Customer();
+
+        $page = 1;
+        $per_page = 100;
+        $categoriesRetrieved = $per_page;
+        while ($categoriesRetrieved == $per_page) {
+            $customers = $client->getAllEntries($per_page, $page++);
+            if (empty($customers)) {
+                break;
+            }
+            foreach ($customers as $customer) {
+                $parsedCustomer = Helper::getParsedData($customer, self::customerFieldsToParse,
+                    self::customerFieldsToRename);
+                $storedCustomer = \App\Customer::getFirst('email', $customer->email);
+                if (Helper::hasDifferences($parsedCustomer, $storedCustomer)) {
+                    $logMessage = 'Getting Customer: ' . $customer->email;
+                    Log::channel('connector')->info($logMessage);
+                    $storedCustomer = \App\Customer::updateOrCreate(
+                        ['email' => $customer->email],
+                        $parsedCustomer
+                    );
+                }
+                foreach ($customer->addresses as $address) {
+                    try {
+                        $parsedAddress = Helper::getParsedData($address, self::addressFieldsToParse,
+                            self::addressFieldsToRename);
+                        $parsedAddress['area_code_id'] = 20;
+                        $storedAddress = Address::getFirst('magento_id', $address->entity_id);
+                        if (Helper::hasDifferences($parsedAddress, $storedAddress)) {
+                            $logMessage = 'Getting Customer (' . $customer->email . ') Address: ' . $address->entity_id;
+                            Log::channel('connector')->info($logMessage);
+                            $updatedAddress = Address::updateOrCreate(
+                                ['magento_id' => $address->entity_id],
+                                $parsedAddress
+                            );
+                            if (!empty($storedAddress)) {
+                                $storedCustomer->addresses()->attach($updatedAddress);
+                            }
+                        }
+                    } catch (Exception $e) {
+                        $logMessage = 'Skipping Customer (' . $customer->email . ') Address: ' . $address->entity_id;
+                        Log::channel('connector')->error($logMessage);
+                        continue;
+                    }
+                }
+            }
+        }
+    }
+
+    public static function sendToMagento()
+    {
+        $client = new Customer();
+        foreach (\App\Customer::all() as $customer) {
+            if ($customer->magento_id != 0) {
+                // @TODO add tax vat to customer
+                $response = $client->sendCustomer([
+                    'firstname' => $customer->first_name,
+                    'lastname' => $customer->last_name,
+                    'email' => $customer->email,
+                ]);
+                if (!isset($response->id)) {
+                    return;
+                }
+                $logMessage = 'Send Customer (' . $customer->email . ') with magento id: ' . $response->id;
+                Log::channel('connector')->info($logMessage);
+                $customer->magento_id = $response->id;
+                $customer->save();
+            }
+            // @TODO set 1st addresss default billing and shipping in there is none
+            foreach ($customer->addresses as $address) {
+                $response = $client->sendAddress($customer->magento_id, [
+                    'address_code' => $address->id,
+                    'firstname' => $address->first_name,
+                    'lastname' => $address->last_name,
+                    'company' => 'webo2',
+                    'street' => [$address->street],
+                    'city' => $address->city,
+                    'country_id' => $address->country_id,
+                    'region' => $address->region,
+                    'postcode' => $address->postcode,
+                    'phone' => $address->phone,
+                    'vat_id' => '151581515',
+                    'is_default_billing' => 1,
+                    'is_default_shipping' => 1
+                ]);
+                if (!isset($response->id)) {
+                    continue;
+                }
+                $logMessage = 'Send Customer (' . $customer->email . ') Address (' . $address->id . ') with magento id: ' . $response->id;
+                Log::channel('connector')->info($logMessage);
+                $address->magento_id = $response->id;
+                $address->save();
+            }
+        }
+    }
+}
