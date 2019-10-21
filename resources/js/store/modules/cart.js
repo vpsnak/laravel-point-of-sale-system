@@ -34,7 +34,7 @@ export default {
             },
             {
                 id: 3,
-                name: "Completion",
+                name: "Order Completed",
                 icon: "check_circle",
                 component: "completion",
                 completed: false

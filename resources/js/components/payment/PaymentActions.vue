@@ -83,7 +83,10 @@
 			>{{ paymentBtnTxt }}</v-btn>
 		</v-col>
 		<v-col cols="12" v-if="remainingAmount !== undefined">
-			<span class="title">Remaining: $ {{ remainingAmount.toFixed(2) }}</span>
+			<span class="title">
+				Remaining:
+				<span class="amber--text" v-text="'$ ' + remainingAmount.toFixed(2)" />
+			</span>
 		</v-col>
 	</v-row>
 </template>

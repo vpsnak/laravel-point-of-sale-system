@@ -55,6 +55,8 @@ export default {
 			get() {
 				if (parseFloat(this.order_remaining) >= 0) {
 					return this.order_remaining;
+				} else if (parseFloat(this.order_remaining) < 0) {
+					return this.order_remaining;
 				} else {
 					return undefined;
 				}
@@ -169,7 +171,8 @@ export default {
 
 			this.create(payload)
 				.then(response => {
-					this.order_remaining = response.total - response.total_paid;
+					this.$store.state.cart.order.remaining = this.order_remaining =
+						response.total - response.total_paid;
 
 					let notification = {
 						msg: "Payment received",

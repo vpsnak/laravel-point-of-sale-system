@@ -36,8 +36,6 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
-
 export default {
 	computed: {
 		currentCheckoutStep() {
@@ -46,9 +44,6 @@ export default {
 		checkoutSteps() {
 			return this.$store.state.cart.checkoutSteps;
 		}
-	},
-	methods: {
-		...mapActions(["search", "create", "getAll", "getOne"])
 	}
 };
 </script>
