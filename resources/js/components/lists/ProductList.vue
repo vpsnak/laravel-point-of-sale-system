@@ -31,13 +31,22 @@
 
 			<v-row align="center" justify="center">
 				<v-col>
-					<v-btn-toggle shaped v-model="selectedCategory">
-						<v-btn
+					<v-slide-group show-arrows v-model="selectedCategory">
+						<v-slide-item
 							v-for="category in categoryList"
 							:key="category.id"
+							v-slot:default="{ active, toggle }"
 							:value="category.id"
-						>{{category.name}}</v-btn>
-					</v-btn-toggle>
+						>
+							<v-btn
+								:color="active ? 'primary' : ''"
+								class="mx-1"
+								@click="toggle"
+								depressed
+								rounded
+							>{{category.name}}</v-btn>
+						</v-slide-item>
+					</v-slide-group>
 				</v-col>
 			</v-row>
 
@@ -105,6 +114,7 @@ export default {
 				return this.selected_category;
 			},
 			set(value) {
+				console.log(value);
 				this.selected_category = value;
 
 				if (value) {
