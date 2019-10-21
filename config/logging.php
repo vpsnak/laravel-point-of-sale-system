@@ -53,6 +53,13 @@ return [
             'days' => 14,
         ],
 
+        'connector' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/connector.log'),
+            'level' => 'debug',
+            'days' => 14,
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),
