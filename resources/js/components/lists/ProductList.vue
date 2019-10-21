@@ -38,7 +38,13 @@
 							v-slot:default="{ active, toggle }"
 							:value="category.id"
 						>
-							<v-btn class="mx-1" @click="toggle" depressed rounded>{{category.name}}</v-btn>
+							<v-btn
+								:color="active ? 'primary' : ''"
+								class="mx-1"
+								@click="toggle"
+								depressed
+								rounded
+							>{{category.name}}</v-btn>
 						</v-slide-item>
 					</v-slide-group>
 				</v-col>
