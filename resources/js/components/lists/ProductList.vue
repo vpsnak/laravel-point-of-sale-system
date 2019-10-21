@@ -15,8 +15,7 @@
 					v-model="keyword"
 					placeholder="Search product"
 					class="mx-2"
-					@keyup.enter="searchProduct(keyword), selectedCategory = null;
-"
+					@keyup.enter="searchProduct(keyword), selectedCategory = null;"
 					clearable
 					@click:clear="getAllProducts"
 				></v-text-field>
@@ -36,8 +35,8 @@
 						<v-btn
 							v-for="category in categoryList"
 							:key="category.id"
-							:value="category.name"
-							@click="searchProduct(category.name)"
+							:value="category.id"
+							@click="getProductsFromCategoryID(category.id)"
 						>{{category.name}}</v-btn>
 					</v-btn-toggle>
 					<!-- <v-combobox
@@ -187,8 +186,21 @@ export default {
 					this.initiateLoadingSearchResults(false);
 				});
 		},
+		getProductsFromCategoryID(category_id) {
+			this.initiateLoadingSearchResults(true);
+			let payload = {
+				model: "categories",
+				mutation: "setProductList",
+				data: {
+					id: category_id,
+					model: "products"
+				}
+			};
+			this.$store.dispatch("getManyByOne", payload).finally(() => {
+				this.initiateLoadingSearchResults(false);
+			});
+		},
 		searchProduct(keyword) {
-			console.log(keyword);
 			if (keyword.length > 0) {
 				this.initiateLoadingSearchResults(true);
 
