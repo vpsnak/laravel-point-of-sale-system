@@ -37,7 +37,6 @@ export default {
 	},
 	methods: {
 		showCompleteBtn(event) {
-			console.log(event);
 			if (event > 0 || event === undefined) {
 				this.completed = false;
 			} else {

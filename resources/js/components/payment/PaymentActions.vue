@@ -54,6 +54,7 @@
 					prepend-inner-icon="mdi-currency-usd"
 					v-model="amount"
 					@keyup="limits"
+					@keyup.enter="sendPayment"
 					@blur="limits"
 					style="max-width:150px;"
 				></v-text-field>
