@@ -130,6 +130,36 @@ export default new Vuex.Store({
                     });
             });
         },
+        getManyByOne(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(
+                        this.state.baseUrl +
+                        payload.model +
+                        "/" +
+                        payload.data.id +
+                        "/" +
+                        payload.data.model
+                    )
+                    .then(response => {
+                        console.log(response.data)
+                        if (_.has(payload, "mutation")) {
+                            context.commit(payload.mutation, response.data, {
+                                root: true
+                            });
+                        }
+                        resolve(response.data);
+                    })
+                    .catch(error => {
+                        let notification = {
+                            msg: error.response.data.errors,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
+                        reject(error);
+                    });
+            });
+        },
         search(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
