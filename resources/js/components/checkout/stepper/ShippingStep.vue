@@ -17,8 +17,12 @@ export default {
 	data() {
 		return {
 			shipping: {
-				method: "pickup",
-				address: undefined
+				get() {
+					return this.$store.state.cart.shipping;
+				},
+				set(value) {
+					this.$store.state.cart.shipping = value;
+				}
 			}
 		};
 	},

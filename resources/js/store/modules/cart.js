@@ -20,7 +20,7 @@ export default {
         checkoutSteps: [
             {
                 id: 1,
-                name: "Shipping options",
+                name: "Delivery options",
                 icon: "local_shipping",
                 component: "shippingStep",
                 completed: false
@@ -49,7 +49,14 @@ export default {
         discount_type: "",
         discount_amount: 0,
 
-        shipping: {},
+        shipping: {
+            address: undefined,
+            notes: "",
+            method: "retail",
+            date: undefined,
+            time: undefined,
+            cost: 0
+        },
 
         order: undefined
     },
@@ -117,7 +124,6 @@ export default {
         setCartPrice(state, cartPrice) {
             state.cart_price = cartPrice;
         },
-
         resetState(state) {
             state.currentCheckoutStep = 1;
             state.customer = undefined;
@@ -131,6 +137,23 @@ export default {
             state.checkoutSteps.forEach(checkoutStep => {
                 checkoutStep.completed = false;
             });
+
+            state.shipping = {
+                address: undefined,
+                method: "retail",
+                date: undefined,
+                time: undefined,
+                cost: 0
+            };
+        },
+        resetShipping(state) {
+            state.shipping = {
+                address: undefined,
+                method: "retail",
+                date: undefined,
+                time: undefined,
+                cost: 0
+            };
         }
     },
     actions: {

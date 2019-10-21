@@ -4,7 +4,7 @@
 			<v-radio-group v-model="shipping.method" @change="selectedShippingMethod" row>
 				<v-radio label="Retail" value="retail"></v-radio>
 				<v-radio label="In store pickup" value="pickup" :disabled="! customer"></v-radio>
-				<v-radio label="Shipping" value="delivery" :disabled="! customer"></v-radio>
+				<v-radio label="Delivery" value="delivery" :disabled="! customer"></v-radio>
 			</v-radio-group>
 		</div>
 		<v-row v-if="shipping.method !== 'retail'">
@@ -84,18 +84,18 @@ export default {
 	data() {
 		return {
 			datePicker: false,
-			timePicker: false,
-			shipping: {
-				address: undefined,
-				notes: "",
-				method: "retail",
-				date: undefined,
-				time: undefined,
-				cost: 0
-			}
+			timePicker: false
 		};
 	},
 	computed: {
+		shipping: {
+			get() {
+				return this.$store.state.cart.shipping;
+			},
+			set(value) {
+				this.$store.state.cart.shipping = value;
+			}
+		},
 		addresses() {
 			if (this.customer) {
 				return this.customer.addresses;
@@ -130,15 +130,6 @@ export default {
 				this.shipping.cost = 0;
 			}
 			this.$emit("shipping", this.shipping);
-		},
-		clear() {
-			this.shipping = {
-				address: undefined,
-				method: "retail",
-				date: undefined,
-				time: undefined,
-				cost: 0
-			};
 		}
 	},
 	beforeDestroy() {
