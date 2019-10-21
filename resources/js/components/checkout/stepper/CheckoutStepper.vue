@@ -17,7 +17,7 @@
 				:key="checkoutStep.id"
 				:step="checkoutStep.id"
 			>
-				<v-card class="pa-2">
+				<v-card class="mx-auto">
 					<v-card-title class="justify-center" align="center">
 						<v-row align="center" justify="center">
 							<v-col align="center" justify="center">

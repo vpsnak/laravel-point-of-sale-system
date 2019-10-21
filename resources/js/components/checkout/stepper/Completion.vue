@@ -6,32 +6,8 @@
 				<span class="amber--text" v-text="'$ ' + change.toFixed(2)" />
 			</h3>
 		</div>
-		<v-card class="mx-auto" max-width="300">
-			<v-list>
-				<v-subheader>
-					<v-icon left>mdi-receipt</v-icon>
-					<h3>Receipt for order #{{ orderId }}</h3>
-				</v-subheader>
-				<v-divider></v-divider>
-				<v-list-item @click>
-					<v-list-item-icon>
-						<v-icon>mdi-printer</v-icon>
-					</v-list-item-icon>
-					<v-list-item-content>
-						<v-list-item-title>Print</v-list-item-title>
-					</v-list-item-content>
-				</v-list-item>
-				<v-list-item :disabled="! customerEmail" @click>
-					<v-list-item-icon>
-						<v-icon>mdi-email-newsletter</v-icon>
-					</v-list-item-icon>
-					<v-list-item-content>
-						<v-list-item-title>Email</v-list-item-title>
-						<v-list-item-subtitle v-text="customerEmail"></v-list-item-subtitle>
-					</v-list-item-content>
-				</v-list-item>
-			</v-list>
-		</v-card>
+
+		<orderReceipt />
 
 		<v-card-actions>
 			<div class="flex-grow-1"></div>
@@ -56,7 +32,6 @@ export default {
 			}
 		},
 		order() {
-			console.log(this.$store.state.cart.order);
 			return this.$store.state.cart.order;
 		},
 		orderId() {
