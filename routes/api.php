@@ -30,6 +30,8 @@ $baseRoutes = [
     'coupons' => 'CouponController',
 ];
 
+Route::get('categories/{category}/products', "CategoryController@productsByCategory");
+
 foreach ($baseRoutes as $route => $controller) {
     Route::get("/$route", "$controller@all");
     Route::get("/$route/{id}", "$controller@get");

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Product;
 use App\Category;
 use Illuminate\Http\Request;
 
@@ -30,5 +31,14 @@ class CategoryController extends BaseController
     public function productListingCategories()
     {
         return response(Category::getAllPaginate('in_product_listing', 1, 20), 200);
+    }
+
+    public function productsByCategory(Category $category)
+    {
+        $products = Product::whereHas('categories', function ($query) use ($category) {
+            $query->where('id', $category->id);
+        })->get();
+
+        return response($products, 200);
     }
 }
