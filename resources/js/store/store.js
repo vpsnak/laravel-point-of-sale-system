@@ -38,7 +38,7 @@ export default new Vuex.Store({
 
         cashRegister: {
             id: null,
-            name: "",
+            name: ""
         },
 
         // notification
@@ -108,9 +108,9 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                        payload.model +
-                        "/" +
-                        payload.data.id
+                            payload.model +
+                            "/" +
+                            payload.data.id
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -135,14 +135,13 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                        payload.model +
-                        "/" +
-                        payload.data.id +
-                        "/" +
-                        payload.data.model
+                            payload.model +
+                            "/" +
+                            payload.data.id +
+                            "/" +
+                            payload.data.model
                     )
                     .then(response => {
-                        console.log(response.data)
                         if (_.has(payload, "mutation")) {
                             context.commit(payload.mutation, response.data, {
                                 root: true

@@ -36,22 +36,11 @@
 							v-for="category in categoryList"
 							:key="category.id"
 							:value="category.id"
-							@click="getProductsFromCategoryID(category.id)"
 						>{{category.name}}</v-btn>
 					</v-btn-toggle>
-					<!-- <v-combobox
-                        v-model="selectedCategories"
-                        :items="categoryList"
-                        item-text="name"
-                        chips
-                        clearable
-                        label="Filter by category"
-                        multiple
-                        prepend-icon="filter_list"
-                        solo
-					></v-combobox>-->
 				</v-col>
 			</v-row>
+
 			<v-row v-if="productList.length" style="height:61vh; overflow-y:auto;">
 				<v-col v-for="product in productList" :key="product.id" cols="12" md="6" lg="4">
 					<v-card :img="product.photo_url" @click="addProduct(product)" height="170px">
@@ -103,7 +92,7 @@ export default {
 			loader: false,
 			model: "products",
 			keyword: "",
-			selectedCategory: null
+			selected_category: null
 		};
 	},
 	mounted() {
@@ -111,31 +100,23 @@ export default {
 		this.getAllCategories();
 	},
 	computed: {
+		selectedCategory: {
+			get() {
+				return this.selected_category;
+			},
+			set(value) {
+				this.selected_category = value;
+
+				if (value) {
+					this.getProductsFromCategoryID();
+				} else {
+					this.getAllProducts();
+				}
+			}
+		},
 		productList: {
 			get() {
 				return this.$store.state.productList;
-				if (this.selectedCategory) {
-					let filteredProducts = [];
-
-					// this.$store.state.productList.forEach(product => {
-					// 	product.categories.forEach(productCategory => {
-					// 		this.selectedCategories.forEach(category => {
-					// 			if (
-					// 				category.id === productCategory.id &&
-					// 				!_.includes(filteredProducts, product)
-					// 			) {
-					// 				filteredProducts.push(product);
-					// 			}
-					// 		});
-					// 	});
-					// });
-
-					this.$store.state.productList;
-
-					return filteredProducts;
-				} else {
-					return this.$store.state.productList;
-				}
 			},
 			set(value) {
 				this.$store.state.productList = value;
@@ -186,24 +167,19 @@ export default {
 					this.initiateLoadingSearchResults(false);
 				});
 		},
-		getProductsFromCategoryID(category_id) {
-			if (this.selectedCategory != null) {
-				console.log(category_id);
-				this.initiateLoadingSearchResults(true);
-				let payload = {
-					model: "categories",
-					mutation: "setProductList",
-					data: {
-						id: category_id,
-						model: "products"
-					}
-				};
-				this.$store.dispatch("getManyByOne", payload).finally(() => {
-					this.initiateLoadingSearchResults(false);
-				});
-			} else {
-				this.getAllProducts();
-			}
+		getProductsFromCategoryID() {
+			this.initiateLoadingSearchResults(true);
+			let payload = {
+				model: "categories",
+				mutation: "setProductList",
+				data: {
+					id: this.selectedCategory,
+					model: "products"
+				}
+			};
+			this.$store.dispatch("getManyByOne", payload).finally(() => {
+				this.initiateLoadingSearchResults(false);
+			});
 		},
 		searchProduct(keyword) {
 			if (keyword.length > 0) {
