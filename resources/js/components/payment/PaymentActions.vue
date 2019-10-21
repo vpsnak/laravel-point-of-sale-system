@@ -114,9 +114,11 @@ export default {
 
 	computed: {
 		remainingAmount() {
-			return this.$props.remaining
-				? this.$props.remaining
-				: this.$store.state.cart.cart_price;
+			if (parseFloat(this.$props.remaining) >= 0) {
+				return parseFloat(this.$props.remaining);
+			} else {
+				return parseFloat(this.$store.state.cart.cart_price);
+			}
 		},
 		amount: {
 			get() {

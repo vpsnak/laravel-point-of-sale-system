@@ -53,7 +53,11 @@ export default {
 	computed: {
 		remaining: {
 			get() {
-				return this.order_remaining ? this.order_remaining : undefined;
+				if (parseFloat(this.order_remaining) >= 0) {
+					return this.order_remaining;
+				} else {
+					return undefined;
+				}
 			},
 			set(value) {
 				this.order_remaining = value;
