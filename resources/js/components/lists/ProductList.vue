@@ -7,7 +7,7 @@
 
 		<v-card-text>
 			<v-row align="center" justify="center">
-				<v-btn icon @click="searchProduct(keyword) , selectedCategory = null" class="mx-2">
+				<v-btn icon @click="searchProduct(keyword)" class="mx-2">
 					<v-icon>mdi-magnify</v-icon>
 				</v-btn>
 
@@ -15,7 +15,7 @@
 					v-model="keyword"
 					placeholder="Search product"
 					class="mx-2"
-					@keyup.enter="searchProduct(keyword), selectedCategory = null;"
+					@keyup.enter="searchProduct(keyword)"
 					clearable
 					@click:clear="getAllProducts"
 				></v-text-field>
@@ -187,18 +187,23 @@ export default {
 				});
 		},
 		getProductsFromCategoryID(category_id) {
-			this.initiateLoadingSearchResults(true);
-			let payload = {
-				model: "categories",
-				mutation: "setProductList",
-				data: {
-					id: category_id,
-					model: "products"
-				}
-			};
-			this.$store.dispatch("getManyByOne", payload).finally(() => {
-				this.initiateLoadingSearchResults(false);
-			});
+			if (this.selectedCategory != null) {
+				console.log(category_id);
+				this.initiateLoadingSearchResults(true);
+				let payload = {
+					model: "categories",
+					mutation: "setProductList",
+					data: {
+						id: category_id,
+						model: "products"
+					}
+				};
+				this.$store.dispatch("getManyByOne", payload).finally(() => {
+					this.initiateLoadingSearchResults(false);
+				});
+			} else {
+				this.getAllProducts();
+			}
 		},
 		searchProduct(keyword) {
 			if (keyword.length > 0) {
