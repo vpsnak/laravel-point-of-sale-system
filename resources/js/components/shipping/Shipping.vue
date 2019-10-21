@@ -30,7 +30,7 @@
 					<template v-slot:activator="{ on }">
 						<v-text-field v-model="shipping.date" label="Date" prepend-icon="event" v-on="on" readonly></v-text-field>
 					</template>
-					<v-date-picker v-model="shipping.date" @input="datePicker = false"></v-date-picker>
+					<v-date-picker v-model="shipping.date" @input="datePicker = false" :min="new Date().toJSON()"></v-date-picker>
 				</v-menu>
 			</v-col>
 			<v-col cols="6" lg="3">
