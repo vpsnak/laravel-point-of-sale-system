@@ -50,8 +50,8 @@ class User extends Authenticatable
         return $openLog->whereStatus(1);
     }
 
-    public function findForPassport($username)
-    {
-        return $this->where('username', $username)->first();
-    }
+    // public function findForPassport($username)
+    // {
+    //     return $this->orWhere('username', $username)->orWhere('phone', $username)->first();
+    // }
 }
