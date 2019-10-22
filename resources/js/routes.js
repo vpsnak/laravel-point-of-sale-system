@@ -16,92 +16,109 @@ import CashRegisters from "./components/pages/CashRegisters";
 import GiftCards from "./components/pages/GiftCards";
 import Coupons from "./components/pages/Coupons";
 
-
-
 export default [
+    {
+        path: "*",
+        redirect: "/"
+    },
     {
         name: "dashboard",
         path: "/",
-        component: Dashboard
+        component: Dashboard,
+        meta: { requiresAuth: true }
     },
     {
-        name: 'login',
-        path: '/login',
+        name: "login",
+        path: "/login",
         component: Login
     },
     {
-        name: 'logout',
-        path: '/logout',
+        name: "logout",
+        path: "/logout",
         component: Logout
     },
     {
         name: "sales",
         path: "/sales",
-        component: Sales
+        component: Sales,
+        meta: { requiresAuth: true }
     },
     {
         name: "Orders",
         path: "/orders",
-        component: Orders
+        component: Orders,
+        meta: { requiresAuth: true }
     },
     {
         name: "Customers",
         path: "/customers",
-        component: Customers
+        component: Customers,
+        meta: { requiresAuth: true }
     },
     {
         name: "Products",
         path: "/products",
-        component: Products
+        component: Products,
+        meta: { requiresAuth: true }
     },
     {
         name: "Categories",
         path: "/categories",
-        component: Categories
+        component: Categories,
+        meta: { requiresAuth: true }
     },
     {
         name: "Stores",
         path: "/stores",
-        component: Stores
+        component: Stores,
+        meta: { requiresAuth: true }
     },
     {
         name: "Users",
         path: "/users",
-        component: Users
+        component: Users,
+        meta: { requiresAuth: true }
     },
     {
         name: "testc",
         path: "/chris",
-        component: CTest
+        component: CTest,
+        meta: { requiresAuth: true }
     },
     {
         name: "Forms",
         path: "/forms",
-        component: Forms
+        component: Forms,
+        meta: { requiresAuth: true }
     },
     {
         name: "ListData",
         path: "/list-data",
-        component: ListData
+        component: ListData,
+        meta: { requiresAuth: true }
     },
     {
         name: "Taxes",
         path: "/taxes",
-        component: Taxes
+        component: Taxes,
+        meta: { requiresAuth: true }
     },
     {
         name: "CashRegisters",
         path: "/cash-registers",
-        component: CashRegisters
+        component: CashRegisters,
+        meta: { requiresAuth: true }
     },
     {
         name: "GiftCards",
         path: "/gift-cards",
-        component: GiftCards
+        component: GiftCards,
+        meta: { requiresAuth: true }
     },
     {
         name: "Coupons",
         path: "/coupons",
-        component: Coupons
+        component: Coupons,
+        meta: { requiresAuth: true }
     }
 ];

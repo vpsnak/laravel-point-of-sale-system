@@ -11,6 +11,12 @@
 |
 */
 
+// auth
+
+Route::post('/auth/login', "UserController@login");
+
+Route::get('/auth/logout', "UserController@logout")->middleware('auth:api');
+
 $baseRoutes = [
     'users' => 'UserController',
     'customers' => 'CustomerController',
@@ -19,7 +25,6 @@ $baseRoutes = [
     'carts' => 'CartController',
     'orders' => 'OrderController',
     'categories' => 'CategoryController',
-
     'stores' => 'StoreController',
     'taxes' => 'TaxController',
     'payments' => 'PaymentController',
@@ -63,3 +68,7 @@ Route::post('/pos-terminal/info', 'PosTerminalController@getCardReaderInfo');
 Route::post('/pos-terminal/transaction/gateway', 'PosTerminalController@openPaymentGateway');
 Route::post('/pos-terminal/transaction/start', 'PosTerminalController@startPaymentTransaction');
 Route::post('/pos-terminal/transaction/status', 'PosTerminalController@getPaymentTransactionStatus');
+
+// e-mail
+Route::get('/sendemail', 'SendEmailController@index');
+Route::get('/send/{order}', 'SendEmailController@send');

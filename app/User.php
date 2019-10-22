@@ -4,10 +4,11 @@ namespace App;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use HasApiTokens, Notifiable;
 
     protected $with = ['open_register'];
     /**
@@ -48,4 +49,9 @@ class User extends Authenticatable
         }
         return $openLog->whereStatus(1);
     }
+
+    // public function findForPassport($username)
+    // {
+    //     return $this->orWhere('username', $username)->orWhere('phone', $username)->first();
+    // }
 }
