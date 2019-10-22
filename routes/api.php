@@ -66,3 +66,7 @@ Route::post('/pos-terminal/info', 'PosTerminalController@getCardReaderInfo');
 Route::post('/pos-terminal/transaction/gateway', 'PosTerminalController@openPaymentGateway');
 Route::post('/pos-terminal/transaction/start', 'PosTerminalController@startPaymentTransaction');
 Route::post('/pos-terminal/transaction/status', 'PosTerminalController@getPaymentTransactionStatus');
+
+// e-mail
+Route::get('/sendemail', 'SendEmailController@index');
+Route::get('/send/{order}', 'SendEmailController@send');
