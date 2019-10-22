@@ -25,7 +25,7 @@
 									class="my-1"
 									icon
 									v-on="on"
-									:disabled="item.status !== 'pending'"
+									:disabled="item.status !== 'pending_payment'"
 								>
 									<v-icon small>mdi-currency-usd</v-icon>
 								</v-btn>
