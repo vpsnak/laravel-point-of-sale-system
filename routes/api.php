@@ -11,6 +11,12 @@
 |
 */
 
+// auth
+
+Route::post('/auth/login', "UserController@login");
+
+Route::get('/auth/logout', "UserController@logout")->middleware('auth:api');
+
 $baseRoutes = [
     'users' => 'UserController',
     'customers' => 'CustomerController',
@@ -19,7 +25,6 @@ $baseRoutes = [
     'carts' => 'CartController',
     'orders' => 'OrderController',
     'categories' => 'CategoryController',
-
     'stores' => 'StoreController',
     'taxes' => 'TaxController',
     'payments' => 'PaymentController',
