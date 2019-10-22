@@ -25,10 +25,11 @@ export default new Vuex.Store({
 
         user: {
             id: 1,
-            name: "Mega Lola",
-            email: "example@example.com",
-            token: null
+            name: "asd",
+            email: "asd@asd.asd"
         },
+
+        token: null,
 
         store: {
             id: null,
@@ -52,7 +53,6 @@ export default new Vuex.Store({
         checkoutDialog: false,
 
         productList: [],
-        userList: [],
         categoryList: [],
         storeList: []
     },
@@ -60,8 +60,11 @@ export default new Vuex.Store({
         // Compute derived state based on the current state. More like computed property.
     },
     mutations: {
-        setUser(state, users) {
-            state.userList = users;
+        setUser(state, user) {
+            state.user = user;
+        },
+        setToken(state, token) {
+            state.token = token;
         },
         setNotification(state, notification) {
             state.notification = notification;
@@ -81,6 +84,59 @@ export default new Vuex.Store({
         }
     },
     actions: {
+        login(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(this.state.baseUrl + "auth/login", payload)
+                    .then(response => {
+                        console.log(response);
+                        context.commit("setUser", response.data.user, {
+                            root: true
+                        });
+                        context.commit("setToken", response.data.token, {
+                            root: true
+                        });
+                        context.commit(
+                            "setNotification",
+                            response.data.notification
+                        );
+
+                        resolve(response.data);
+                    })
+                    .catch(error => {
+                        let notification = {
+                            msg: error.response.data.errors,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
+                        reject(error);
+                    });
+            });
+        },
+        logout(context) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(this.state.baseUrl + "auth/logout")
+                    .then(response => {
+                        context.commit(setUser, response.data.user, {
+                            root: true
+                        });
+                        context.commit(
+                            "setNotification",
+                            response.notification
+                        );
+                        resolve(response.data);
+                    })
+                    .catch(error => {
+                        let notification = {
+                            msg: error.response.data.errors,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
+                        reject(error);
+                    });
+            });
+        },
         getAll(context, payload) {
             return new Promise((resolve, reject) => {
                 axios

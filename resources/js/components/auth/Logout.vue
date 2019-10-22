@@ -1,9 +1,16 @@
-<template>
-
-</template>
+<template></template>
 
 <script>
-	export default {
-		mounted() {}
-	};
+import { mapActions } from "vuex";
+
+export default {
+	mounted() {
+		this.logout().finally(() => {
+			this.$router.push("/login");
+		});
+	},
+	methods: {
+		...mapActions(["logout"])
+	}
+};
 </script>

@@ -46,7 +46,17 @@ class UserController extends Controller
             ],
         ]);
 
-        return json_decode((string) $response->getBody(), true);
+        $user = User::whereEmail($validatedData['username'])->firstOrFail();
+        $token = (json_decode((string) $response->getBody(), true))['access_token'];
+
+        return response([
+            'notification' => [
+                'msg' => 'Welcome ' . $user->name,
+                'type' => 'info'
+            ],
+            'user' => $user,
+            'token' => $token
+        ], 200);
     }
 
     public function logout()
@@ -54,8 +64,10 @@ class UserController extends Controller
         auth()->user()->token()->revoke();
 
         return response([
-            'type' => 'success',
-            'msg' => 'Logged out successfully!'
+            'notification' => [
+                'type' => 'success',
+                'msg' => '<s>B</s><strong>y</strong><i>e</i> . . .'
+            ]
         ], 200);
     }
 }
