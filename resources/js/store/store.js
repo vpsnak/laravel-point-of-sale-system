@@ -116,14 +116,21 @@ export default new Vuex.Store({
         logout(context) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(this.state.baseUrl + "auth/logout")
+                    .get(this.state.baseUrl + "auth/logout", {
+                        headers: {
+                            Authorization: "Bearer " + this.state.token
+                        }
+                    })
                     .then(response => {
-                        context.commit(setUser, response.data.user, {
+                        context.commit("setUser", null, {
+                            root: true
+                        });
+                        context.commit("setToken", null, {
                             root: true
                         });
                         context.commit(
                             "setNotification",
-                            response.notification
+                            response.data.notification
                         );
                         resolve(response.data);
                     })
