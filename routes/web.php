@@ -18,3 +18,6 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/sendemail', 'SendEmailController@index');
+Route::get('/sendemail/send/{order}', 'SendEmailController@send');
