@@ -65,7 +65,7 @@ class UserController extends Controller
 
         return response([
             'notification' => [
-                'type' => 'success',
+                'type' => 'info',
                 'msg' => '<s>B</s><strong>y</strong><i>e</i> . . .'
             ]
         ], 200);
