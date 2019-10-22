@@ -147,13 +147,20 @@ export default {
             };
         },
         resetShipping(state) {
+            let notes = state.shipping.notes;
             state.shipping = {
+                notes: notes,
                 address: undefined,
                 method: "retail",
                 date: undefined,
                 time: undefined,
                 cost: 0
             };
+
+            state.currentCheckoutStep = 1;
+            state.checkoutSteps.forEach(checkoutStep => {
+                checkoutStep.completed = false;
+            });
         }
     },
     actions: {
