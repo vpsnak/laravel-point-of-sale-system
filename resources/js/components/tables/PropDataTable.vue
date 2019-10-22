@@ -18,12 +18,25 @@
 						<slot :name="slot" v-bind="scope" />
 					</template>
 					<template v-slot:item.action="{ item }">
-						<v-tooltip bottom>
+						<v-tooltip bottom v-if="tableViewComponent === 'order'">
+							<template v-slot:activator="{ on }">
+								<v-btn
+									@click="checkout(item)"
+									class="my-1"
+									icon
+									v-on="on"
+									:disabled="item.status !== 'pending'"
+								>
+									<v-icon small>mdi-currency-usd</v-icon>
+								</v-btn>
+							</template>
+							<span>Checkout</span>
+						</v-tooltip>
+						<v-tooltip bottom v-else-if="tableForm === 'giftCardForm'">
 							<template v-slot:activator="{ on }">
 								<v-btn
 									@click="rechargeGiftcardDialog = true, selectedItem = item"
 									:disabled="btnDisable"
-									v-if="tableForm === 'giftCardForm'"
 									class="my-1"
 									icon
 									v-on="on"
@@ -86,17 +99,17 @@
 			action="edit"
 			titleCloseBtn
 		></interactiveDialog>
-  
+
 		<interactiveDialog
 			v-if="showViewDialog"
 			:show="showViewDialog"
 			title="View item"
 			:fullscreen="false"
-            :width="1000"
+			:width="1000"
 			:component="tableViewComponent"
 			:model="viewId"
-            @action="result"
-            cancelBtnTxt="Close"
+			@action="result"
+			cancelBtnTxt="Close"
 		></interactiveDialog>
 
 		<interactiveDialog
@@ -118,6 +131,8 @@
 			confirmationBtnTxt="Yes"
 			@action="deleteEvent"
 		/>
+
+		<checkoutDialog :show="checkoutDialog" />
 
 		<interactiveDialog
 			v-if="rechargeGiftcardDialog"
@@ -144,7 +159,7 @@ export default {
 			deleteConfirmation: false,
 			rechargeGiftcardDialog: false,
 			defaultObject: {},
-            viewId: null,
+			viewId: null,
 			search: "",
 			selectedItem: {}
 		};
@@ -169,6 +184,19 @@ export default {
 		this.setForm(this.tableForm);
 	},
 	computed: {
+		checkoutDialog: {
+			get() {
+				if (this.$store.state.checkoutDialog === false) {
+					this.getRows({
+						url: this.dataUrl
+					});
+				}
+				return this.$store.state.checkoutDialog;
+			},
+			set(value) {
+				this.$store.state.checkoutDialog = value;
+			}
+		},
 		...mapState("datatable", {
 			title: "title",
 			headers: "headers",
@@ -180,6 +208,13 @@ export default {
 		})
 	},
 	methods: {
+		checkout(item) {
+			this.$store.commit("cart/setOrder", item);
+			this.$store.state.cart.checkoutSteps[1].completed = true;
+			this.$store.state.cart.currentCheckoutStep = 2;
+
+			this.checkoutDialog = true;
+		},
 		submitEvent(event) {
 			if (event) {
 				this.getRows({
@@ -195,8 +230,7 @@ export default {
 		},
 
 		viewItem(item) {
-			// this.defaultObject = item;
-			this.viewId = {id: item.id};
+			this.viewId = { id: item.id };
 			this.showViewDialog = true;
 		},
 
@@ -211,7 +245,6 @@ export default {
 			this.deleteConfirmation = false;
 		},
 		deleteItem() {
-			console.log(this.selectedItem.id);
 			this.deleteRow({
 				url: this.dataUrl + "/" + this.selectedItem.id,
 				data: {
