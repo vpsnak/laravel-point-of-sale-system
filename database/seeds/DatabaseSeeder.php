@@ -28,5 +28,6 @@ class DatabaseSeeder extends Seeder
         $this->call(PaymentSeeder::class);
 
         $this->call(PlantshedPostCodes::class);
+        $this->call(PlantshedAreasSeeder::class);
     }
 }
