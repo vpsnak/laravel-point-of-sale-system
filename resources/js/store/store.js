@@ -1,6 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
+
 import "es6-promise/auto";
+import Cookies from "js-cookie";
 
 //modules
 import topMenu from "./menu/topMenu";
@@ -23,13 +25,9 @@ export default new Vuex.Store({
     state: {
         baseUrl: "/api/",
 
-        user: {
-            id: 1,
-            name: "asd",
-            email: "asd@asd.asd"
-        },
+        user: Cookies.get("user") ? JSON.parse(Cookies.get("user")) : {},
 
-        token: null,
+        token: Cookies.get("token") || null,
 
         store: {
             id: null,
@@ -61,10 +59,22 @@ export default new Vuex.Store({
     },
     mutations: {
         setUser(state, user) {
-            state.user = user;
+            if (user) {
+                state.user = user;
+                Cookies.set("user", user);
+            } else {
+                state.user = null;
+                Cookies.remove("user");
+            }
         },
         setToken(state, token) {
-            state.token = token;
+            if (token) {
+                state.token = "Bearer " + token;
+                Cookies.set("token", "Bearer " + token);
+            } else {
+                state.token = null;
+                Cookies.remove("token");
+            }
         },
         setNotification(state, notification) {
             state.notification = notification;
@@ -89,7 +99,6 @@ export default new Vuex.Store({
                 axios
                     .post(this.state.baseUrl + "auth/login", payload)
                     .then(response => {
-                        console.log(response);
                         context.commit("setUser", response.data.user, {
                             root: true
                         });
@@ -118,29 +127,23 @@ export default new Vuex.Store({
                 axios
                     .get(this.state.baseUrl + "auth/logout", {
                         headers: {
-                            Authorization: "Bearer " + this.state.token
+                            Authorization: this.state.token
                         }
                     })
                     .then(response => {
-                        context.commit("setUser", null, {
-                            root: true
-                        });
-                        context.commit("setToken", null, {
-                            root: true
-                        });
                         context.commit(
                             "setNotification",
                             response.data.notification
                         );
                         resolve(response.data);
                     })
-                    .catch(error => {
-                        let notification = {
-                            msg: error.response.data.errors,
-                            type: "error"
-                        };
-                        context.commit("setNotification", notification);
-                        reject(error);
+                    .finally(() => {
+                        context.commit("setUser", null, {
+                            root: true
+                        });
+                        context.commit("setToken", null, {
+                            root: true
+                        });
                     });
             });
         },

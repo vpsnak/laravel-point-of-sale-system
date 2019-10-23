@@ -14,7 +14,7 @@
 
 <script>
 import { mapActions, mapState } from "vuex";
-
+import Cookies from "js-cookie";
 export default {
 	computed: {
 		...mapState(["token"]),
