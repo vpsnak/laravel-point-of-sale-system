@@ -1,8 +1,8 @@
 <template>
 	<v-app id="app">
-		<sideMenu />
+		<sideMenu v-if="authorized || !loginRoute" />
 
-		<topMenu />
+		<topMenu v-if="authorized || !loginRoute" />
 
 		<notification />
 
@@ -13,9 +13,18 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
-
+import { mapActions, mapState } from "vuex";
+import Cookies from "js-cookie";
 export default {
+	computed: {
+		...mapState(["token"]),
+		authorized() {
+			return this.token ? true : false;
+		},
+		loginRoute() {
+			return this.$router.currentRoute.name === "login" ? true : false;
+		}
+	},
 	mounted() {
 		this.getOne({
 			model: "stores",

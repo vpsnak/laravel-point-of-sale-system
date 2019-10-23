@@ -35,7 +35,8 @@ export default [
     {
         name: "logout",
         path: "/logout",
-        component: Logout
+        component: Logout,
+        meta: { requiresAuth: true }
     },
     {
         name: "sales",

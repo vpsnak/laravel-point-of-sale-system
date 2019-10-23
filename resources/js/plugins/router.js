@@ -25,6 +25,13 @@ router.beforeEach((to, from, next) => {
     } else {
         next();
     }
+
+    if (
+        to.matched.some(record => record.name === "login") &&
+        store.state.token
+    ) {
+        next({ path: "/" });
+    }
 });
 
 export default router;
