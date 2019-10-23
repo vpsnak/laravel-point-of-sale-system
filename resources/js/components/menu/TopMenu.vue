@@ -33,7 +33,7 @@
 						</v-list-item-content>
 					</v-list-item>
 					<v-divider />
-					<v-list-item>
+					<v-list-item to="/logout">
 						<v-list-item-avatar>
 							<v-icon>mdi-logout-variant</v-icon>
 						</v-list-item-avatar>

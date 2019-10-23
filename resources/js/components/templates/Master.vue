@@ -18,14 +18,6 @@ import { mapActions } from "vuex";
 export default {
 	mounted() {
 		this.getOne({
-			model: "users",
-			data: {
-				id: 1
-			}
-		}).then(result => {
-			this.$store.state.user = result;
-		});
-		this.getOne({
 			model: "stores",
 			data: {
 				id: 1
