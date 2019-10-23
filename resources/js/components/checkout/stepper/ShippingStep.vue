@@ -30,23 +30,18 @@ export default {
 		currentStep: Object
 	},
 
-	methods: {
-		completeStep() {
-			this.$store.dispatch("cart/completeStep");
-		},
-		prevStep() {
-			this.$store.state.cart.currentCheckoutStep--;
-		},
+	computed: {
 		showNext() {
 			switch (this.shipping.method) {
+				case undefined:
 				case "retail":
 					return true;
-					break;
 				case "pickup":
 					if (this.shipping.date && this.shipping.time) {
 						return true;
+					} else {
+						return false;
 					}
-					break;
 				case "delivery":
 					if (
 						this.shipping.date &&
@@ -54,11 +49,21 @@ export default {
 						this.shipping.address
 					) {
 						return true;
+					} else {
+						return false;
 					}
-					break;
 				default:
-					break;
+					return false;
 			}
+		}
+	},
+
+	methods: {
+		completeStep() {
+			this.$store.dispatch("cart/completeStep");
+		},
+		prevStep() {
+			this.$store.state.cart.currentCheckoutStep--;
 		},
 		setShipping(value) {
 			this.shipping = value;

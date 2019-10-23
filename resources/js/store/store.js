@@ -137,6 +137,9 @@ export default new Vuex.Store({
                         );
                         resolve(response.data);
                     })
+                    .catch(error => {
+                        reject(error);
+                    })
                     .finally(() => {
                         context.commit("setUser", null, {
                             root: true

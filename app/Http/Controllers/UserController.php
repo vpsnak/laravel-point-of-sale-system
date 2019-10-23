@@ -51,7 +51,7 @@ class UserController extends Controller
 
         return response([
             'notification' => [
-                'msg' => 'Welcome ' . $user->name,
+                'msg' => '<h2>Welcome ' . $user->name . '</h2>',
                 'type' => 'info'
             ],
             'user' => $user,
@@ -66,7 +66,7 @@ class UserController extends Controller
         return response([
             'notification' => [
                 'type' => 'info',
-                'msg' => '<s>B</s><strong>y</strong><i>e</i> . . .'
+                'msg' => '<h2>Bye . . .</h2>'
             ]
         ], 200);
     }
