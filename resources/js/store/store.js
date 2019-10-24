@@ -61,7 +61,9 @@ export default new Vuex.Store({
         setUser(state, user) {
             if (user) {
                 state.user = user;
-                Cookies.set("user", user);
+                Cookies.set("user", user, {
+                    sameSite: "strict"
+                });
             } else {
                 state.user = null;
                 Cookies.remove("user");
@@ -70,7 +72,9 @@ export default new Vuex.Store({
         setToken(state, token) {
             if (token) {
                 state.token = "Bearer " + token;
-                Cookies.set("token", "Bearer " + token);
+                Cookies.set("token", "Bearer " + token, {
+                    sameSite: "strict"
+                });
             } else {
                 state.token = null;
                 Cookies.remove("token");

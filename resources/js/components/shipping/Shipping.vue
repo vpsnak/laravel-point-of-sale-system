@@ -34,33 +34,12 @@
 				</v-menu>
 			</v-col>
 			<v-col cols="6" lg="3">
-				<v-menu
-					ref="menu"
-					v-model="timePicker"
-					:close-on-content-click="false"
-					:nudge-right="40"
-					:return-value.sync="shipping.time"
-					transition="scale-transition"
-					offset-y
-					max-width="290px"
-					min-width="290px"
-				>
-					<template v-slot:activator="{ on }">
-						<v-text-field
-							v-model="shipping.time"
-							label="At"
-							prepend-icon="access_time"
-							v-on="on"
-							readonly
-						></v-text-field>
-					</template>
-					<v-time-picker
-						v-if="timePicker"
-						v-model="shipping.time"
-						full-width
-						@click:minute="$refs.menu.save(shipping.time)"
-					></v-time-picker>
-				</v-menu>
+				<v-select-box
+					v-if="timePicker"
+					v-model="shipping.time"
+					full-width
+					@click:minute="$refs.menu.save(shipping.time)"
+				></v-select-box>
 			</v-col>
 		</v-row>
 		<v-row>
@@ -83,8 +62,7 @@
 export default {
 	data() {
 		return {
-			datePicker: false,
-			timePicker: false
+			datePicker: false
 		};
 	},
 	computed: {

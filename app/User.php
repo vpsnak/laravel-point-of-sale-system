@@ -52,6 +52,6 @@ class User extends Authenticatable
 
     // public function findForPassport($username)
     // {
-    //     return $this->orWhere('username', $username)->orWhere('phone', $username)->first();
+    //     return $this->orWhere('email', $username)->orWhere('phone', $username)->first();
     // }
 }
