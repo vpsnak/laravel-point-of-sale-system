@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Store;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class StoreController extends BaseController
 {
@@ -29,4 +31,17 @@ class StoreController extends BaseController
             return response($this->model::store($validatedData), 201);
         }
     }
+
+    /**
+     * @return ResponseFactory|Response
+     */
+    public function all()
+    {
+        if (!isset($this->model)) {
+            return response('Model not found', 404);
+        }
+
+        return response($this->model::with(['cash_registers'])->get(), 200);
+    }
+
 }

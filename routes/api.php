@@ -51,6 +51,8 @@ Route::get('/product-listing/categories', "CategoryController@productListingCate
 Route::post('/cash-register-logs/open', "{$baseRoutes['cash-register-logs']}@open");
 Route::post('/cash-register-logs/close', "{$baseRoutes['cash-register-logs']}@close");
 
+Route::post('/shipping/timeslot', "TimeslotController@getTimeslots");
+
 Route::get('/magento/authorize', 'Auth\MagentoOAuthController@authorizeMagento');
 
 // POS
@@ -62,7 +64,7 @@ Route::post('/pos-terminal/configure/status', 'PosTerminalController@getCommandS
 Route::post('/pos-terminal/search', 'PosTerminalController@startCardReadersSearch');
 Route::post('/pos-terminal/search/status', 'PosTerminalController@getCardReadersSearchStatus');
 Route::post('/pos-terminal/info', 'PosTerminalController@getCardReaderInfo');
-// transaction 
+// transaction
 Route::post('/pos-terminal/transaction/gateway', 'PosTerminalController@openPaymentGateway');
 Route::post('/pos-terminal/transaction/start', 'PosTerminalController@startPaymentTransaction');
 Route::post('/pos-terminal/transaction/status', 'PosTerminalController@getPaymentTransactionStatus');

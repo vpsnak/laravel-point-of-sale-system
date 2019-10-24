@@ -25,11 +25,6 @@ class Address extends BaseModel
         'magento_id'
     ];
 
-    public function areaCode()
-    {
-        return $this->hasOne(AreaCode::class);
-    }
-
     public function customers()
     {
         return $this->belongsToMany(Customer::class);

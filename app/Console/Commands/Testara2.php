@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\CreditCardController;
+use App\PostalCode;
 use Illuminate\Console\Command;
 
 class Testara2 extends Command
@@ -38,17 +38,26 @@ class Testara2 extends Command
      */
     public function handle()
     {
-        $controller = new CreditCardController();
-
-        $payment = $controller::cardPayment(
-            '5405010000000090',
-            '1219',
-            '123',
-            'Test',
-            10
+//        $controller = new CreditCardController();
+//
+//        $payment = $controller::cardPayment(
+//            '5405010000000090',
+//            '1219',
+//            '123',
+//            'Test',
+//            10
+//        );
+        $postalcode = PostalCode::skip(2)->first();
+        var_dump(
+            $postalcode->postalcode
         );
         var_dump(
-            $payment
+            $postalcode->grid->group->group_name
         );
+        foreach ($postalcode->grid->group->timeslotGrid as $grid) {
+            var_dump(
+                $grid->timeslot->title
+            );
+        }
     }
 }
