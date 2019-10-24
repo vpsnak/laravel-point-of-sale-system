@@ -50,6 +50,11 @@ class User extends Authenticatable
         return $openLog->whereStatus(1);
     }
 
+    public function transactionLogs()
+    {
+        return $this->hasMany(TransactionLog::class);
+    }
+
     // public function findForPassport($username)
     // {
     //     return $this->orWhere('email', $username)->orWhere('phone', $username)->first();

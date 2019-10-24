@@ -55,20 +55,6 @@ Route::post('/shipping/timeslot', "TimeslotController@getTimeslots");
 
 Route::get('/magento/authorize', 'Auth\MagentoOAuthController@authorizeMagento');
 
-// POS
-
-// config
-Route::post('/pos-terminal/configure', 'PosTerminalController@startCardReaderConfiguration');
-Route::post('/pos-terminal/configure/status', 'PosTerminalController@getCommandStatusOnCardReader');
-// search - info
-Route::post('/pos-terminal/search', 'PosTerminalController@startCardReadersSearch');
-Route::post('/pos-terminal/search/status', 'PosTerminalController@getCardReadersSearchStatus');
-Route::post('/pos-terminal/info', 'PosTerminalController@getCardReaderInfo');
-// transaction
-Route::post('/pos-terminal/transaction/gateway', 'PosTerminalController@openPaymentGateway');
-Route::post('/pos-terminal/transaction/start', 'PosTerminalController@startPaymentTransaction');
-Route::post('/pos-terminal/transaction/status', 'PosTerminalController@getPaymentTransactionStatus');
-
 // e-mail
 Route::get('/sendemail', 'SendEmailController@index');
 Route::get('/send/{order}', 'SendEmailController@send');

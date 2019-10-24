@@ -15,6 +15,11 @@ class Payment extends BaseModel
         'created_by',
     ];
 
+    public function transactionLog()
+    {
+        return $this->hasMany(TransactionLog::class);
+    }
+
     public function paymentType()
     {
         return $this->belongsTo(PaymentType::class, 'payment_type');

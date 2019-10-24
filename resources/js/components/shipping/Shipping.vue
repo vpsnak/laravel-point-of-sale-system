@@ -20,14 +20,7 @@
 				></v-combobox>
 			</v-col>
 			<v-col cols="4" lg="2" offset-lg="3">
-				<v-menu
-					v-model="datePicker"
-					:close-on-content-click="false"
-					:nudge-right="40"
-					transition="scale-transition"
-					offset-y
-					min-width="290px"
-				>
+				<v-menu v-model="datePicker" transition="scale-transition" offset-y min-width="290px">
 					<template v-slot:activator="{ on }">
 						<v-text-field
 							v-model="shipping.date"
@@ -43,6 +36,7 @@
 			</v-col>
 			<v-col cols="4" lg="2" v-if="shipping.method === 'delivery'">
 				<v-combobox
+					:loading="loading"
 					label="At"
 					prepend-icon="mdi-clock"
 					:items="timeSlots"
@@ -52,7 +46,13 @@
 				></v-combobox>
 			</v-col>
 			<v-col cols="4" lg="2" v-if="shipping.method === 'delivery'">
-				<v-text-field label="Cost" prepend-icon="mdi-currency-usd" v-model="shipping.timeSlotCost"></v-text-field>
+				<v-text-field
+					type="number"
+					label="Cost"
+					:min="0"
+					prepend-icon="mdi-currency-usd"
+					v-model="shipping.timeSlotCost"
+				></v-text-field>
 			</v-col>
 		</v-row>
 		<v-row>
@@ -77,6 +77,7 @@ import { mapActions } from "vuex";
 export default {
 	data() {
 		return {
+			loading: false,
 			time_slots: [],
 			datePicker: false
 		};
@@ -118,8 +119,9 @@ export default {
 	methods: {
 		setCost(item) {
 			if (_.has(item, "cost")) {
-				console.log(item);
 				this.shipping.timeSlotCost = item.cost;
+			} else {
+				this.shipping.timeSlotCost = null;
 			}
 		},
 		getTimeSlots() {
@@ -128,6 +130,7 @@ export default {
 				this.shipping.date &&
 				this.shipping.method === "delivery"
 			) {
+				this.loading = true;
 				let payload = {
 					url: "shipping/timeslot",
 					data: {
@@ -135,9 +138,13 @@ export default {
 						date: this.shipping.date
 					}
 				};
-				this.postRequest(payload).then(response => {
-					this.timeSlots = response;
-				});
+				this.postRequest(payload)
+					.then(response => {
+						this.timeSlots = response;
+					})
+					.finally(() => {
+						this.loading = false;
+					});
 			}
 		},
 		getAddressText(item) {

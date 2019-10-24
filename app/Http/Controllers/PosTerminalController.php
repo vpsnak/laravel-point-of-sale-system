@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use \App\TransactionLog;
 
 class PosTerminalController extends Controller
 {
@@ -99,6 +100,16 @@ class PosTerminalController extends Controller
             ],
             'body' => json_encode($payload)
         ]);
+
+        $transaction_log = new TransactionLog();
+        $transaction_log = [
+            'user_id' => 1,
+            'payment_id' => $payment,
+            'cash_register_id' => 1,
+            'log' => $response->getBody()->getContents(),
+        ];
+
+        $transaction_log->save();
 
         return $response->getBody()->getContents();
     }
