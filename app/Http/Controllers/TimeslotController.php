@@ -17,7 +17,7 @@ class TimeslotController extends Controller
         $result = [];
         $postcode = PostalCode::where('postalcode', $validatedData['postcode'])->first();
         if (empty($postcode) || empty($postcode->grid) || empty($postcode->grid->group) || empty($postcode->grid->group->timeslotGrid)) {
-            response($result, 200);
+            return response($result, 200);
         }
         $area_cost = $postcode->grid->group->group_price;
         foreach ($postcode->grid->group->timeslotGrid as $grid) {
@@ -28,6 +28,8 @@ class TimeslotController extends Controller
                 'label' => $grid->timeslot->title,
                 'cost' => $area_cost
             ];
+            // $result['labels'][] = $grid->timeslot->title;
+            // $result['cost'][] = $area_cost;
         }
         return response($result, 200);
     }

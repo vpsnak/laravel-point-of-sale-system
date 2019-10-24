@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="d-flex justify-center">
-			<v-radio-group v-model="shipping.method" @change="selectedShippingMethod" row>
+			<v-radio-group v-model="shipping.method" row>
 				<v-radio label="Retail" value="retail"></v-radio>
 				<v-radio label="In store pickup" value="pickup" :disabled="! customer"></v-radio>
 				<v-radio label="Delivery" value="delivery" :disabled="! customer"></v-radio>
@@ -46,12 +46,13 @@
 					label="At"
 					prepend-icon="mdi-clock"
 					:items="timeSlots"
-					v-model="shipping.timeSlot"
-					@input="getTimeSlots"
+					item-text="label"
+					v-model="shipping.timeSlotLabel"
+					@input="setCost"
 				></v-combobox>
 			</v-col>
 			<v-col cols="4" lg="2" v-if="shipping.method === 'delivery'">
-				<v-text-field label="Cost" prepend-icon="mdi-currency-usd" v-model="shipping.cost"></v-text-field>
+				<v-text-field label="Cost" prepend-icon="mdi-currency-usd" v-model="shipping.timeSlotCost"></v-text-field>
 			</v-col>
 		</v-row>
 		<v-row>
@@ -115,6 +116,12 @@ export default {
 	},
 
 	methods: {
+		setCost(item) {
+			if (_.has(item, "cost")) {
+				console.log(item);
+				this.shipping.timeSlotCost = item.cost;
+			}
+		},
 		getTimeSlots() {
 			if (
 				this.shipping.address &&
@@ -145,12 +152,6 @@ export default {
 				" " +
 				item.country_id
 			);
-		},
-		selectedShippingMethod() {
-			if (this.shipping.method !== "retail") {
-				this.shipping.cost = 0;
-			}
-			this.$emit("shipping", this.shipping);
 		},
 		...mapActions(["postRequest"])
 	},
