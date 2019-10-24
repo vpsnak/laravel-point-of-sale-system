@@ -18,6 +18,7 @@ export default {
 	data() {
 		return {
 			dummyProduct: {
+				id: null,
 				name: "",
 				sku: null,
 				notes: "",
@@ -48,8 +49,9 @@ export default {
 					.toString(16)
 					.substring(1);
 			};
-			this.sku = "dummy" + "-" + random() + random();
-			console.log(this.sku);
+			this.dummyProduct.id = "dummy" + "-" + random();
+			this.dummyProduct.sku = "dummy" + "-" + random() + random();
+			console.log(this.dummyProduct.id);
 		},
 		clear() {
 			this.dummyProduct = {
