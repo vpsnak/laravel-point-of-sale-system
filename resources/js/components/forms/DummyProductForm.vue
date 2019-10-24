@@ -19,7 +19,7 @@ export default {
 		return {
 			dummyProduct: {
 				name: "",
-				sku: 1,
+				sku: null,
 				notes: "",
 				price: {
 					amount: null
@@ -31,6 +31,7 @@ export default {
 
 	methods: {
 		addProduct() {
+			this.skuGenerator();
 			this.dummyProduct.final_price = this.dummyProduct.price.amount;
 			this.$store.commit("cart/addProduct", this.dummyProduct);
 			this.$emit("addtocart", "cart");
@@ -40,6 +41,15 @@ export default {
 		},
 		beforeDestroy() {
 			this.$off("addtocart");
+		},
+		skuGenerator() {
+			let random = function() {
+				return (((1 + Math.random()) * 0x10000) | 0)
+					.toString(16)
+					.substring(1);
+			};
+			this.sku = "dummy" + "-" + random() + random();
+			console.log(this.sku);
 		},
 		clear() {
 			this.dummyProduct = {
