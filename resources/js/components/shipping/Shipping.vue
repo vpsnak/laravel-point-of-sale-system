@@ -10,6 +10,7 @@
 		<v-row v-if="shipping.method !== 'retail'">
 			<v-col v-if="shipping.method === 'delivery'" cols="12" lg="6" offset-lg="3">
 				<v-combobox
+					@input="getTimeSlots"
 					:items="addresses"
 					prepend-icon="mdi-map-marker"
 					label="Address"
@@ -18,7 +19,7 @@
 					return-object
 				></v-combobox>
 			</v-col>
-			<v-col cols="6" lg="3" offset-lg="3">
+			<v-col cols="4" lg="2" offset-lg="3">
 				<v-menu
 					v-model="datePicker"
 					:close-on-content-click="false"
@@ -28,39 +29,29 @@
 					min-width="290px"
 				>
 					<template v-slot:activator="{ on }">
-						<v-text-field v-model="shipping.date" label="Date" prepend-icon="event" v-on="on" readonly></v-text-field>
-					</template>
-					<v-date-picker v-model="shipping.date" @input="datePicker = false" :min="new Date().toJSON()"></v-date-picker>
-				</v-menu>
-			</v-col>
-			<v-col cols="6" lg="3">
-				<v-menu
-					ref="menu"
-					v-model="timePicker"
-					:close-on-content-click="false"
-					:nudge-right="40"
-					:return-value.sync="shipping.time"
-					transition="scale-transition"
-					offset-y
-					max-width="290px"
-					min-width="290px"
-				>
-					<template v-slot:activator="{ on }">
 						<v-text-field
-							v-model="shipping.time"
-							label="At"
-							prepend-icon="access_time"
+							v-model="shipping.date"
+							label="Date"
+							prepend-icon="event"
 							v-on="on"
 							readonly
+							@input="getTimeSlots"
 						></v-text-field>
 					</template>
-					<v-time-picker
-						v-if="timePicker"
-						v-model="shipping.time"
-						full-width
-						@click:minute="$refs.menu.save(shipping.time)"
-					></v-time-picker>
+					<v-date-picker v-model="shipping.date" @input="getTimeSlots" :min="new Date().toJSON()"></v-date-picker>
 				</v-menu>
+			</v-col>
+			<v-col cols="4" lg="2" v-if="shipping.method === 'delivery'">
+				<v-combobox
+					label="At"
+					prepend-icon="mdi-clock"
+					:items="timeSlots"
+					v-model="shipping.timeSlot"
+					@input="getTimeSlots"
+				></v-combobox>
+			</v-col>
+			<v-col cols="4" lg="2" v-if="shipping.method === 'delivery'">
+				<v-text-field label="Cost" prepend-icon="mdi-currency-usd" v-model="shipping.cost"></v-text-field>
 			</v-col>
 		</v-row>
 		<v-row>
@@ -80,14 +71,25 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 export default {
 	data() {
 		return {
-			datePicker: false,
-			timePicker: false
+			time_slots: [],
+			datePicker: false
 		};
 	},
+
 	computed: {
+		timeSlots: {
+			get() {
+				return this.time_slots;
+			},
+			set(value) {
+				this.time_slots = value;
+			}
+		},
 		shipping: {
 			get() {
 				return this.$store.state.cart.shipping;
@@ -111,7 +113,26 @@ export default {
 			}
 		}
 	},
+
 	methods: {
+		getTimeSlots() {
+			if (
+				this.shipping.address &&
+				this.shipping.date &&
+				this.shipping.method === "delivery"
+			) {
+				let payload = {
+					url: "shipping/timeslot",
+					data: {
+						postcode: this.shipping.address.postcode,
+						date: this.shipping.date
+					}
+				};
+				this.postRequest(payload).then(response => {
+					this.timeSlots = response;
+				});
+			}
+		},
 		getAddressText(item) {
 			return (
 				item.street +
@@ -130,7 +151,8 @@ export default {
 				this.shipping.cost = 0;
 			}
 			this.$emit("shipping", this.shipping);
-		}
+		},
+		...mapActions(["postRequest"])
 	},
 	beforeDestroy() {
 		this.$off("shipping");

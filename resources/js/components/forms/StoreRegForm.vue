@@ -66,11 +66,6 @@ export default {
 			this.storeDisabled = false;
 		});
 		this.formFields.user_id = this.$store.state.user.id;
-		// this.getAll({
-		// 	model: "cash-registers"
-		// }).then(cash_registers => {
-		// 	this.cash_registers = cash_registers;
-		// });
 	},
 	methods: {
 		submit() {
@@ -81,7 +76,6 @@ export default {
 			}
 			for (const cash_register of this.cash_registers) {
 				if (cash_register.id == this.formFields.cash_register_id) {
-					console.log(cash_register);
 					this.$store.state.cashRegister = cash_register;
 				}
 			}
@@ -136,10 +130,8 @@ export default {
 		})
 	},
 	computed: {
-		user_id: {
-			get() {
-				return this.$store.state.user.id;
-			}
+		user_id() {
+			return this.$store.state.user.id;
 		}
 	}
 };

@@ -34,12 +34,6 @@ export default {
 	},
 	mounted() {
 		this.visibility = true;
-	},
-	methods: {
-		readResult(event) {
-			console.log("read dialog result: " + event);
-			this.visibility = false;
-		}
 	}
 };
 </script>

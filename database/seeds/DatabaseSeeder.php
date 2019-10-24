@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
         $this->call(OrderSeeder::class);
         $this->call(PaymentSeeder::class);
 
+        $this->call(OauthClientsSeeder::class);
         $this->call(PlantshedPostCodes::class);
         $this->call(PlantshedAreasSeeder::class);
     }

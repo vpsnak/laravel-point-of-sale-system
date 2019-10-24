@@ -54,7 +54,7 @@ export default {
             notes: "",
             method: "retail",
             date: undefined,
-            time: undefined,
+            timeSlot: undefined,
             cost: 0
         },
 
@@ -130,7 +130,6 @@ export default {
             state.products = [];
             state.discount_type = "";
             state.discount_amount = 0;
-            state.shipping = {};
             state.order = undefined;
             state.total_price = 0;
 
@@ -142,7 +141,7 @@ export default {
                 address: undefined,
                 method: "retail",
                 date: undefined,
-                time: undefined,
+                timeSlot: undefined,
                 cost: 0
             };
         },
@@ -153,7 +152,7 @@ export default {
                 address: undefined,
                 method: "retail",
                 date: undefined,
-                time: undefined,
+                timeSlot: undefined,
                 cost: 0
             };
 
