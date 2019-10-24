@@ -54,8 +54,8 @@ export default {
             notes: "",
             method: "retail",
             date: undefined,
-            timeSlot: undefined,
-            cost: 0
+            timeSlotLabel: null,
+            timeSlotCost: 0
         },
 
         order: undefined
@@ -141,8 +141,8 @@ export default {
                 address: undefined,
                 method: "retail",
                 date: undefined,
-                timeSlot: undefined,
-                cost: 0
+                timeSlotLabel: null,
+                timeSlotCost: 0
             };
         },
         resetShipping(state) {
@@ -152,8 +152,8 @@ export default {
                 address: undefined,
                 method: "retail",
                 date: undefined,
-                timeSlot: undefined,
-                cost: 0
+                timeSlotLabel: null,
+                timeSlotCost: 0
             };
 
             state.currentCheckoutStep = 1;
