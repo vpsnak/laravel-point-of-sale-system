@@ -14,8 +14,10 @@
                 <td valign="top">
                     <p>
                         <strong>Hello {{ $data['customer']['first_name'] }} {{ $data['customer']['last_name'] }}</strong>,<br/>
-                        Thank you for your order from Plantshed.
-                        If you have any questions about your order please contact us. Monday - Friday, 9am - 7pm PST and Sunday 9am - 5pm PST.
+                        Thank you for your order from Plantshed. If you have any questions about your order please contact us at 
+                        <a href="mailto:cs@plantshed.com" style="color:rgb(30,126,200)" target="_blank">cs@plantshed.com</a>  or call us at 
+                        <a href="tel:(212)%20662-4400" value="+12126624400" target="_blank">1-212-662-4400</a>
+                         Monday - Friday, 9am - 7pm PST and Sunday 9am - 5pm PST.
                     </p>
                     <p>Your order confirmation is below. Thank you again for your business.</p>
 
@@ -33,11 +35,12 @@
                             <td valign="top" style="padding:7px 9px 9px 9px; border:1px solid #bebcb7; border-top:0; background:#f8f7f5;">
                                 <p>{{$data['customer']['first_name']}}{{$data['customer']['last_name']}}</p>
                                 <p>{{$data['customer']['phone']}}</p>
+                                <p>{{$data['customer']['email']}}</p>
                                 <p>{{$data['customer']['company_name']}}</p>
                             </td>
                             <td>&nbsp;</td>
                             <td valign="top" style="padding:7px 9px 9px 9px; border:1px solid #bebcb7; border-top:0; background:#f8f7f5;">
-                                @foreach($data['payments'] as $payment ) 
+                                @foreach(json_decode($data['payments'] , true) as $payment)
                                 <h4>{{ $payment['payment_type']['name']}}</h4>
                                 <p>Type : {{$payment['payment_type']['type']}}</p> 
                                 <p>Created by: {{$payment['created_by']['name']}}</p> 
@@ -59,11 +62,9 @@
                         <tbody>
                         <tr>
                             <td valign="top" style="padding:7px 9px 9px 9px; border:1px solid #bebcb7; border-top:0; background:#f8f7f5;">
-                                &nbsp;
                             </td>
                             <td>&nbsp;</td>
                             <td valign="top" style="padding:7px 9px 9px 9px; border:1px solid #bebcb7; border-top:0; background:#f8f7f5;">
-                                &nbsp;
                                   <p>Shipping type : {{ $data['shipping_type'] }}.</p>
                                   <p>Shipping cost : {{ $data['shipping_cost'] }}.</p>
                             </td>
@@ -71,22 +72,21 @@
                         </tbody>
                     </table>
                     <br/>
-                     <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                       <br/>
+                    <table cellspacing="0" cellpadding="0" border="0" width="100%">
                         <thead>
                         <tr>
-                            <th align="left" width="48.5%" bgcolor="#d9e5ee" style="padding:5px 9px 6px 9px; border:1px solid #bebcb7; border-bottom:none; line-height:1em;">Order:</th>
+                            <th align="left" width="48.5%" bgcolor="#d9e5ee" style="padding:5px 9px 6px 9px; border:1px solid #bebcb7; border-bottom:none; line-height:1em;">Delivery Information:</th>
+                            <th width="3%"></th>
+                            <th align="left" width="48.5%" bgcolor="#d9e5ee" style="padding:5px 9px 6px 9px; border:1px solid #bebcb7; border-bottom:none; line-height:1em;">Delivery Comment:</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr>
                             <td valign="top" style="padding:7px 9px 9px 9px; border:1px solid #bebcb7; border-top:0; background:#f8f7f5;">
-                               <p>Name : {{ $data['id'] }}</p>
-                               <p>Status : {{ $data['status'] }}.</p>
-                               <p>Discount type : {{ $data['discount_type'] }}.</p>
-                               <p>Discount amount : {{ $data['discount_amount'] }}.</p>
-                               <p>Tax : {{ $data['tax'] }}.</p>
-                               <p>Subtotal : {{ $data['subtotal'] }}.</p>
-                               <p>Notes : {{ $data['notes'] }}.</p> 
+                            </td>
+                            <td>&nbsp;</td>
+                            <td valign="top" style="padding:7px 9px 9px 9px; border:1px solid #bebcb7; border-top:0; background:#f8f7f5;">
                             </td>
                         </tr>
                         </tbody>
@@ -99,7 +99,7 @@
                             <th align="left" bgcolor="#EAEAEA" style="font-size:13px;padding:3px 9px">Item</th>
                             <th align="left" bgcolor="#EAEAEA" style="font-size:13px;padding:3px 9px">Sku</th>
                             <th align="center" bgcolor="#EAEAEA" style="font-size:13px;padding:3px 9px">Qty</th>
-                            <th align="right" bgcolor="#EAEAEA" style="font-size:13px;padding:3px 9px">Subtotal</th>
+                            <th align="right" bgcolor="#EAEAEA" style="font-size:13px;padding:3px 9px">Price</th>
                         </tr>
                     </thead>
                        @foreach($data['items'] as $item ) 
@@ -115,23 +115,23 @@
                         <tbody>
                             <tr>
                             <td colspan="3" align="right" style="padding:3px 9px">Subtotal</td>
-                                <td align="right" style="padding:3px 9px">${{ $data['total'] }}</td>
+                                <td align="right" style="padding:3px 9px">${{ $data['subtotal'] }}</td>
                             </tr>
                                 <tr>
-                                    <td colspan="3" align="right" style="padding:3px 9px">Delivery Fees</td>
-                                    <td align="right" style="padding:3px 9px">$25.00</td>
+                                    <td colspan="3" align="right" style="padding:3px 9px">Shipping Cost</td>
+                                    <td align="right" style="padding:3px 9px">${{ $data['shipping_cost'] }}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="3" align="right" style="padding:3px 9px"><strong>Grand Total (Excl.Tax)</strong></td>
-                                    <td align="right" style="padding:3px 9px"><strong>${{ $data['total_without_tax'] }}</strong></td>
-                                </tr>
-                                <tr>
-                                    <td colspan="3" align="right" style="padding:3px 9px">US-NY-*-Rate 1 (8.875%)<br></td>
-                                    <td align="right" rowspan="1" style="padding:3px 9px">$5.68</td>
+                                    <td align="right" style="padding:3px 9px"><strong>${{ $data['subtotal'] }}</strong></td>
                                 </tr>
                                 <tr>
                                     <td colspan="3" align="right" style="padding:3px 9px"><div>Tax</div></td>
-                                    <td align="right" style="padding:3px 9px">$5.68</td>
+                                    <td align="right" style="padding:3px 9px">$ {{ $data['tax'] }} </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3" align="right" style="padding:3px 9px">Discount type and amount<br></td>
+                                    <td align="right" rowspan="1" style="padding:3px 9px">{{ $data['discount_type'] }} ${{ $data['discount_amount'] }}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="3" align="right" style="padding:3px 9px"><strong>Grand Total (Incl.Tax)</strong></td>
@@ -139,9 +139,12 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <br/>
+                        <p>Thank you again,<br/><strong>Plantshed</strong></p>
                     </td> 
                 </tr>
             </table>
+            <br/>
         </td>
     </tr>
 </table>
