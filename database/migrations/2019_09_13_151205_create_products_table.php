@@ -17,7 +17,10 @@ class CreateProductsTable extends Migration
             $table->bigIncrements('id');
             $table->string('sku')->unique()->index();
             $table->string('name');
+            $table->string('barcode')->nullable();
             $table->string('photo_url');
+            $table->string('url')->nullable();
+            $table->text('description')->nullable();
             $table->softDeletes();
             $table->timestamps();
             // stock_id price_id foreign

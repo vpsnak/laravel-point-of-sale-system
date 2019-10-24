@@ -15,7 +15,7 @@ class ProductSync
         'url',
         'name',
         'sku',
-        'price',
+//        'price',
 //        'final_price',
 //        'description',
         'image_url',
@@ -43,20 +43,26 @@ class ProductSync
             foreach ($products as $product) {
                 $storedProduct = \App\Product::getFirst('sku', $product->sku);
                 $productUpdateAt = Carbon::parse($product->updated_at);
-//                if (empty($storedProduct) || $productUpdateAt->greaterThan($storedProduct->updated_at)) {
+                if (empty($storedProduct) || $productUpdateAt->greaterThan($storedProduct->updated_at)) {
                     $parsedProduct = Helper::getParsedData($product, self::productFieldsToParse,
                         self::productFieldsToRename);
                     $storedProduct = \App\Product::updateOrCreate(
                         ['sku' => $product->sku],
                         $parsedProduct
                     );
-                $storedProduct->price()->updateOrCreate([
-                    'amount' => $product->final_price ?? 0
-                ]);;
+                    $price = $storedProduct->price()->updateOrCreate([
+                        'amount' => $product->final_price ?? 0
+                    ]);
+                    $discount = $price->discount()->updateOrCreate([
+                        'type' => 'flat',
+                        'amount' => $product->price
+                    ]);
+                    $price->discount_id = $discount->id;
+                    $price->save();
+
                     $storedProduct->stores()->sync([2 => ['qty' => $product->qty ?? 0]]);
-//                    dd($storedProduct);
                 }
-//            }
+            }
         }
     }
 }

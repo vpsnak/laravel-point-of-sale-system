@@ -12,4 +12,9 @@ class Price extends BaseModel
     {
         return $this->morphTo();
     }
+
+    public function discount()
+    {
+        return $this->belongsTo(Discount::class);
+    }
 }
