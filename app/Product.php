@@ -8,6 +8,12 @@ class Product extends BaseModel
 
     protected $with = ['stores', 'price', 'categories'];
 
+    protected $fillable = [
+        'sku',
+        'name',
+        'photo_url',
+    ];
+
     public function getFinalPriceAttribute()
     {
         return $this->price->amount;

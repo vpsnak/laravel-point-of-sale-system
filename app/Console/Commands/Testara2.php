@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\PostalCode;
+use App\Http\Controllers\Magento\Script\ProductSync;
 use Illuminate\Console\Command;
 
 class Testara2 extends Command
@@ -47,17 +47,7 @@ class Testara2 extends Command
 //            'Test',
 //            10
 //        );
-        $postalcode = PostalCode::skip(2)->first();
-        var_dump(
-            $postalcode->postalcode
-        );
-        var_dump(
-            $postalcode->grid->group->group_name
-        );
-        foreach ($postalcode->grid->group->timeslotGrid as $grid) {
-            var_dump(
-                $grid->timeslot->title
-            );
-        }
+
+        ProductSync::getFromMagento();
     }
 }

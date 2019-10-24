@@ -2,7 +2,6 @@
 
 use App\Price;
 use App\Product;
-use App\Store;
 use Illuminate\Database\Seeder;
 
 class ProductSeeder extends Seeder
@@ -20,9 +19,7 @@ class ProductSeeder extends Seeder
                 'priceable_id' => $product->id,
                 'priceable_type' => Product::class
             ]);
-            foreach (Store::all() as $store) {
-                $product->stores()->attach($store, ['qty' => rand(-100, 200)]);
-            }
+            $product->stores()->attach(1, ['qty' => rand(-100, 200)]);
         });
     }
 }
