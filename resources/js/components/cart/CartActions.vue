@@ -73,7 +73,7 @@ export default {
 				this.carts_on_hold_size = value;
 			}
 		},
-		products: {
+		cart: {
 			get() {
 				return this.$store.state.cart;
 			}
@@ -115,16 +115,19 @@ export default {
 			}
 		},
 		holdCart() {
+			let product_count = Object.keys(this.cart.products).length;
 			let payload = {
 				model: "carts",
 				data: {
 					cash_register_id: this.$store.state.cashRegister.id,
 					cart: {
-						products: this.products,
+						products: this.cart,
 						customer_id: this.$store.state.cart.customer
 							? this.$store.state.cart.customer.id
 							: null
-					}
+					},
+					product_count: product_count,
+					total_price: this.cart.cart_price
 				}
 			};
 			this.create(payload).then(() => {
