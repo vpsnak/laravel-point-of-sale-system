@@ -15,12 +15,11 @@ class CreateTransactionLogsTable extends Migration
     {
         Schema::create('transaction_logs', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id');
+
             $table->unsignedBigInteger('payment_id');
             $table->unsignedBigInteger('cash_register_id');
             $table->text('log');
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('payment_id')->references('id')->on('payments')->onDelete('cascade');
             $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('cascade');
 

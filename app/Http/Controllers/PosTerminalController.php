@@ -2,17 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Payment;
 use GuzzleHttp\Client;
+use \App\Payment;
+use \App\ElavonSdkPayment;
 use \App\TransactionLog;
 
 class PosTerminalController extends Controller
 {
+    private static function saveToSdkLog(Payment $payment, $testCase, $data)
+    {
+        $elavonSdkPayment = new ElavonSdkPayment();
+
+        $elavonSdkPayment->payment_id = $payment->id;
+        $elavonSdkPayment->cash_register_id = $payment->cash_register_id;
+        $elavonSdkPayment->test_case = $testCase;
+        $elavonSdkPayment->log = $data;
+
+        $elavonSdkPayment->save();
+    }
+
     private static function saveToLog(Payment $payment, $data)
     {
         $transactionLog = new TransactionLog();
 
-        $transactionLog->user_id = $payment->created_by;
         $transactionLog->payment_id = $payment->id;
         $transactionLog->cash_register_id = $payment->cash_register_id;
         $transactionLog->log = $data;

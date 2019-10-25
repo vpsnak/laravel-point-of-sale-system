@@ -7,13 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class TransactionLog extends Model
 {
     protected $fillable = [
-        'user_id', 'cash_register_id', 'log'
+        'payment_id', 'cash_register_id', 'log'
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 
     public function cashRegister()
     {
