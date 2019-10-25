@@ -79,7 +79,11 @@ export default {
 			if (this.order && this.order.status === "complete") {
 				this.resetState();
 				this.state = false;
-			} else if (this.order && this.order.status === "pending") {
+			} else if (
+				this.order &&
+				(this.order.status === "pending" ||
+					this.order.status === "pending_payment")
+			) {
 				this.closePrompt = true;
 			} else {
 				this.state = false;

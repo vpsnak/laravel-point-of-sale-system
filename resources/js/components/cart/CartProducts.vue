@@ -6,7 +6,7 @@
 					<div class="d-flex align-center justify-space-between">
 						<div class="d-flex flex-column">
 							<span class="subtitle-2">{{ product.name }}</span>
-							<span class="body-2">$ {{ price(product) }}</span>
+							<span class="body-2">$ {{ parseFloat(price(product)).toFixed(2) }}</span>
 						</div>
 						<v-spacer />
 						<div class="d-flex justify-content-center align-center">

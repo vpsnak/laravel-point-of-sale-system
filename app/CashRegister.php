@@ -6,7 +6,7 @@ class CashRegister extends BaseModel
 {
     protected $appends = ['is_open', 'store'];
     protected $with = [
-//        'logs'
+        'logs'
     ];
 
     protected $fillable = [
@@ -28,5 +28,20 @@ class CashRegister extends BaseModel
     public function logs()
     {
         return $this->hasMany(CashRegisterLogs::class);
+    }
+
+    public function transactionLogs()
+    {
+        return $this->hasMany(TransactionLog::class);
+    }
+
+    public function elavonApiPayments()
+    {
+        return $this->hasMany(ElavonApiPayment::class);
+    }
+
+    public function elavonSdkPayments()
+    {
+        return $this->hasMany(ElavonSdkPayment::class);
     }
 }

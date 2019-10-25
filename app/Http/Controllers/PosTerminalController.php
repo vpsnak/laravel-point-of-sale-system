@@ -2,13 +2,45 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use \App\Payment;
+use \App\ElavonSdkPayment;
+use \App\TransactionLog;
 
 class PosTerminalController extends Controller
 {
-    public static function posPayment($amount)
+    private static function saveToSdkLog(Payment $payment, $testCase, $data)
     {
+        $elavonSdkPayment = new ElavonSdkPayment();
+
+        $elavonSdkPayment->payment_id = $payment->id;
+        $elavonSdkPayment->cash_register_id = $payment->cash_register_id;
+        $elavonSdkPayment->test_case = $testCase;
+        $elavonSdkPayment->log = $data;
+
+        $elavonSdkPayment->save();
+    }
+
+    private static function saveToLog(Payment $payment, $data)
+    {
+        $transactionLog = new TransactionLog();
+
+        $transactionLog->payment_id = $payment->id;
+        $transactionLog->cash_register_id = $payment->cash_register_id;
+        $transactionLog->log = $data;
+
+        $transactionLog->save();
+    }
+
+    private static function setPaymentStatus(Payment $payment, $status)
+    {
+        $payment->status = $status;
+        $payment->save();
+    }
+
+    public static function posPayment($amount, Payment $payment)
+    {
+        self::setPaymentStatus($payment, 'time out');
         $amount *= 100;
 
         $cardReaderInfo = json_decode(self::getCardReaderInfo(), true);
@@ -19,6 +51,8 @@ class PosTerminalController extends Controller
             $id = json_decode(self::startCardReaderConfiguration(), true);
 
             if ($id['statusDetails'] === 'TARGET_UNAVAILABLE') {
+                self::setPaymentStatus($payment, 'failed');
+
                 return ['errors' => 'POS Terminal is already initialized or not available'];
             }
 
@@ -33,6 +67,8 @@ class PosTerminalController extends Controller
             } while ($response['data']['cardReadersSearch']['completed'] === false);
 
             if (!count($response['data']['cardReadersSearch']['cardReaders'])) {
+                self::setPaymentStatus($payment, 'failed');
+
                 return ['errors' => 'POS Terminal failed to initialize properly'];
             }
         }
@@ -41,6 +77,8 @@ class PosTerminalController extends Controller
         $paymentGatewayId = json_decode(self::openPaymentGateway(), true);
 
         if ($paymentGatewayId['data']['paymentGatewayCommand']['openPaymentGatewayData']['result'] !== 'SUCCESS') {
+            self::setPaymentStatus($payment, 'failed');
+
             return ['errors' => 'Payment gateway failed'];
         }
 
@@ -58,6 +96,8 @@ class PosTerminalController extends Controller
 
 
         if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'FAILED') {
+            self::setPaymentStatus($payment, 'failed');
+
             switch ($response['data']['paymentGatewayCommand']['paymentTransactionData']['errors'][0]) {
                 case 'ECLCommerceError ECLCardReaderCanceled':
                     return ['errors' => 'Transaction canceled'];
@@ -79,10 +119,16 @@ class PosTerminalController extends Controller
                     return ['error' => $response['data']['paymentGatewayCommand']['paymentTransactionData']];
             }
         } else if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'DECLINED') {
+            self::setPaymentStatus($payment, 'declined');
+
             return ['errors' => 'Card declined by issuer'];
         } else if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'APPROVED') {
+            self::setPaymentStatus($payment, 'approved');
+
             return ['success' => $response['data']['paymentGatewayCommand']['eventQueue']];
         } else {
+            self::setPaymentStatus($payment, 'failed');
+
             return ['errors' => $response];
         }
     }
@@ -92,13 +138,19 @@ class PosTerminalController extends Controller
         $url = config('elavon.hostPC.ip') . ':' . config('elavon.hostPC.port') . '/rest/command';
         $client = new Client(['verify' => false]);
 
-        $response = $client->post($url, [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json'
-            ],
-            'body' => json_encode($payload)
-        ]);
+        try {
+            $response = $client->post($url, [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json'
+                ],
+                'connect_timeout' => 30,
+                'body' => json_encode($payload)
+            ]);
+        } catch (Exception $e) {
+            self::setPaymentStatus($payload, 'failed');
+            return ['errors' => $e->getResponse()];
+        }
 
         return $response->getBody()->getContents();
     }
@@ -258,6 +310,81 @@ class PosTerminalController extends Controller
             "parameters" => [
                 "paymentGatewayId" => $paymentGatewayId,
                 "chanId" => $chanId
+            ]
+        ];
+
+        return self::sendRequest($payload);
+    }
+
+    private static function cancelPaymentTransaction($paymentGatewayId, $chanId)
+    {
+        $requestId = idate("U");
+
+        $payload = [
+            "method" => "cancelPaymentTransaction",
+            "requestId" => $requestId,
+            "targetType" => "paymentGatewayConverge",
+            "version" => "1.0",
+            "parameters" => [
+                "paymentGatewayId" => $paymentGatewayId,
+                "chanId" => $chanId
+            ]
+        ];
+
+        return self::sendRequest($payload);
+    }
+
+    private static function searchPaymentTransaction($parameters)
+    {
+        // params example
+        // $parameters = [
+        //     "first6CC" => null,
+        //     "creditCard" => null,
+        //     "utcDate" => null,
+        //     "paymentGatewayId" => $paymentGatewayId,
+        //     "transId" => null,
+        //     "endDate" => "20160307",
+        //     "last4CC" => "4243",
+        //     "beginDate" => "20160307",
+        //     "note" => ""
+        // ];
+
+        if (!count($parameters)) {
+            return ['errors' => 'No parameters specified'];
+        }
+
+        $requestId = idate("U");
+
+        $payload = [
+            "method" => "searchPaymentTransaction",
+            "requestId" => $requestId,
+            "targetType" => "paymentGatewayConverge",
+            "version" => "1.0",
+        ];
+
+        $payload[] = $parameters;
+
+        return self::sendRequest($payload);
+    }
+
+    private static function linkedRefund(Payment $payment)
+    {
+        $requestId = idate("U");
+
+        $payload = [
+            "method" => "startPaymenTransaction",
+            "requestId" => $requestId,
+            "targetType" => "paymentGatewayConverge",
+            "version" => "1.0",
+            "parameters" => [
+                "paymentGatewayId" => "e9b2f3cd-ad49-482b-9982-d39d76a79a7f",
+                "originalTransId" => "070316A15-0A81D9AD-6700-4E07-A82D-DF17E41F91A6",
+                "transactionType" => "LINKED_REFUND",
+                "tenderType" => "CARD",
+                "baseTransactionAmount" => [
+                    "value" => 2500,
+                    "currencyCode" => "USD"
+                ],
             ]
         ];
 

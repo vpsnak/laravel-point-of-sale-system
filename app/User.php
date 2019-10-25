@@ -41,6 +41,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
     public function open_register()
     {
         $openLog = $this->hasOne(CashRegisterLogs::class);

@@ -179,12 +179,19 @@ export default {
 						type: "success"
 					};
 					this.setNotification(notification);
-
-					this.init();
+				})
+				.catch(error => {
+					let notification = {
+						msg: error.response.data.message,
+						type: "error"
+					};
+					this.setNotification(notification);
 				})
 				.finally(() => {
 					this.paymentAmount = null;
 					this.paymentActionsLoading = false;
+
+					this.init();
 				});
 		},
 		refund(event) {
