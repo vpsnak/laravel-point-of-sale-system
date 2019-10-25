@@ -11,12 +11,11 @@ class OrderObserver
 {
     public function created(Order $order)
     {
-//        dd(var_dump($order->items->toArray()));
-        Log::debug(var_dump($order));
-        Log::debug(var_dump($order->items));
         foreach ($order->items as $item) {
             $this->handleStock($item, $order->status);
         }
+
+        return true;
     }
 
     public function handleStock(OrderProduct $item, $order_status)
@@ -50,8 +49,10 @@ class OrderObserver
         if ($order->status == 'canceled') {
             $order->payments()->delete();
         }
-        if ($order->status == 'canceled'
-            || $order->status == 'pending') {
+        if (
+            $order->status == 'canceled'
+            || $order->status == 'pending'
+        ) {
             foreach ($order->items as $item) {
                 $this->handleStock($item, $order->status);
             }

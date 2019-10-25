@@ -32,7 +32,6 @@ class PaymentController extends BaseController
             'code' => 'required_if:payment_type,coupon|required_if:payment_type,giftcard'
         ]);
 
-
         $newPayment = $validatedData;
         $newPayment['payment_type'] = PaymentType::getFirst('type', $validatedData['payment_type'])->id;
         $newPayment['status'] = 'pending';

@@ -1,5 +1,15 @@
 <template>
 	<div>
+		<interactiveDialog
+			v-if="addTimeSlotDialog"
+			action="update"
+			:show="addTimeSlotDialog"
+			title="Add time slot"
+			component="timeSlotForm"
+			@action="closedDialog"
+			@addTimeSlot="addTimeSlot"
+		/>
+
 		<div class="d-flex justify-center">
 			<v-radio-group v-model="shipping.method" row>
 				<v-radio label="Retail" value="retail"></v-radio>
@@ -35,15 +45,17 @@
 				</v-menu>
 			</v-col>
 			<v-col cols="4" lg="2" v-if="shipping.method === 'delivery'">
-				<v-combobox
+				<v-select
 					:loading="loading"
 					label="At"
 					prepend-icon="mdi-clock"
+					append-outer-icon="mdi-plus"
 					:items="timeSlots"
 					item-text="label"
 					v-model="shipping.timeSlotLabel"
 					@input="setCost"
-				></v-combobox>
+					@click:append-outer="addTimeSlotDialog = true"
+				></v-select>
 			</v-col>
 			<v-col cols="4" lg="2" v-if="shipping.method === 'delivery'">
 				<v-text-field
@@ -77,6 +89,7 @@ import { mapActions } from "vuex";
 export default {
 	data() {
 		return {
+			addTimeSlotDialog: false,
 			loading: false,
 			time_slots: [],
 			datePicker: false
@@ -117,6 +130,12 @@ export default {
 	},
 
 	methods: {
+		closedDialog(event) {
+			this.addTimeSlotDialog = false;
+		},
+		addTimeSlot(timeSlot) {
+			this.timeSlots.push(timeSlot);
+		},
 		setCost(item) {
 			if (_.has(item, "cost")) {
 				this.shipping.timeSlotCost = item.cost;
