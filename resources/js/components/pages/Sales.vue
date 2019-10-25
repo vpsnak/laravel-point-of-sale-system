@@ -1,5 +1,5 @@
 <template>
-	<v-container fluid>
+	<v-container fluid px-2 py-0>
 		<v-row>
 			<v-col cols="8">
 				<productList />
