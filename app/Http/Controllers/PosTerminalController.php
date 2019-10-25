@@ -322,7 +322,7 @@ class PosTerminalController extends Controller
         return self::sendRequest($payload);
     }
 
-    private static function searchPaymentTransaction($paymentGatewayId, $parameters)
+    private static function searchPaymentTransaction($parameters)
     {
         // params example
         // $parameters = [
@@ -337,6 +337,10 @@ class PosTerminalController extends Controller
         //     "note" => ""
         // ];
 
+        if (!count($parameters)) {
+            return ['errors' => 'No parameters specified'];
+        }
+
         $requestId = idate("U");
 
         $payload = [
@@ -347,6 +351,30 @@ class PosTerminalController extends Controller
         ];
 
         $payload[] = $parameters;
+
+        return self::sendRequest($payload);
+    }
+
+    private static function linkedRefund(Payment $payment)
+    {
+        $requestId = idate("U");
+
+        $payload = [
+            "method" => "startPaymenTransaction",
+            "requestId" => $requestId,
+            "targetType" => "paymentGatewayConverge",
+            "version" => "1.0",
+            "parameters" => [
+                "paymentGatewayId" => "e9b2f3cd-ad49-482b-9982-d39d76a79a7f",
+                "originalTransId" => "070316A15-0A81D9AD-6700-4E07-A82D-DF17E41F91A6",
+                "transactionType" => "LINKED_REFUND",
+                "tenderType" => "CARD",
+                "baseTransactionAmount" => [
+                    "value" => 2500,
+                    "currencyCode" => "USD"
+                ],
+            ]
+        ];
 
         return self::sendRequest($payload);
     }

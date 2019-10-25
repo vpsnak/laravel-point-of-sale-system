@@ -34,4 +34,9 @@ class CashRegister extends BaseModel
     {
         return $this->hasMany(TransactionLog::class);
     }
+
+    public function elavonApiPayments()
+    {
+        return $this->hasMany(ElavonApiPayment::class);
+    }
 }

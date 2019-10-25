@@ -4,16 +4,18 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TransactionLog extends Model
+class ElavonApiPayment extends Model
 {
     protected $fillable = [
-        'user_id', 'cash_register_id', 'log'
+        'payment_id',
+        'cash_register_id',
+        'transactionId',
+        'paymentGatewayId',
+        'chanId',
+        'log',
+        'payment_id',
+        'cash_register_id'
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 
     public function cashRegister()
     {
