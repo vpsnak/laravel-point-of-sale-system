@@ -17,12 +17,8 @@ class ProductSync
         'name',
         'sku',
         'stock_id',
-//        'price',
-//        'final_price',
         'description',
         'image_url',
-//        'manage_stock',
-//        'qty',
     ];
 
     protected const productFieldsToRename = [
@@ -30,7 +26,7 @@ class ProductSync
         'image_url' => 'photo_url',
     ];
 
-    public static function getFromMagento()
+    public static function getFromMagento($force = false)
     {
         $client = new Product();
 
@@ -45,30 +41,29 @@ class ProductSync
             foreach ($products as $product) {
                 $storedProduct = \App\Product::getFirst('sku', $product->sku);
                 $productUpdateAt = Carbon::parse($product->updated_at);
-//                if (empty($storedProduct) || $productUpdateAt->greaterThan($storedProduct->updated_at)) {
-                $parsedProduct = Helper::getParsedData($product, self::productFieldsToParse,
-                    self::productFieldsToRename);
-                $storedProduct = \App\Product::updateOrCreate(
-                    ['sku' => $product->sku],
-                    $parsedProduct
-                );
-                $price = $storedProduct->price()->updateOrCreate([
-                    'amount' => $product->final_price ?? 0
-                ]);
-                $discount = $price->discount()->updateOrCreate([
-                    'type' => 'flat',
-                    'amount' => $product->price
-                ]);
-                $price->discount_id = $discount->id;
-                $price->save();
+                if ($force || empty($storedProduct) || $productUpdateAt->greaterThan($storedProduct->updated_at)) {
+                    $parsedProduct = Helper::getParsedData($product, self::productFieldsToParse,
+                        self::productFieldsToRename);
+                    $storedProduct = \App\Product::updateOrCreate(
+                        ['sku' => $product->sku],
+                        $parsedProduct
+                    );
+                    $price = $storedProduct->price()->updateOrCreate([
+                        'amount' => $product->final_price ?? 0
+                    ]);
+                    $discount = $price->discount()->updateOrCreate([
+                        'type' => 'flat',
+                        'amount' => $product->price
+                    ]);
+                    $price->discount_id = $discount->id;
+                    $price->save();
 
-                $storedProduct->stores()->sync(
-                    [
-                        1 => ['qty' => $product->qty + rand(-10, 10) ?? 0],
-                        2 => ['qty' => $product->qty ?? 0]
-                    ]
-                );
-//                }
+                    $storedProduct->stores()->syncWithoutDetaching(
+                        [
+                            $storedProduct->magentoStore()->id => ['qty' => $product->qty ?? 0]
+                        ]
+                    );
+                }
             }
         }
     }
@@ -107,10 +102,10 @@ class ProductSync
                 'item_id' => $stock_data->item_id,
                 'qty' => $final_stock,
             ]);
-            $product->stores()->sync(
+            $product->stores()->syncWithoutDetaching(
                 [
-                    1 => ['qty' => $product->qty ?? 0],
-                    2 => ['qty' => $product->qty ?? 0]
+                    $product->laravelStore()->id => ['qty' => $product->qty ?? 0],
+                    $product->magentoStore()->id => ['qty' => $product->qty ?? 0]
                 ]
             );
         }

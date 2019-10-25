@@ -33,29 +33,42 @@ class Product extends BaseModel
         return $stock;
     }
 
+    public function getMagentoStockAttribute()
+    {
+        $store = $this->magentoStore();
+        if (!empty($store)) {
+            return $store->pivot->qty;
+        }
+        return null;
+    }
+
+    public function magentoStore()
+    {
+        return $this->store_view(2);
+    }
+
+    public function store_view($store_id)
+    {
+        return $this->stores()->where('id', $store_id)->first();
+    }
+
     public function stores()
     {
         return $this->belongsToMany(Store::class)->withPivot('qty');
     }
 
-    public function getMagentoStockAttribute()
+    public function getLaravelStockAttribute()
     {
-        foreach ($this->stores as $store) {
-            if ($store->id == 2) {
-                return $store->pivot->qty;
-            }
+        $store = $this->laravelStore();
+        if (!empty($store)) {
+            return $store->pivot->qty;
         }
         return null;
     }
 
-    public function getLaravelStockAttribute()
+    public function laravelStore()
     {
-        foreach ($this->stores as $store) {
-            if ($store->id == 1) {
-                return $store->pivot->qty;
-            }
-        }
-        return null;
+        return $this->store_view(1);
     }
 
     public function carts()
