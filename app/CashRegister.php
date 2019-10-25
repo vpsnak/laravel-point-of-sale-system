@@ -39,4 +39,9 @@ class CashRegister extends BaseModel
     {
         return $this->hasMany(ElavonApiPayment::class);
     }
+
+    public function elavonSdkPayments()
+    {
+        return $this->hasMany(ElavonSdkPayment::class);
+    }
 }

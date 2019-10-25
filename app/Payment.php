@@ -16,11 +16,6 @@ class Payment extends BaseModel
         'created_by',
     ];
 
-    public function transactionLog()
-    {
-        return $this->hasMany(TransactionLog::class);
-    }
-
     public function paymentType()
     {
         return $this->belongsTo(PaymentType::class, 'payment_type');
@@ -34,5 +29,20 @@ class Payment extends BaseModel
     public function created_by()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function elavonApiPayments()
+    {
+        return $this->hasMany(ElavonApiPayment::class);
+    }
+
+    public function elavonSdkPayments()
+    {
+        return $this->hasMany(ElavonSdkPayment::class);
+    }
+
+    public function transactionLog()
+    {
+        return $this->hasMany(TransactionLog::class);
     }
 }

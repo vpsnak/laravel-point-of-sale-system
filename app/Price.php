@@ -17,9 +17,4 @@ class Price extends BaseModel
     {
         return $this->belongsTo(Discount::class);
     }
-
-    public function elavonApiPayments()
-    {
-        return $this->hasMany(ElavonApiPayment::class);
-    }
 }
