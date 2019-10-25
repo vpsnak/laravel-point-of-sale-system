@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Observers\OrderObserver;
+use App\Order;
 use Illuminate\Console\Command;
 
 class Testara2 extends Command
@@ -46,5 +48,7 @@ class Testara2 extends Command
 //            'Test',
 //            10
 //        );
+        $a = Order::getOne(15);
+        (new OrderObserver())->created($a);
     }
 }

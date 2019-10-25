@@ -5,18 +5,17 @@ namespace App\Observers;
 use App\Http\Controllers\Magento\Script\ProductSync;
 use App\Order;
 use App\OrderProduct;
+use Illuminate\Support\Facades\Log;
 
 class OrderObserver
 {
-    public function updated(Order $order)
+    public function created(Order $order)
     {
-        if ($order->status == 'canceled') {
-            $order->payments()->delete();
-        }
-        if ($order->status == 'canceled' || $order->status == 'pending_payment') {
-            foreach ($order->items as $item) {
-                $this->handleStock($item, $order->status);
-            }
+//        dd(var_dump($order->items->toArray()));
+        Log::debug(var_dump($order));
+        Log::debug(var_dump($order->items));
+        foreach ($order->items as $item) {
+            $this->handleStock($item, $order->status);
         }
     }
 
@@ -27,7 +26,7 @@ class OrderObserver
             return;
         }
         switch ($order_status) {
-            case 'pending_payment':
+            case 'pending':
                 $qty = $product->laravel_stock - $item->qty;
                 $product->stores()->syncWithoutDetaching(
                     [$product->laravelStore()->id, ['qty' => $qty]]
@@ -44,5 +43,18 @@ class OrderObserver
             return;
         }
         ProductSync::syncStock($product);
+    }
+
+    public function updated(Order $order)
+    {
+        if ($order->status == 'canceled') {
+            $order->payments()->delete();
+        }
+        if ($order->status == 'canceled'
+            || $order->status == 'pending') {
+            foreach ($order->items as $item) {
+                $this->handleStock($item, $order->status);
+            }
+        }
     }
 }
