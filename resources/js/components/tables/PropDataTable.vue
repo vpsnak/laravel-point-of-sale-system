@@ -18,20 +18,25 @@
 						<slot :name="slot" v-bind="scope" />
 					</template>
 					<template v-slot:item.action="{ item }">
-						<v-tooltip bottom v-if="tableViewComponent === 'order'">
+						<!-- order actions -->
+						<v-tooltip bottom v-if="tableViewComponent === 'order' && item.status === 'pending_payment'">
 							<template v-slot:activator="{ on }">
-								<v-btn
-									@click="checkout(item)"
-									class="my-1"
-									icon
-									v-on="on"
-									:disabled="item.status !== 'pending_payment'"
-								>
+								<v-btn @click="checkout(item)" class="my-1" icon v-on="on">
 									<v-icon small>mdi-currency-usd</v-icon>
 								</v-btn>
 							</template>
-							<span>Checkout</span>
+							<span>Continue checkout</span>
 						</v-tooltip>
+						<v-tooltip bottom v-else-if="tableViewComponent === 'order' && item.status === 'complete'">
+							<template v-slot:activator="{ on }">
+								<v-btn @click="selectedItem = item, cancelOrderDialog = true" class="my-1" icon v-on="on">
+									<v-icon small>mdi-cancel</v-icon>
+								</v-btn>
+							</template>
+							<span>Cancel order</span>
+						</v-tooltip>
+
+						<!-- gift card actions -->
 						<v-tooltip bottom v-else-if="tableForm === 'giftCardForm'">
 							<template v-slot:activator="{ on }">
 								<v-btn
@@ -61,20 +66,6 @@
 								</v-btn>
 							</template>
 							<span>View</span>
-						</v-tooltip>
-						<v-tooltip bottom>
-							<template v-slot:activator="{ on }">
-								<v-btn
-									:disabled="btnDisable"
-									@click="deleteConfirmation = true, selectedItem = item"
-									class="my-1"
-									v-on="on"
-									icon
-								>
-									<v-icon small>delete</v-icon>
-								</v-btn>
-							</template>
-							<span>Delete</span>
 						</v-tooltip>
 					</template>
 					<v-alert
@@ -121,17 +112,6 @@
 			cancelBtnTxt="Close"
 		></interactiveDialog>
 
-		<interactiveDialog
-			v-if="deleteConfirmation"
-			:show="deleteConfirmation"
-			title="Confirm delete"
-			content="Are you sure you want to delete this item?"
-			action="confirmation"
-			cancelBtnTxt="No"
-			confirmationBtnTxt="Yes"
-			@action="deleteEvent"
-		/>
-
 		<checkoutDialog :show="checkoutDialog" />
 
 		<interactiveDialog
@@ -144,6 +124,17 @@
 			action="edit"
 			@action="rechargeEvent"
 		/>
+
+		<interactiveDialog
+			v-if="cancelOrderDialog"
+			:show="cancelOrderDialog"
+			action="confirmation"
+			title="Cancel order?"
+			content="Are you sure you want to <strong>cancel</strong> the selected order?"
+			@action="cancelOrderConfirmation"
+			actions
+			persistent
+		/>
 	</v-card>
 </template>
 
@@ -153,10 +144,10 @@ import { mapActions, mapMutations, mapState } from "vuex";
 export default {
 	data() {
 		return {
+			cancelOrderDialog: false,
 			showCreateDialog: false,
 			showEditDialog: false,
 			showViewDialog: false,
-			deleteConfirmation: false,
 			rechargeGiftcardDialog: false,
 			defaultObject: {},
 			viewId: null,
@@ -208,6 +199,21 @@ export default {
 		})
 	},
 	methods: {
+		cancelOrderConfirmation(event) {
+			if (event) {
+				let payload = {
+					model: "orders",
+					id: this.selectedItem.id
+				};
+
+				this.delete(payload).then(response => {
+					this.getRows({
+						url: this.dataUrl
+					});
+				});
+			}
+			this.closePrompt = false;
+		},
 		checkout(item) {
 			this.$store.commit("cart/setOrder", item);
 			this.$store.state.cart.checkoutSteps[1].completed = true;
@@ -238,25 +244,10 @@ export default {
 			this.rechargeGiftcardDialog = false;
 		},
 
-		deleteEvent(event) {
-			if (event) {
-				this.deleteItem();
-			}
-			this.deleteConfirmation = false;
-		},
-		deleteItem() {
-			this.deleteRow({
-				url: this.dataUrl + "/" + this.selectedItem.id,
-				data: {
-					id: this.selectedItem.id
-				}
-			});
-		},
 		result(event) {
 			this.showCreateDialog = false;
 			this.showEditDialog = false;
 			this.showViewDialog = false;
-			this.showDeleteDialog = false;
 		},
 
 		...mapActions("datatable", {

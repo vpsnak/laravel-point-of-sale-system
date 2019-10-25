@@ -20,7 +20,6 @@
 				</v-col>
 			</v-row>
 		</v-container>
-		<!--        <order :id="2"/>-->
 	</div>
 </template>
 
