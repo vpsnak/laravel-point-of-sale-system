@@ -303,4 +303,51 @@ class PosTerminalController extends Controller
 
         return self::sendRequest($payload);
     }
+
+    private static function cancelPaymentTransaction($paymentGatewayId, $chanId)
+    {
+        $requestId = idate("U");
+
+        $payload = [
+            "method" => "cancelPaymentTransaction",
+            "requestId" => $requestId,
+            "targetType" => "paymentGatewayConverge",
+            "version" => "1.0",
+            "parameters" => [
+                "paymentGatewayId" => $paymentGatewayId,
+                "chanId" => $chanId
+            ]
+        ];
+
+        return self::sendRequest($payload);
+    }
+
+    private static function searchPaymentTransaction($paymentGatewayId, $parameters)
+    {
+        // params example
+        // $parameters = [
+        //     "first6CC" => null,
+        //     "creditCard" => null,
+        //     "utcDate" => null,
+        //     "paymentGatewayId" => $paymentGatewayId,
+        //     "transId" => null,
+        //     "endDate" => "20160307",
+        //     "last4CC" => "4243",
+        //     "beginDate" => "20160307",
+        //     "note" => ""
+        // ];
+
+        $requestId = idate("U");
+
+        $payload = [
+            "method" => "searchPaymentTransaction",
+            "requestId" => $requestId,
+            "targetType" => "paymentGatewayConverge",
+            "version" => "1.0",
+        ];
+
+        $payload[] = $parameters;
+
+        return self::sendRequest($payload);
+    }
 }
