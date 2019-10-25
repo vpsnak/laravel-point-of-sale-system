@@ -20,7 +20,7 @@ class CreatePaymentsTable extends Migration
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('cash_register_id')->nullable();
             $table->string('code')->nullable();
-            $table->string('status')->nullable(); // @TODO: remove nullable
+            $table->string('status'); // @TODO: remove nullable
 
             $table->unsignedBigInteger('created_by');
             $table->timestamps();

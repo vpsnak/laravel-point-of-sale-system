@@ -10,6 +10,7 @@ class Payment extends BaseModel
         'payment_type',
         'amount',
         'code',
+        'status',
         'cash_register_id',
         'order_id',
         'created_by',

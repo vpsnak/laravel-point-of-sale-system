@@ -2,14 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Payment;
 use GuzzleHttp\Client;
 use \App\TransactionLog;
 
 class PosTerminalController extends Controller
 {
-    public static function posPayment($amount)
+    private static function saveToLog(Payment $payment, $data)
     {
+        $transactionLog = new TransactionLog();
+
+        $transactionLog->user_id = $payment->created_by;
+        $transactionLog->payment_id = $payment->id;
+        $transactionLog->cash_register_id = $payment->cash_register_id;
+        $transactionLog->log = $data;
+
+        $transactionLog->save();
+    }
+
+    private static function setPaymentStatus(Payment $payment, $status)
+    {
+        $payment->status = $status;
+        $payment->save();
+    }
+
+    public static function posPayment($amount, Payment $payment)
+    {
+        self::setPaymentStatus($payment, 'time out');
         $amount *= 100;
 
         $cardReaderInfo = json_decode(self::getCardReaderInfo(), true);
@@ -20,6 +39,8 @@ class PosTerminalController extends Controller
             $id = json_decode(self::startCardReaderConfiguration(), true);
 
             if ($id['statusDetails'] === 'TARGET_UNAVAILABLE') {
+                self::setPaymentStatus($payment, 'failed');
+
                 return ['errors' => 'POS Terminal is already initialized or not available'];
             }
 
@@ -34,6 +55,8 @@ class PosTerminalController extends Controller
             } while ($response['data']['cardReadersSearch']['completed'] === false);
 
             if (!count($response['data']['cardReadersSearch']['cardReaders'])) {
+                self::setPaymentStatus($payment, 'failed');
+
                 return ['errors' => 'POS Terminal failed to initialize properly'];
             }
         }
@@ -42,6 +65,8 @@ class PosTerminalController extends Controller
         $paymentGatewayId = json_decode(self::openPaymentGateway(), true);
 
         if ($paymentGatewayId['data']['paymentGatewayCommand']['openPaymentGatewayData']['result'] !== 'SUCCESS') {
+            self::setPaymentStatus($payment, 'failed');
+
             return ['errors' => 'Payment gateway failed'];
         }
 
@@ -59,6 +84,8 @@ class PosTerminalController extends Controller
 
 
         if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'FAILED') {
+            self::setPaymentStatus($payment, 'failed');
+
             switch ($response['data']['paymentGatewayCommand']['paymentTransactionData']['errors'][0]) {
                 case 'ECLCommerceError ECLCardReaderCanceled':
                     return ['errors' => 'Transaction canceled'];
@@ -80,10 +107,16 @@ class PosTerminalController extends Controller
                     return ['error' => $response['data']['paymentGatewayCommand']['paymentTransactionData']];
             }
         } else if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'DECLINED') {
+            self::setPaymentStatus($payment, 'declined');
+
             return ['errors' => 'Card declined by issuer'];
         } else if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'APPROVED') {
+            self::setPaymentStatus($payment, 'approved');
+
             return ['success' => $response['data']['paymentGatewayCommand']['eventQueue']];
         } else {
+            self::setPaymentStatus($payment, 'failed');
+
             return ['errors' => $response];
         }
     }
@@ -93,23 +126,19 @@ class PosTerminalController extends Controller
         $url = config('elavon.hostPC.ip') . ':' . config('elavon.hostPC.port') . '/rest/command';
         $client = new Client(['verify' => false]);
 
-        $response = $client->post($url, [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json'
-            ],
-            'body' => json_encode($payload)
-        ]);
-
-        $transaction_log = new TransactionLog();
-        $transaction_log = [
-            'user_id' => 1,
-            'payment_id' => $payment,
-            'cash_register_id' => 1,
-            'log' => $response->getBody()->getContents(),
-        ];
-
-        $transaction_log->save();
+        try {
+            $response = $client->post($url, [
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json'
+                ],
+                'connect_timeout' => 30,
+                'body' => json_encode($payload)
+            ]);
+        } catch (Exception $e) {
+            self::setPaymentStatus($payload, 'failed');
+            return ['errors' => $e->getResponse()];
+        }
 
         return $response->getBody()->getContents();
     }

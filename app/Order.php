@@ -50,7 +50,9 @@ class Order extends BaseModel
     {
         $total_paid = 0;
         foreach ($this->payments as $payment) {
-            $total_paid += $payment->amount;
+            if ($payment->status === 'approved') {
+                $total_paid += $payment->amount;
+            }
         };
         return $total_paid;
     }
