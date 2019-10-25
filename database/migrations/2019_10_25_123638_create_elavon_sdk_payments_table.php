@@ -18,6 +18,7 @@ class CreateElavonSdkPaymentsTable extends Migration
             $table->unsignedBigInteger('payment_id');
             $table->unsignedBigInteger('cash_register_id');
 
+            $table->string('test_case')->nullable();
             $table->string('transactionId');
             $table->string('paymentGatewayId');
             $table->string('chanId');
