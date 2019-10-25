@@ -15,6 +15,8 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->unsignedBigInteger('magento_id')->default(0);
+            $table->unsignedBigInteger('stock_id')->default(0);
             $table->string('sku')->unique()->index();
             $table->string('name');
             $table->string('barcode')->nullable();

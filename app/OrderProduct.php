@@ -17,6 +17,11 @@ class OrderProduct extends BaseModel
 
     public function order()
     {
-        return $this->belongsTo(\App\Order::class);
+        return $this->belongsTo(Order::class);
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'sku', 'sku');
     }
 }

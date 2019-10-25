@@ -17,4 +17,9 @@ class Product extends MagentoClient
     {
         return $this->get("/w2/products/list?limit=$per_page&page=$page", []);
     }
+
+    public function getById($magento_id)
+    {
+        return $this->get('products/' . $magento_id, []);
+    }
 }

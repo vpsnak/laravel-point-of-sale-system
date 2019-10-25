@@ -4,14 +4,19 @@ namespace App;
 
 class Product extends BaseModel
 {
-    protected $appends = ['final_price', 'stock'];
+    protected $appends = ['final_price', 'stock', 'magento_stock', 'laravel_stock'];
 
     protected $with = ['stores', 'price', 'categories'];
 
     protected $fillable = [
+        'magento_id',
+        'stock_id',
         'sku',
         'name',
+        'barcode',
         'photo_url',
+        'url',
+        'description',
     ];
 
     public function getFinalPriceAttribute()
@@ -31,6 +36,26 @@ class Product extends BaseModel
     public function stores()
     {
         return $this->belongsToMany(Store::class)->withPivot('qty');
+    }
+
+    public function getMagentoStockAttribute()
+    {
+        foreach ($this->stores as $store) {
+            if ($store->id == 2) {
+                return $store->pivot->qty;
+            }
+        }
+        return null;
+    }
+
+    public function getLaravelStockAttribute()
+    {
+        foreach ($this->stores as $store) {
+            if ($store->id == 1) {
+                return $store->pivot->qty;
+            }
+        }
+        return null;
     }
 
     public function carts()

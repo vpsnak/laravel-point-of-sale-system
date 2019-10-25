@@ -2,16 +2,17 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Controllers\Magento\Script\ProductSync;
 use Illuminate\Console\Command;
 
-class Testara2 extends Command
+class GetMagentoProducts extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'w2:test2';
+    protected $signature = 'w2:get:products';
 
     /**
      * The console command description.
@@ -37,14 +38,6 @@ class Testara2 extends Command
      */
     public function handle()
     {
-//        $controller = new CreditCardController();
-//
-//        $payment = $controller::cardPayment(
-//            '5405010000000090',
-//            '1219',
-//            '123',
-//            'Test',
-//            10
-//        );
+        ProductSync::getFromMagento();
     }
 }
