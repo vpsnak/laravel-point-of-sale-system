@@ -216,7 +216,7 @@ export default {
 		},
 		checkout(item) {
 			this.$store.commit("cart/setOrder", item);
-			this.$store.state.cart.checkoutSteps[1].completed = true;
+			this.$store.state.cart.checkoutSteps[0].completed = true;
 			this.$store.state.cart.currentCheckoutStep = 2;
 
 			this.checkoutDialog = true;
