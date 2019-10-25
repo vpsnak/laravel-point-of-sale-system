@@ -33,7 +33,7 @@ export default {
 		};
 	},
 	mounted() {
-		this.visibility = true;
+		// this.visibility = true;
 	}
 };
 </script>

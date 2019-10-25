@@ -6,7 +6,7 @@ class CashRegister extends BaseModel
 {
     protected $appends = ['is_open', 'store'];
     protected $with = [
-        //        'logs'
+        'logs'
     ];
 
     protected $fillable = [
