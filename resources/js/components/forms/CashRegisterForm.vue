@@ -45,7 +45,7 @@ export default {
 		}).then(stores => {
 			this.stores = stores;
 		});
-		this.defaultValues = this.formFields;
+		this.defaultValues = { ...this.formFields };
 		if (this.$props.model) {
 			this.formFields = {
 				...this.$props.model

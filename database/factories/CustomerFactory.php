@@ -10,6 +10,6 @@ $factory->define(Customer::class, function (Faker $faker) {
     return [
         'email' => $faker->unique()->email,
         'first_name' => $faker->firstName,
-        'last_name' => $faker->lastName,
+        'last_name' => $faker->lastName
     ];
 });

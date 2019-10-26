@@ -8,7 +8,7 @@ class Customer extends BaseModel
         'magento_id',
         'first_name',
         'last_name',
-        'email',
+        'email'
     ];
 
     protected $with = ['addresses'];

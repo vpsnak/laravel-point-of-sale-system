@@ -166,7 +166,6 @@ export default {
         submitOrder({ state, commit, dispatch }) {
             return new Promise((resolve, reject) => {
                 let payload = {
-                    model: "orders",
                     data: {
                         customer_id: state.customer ? state.customer.id : "",
                         created_by: this.state.user.id,
@@ -174,7 +173,8 @@ export default {
                         status: "pending",
                         discount_type: state.discount_type,
                         discount_amount: state.discount_amount,
-                        products: state.products
+                        products: state.products,
+                        shipping: state.shipping
                     }
                 };
 
