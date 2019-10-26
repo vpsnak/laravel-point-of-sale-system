@@ -134,6 +134,7 @@ export default {
 			this.addTimeSlotDialog = false;
 		},
 		addTimeSlot(timeSlot) {
+			console.log(timeSlot);
 			this.timeSlots.push(timeSlot);
 		},
 		setCost(item) {
