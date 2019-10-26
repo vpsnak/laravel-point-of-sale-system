@@ -19,7 +19,7 @@ class MagentoOAuthController extends Controller
     protected $consumer_key;
     protected $consumer_secret;
 
-    protected $callback_url = 'http://localhost:8000/api/magento/authorize';
+    protected $callback_url = '/api/magento/authorize';
     protected $request_token_url = '/oauth/initiate';
     protected $admin_authorization_url = '/oauth_authorize';
     protected $access_token_url = '/oauth/token';
@@ -107,6 +107,7 @@ class MagentoOAuthController extends Controller
         $magento_admin = config('magento.MAGENTO_ADMIN');
         $this->consumer_key = config('magento.OAUTH_CONSUMER_KEY');
         $this->consumer_secret = config('magento.OAUTH_CONSUMER_SECRET');
+        $this->callback_url = config('app.url') . '/api/magento/authorize';
         $this->request_token_url = "$magento_url/oauth/initiate";
         $this->admin_authorization_url = "$magento_url/$magento_admin/oauth_authorize";
         $this->access_token_url = $magento_url . '/oauth/token';
