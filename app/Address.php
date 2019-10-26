@@ -36,7 +36,10 @@ class Address extends BaseModel
 
     public function getAddressCountryAttribute()
     {
-        return $this->country->iso2_code;
+        if (!empty($this->country)) {
+            return $this->country->iso2_code;
+        }
+        return $this->country_id;
     }
 
     public function getAddressRegionAttribute()
