@@ -58,11 +58,11 @@ export default {
 				cost: null
 			};
 
-			this.$emit("addTimeSlot", payload);
+			this.$emit("submit", payload);
 		}
 	},
 	beforeDestroy() {
-		this.$off("addTimeSlot");
+		this.$off("submit");
 	}
 };
 </script>

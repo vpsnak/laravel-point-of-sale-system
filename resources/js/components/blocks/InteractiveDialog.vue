@@ -106,17 +106,18 @@ export default {
 			deleteRow: "deleteRow"
 		}),
 
+		// WTF
 		submit(event) {
 			this.submit = event;
-			if (this.submit != null) {
+			if (event != null) {
 				this.closeEvent();
 			}
 
 			this.getRows({
-				url: this.submit
+				url: event
 			});
 			this.$store.commit("setNotification", {
-				msg: "Saved in " + this.submit,
+				msg: "Saved in " + event,
 				type: "success"
 			});
 		},
