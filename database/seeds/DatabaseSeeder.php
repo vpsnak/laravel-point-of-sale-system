@@ -11,9 +11,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(OauthClientsSeeder::class);
-        $this->call(PlantshedPostCodes::class);
-        $this->call(PlantshedAreasSeeder::class);
 
         $this->call(UserSeeder::class);
         $this->call(TaxSeeder::class);
@@ -30,5 +27,9 @@ class DatabaseSeeder extends Seeder
 
         $this->call(OrderSeeder::class);
         $this->call(PaymentSeeder::class);
+
+        $this->call(OauthClientsSeeder::class);
+        $this->call(PlantshedPostCodes::class);
+        $this->call(PlantshedAreasSeeder::class);
     }
 }
