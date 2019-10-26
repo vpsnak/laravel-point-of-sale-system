@@ -7,7 +7,7 @@ class Address extends BaseModel
 //    protected $with = ['areaCode', 'customers'];
 //    protected $with = ['customers'];
 
-    protected $attributes = ['address_country', 'address_region'];
+    protected $appends = ['address_country', 'address_region'];
 
     protected $fillable = [
         'magento_id',
