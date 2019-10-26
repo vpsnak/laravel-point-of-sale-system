@@ -18,16 +18,16 @@ class CustomerController extends BaseController
             'last_name' => 'required|string',
         ]);
 
-        $address = $request->validate([
-            'address.first_name' => 'required|string',
-            'address.last_name' => 'required|string',
-            'address.street' => 'required|string',
-            'address.city' => 'required|string',
-            'address.country_id' => 'nullable|string',
-            'address.region' => 'required|string',
-            'address.postcode' => 'required|string',
-            'address.phone' => 'required|numeric',
-        ]);
+        // $address = $request->validate([
+        //     'address.first_name' => 'required|string',
+        //     'address.last_name' => 'required|string',
+        //     'address.street' => 'required|string',
+        //     'address.city' => 'required|string',
+        //     'address.country_id' => 'nullable|string',
+        //     'address.region' => 'required|string',
+        //     'address.postcode' => 'required|string',
+        //     'address.phone' => 'required|numeric',
+        // ]);
 
         if (array_key_exists('customer_id', $validatedData)) {
             $customer = $this->model::find($validatedData['customer_id']);
