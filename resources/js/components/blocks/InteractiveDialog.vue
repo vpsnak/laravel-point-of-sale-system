@@ -119,8 +119,10 @@ export default {
 				});
 			}
 
-			if (event.closeDialog === true) {
+			if (event.data) {
 				this.fire(event.data);
+			} else {
+				this.fire(true);
 			}
 		},
 
