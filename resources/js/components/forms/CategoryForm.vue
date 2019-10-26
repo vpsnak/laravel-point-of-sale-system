@@ -15,11 +15,7 @@
 					required
 				></v-text-field>
 			</ValidationProvider>
-			<v-switch
-				v-model="formFields.in_product_listing"
-				label="In Product listing"
-				data-vv-name="email"
-			></v-switch>
+			<v-switch v-model="formFields.in_product_listing" label="In Product listing"></v-switch>
 			<v-btn
 				class="mr-4"
 				type="submit"
@@ -53,7 +49,7 @@ export default {
 		}
 	},
 	mounted() {
-		this.defaultValues = this.formFields;
+		this.defaultValues = { ...this.formFields };
 		if (this.$props.model) {
 			this.formFields = {
 				...this.$props.model

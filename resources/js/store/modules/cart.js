@@ -174,7 +174,8 @@ export default {
                         status: "pending",
                         discount_type: state.discount_type,
                         discount_amount: state.discount_amount,
-                        products: state.products
+                        products: state.products,
+                        shipping: state.shipping
                     }
                 };
 

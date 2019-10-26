@@ -52,7 +52,7 @@ export default {
 		}).then(taxes => {
 			this.taxes = taxes;
 		});
-		this.defaultValues = this.formFields;
+		this.defaultValues = { ...this.formFields };
 		if (this.$props.model) {
 			this.formFields = {
 				...this.$props.model
@@ -77,7 +77,7 @@ export default {
 			this.$off("submit");
 		},
 		clear() {
-			this.formFields = { ...this.defaultValues };
+			this.formFields = this.defaultValues;
 		},
 		getAllTaxes() {
 			this.getAll({

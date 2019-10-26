@@ -43,7 +43,7 @@
 					<v-date-picker v-model="shipping.date" @input="getTimeSlots" :min="new Date().toJSON()"></v-date-picker>
 				</v-menu>
 			</v-col>
-			<v-col cols="4" lg="2" v-if="shipping.method === 'delivery'">
+			<v-col cols="4" lg="3" v-if="shipping.method === 'delivery'">
 				<v-select
 					:loading="loading"
 					label="At"
@@ -56,7 +56,7 @@
 					@click:append-outer="addTimeSlotDialog = true"
 				></v-select>
 			</v-col>
-			<v-col cols="4" lg="2" v-if="shipping.method === 'delivery'">
+			<v-col cols="4" lg="1" v-if="shipping.method === 'delivery'">
 				<v-text-field
 					type="number"
 					label="Cost"
@@ -109,7 +109,7 @@ export default {
 				return this.$store.state.cart.shipping;
 			},
 			set(value) {
-				this.$store.state.cart.shipping = value;
+				this.$store.state.cart.timeSlotCost = value;
 			}
 		},
 		addresses() {
@@ -132,6 +132,8 @@ export default {
 		closedDialog(event) {
 			if (event) {
 				this.timeSlots.push(event);
+				this.shipping.timeSlotLabel = event.label;
+				this.shipping.cost = event.cost;
 			}
 
 			this.addTimeSlotDialog = false;
@@ -168,15 +170,19 @@ export default {
 		},
 		getAddressText(item) {
 			return (
+				item.first_name +
+				" " +
+				item.last_name +
+				" " +
 				item.street +
 				" " +
 				item.city +
-				" " +
-				item.area_code_id +
-				" " +
-				item.region +
-				" " +
-				item.country_id
+				", " +
+				item.address_region +
+				", " +
+				item.postcode +
+				", " +
+				item.address_country
 			);
 		},
 		...mapActions(["postRequest"])

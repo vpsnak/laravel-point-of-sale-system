@@ -203,13 +203,8 @@ class PaymentController extends BaseController
             return response('Model not found', 404);
         }
 
-        $payment = Payment::findOrFail($id);
-        $deleted = $payment->delete();
+        (Payment::findOrFail($id))->delete();
 
-        if ($deleted) {
-            return response(['msg' => 'Refund completed successfully!', 'status' => 'success'], 200);
-        } else {
-            return response(['msg' => 'Refund error!', 'status' => 'error'], 404);
-        }
+        return response(['msg' => 'Refund completed successfully!', 'status' => 'success'], 200);
     }
 }

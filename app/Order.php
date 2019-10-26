@@ -16,10 +16,12 @@ class Order extends BaseModel
         'items',
         'discount_type',
         'discount_amount',
-        'shipping_type',
-        'shipping_cost',
         'tax',
         'subtotal',
+        'shipping_type',
+        'shipping_cost',
+        'shipping_address',
+        'delivery_date',
         'notes',
     ];
 
