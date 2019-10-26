@@ -168,15 +168,19 @@ export default {
 		},
 		getAddressText(item) {
 			return (
+				item.first_name +
+				" " +
+				item.last_name +
+				" " +
 				item.street +
 				" " +
 				item.city +
-				" " +
-				item.area_code_id +
-				" " +
-				item.region +
-				" " +
-				item.country_id
+				", " +
+				item.address_region +
+				", " +
+				item.postcode +
+				", " +
+				item.address_country
 			);
 		},
 		...mapActions(["postRequest"])
