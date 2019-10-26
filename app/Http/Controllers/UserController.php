@@ -35,7 +35,7 @@ class UserController extends Controller
 
         $http = new Client;
 
-        $response = $http->post('localhost/oauth/token', [
+        $response = $http->post(config('app.url') . '/oauth/token', [
             'form_params' => [
                 'grant_type' => 'password',
                 'client_id' => '2',

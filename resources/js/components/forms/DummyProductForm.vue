@@ -12,9 +12,6 @@
 import { mapActions } from "vuex";
 
 export default {
-	props: {
-		model: Object
-	},
 	data() {
 		return {
 			dummyProduct: {
@@ -51,7 +48,6 @@ export default {
 			};
 			this.dummyProduct.id = "dummy" + "-" + random();
 			this.dummyProduct.sku = "dummy" + "-" + random() + random();
-			console.log(this.dummyProduct.id);
 		},
 		clear() {
 			this.dummyProduct = {

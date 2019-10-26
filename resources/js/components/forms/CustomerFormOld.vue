@@ -1,4 +1,4 @@
-formFields<template>
+<template>
 	<div>
 		<v-form>
 			<div class="text-center">
@@ -11,16 +11,11 @@ formFields<template>
 			<v-text-field v-model="formFields.email" label="Email" required></v-text-field>
 			<v-text-field v-model="formFields.phone" label="Phone" required></v-text-field>
 			<v-text-field v-model="formFields.company_name" label="Company name" required></v-text-field>
-			<v-text-field v-model="formFields.addresses.area_code_id" counter label="Area Code id" required></v-text-field>
-			<v-text-field v-model="formFields.addresses.first_name" counter label="First name" required></v-text-field>
-			<v-text-field v-model="formFields.addresses.last_name" counter label="Last name" required></v-text-field>
-			<v-text-field v-model="formFields.addresses.street" counter label="Street" required></v-text-field>
-			<v-text-field v-model="formFields.addresses.city" counter label="City" required></v-text-field>
-			<v-text-field v-model="formFields.addresses.country_id" counter label="Country id" required></v-text-field>
-			<v-text-field v-model="formFields.addresses.region" counter label="Region" required></v-text-field>
-			<v-text-field v-model="formFields.addresses.postcode" counter label="Postcode" required></v-text-field>
-			<v-text-field v-model="formFields.addresses.phone" counter label="Phone" required></v-text-field>
-
+			<addressForm
+				@address="watchAddress($event)"
+				:addressClear="addressClear"
+				:addressData="formFields.addresses"
+			></addressForm>
 			<v-btn class="mr-4" @click="submit">submit</v-btn>
 			<v-btn @click="clear">clear</v-btn>
 		</v-form>
@@ -67,6 +62,10 @@ export default {
 		}
 	},
 	methods: {
+		watchAddress(current_address) {
+			this.formFields.addresses = current_address;
+			console.log(this.formFields);
+		},
 		submit() {
 			let payload = {
 				model: "customers",
@@ -80,8 +79,10 @@ export default {
 		clear() {
 			console.log(this.formFields);
 			this.formFields = { ...this.defaultValues };
+			this.addressClear = true;
 		},
 		beforeDestroy() {
+			this.$off("clearAddress");
 			this.$off("submit");
 		},
 		...mapActions({
