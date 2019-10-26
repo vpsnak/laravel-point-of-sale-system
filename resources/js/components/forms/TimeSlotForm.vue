@@ -47,8 +47,7 @@ export default {
 			let payload = {
 				notification: false,
 				data: {
-					label: this.timeSlot.from_h + " - " + this.timeSlot.to_h,
-					cost: null
+					label: this.timeSlot.from_h + "-" + this.timeSlot.to_h
 				}
 			};
 
