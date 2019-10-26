@@ -19,43 +19,37 @@
 export default {
 	data() {
 		return {
-			hours: [
-				"00",
-				"01",
-				"02",
-				"03",
-				"04",
-				"05",
-				"06",
-				"07",
-				"08",
-				"09",
-				"10",
-				"11",
-				"12",
-				"13",
-				"14",
-				"15",
-				"16",
-				"17",
-				"18",
-				"19",
-				"20",
-				"21",
-				"22",
-				"23"
-			],
 			timeSlot: {
 				from_h: null,
 				to_h: null
 			}
 		};
 	},
+
+	computed: {
+		hours() {
+			let a = Array.from(Array(48).keys()).map((value, i) => {
+				const flag = i % 2 == 0;
+
+				if (i > 19) {
+					return parseInt(i / 2) + (flag ? ":00" : ":30");
+				} else {
+					return "0" + parseInt(i / 2) + (flag ? ":00" : ":30");
+				}
+			});
+
+			return a;
+		}
+	},
+
 	methods: {
 		submit() {
 			let payload = {
-				label: this.timeSlot.from_h + " - " + this.timeSlot.to_h,
-				cost: null
+				notification: false,
+				data: {
+					label: this.timeSlot.from_h + " - " + this.timeSlot.to_h,
+					cost: null
+				}
 			};
 
 			this.$emit("submit", payload);

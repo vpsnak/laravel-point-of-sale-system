@@ -7,7 +7,6 @@
 			title="Add time slot"
 			component="timeSlotForm"
 			@action="closedDialog"
-			@addTimeSlot="addTimeSlot"
 		/>
 
 		<div class="d-flex justify-center">
@@ -131,11 +130,11 @@ export default {
 
 	methods: {
 		closedDialog(event) {
+			if (event) {
+				this.timeSlots.push(event);
+			}
+
 			this.addTimeSlotDialog = false;
-		},
-		addTimeSlot(timeSlot) {
-			console.log(timeSlot);
-			this.timeSlots.push(timeSlot);
 		},
 		setCost(item) {
 			if (_.has(item, "cost")) {

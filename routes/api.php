@@ -20,7 +20,7 @@ Route::get('/auth/logout', "UserController@logout")->middleware('auth:api');
 $baseRoutes = [
     'users' => 'UserController',
     'customers' => 'CustomerController',
-    'address' => 'AddressController',
+    'addresses' => 'AddressController',
     'products' => 'ProductController',
     'carts' => 'CartController',
     'orders' => 'OrderController',

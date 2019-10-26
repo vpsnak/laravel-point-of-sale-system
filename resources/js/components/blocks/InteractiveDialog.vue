@@ -61,9 +61,9 @@ export default {
 		fullscreen: Boolean,
 		cancelBtnTxt: String,
 		confirmationBtnTxt: String,
-		// model CRUD props
+
 		model: Object,
-		action: String // Possible values: edit, read, confirmation, info
+		action: String
 	},
 
 	data() {
@@ -105,29 +105,29 @@ export default {
 			deleteRow: "deleteRow"
 		}),
 
-		submit(event) {
-			if (event.getRows) {
+		submit(payload) {
+			if (payload.getRows && payload.model) {
 				this.getRows({
-					url: event.model
+					url: payload.model
 				});
 			}
 
-			if (event.notification) {
+			if (payload.notification) {
 				this.$store.commit("setNotification", {
-					msg: event.notification.msg,
-					type: event.notification.type
+					msg: payload.notification.msg,
+					type: payload.notification.type
 				});
 			}
 
-			if (event.data) {
-				this.fire(event.data);
+			if (payload.data) {
+				this.fire(payload.data);
 			} else {
 				this.fire(true);
 			}
 		},
 
-		fire(confirmation) {
-			this.$emit("action", confirmation);
+		fire(payload) {
+			this.$emit("action", payload);
 			this.visibility = false;
 		},
 		closeEvent() {

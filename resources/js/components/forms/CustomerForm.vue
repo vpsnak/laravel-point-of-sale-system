@@ -11,21 +11,60 @@ formFields<template>
 			<v-text-field v-model="formFields.email" label="Email" required></v-text-field>
 			<v-text-field v-model="formFields.phone" label="Phone" required></v-text-field>
 			<v-text-field v-model="formFields.company_name" label="Company name" required></v-text-field>
-			<v-text-field v-model="formFields.addresses.area_code_id" label="Area Code id" required></v-text-field>
-			<v-text-field v-model="formFields.addresses.first_name" label="First name" required></v-text-field>
-			<v-text-field v-model="formFields.addresses.last_name" label="Last name" required></v-text-field>
-			<v-text-field v-model="formFields.addresses.street" label="Street" required></v-text-field>
-			<v-text-field v-model="formFields.addresses.city" label="City" required></v-text-field>
-			<v-text-field v-model="formFields.addresses.country_id" label="Country id" required></v-text-field>
-			<v-text-field v-model="formFields.addresses.region" label="Region" required></v-text-field>
-			<v-text-field v-model="formFields.addresses.postcode" label="Postcode" required></v-text-field>
-			<v-text-field v-model="formFields.addresses.phone" label="Phone" required></v-text-field>
-
+			<v-text-field
+				v-model="formFields.address.first_name"
+				label="First name"
+				:disabled="loading"
+				required
+			></v-text-field>
+			<v-text-field
+				v-model="formFields.address.last_name"
+				label="Last name"
+				:disabled="loading"
+				required
+			></v-text-field>
+			<v-text-field v-model="formFields.address.street" label="Street" :disabled="loading" required></v-text-field>
+			<v-text-field
+				v-model="formFields.address.street2"
+				label="Second Street"
+				:disabled="loading"
+				required
+			></v-text-field>
+			<v-text-field v-model="formFields.address.city" label="City" :disabled="loading" required></v-text-field>
+			<v-text-field
+				v-model="formFields.address.country_id"
+				label="Country id"
+				:disabled="loading"
+				required
+			></v-text-field>
+			<v-text-field v-model="formFields.addresses.region" label="Region" :disabled="loading" required></v-text-field>
+			<v-text-field
+				v-model="formFields.address.postcode"
+				label="Postcode"
+				:disabled="loading"
+				required
+			></v-text-field>
+			<v-text-field
+				v-model="formFields.address.phone"
+				label="Phone"
+				type="number"
+				:min="0"
+				:disabled="loading"
+				required
+			></v-text-field>
+			<v-text-field v-model="formFields.address.company" label="Company" :disabled="loading" required></v-text-field>
+			<v-text-field v-model="formFields.address.vat_id" label="Vat id" :disabled="loading" required></v-text-field>
+			<!-- <v-text-field
+				v-model="formFields.address.deliverydate"
+				label="Delivery date"
+				:disabled="loading"
+				required
+			></v-text-field>-->
 			<v-btn class="mr-4" @click="submit">submit</v-btn>
 			<v-btn @click="clear">clear</v-btn>
 		</v-form>
 	</div>
-</template>
+</template> 
 <script>
 import { mapActions, mapState, mapGetters } from "vuex";
 
@@ -35,33 +74,32 @@ export default {
 	},
 	data() {
 		return {
-			defaultValues: {},
+			defaultValues: { address: {} },
 			formFields: {
 				first_name: null,
 				last_name: null,
-				company_name: null,
 				email: null,
 				phone: null,
-				addresses: {
-					area_code_id: null,
-					last_name: "",
-					first_name: "",
-					street: "",
-					city: "",
+				address: {
+					first_name: null,
+					last_name: null,
+					street: null,
+					street2: null,
+					city: null,
 					country_id: null,
 					region: null,
 					postcode: null,
-					phone: null
+					phone: null,
+					company: null,
+					vat_id: null,
+					deliverydate: null
 				}
 			}
 		};
 	},
 	mounted() {
-		this.defaultValues = this.formFields;
 		if (this.$props.model) {
-			this.formFields = {
-				...this.$props.model
-			};
+			this.formFields = this.$props.model;
 		}
 	},
 	methods: {
