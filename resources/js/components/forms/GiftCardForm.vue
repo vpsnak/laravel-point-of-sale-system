@@ -14,7 +14,6 @@
 			<v-btn class="mr-4" @click="submit">submit</v-btn>
 			<v-btn @click="clear">clear</v-btn>
 		</v-form>
-		<v-alert v-if="savingSuccessful === true" class="mt-4" type="success">Form submitted successfully!</v-alert>
 	</div>
 </template>
 <script>
@@ -26,7 +25,6 @@ export default {
 	},
 	data() {
 		return {
-			savingSuccessful: false,
 			defaultValues: {},
 			formFields: {
 				name: null,
