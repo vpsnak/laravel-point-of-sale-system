@@ -25,7 +25,6 @@
 					:model="model"
 					:readOnly="readOnly"
 					@submit="submit"
-					@addtocart="addtocart"
 				></component>
 				<div v-else v-html="content" :class="contentClass || ''"></div>
 			</v-card-text>
@@ -106,31 +105,23 @@ export default {
 			deleteRow: "deleteRow"
 		}),
 
-		// WTF
 		submit(event) {
-			this.submit = event;
-			if (event != null) {
-				this.closeEvent();
+			if (event.getRows) {
+				this.getRows({
+					url: event.model
+				});
 			}
 
-			this.getRows({
-				url: event
-			});
-			this.$store.commit("setNotification", {
-				msg: "Saved in " + event,
-				type: "success"
-			});
-		},
-
-		addtocart(event) {
-			this.addtocart = event;
-			if (this.addtocart != null) {
-				this.closeEvent();
+			if (event.notification) {
+				this.$store.commit("setNotification", {
+					msg: event.notification.msg,
+					type: event.notification.type
+				});
 			}
-			this.$store.commit("setNotification", {
-				msg: "Added to " + this.addtocart,
-				type: "success"
-			});
+
+			if (event.closeDialog === true) {
+				this.fire(event.data);
+			}
 		},
 
 		fire(confirmation) {
