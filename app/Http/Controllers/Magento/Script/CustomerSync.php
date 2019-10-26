@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Log;
 
 class CustomerSync
 {
+    const LOG_PREFIX = 'Customer Sync';
+
     protected const customerFieldsToParse = [
         'entity_id',
         'firstname',
@@ -43,7 +45,7 @@ class CustomerSync
         'telephone' => 'phone',
     ];
 
-    public static function getFromMagento()
+    public static function getFromMagento($force = false)
     {
         $client = new Customer();
 
@@ -59,9 +61,8 @@ class CustomerSync
                 $parsedCustomer = Helper::getParsedData($customer, self::customerFieldsToParse,
                     self::customerFieldsToRename);
                 $storedCustomer = \App\Customer::getFirst('email', $customer->email);
-                if (Helper::hasDifferences($parsedCustomer, $storedCustomer)) {
-                    $logMessage = 'Getting Customer: ' . $customer->email;
-                    Log::channel('connector')->info($logMessage);
+                if ($force || Helper::hasDifferences($parsedCustomer, $storedCustomer)) {
+                    self::log('Getting Customer: ' . $customer->email);
                     $storedCustomer = \App\Customer::updateOrCreate(
                         ['email' => $customer->email],
                         $parsedCustomer
@@ -71,11 +72,17 @@ class CustomerSync
                     try {
                         $parsedAddress = Helper::getParsedData($address, self::addressFieldsToParse,
                             self::addressFieldsToRename);
-                        $parsedAddress['area_code_id'] = 20;
                         $storedAddress = Address::getFirst('magento_id', $address->entity_id);
-                        if (Helper::hasDifferences($parsedAddress, $storedAddress)) {
-                            $logMessage = 'Getting Customer (' . $customer->email . ') Address: ' . $address->entity_id;
-                            Log::channel('connector')->info($logMessage);
+                        if ($force || Helper::hasDifferences($parsedAddress, $storedAddress)) {
+                            self::log('Getting Customer (' . $customer->email . ') Address: ' . $address->entity_id);
+
+                            // check if magento address has 2 streets and parse them
+                            $street = explode("\n", $address->street);
+                            if (count($street) > 1) {
+                                $parsedAddress['street'] = $street[0];
+                                $parsedAddress['street2'] = $street[1];
+                            }
+
                             $updatedAddress = Address::updateOrCreate(
                                 ['magento_id' => $address->entity_id],
                                 $parsedAddress
@@ -85,13 +92,17 @@ class CustomerSync
                             }
                         }
                     } catch (Exception $e) {
-                        $logMessage = 'Skipping Customer (' . $customer->email . ') Address: ' . $address->entity_id;
-                        Log::channel('connector')->error($logMessage);
+                        self::log('Skipping Customer (' . $customer->email . ') Address: ' . $address->entity_id);
                         continue;
                     }
                 }
             }
         }
+    }
+
+    private static function log($message)
+    {
+        Log::channel('connector')->info(self::LOG_PREFIX . ': ' . $message);
     }
 
     public static function sendToMagento()
@@ -109,7 +120,7 @@ class CustomerSync
                     return;
                 }
                 $logMessage = 'Send Customer (' . $customer->email . ') with magento id: ' . $response->id;
-                Log::channel('connector')->info($logMessage);
+                self::log($logMessage);
                 $customer->magento_id = $response->id;
                 $customer->save();
             }
@@ -134,7 +145,7 @@ class CustomerSync
                     continue;
                 }
                 $logMessage = 'Send Customer (' . $customer->email . ') Address (' . $address->id . ') with magento id: ' . $response->id;
-                Log::channel('connector')->info($logMessage);
+                self::log($logMessage);
                 $address->magento_id = $response->id;
                 $address->save();
             }

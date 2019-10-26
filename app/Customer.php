@@ -9,8 +9,6 @@ class Customer extends BaseModel
         'first_name',
         'last_name',
         'email',
-        'phone',
-        'company_name'
     ];
 
     protected $with = ['addresses'];

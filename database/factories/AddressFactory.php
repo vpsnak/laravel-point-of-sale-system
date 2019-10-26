@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Factory;
 
 $factory->define(Address::class, function (Faker $faker) {
     return [
-        'area_code_id' => $faker->randomNumber(),
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,
         'street' => $faker->streetAddress,

@@ -15,12 +15,9 @@ class CustomerController extends BaseController
             'email' => 'required|email|unique:customers,email',
             'first_name' => 'required|string',
             'last_name' => 'required|string',
-            'phone' => 'required|numeric|unique:customers,phone',
-            'company_name' => 'required|string',
         ]);
 
         $address = $request->validate([
-            'addresses.area_code_id' => 'required|string',
             'addresses.first_name' => 'required|string',
             'addresses.last_name' => 'required|string',
             'addresses.street' => 'required|string',

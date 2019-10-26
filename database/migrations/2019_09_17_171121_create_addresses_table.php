@@ -16,10 +16,10 @@ class CreateAddressesTable extends Migration
         Schema::create('addresses', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('magento_id')->default(0);
-            $table->unsignedInteger('area_code_id');
             $table->string('first_name', 100);
             $table->string('last_name', 100);
             $table->string('street', 100);
+            $table->string('street2', 100)->nullable();
             $table->string('city', 100);
             $table->string('country_id', 100);
             $table->string('region', 100);
@@ -27,6 +27,7 @@ class CreateAddressesTable extends Migration
             $table->string('phone', 100);
             $table->string('company', 100)->nullable();
             $table->string('vat_id', 100)->nullable();
+            $table->string('deliverydate', 100)->nullable();
             $table->timestamps();
         });
     }

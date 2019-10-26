@@ -8,10 +8,10 @@ class Address extends BaseModel
 //    protected $with = ['customers'];
     protected $fillable = [
         'magento_id',
-        'area_code_id',
         'first_name',
         'last_name',
         'street',
+        'street2',
         'city',
         'country_id',
         'region',
@@ -19,6 +19,7 @@ class Address extends BaseModel
         'phone',
         'company',
         'vat_id',
+        'deliverydate',
     ];
 
     protected $hidden = [
