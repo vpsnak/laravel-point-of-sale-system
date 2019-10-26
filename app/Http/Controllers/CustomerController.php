@@ -12,26 +12,31 @@ class CustomerController extends BaseController
     public function create(Request $request)
     {
         $validatedData = $request->validate([
+            'customer_id' => 'sometimes|exists:customers,id',
             'email' => 'required|email|unique:customers,email',
             'first_name' => 'required|string',
             'last_name' => 'required|string',
         ]);
 
         $address = $request->validate([
-            'addresses.first_name' => 'required|string',
-            'addresses.last_name' => 'required|string',
-            'addresses.street' => 'required|string',
-            'addresses.city' => 'required|string',
-            'addresses.country_id' => 'nullable|string',
-            'addresses.region' => 'required|string',
-            'addresses.postcode' => 'required|string',
-            'addresses.phone' => 'required|numeric',
+            'address.first_name' => 'required|string',
+            'address.last_name' => 'required|string',
+            'address.street' => 'required|string',
+            'address.city' => 'required|string',
+            'address.country_id' => 'nullable|string',
+            'address.region' => 'required|string',
+            'address.postcode' => 'required|string',
+            'address.phone' => 'required|numeric',
         ]);
 
-//        $customer = $this->model::store($validatedData);
-        $customer = $this->model::find(1);
-//        dd($address['addresses']);
-        $customer->addresses()->create($address['addresses']);
+        if (array_key_exists('customer_id', $validatedData)) {
+            $customer = $this->model::find($validatedData['customer_id']);
+            unset($validatedData['customer_id']);
+        } else {
+            $customer = new Customer($validatedData);
+        }
+
+        $customer->save();
 
         // @TODO fix update
         return response($customer, 201);
@@ -45,7 +50,8 @@ class CustomerController extends BaseController
             'page' => 'nullable|numeric',
         ]);
 
-        return $this->searchResult(['first_name', 'last_name', 'email', 'phone'],
+        return $this->searchResult(
+            ['first_name', 'last_name', 'email', 'phone'],
             $validatedData['keyword'],
             array_key_exists('per_page', $validatedData) ? $validatedData['per_page'] : 0,
             array_key_exists('page', $validatedData) ? $validatedData['page'] : 0
