@@ -166,6 +166,7 @@ export default {
         submitOrder({ state, commit, dispatch }) {
             return new Promise((resolve, reject) => {
                 let payload = {
+                    model: "orders",
                     data: {
                         customer_id: state.customer ? state.customer.id : "",
                         created_by: this.state.user.id,

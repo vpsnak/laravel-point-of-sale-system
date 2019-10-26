@@ -36,6 +36,8 @@ class PaymentObserver
         $this->updateOrderStatus($payment);
 
         switch ($payment->paymentType->type) {
+            case 'cash':
+                break;
             case 'pos-terminal':
                 break;
             case 'card':
