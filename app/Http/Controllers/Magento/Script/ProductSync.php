@@ -60,7 +60,8 @@ class ProductSync
 
                     $storedProduct->stores()->syncWithoutDetaching(
                         [
-                            $storedProduct->magentoStore()->id => ['qty' => $product->qty ?? 0]
+                            \App\Product::LARAVEL_STORE_ID => ['qty' => $product->qty ?? 0],
+                            \App\Product::MAGENTO_STORE_ID => ['qty' => $product->qty ?? 0]
                         ]
                     );
                 }
@@ -68,6 +69,11 @@ class ProductSync
         }
     }
 
+    /**
+     * Used to sync product qty with magento and calculate new qty
+     *
+     * @param \App\Product $product
+     */
     public static function syncStock(\App\Product $product)
     {
         $inventory_api = new Inventory();
@@ -89,13 +95,15 @@ class ProductSync
         $difference = $snapshot_stock - $current_stock;
 
         $final_stock = $live_stock - $difference;
-        echo $product->magento_id;
-        echo ' Started: ' . $snapshot_stock;
-        echo ' Laravel: ' . $current_stock;
-        echo ' Magento: ' . $live_stock;
-        echo ' Difference: ' . $difference;
-        echo ' Final: ' . $final_stock;
-        echo PHP_EOL;
+        if (app()->runningInConsole()) {
+            echo $product->magento_id;
+            echo ' Started: ' . $snapshot_stock;
+            echo ' Laravel: ' . $current_stock;
+            echo ' Magento: ' . $live_stock;
+            echo ' Difference: ' . $difference;
+            echo ' Final: ' . $final_stock;
+            echo PHP_EOL;
+        }
 
         if ($final_stock != $live_stock) {
             $inventory_api->updateStockData([
@@ -104,8 +112,8 @@ class ProductSync
             ]);
             $product->stores()->syncWithoutDetaching(
                 [
-                    $product->laravelStore()->id => ['qty' => $product->qty ?? 0],
-                    $product->magentoStore()->id => ['qty' => $product->qty ?? 0]
+                    \App\Product::LARAVEL_STORE_ID => ['qty' => $final_stock],
+                    \App\Product::MAGENTO_STORE_ID => ['qty' => $final_stock]
                 ]
             );
         }

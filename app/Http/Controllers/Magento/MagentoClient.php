@@ -57,7 +57,9 @@ class MagentoClient
     public function request($method, $url, $options = [])
     {
         $this->initClient();
-        echo $method . ' ' . $url . PHP_EOL;
+        if (app()->runningInConsole()) {
+            echo $method . ' ' . $url . PHP_EOL;
+        }
         try {
             $this->oauth_client->fetch(
                 $this->baseUrl . $url,
@@ -65,11 +67,12 @@ class MagentoClient
                 $method,
                 ['Content-Type' => 'application/json', 'Accept' => 'application/json']
             );
-            echo 'request send' . PHP_EOL;
+            if (app()->runningInConsole()) {
+                echo 'request send' . PHP_EOL;
+            }
             $response = $this->oauth_client->getLastResponse();
             return json_decode($response);
         } catch (Exception $e) {
-            die($e);
             print_r($e->getMessage());
             return false;
         }

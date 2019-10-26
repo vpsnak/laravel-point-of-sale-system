@@ -2,8 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Observers\OrderObserver;
-use App\Order;
 use Illuminate\Console\Command;
 
 class Testara2 extends Command
@@ -39,16 +37,5 @@ class Testara2 extends Command
      */
     public function handle()
     {
-//        $controller = new CreditCardController();
-//
-//        $payment = $controller::cardPayment(
-//            '5405010000000090',
-//            '1219',
-//            '123',
-//            'Test',
-//            10
-//        );
-        $a = Order::getOne(15);
-        (new OrderObserver())->created($a);
     }
 }

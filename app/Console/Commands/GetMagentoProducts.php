@@ -38,6 +38,6 @@ class GetMagentoProducts extends Command
      */
     public function handle()
     {
-        ProductSync::getFromMagento();
+        ProductSync::getFromMagento(true);
     }
 }
