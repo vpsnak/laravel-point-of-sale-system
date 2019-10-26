@@ -17,7 +17,7 @@
 								<v-icon>mdi-plus</v-icon>
 							</v-btn>
 						</template>
-						<span>Add customer</span>
+						<span>Add a customer</span>
 					</v-tooltip>
 				</v-flex>
 			</v-layout>
