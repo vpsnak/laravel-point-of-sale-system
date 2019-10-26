@@ -10,7 +10,7 @@
 						v-for="(paymentType, index) in types"
 						:key="index"
 						:value="paymentType.type"
-						:disabled="loading"
+						:disabled="loading || orderLoading"
 					>
 						<v-icon class="pr-2">{{ paymentType.icon }}</v-icon>
 						{{ paymentType.name }}
@@ -45,7 +45,7 @@
 				<v-spacer></v-spacer>
 
 				<v-text-field
-					:disabled="loading"
+					:disabled="loading || orderLoading"
 					:min="0.01"
 					:max="99999"
 					v-if="paymentType !== 'coupon'"
@@ -65,7 +65,7 @@
 					v-if="paymentType === 'coupon' || paymentType === 'giftcard'"
 					label="Code"
 					:prepend-inner-icon="getIcon()"
-					:disabled="loading"
+					:disabled="loading || orderLoading"
 					v-model="code"
 					style="max-width:300px;"
 				></v-text-field>
@@ -77,8 +77,8 @@
 			<v-btn
 				color="blue-grey"
 				@click="sendPayment"
-				:loading="loading"
-				:disabled="loading"
+				:loading="loading || orderLoading"
+				:disabled="loading || orderLoading"
 				block
 			>{{ paymentBtnTxt }}</v-btn>
 		</v-col>
@@ -104,6 +104,7 @@ export default {
 	},
 	data() {
 		return {
+			orderLoading: false,
 			paymentAmount: Number,
 			paymentType: null,
 			code: null,
@@ -199,12 +200,15 @@ export default {
 			this.card.exp_date = null;
 		},
 		sendPayment() {
+			this.orderLoading = true;
 			if (this.$store.state.cart.order === undefined) {
 				this.submitOrder().then(response => {
 					this.pay();
+					this.orderLoading = false;
 				});
 			} else {
 				this.pay();
+				this.orderLoading = false;
 			}
 		},
 
