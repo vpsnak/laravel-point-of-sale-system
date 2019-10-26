@@ -5,57 +5,56 @@ namespace App\Observers;
 use App\Http\Controllers\Magento\Script\ProductSync;
 use App\Order;
 use App\OrderProduct;
+use App\Product;
 use Illuminate\Support\Facades\Log;
 
 class OrderObserver
 {
-    public function created(Order $order)
-    {
-        foreach ($order->items as $item) {
-            $this->handleStock($item, $order->status);
-        }
+    const LOG_PREFIX = 'Handle Stock';
 
-        return true;
+    public function updated(Order $order)
+    {
+        if ($order->status == 'canceled') {
+            $order->payments()->delete();
+
+            foreach ($order->items as $item) {
+                $this->handleStock($item, 'add');
+            }
+        }
     }
 
-    public function handleStock(OrderProduct $item, $order_status)
+    public static function handleStock(OrderProduct $item, $action)
     {
         $product = $item->product;
         if (empty($product)) {
+            self::log('Empty Product');
             return;
         }
-        switch ($order_status) {
-            case 'pending':
+        switch ($action) {
+            case 'remove':
                 $qty = $product->laravel_stock - $item->qty;
+                self::log('Removing Stock ' . $product->sku . ' Qty: ' . $qty . ' from: ' . $product->laravel_stock);
                 $product->stores()->syncWithoutDetaching(
-                    [$product->laravelStore()->id, ['qty' => $qty]]
+                    [Product::LARAVEL_STORE_ID, ['qty' => $qty]]
                 );
                 break;
-            case 'canceled':
+            case 'add':
                 $qty = $product->laravel_stock + $item->qty;
+                self::log('Adding Stock ' . $product->sku . ' Qty: ' . $qty . ' from: ' . $product->laravel_stock);
                 $product->stores()->syncWithoutDetaching(
-                    [$product->laravelStore()->id, ['qty' => $qty]]
+                    [Product::LARAVEL_STORE_ID, ['qty' => $qty]]
                 );
                 break;
         }
         if (empty($product->magento_id) || empty($product->stock_id)) {
             return;
         }
+        self::log('Try Sync Stock Magento ' . $product->sku);
         ProductSync::syncStock($product);
     }
 
-    public function updated(Order $order)
+    private static function log($message)
     {
-        if ($order->status == 'canceled') {
-            $order->payments()->delete();
-        }
-        if (
-            $order->status == 'canceled'
-            || $order->status == 'pending'
-        ) {
-            foreach ($order->items as $item) {
-                $this->handleStock($item, $order->status);
-            }
-        }
+        Log::channel('stock')->info(self::LOG_PREFIX . ': ' . $message);
     }
 }
