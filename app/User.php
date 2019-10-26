@@ -4,10 +4,11 @@ namespace App;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use HasApiTokens, Notifiable;
 
     protected $with = ['open_register'];
     /**
@@ -40,6 +41,11 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
     public function open_register()
     {
         $openLog = $this->hasOne(CashRegisterLogs::class);
@@ -48,4 +54,9 @@ class User extends Authenticatable
         }
         return $openLog->whereStatus(1);
     }
+
+    // public function findForPassport($username)
+    // {
+    //     return $this->orWhere('email', $username)->orWhere('phone', $username)->first();
+    // }
 }

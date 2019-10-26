@@ -17,7 +17,7 @@
 				:key="checkoutStep.id"
 				:step="checkoutStep.id"
 			>
-				<v-card class="pa-2">
+				<v-card class="mx-auto">
 					<v-card-title class="justify-center" align="center">
 						<v-row align="center" justify="center">
 							<v-col align="center" justify="center">
@@ -36,8 +36,6 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
-
 export default {
 	computed: {
 		currentCheckoutStep() {
@@ -46,9 +44,6 @@ export default {
 		checkoutSteps() {
 			return this.$store.state.cart.checkoutSteps;
 		}
-	},
-	methods: {
-		...mapActions(["search", "create", "getAll", "getOne"])
 	}
 };
 </script>

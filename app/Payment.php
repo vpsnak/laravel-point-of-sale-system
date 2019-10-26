@@ -10,6 +10,7 @@ class Payment extends BaseModel
         'payment_type',
         'amount',
         'code',
+        'status',
         'cash_register_id',
         'order_id',
         'created_by',
@@ -28,5 +29,20 @@ class Payment extends BaseModel
     public function created_by()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function elavonApiPayments()
+    {
+        return $this->hasMany(ElavonApiPayment::class);
+    }
+
+    public function elavonSdkPayments()
+    {
+        return $this->hasMany(ElavonSdkPayment::class);
+    }
+
+    public function transactionLog()
+    {
+        return $this->hasMany(TransactionLog::class);
     }
 }

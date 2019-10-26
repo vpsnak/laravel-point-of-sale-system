@@ -2,7 +2,7 @@
 	<div>
 		<payment :order_id="orderId" history actions @amountPending="showCompleteBtn" />
 		<v-card-actions>
-			<v-btn color="grey" @click="prevStep()">
+			<v-btn color="grey" @click="prevStep()" v-if="orderId === 0">
 				<v-icon small left>mdi-chevron-left</v-icon>Back
 			</v-btn>
 			<div class="flex-grow-1"></div>
@@ -37,7 +37,7 @@ export default {
 	},
 	methods: {
 		showCompleteBtn(event) {
-			if (event > 0) {
+			if (event > 0 || event === undefined) {
 				this.completed = false;
 			} else {
 				this.completed = true;

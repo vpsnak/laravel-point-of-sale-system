@@ -25,7 +25,6 @@
 					:model="model"
 					:readOnly="readOnly"
 					@submit="submit"
-					@addtocart="addtocart"
 				></component>
 				<div v-else v-html="content" :class="contentClass || ''"></div>
 			</v-card-text>
@@ -62,9 +61,9 @@ export default {
 		fullscreen: Boolean,
 		cancelBtnTxt: String,
 		confirmationBtnTxt: String,
-		// model CRUD props
+
 		model: Object,
-		action: String // Possible values: edit, read, confirmation, info
+		action: String
 	},
 
 	data() {
@@ -106,34 +105,29 @@ export default {
 			deleteRow: "deleteRow"
 		}),
 
-		submit(event) {
-			this.submit = event;
-			if (this.submit != null) {
-				this.closeEvent();
+		submit(payload) {
+			if (payload.getRows && payload.model) {
+				this.getRows({
+					url: payload.model
+				});
 			}
 
-			this.getRows({
-				url: this.submit
-			});
-			this.$store.commit("setNotification", {
-				msg: "Saved in " + this.submit,
-				type: "success"
-			});
-		},
-
-		addtocart(event) {
-			this.addtocart = event;
-			if (this.addtocart != null) {
-				this.closeEvent();
+			if (payload.notification) {
+				this.$store.commit("setNotification", {
+					msg: payload.notification.msg,
+					type: payload.notification.type
+				});
 			}
-			this.$store.commit("setNotification", {
-				msg: "Added to " + this.addtocart,
-				type: "success"
-			});
+
+			if (payload.data) {
+				this.fire(payload.data);
+			} else {
+				this.fire(true);
+			}
 		},
 
-		fire(confirmation) {
-			this.$emit("action", confirmation);
+		fire(payload) {
+			this.$emit("action", payload);
 			this.visibility = false;
 		},
 		closeEvent() {

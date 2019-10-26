@@ -1,5 +1,5 @@
 <template>
-	<v-container fluid>
+	<v-container fluid px-2 py-0>
 		<v-row>
 			<v-col cols="8">
 				<productList />
@@ -33,13 +33,7 @@ export default {
 		};
 	},
 	mounted() {
-		this.visibility = true;
-	},
-	methods: {
-		readResult(event) {
-			console.log("read dialog result: " + event);
-			this.visibility = false;
-		}
+		// this.visibility = true;
 	}
 };
 </script>

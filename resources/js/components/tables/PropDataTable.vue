@@ -18,12 +18,36 @@
 						<slot :name="slot" v-bind="scope" />
 					</template>
 					<template v-slot:item.action="{ item }">
-						<v-tooltip bottom>
+						<!-- order actions -->
+						<v-tooltip
+							bottom
+							v-if="tableViewComponent === 'order' && (item.status === 'pending_payment' || item.status === 'pending')"
+						>
+							<template v-slot:activator="{ on }">
+								<v-btn @click="checkout(item)" class="my-1" icon v-on="on">
+									<v-icon small>mdi-currency-usd</v-icon>
+								</v-btn>
+							</template>
+							<span>Continue checkout</span>
+						</v-tooltip>
+						<v-tooltip
+							bottom
+							v-if="tableViewComponent === 'order' && (item.status === 'pending_payment' || item.status === 'pending' || item.status === 'completed')"
+						>
+							<template v-slot:activator="{ on }">
+								<v-btn @click="selectedItem = item, cancelOrderDialog = true" class="my-1" icon v-on="on">
+									<v-icon small>mdi-cancel</v-icon>
+								</v-btn>
+							</template>
+							<span>Cancel order</span>
+						</v-tooltip>
+
+						<!-- gift card actions -->
+						<v-tooltip bottom v-else-if="tableForm === 'giftCardForm'">
 							<template v-slot:activator="{ on }">
 								<v-btn
 									@click="rechargeGiftcardDialog = true, selectedItem = item"
 									:disabled="btnDisable"
-									v-if="tableForm === 'giftCardForm'"
 									class="my-1"
 									icon
 									v-on="on"
@@ -49,20 +73,6 @@
 							</template>
 							<span>View</span>
 						</v-tooltip>
-						<v-tooltip bottom>
-							<template v-slot:activator="{ on }">
-								<v-btn
-									:disabled="btnDisable"
-									@click="deleteConfirmation = true, selectedItem = item"
-									class="my-1"
-									v-on="on"
-									icon
-								>
-									<v-icon small>delete</v-icon>
-								</v-btn>
-							</template>
-							<span>Delete</span>
-						</v-tooltip>
 					</template>
 					<v-alert
 						:value="true"
@@ -86,17 +96,18 @@
 			action="edit"
 			titleCloseBtn
 		></interactiveDialog>
-  
+
 		<interactiveDialog
 			v-if="showViewDialog"
 			:show="showViewDialog"
 			title="View item"
 			:fullscreen="false"
-            :width="1000"
+			:width="1000"
 			:component="tableViewComponent"
 			:model="viewId"
-            @action="result"
-            cancelBtnTxt="Close"
+			@action="result"
+			action="newItem"
+			cancelBtnTxt="Close"
 		></interactiveDialog>
 
 		<interactiveDialog
@@ -104,20 +115,13 @@
 			:show="showCreateDialog"
 			:component="form"
 			:title="btnTitle"
+			:model="{}"
 			@action="result"
 			cancelBtnTxt="Close"
+			titleCloseBtn
 		></interactiveDialog>
 
-		<interactiveDialog
-			v-if="deleteConfirmation"
-			:show="deleteConfirmation"
-			title="Confirm delete"
-			content="Are you sure you want to delete this item?"
-			action="confirmation"
-			cancelBtnTxt="No"
-			confirmationBtnTxt="Yes"
-			@action="deleteEvent"
-		/>
+		<checkoutDialog :show="checkoutDialog" />
 
 		<interactiveDialog
 			v-if="rechargeGiftcardDialog"
@@ -129,6 +133,17 @@
 			action="edit"
 			@action="rechargeEvent"
 		/>
+
+		<interactiveDialog
+			v-if="cancelOrderDialog"
+			:show="cancelOrderDialog"
+			action="confirmation"
+			title="Cancel order?"
+			content="Are you sure you want to <strong>cancel</strong> the selected order?"
+			@action="cancelOrderConfirmation"
+			actions
+			persistent
+		/>
 	</v-card>
 </template>
 
@@ -138,13 +153,13 @@ import { mapActions, mapMutations, mapState } from "vuex";
 export default {
 	data() {
 		return {
+			cancelOrderDialog: false,
 			showCreateDialog: false,
 			showEditDialog: false,
 			showViewDialog: false,
-			deleteConfirmation: false,
 			rechargeGiftcardDialog: false,
 			defaultObject: {},
-            viewId: null,
+			viewId: null,
 			search: "",
 			selectedItem: {}
 		};
@@ -169,6 +184,19 @@ export default {
 		this.setForm(this.tableForm);
 	},
 	computed: {
+		checkoutDialog: {
+			get() {
+				if (this.$store.state.checkoutDialog === false) {
+					this.getRows({
+						url: this.dataUrl
+					});
+				}
+				return this.$store.state.checkoutDialog;
+			},
+			set(value) {
+				this.$store.state.checkoutDialog = value;
+			}
+		},
 		...mapState("datatable", {
 			title: "title",
 			headers: "headers",
@@ -180,6 +208,28 @@ export default {
 		})
 	},
 	methods: {
+		cancelOrderConfirmation(event) {
+			if (event) {
+				let payload = {
+					model: "orders",
+					id: this.selectedItem.id
+				};
+
+				this.delete(payload).then(response => {
+					this.getRows({
+						url: this.dataUrl
+					});
+				});
+			}
+			this.closePrompt = false;
+		},
+		checkout(item) {
+			this.$store.commit("cart/setOrder", item);
+			this.$store.state.cart.checkoutSteps[0].completed = true;
+			this.$store.state.cart.currentCheckoutStep = 2;
+
+			this.checkoutDialog = true;
+		},
 		submitEvent(event) {
 			if (event) {
 				this.getRows({
@@ -195,8 +245,7 @@ export default {
 		},
 
 		viewItem(item) {
-			// this.defaultObject = item;
-			this.viewId = {id: item.id};
+			this.viewId = { id: item.id };
 			this.showViewDialog = true;
 		},
 
@@ -204,26 +253,10 @@ export default {
 			this.rechargeGiftcardDialog = false;
 		},
 
-		deleteEvent(event) {
-			if (event) {
-				this.deleteItem();
-			}
-			this.deleteConfirmation = false;
-		},
-		deleteItem() {
-			console.log(this.selectedItem.id);
-			this.deleteRow({
-				url: this.dataUrl + "/" + this.selectedItem.id,
-				data: {
-					id: this.selectedItem.id
-				}
-			});
-		},
 		result(event) {
 			this.showCreateDialog = false;
 			this.showEditDialog = false;
 			this.showViewDialog = false;
-			this.showDeleteDialog = false;
 		},
 
 		...mapActions("datatable", {

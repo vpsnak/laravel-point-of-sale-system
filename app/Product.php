@@ -4,9 +4,23 @@ namespace App;
 
 class Product extends BaseModel
 {
-    protected $appends = ['final_price', 'stock'];
+    const LARAVEL_STORE_ID = 1;
+    const MAGENTO_STORE_ID = 2;
+
+    protected $appends = ['final_price', 'stock', 'magento_stock', 'laravel_stock'];
 
     protected $with = ['stores', 'price', 'categories'];
+
+    protected $fillable = [
+        'magento_id',
+        'stock_id',
+        'sku',
+        'name',
+        'barcode',
+        'photo_url',
+        'url',
+        'description',
+    ];
 
     public function getFinalPriceAttribute()
     {
@@ -17,14 +31,40 @@ class Product extends BaseModel
     {
         $stock = 0;
         foreach ($this->stores as $store) {
+            if ($store->id == self::MAGENTO_STORE_ID) {
+                continue;
+            }
             $stock += $store->pivot->qty;
         };
         return $stock;
     }
 
+    public function getMagentoStockAttribute()
+    {
+        $store = $this->store_view(self::MAGENTO_STORE_ID);
+        if (!empty($store)) {
+            return $store->pivot->qty;
+        }
+        return null;
+    }
+
+    public function store_view($store_id)
+    {
+        return $this->stores()->where('id', $store_id)->first();
+    }
+
     public function stores()
     {
         return $this->belongsToMany(Store::class)->withPivot('qty');
+    }
+
+    public function getLaravelStockAttribute()
+    {
+        $store = $this->store_view(self::LARAVEL_STORE_ID);
+        if (!empty($store)) {
+            return $store->pivot->qty;
+        }
+        return null;
     }
 
     public function carts()

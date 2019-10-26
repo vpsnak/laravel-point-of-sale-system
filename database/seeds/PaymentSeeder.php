@@ -11,35 +11,35 @@ class PaymentSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('payments')->insert([
-            [
-                'payment_type' => 1,
-                'amount' => 12,
-                'cash_register_id' => 1,
-                'order_id' => 1,
-                'created_by' => 1
-            ],
-            [
-                'payment_type' => 2,
-                'amount' => 12,
-                'cash_register_id' => 1,
-                'order_id' => 1,
-                'created_by' => 1
-            ],
-            [
-                'payment_type' => 3,
-                'amount' => 12,
-                'cash_register_id' => 1,
-                'order_id' => 1,
-                'created_by' => 1
-            ],
-            [
-                'payment_type' => 4,
-                'amount' => 12,
-                'cash_register_id' => 1,
-                'order_id' => 1,
-                'created_by' => 1
-            ],
-        ]);
+        // DB::table('payments')->insert([
+        //     [
+        //         'payment_type' => 1,
+        //         'amount' => 12,
+        //         'cash_register_id' => 1,
+        //         'order_id' => 1,
+        //         'created_by' => 1
+        //     ],
+        //     [
+        //         'payment_type' => 2,
+        //         'amount' => 12,
+        //         'cash_register_id' => 1,
+        //         'order_id' => 1,
+        //         'created_by' => 1
+        //     ],
+        //     [
+        //         'payment_type' => 3,
+        //         'amount' => 12,
+        //         'cash_register_id' => 1,
+        //         'order_id' => 1,
+        //         'created_by' => 1
+        //     ],
+        //     [
+        //         'payment_type' => 4,
+        //         'amount' => 12,
+        //         'cash_register_id' => 1,
+        //         'order_id' => 1,
+        //         'created_by' => 1
+        //     ],
+        // ]);
     }
 }

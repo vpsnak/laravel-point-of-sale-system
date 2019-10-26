@@ -24,7 +24,12 @@
 				<template v-slot:item.actions="{ item }">
 					<v-tooltip bottom>
 						<template v-slot:activator="{ on }">
-							<v-btn @click="refundConfirmation = true, refundItem=item" icon v-on="on">
+							<v-btn
+								@click="refundConfirmation = true, refundItem = item"
+								icon
+								v-on="on"
+								v-if="item.status === 'approved'"
+							>
 								<v-icon v-if="item.payment_type.type === 'cash'">mdi-cash-refund</v-icon>
 								<v-icon v-else>mdi-credit-card-refund</v-icon>
 							</v-btn>
@@ -61,6 +66,10 @@ export default {
 				{
 					text: "Type",
 					value: "payment_type.name"
+				},
+				{
+					text: "Status",
+					value: "status"
 				},
 				{
 					text: "Amount (USD)",

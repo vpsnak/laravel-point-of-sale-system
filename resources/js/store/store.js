@@ -1,6 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
+
 import "es6-promise/auto";
+import Cookies from "js-cookie";
 
 //modules
 import topMenu from "./menu/topMenu";
@@ -23,12 +25,9 @@ export default new Vuex.Store({
     state: {
         baseUrl: "/api/",
 
-        user: {
-            id: 1,
-            name: "Mega Lola",
-            email: "example@example.com",
-            token: null
-        },
+        user: Cookies.get("user") ? JSON.parse(Cookies.get("user")) : {},
+
+        token: Cookies.get("token") || null,
 
         store: {
             id: null,
@@ -38,7 +37,7 @@ export default new Vuex.Store({
 
         cashRegister: {
             id: null,
-            name: "",
+            name: ""
         },
 
         // notification
@@ -52,7 +51,6 @@ export default new Vuex.Store({
         checkoutDialog: false,
 
         productList: [],
-        userList: [],
         categoryList: [],
         storeList: []
     },
@@ -60,8 +58,27 @@ export default new Vuex.Store({
         // Compute derived state based on the current state. More like computed property.
     },
     mutations: {
-        setUser(state, users) {
-            state.userList = users;
+        setUser(state, user) {
+            if (user) {
+                state.user = user;
+                Cookies.set("user", user, {
+                    sameSite: "strict"
+                });
+            } else {
+                state.user = null;
+                Cookies.remove("user");
+            }
+        },
+        setToken(state, token) {
+            if (token) {
+                state.token = "Bearer " + token;
+                Cookies.set("token", "Bearer " + token, {
+                    sameSite: "strict"
+                });
+            } else {
+                state.token = null;
+                Cookies.remove("token");
+            }
         },
         setNotification(state, notification) {
             state.notification = notification;
@@ -81,6 +98,62 @@ export default new Vuex.Store({
         }
     },
     actions: {
+        login(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(this.state.baseUrl + "auth/login", payload)
+                    .then(response => {
+                        context.commit("setUser", response.data.user, {
+                            root: true
+                        });
+                        context.commit("setToken", response.data.token, {
+                            root: true
+                        });
+                        context.commit(
+                            "setNotification",
+                            response.data.notification
+                        );
+
+                        resolve(response.data);
+                    })
+                    .catch(error => {
+                        let notification = {
+                            msg: error.response.data.errors,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
+                        reject(error);
+                    });
+            });
+        },
+        logout(context) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(this.state.baseUrl + "auth/logout", {
+                        headers: {
+                            Authorization: this.state.token
+                        }
+                    })
+                    .then(response => {
+                        context.commit(
+                            "setNotification",
+                            response.data.notification
+                        );
+                        resolve(response.data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+                    .finally(() => {
+                        context.commit("setUser", null, {
+                            root: true
+                        });
+                        context.commit("setToken", null, {
+                            root: true
+                        });
+                    });
+            });
+        },
         getAll(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -108,9 +181,38 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                        payload.model +
-                        "/" +
-                        payload.data.id
+                            payload.model +
+                            "/" +
+                            payload.data.id
+                    )
+                    .then(response => {
+                        if (_.has(payload, "mutation")) {
+                            context.commit(payload.mutation, response.data, {
+                                root: true
+                            });
+                        }
+                        resolve(response.data);
+                    })
+                    .catch(error => {
+                        let notification = {
+                            msg: error.response.data.errors,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
+                        reject(error);
+                    });
+            });
+        },
+        getManyByOne(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(
+                        this.state.baseUrl +
+                            payload.model +
+                            "/" +
+                            payload.data.id +
+                            "/" +
+                            payload.data.model
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -210,6 +312,31 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 axios
                     .get(this.state.baseUrl + payload.url)
+                    .then(response => {
+                        if (_.has(payload, "mutation")) {
+                            context.commit(payload.mutation, response.data, {
+                                root: true
+                            });
+                        }
+                        resolve(response.data);
+                    })
+                    .catch(error => {
+                        let notification = {
+                            msg: error.response.data.errors,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
+                        reject(error);
+                    });
+            });
+        },
+        postRequest(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(
+                        this.state.baseUrl + payload.url,
+                        payload.data
+                        )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
                             context.commit(payload.mutation, response.data, {

@@ -4,7 +4,7 @@
 		<v-card-actions>
 			<span class="title" v-if="shipping.cost">Shipping cost: $ {{ shipping.cost }}</span>
 			<div class="flex-grow-1"></div>
-			<v-btn color="primary" v-if="showNext()" @click="completeStep()">
+			<v-btn color="primary" v-if="showNext" @click="completeStep">
 				Next
 				<v-icon small right>mdi-chevron-right</v-icon>
 			</v-btn>
@@ -13,16 +13,51 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 export default {
 	data() {
 		return {
 			shipping: {
-				method: "pickup"
+				get() {
+					return this.$store.state.cart.shipping;
+				},
+				set(value) {
+					this.$store.state.cart.shipping = value;
+				}
 			}
 		};
 	},
 	props: {
 		currentStep: Object
+	},
+
+	computed: {
+		showNext() {
+			switch (this.shipping.method) {
+				case undefined:
+				case "retail":
+					return true;
+				case "pickup":
+					if (this.shipping.date && this.shipping.timeSlot) {
+						return true;
+					} else {
+						return false;
+					}
+				case "delivery":
+					if (
+						this.shipping.date &&
+						this.shipping.timeSlot &&
+						this.shipping.address
+					) {
+						return true;
+					} else {
+						return false;
+					}
+				default:
+					return false;
+			}
+		}
 	},
 
 	methods: {
@@ -31,15 +66,6 @@ export default {
 		},
 		prevStep() {
 			this.$store.state.cart.currentCheckoutStep--;
-		},
-		showNext() {
-			if (this.shipping.method === "pickup") {
-				return true;
-			} else {
-				if (this.shipping.date && this.shipping.time) {
-					return true;
-				}
-			}
 		},
 		setShipping(value) {
 			this.shipping = value;

@@ -20,7 +20,7 @@ export default {
         checkoutSteps: [
             {
                 id: 1,
-                name: "Shipping options",
+                name: "Delivery options",
                 icon: "local_shipping",
                 component: "shippingStep",
                 completed: false
@@ -34,7 +34,7 @@ export default {
             },
             {
                 id: 3,
-                name: "Completion",
+                name: "Order Completed",
                 icon: "check_circle",
                 component: "completion",
                 completed: false
@@ -49,7 +49,14 @@ export default {
         discount_type: "",
         discount_amount: 0,
 
-        shipping: {},
+        shipping: {
+            address: undefined,
+            notes: "",
+            method: "retail",
+            date: undefined,
+            timeSlotLabel: null,
+            timeSlotCost: 0
+        },
 
         order: undefined
     },
@@ -117,17 +124,39 @@ export default {
         setCartPrice(state, cartPrice) {
             state.cart_price = cartPrice;
         },
-
         resetState(state) {
             state.currentCheckoutStep = 1;
             state.customer = undefined;
             state.products = [];
             state.discount_type = "";
             state.discount_amount = 0;
-            state.shipping = {};
             state.order = undefined;
             state.total_price = 0;
 
+            state.checkoutSteps.forEach(checkoutStep => {
+                checkoutStep.completed = false;
+            });
+
+            state.shipping = {
+                address: undefined,
+                method: "retail",
+                date: undefined,
+                timeSlotLabel: null,
+                timeSlotCost: 0
+            };
+        },
+        resetShipping(state) {
+            let notes = state.shipping.notes;
+            state.shipping = {
+                notes: notes,
+                address: undefined,
+                method: "retail",
+                date: undefined,
+                timeSlotLabel: null,
+                timeSlotCost: 0
+            };
+
+            state.currentCheckoutStep = 1;
             state.checkoutSteps.forEach(checkoutStep => {
                 checkoutStep.completed = false;
             });

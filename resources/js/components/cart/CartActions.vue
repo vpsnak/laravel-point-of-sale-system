@@ -2,24 +2,12 @@
 	<div>
 		<v-divider />
 
-		<v-btn
-			block
-			class="my-2"
-			@click.stop="checkout"
-			:disabled="disabled || checkoutLoading"
-			:loading="checkoutLoading"
-		>Checkout</v-btn>
+		<v-btn block class="my-2" @click.stop="checkout" :disabled="disabled">Checkout</v-btn>
 
 		<v-divider />
 
 		<div class="d-flex align-center justify-center pa-2">
-			<v-btn
-				icon
-				@click="showRestoreOnHoldCartDialog"
-				:disabled="checkoutLoading"
-				class="flex-grow-1"
-				tile
-			>
+			<v-btn icon @click="showRestoreOnHoldCartDialog" class="flex-grow-1" tile>
 				<v-icon>fa-recycle</v-icon>
 				<v-badge overlap color="purple" style="position: absolute; top: 0;right:38%;">
 					<template v-slot:badge>
@@ -27,16 +15,10 @@
 					</template>
 				</v-badge>
 			</v-btn>
-			<v-btn icon :disabled="disabled || checkoutLoading" @click="holdCart" class="flex-grow-1" tile>
+			<v-btn icon :disabled="disabled" @click="holdCart" class="flex-grow-1" tile>
 				<v-icon>pause</v-icon>
 			</v-btn>
-			<v-btn
-				icon
-				@click.stop="emptyCart(true)"
-				:disabled="disabled || checkoutLoading"
-				class="flex-grow-1"
-				tile
-			>
+			<v-btn icon @click.stop="emptyCart(true)" :disabled="disabled" class="flex-grow-1" tile>
 				<v-icon>delete</v-icon>
 			</v-btn>
 		</div>
@@ -63,7 +45,6 @@ export default {
 	data() {
 		return {
 			empty_cart_confirmation_dialog: false,
-			checkoutLoading: false,
 			carts_on_hold_size: 0
 		};
 	},
@@ -92,7 +73,7 @@ export default {
 				this.carts_on_hold_size = value;
 			}
 		},
-		products: {
+		cart: {
 			get() {
 				return this.$store.state.cart;
 			}
@@ -117,15 +98,8 @@ export default {
 
 	methods: {
 		checkout() {
+			this.$store.commit("cart/setOrder", undefined);
 			this.checkoutDialog = true;
-			// this.checkoutLoading = true;
-			// this.submitOrder()
-			// 	.then(response => {
-			// 		this.checkoutDialog = true;
-			// 	})
-			// 	.finally(() => {
-			// 		this.checkoutLoading = false;
-			// 	});
 		},
 		emptyConfirmation(event) {
 			if (event) {
@@ -141,16 +115,19 @@ export default {
 			}
 		},
 		holdCart() {
+			let product_count = Object.keys(this.cart.products).length;
 			let payload = {
 				model: "carts",
 				data: {
 					cash_register_id: this.$store.state.cashRegister.id,
 					cart: {
-						products: this.products,
+						products: this.cart,
 						customer_id: this.$store.state.cart.customer
 							? this.$store.state.cart.customer.id
 							: null
-					}
+					},
+					product_count: product_count,
+					total_price: this.cart.cart_price
 				}
 			};
 			this.create(payload).then(() => {

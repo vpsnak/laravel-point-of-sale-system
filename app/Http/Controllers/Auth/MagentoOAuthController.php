@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\MagentoOAuth;
+use App\Setting;
 use Illuminate\Http\Request;
 use OAuth;
 use OAuthException;
@@ -24,47 +24,11 @@ class MagentoOAuthController extends Controller
     protected $admin_authorization_url = '/oauth_authorize';
     protected $access_token_url = '/oauth/token';
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $magento_url = env('MAGENTO_URL');
-        $magento_admin = env('MAGENTO_ADMIN');
-        $this->consumer_key = env('OAUTH_CONSUMER_KEY');
-        $this->consumer_secret = env('OAUTH_CONSUMER_SECRET');
-        $this->request_token_url = "$magento_url/oauth/initiate";
-        $this->admin_authorization_url = "$magento_url/$magento_admin/oauth_authorize";
-        $this->access_token_url = $magento_url . '/oauth/token';
-
-        if (!MagentoOAuth::checkExists('key', 'state')) {
-            MagentoOAuth::store(['key' => 'state', 'value' => 0]);
-        }
-        if (!MagentoOAuth::checkExists('key', 'token')) {
-            MagentoOAuth::store(['key' => 'token']);
-        }
-        if (!MagentoOAuth::checkExists('key', 'secret')) {
-            MagentoOAuth::store(['key' => 'secret']);
-        }
-        $this->state = MagentoOAuth::getFirst('key', 'state');
-        $this->token = MagentoOAuth::getFirst('key', 'token');
-        $this->secret = MagentoOAuth::getFirst('key', 'secret');
-
-        $auth_type = ($this->state->value == 2) ? OAUTH_AUTH_TYPE_AUTHORIZATION : OAUTH_AUTH_TYPE_URI;
-        try {
-            $this->oauth_client = new OAuth($this->consumer_key, $this->consumer_secret, OAUTH_SIG_METHOD_HMACSHA1,
-                $auth_type);
-            $this->oauth_client->enableDebug();
-            $this->oauth_client->setSSLChecks(OAUTH_SSLCHECK_NONE);
-        } catch (OAuthException $e) {
-            report($e);
-        }
-    }
-
     public function authorizeMagento(Request $request)
     {
+        if (!isset($this->oauth_client)) {
+            $this->initOAuth();
+        }
         $oauth_token = $request->input('oauth_token');
         if (!isset($oauth_token) && $this->state->value == 0) {
             $this->state->value = 0;
@@ -104,10 +68,9 @@ class MagentoOAuthController extends Controller
                 } else {
                     // do request
                     $this->oauth_client->setToken($this->token->value, $this->secret->value);
-                    $this->oauth_client->fetch(env('MAGENTO_URL') . '/api/rest/products', [], 'GET',
+                    $this->oauth_client->fetch(config('magento.MAGENTO_URL') . '/api/rest/products', [], 'GET',
                         ['Content-Type' => 'application/json', 'Accept' => '*/*']);
-                    $response = $this->oauth_client->getLastResponse();
-                    if (!empty($response)) {
+                    if ($this->oauth_client->getLastResponseInfo()['http_code'] != 200) {
                         return response()->json([
                             'status' => 'inactive',
                             'message' => 'There was an error. You can not access data over REST api.'
@@ -135,6 +98,40 @@ class MagentoOAuthController extends Controller
                 'status' => 'exception',
                 'message' => 'There was an error. You can not access data over REST api.'
             ]);
+        }
+    }
+
+    private function initOAuth()
+    {
+        $magento_url = config('magento.MAGENTO_URL');
+        $magento_admin = config('magento.MAGENTO_ADMIN');
+        $this->consumer_key = config('magento.OAUTH_CONSUMER_KEY');
+        $this->consumer_secret = config('magento.OAUTH_CONSUMER_SECRET');
+        $this->request_token_url = "$magento_url/oauth/initiate";
+        $this->admin_authorization_url = "$magento_url/$magento_admin/oauth_authorize";
+        $this->access_token_url = $magento_url . '/oauth/token';
+
+        if (!Setting::checkExists('key', 'state')) {
+            Setting::store(['key' => 'state', 'value' => 0]);
+        }
+        if (!Setting::checkExists('key', 'token')) {
+            Setting::store(['key' => 'token']);
+        }
+        if (!Setting::checkExists('key', 'secret')) {
+            Setting::store(['key' => 'secret']);
+        }
+        $this->state = Setting::getFirst('key', 'state');
+        $this->token = Setting::getFirst('key', 'token');
+        $this->secret = Setting::getFirst('key', 'secret');
+
+        $auth_type = ($this->state->value == 2) ? OAUTH_AUTH_TYPE_AUTHORIZATION : OAUTH_AUTH_TYPE_URI;
+        try {
+            $this->oauth_client = new OAuth($this->consumer_key, $this->consumer_secret, OAUTH_SIG_METHOD_HMACSHA1,
+                $auth_type);
+            $this->oauth_client->enableDebug();
+            $this->oauth_client->setSSLChecks(OAUTH_SSLCHECK_NONE);
+        } catch (OAuthException $e) {
+            report($e);
         }
     }
 

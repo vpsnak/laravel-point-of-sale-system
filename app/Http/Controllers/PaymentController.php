@@ -32,8 +32,17 @@ class PaymentController extends BaseController
             'code' => 'required_if:payment_type,coupon|required_if:payment_type,giftcard'
         ]);
 
+        $newPayment = $validatedData;
+        $newPayment['payment_type'] = PaymentType::getFirst('type', $validatedData['payment_type'])->id;
+        $newPayment['status'] = 'pending';
+
+        $payment = $this->model::store($newPayment);
+
         switch ($validatedData['payment_type']) {
             default:
+                $payment->status = 'failed';
+                $payment->save();
+
                 return response(['msg' => 'This payment method does not exist. ', 'status' => 'error'], 500);
                 break;
             case 'cash':
@@ -48,6 +57,9 @@ class PaymentController extends BaseController
                     $validatedData['amount']
                 );
                 if (isset($paymentResponse->errorCode)) {
+                    $payment->status = 'failed';
+                    $payment->save();
+
                     return response([
                         'errors' => ["Error $paymentResponse->errorCode" => ["$paymentResponse->errorName"]],
                         'message' => $paymentResponse
@@ -60,6 +72,9 @@ class PaymentController extends BaseController
                 $coupon = Coupon::getFirst('code', $validatedData['code']);
 
                 if (empty($coupon)) {
+                    $payment->status = 'failed';
+                    $payment->save();
+
                     return response([
                         'errors' => ['Coupon' => ['Coupon does not exist']],
                         'message' => 'Coupon does not exist'
@@ -67,12 +82,18 @@ class PaymentController extends BaseController
                 }
 
                 if (date('Y-m-d H:i:s') > $coupon->to || $coupon->uses === 0) {
+                    $payment->status = 'failed';
+                    $payment->save();
+
                     return response([
                         'errors' => ['Coupon' => ['This coupon has expired']],
                         'message' => 'This coupon has expired'
                     ], 403);
                 } else {
                     if ($coupon->from > date('Y-m-d H:i:s')) {
+                        $payment->status = 'failed';
+                        $payment->save();
+
                         return response([
                             'errors' => [
                                 'Coupon' => [
@@ -101,12 +122,18 @@ class PaymentController extends BaseController
                 $giftcard = Giftcard::getFirst('code', $validatedData['code']);
 
                 if (!$giftcard->enabled) {
+                    $payment->status = 'failed';
+                    $payment->save();
+
                     return response([
                         'errors' => ['Gift card' => ['This gift card is inactive']],
                         'message' => 'This gift card is inactive'
                     ], 403);
                 } else {
                     if ($giftcard->amount < $validatedData['amount']) {
+                        $payment->status = 'failed';
+                        $payment->save();
+
                         return response([
                             'errors' => ['Gift card' => ['This gift card has insufficient balance to complete the transaction']],
                             'message' => 'This gift card has insufficient balance to complete the transaction'
@@ -121,14 +148,29 @@ class PaymentController extends BaseController
 
             case 'pos-terminal':
                 $paymentResponse = PosTerminalController::posPayment(
-                    $validatedData['amount']
+                    $validatedData['amount'],
+                    $payment
                 );
+
+                if (key_exists('errors', $paymentResponse)) {
+                    $payment->status = 'failed';
+                    $payment->save();
+
+                    return response([
+                        'errors' => [
+                            'POS Terminal' => [
+                                $paymentResponse['errors']
+                            ]
+                        ],
+                        'message' => $paymentResponse['errors']
+                    ], 403);
+                }
+
                 break;
         }
 
-        $validatedData['payment_type'] = PaymentType::getFirst('type', $validatedData['payment_type'])->id;
-
-        $payment = $this->model::store($validatedData);
+        $payment->status = 'approved';
+        $payment->save();
 
         if (!empty($payment)) {
             return response([

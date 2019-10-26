@@ -6,16 +6,19 @@
 
 require("./includes");
 
-import routes from "./routes";
+import router from "./plugins/router";
 import vuetify from "./plugins/vuetify"; // path to vuetify export
+
+import {
+    ValidationProvider,
+    ValidationObserver
+} from "vee-validate/dist/vee-validate.full";
 import store from "./store/store";
-import VueRouter from "vue-router";
-import { ValidationProvider } from "vee-validate";
 
 window.Vue = require("vue");
 
-Vue.use(VueRouter);
 Vue.component("ValidationProvider", ValidationProvider);
+Vue.component("ValidationObserver", ValidationObserver);
 
 /**
  * The following block of code may be used to automatically register your
@@ -35,10 +38,6 @@ files.keys().map(key =>
         files(key).default
     )
 );
-
-const router = new VueRouter({
-    routes
-});
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

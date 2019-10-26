@@ -34,7 +34,10 @@ class PaymentObserver
     public function deleted(Payment $payment)
     {
         $this->updateOrderStatus($payment);
+
         switch ($payment->paymentType->type) {
+            case 'pos-terminal':
+                break;
             case 'card':
                 $paymentResponse = CreditCardController::cardPayment(
                     '5472063333333330',
@@ -45,21 +48,24 @@ class PaymentObserver
                 if (isset($paymentResponse->errorCode)) {
                     return false;
                 }
-                return true;
                 break;
             case 'coupon':
-                $coupon = Coupon::whereCode($payment->code)->first();
+                $coupon = Coupon::whereCode($payment->code)->firstOrFail();
                 $coupon->uses++;
                 $coupon->save();
-                return true;
                 break;
             case 'giftcard':
-                $giftcard = Giftcard::whereCode($payment->code)->first();
+                $giftcard = Giftcard::whereCode($payment->code)->firstOrFail();
                 $giftcard->amount += $payment['amount'];
                 $giftcard->save();
-                return true;
                 break;
+            default:
+                return false;
         }
+
+        $payment->status = 'refunded';
+        $payment->save();
+
         return false;
     }
 }

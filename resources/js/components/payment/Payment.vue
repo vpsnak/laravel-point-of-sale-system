@@ -53,7 +53,13 @@ export default {
 	computed: {
 		remaining: {
 			get() {
-				return this.order_remaining ? this.order_remaining : undefined;
+				if (parseFloat(this.order_remaining) >= 0) {
+					return this.order_remaining;
+				} else if (parseFloat(this.order_remaining) < 0) {
+					return this.order_remaining;
+				} else {
+					return undefined;
+				}
 			},
 			set(value) {
 				this.order_remaining = value;
@@ -165,19 +171,27 @@ export default {
 
 			this.create(payload)
 				.then(response => {
-					this.order_remaining = response.total - response.total_paid;
+					this.$store.state.cart.order.remaining = this.order_remaining =
+						response.total - response.total_paid;
 
 					let notification = {
 						msg: "Payment received",
 						type: "success"
 					};
 					this.setNotification(notification);
-
-					this.init();
+				})
+				.catch(error => {
+					let notification = {
+						msg: error.response.data.message,
+						type: "error"
+					};
+					this.setNotification(notification);
 				})
 				.finally(() => {
 					this.paymentAmount = null;
 					this.paymentActionsLoading = false;
+
+					this.init();
 				});
 		},
 		refund(event) {

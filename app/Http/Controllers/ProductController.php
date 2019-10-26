@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Product;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class ProductController extends BaseController
 {
@@ -41,5 +43,17 @@ class ProductController extends BaseController
             array_key_exists('per_page', $validatedData) ? $validatedData['per_page'] : 0,
             array_key_exists('page', $validatedData) ? $validatedData['page'] : 0
         );
+    }
+
+    /**
+     * @return ResponseFactory|Response
+     */
+    public function all()
+    {
+        if (!isset($this->model)) {
+            return response('Model not found', 404);
+        }
+
+        return response($this->model::limit(30)->get(), 200);
     }
 }

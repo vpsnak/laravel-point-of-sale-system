@@ -19,8 +19,8 @@
 					v-for="cartOnHold in cartsOnHold"
 					:key="cartOnHold.id"
 					close
-					@click="selectedCart=cartOnHold, restoreCart()"
-					@click:close="removeCart(cartOnHold)"
+					@click="selectedCart = cartOnHold, restoreCart()"
+					@click:close="selectedCart = cartOnHold, removeCart()"
 				>
 					<span>
 						{{ cartOnHold.name }}

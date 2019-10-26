@@ -48,6 +48,9 @@ export default {
 				return this.$store.state.cart.customer;
 			},
 			set(value) {
+				if (value !== this.cartCustomer) {
+					this.$store.commit("cart/resetShipping", value);
+				}
 				this.$store.commit("cart/setCustomer", value);
 			}
 		}

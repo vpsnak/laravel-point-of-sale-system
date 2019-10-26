@@ -1,19 +1,20 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+/** @var Factory $factory */
 
+use App\Address;
 use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factory;
 
-$factory->define(\App\Address::class, function (Faker $faker) {
+$factory->define(Address::class, function (Faker $faker) {
     return [
-        'area_code_id' => $faker->randomNumber(),
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,
         'street' => $faker->streetAddress,
         'city' => $faker->city,
         'country_id' => $faker->countryCode,
         'region' => $faker->country,
-        'postcode' => $faker->postcode,
+        'postcode' => $faker->randomElement(['00606', '10025', '01524', '01561', '97029', '0']),
         'phone' => $faker->phoneNumber,
     ];
 });

@@ -23,17 +23,14 @@
 			<v-list dense :avatar="avatar">
 				<v-list-item-group>
 					<v-list-item inactive two-line>
-						<v-list-item-avatar>
-							<v-img :src="avatar"></v-img>
-							<!-- <v-icon>mdi-account</v-icon> -->
-						</v-list-item-avatar>
+						<v-list-item-avatar>{{ user.name.charAt(0) }}</v-list-item-avatar>
 						<v-list-item-content>
 							<v-list-item-title>{{ user.name }}</v-list-item-title>
 							<v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
 						</v-list-item-content>
 					</v-list-item>
 					<v-divider />
-					<v-list-item>
+					<v-list-item to="/logout">
 						<v-list-item-avatar>
 							<v-icon>mdi-logout-variant</v-icon>
 						</v-list-item-avatar>

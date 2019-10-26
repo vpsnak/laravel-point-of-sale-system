@@ -11,15 +11,20 @@
 |
 */
 
+// auth
+
+Route::post('/auth/login', "UserController@login");
+
+Route::get('/auth/logout', "UserController@logout")->middleware('auth:api');
+
 $baseRoutes = [
     'users' => 'UserController',
     'customers' => 'CustomerController',
-    'address' => 'AddressController',
+    'addresses' => 'AddressController',
     'products' => 'ProductController',
     'carts' => 'CartController',
     'orders' => 'OrderController',
     'categories' => 'CategoryController',
-
     'stores' => 'StoreController',
     'taxes' => 'TaxController',
     'payments' => 'PaymentController',
@@ -29,6 +34,8 @@ $baseRoutes = [
     'gift-cards' => 'GiftCardController',
     'coupons' => 'CouponController',
 ];
+
+Route::get('categories/{category}/products', "CategoryController@productsByCategory");
 
 foreach ($baseRoutes as $route => $controller) {
     Route::get("/$route", "$controller@all");
@@ -44,18 +51,10 @@ Route::get('/product-listing/categories', "CategoryController@productListingCate
 Route::post('/cash-register-logs/open', "{$baseRoutes['cash-register-logs']}@open");
 Route::post('/cash-register-logs/close', "{$baseRoutes['cash-register-logs']}@close");
 
+Route::post('/shipping/timeslot', "TimeslotController@getTimeslots");
+
 Route::get('/magento/authorize', 'Auth\MagentoOAuthController@authorizeMagento');
 
-// POS
-
-// config
-Route::post('/pos-terminal/configure', 'PosTerminalController@startCardReaderConfiguration');
-Route::post('/pos-terminal/configure/status', 'PosTerminalController@getCommandStatusOnCardReader');
-// search - info
-Route::post('/pos-terminal/search', 'PosTerminalController@startCardReadersSearch');
-Route::post('/pos-terminal/search/status', 'PosTerminalController@getCardReadersSearchStatus');
-Route::post('/pos-terminal/info', 'PosTerminalController@getCardReaderInfo');
-// transaction 
-Route::post('/pos-terminal/transaction/gateway', 'PosTerminalController@openPaymentGateway');
-Route::post('/pos-terminal/transaction/start', 'PosTerminalController@startPaymentTransaction');
-Route::post('/pos-terminal/transaction/status', 'PosTerminalController@getPaymentTransactionStatus');
+// e-mail
+Route::get('/sendemail', 'SendEmailController@index');
+Route::get('/send/{order}', 'SendEmailController@send');
