@@ -7,7 +7,7 @@ class Address extends BaseModel
 //    protected $with = ['areaCode', 'customers'];
 //    protected $with = ['customers'];
 
-    protected $attributes = ['address_region'];
+    protected $attributes = ['address_country', 'address_region'];
 
     protected $fillable = [
         'magento_id',
@@ -32,6 +32,11 @@ class Address extends BaseModel
     public function customers()
     {
         return $this->belongsToMany(Customer::class);
+    }
+
+    public function getAddressCountryAttribute()
+    {
+        return $this->country->iso2_code;
     }
 
     public function getAddressRegionAttribute()
