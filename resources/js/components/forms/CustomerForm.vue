@@ -25,7 +25,7 @@ formFields<template>
 			<v-btn @click="clear">clear</v-btn>
 		</v-form>
 	</div>
-</template>
+</template> 
 <script>
 import { mapActions, mapState, mapGetters } from "vuex";
 
@@ -35,7 +35,7 @@ export default {
 	},
 	data() {
 		return {
-			defaultValues: {},
+			defaultValues: { addresses: {} },
 			formFields: {
 				first_name: null,
 				last_name: null,
@@ -44,10 +44,10 @@ export default {
 				phone: null,
 				addresses: {
 					area_code_id: null,
-					last_name: "",
-					first_name: "",
-					street: "",
-					city: "",
+					first_name: null,
+					last_name: null,
+					street: null,
+					city: null,
 					country_id: null,
 					region: null,
 					postcode: null,
@@ -57,11 +57,8 @@ export default {
 		};
 	},
 	mounted() {
-		this.defaultValues = this.formFields;
 		if (this.$props.model) {
-			this.formFields = {
-				...this.$props.model
-			};
+			this.formFields = this.$props.model;
 		}
 	},
 	methods: {
