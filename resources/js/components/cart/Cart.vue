@@ -4,10 +4,24 @@
 			<v-icon class="pr-2">{{ icon }}</v-icon>
 			<h4 class="title-2">{{ title }}</h4>
 		</div>
-
 		<v-divider />
-
-		<customerSearch :editable="editable" :keywordLength="1" class="my-3"></customerSearch>
+		<v-container grid-list-md text-xs-center>
+			<v-layout row wrap>
+				<v-flex xs11>
+					<customerSearch :editable="editable" :keywordLength="1" class="my-3"></customerSearch>
+				</v-flex>
+				<v-flex xs1>
+					<v-tooltip bottom>
+						<template v-slot:activator="{ on }">
+							<v-btn @click="showCreateDialog = true" class="my-3" v-on="on" icon>
+								<v-icon>mdi-plus</v-icon>
+							</v-btn>
+						</template>
+						<span>Add customer</span>
+					</v-tooltip>
+				</v-flex>
+			</v-layout>
+		</v-container>
 
 		<cartProducts :products="items ? items : products" :editable="editable"></cartProducts>
 
@@ -31,6 +45,17 @@
 				<cartActions :disabled="totalProducts" />
 			</div>
 		</div>
+		<interactiveDialog
+			v-if="showCreateDialog"
+			:show="showCreateDialog"
+			:model="{}"
+			component="customerForm"
+			title="Add a Customer"
+			@action="result"
+			cancelBtnTxt="Close"
+			persistent
+			titleCloseBtn
+		></interactiveDialog>
 	</v-card>
 </template>
 
@@ -38,6 +63,11 @@
 import { mapActions } from "vuex";
 
 export default {
+	data() {
+		return {
+			showCreateDialog: false
+		};
+	},
 	props: {
 		order: Array | null,
 		items: Array | null,
@@ -80,6 +110,9 @@ export default {
 		addAll(cart) {
 			this.products.splice(0);
 			this.products = cart;
+		},
+		result(event) {
+			this.showCreateDialog = false;
 		},
 
 		...mapActions({

@@ -82,7 +82,6 @@
 		<interactiveDialog
 			v-if="showCreateDialog"
 			:show="showCreateDialog"
-			:model="{}"
 			component="dummyProductForm"
 			title="Add a dummy product"
 			@action="result"

@@ -27,7 +27,6 @@
 				:disabled="invalid || disableSubmit"
 			>submit</v-btn>
 			<v-btn class="mr-4" @click="clear">clear</v-btn>
-			<v-btn @click="edit">edit</v-btn>
 		</v-form>
 	</ValidationObserver>
 </template>
@@ -77,16 +76,6 @@ export default {
 		},
 		clear() {
 			this.formFields = { ...this.defaultValues };
-		},
-		edit() {
-			this.getOne({
-				model: "categories",
-				data: {
-					id: 2
-				}
-			}).then(category => {
-				this.formFields = { ...category };
-			});
 		},
 		...mapActions({
 			getAll: "getAll",

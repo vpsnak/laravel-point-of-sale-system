@@ -100,6 +100,7 @@
 			:component="tableViewComponent"
 			:model="viewId"
 			@action="result"
+			action="newItem"
 			cancelBtnTxt="Close"
 		></interactiveDialog>
 
@@ -108,8 +109,10 @@
 			:show="showCreateDialog"
 			:component="form"
 			:title="btnTitle"
+			:model="{}"
 			@action="result"
 			cancelBtnTxt="Close"
+			titleCloseBtn
 		></interactiveDialog>
 
 		<checkoutDialog :show="checkoutDialog" />
