@@ -44,7 +44,7 @@ class Address extends BaseModel
 
     public function getAddressRegionAttribute()
     {
-        return $this->region_id ?? $this->region_name;
+        return ($this->region_id ?? $this->region_name) ?? $this->region;
     }
 
     public function country()

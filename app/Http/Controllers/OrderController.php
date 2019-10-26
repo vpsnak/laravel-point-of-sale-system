@@ -23,12 +23,10 @@ class OrderController extends BaseController
                 'status' => 'required|in:pending_payment,paid,complete',
                 'shipping_type' => 'string|nullable',
                 'shipping_cost' => 'numeric|nullable',
-                'notes' => 'string|nullable',
             ]);
 
             return response($this->model::updateData($validatedID, $validatedData), 200);
         }
-
         $validatedData = $request->validate([
             'customer_id' => 'nullable|exists:customers,id',
             'status' => 'required|in:pending,pending_payment,paid,complete,canceled',
@@ -40,6 +38,35 @@ class OrderController extends BaseController
             'store_id' => 'required|exists:stores,id',
             'created_by' => 'required|exists:users,id',
         ]);
+
+        $shippingData = $request->validate([
+            'shipping.method' => 'string|string',
+            'shipping.date' => 'string|date',
+            'shipping.timeSlotLabel' => 'string|string',
+            'shipping.timeSlotCost' => 'string|numeric',
+            'shipping.notes' => 'string|nullable',
+            'shipping.address' => 'sometimes|nullable',
+            'shipping.address.id' => 'numeric|exists:addresses,id|nullable',
+        ]);
+
+        if (!empty($shippingData['shipping']['address'])) {
+            $address = $shippingData['shipping']['address'];
+            $concatAddress = $address['first_name'];
+            $concatAddress .= ' ' . $address['last_name'];
+            $concatAddress .= ' ' . $address['street'];
+            $concatAddress .= ' ' . $address['street2'];
+            $concatAddress .= ' ' . $address['city'];
+            $concatAddress .= ' ' . $address['address_region'];
+            $concatAddress .= ' ' . $address['address_country'];
+            $concatAddress .= ' ' . $address['postcode'];
+            $concatAddress .= ' ' . $address['phone'];
+        }
+
+        $validatedData['shipping_type'] = $shippingData['shipping']['method'] ?? null;
+        $validatedData['shipping_cost'] = $shippingData['shipping']['timeSlotCost'] ?? null;
+        $validatedData['shipping_address'] = $concatAddress ?? null;
+        $validatedData['delivery_date'] = $shippingData['shipping']['timeSlotLabel'] ?? null;
+        $validatedData['notes'] = $shippingData['shipping']['notes'] ?? null;
 
         $order_items = $request->validate([
             'products' => 'required|array',
