@@ -19,7 +19,10 @@
 					</template>
 					<template v-slot:item.action="{ item }">
 						<!-- order actions -->
-						<v-tooltip bottom v-if="tableViewComponent === 'order' && item.status === 'pending_payment'">
+						<v-tooltip
+							bottom
+							v-if="tableViewComponent === 'order' && (item.status === 'pending_payment' || item.status === 'pending')"
+						>
 							<template v-slot:activator="{ on }">
 								<v-btn @click="checkout(item)" class="my-1" icon v-on="on">
 									<v-icon small>mdi-currency-usd</v-icon>
@@ -27,7 +30,10 @@
 							</template>
 							<span>Continue checkout</span>
 						</v-tooltip>
-						<v-tooltip bottom v-else-if="tableViewComponent === 'order' && item.status === 'complete'">
+						<v-tooltip
+							bottom
+							v-if="tableViewComponent === 'order' && (item.status === 'pending_payment' || item.status === 'pending' || item.status === 'completed')"
+						>
 							<template v-slot:activator="{ on }">
 								<v-btn @click="selectedItem = item, cancelOrderDialog = true" class="my-1" icon v-on="on">
 									<v-icon small>mdi-cancel</v-icon>
