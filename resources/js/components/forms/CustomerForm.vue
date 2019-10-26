@@ -34,7 +34,7 @@ export default {
 		};
 	},
 	mounted() {
-		this.defaultValues = this.formFields;
+		this.defaultValues = { ...this.formFields };
 		if (this.$props.model) {
 			this.formFields = {
 				...this.$props.model
@@ -65,7 +65,7 @@ export default {
 				});
 		},
 		clear() {
-			this.formFields = { ...this.defaultValues };
+			this.formFields = this.defaultValues;
 			// this.formFields.first_name = null;
 			// this.formFields.last_name = null;
 			// this.formFields.email = null;
