@@ -67,8 +67,15 @@ export default {
 				data: { ...this.formFields }
 			};
 			this.create(payload).then(() => {
+				this.$emit("submit", {
+					getRows: true,
+					model: "categories",
+					notification: {
+						msg: "Category added successfully",
+						type: "success"
+					}
+				});
 				this.clear();
-				this.$emit("submit", "categories");
 			});
 		},
 		beforeDestroy() {

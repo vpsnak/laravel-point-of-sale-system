@@ -1,25 +1,24 @@
 <template>
 	<div>
-		<v-form>
+		<v-form @submit="submit">
 			<div class="text-center">
 				<v-chip color="primary" label>
 					<v-icon left>fas fa-cash-register</v-icon>Cash Register Form
 				</v-chip>
 			</div>
-			<v-text-field v-model="formFields.name" label="Name" required></v-text-field>
+			<v-text-field v-model="formFields.name" label="Name" :disabled="loading" required></v-text-field>
 			<v-select
 				v-model="formFields.store_id"
-				:items="stores"
-				:rules="[v => !!v || 'Store is required']"
 				label="Stores"
-				required
+				:items="stores"
 				item-text="name"
 				item-value="id"
+				:disabled="loading"
+				required
 			></v-select>
-			<v-btn class="mr-4" @click="submit">submit</v-btn>
+			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="loading">submit</v-btn>
 			<v-btn @click="clear">clear</v-btn>
 		</v-form>
-		<v-alert v-if="savingSuccessful === true" class="mt-4" type="success">Form submitted successfully!</v-alert>
 	</div>
 </template>
 <script>
@@ -31,7 +30,7 @@ export default {
 	},
 	data() {
 		return {
-			savingSuccessful: false,
+			loading: false,
 			defaultValues: {},
 			formFields: {
 				name: null,
@@ -55,17 +54,31 @@ export default {
 	},
 	methods: {
 		submit() {
+			this.loading = true;
 			let payload = {
 				model: "cash-registers",
 				data: { ...this.formFields }
 			};
-			this.create(payload).then(() => {
-				if (this.formFields.id == this.$store.state.cashRegister.id) {
-					this.$store.state.cashRegister = this.formFields;
-				}
-				this.clear();
-				this.$emit("submit", "cash-registers");
-			});
+			this.create(payload)
+				.then(() => {
+					if (
+						this.formFields.id == this.$store.state.cashRegister.id
+					) {
+						this.$store.state.cashRegister = this.formFields;
+					}
+					this.$emit("submit", {
+						getRows: true,
+						model: "cash-registers",
+						notification: {
+							msg: "Cash Register added successfully",
+							type: "success"
+						}
+					});
+					this.clear();
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 		beforeDestroy() {
 			this.$off("submit");
