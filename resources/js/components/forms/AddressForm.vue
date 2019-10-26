@@ -5,56 +5,30 @@
 				<v-icon left>fas fa-address-card</v-icon>Address Form
 			</v-chip>
 		</div>
-		<v-text-field
-			v-model="formFields.first_name"
-			counter
-			label="First name"
-			:disabled="loading"
-			required
-		></v-text-field>
-		<v-text-field
-			v-model="formFields.last_name"
-			counter
-			label="Last name"
-			:disabled="loading"
-			required
-		></v-text-field>
-		<v-text-field v-model="formFields.street" counter label="Street" :disabled="loading" required></v-text-field>
-		<v-text-field
-			v-model="formFields.street2"
-			counter
-			label="Second Street"
-			:disabled="loading"
-			required
-		></v-text-field>
-		<v-text-field v-model="formFields.city" counter label="City" :disabled="loading" required></v-text-field>
-		<v-text-field
-			v-model="formFields.country_id"
-			counter
-			label="Country id"
-			:disabled="loading"
-			required
-		></v-text-field>
-		<v-text-field v-model="formFields.region" counter label="Region" :disabled="loading" required></v-text-field>
-		<v-text-field v-model="formFields.postcode" counter label="Postcode" :disabled="loading" required></v-text-field>
+		<v-text-field v-model="formFields.first_name" label="First name" :disabled="loading" required></v-text-field>
+		<v-text-field v-model="formFields.last_name" label="Last name" :disabled="loading" required></v-text-field>
+		<v-text-field v-model="formFields.street" label="Street" :disabled="loading" required></v-text-field>
+		<v-text-field v-model="formFields.street2" label="Second Street" :disabled="loading" required></v-text-field>
+		<v-text-field v-model="formFields.city" label="City" :disabled="loading" required></v-text-field>
+		<v-text-field v-model="formFields.country_id" label="Country id" :disabled="loading" required></v-text-field>
+		<v-text-field v-model="formFields.region" label="Region" :disabled="loading" required></v-text-field>
+		<v-text-field v-model="formFields.postcode" label="Postcode" :disabled="loading" required></v-text-field>
 		<v-text-field
 			v-model="formFields.phone"
-			counter
 			label="Phone"
 			type="number"
 			:min="0"
 			:disabled="loading"
 			required
 		></v-text-field>
-		<v-text-field v-model="formFields.company" counter label="Company" :disabled="loading" required></v-text-field>
-		<v-text-field v-model="formFields.vat_id" counter label="Vat id" :disabled="loading" required></v-text-field>
-		<v-text-field
+		<v-text-field v-model="formFields.company" label="Company" :disabled="loading" required></v-text-field>
+		<v-text-field v-model="formFields.vat_id" label="Vat id" :disabled="loading" required></v-text-field>
+		<!-- <v-text-field
 			v-model="formFields.deliverydate"
-			counter
 			label="Delivery date"
 			:disabled="loading"
 			required
-		></v-text-field>
+		></v-text-field>-->
 		<v-btn class="mr-4" type="submit" :loading="loading" :disabled="loading">submit</v-btn>
 		<v-btn @click="clear">clear</v-btn>
 	</v-form>
@@ -72,8 +46,8 @@ export default {
 			loading: false,
 			defaultValues: {},
 			formFields: {
-				last_name: null,
 				first_name: null,
+				last_name: null,
 				street: null,
 				street2: null,
 				city: null,
