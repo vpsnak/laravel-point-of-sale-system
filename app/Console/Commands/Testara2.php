@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Address;
 use Illuminate\Console\Command;
 
 class Testara2 extends Command
@@ -37,5 +38,7 @@ class Testara2 extends Command
      */
     public function handle()
     {
+        $a = Address::getOne(50);
+        var_dump($a->country);
     }
 }
