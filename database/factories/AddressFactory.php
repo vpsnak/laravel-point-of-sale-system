@@ -15,6 +15,6 @@ $factory->define(Address::class, function (Faker $faker) {
         'country_id' => $faker->countryCode,
         'region' => $faker->country,
         'postcode' => $faker->randomElement(['00606', '10025', '01524', '01561', '97029', '0']),
-        'phone' => $faker->phoneNumber,
+        'phone' => $faker->phoneNumber
     ];
 });
