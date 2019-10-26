@@ -115,7 +115,6 @@
 			:show="showCreateDialog"
 			:component="form"
 			:title="btnTitle"
-			:model="{}"
 			@action="result"
 			cancelBtnTxt="Close"
 			titleCloseBtn
