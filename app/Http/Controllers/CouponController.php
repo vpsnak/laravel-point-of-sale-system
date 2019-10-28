@@ -15,12 +15,12 @@ class CouponController extends BaseController
         $validatedData = $request->validate([
             'name' => 'required|string',
             'code' => 'required|string',
-            'uses' => 'nullable|numeric',
+            'uses' => 'required|numeric',
             'from' => 'nullable|date',
             'to' => 'nullable|date',
         ]);
         $discountData = $request->validate([
-            'discount_type' => 'required|string',
+            'discount_type' => 'required|in:flat,percentage',
             'discount_amount' => 'required|numeric',
         ]);
 

@@ -13,7 +13,6 @@ class CreateCartsTable extends Migration
      */
     public function up()
     {
-        // @TODO map carts to loggedin user instead of customer
         Schema::create('carts', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('cash_register_id')->nullable();
@@ -23,7 +22,7 @@ class CreateCartsTable extends Migration
             $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('restrict');
         });
     }
-    
+
     /**
      * Reverse the migrations.
      *
