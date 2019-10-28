@@ -15,7 +15,10 @@ class OrderObserver
     public function updated(Order $order)
     {
         if ($order->status == 'canceled') {
-            $order->payments()->delete();
+            foreach ($order->payments as $payment) {
+                $payment->status = 'refunded';
+                $payment->save();
+            }
 
             foreach ($order->items as $item) {
                 $this->handleStock($item, 'add');

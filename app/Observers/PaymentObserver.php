@@ -31,43 +31,40 @@ class PaymentObserver
         }
     }
 
-    public function deleted(Payment $payment)
+    public function updated(Payment $payment)
     {
         $this->updateOrderStatus($payment);
 
-        switch ($payment->paymentType->type) {
-            case 'cash':
-                break;
-            case 'pos-terminal':
-                break;
-            case 'card':
-                $paymentResponse = CreditCardController::cardPayment(
-                    '5472063333333330',
-                    '1224',
-                    '123',
-                    $payment->amount
-                );
-                if (isset($paymentResponse->errorCode)) {
-                    return false;
-                }
-                break;
-            case 'coupon':
-                $coupon = Coupon::whereCode($payment->code)->firstOrFail();
-                $coupon->uses++;
-                $coupon->save();
-                break;
-            case 'giftcard':
-                $giftcard = Giftcard::whereCode($payment->code)->firstOrFail();
-                $giftcard->amount += $payment['amount'];
-                $giftcard->save();
-                break;
-            default:
-                return false;
+        if ($payment->status == 'refunded') {
+            switch ($payment->paymentType->type) {
+                case 'card':
+                    $paymentResponse = CreditCardController::cardPayment(
+                        '5472063333333330',
+                        '1224',
+                        '123',
+                        $payment->amount
+                    );
+                    if (isset($paymentResponse->errorCode)) {
+                        return false;
+                    }
+                    return true;
+                    break;
+                case 'coupon':
+                    $coupon = Coupon::whereCode($payment->code)->firstOrFail();
+                    $coupon->uses++;
+                    $coupon->save();
+                    return true;
+                    break;
+                case 'giftcard':
+                    $giftcard = Giftcard::whereCode($payment->code)->firstOrFail();
+                    $giftcard->amount += $payment['amount'];
+                    $giftcard->save();
+                    return true;
+                    break;
+                default:
+                    return true;
+            }
         }
-
-        $payment->status = 'refunded';
-        $payment->save();
-
-        return false;
+        return true;
     }
 }
