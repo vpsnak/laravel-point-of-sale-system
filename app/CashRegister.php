@@ -6,7 +6,7 @@ class CashRegister extends BaseModel
 {
     protected $appends = ['is_open', 'store'];
     protected $with = [
-        'logs'
+//        'logs'
     ];
 
     protected $fillable = [
@@ -22,7 +22,7 @@ class CashRegister extends BaseModel
 
     public function getIsOpenAttribute()
     {
-        return $this->logs()->whereStatus(1)->count() > 0;
+        return $this->hasMany(CashRegisterLogs::class)->whereStatus(1)->count() > 0;
     }
 
     public function logs()

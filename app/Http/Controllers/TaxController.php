@@ -14,7 +14,6 @@ class TaxController extends BaseController
         $validatedData = $request->validate([
             'name' => 'required|string',
             'percentage' => 'required|numeric',
-            'is_default' => 'required|boolean',
         ]);
 
 

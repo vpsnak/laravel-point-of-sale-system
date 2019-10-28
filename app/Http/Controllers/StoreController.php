@@ -15,8 +15,6 @@ class StoreController extends BaseController
     {
         $validatedData = $request->validate([
             'name' => 'required|string',
-            'taxable' => 'required|boolean',
-            'is_default' => 'required|boolean',
             'tax_id' => 'required|exists:taxes,id',
             'created_by' => 'required|exists:users,id',
         ]);

@@ -15,8 +15,6 @@ class StoreSeeder extends Seeder
         DB::table('stores')->insert([
             [
                 'name' => 'Plantshed Laravel',
-                'taxable' => 1,
-                'is_default' => 1,
                 'tax_id' => 1,
                 'created_by' => 1,
             ]
@@ -24,8 +22,6 @@ class StoreSeeder extends Seeder
         DB::table('stores')->insert([
             [
                 'name' => 'Plantshed Eshop',
-                'taxable' => 1,
-                'is_default' => 1,
                 'tax_id' => 1,
                 'created_by' => 1,
             ]
