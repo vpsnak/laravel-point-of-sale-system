@@ -1,7 +1,7 @@
 <template>
     <v-container v-if="orderData">
         <v-row>
-            <v-col cols="12" md="6">
+            <v-col cols="12" md="5">
                 <v-card>
                     <v-card-title>Order #{{orderData.id}}</v-card-title>
                     <v-card-text>
@@ -12,7 +12,7 @@
                     </v-card-text>
                 </v-card>
             </v-col>
-            <v-col cols="12" md="6">
+            <v-col cols="12" md="7">
                 <v-simple-table>
                     <template v-slot:default>
                         <thead>
@@ -21,6 +21,7 @@
                             <th class="text-left">Sku</th>
                             <th class="text-left">Price</th>
                             <th class="text-left">Qty</th>
+                            <th class="text-left">Notes</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -29,21 +30,24 @@
                             <td>{{ item.sku }}</td>
                             <td>{{ item.price }}</td>
                             <td>{{ item.qty }}</td>
+                            <td>{{ item.notes }}</td>
                         </tr>
                         </tbody>
                     </template>
                 </v-simple-table>
             </v-col>
-            <v-col cols="12" md="6" v-if="orderData.shipping_type">
+            <v-col cols="12" md="5" v-if="orderData.shipping_type">
                 <v-card>
                     <v-card-title>Shipping</v-card-title>
                     <v-card-text>
+                        <div class="subtitle-1" v-if="orderData.shipping_address">Shipping Address: {{orderData.shipping_address}}</div>
                         <div class="subtitle-1">Shipping Type: {{orderData.shipping_type}}</div>
-                        <div class="subtitle-1">Shipping Cost: {{orderData.shipping_cost}}</div>
+                        <div class="subtitle-1" v-if="orderData.delivery_date">Delivery Type: {{orderData.delivery_date}}</div>
+                        <div class="subtitle-1">Shipping Cost: {{orderData.shipping_cost.toFixed(2)}} $</div>
                     </v-card-text>
                 </v-card>
             </v-col>
-            <v-col cols="12" md="6" v-if="orderData.notes">
+            <v-col cols="12" md="7" v-if="orderData.notes">
                 <v-card>
                     <v-card-title>Notes</v-card-title>
                     <v-card-text>
@@ -51,12 +55,13 @@
                     </v-card-text>
                 </v-card>
             </v-col>
-            <v-col cols="12" md="6">
+            <v-col cols="12" md="5">
                 <v-card>
                     <v-card-title>Totals</v-card-title>
                     <v-card-text>
                         <div class="subtitle-1">Subtotal: {{orderData.subtotal}} $</div>
-                        <div class="subtitle-1">Tax ({{orderData.tax}}%) : {{(orderData.total - orderData.subtotal).toFixed(2)}} $</div>
+                        <div class="subtitle-1">Shipping Cost: {{orderData.shipping_cost.toFixed(2)}} $</div>
+                        <div class="subtitle-1">Tax ({{orderData.tax}}%) : {{(orderData.total - orderData.subtotal - orderData.shipping_cost).toFixed(2)}} $</div>
                         <div class="headline">Total: {{orderData.total.toFixed(2)}} $</div>
                     </v-card-text>
                 </v-card>
