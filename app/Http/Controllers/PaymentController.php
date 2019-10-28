@@ -108,10 +108,10 @@ class PaymentController extends BaseController
                 $order = Order::findOrFail($validatedData['order_id']);
 
                 $validatedData['amount'] = $order->subtotal - Price::calculateDiscount(
-                    $order->subtotal,
-                    $coupon->discount->type,
-                    $coupon->discount->amount
-                );
+                        $order->subtotal,
+                        $coupon->discount->type,
+                        $coupon->discount->amount
+                    );
 
                 $coupon->uses--;
                 $coupon->save();
@@ -203,7 +203,9 @@ class PaymentController extends BaseController
             return response('Model not found', 404);
         }
 
-        (Payment::findOrFail($id))->delete();
+        $payment = Payment::findOrFail($id);
+        $payment->status = 'refunded';
+        $payment->save();
 
         return response(['msg' => 'Refund completed successfully!', 'status' => 'success'], 200);
     }

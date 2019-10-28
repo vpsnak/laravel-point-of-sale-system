@@ -19,10 +19,7 @@ class CreatePaymentTypesTable extends Migration
             $table->string('type');
             $table->string('icon')->nullable();
             $table->tinyInteger('status')->default(1);
-            $table->tinyInteger('is_default')->default(0);
-            $table->unsignedBigInteger('created_by');
             $table->timestamps();
-            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

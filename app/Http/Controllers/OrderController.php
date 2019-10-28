@@ -42,8 +42,8 @@ class OrderController extends BaseController
         $shippingData = $request->validate([
             'shipping.method' => 'string|string',
             'shipping.date' => 'string|date',
-            'shipping.timeSlotLabel' => 'string|string',
-            'shipping.timeSlotCost' => 'string|numeric',
+            'shipping.timeSlotLabel' => 'string|nullable',
+            'shipping.timeSlotCost' => 'numeric',
             'shipping.notes' => 'string|nullable',
             'shipping.address' => 'sometimes|nullable',
             'shipping.address.id' => 'numeric|exists:addresses,id|nullable',
@@ -131,7 +131,6 @@ class OrderController extends BaseController
     {
         $order = $this->model::getOne($id);
         $order->status = 'canceled';
-        // @TODO refund before update order
         $order->save();
         return response($order, 200);
     }

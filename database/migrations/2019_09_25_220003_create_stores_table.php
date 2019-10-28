@@ -16,8 +16,6 @@ class CreateStoresTable extends Migration
         Schema::create('stores', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->tinyInteger('taxable');
-            $table->tinyInteger('is_default')->default(0);
             $table->unsignedBigInteger('tax_id')->default(0);
             $table->unsignedBigInteger('created_by');
             $table->timestamps();
@@ -25,7 +23,7 @@ class CreateStoresTable extends Migration
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
         });
     }
-    
+
     /**
      * Reverse the mig rations.
      *

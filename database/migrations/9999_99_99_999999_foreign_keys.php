@@ -33,10 +33,6 @@ class ForeignKeys extends Migration
             $table->foreign('payment_id')->references('id')->on('payments')->onDelete('cascade');
         });
 
-        Schema::table('shippings', function (Blueprint $table) {
-            $table->foreign('price_id')->references('id')->on('prices')->onDelete('cascade');
-        });
-
         Schema::table('prices', function (Blueprint $table) {
             $table->foreign('discount_id')->references('id')->on('discounts')->onDelete('cascade');
         });
@@ -66,10 +62,6 @@ class ForeignKeys extends Migration
         Schema::table('order_payment', function (Blueprint $table) {
             $table->dropForeign(['order_id']);
             $table->dropForeign(['payment_id']);
-        });
-
-        Schema::table('shippings', function (Blueprint $table) {
-            $table->dropForeign(['price_id']);
         });
 
         Schema::table('prices', function (Blueprint $table) {
