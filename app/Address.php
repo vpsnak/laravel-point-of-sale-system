@@ -22,7 +22,8 @@ class Address extends BaseModel
         'phone',
         'company',
         'vat_id',
-        'deliverydate',
+        'billing',
+        'shipping'
     ];
 
     protected $hidden = [
