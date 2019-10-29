@@ -25,14 +25,13 @@ export default {
 
 	computed: {
 		change() {
-			if (this.order && this.order.remaining < 0) {
-				return Math.abs(this.order.remaining);
+			if (this.order && this.order.total - this.order.total_paid < 0) {
+				return Math.abs(this.order.total - this.order.total_paid);
 			} else {
 				return false;
 			}
 		},
 		order() {
-			console.log(this.$store.state.cart.order);
 			return this.$store.state.cart.order;
 		},
 		orderId() {

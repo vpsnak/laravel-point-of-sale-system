@@ -333,10 +333,7 @@ export default new Vuex.Store({
         postRequest(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(
-                        this.state.baseUrl + payload.url,
-                        payload.data
-                        )
+                    .post(this.state.baseUrl + payload.url, payload.data)
                     .then(response => {
                         if (_.has(payload, "mutation")) {
                             context.commit(payload.mutation, response.data, {
