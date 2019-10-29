@@ -20,8 +20,8 @@ class CouponController extends BaseController
             'to' => 'nullable|date',
         ]);
         $discountData = $request->validate([
-            'discount_type' => 'required|in:flat,percentage',
-            'discount_amount' => 'required|numeric',
+            'discount.type' => 'required|in:flat,percentage',
+            'discount.amount' => 'required|numeric',
         ]);
 
 
@@ -34,9 +34,9 @@ class CouponController extends BaseController
             return response($this->model::updateData($validatedID, $validatedData), 200);
         } else {
 
-            $discount = Discount::store([
-                'type' => $discountData['discount_type'],
-                'amount' => $discountData['discount_amount'],
+            $discount = Discount::store([ 
+                'type' => $discountData['discount']['type'],
+                'amount' => $discountData['discount']['amount'],
             ]);
             $coupon = $discount->coupon()->create($validatedData);
 
