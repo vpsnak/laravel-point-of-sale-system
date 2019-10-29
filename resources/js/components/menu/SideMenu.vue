@@ -96,6 +96,12 @@ export default {
 				},
 				{
 					id: 13,
+					title: "Addresses",
+					icon: "fas fa-address-card",
+					to: "addresses"
+				},
+				{
+					id: 14,
 					title: "Forms",
 					icon: "fas fa-cat",
 					to: "forms"

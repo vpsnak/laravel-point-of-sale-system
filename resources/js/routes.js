@@ -15,6 +15,8 @@ import Taxes from './components/pages/Taxes'
 import CashRegisters from './components/pages/CashRegisters'
 import GiftCards from './components/pages/GiftCards'
 import Coupons from './components/pages/Coupons'
+import Addresses from './components/pages/Addresses'
+
 
 export default [
     {
@@ -25,7 +27,7 @@ export default [
         name: "dashboard",
         path: "/",
         component: Dashboard,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
     },
     {
         name: "login",
@@ -36,90 +38,96 @@ export default [
         name: "logout",
         path: "/logout",
         component: Logout,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
     },
     {
         name: "sales",
         path: "/sales",
         component: Sales,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
     },
     {
         name: "Orders",
         path: "/orders",
         component: Orders,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
     },
     {
         name: "Customers",
         path: "/customers",
         component: Customers,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
     },
     {
         name: "Products",
         path: "/products",
         component: Products,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
     },
     {
         name: "Categories",
         path: "/categories",
         component: Categories,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
     },
     {
         name: "Stores",
         path: "/stores",
         component: Stores,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
     },
     {
         name: "Users",
         path: "/users",
         component: Users,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
     },
     {
         name: "testc",
         path: "/chris",
         component: CTest,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
     },
     {
         name: "Forms",
         path: "/forms",
         component: Forms,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
     },
     {
         name: "ListData",
         path: "/list-data",
         component: ListData,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
     },
     {
         name: "Taxes",
         path: "/taxes",
         component: Taxes,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
     },
     {
         name: "CashRegisters",
         path: "/cash-registers",
         component: CashRegisters,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
     },
     {
         name: "GiftCards",
         path: "/gift-cards",
         component: GiftCards,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
     },
     {
         name: "Coupons",
         path: "/coupons",
         component: Coupons,
-        meta: {requiresAuth: true}
+        meta: { requiresAuth: true }
+    },
+    {
+        name: "Addresses",
+        path: "/addresses",
+        component: Addresses,
+        meta: { requiresAuth: true }
     }
 ];
