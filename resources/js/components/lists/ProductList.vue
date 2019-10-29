@@ -31,7 +31,7 @@
 
 			<v-row align="center" justify="center">
 				<v-col>
-					<v-slide-group show-arrows v-model="selectedCategory">
+					<v-slide-group show-arrows v-model="selectedCategory" @change="keyword = ''">
 						<v-slide-item
 							v-for="category in categoryList"
 							:key="category.id"
