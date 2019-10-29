@@ -32,7 +32,12 @@ export default {
 			this.skuGenerator();
 			this.dummyProduct.final_price = this.dummyProduct.price.amount;
 			this.$store.commit("cart/addProduct", this.dummyProduct);
-			this.$emit("addtocart", "cart");
+			this.$emit("submit", {
+				notification: {
+					msg: this.dummyProduct.name + " added to cart!",
+					type: "success"
+				}
+			});
 		},
 		beforeDestroy() {
 			this.$off("addtocart");

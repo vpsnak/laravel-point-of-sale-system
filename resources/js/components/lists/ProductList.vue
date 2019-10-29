@@ -70,11 +70,8 @@
 								</v-list>
 							</v-menu>
 						</v-card-title>
-						<v-chip class="mt-2 ml-1">
-							<span
-								v-if="product.final_price != product.price.amount"
-							>Net Price: {{parseFloat(product.final_price).toFixed(2)}} $</span>
-							<span v-else>Net Price: {{parseFloat(product.price.amount).toFixed(2)}} $</span>
+						<v-chip v-if="product.final_price != product.price.amount" class="mt-2 ml-1">
+							<span>Net Price: {{parseFloat(product.final_price).toFixed(2)}} $</span>
 						</v-chip>
 					</v-card>
 				</v-col>
@@ -92,7 +89,6 @@
 			title="Add a dummy product"
 			@action="result"
 			cancelBtnTxt="Close"
-			persistent
 			titleCloseBtn
 		></interactiveDialog>
 	</v-card>
@@ -119,7 +115,6 @@ export default {
 				return this.selected_category;
 			},
 			set(value) {
-				console.log(value);
 				this.selected_category = value;
 
 				if (value) {
