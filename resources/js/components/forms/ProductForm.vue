@@ -40,7 +40,7 @@
 			item-value="id"
 		></v-select>
 		<v-btn class="mr-4" @click="submit">submit</v-btn>
-		<v-btn v-if="this.model === undifined" @click="clear">clear</v-btn>
+		<v-btn v-if="this.model === undefined" @click="clear">clear</v-btn>
 	</v-form>
 </template>
 
