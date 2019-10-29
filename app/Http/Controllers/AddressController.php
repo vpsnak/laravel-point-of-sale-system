@@ -22,6 +22,14 @@ class AddressController extends BaseController
             'phone' => 'required|numeric',
         ]);
 
-        return response('HUHUHUHUHU');
+        $validatedID = $request->validate([
+            'id' => 'nullable|exists:address,id'
+        ]);
+
+        if (!empty($validatedID)) {
+            return response($this->model::updateData($validatedID, $validatedData), 200);
+        } else {
+            return response($this->model::store($validatedData), 201);
+        }
     }
 }
