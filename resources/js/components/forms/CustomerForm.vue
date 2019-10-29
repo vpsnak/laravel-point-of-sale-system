@@ -11,7 +11,7 @@
 			<v-text-field v-model="formFields.email" label="Email" required></v-text-field>
 
 			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="loading">submit</v-btn>
-			<v-btn v-if="this.model === undifined" @click="clear">clear</v-btn>
+			<v-btn v-if="this.model === undefined" @click="clear">clear</v-btn>
 		</v-form>
 	</div>
 </template> 
@@ -65,21 +65,7 @@ export default {
 				});
 		},
 		clear() {
-			this.formFields = this.defaultValues;
-			// this.formFields.first_name = null;
-			// this.formFields.last_name = null;
-			// this.formFields.email = null;
-			// this.formFields.phone = null;
-			// this.formFields.company_name = null;
-			// this.formFields.addresses.area_code_id = null;
-			// this.formFields.addresses.first_name = null;
-			// this.formFields.addresses.last_name = null;
-			// this.formFields.addresses.street = null;
-			// this.formFields.addresses.city = null;
-			// this.formFields.addresses.country_id = null;
-			// this.formFields.addresses.region = null;
-			// this.formFields.addresses.postcode = null;
-			// this.formFields.addresses.phone = null;
+			this.formFields = { ...this.defaultValues };
 		},
 		beforeDestroy() {
 			this.$off("submit");
