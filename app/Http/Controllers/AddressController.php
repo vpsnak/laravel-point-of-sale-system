@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Address;
+use Illuminate\Http\Request;
 
 class AddressController extends BaseController
 {
@@ -11,14 +12,14 @@ class AddressController extends BaseController
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'address.first_name' => 'required|string',
-            'address.last_name' => 'required|string',
-            'address.street' => 'required|string',
-            'address.city' => 'required|string',
-            'address.country_id' => 'nullable|string',
-            'address.region' => 'required|string',
-            'address.postcode' => 'required|string',
-            'address.phone' => 'required|numeric',
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'street' => 'required|string',
+            'city' => 'required|string',
+            'country_id' => 'nullable|string',
+            'region' => 'required|string',
+            'postcode' => 'required|string',
+            'phone' => 'required|numeric',
         ]);
 
         return response('HUHUHUHUHU');

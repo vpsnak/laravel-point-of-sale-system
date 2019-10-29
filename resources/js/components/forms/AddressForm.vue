@@ -10,9 +10,23 @@
 		<v-text-field v-model="formFields.street" label="Street" :disabled="loading" required></v-text-field>
 		<v-text-field v-model="formFields.street2" label="Second Street" :disabled="loading" required></v-text-field>
 		<v-text-field v-model="formFields.city" label="City" :disabled="loading" required></v-text-field>
-		<v-text-field v-model="formFields.country_id" label="Country id" :disabled="loading" required></v-text-field>
-		<v-text-field v-model="formFields.region" label="Region" :disabled="loading" required></v-text-field>
 		<v-text-field v-model="formFields.postcode" label="Postcode" :disabled="loading" required></v-text-field>
+		<v-select
+			v-model="formFields.region"
+			:items="regions"
+			label="Regions"
+			required
+			item-text="default_name"
+			item-value="default_name"
+		></v-select>
+		<v-select
+			v-model="formFields.country_id"
+			:items="countries"
+			label="Countries"
+			required
+			item-text="iso2_code"
+			item-value="iso2_code"
+		></v-select>
 		<v-text-field
 			v-model="formFields.phone"
 			label="Phone"
@@ -45,6 +59,8 @@ export default {
 		return {
 			loading: false,
 			defaultValues: {},
+			countries: [],
+			regions: [],
 			formFields: {
 				first_name: null,
 				last_name: null,
@@ -62,6 +78,16 @@ export default {
 		};
 	},
 	mounted() {
+		this.getAll({
+			model: "regions"
+		}).then(regions => {
+			this.regions = regions;
+		});
+		this.getAll({
+			model: "countries"
+		}).then(countries => {
+			this.countries = countries;
+		});
 		this.defaultValues = { ...this.formFields };
 		if (this.$props.model) {
 			this.formFields = {
@@ -77,7 +103,7 @@ export default {
 			this.loading = true;
 			let payload = {
 				model: "addresses",
-				data: { ...this.address }
+				data: { ...this.formFields }
 			};
 			this.create(payload)
 				.then(() => {
@@ -100,7 +126,10 @@ export default {
 		},
 
 		...mapActions({
-			create: "create"
+			getAll: "getAll",
+			getOne: "getOne",
+			create: "create",
+			delete: "delete"
 		})
 	}
 };
