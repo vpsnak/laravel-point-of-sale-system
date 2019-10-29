@@ -1,19 +1,27 @@
 <template>
 	<div>
-		<v-form>
+		<v-form @submit="submit">
 			<div class="text-center">
 				<v-chip color="primary" label>
 					<v-icon left>fas fa-ticket-alt</v-icon>Coupon Form
 				</v-chip>
 			</div>
-			<v-text-field v-model="formFields.name" label="Name" required></v-text-field>
-			<v-text-field v-model="formFields.code" label="Code" required></v-text-field>
-			<v-text-field v-model="formFields.uses" type="number" label="Uses" required></v-text-field>
-			<v-text-field v-model="formFields.discount_type" label="Discount Type" required></v-text-field>
+			<v-text-field v-model="formFields.name" label="Name" :disabled="loading" required></v-text-field>
+			<v-text-field v-model="formFields.code" label="Code" :disabled="loading" required></v-text-field>
+			<v-text-field v-model="formFields.uses" type="number" label="Uses" :disabled="loading" required></v-text-field>
+			<v-select
+				v-model="formFields.discount.type"
+				label="Discount type"
+				:items="discount_types"
+				:disabled="loading"
+				item-value="id"
+				required
+			></v-select>
 			<v-text-field
-				v-model="formFields.discount_amount"
+				v-model="formFields.discount.amount"
 				type="number"
 				label="Discount amount"
+				:disabled="loading"
 				required
 			></v-text-field>
 			<v-menu
@@ -43,7 +51,7 @@
 				<v-date-picker v-model="formFields.to" @input="menu2 = false"></v-date-picker>
 			</v-menu>
 
-			<v-btn class="mr-4" @click="submit">submit</v-btn>
+			<v-btn class="mr-4" :loading="loading" :disabled="loading" @click="submit">submit</v-btn>
 			<v-btn v-if="this.model === undefined" @click="clear">clear</v-btn>
 		</v-form>
 	</div>
@@ -57,14 +65,17 @@ export default {
 	},
 	data() {
 		return {
+			loading: false,
 			defaultValues: {},
-			savingSuccessful: false,
+			discount_types: ["flat", "percentage"],
 			formFields: {
 				name: null,
 				code: null,
 				uses: null,
-				discount_type: null,
-				discount_amount: null,
+				discount: {
+					type: null,
+					amount: null
+				},
 				from: null,
 				to: null
 			},
@@ -83,20 +94,32 @@ export default {
 	},
 	methods: {
 		submit() {
+			this.loading = true;
 			let payload = {
 				model: "coupons",
 				data: { ...this.formFields }
 			};
-			this.create(payload).then(() => {
-				this.clear();
-				this.$emit("submit", "coupons");
-			});
+			this.create(payload)
+				.then(() => {
+					this.$emit("submit", {
+						getRows: true,
+						model: "coupons",
+						notification: {
+							msg: "Coupon added successfully",
+							type: "success"
+						}
+					});
+					this.clear();
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 		beforeDestroy() {
 			this.$off("submit");
 		},
 		clear() {
-			this.formFields = this.defaultValues;
+			this.formFields = { ...this.defaultValues };
 		},
 		...mapActions({
 			getAll: "getAll",
