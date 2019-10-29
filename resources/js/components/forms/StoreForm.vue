@@ -20,7 +20,7 @@
 				item-value="id"
 			></v-select>
 			<v-btn class="mr-4" @click="submit">submit</v-btn>
-			<v-btn @click="clear">clear</v-btn>
+			<v-btn v-if="this.model === undifined" @click="clear">clear</v-btn>
 		</v-form>
 	</div>
 </template>
@@ -65,13 +65,25 @@ export default {
 				model: "stores",
 				data: { ...this.formFields }
 			};
-			this.create(payload).then(() => {
-				if (this.formFields.id == this.$store.state.store.id) {
-					this.$store.state.store = this.formFields;
-				}
-				this.clear();
-				this.$emit("submit", "stores");
-			});
+			this.create(payload)
+				.then(() => {
+					if (this.formFields.id == this.$store.state.store.id) {
+						this.$store.state.store = this.formFields;
+					}
+					this.clear();
+					this.$emit("submit", {
+						getRows: true,
+						model: "stores",
+						notification: {
+							msg: "Store added successfully",
+							type: "success"
+						}
+					});
+					this.clear();
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 		beforeDestroy() {
 			this.$off("submit");

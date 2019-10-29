@@ -19,7 +19,7 @@
 			@click:append="show = !show"
 		></v-text-field>
 		<v-btn class="mr-4" @click="submit">submit</v-btn>
-		<v-btn @click="clear">clear</v-btn>
+		<v-btn v-if="this.model === undifined" @click="clear">clear</v-btn>
 	</v-form>
 </template>
 

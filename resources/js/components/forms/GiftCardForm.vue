@@ -12,7 +12,7 @@
 			<v-text-field v-model="formFields.amount" type="number" label="Amount" required></v-text-field>
 
 			<v-btn class="mr-4" @click="submit">submit</v-btn>
-			<v-btn @click="clear">clear</v-btn>
+			<v-btn v-if="this.model === undifined" @click="clear">clear</v-btn>
 		</v-form>
 	</div>
 </template>
@@ -48,10 +48,21 @@ export default {
 				model: "gift-cards",
 				data: { ...this.formFields }
 			};
-			this.create(payload).then(() => {
-				this.clear();
-				this.$emit("submit", "gift-cards");
-			});
+			this.create(payload)
+				.then(() => {
+					this.$emit("submit", {
+						getRows: true,
+						model: "gift-cards",
+						notification: {
+							msg: "Gift card added successfully",
+							type: "success"
+						}
+					});
+					this.clear();
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 		beforeDestroy() {
 			this.$off("submit");

@@ -22,7 +22,7 @@
 				@click.prevent="submit"
 				:disabled="invalid || disableSubmit"
 			>submit</v-btn>
-			<v-btn class="mr-4" @click="clear">clear</v-btn>
+			<v-btn v-if="this.model === undifined" class="mr-4" @click="clear">clear</v-btn>
 		</v-form>
 	</ValidationObserver>
 </template>
