@@ -40,7 +40,7 @@ export default {
 			});
 		},
 		beforeDestroy() {
-			this.$off("addtocart");
+			this.$off("submit");
 		},
 		beforeDestroy() {
 			this.$off("addtocart");
