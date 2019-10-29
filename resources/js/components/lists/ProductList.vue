@@ -55,6 +55,7 @@
 					<v-card :img="product.photo_url" @click="addProduct(product)" height="170px">
 						<v-card-title class="blue-grey pa-0" @click.stop>
 							<h6 class="px-2">{{product.name}}</h6>
+							<h6 class="px-2">{{parseFloat(product.price.amount).toFixed(2)}} $</h6>
 							<div class="flex-grow-1"></div>
 							<v-menu bottom left>
 								<template v-slot:activator="{ on }">
