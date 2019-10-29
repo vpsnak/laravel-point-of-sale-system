@@ -9,7 +9,7 @@
 			<v-btn
 				v-if="completed"
 				color="primary"
-				@click="completeStep()"
+				@click="completeStep"
 				:loading="loading"
 				:disabled="loading"
 			>Complete order</v-btn>
@@ -50,13 +50,14 @@ export default {
 				data: {
 					id: this.order.id,
 					status: "complete"
-				}
+				},
+				mutation: "cart/setOrder"
 			};
 
-			this.create(payload).finally(() => {
+			this.create(payload).then(response => {
 				this.$store.dispatch("cart/completeStep").then(() => {
 					this.loading = false;
-					this.$store.state.cart.order.status = "complete";
+					// this.$store.state.cart.order.status = "complete";
 				});
 			});
 		},

@@ -25,8 +25,11 @@ class OrderController extends BaseController
                 'shipping_cost' => 'numeric|nullable',
             ]);
 
-            return response($this->model::updateData($validatedID, $validatedData), 200);
+            $this->model::updateData($validatedID, $validatedData);
+
+            return response(Order::findOrFail($validatedID)->first(), 200);
         }
+
         $validatedData = $request->validate([
             'customer_id' => 'nullable|exists:customers,id',
             'status' => 'required|in:pending,pending_payment,paid,complete,canceled',
