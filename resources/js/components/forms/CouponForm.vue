@@ -84,7 +84,6 @@ export default {
 		};
 	},
 	mounted() {
-		console.log(this.model);
 		this.defaultValues = { ...this.formFields };
 		if (this.$props.model) {
 			this.formFields = {

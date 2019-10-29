@@ -33,6 +33,8 @@ $baseRoutes = [
     'cash-register-logs' => 'CashRegisterLogsController',
     'gift-cards' => 'GiftCardController',
     'coupons' => 'CouponController',
+    'regions' => 'RegionController',
+    'countries' => 'CountryController',
 ];
 
 Route::get('categories/{category}/products', "CategoryController@productsByCategory");
