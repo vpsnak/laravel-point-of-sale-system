@@ -15,11 +15,14 @@ class AddressController extends BaseController
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'street' => 'required|string',
+            'street2' => 'required|string',
             'city' => 'required|string',
             'country_id' => 'nullable|string',
             'region' => 'required|string',
             'postcode' => 'required|string',
             'phone' => 'required|numeric',
+            'company' => 'required|string',
+            'vat_id' => 'required|string'
         ]);
 
         $validatedID = $request->validate([
