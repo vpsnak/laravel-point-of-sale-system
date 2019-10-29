@@ -71,7 +71,10 @@
 							</v-menu>
 						</v-card-title>
 						<v-chip class="mt-2 ml-1">
-							<span>Net Price : {{parseFloat(product.final_price).toFixed(2)}} $</span>
+							<span
+								v-if="product.final_price != product.price.amount"
+							>Net Price: {{parseFloat(product.final_price).toFixed(2)}} $</span>
+							<span v-else>Net Price: {{parseFloat(product.price.amount).toFixed(2)}} $</span>
 						</v-chip>
 					</v-card>
 				</v-col>
