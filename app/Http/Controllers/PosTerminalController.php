@@ -10,79 +10,83 @@ use \App\TransactionLog;
 class PosTerminalController extends Controller
 {
     private $payment;
+    private $testCase;
+    private $transactionId;
+    private $paymentGatewayId;
+    private $chanId;
 
-    public function __construct(Payment $payment)
-    {
-        $this->setPayment($payment);
-    }
-
-    protected function getPayment()
-    {
-        return $this->payment;
-    }
-
-    protected function setPayment(Payment $payment)
+    public function __construct(Payment $payment, $amount, $testCase = null)
     {
         $this->payment = $payment;
+        $this->testCase = $testCase;
     }
 
-    private function saveToSdkLog($testCase, $data)
+    private function saveToSdkLog($data, $status)
     {
         $elavonSdkPayment = new ElavonSdkPayment();
 
-        $elavonSdkPayment->payment_id = $this->$this->getPayment()->id;
-        $elavonSdkPayment->cash_register_id = $this->$this->getPayment()->cash_register_id;
-        $elavonSdkPayment->test_case = $testCase;
+        $elavonSdkPayment->payment_id = $this->payment->id;
+        $elavonSdkPayment->cash_register_id = $this->payment->cash_register_id;
+        $elavonSdkPayment->payment_gateway_id = $this->paymentGatewayId;
+        $elavonSdkPayment->chan_id = $this->chanId;
+
+        $elavonSdkPayment->test_case = $this->testCase;
+        $elavonSdkPayment->status = $status;
         $elavonSdkPayment->log = $data;
 
         $elavonSdkPayment->save();
     }
 
-    private function saveToLog(Payment $payment, $data)
-    {
-        $transactionLog = new TransactionLog();
-
-        $transactionLog->payment_id = $payment->id;
-        $transactionLog->cash_register_id = $payment->cash_register_id;
-        $transactionLog->log = $data;
-
-        $transactionLog->save();
-    }
-
     private function setPaymentStatus($status)
     {
-        $this->getPayment()->status = $status;
-        $this->getPayment()->save();
+        $this->payment->status = $status;
+        $this->payment->save();
     }
 
     private function initPosTerminal()
     {
+        $id = json_decode($this->startCardReaderConfiguration(), true);
+
+        if ($id['statusDetails'] === 'TARGET_UNAVAILABLE') {
+            $this->setPaymentStatus('failed');
+            $this->saveToSdkLog('POS Terminal initialization failed. Please restart Converge Service and try again.', 'error');
+
+            return ['errors' => 'POS Terminal initialization failed.<br>Please restart Converge Service and try again.'];
+        }
+
+        $id = $id['data']['cardReaderCommand']['id'];
+
+        $response = $this->startCardReadersSearch();
+        $this->saveToSdkLog($response, 'info');
+
+        $id = json_decode($response, true);
+        $id = $id['requestId'];
+
+        do {
+            sleep(1);
+            $response = json_decode($this->getCardReadersSearchStatus($id), true);
+        } while ($response['data']['cardReadersSearch']['completed'] === false);
+
+        $this->saveToSdkLog($response, 'success');
+
+        if (!count($response['data']['cardReadersSearch']['cardReaders'])) {
+            $this->setPaymentStatus('failed');
+
+            return ['errors' => 'POS Terminal failed to initialize properly'];
+        }
+    }
+
+    private function getPosTerminalStatus($autoInit = true)
+    {
         $cardReaderInfo = json_decode($this->getCardReaderInfo(), true);
+
         if ($cardReaderInfo['data']['cardReaderInfo'] === null) {
-            // card reader is not initialized!
-
-            $id = json_decode($this->startCardReaderConfiguration(), true);
-
-            if ($id['statusDetails'] === 'TARGET_UNAVAILABLE') {
-                $this->setPaymentStatus($this->getPayment(), 'failed');
-
-                return ['errors' => 'POS Terminal is already initialized or not available'];
-            }
-
-            $id = $id['data']['cardReaderCommand']['id'];
-
-            $id = json_decode($this->startCardReadersSearch(), true);
-            $id = $id['requestId'];
-
-            do {
-                sleep(1);
-                $response = json_decode($this->getCardReadersSearchStatus($id), true);
-            } while ($response['data']['cardReadersSearch']['completed'] === false);
-
-            if (!count($response['data']['cardReadersSearch']['cardReaders'])) {
-                $this->setPaymentStatus('failed');
-
-                return ['errors' => 'POS Terminal failed to initialize properly'];
+            $this->saveToSdkLog('POS Terminal is not initialized.', 'error');
+            if ($autoInit) {
+                $this->saveToSdkLog('Starting automatic initialization process...', 'info');
+                return $this->initPosTerminal();
+            } else {
+                return false;
             }
         }
     }
@@ -91,37 +95,41 @@ class PosTerminalController extends Controller
     {
         if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'FAILED') {
             $this->setPaymentStatus('failed');
+            $this->saveToSdkLog(json_encode($response), 'failed');
 
             switch ($response['data']['paymentGatewayCommand']['paymentTransactionData']['errors'][0]) {
                 case 'ECLCommerceError ECLCardReaderCanceled':
+                    $this->setPaymentStatus('Transaction canceled');
                     return ['errors' => 'Transaction canceled'];
-                    break;
                 case 'ECLCommerceError ECLTransactionCardNeedsRemoval':
+                    $this->setPaymentStatus('Remove the card and try again.<br>Insert the card only when prompted by the POS Terminal');
                     return ['errors' => 'Remove the card and try again.<br>Insert the card only when prompted by the POS Terminal'];
-                    break;
-
                 case 'ECLCommerceError ECLTransactionCardRemoved':
+                    $this->setPaymentStatus('Card has been removed before the transaction completed');
                     return ['errors' => 'Card has been removed before the transaction completed'];
-                    break;
                 case 'ECLCommerceError ECLCardReaderCannotConnect':
+                    $this->setPaymentStatus('POS Terminal disconnected<br>Please verify that POS Terminal is properly connected and try again');
                     return ['errors' => 'POS Terminal disconnected<br>Please verify that POS Terminal is properly connected and try again'];
-                    break;
                 case 'ECLCommerceError ECLCardReaderCardDataInvalid':
+                    $this->setPaymentStatus('Invalid card');
                     return ['errors' => 'Invalid card'];
-                    break;
                 default:
+                    $this->setPaymentStatus('Warning: Unhandled error occured. Please check log file entry above');
                     return ['errors' => $response['data']['paymentGatewayCommand']['paymentTransactionData']];
             }
         } else if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'DECLINED') {
             $this->setPaymentStatus('declined');
+            $this->saveToSdkLog(json_encode($response), 'declined');
 
             return ['errors' => 'Card declined by issuer'];
         } else if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'APPROVED') {
             $this->setPaymentStatus('approved');
+            $this->saveToSdkLog(json_encode($response), 'approved');
 
             return ['success' => $response['data']['paymentGatewayCommand']['eventQueue']];
         } else {
             $this->setPaymentStatus('failed');
+            $this->saveToSdkLog(json_encode($response), 'failed');
 
             return ['errors' => $response];
         }
@@ -130,33 +138,34 @@ class PosTerminalController extends Controller
     public function posPayment($amount)
     {
         $this->setPaymentStatus('failed');
-        $this->initPosTerminal();
+        $this->getPosTerminalStatus();
         $amount *= 100;
 
-        $paymentGatewayId = json_decode($this->openPaymentGateway(), true);
+        $errors = $this->openPaymentGateway();
 
-        if ($paymentGatewayId['data']['paymentGatewayCommand']['openPaymentGatewayData']['result'] !== 'SUCCESS') {
-            $this->setPaymentStatus('failed');
-
-            return ['errors' => 'Payment gateway failed'];
+        if (array_key_exists('errors', $errors)) {
+            return $errors;
         }
 
-        $paymentGatewayId = $paymentGatewayId['data']['paymentGatewayCommand']['openPaymentGatewayData']['paymentGatewayId'];
-        $chanId = json_decode($this->startPaymentTransaction($paymentGatewayId, $amount), true);
-
-        $chanId = $chanId['data']['paymentGatewayCommand']['chanId'];
+        if (array_key_exists('errors', $this->startPaymentTransaction($amount))) {
+            $this->saveToSdkLog('Error at starting transaction. Please try again.', 'error');
+            return ['errors' => 'Error at starting transaction.<br>Please try again.'];
+        }
 
         set_time_limit(300);
 
         do {
             sleep(1);
-            $response = json_decode($this->getPaymentTransactionStatus($paymentGatewayId, $chanId), true);
+            $response = json_decode($this->getPaymentTransactionStatus(), true);
         } while ($response['data']['paymentGatewayCommand']['completed'] === false);
+        $this->saveToSdkLog(json_encode($response), 'success');
 
-        $this->getTransactionResponse($response);
+        $response = $this->getTransactionResponse($response);
+
+        return $response;
     }
 
-    private function sendRequest($payload)
+    private function sendRequest($payload, $verbose = true)
     {
         $url = config('elavon.hostPC.ip') . ':' . config('elavon.hostPC.port') . '/rest/command';
         $client = new Client(['verify' => false]);
@@ -172,10 +181,17 @@ class PosTerminalController extends Controller
             ]);
         } catch (Exception $e) {
             $this->setPaymentStatus($payload, 'failed');
+            $this->saveToSdkLog($e->getResponse(), 'error');
+
             return ['errors' => $e->getResponse()];
         }
 
-        return $response->getBody()->getContents();
+        $response = $response->getBody()->getContents();
+        if ($verbose) {
+            $this->saveToSdkLog($response, 'success');
+        }
+
+        return $response;
     }
 
     private function startCardReaderConfiguration()
@@ -219,7 +235,7 @@ class PosTerminalController extends Controller
         return $this->sendRequest($payload);
     }
 
-    private  function startCardReadersSearch()
+    private function startCardReadersSearch()
     {
         $requestId = idate("U");
 
@@ -252,7 +268,7 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        return $this->sendRequest($payload);
+        return $this->sendRequest($payload, false);
     }
 
     private  function getCardReaderInfo()
@@ -268,7 +284,7 @@ class PosTerminalController extends Controller
         return $this->sendRequest($payload);
     }
 
-    private  function openPaymentGateway()
+    private function openPaymentGateway()
     {
         $requestId = idate("U");
 
@@ -292,10 +308,21 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        return $this->sendRequest($payload);
+        $paymentGateway = json_decode($this->sendRequest($payload), true);
+
+        if ($paymentGateway['data']['paymentGatewayCommand']['openPaymentGatewayData']['result'] !== 'SUCCESS') {
+            $this->setPaymentStatus('failed');
+            $this->saveToSdkLog('Payment gateway failed', 'error');
+
+            return ['errors' => 'Payment gateway failed'];
+        } else {
+            $this->paymentGatewayId = $paymentGateway['data']['paymentGatewayCommand']['openPaymentGatewayData']['paymentGatewayId'];
+
+            return [];
+        }
     }
 
-    private  function startPaymentTransaction($paymentGatewayId, $transactionAmount)
+    private  function startPaymentTransaction($transactionAmount)
     {
         $requestId = idate("U");
 
@@ -305,7 +332,7 @@ class PosTerminalController extends Controller
             "targetType" => "paymentGatewayConverge",
             "version" => "1.0",
             "parameters" => [
-                "paymentGatewayId" => $paymentGatewayId,
+                "paymentGatewayId" => $this->paymentGatewayId,
                 "transactionType" => "SALE",
                 "baseTransactionAmount" => [
                     "value" => (int) $transactionAmount,
@@ -318,10 +345,13 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        return $this->sendRequest($payload);
+        $response = json_decode($this->sendRequest($payload), true);
+        $this->chanId = $response['data']['paymentGatewayCommand']['chanId'];
+
+        return [];
     }
 
-    private  function getPaymentTransactionStatus($paymentGatewayId, $chanId)
+    private  function getPaymentTransactionStatus()
     {
         $requestId = idate("U");
 
@@ -331,12 +361,12 @@ class PosTerminalController extends Controller
             "targetType" => "paymentGatewayConverge",
             "version" => "1.0",
             "parameters" => [
-                "paymentGatewayId" => $paymentGatewayId,
-                "chanId" => $chanId
+                "paymentGatewayId" => $this->paymentGatewayId,
+                "chanId" => $this->chanId
             ]
         ];
 
-        return $this->sendRequest($payload);
+        return $this->sendRequest($payload, false);
     }
 
     private  function cancelPaymentTransaction($paymentGatewayId, $chanId)

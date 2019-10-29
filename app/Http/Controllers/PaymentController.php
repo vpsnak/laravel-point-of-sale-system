@@ -9,6 +9,7 @@ use App\Order;
 use App\Payment;
 use App\PaymentType;
 use Illuminate\Http\Request;
+use App\Http\Controllers\PosTerminalController;
 
 class PaymentController extends BaseController
 {
@@ -22,6 +23,9 @@ class PaymentController extends BaseController
             'order_id' => 'required|exists:orders,id',
             'cash_register_id' => 'required|exists:cash_registers,id',
             'created_by' => 'required|exists:users,id',
+
+            // test case for API/SDK
+            'test_case' => 'sometimes|string',
 
             // card validation
             'card.number' => 'nullable|required_if:payment_type,card|numeric',
@@ -147,10 +151,10 @@ class PaymentController extends BaseController
                 break;
 
             case 'pos-terminal':
-                $paymentResponse = new PosTerminalController($payment);
-                $paymentResponse = $paymentResponse->posPayment($validatedData['amount']);
+                $posTerminalController = new PosTerminalController($payment, array_key_exists('test_case', $validatedData) ? $validatedData['test_case'] : null);
+                $paymentResponse = $posTerminalController->posPayment($validatedData['amount']);
 
-                if (key_exists('errors', $paymentResponse)) {
+                if (array_key_exists('errors', $paymentResponse)) {
                     $payment->status = 'failed';
                     $payment->save();
 
