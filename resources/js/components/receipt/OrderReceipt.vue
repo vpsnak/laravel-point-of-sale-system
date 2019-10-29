@@ -1,5 +1,5 @@
 <template>
-	<v-card class="mx-auto" max-width="300">
+	<v-card class="mx-auto" max-width="400">
 		<v-list>
 			<v-subheader>
 				<v-icon left>mdi-receipt</v-icon>
@@ -17,15 +17,15 @@
 					<v-list-item-title>Print</v-list-item-title>
 				</v-list-item-content>
 			</v-list-item>
-			<v-list-item :disabled="! customerEmail" @click="mailReceipt">
-				<v-list-item-icon>
-					<v-icon>mdi-email-newsletter</v-icon>
-				</v-list-item-icon>
+			<v-list-item>
 				<v-list-item-content>
-					<v-list-item-title>Email</v-list-item-title>
-					<v-list-item-subtitle v-if="customerEmail">
-						<i>at {{ customerEmail }}</i>
-					</v-list-item-subtitle>
+					<v-text-field
+						v-model="customerEmail"
+						label="Send via e-mail"
+						prepend-inner-icon="mdi-email-newsletter"
+						append-outer-icon="mdi-send"
+						@click:append-outer="mailReceipt"
+					></v-text-field>
 				</v-list-item-content>
 			</v-list-item>
 		</v-list>
@@ -34,6 +34,11 @@
 
 <script>
 export default {
+	data() {
+		return {
+			customer_email: ""
+		};
+	},
 	computed: {
 		order() {
 			return this.$store.state.cart.order;
@@ -49,11 +54,18 @@ export default {
 			}
 			return undefined;
 		},
-		customerEmail() {
-			if (this.customer) {
-				return this.customer.email ? this.customer.email : undefined;
-			} else {
-				return undefined;
+		customerEmail: {
+			get() {
+				if (this.customer_email) {
+					return this.customer_email;
+				} else if (this.customer) {
+					return this.customer.email ? this.customer.email : undefined;
+				} else {
+					return undefined;
+				}
+			},
+			set(value) {
+				this.customer_email = value;
 			}
 		}
 	},

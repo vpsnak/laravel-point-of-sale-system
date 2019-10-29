@@ -32,6 +32,7 @@ export default {
 			}
 		},
 		order() {
+			console.log(this.$store.state.cart.order);
 			return this.$store.state.cart.order;
 		},
 		orderId() {

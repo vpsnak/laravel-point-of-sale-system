@@ -48,19 +48,17 @@ class PaymentObserver
                         return false;
                     }
                     return true;
-                    break;
                 case 'coupon':
                     $coupon = Coupon::whereCode($payment->code)->firstOrFail();
                     $coupon->uses++;
                     $coupon->save();
                     return true;
-                    break;
                 case 'giftcard':
                     $giftcard = Giftcard::whereCode($payment->code)->firstOrFail();
                     $giftcard->amount += $payment['amount'];
                     $giftcard->save();
                     return true;
-                    break;
+                case 'cash':
                 default:
                     return true;
             }

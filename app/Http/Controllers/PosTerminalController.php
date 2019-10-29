@@ -40,7 +40,7 @@ class PosTerminalController extends Controller
 
     public static function posPayment($amount, Payment $payment)
     {
-        self::setPaymentStatus($payment, 'time out');
+        self::setPaymentStatus($payment, 'failed');
         $amount *= 100;
 
         $cardReaderInfo = json_decode(self::getCardReaderInfo(), true);
