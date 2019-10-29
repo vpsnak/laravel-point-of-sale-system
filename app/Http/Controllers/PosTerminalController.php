@@ -57,30 +57,30 @@ class PosTerminalController extends Controller
 
     private function initPosTerminal()
     {
-        $cardReaderInfo = json_decode(self::getCardReaderInfo(), true);
+        $cardReaderInfo = json_decode($this->getCardReaderInfo(), true);
         if ($cardReaderInfo['data']['cardReaderInfo'] === null) {
             // card reader is not initialized!
 
-            $id = json_decode(self::startCardReaderConfiguration(), true);
+            $id = json_decode($this->startCardReaderConfiguration(), true);
 
             if ($id['statusDetails'] === 'TARGET_UNAVAILABLE') {
-                self::setPaymentStatus($this->getPayment(), 'failed');
+                $this->setPaymentStatus($this->getPayment(), 'failed');
 
                 return ['errors' => 'POS Terminal is already initialized or not available'];
             }
 
             $id = $id['data']['cardReaderCommand']['id'];
 
-            $id = json_decode(self::startCardReadersSearch(), true);
+            $id = json_decode($this->startCardReadersSearch(), true);
             $id = $id['requestId'];
 
             do {
                 sleep(1);
-                $response = json_decode(self::getCardReadersSearchStatus($id), true);
+                $response = json_decode($this->getCardReadersSearchStatus($id), true);
             } while ($response['data']['cardReadersSearch']['completed'] === false);
 
             if (!count($response['data']['cardReadersSearch']['cardReaders'])) {
-                self::setPaymentStatus('failed');
+                $this->setPaymentStatus('failed');
 
                 return ['errors' => 'POS Terminal failed to initialize properly'];
             }
@@ -90,7 +90,7 @@ class PosTerminalController extends Controller
     private function getTransactionResponse($response)
     {
         if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'FAILED') {
-            self::setPaymentStatus('failed');
+            $this->setPaymentStatus('failed');
 
             switch ($response['data']['paymentGatewayCommand']['paymentTransactionData']['errors'][0]) {
                 case 'ECLCommerceError ECLCardReaderCanceled':
@@ -113,15 +113,15 @@ class PosTerminalController extends Controller
                     return ['errors' => $response['data']['paymentGatewayCommand']['paymentTransactionData']];
             }
         } else if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'DECLINED') {
-            self::setPaymentStatus('declined');
+            $this->setPaymentStatus('declined');
 
             return ['errors' => 'Card declined by issuer'];
         } else if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'APPROVED') {
-            self::setPaymentStatus('approved');
+            $this->setPaymentStatus('approved');
 
             return ['success' => $response['data']['paymentGatewayCommand']['eventQueue']];
         } else {
-            self::setPaymentStatus('failed');
+            $this->setPaymentStatus('failed');
 
             return ['errors' => $response];
         }
@@ -129,20 +129,20 @@ class PosTerminalController extends Controller
 
     public function posPayment($amount)
     {
-        self::setPaymentStatus('failed');
-        self::initPosTerminal();
+        $this->setPaymentStatus('failed');
+        $this->initPosTerminal();
         $amount *= 100;
 
-        $paymentGatewayId = json_decode(self::openPaymentGateway(), true);
+        $paymentGatewayId = json_decode($this->openPaymentGateway(), true);
 
         if ($paymentGatewayId['data']['paymentGatewayCommand']['openPaymentGatewayData']['result'] !== 'SUCCESS') {
-            self::setPaymentStatus('failed');
+            $this->setPaymentStatus('failed');
 
             return ['errors' => 'Payment gateway failed'];
         }
 
         $paymentGatewayId = $paymentGatewayId['data']['paymentGatewayCommand']['openPaymentGatewayData']['paymentGatewayId'];
-        $chanId = json_decode(self::startPaymentTransaction($paymentGatewayId, $amount), true);
+        $chanId = json_decode($this->startPaymentTransaction($paymentGatewayId, $amount), true);
 
         $chanId = $chanId['data']['paymentGatewayCommand']['chanId'];
 
@@ -150,13 +150,13 @@ class PosTerminalController extends Controller
 
         do {
             sleep(1);
-            $response = json_decode(self::getPaymentTransactionStatus($paymentGatewayId, $chanId), true);
+            $response = json_decode($this->getPaymentTransactionStatus($paymentGatewayId, $chanId), true);
         } while ($response['data']['paymentGatewayCommand']['completed'] === false);
 
-        self::getTransactionResponse($response);
+        $this->getTransactionResponse($response);
     }
 
-    private  function sendRequest($payload)
+    private function sendRequest($payload)
     {
         $url = config('elavon.hostPC.ip') . ':' . config('elavon.hostPC.port') . '/rest/command';
         $client = new Client(['verify' => false]);
@@ -171,14 +171,14 @@ class PosTerminalController extends Controller
                 'body' => json_encode($payload)
             ]);
         } catch (Exception $e) {
-            self::setPaymentStatus($payload, 'failed');
+            $this->setPaymentStatus($payload, 'failed');
             return ['errors' => $e->getResponse()];
         }
 
         return $response->getBody()->getContents();
     }
 
-    private  function startCardReaderConfiguration()
+    private function startCardReaderConfiguration()
     {
         $requestId = idate("U");
 
@@ -199,10 +199,10 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        return self::sendRequest($payload);
+        return $this->sendRequest($payload);
     }
 
-    private  function getCommandStatusOnCardReader($id)
+    private function getCommandStatusOnCardReader($id)
     {
         $requestId = idate("U");
 
@@ -216,7 +216,7 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        return self::sendRequest($payload);
+        return $this->sendRequest($payload);
     }
 
     private  function startCardReadersSearch()
@@ -235,7 +235,7 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        return self::sendRequest($payload);
+        return $this->sendRequest($payload);
     }
 
     private  function getCardReadersSearchStatus($id)
@@ -252,7 +252,7 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        return self::sendRequest($payload);
+        return $this->sendRequest($payload);
     }
 
     private  function getCardReaderInfo()
@@ -265,7 +265,7 @@ class PosTerminalController extends Controller
             "targetType" => "api"
         ];
 
-        return self::sendRequest($payload);
+        return $this->sendRequest($payload);
     }
 
     private  function openPaymentGateway()
@@ -292,7 +292,7 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        return self::sendRequest($payload);
+        return $this->sendRequest($payload);
     }
 
     private  function startPaymentTransaction($paymentGatewayId, $transactionAmount)
@@ -318,7 +318,7 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        return self::sendRequest($payload);
+        return $this->sendRequest($payload);
     }
 
     private  function getPaymentTransactionStatus($paymentGatewayId, $chanId)
@@ -336,7 +336,7 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        return self::sendRequest($payload);
+        return $this->sendRequest($payload);
     }
 
     private  function cancelPaymentTransaction($paymentGatewayId, $chanId)
@@ -354,7 +354,7 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        return self::sendRequest($payload);
+        return $this->sendRequest($payload);
     }
 
     private  function searchPaymentTransaction($parameters)
@@ -387,7 +387,7 @@ class PosTerminalController extends Controller
 
         $payload[] = $parameters;
 
-        return self::sendRequest($payload);
+        return $this->sendRequest($payload);
     }
 
     private  function linkedRefund(Payment $payment)
@@ -411,6 +411,6 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        return self::sendRequest($payload);
+        return $this->sendRequest($payload);
     }
 }
