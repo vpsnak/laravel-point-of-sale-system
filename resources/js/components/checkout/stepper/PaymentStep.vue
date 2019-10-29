@@ -57,7 +57,6 @@ export default {
 			this.create(payload).then(response => {
 				this.$store.dispatch("cart/completeStep").then(() => {
 					this.loading = false;
-					// this.$store.state.cart.order.status = "complete";
 				});
 			});
 		},
