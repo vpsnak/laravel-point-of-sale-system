@@ -16,8 +16,10 @@ class OrderObserver
     {
         if ($order->status == 'canceled') {
             foreach ($order->payments as $payment) {
-                $payment->status = 'refunded';
-                $payment->save();
+                if ($payment->status === 'approved') {
+                    $payment->status = 'refunded';
+                    $payment->save();
+                }
             }
 
             foreach ($order->items as $item) {

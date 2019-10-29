@@ -16,7 +16,7 @@ class PaymentObserver
 
     public function updateOrderStatus(Payment $payment)
     {
-        if ($payment->order->status != 'complete') {
+        if ($payment->order->status != 'complete' && $payment->order->status != 'canceled') {
             if ($payment->order->total - $payment->order->total_paid > 0) {
                 if ($payment->order->status != 'pending_payment') {
                     $payment->order->status = 'pending_payment';

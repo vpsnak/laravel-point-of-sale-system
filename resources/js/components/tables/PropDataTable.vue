@@ -30,10 +30,7 @@
 							</template>
 							<span>Continue checkout</span>
 						</v-tooltip>
-						<v-tooltip
-							bottom
-							v-if="tableViewComponent === 'order' && (item.status === 'pending_payment' || item.status === 'pending' || item.status === 'completed')"
-						>
+						<v-tooltip bottom v-if="tableViewComponent === 'order' && item.status !== 'canceled'">
 							<template v-slot:activator="{ on }">
 								<v-btn @click="selectedItem = item, cancelOrderDialog = true" class="my-1" icon v-on="on">
 									<v-icon small>mdi-cancel</v-icon>
