@@ -70,6 +70,12 @@
 								</v-list>
 							</v-menu>
 						</v-card-title>
+						<v-chip class="mt-2 ml-1">
+							<span
+								v-if="product.final_price != product.price.amount"
+							>Net Price: {{parseFloat(product.final_price).toFixed(2)}} $</span>
+							<span v-else>Net Price: {{parseFloat(product.price.amount).toFixed(2)}} $</span>
+						</v-chip>
 					</v-card>
 				</v-col>
 			</v-row>
@@ -152,6 +158,7 @@ export default {
 		},
 		getAllProducts() {
 			this.initiateLoadingSearchResults(true);
+			this.selected_category = null;
 
 			let payload = {
 				model: "products",
@@ -191,6 +198,7 @@ export default {
 			});
 		},
 		searchProduct(keyword) {
+			this.selected_category = null;
 			if (keyword.length > 0) {
 				this.initiateLoadingSearchResults(true);
 

@@ -5,44 +5,52 @@
 				<v-icon left>fas fa-address-card</v-icon>Address Form
 			</v-chip>
 		</div>
-		<v-text-field v-model="formFields.first_name" label="First name" :disabled="loading" required></v-text-field>
-		<v-text-field v-model="formFields.last_name" label="Last name" :disabled="loading" required></v-text-field>
-		<v-text-field v-model="formFields.street" label="Street" :disabled="loading" required></v-text-field>
-		<v-text-field v-model="formFields.street2" label="Second Street" :disabled="loading" required></v-text-field>
-		<v-text-field v-model="formFields.city" label="City" :disabled="loading" required></v-text-field>
-		<v-text-field v-model="formFields.postcode" label="Postcode" :disabled="loading" required></v-text-field>
-		<v-select
-			v-model="formFields.region"
-			:items="regions"
-			label="Regions"
-			required
-			item-text="default_name"
-			item-value="default_name"
-		></v-select>
-		<v-select
-			v-model="formFields.country_id"
-			:items="countries"
-			label="Countries"
-			required
-			item-text="iso2_code"
-			item-value="iso2_code"
-		></v-select>
-		<v-text-field
-			v-model="formFields.phone"
-			label="Phone"
-			type="number"
-			:min="0"
-			:disabled="loading"
-			required
-		></v-text-field>
-		<v-text-field v-model="formFields.company" label="Company" :disabled="loading" required></v-text-field>
-		<v-text-field v-model="formFields.vat_id" label="Vat id" :disabled="loading" required></v-text-field>
-		<!-- <v-text-field
+		<v-row>
+			<v-col cols="4">
+				<v-text-field v-model="formFields.first_name" label="First name" :disabled="loading" required></v-text-field>
+				<v-text-field v-model="formFields.city" label="City" :disabled="loading" required></v-text-field>
+				<v-select
+					v-model="formFields.region"
+					:items="regions"
+					label="Regions"
+					required
+					item-text="default_name"
+					item-value="id"
+				></v-select>
+				<v-text-field v-model="formFields.company" label="Company" :disabled="loading" required></v-text-field>
+			</v-col>
+			<v-col cols="4">
+				<v-text-field v-model="formFields.last_name" label="Last name" :disabled="loading" required></v-text-field>
+				<v-text-field v-model="formFields.postcode" label="Postcode" :disabled="loading" required></v-text-field>
+				<v-select
+					v-model="formFields.country_id"
+					:items="countries"
+					label="Countries"
+					required
+					item-text="iso2_code"
+					item-value="iso2_code"
+				></v-select>
+				<v-text-field v-model="formFields.vat_id" label="Vat id" :disabled="loading" required></v-text-field>
+			</v-col>
+			<v-col cols="4">
+				<v-text-field v-model="formFields.street" label="Street" :disabled="loading" required></v-text-field>
+				<v-text-field v-model="formFields.street2" label="Second Street" :disabled="loading" required></v-text-field>
+				<v-text-field
+					v-model="formFields.phone"
+					label="Phone"
+					type="number"
+					:min="0"
+					:disabled="loading"
+					required
+				></v-text-field>
+				<!-- <v-text-field
 			v-model="formFields.deliverydate"
 			label="Delivery date"
 			:disabled="loading"
 			required
-		></v-text-field>-->
+				></v-text-field>-->
+			</v-col>
+		</v-row>
 		<v-btn class="mr-4" type="submit" :loading="loading" :disabled="loading">submit</v-btn>
 		<v-btn v-if="this.model === undefined" @click="clear">clear</v-btn>
 	</v-form>
