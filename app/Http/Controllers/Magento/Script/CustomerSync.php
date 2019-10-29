@@ -37,12 +37,16 @@ class CustomerSync
         'telephone',
         'company',
         'vat_id',
+        'is_default_billing',
+        'is_default_shipping'
     ];
     protected const addressFieldsToRename = [
         'firstname' => 'first_name',
         'lastname' => 'last_name',
         'region_id' => 'region',
         'telephone' => 'phone',
+        'is_default_billing' => 'billing',
+        'is_default_shipping' => 'shipping'
     ];
 
     public static function getFromMagento($force = false)
@@ -58,6 +62,9 @@ class CustomerSync
                 break;
             }
             foreach ($customers as $customer) {
+                if (count($customer->addresses) == 0) {
+                    continue;
+                }
                 $parsedCustomer = Helper::getParsedData($customer, self::customerFieldsToParse,
                     self::customerFieldsToRename);
                 $storedCustomer = \App\Customer::getFirst('email', $customer->email);
@@ -87,7 +94,7 @@ class CustomerSync
                                 ['magento_id' => $address->entity_id],
                                 $parsedAddress
                             );
-                            if (!empty($storedAddress)) {
+                            if (empty($storedAddress)) {
                                 $storedCustomer->addresses()->attach($updatedAddress);
                             }
                         }
