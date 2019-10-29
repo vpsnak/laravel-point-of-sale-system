@@ -152,6 +152,7 @@ export default {
 		},
 		getAllProducts() {
 			this.initiateLoadingSearchResults(true);
+			this.selected_category = null;
 
 			let payload = {
 				model: "products",
@@ -191,6 +192,7 @@ export default {
 			});
 		},
 		searchProduct(keyword) {
+			this.selected_category = null;
 			if (keyword.length > 0) {
 				this.initiateLoadingSearchResults(true);
 
