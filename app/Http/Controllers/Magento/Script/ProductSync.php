@@ -49,11 +49,11 @@ class ProductSync
                         $parsedProduct
                     );
                     $price = $storedProduct->price()->updateOrCreate([
-                        'amount' => $product->final_price ?? 0
+                        'amount' => $product->price ?? 0
                     ]);
                     $discount = $price->discount()->updateOrCreate([
                         'type' => 'flat',
-                        'amount' => $product->price
+                        'amount' => $product->price - $product->final_price
                     ]);
                     $price->discount_id = $discount->id;
                     $price->save();

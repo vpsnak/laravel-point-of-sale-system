@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Helper\Price;
+
 class Product extends BaseModel
 {
     const LARAVEL_STORE_ID = 1;
@@ -24,6 +26,10 @@ class Product extends BaseModel
 
     public function getFinalPriceAttribute()
     {
+        if (!empty($this->price->discount)) {
+            return Price::calculateDiscount($this->price->amount, $this->price->discount->type,
+                $this->price->discount->amount);
+        }
         return $this->price->amount;
     }
 

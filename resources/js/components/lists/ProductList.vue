@@ -31,7 +31,7 @@
 
 			<v-row align="center" justify="center">
 				<v-col>
-					<v-slide-group show-arrows v-model="selectedCategory">
+					<v-slide-group show-arrows v-model="selectedCategory" @change="keyword = ''">
 						<v-slide-item
 							v-for="category in categoryList"
 							:key="category.id"
@@ -70,6 +70,9 @@
 								</v-list>
 							</v-menu>
 						</v-card-title>
+						<v-chip v-if="product.final_price != product.price.amount" class="mt-2 ml-1">
+							<span>Net Price: {{parseFloat(product.final_price).toFixed(2)}} $</span>
+						</v-chip>
 					</v-card>
 				</v-col>
 			</v-row>
@@ -86,7 +89,6 @@
 			title="Add a dummy product"
 			@action="result"
 			cancelBtnTxt="Close"
-			persistent
 			titleCloseBtn
 		></interactiveDialog>
 	</v-card>
@@ -113,7 +115,6 @@ export default {
 				return this.selected_category;
 			},
 			set(value) {
-				console.log(value);
 				this.selected_category = value;
 
 				if (value) {
@@ -152,6 +153,7 @@ export default {
 		},
 		getAllProducts() {
 			this.initiateLoadingSearchResults(true);
+			this.selected_category = null;
 
 			let payload = {
 				model: "products",
@@ -191,6 +193,7 @@ export default {
 			});
 		},
 		searchProduct(keyword) {
+			this.selected_category = null;
 			if (keyword.length > 0) {
 				this.initiateLoadingSearchResults(true);
 
