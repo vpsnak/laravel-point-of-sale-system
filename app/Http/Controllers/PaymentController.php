@@ -108,10 +108,10 @@ class PaymentController extends BaseController
                 $order = Order::findOrFail($validatedData['order_id']);
 
                 $validatedData['amount'] = $order->subtotal - Price::calculateDiscount(
-                        $order->subtotal,
-                        $coupon->discount->type,
-                        $coupon->discount->amount
-                    );
+                    $order->subtotal,
+                    $coupon->discount->type,
+                    $coupon->discount->amount
+                );
 
                 $coupon->uses--;
                 $coupon->save();
@@ -147,10 +147,8 @@ class PaymentController extends BaseController
                 break;
 
             case 'pos-terminal':
-                $paymentResponse = PosTerminalController::posPayment(
-                    $validatedData['amount'],
-                    $payment
-                );
+                $paymentResponse = new PosTerminalController($payment);
+                $paymentResponse = $paymentResponse->posPayment($validatedData['amount']);
 
                 if (key_exists('errors', $paymentResponse)) {
                     $payment->status = 'failed';

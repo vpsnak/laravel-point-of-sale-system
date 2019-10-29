@@ -9,19 +9,36 @@ use \App\TransactionLog;
 
 class PosTerminalController extends Controller
 {
-    private static function saveToSdkLog(Payment $payment, $testCase, $data)
+    private $payment;
+
+    public function __construct(Payment $payment)
+    {
+        $this->setPayment($payment);
+    }
+
+    protected function getPayment()
+    {
+        return $this->payment;
+    }
+
+    protected function setPayment(Payment $payment)
+    {
+        $this->payment = $payment;
+    }
+
+    private function saveToSdkLog($testCase, $data)
     {
         $elavonSdkPayment = new ElavonSdkPayment();
 
-        $elavonSdkPayment->payment_id = $payment->id;
-        $elavonSdkPayment->cash_register_id = $payment->cash_register_id;
+        $elavonSdkPayment->payment_id = $this->$this->getPayment()->id;
+        $elavonSdkPayment->cash_register_id = $this->$this->getPayment()->cash_register_id;
         $elavonSdkPayment->test_case = $testCase;
         $elavonSdkPayment->log = $data;
 
         $elavonSdkPayment->save();
     }
 
-    private static function saveToLog(Payment $payment, $data)
+    private function saveToLog(Payment $payment, $data)
     {
         $transactionLog = new TransactionLog();
 
@@ -32,26 +49,22 @@ class PosTerminalController extends Controller
         $transactionLog->save();
     }
 
-    private static function setPaymentStatus(Payment $payment, $status)
+    private function setPaymentStatus($status)
     {
-        $payment->status = $status;
-        $payment->save();
+        $this->getPayment()->status = $status;
+        $this->getPayment()->save();
     }
 
-    public static function posPayment($amount, Payment $payment)
+    private function initPosTerminal()
     {
-        self::setPaymentStatus($payment, 'failed');
-        $amount *= 100;
-
         $cardReaderInfo = json_decode(self::getCardReaderInfo(), true);
-
         if ($cardReaderInfo['data']['cardReaderInfo'] === null) {
             // card reader is not initialized!
 
             $id = json_decode(self::startCardReaderConfiguration(), true);
 
             if ($id['statusDetails'] === 'TARGET_UNAVAILABLE') {
-                self::setPaymentStatus($payment, 'failed');
+                self::setPaymentStatus($this->getPayment(), 'failed');
 
                 return ['errors' => 'POS Terminal is already initialized or not available'];
             }
@@ -67,36 +80,17 @@ class PosTerminalController extends Controller
             } while ($response['data']['cardReadersSearch']['completed'] === false);
 
             if (!count($response['data']['cardReadersSearch']['cardReaders'])) {
-                self::setPaymentStatus($payment, 'failed');
+                self::setPaymentStatus('failed');
 
                 return ['errors' => 'POS Terminal failed to initialize properly'];
             }
         }
+    }
 
-        // pos terminal is configured
-        $paymentGatewayId = json_decode(self::openPaymentGateway(), true);
-
-        if ($paymentGatewayId['data']['paymentGatewayCommand']['openPaymentGatewayData']['result'] !== 'SUCCESS') {
-            self::setPaymentStatus($payment, 'failed');
-
-            return ['errors' => 'Payment gateway failed'];
-        }
-
-        $paymentGatewayId = $paymentGatewayId['data']['paymentGatewayCommand']['openPaymentGatewayData']['paymentGatewayId'];
-        $chanId = json_decode(self::startPaymentTransaction($paymentGatewayId, $amount), true);
-
-        $chanId = $chanId['data']['paymentGatewayCommand']['chanId'];
-
-        set_time_limit(300);
-
-        do {
-            sleep(1);
-            $response = json_decode(self::getPaymentTransactionStatus($paymentGatewayId, $chanId), true);
-        } while ($response['data']['paymentGatewayCommand']['completed'] === false);
-
-
+    private function getTransactionResponse($response)
+    {
         if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'FAILED') {
-            self::setPaymentStatus($payment, 'failed');
+            self::setPaymentStatus('failed');
 
             switch ($response['data']['paymentGatewayCommand']['paymentTransactionData']['errors'][0]) {
                 case 'ECLCommerceError ECLCardReaderCanceled':
@@ -116,24 +110,53 @@ class PosTerminalController extends Controller
                     return ['errors' => 'Invalid card'];
                     break;
                 default:
-                    return ['error' => $response['data']['paymentGatewayCommand']['paymentTransactionData']];
+                    return ['errors' => $response['data']['paymentGatewayCommand']['paymentTransactionData']];
             }
         } else if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'DECLINED') {
-            self::setPaymentStatus($payment, 'declined');
+            self::setPaymentStatus('declined');
 
             return ['errors' => 'Card declined by issuer'];
         } else if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'APPROVED') {
-            self::setPaymentStatus($payment, 'approved');
+            self::setPaymentStatus('approved');
 
             return ['success' => $response['data']['paymentGatewayCommand']['eventQueue']];
         } else {
-            self::setPaymentStatus($payment, 'failed');
+            self::setPaymentStatus('failed');
 
             return ['errors' => $response];
         }
     }
 
-    private static function sendRequest($payload)
+    public function posPayment($amount)
+    {
+        self::setPaymentStatus('failed');
+        self::initPosTerminal();
+        $amount *= 100;
+
+        $paymentGatewayId = json_decode(self::openPaymentGateway(), true);
+
+        if ($paymentGatewayId['data']['paymentGatewayCommand']['openPaymentGatewayData']['result'] !== 'SUCCESS') {
+            self::setPaymentStatus('failed');
+
+            return ['errors' => 'Payment gateway failed'];
+        }
+
+        $paymentGatewayId = $paymentGatewayId['data']['paymentGatewayCommand']['openPaymentGatewayData']['paymentGatewayId'];
+        $chanId = json_decode(self::startPaymentTransaction($paymentGatewayId, $amount), true);
+
+        $chanId = $chanId['data']['paymentGatewayCommand']['chanId'];
+
+        set_time_limit(300);
+
+        do {
+            sleep(1);
+            $response = json_decode(self::getPaymentTransactionStatus($paymentGatewayId, $chanId), true);
+        } while ($response['data']['paymentGatewayCommand']['completed'] === false);
+
+        self::getTransactionResponse($response);
+    }
+
+    private  function sendRequest($payload)
     {
         $url = config('elavon.hostPC.ip') . ':' . config('elavon.hostPC.port') . '/rest/command';
         $client = new Client(['verify' => false]);
@@ -155,7 +178,7 @@ class PosTerminalController extends Controller
         return $response->getBody()->getContents();
     }
 
-    private static function startCardReaderConfiguration()
+    private  function startCardReaderConfiguration()
     {
         $requestId = idate("U");
 
@@ -179,7 +202,7 @@ class PosTerminalController extends Controller
         return self::sendRequest($payload);
     }
 
-    private static function getCommandStatusOnCardReader($id)
+    private  function getCommandStatusOnCardReader($id)
     {
         $requestId = idate("U");
 
@@ -196,7 +219,7 @@ class PosTerminalController extends Controller
         return self::sendRequest($payload);
     }
 
-    private static function startCardReadersSearch()
+    private  function startCardReadersSearch()
     {
         $requestId = idate("U");
 
@@ -215,7 +238,7 @@ class PosTerminalController extends Controller
         return self::sendRequest($payload);
     }
 
-    private static function getCardReadersSearchStatus($id)
+    private  function getCardReadersSearchStatus($id)
     {
         $requestId = idate("U");
 
@@ -232,7 +255,7 @@ class PosTerminalController extends Controller
         return self::sendRequest($payload);
     }
 
-    private static function getCardReaderInfo()
+    private  function getCardReaderInfo()
     {
         $requestId = idate("U");
 
@@ -245,7 +268,7 @@ class PosTerminalController extends Controller
         return self::sendRequest($payload);
     }
 
-    private static function openPaymentGateway()
+    private  function openPaymentGateway()
     {
         $requestId = idate("U");
 
@@ -272,7 +295,7 @@ class PosTerminalController extends Controller
         return self::sendRequest($payload);
     }
 
-    private static function startPaymentTransaction($paymentGatewayId, $transactionAmount)
+    private  function startPaymentTransaction($paymentGatewayId, $transactionAmount)
     {
         $requestId = idate("U");
 
@@ -298,7 +321,7 @@ class PosTerminalController extends Controller
         return self::sendRequest($payload);
     }
 
-    private static function getPaymentTransactionStatus($paymentGatewayId, $chanId)
+    private  function getPaymentTransactionStatus($paymentGatewayId, $chanId)
     {
         $requestId = idate("U");
 
@@ -316,7 +339,7 @@ class PosTerminalController extends Controller
         return self::sendRequest($payload);
     }
 
-    private static function cancelPaymentTransaction($paymentGatewayId, $chanId)
+    private  function cancelPaymentTransaction($paymentGatewayId, $chanId)
     {
         $requestId = idate("U");
 
@@ -334,7 +357,7 @@ class PosTerminalController extends Controller
         return self::sendRequest($payload);
     }
 
-    private static function searchPaymentTransaction($parameters)
+    private  function searchPaymentTransaction($parameters)
     {
         // params example
         // $parameters = [
@@ -367,7 +390,7 @@ class PosTerminalController extends Controller
         return self::sendRequest($payload);
     }
 
-    private static function linkedRefund(Payment $payment)
+    private  function linkedRefund(Payment $payment)
     {
         $requestId = idate("U");
 
