@@ -99,23 +99,29 @@ class PosTerminalController extends Controller
 
             switch ($response['data']['paymentGatewayCommand']['paymentTransactionData']['errors'][0]) {
                 case 'ECLCommerceError ECLCardReaderCanceled':
-                    $this->setPaymentStatus('Transaction canceled');
-                    return ['errors' => 'Transaction canceled'];
+                    $msg = 'Transaction canceled';
+                    $this->setPaymentStatus($msg);
+                    return ['errors' => $msg];
                 case 'ECLCommerceError ECLTransactionCardNeedsRemoval':
-                    $this->setPaymentStatus('Remove the card and try again.<br>Insert the card only when prompted by the POS Terminal');
-                    return ['errors' => 'Remove the card and try again.<br>Insert the card only when prompted by the POS Terminal'];
+                    $msg = 'Remove the card and try again<br>Insert the card only when prompted by the POS Terminal';
+                    $this->setPaymentStatus($msg);
+                    return ['errors' => $msg];
                 case 'ECLCommerceError ECLTransactionCardRemoved':
-                    $this->setPaymentStatus('Card has been removed before the transaction completed');
-                    return ['errors' => 'Card has been removed before the transaction completed'];
+                    $msg = 'Card has been removed before the transaction completed';
+                    $this->setPaymentStatus($msg);
+                    return ['errors' => $msg];
                 case 'ECLCommerceError ECLCardReaderCannotConnect':
-                    $this->setPaymentStatus('POS Terminal disconnected<br>Please verify that POS Terminal is properly connected and try again');
-                    return ['errors' => 'POS Terminal disconnected<br>Please verify that POS Terminal is properly connected and try again'];
+                    $msg = 'POS Terminal disconnected<br>Please verify that POS Terminal is properly connected and try again';
+                    $this->setPaymentStatus($msg);
+                    return ['errors' => $msg];
                 case 'ECLCommerceError ECLCardReaderCardDataInvalid':
-                    $this->setPaymentStatus('Invalid card');
-                    return ['errors' => 'Invalid card'];
+                    $msg = 'Invalid card';
+                    $this->setPaymentStatus($msg);
+                    return ['errors' => $msg];
                 default:
-                    $this->setPaymentStatus('Warning: Unhandled error occured. Please check log file entry above');
-                    return ['errors' => $response['data']['paymentGatewayCommand']['paymentTransactionData']];
+                    $msg = 'Warning: Unhandled error occured. Please check log file entry above';
+                    $this->setPaymentStatus($msg);
+                    return ['errors' => $msg];
             }
         } else if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'DECLINED') {
             $this->setPaymentStatus('declined');
