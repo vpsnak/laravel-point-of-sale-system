@@ -5,6 +5,7 @@
 		tableTitle="Addresses"
 		tableBtnTitle="New Address"
 		tableForm="addressForm"
+		tableViewComponent="Address"
 	/>
 </template>
 
