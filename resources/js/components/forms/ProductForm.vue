@@ -21,29 +21,19 @@
 			item-value="id"
 			clearable
 		></v-select>
-		<v-row v-if="this.formFields.id == null">
-			<v-col v-for="store in stores" :key="store.id">
-				<v-card>
-					<v-card-title class="blue-grey pa-0" @click.stop>
-						<h6 class="px-2">{{store.name}}</h6>
-					</v-card-title>
-					<v-text-field type="number" v-model="formFields.stores[0].pivot.qty" label="Qty" required></v-text-field>
-				</v-card>
-			</v-col>
-		</v-row>
-
-		<v-row v-else>
-			<v-col v-for="store in formFields.stores" :key="store.id">
+		<v-row v-if="this.formFields.stores">
+			<!--			mporeis na valeis item, index gia na exeis access se poia epanalipsi eisai => na ksereis pio entry na peirakseis-->
+			<v-col :key="store.id" v-for="(store, index) in formFields.stores">
 				<v-card>
 					<v-card-title class="blue-grey pa-0" @click.stop>
 						<h6 class="px-2">{{store.name}}</h6>
 					</v-card-title>
 					<v-text-field
-						type="number"
-						label="Qty"
-						v-model="formFields.stores[0].pivot.qty"
-						:placeholder="store.pivot.qty.toString()"
-						required
+							type="number"
+							label="Qty"
+							:value="formFields.stores[index].pivot.qty"
+							v-model="formFields.stores[index].pivot.qty"
+							required
 					></v-text-field>
 				</v-card>
 			</v-col>
@@ -54,9 +44,9 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+  import {mapActions} from 'vuex'
 
-export default {
+  export default {
 	props: {
 		model: Object || undefined
 	},
@@ -75,24 +65,7 @@ export default {
 				url: null,
 				description: null,
 				categories: [{}],
-				stores: [
-					{
-						id: 1,
-						pivot: {
-							product_id: null,
-							store_id: null,
-							qty: null
-						}
-					},
-					{
-						id: 2,
-						pivot: {
-							product_id: null,
-							store_id: null,
-							qty: null
-						}
-					}
-				]
+              stores: []
 			}
 		};
 	},
@@ -147,7 +120,12 @@ export default {
 			this.getAll({
 				model: "stores"
 			}).then(stores => {
-				this.stores = stores;
+              // india gia na exoume default value sto qty twn stores
+              // @TODO fix object assign on product edit
+              stores = stores.map(item => {return item = {...item, ...{pivot: {qty: 0}}}})
+              this.formFields.stores = stores
+              // reset default values after getting and setting the stores
+              this.defaultValues = {...this.formFields}
 			});
 		},
 
