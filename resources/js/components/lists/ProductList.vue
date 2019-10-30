@@ -46,7 +46,7 @@
 							:value="category.id"
 						>
 							<v-btn
-								:color="active ? 'primary' : ''"
+								:color="active ? 'blue-grey' : ''"
 								class="mx-1"
 								@click="toggle"
 								depressed
@@ -94,7 +94,7 @@
 				<v-progress-circular v-else dark indeterminate color="white"></v-progress-circular>
 			</v-row>
 		</v-card-text>
-		<v-pagination v-model="page" :length="productList.length/4" circle></v-pagination>
+		<v-pagination v-model="page" :length="pageLength" circle></v-pagination>
 
 		<v-card-actions></v-card-actions>
 		<interactiveDialog
@@ -144,6 +144,7 @@ export default {
 			loader: false,
 			model: "products",
 			keyword: "",
+			pageLength: 0,
 			selected_category: null
 		};
 	},
@@ -203,6 +204,7 @@ export default {
 			};
 			this.$store.dispatch("getAll", payload).finally(() => {
 				this.initiateLoadingSearchResults(false);
+				this.pageLength = this.productList.length / 4;
 			});
 		},
 		getAllCategories() {
