@@ -19,10 +19,11 @@ class CreateElavonSdkPaymentsTable extends Migration
             $table->unsignedBigInteger('cash_register_id');
 
             $table->string('test_case')->nullable();
-            $table->string('transactionId');
-            $table->string('paymentGatewayId');
-            $table->string('chanId');
+            $table->string('transaction_id')->nullable();
+            $table->string('payment_gateway_id')->nullable();
+            $table->string('chan_id')->nullable();
 
+            $table->string('status');
             $table->text('log');
 
             $table->foreign('payment_id')->references('id')->on('payments')->onDelete('cascade');

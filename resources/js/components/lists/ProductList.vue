@@ -10,7 +10,6 @@
 				<v-btn icon @click="searchProduct(keyword)" class="mx-2">
 					<v-icon>mdi-magnify</v-icon>
 				</v-btn>
-
 				<v-text-field
 					v-model="keyword"
 					placeholder="Search product"
@@ -21,17 +20,25 @@
 				></v-text-field>
 				<v-tooltip bottom>
 					<template v-slot:activator="{ on }">
-						<v-btn @click="showCreateDialog = true" class="my-1" v-on="on" icon>
+						<v-btn @click="showDummyDialog = true" class="my-1" v-on="on" icon>
 							<v-icon>mdi-plus</v-icon>
 						</v-btn>
 					</template>
 					<span>Add dummy product</span>
 				</v-tooltip>
+				<v-tooltip bottom>
+					<template v-slot:activator="{ on }">
+						<v-btn @click="showGiftCardDialog = true" class="my-1" v-on="on" icon>
+							<v-icon>mdi-credit-card-plus</v-icon>
+						</v-btn>
+					</template>
+					<span>Add gift card</span>
+				</v-tooltip>
 			</v-row>
 
 			<v-row align="center" justify="center">
 				<v-col>
-					<v-slide-group show-arrows v-model="selectedCategory">
+					<v-slide-group show-arrows v-model="selectedCategory" @change="keyword = ''">
 						<v-slide-item
 							v-for="category in categoryList"
 							:key="category.id"
@@ -49,7 +56,6 @@
 					</v-slide-group>
 				</v-col>
 			</v-row>
-
 			<v-row v-if="productList.length" style="height:61vh; overflow-y:auto;">
 				<v-col v-for="product in productList" :key="product.id" cols="12" md="6" lg="4">
 					<v-card :img="product.photo_url" @click="addProduct(product)" height="170px">
@@ -67,14 +73,18 @@
 										<v-icon class="pr-2">mdi-heart</v-icon>
 										<h5>Add to favorites</h5>
 									</v-list-item>
+									<v-list-item @click="viewItem(product)">
+										<v-icon class="pr-2">fas fa-eye</v-icon>
+										<h5>View product</h5>
+									</v-list-item>
 								</v-list>
 							</v-menu>
 						</v-card-title>
-						<v-chip class="mt-2 ml-1">
-							<span
-								v-if="product.final_price != product.price.amount"
-							>Net Price: {{parseFloat(product.final_price).toFixed(2)}} $</span>
-							<span v-else>Net Price: {{parseFloat(product.price.amount).toFixed(2)}} $</span>
+						<v-chip v-if="product.final_price != product.price.amount" class="mt-2 ml-1">
+							<span>Final Price: {{parseFloat(product.final_price).toFixed(2)}} $</span>
+						</v-chip>
+						<v-chip v-else class="mt-2 ml-1">
+							<span>Net Price: {{parseFloat(product.final_price).toFixed(2)}} $</span>
 						</v-chip>
 					</v-card>
 				</v-col>
@@ -84,16 +94,40 @@
 				<v-progress-circular v-else dark indeterminate color="white"></v-progress-circular>
 			</v-row>
 		</v-card-text>
+		<v-pagination v-model="page" :length="productList.length/4" circle></v-pagination>
+
 		<v-card-actions></v-card-actions>
 		<interactiveDialog
-			v-if="showCreateDialog"
-			:show="showCreateDialog"
+			v-if="showDummyDialog"
+			:show="showDummyDialog"
 			component="dummyProductForm"
 			title="Add a dummy product"
 			@action="result"
 			cancelBtnTxt="Close"
-			persistent
 			titleCloseBtn
+		></interactiveDialog>
+
+		<interactiveDialog
+			v-if="showGiftCardDialog"
+			:show="showGiftCardDialog"
+			component="giftCardForm"
+			title="Add a gift card"
+			@action="result"
+			cancelBtnTxt="Close"
+			titleCloseBtn
+		></interactiveDialog>
+
+		<interactiveDialog
+			v-if="showViewDialog"
+			:show="showViewDialog"
+			title="View item"
+			:fullscreen="false"
+			:width="1000"
+			component="product"
+			:model="viewId"
+			@action="result"
+			action="newItem"
+			cancelBtnTxt="Close"
 		></interactiveDialog>
 	</v-card>
 </template>
@@ -102,7 +136,11 @@
 export default {
 	data() {
 		return {
-			showCreateDialog: false,
+			page: 1,
+			showViewDialog: false,
+			showDummyDialog: false,
+			showGiftCardDialog: false,
+			viewId: null,
 			loader: false,
 			model: "products",
 			keyword: "",
@@ -119,7 +157,6 @@ export default {
 				return this.selected_category;
 			},
 			set(value) {
-				console.log(value);
 				this.selected_category = value;
 
 				if (value) {
@@ -219,7 +256,14 @@ export default {
 			this.$store.commit("cart/addProduct", product);
 		},
 		result(event) {
-			this.showCreateDialog = false;
+			this.showDummyDialog = false;
+			this.showGiftCardDialog = false;
+			this.showViewDialog = false;
+		},
+
+		viewItem(product) {
+			this.viewId = product;
+			this.showViewDialog = true;
 		}
 	}
 };

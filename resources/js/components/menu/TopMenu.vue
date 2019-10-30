@@ -11,7 +11,7 @@
 				<v-btn icon v-on="on">
 					<v-icon>account_circle</v-icon>
 				</v-btn>
-				<v-chip class="ma-2" color="indigo" text-color="white">
+				<v-chip class="ma-2" color="blue-grey" text-color="white">
 					<v-avatar left>
 						<v-icon>fas fa-store-alt</v-icon>
 					</v-avatar>
