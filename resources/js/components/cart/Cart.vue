@@ -8,7 +8,7 @@
 		<v-container grid-list-md text-xs-center>
 			<v-layout row wrap>
 				<v-flex xs11>
-					<customerSearch :editable="editable" :keywordLength="1" class="my-3"></customerSearch>
+					<customerSearch :editable="editable" :keywordLength="3" class="my-3"></customerSearch>
 				</v-flex>
 				<v-flex xs1>
 					<v-tooltip bottom>
