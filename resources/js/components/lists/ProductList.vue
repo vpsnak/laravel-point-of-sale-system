@@ -20,11 +20,19 @@
 				></v-text-field>
 				<v-tooltip bottom>
 					<template v-slot:activator="{ on }">
-						<v-btn @click="showCreateDialog = true" class="my-1" v-on="on" icon>
+						<v-btn @click="showDummyDialog = true" class="my-1" v-on="on" icon>
 							<v-icon>mdi-plus</v-icon>
 						</v-btn>
 					</template>
 					<span>Add dummy product</span>
+				</v-tooltip>
+				<v-tooltip bottom>
+					<template v-slot:activator="{ on }">
+						<v-btn @click="showGiftCardDialog = true" class="my-1" v-on="on" icon>
+							<v-icon>mdi-credit-card-plus</v-icon>
+						</v-btn>
+					</template>
+					<span>Add gift card</span>
 				</v-tooltip>
 			</v-row>
 
@@ -87,10 +95,20 @@
 
 		<v-card-actions></v-card-actions>
 		<interactiveDialog
-			v-if="showCreateDialog"
-			:show="showCreateDialog"
+			v-if="showDummyDialog"
+			:show="showDummyDialog"
 			component="dummyProductForm"
 			title="Add a dummy product"
+			@action="result"
+			cancelBtnTxt="Close"
+			titleCloseBtn
+		></interactiveDialog>
+
+		<interactiveDialog
+			v-if="showGiftCardDialog"
+			:show="showGiftCardDialog"
+			component="giftCardForm"
+			title="Add a gift card"
 			@action="result"
 			cancelBtnTxt="Close"
 			titleCloseBtn
@@ -117,8 +135,9 @@ export default {
 		return {
 			page: 1,
 			showViewDialog: false,
+			showDummyDialog: false,
+			showGiftCardDialog: false,
 			viewId: null,
-			showCreateDialog: false,
 			loader: false,
 			model: "products",
 			keyword: "",
@@ -234,7 +253,8 @@ export default {
 			this.$store.commit("cart/addProduct", product);
 		},
 		result(event) {
-			this.showCreateDialog = false;
+			this.showDummyDialog = false;
+			this.showGiftCardDialog = false;
 			this.showViewDialog = false;
 		},
 
