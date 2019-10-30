@@ -8,9 +8,8 @@
 		<v-text-field v-model="formFields.name" label="Name" required></v-text-field>
 		<v-text-field v-model="formFields.sku" label="Sku" required></v-text-field>
 		<v-text-field v-model="formFields.url" label="Url" required></v-text-field>
-		<v-text-field v-model="formFields.photo_url" label="Phot url" required></v-text-field>
+		<v-text-field v-model="formFields.photo_url" label="Photo url" required></v-text-field>
 		<v-text-field v-model="formFields.description" label="Description" required></v-text-field>
-		<v-text-field type="number" v-model="formFields.stock" label="Stock" required></v-text-field>
 		<v-text-field type="number" v-model="formFields.final_price" label="Final price" required></v-text-field>
 		<v-select
 			v-model="formFields.categories"
@@ -73,14 +72,20 @@ export default {
 				sku: null,
 				photo_url: null,
 				final_price: null,
-				stock: null,
 				url: null,
 				description: null,
-				category_ids: [],
 				categories: [{}],
-				store_id: null,
 				stores: [
 					{
+						id: 1,
+						pivot: {
+							product_id: null,
+							store_id: null,
+							qty: null
+						}
+					},
+					{
+						id: 2,
 						pivot: {
 							product_id: null,
 							store_id: null,
