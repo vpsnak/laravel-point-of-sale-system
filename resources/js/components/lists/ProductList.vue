@@ -10,7 +10,6 @@
 				<v-btn icon @click="searchProduct(keyword)" class="mx-2">
 					<v-icon>mdi-magnify</v-icon>
 				</v-btn>
-
 				<v-text-field
 					v-model="keyword"
 					placeholder="Search product"
@@ -49,7 +48,6 @@
 					</v-slide-group>
 				</v-col>
 			</v-row>
-
 			<v-row v-if="productList.length" style="height:61vh; overflow-y:auto;">
 				<v-col v-for="product in productList" :key="product.id" cols="12" md="6" lg="4">
 					<v-card :img="product.photo_url" @click="addProduct(product)" height="170px">
@@ -67,6 +65,10 @@
 										<v-icon class="pr-2">mdi-heart</v-icon>
 										<h5>Add to favorites</h5>
 									</v-list-item>
+									<v-list-item @click="viewItem(product)">
+										<v-icon class="pr-2">fas fa-eye</v-icon>
+										<h5>View product</h5>
+									</v-list-item>
 								</v-list>
 							</v-menu>
 						</v-card-title>
@@ -81,6 +83,8 @@
 				<v-progress-circular v-else dark indeterminate color="white"></v-progress-circular>
 			</v-row>
 		</v-card-text>
+		<v-pagination v-model="page" :length="productList.length/4" circle></v-pagination>
+
 		<v-card-actions></v-card-actions>
 		<interactiveDialog
 			v-if="showCreateDialog"
@@ -91,6 +95,19 @@
 			cancelBtnTxt="Close"
 			titleCloseBtn
 		></interactiveDialog>
+
+		<interactiveDialog
+			v-if="showViewDialog"
+			:show="showViewDialog"
+			title="View item"
+			:fullscreen="false"
+			:width="1000"
+			component="product"
+			:model="viewId"
+			@action="result"
+			action="newItem"
+			cancelBtnTxt="Close"
+		></interactiveDialog>
 	</v-card>
 </template>
 
@@ -98,6 +115,9 @@
 export default {
 	data() {
 		return {
+			page: 1,
+			showViewDialog: false,
+			viewId: null,
 			showCreateDialog: false,
 			loader: false,
 			model: "products",
@@ -215,6 +235,12 @@ export default {
 		},
 		result(event) {
 			this.showCreateDialog = false;
+			this.showViewDialog = false;
+		},
+
+		viewItem(product) {
+			this.viewId = product;
+			this.showViewDialog = true;
 		}
 	}
 };
