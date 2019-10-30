@@ -13,7 +13,7 @@
 		<v-text-field type="number" v-model="formFields.stock" label="Stock" required></v-text-field>
 		<v-text-field type="number" v-model="formFields.final_price" label="Final price" required></v-text-field>
 		<v-select
-			v-model="formFields.category_ids"
+			v-model="formFields.categories"
 			:items="categories"
 			chips
 			label="Categories"
@@ -22,22 +22,30 @@
 			item-value="id"
 			clearable
 		></v-select>
-		<v-select
-			v-model="formFields.store_id"
-			:items="stores"
-			label="Stores"
-			required
-			clearable
-			item-text="name"
-			item-value="id"
-		></v-select>
-		<v-row v-if="stores.length">
+		<v-row v-if="this.formFields.id == null">
 			<v-col v-for="store in stores" :key="store.id">
 				<v-card>
 					<v-card-title class="blue-grey pa-0" @click.stop>
 						<h6 class="px-2">{{store.name}}</h6>
 					</v-card-title>
-					<v-text-field type="number" v-model="formFields.store.pivot.qty" label="Qty" required></v-text-field>
+					<v-text-field type="number" v-model="formFields.stores[0].pivot.qty" label="Qty" required></v-text-field>
+				</v-card>
+			</v-col>
+		</v-row>
+
+		<v-row v-else>
+			<v-col v-for="store in formFields.stores" :key="store.id">
+				<v-card>
+					<v-card-title class="blue-grey pa-0" @click.stop>
+						<h6 class="px-2">{{store.name}}</h6>
+					</v-card-title>
+					<v-text-field
+						type="number"
+						label="Qty"
+						v-model="formFields.stores[0].pivot.qty"
+						:placeholder="store.pivot.qty"
+						required
+					></v-text-field>
 				</v-card>
 			</v-col>
 		</v-row>
@@ -69,14 +77,17 @@ export default {
 				url: null,
 				description: null,
 				category_ids: [],
+				categories: [{}],
 				store_id: null,
-				store: {
-					pivot: {
-						product_id: null,
-						store_id: null,
-						qty: null
+				stores: [
+					{
+						pivot: {
+							product_id: null,
+							store_id: null,
+							qty: null
+						}
 					}
-				}
+				]
 			}
 		};
 	},
@@ -134,6 +145,14 @@ export default {
 				this.stores = stores;
 			});
 		},
+
+		// getFromProductsStoreQty() {
+		// 	for (const stores of this.products) {
+		// 		for (const store_qty of stores) {
+		// 			console.log(this.store_qty.pivot.store_id);
+		// 		}
+		// 	}
+		// },
 		...mapActions({
 			getAll: "getAll",
 			getOne: "getOne",
