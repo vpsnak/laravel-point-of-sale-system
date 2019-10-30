@@ -16,18 +16,37 @@ class ProductController extends BaseController
         $validatedData = $request->validate([
             'name' => 'required|string',
             'sku' => 'required|string',
+            'url' => 'nullable|string',
+            'photo_url' => 'nullable|string',
+            'description' => 'nullable|string',
         ]);
 
-
-        $validatedID = $request->validate([
-            'id' => 'nullable|exists:products,id'
+        $validatedExtra = $request->validate([
+            'id' => 'nullable|exists:products,id',
+            'category_ids' => 'required|array',
+            'final_price' => 'required|numeric',
         ]);
 
-        if (!empty($validatedID)) {
-            return response($this->model::updateData($validatedID, $validatedData), 200);
+        $product = $this->getProduct($validatedExtra['id'] ?? null, $validatedData);
+
+        $product->categories()->sync($validatedExtra['category_ids']);
+
+//        @TODO fix amount create or update
+//        $product->price()->updateOrCreate(['amount' => $validatedExtra['final_price']]);
+//        $product->price->save();
+
+        return response($product, 200);
+    }
+
+    private function getProduct($id, $data)
+    {
+        if (!empty($id)) {
+            $this->model::updateData($id, $data);
+            $model = $this->model::getOne($id);
         } else {
-            return response($this->model::store($validatedData), 201);
+            $model = $this->model::store($data);
         }
+        return $model;
     }
 
     public function search(Request $request)
