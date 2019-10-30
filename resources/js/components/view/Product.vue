@@ -19,15 +19,15 @@
 							<thead>
 								<tr>
 									<th class="text-left">Store name</th>
-									<th class="text-left">Taxable</th>
-									<th class="text-left">Is Default</th>
+									<th class="text-left">Tax ID</th>
+									<th class="text-left">Updated at</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr v-for="store in productData.stores" :key="store.id">
 									<td>{{ store.name }}</td>
-									<td>{{ store.taxable }}</td>
-									<td>{{ store.is_default }}</td>
+									<td>{{ store.tax_id }}</td>
+									<td>{{ store.updated_at }}</td>
 								</tr>
 							</tbody>
 						</template>
