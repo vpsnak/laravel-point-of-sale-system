@@ -43,7 +43,7 @@
 						type="number"
 						label="Qty"
 						v-model="formFields.stores[0].pivot.qty"
-						:placeholder="store.pivot.qty"
+						:placeholder="store.pivot.qty.toString()"
 						required
 					></v-text-field>
 				</v-card>
