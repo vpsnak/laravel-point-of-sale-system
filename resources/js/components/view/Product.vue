@@ -9,7 +9,7 @@
 					<v-card-title>{{productData.name}}</v-card-title>
 					<v-card-text>
 						<div class="subtitle-1">Sku: {{productData.sku}}</div>
-						<div class="subtitle-1">Price: {{productData.final_price}}</div>
+						<div class="subtitle-1">Price: {{parseFloat(product.final_price).toFixed(2)}} $</div>
 						<div class="subtitle-1">Stock: {{productData.stock}}</div>
 						<div class="subtitle-1">Created at: {{productData.created_at}}</div>
 						<div class="subtitle-1">Description: {{productData.description}}</div>
