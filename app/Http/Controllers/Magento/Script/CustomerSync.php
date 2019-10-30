@@ -114,52 +114,57 @@ class CustomerSync
 
     public static function sendToMagento()
     {
-        $client = new Customer();
         foreach (\App\Customer::all() as $customer) {
-            if ($customer->magento_id == 0) {
+            self::importToMagento($customer);
+        }
+    }
+
+    public static function importToMagento(\App\Customer $customer)
+    {
+        $client = new Customer();
+        if ($customer->magento_id == 0) {
 //                // @TODO add tax vat to customer
-                $response = $client->sendCustomer([
-                    'firstname' => $customer->first_name,
-                    'lastname' => $customer->last_name,
-                    'email' => $customer->email,
+            $response = $client->sendCustomer([
+                'firstname' => $customer->first_name,
+                'lastname' => $customer->last_name,
+                'email' => $customer->email,
+            ]);
+            if (!isset($response->id)) {
+                return;
+            }
+            $logMessage = 'Send Customer (' . $customer->email . ') with magento id: ' . $response->id;
+            self::log($logMessage);
+            $customer->magento_id = $response->id;
+            $customer->save();
+        }
+        // @TODO set 1st addresss default billing and shipping in there is none
+        foreach ($customer->addresses as $address) {
+            if ($address->magento_id == 0) {
+                $response = $client->sendAddress($customer->magento_id, [
+                    'address_code' => $address->id,
+                    'firstname' => $address->first_name,
+                    'lastname' => $address->last_name,
+                    'company' => $address->company,
+                    'street' => [
+                        $address->street,
+                        $address->street2
+                    ],
+                    'city' => $address->city,
+                    'country_id' => $address->country_id,
+                    'region' => $address->region,
+                    'postcode' => $address->postcode,
+                    'phone' => $address->phone,
+                    'vat_id' => $address->vat_id,
+                    'is_default_billing' => $address->billing,
+                    'is_default_shipping' => $address->shipping
                 ]);
                 if (!isset($response->id)) {
-                    return;
+                    continue;
                 }
-                $logMessage = 'Send Customer (' . $customer->email . ') with magento id: ' . $response->id;
+                $logMessage = 'Send Customer (' . $customer->email . ') Address (' . $address->id . ') with magento id: ' . $response->id;
                 self::log($logMessage);
-                $customer->magento_id = $response->id;
-                $customer->save();
-            }
-            // @TODO set 1st addresss default billing and shipping in there is none
-            foreach ($customer->addresses as $address) {
-                if ($address->magento_id == 0) {
-                    $response = $client->sendAddress($customer->magento_id, [
-                        'address_code' => $address->id,
-                        'firstname' => $address->first_name,
-                        'lastname' => $address->last_name,
-                        'company' => $address->company,
-                        'street' => [
-                            $address->street,
-                            $address->street2
-                        ],
-                        'city' => $address->city,
-                        'country_id' => $address->country_id,
-                        'region' => $address->region,
-                        'postcode' => $address->postcode,
-                        'phone' => $address->phone,
-                        'vat_id' => $address->vat_id,
-                        'is_default_billing' => $address->billing,
-                        'is_default_shipping' => $address->shipping
-                    ]);
-                    if (!isset($response->id)) {
-                        continue;
-                    }
-                    $logMessage = 'Send Customer (' . $customer->email . ') Address (' . $address->id . ') with magento id: ' . $response->id;
-                    self::log($logMessage);
-                    $address->magento_id = $response->id;
-                    $address->save();
-                }
+                $address->magento_id = $response->id;
+                $address->save();
             }
         }
     }
