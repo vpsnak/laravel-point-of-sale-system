@@ -1,8 +1,10 @@
 <template>
 	<v-card class="pa-3 d-flex flex-column" style="max-height: 90vh;">
-		<div class="d-flex align-center justify-center py-5">
+		<div class="d-flex align-center justify-center">
 			<v-icon class="pr-2">{{ icon }}</v-icon>
 			<h4 class="title-2">{{ title }}</h4>
+			<v-spacer></v-spacer>
+			<v-switch @change="saveOneClick" label="Retail" :disabled="!editable"></v-switch>
 		</div>
 		<v-divider />
 		<v-container grid-list-md text-xs-center>
@@ -107,6 +109,13 @@ export default {
 	},
 
 	methods: {
+		saveOneClick(e) {
+			e
+				? ((this.$store.state.cart.checkoutSteps[0].completed = true),
+				  (this.$store.state.cart.currentCheckoutStep = 2))
+				: ((this.$store.state.cart.checkoutSteps[0].completed = false),
+				  (this.$store.state.cart.currentCheckoutStep = 1));
+		},
 		addAll(cart) {
 			this.products.splice(0);
 			this.products = cart;

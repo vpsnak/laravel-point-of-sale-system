@@ -2,6 +2,8 @@ export default {
     namespaced: true,
 
     state: {
+        skipOneClickToggle: false,
+
         discountTypes: [
             {
                 label: "None",
