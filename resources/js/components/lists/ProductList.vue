@@ -16,7 +16,7 @@
 					class="mx-2"
 					@keyup.enter="searchProduct"
 					clearable
-					@click:clear="getAllProducts"
+					@click:clear="currentPage = 1, getAllProducts()"
 				></v-text-field>
 				<v-tooltip bottom>
 					<template v-slot:activator="{ on }">
@@ -134,7 +134,7 @@ export default {
 	data() {
 		return {
 			current_page: 1,
-			last_page: 0,
+			last_page: null,
 			showViewDialog: false,
 			showDummyDialog: false,
 			showGiftCardDialog: false,
@@ -155,7 +155,7 @@ export default {
 				return this.search_keyword;
 			},
 			set(value) {
-				if (!this.search_keyword) {
+				if (!this.keyword) {
 					this.currentPage = 1;
 				}
 				this.search_keyword = value;
@@ -270,6 +270,7 @@ export default {
 			let payload = {
 				model: "categories",
 				mutation: "setProductList",
+				page: this.currentPage,
 				data: {
 					id: this.selectedCategory,
 					model: "products"

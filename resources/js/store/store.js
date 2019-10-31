@@ -156,7 +156,7 @@ export default new Vuex.Store({
         },
         getAll(context, payload) {
             return new Promise((resolve, reject) => {
-                let page = "?page=" + payload.page || "";
+                let page = payload.page ? "?page=" + payload.page : "";
 
                 axios
                     .get(this.state.baseUrl + payload.model + page)
@@ -207,6 +207,8 @@ export default new Vuex.Store({
         },
         getManyByOne(context, payload) {
             return new Promise((resolve, reject) => {
+                let page = payload.page ? "?page=" + payload.page : "";
+
                 axios
                     .get(
                         this.state.baseUrl +
@@ -214,7 +216,8 @@ export default new Vuex.Store({
                             "/" +
                             payload.data.id +
                             "/" +
-                            payload.data.model
+                            payload.data.model +
+                            page
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -236,7 +239,7 @@ export default new Vuex.Store({
         },
         search(context, payload) {
             return new Promise((resolve, reject) => {
-                let page = "?page=" + payload.page || "";
+                let page = payload.page ? "?page=" + payload.page : "";
 
                 axios
                     .post(
