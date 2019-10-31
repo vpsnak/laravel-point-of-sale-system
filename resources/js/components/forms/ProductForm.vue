@@ -29,11 +29,11 @@
 						<h6 class="px-2">{{store.name}}</h6>
 					</v-card-title>
 					<v-text-field
-							type="number"
-							label="Qty"
-							:value="formFields.stores[index].pivot.qty"
-							v-model="formFields.stores[index].pivot.qty"
-							required
+						type="number"
+						label="Qty"
+						:value="formFields.stores[index].pivot.qty"
+						v-model="formFields.stores[index].pivot.qty"
+						required
 					></v-text-field>
 				</v-card>
 			</v-col>
@@ -44,9 +44,9 @@
 </template>
 
 <script>
-  import {mapActions} from 'vuex'
+import { mapActions } from "vuex";
 
-  export default {
+export default {
 	props: {
 		model: Object || undefined
 	},
@@ -65,7 +65,7 @@
 				url: null,
 				description: null,
 				categories: [{}],
-              stores: []
+				stores: []
 			}
 		};
 	},
@@ -120,12 +120,19 @@
 			this.getAll({
 				model: "stores"
 			}).then(stores => {
-              // india gia na exoume default value sto qty twn stores
-              // @TODO fix object assign on product edit
-              stores = stores.map(item => {return item = {...item, ...{pivot: {qty: 0}}}})
-              this.formFields.stores = stores
-              // reset default values after getting and setting the stores
-              this.defaultValues = {...this.formFields}
+				// india gia na exoume default value sto qty twn stores
+				// @TODO fix object assign on product edit
+				stores = stores.map(item => {
+					return (item = { ...item, ...{ pivot: { qty: 0 } } });
+				});
+				if (
+					this.formFields.stores === undefined ||
+					this.formFields.stores.length == 0
+				) {
+					this.formFields.stores = stores;
+				}
+				// reset default values after getting and setting the stores
+				this.defaultValues = { ...this.formFields };
 			});
 		},
 
