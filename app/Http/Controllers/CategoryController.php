@@ -37,7 +37,7 @@ class CategoryController extends BaseController
     {
         $products = Product::whereHas('categories', function ($query) use ($category) {
             $query->where('id', $category->id);
-        })->get();
+        })->paginate(3);
 
         return response($products, 200);
     }

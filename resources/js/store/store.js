@@ -84,7 +84,7 @@ export default new Vuex.Store({
             state.notification = notification;
         },
         setProductList(state, products) {
-            state.productList = products;
+            state.productList = products.data;
         },
         setCategoryList(state, categories) {
             state.categoryList = categories;
@@ -156,8 +156,10 @@ export default new Vuex.Store({
         },
         getAll(context, payload) {
             return new Promise((resolve, reject) => {
+                let page = "?page=" + payload.page || "";
+
                 axios
-                    .get(this.state.baseUrl + payload.model)
+                    .get(this.state.baseUrl + payload.model + page)
                     .then(response => {
                         if (_.has(payload, "mutation")) {
                             context.commit(payload.mutation, response.data, {
@@ -234,9 +236,11 @@ export default new Vuex.Store({
         },
         search(context, payload) {
             return new Promise((resolve, reject) => {
+                let page = "?page=" + payload.page || "";
+
                 axios
                     .post(
-                        this.state.baseUrl + payload.model + "/search",
+                        this.state.baseUrl + payload.model + "/search" + page,
                         payload
                     )
                     .then(response => {

@@ -73,11 +73,15 @@ class BaseController extends Controller
         ]);
 
         $columns = Schema::getColumnListing((new $this->model)->getTable());
-        return $this->searchResult($columns, $validatedData['keyword'], $validatedData['per_page'],
-            $validatedData['page']);
+        return $this->searchResult(
+            $columns,
+            $validatedData['keyword'],
+            $validatedData['per_page'],
+            $validatedData['page']
+        );
     }
 
-    public function searchResult($columns, $keyword, $perPage = 20, $page = 1)
+    public function searchResult($columns, $keyword, $pagination = false)
     {
         if (empty($columns) || empty($keyword)) {
             return response('Did not found columns or keyword to search', 404);
@@ -88,9 +92,8 @@ class BaseController extends Controller
             $query->orWhere($column, 'like', "%$keyword%");
         }
 
-        if (!empty($perPage)) {
-            $page = !empty($page) ? $page : 1;
-            return response($query->paginate($perPage, ['*'], 'page', $page), 200);
+        if ($pagination) {
+            return response($query->paginate(), 200);
         } else {
             return response($query->get(), 200);
         }
