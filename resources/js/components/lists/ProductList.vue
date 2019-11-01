@@ -7,16 +7,16 @@
 
 		<v-card-text>
 			<v-row align="center" justify="center">
-				<v-btn icon @click="searchProduct(keyword)" class="mx-2">
+				<v-btn icon @click="searchProduct" class="mx-2">
 					<v-icon>mdi-magnify</v-icon>
 				</v-btn>
 				<v-text-field
 					v-model="keyword"
 					placeholder="Search product"
 					class="mx-2"
-					@keyup.enter="searchProduct(keyword)"
+					@keyup.enter="searchProduct"
 					clearable
-					@click:clear="getAllProducts"
+					@click:clear="currentPage = 1, getAllProducts()"
 				></v-text-field>
 				<v-tooltip bottom>
 					<template v-slot:activator="{ on }">
@@ -51,7 +51,7 @@
 								@click="toggle"
 								depressed
 								rounded
-							>{{category.name}}</v-btn>
+							>{{ category.name }}</v-btn>
 						</v-slide-item>
 					</v-slide-group>
 				</v-col>
@@ -61,31 +61,21 @@
 					<v-card :img="product.photo_url" @click="addProduct(product)" height="170px">
 						<v-card-title class="blue-grey pa-0" @click.stop>
 							<h6 class="px-2">{{product.name}}</h6>
+
 							<div class="flex-grow-1"></div>
-							<v-menu bottom left>
-								<template v-slot:activator="{ on }">
-									<v-btn dark icon v-on="on">
-										<v-icon>mdi-dots-vertical</v-icon>
-									</v-btn>
-								</template>
-								<v-list>
-									<v-list-item @click="addToFavorites(product)">
-										<v-icon class="pr-2">mdi-heart</v-icon>
-										<h5>Add to favorites</h5>
-									</v-list-item>
-									<v-list-item @click="viewItem(product)">
-										<v-icon class="pr-2">fas fa-eye</v-icon>
-										<h5>View product</h5>
-									</v-list-item>
-								</v-list>
-							</v-menu>
+
+							<v-btn icon @click="viewItem(product)">
+								<v-icon>fas fa-eye</v-icon>
+							</v-btn>
 						</v-card-title>
-						<v-chip v-if="product.final_price != product.price.amount" class="mt-2 ml-1">
-							<span>Final Price: {{parseFloat(product.final_price).toFixed(2)}} $</span>
-						</v-chip>
-						<v-chip v-else class="mt-2 ml-1">
-							<span>Net Price: {{parseFloat(product.final_price).toFixed(2)}} $</span>
-						</v-chip>
+						<v-card-actions>
+							<v-chip v-if="product.final_price != product.price.amount" class="mt-2 ml-1">
+								<span>Final Price: {{ parseFloat(product.final_price).toFixed(2) }} $</span>
+							</v-chip>
+							<v-chip v-else class="mt-2 ml-1">
+								<span>Net Price: {{ parseFloat(product.final_price).toFixed(2) }} $</span>
+							</v-chip>
+						</v-card-actions>
 					</v-card>
 				</v-col>
 			</v-row>
@@ -94,9 +84,16 @@
 				<v-progress-circular v-else dark indeterminate color="white"></v-progress-circular>
 			</v-row>
 		</v-card-text>
-		<v-pagination v-model="page" :length="pageLength" circle></v-pagination>
+		<v-pagination
+			v-model="currentPage"
+			@input="paginate"
+			:length="lastPage"
+			color="blue-grey"
+			:disabled="loader"
+			@previous="currentPage -= 1"
+			@next="currentPage += 1"
+		></v-pagination>
 
-		<v-card-actions></v-card-actions>
 		<interactiveDialog
 			v-if="showDummyDialog"
 			:show="showDummyDialog"
@@ -110,7 +107,7 @@
 		<interactiveDialog
 			v-if="showGiftCardDialog"
 			:show="showGiftCardDialog"
-			component="giftCardForm"
+			component="giftCardToCartForm"
 			title="Add a gift card"
 			@action="result"
 			cancelBtnTxt="Close"
@@ -136,15 +133,15 @@
 export default {
 	data() {
 		return {
-			page: 1,
+			current_page: 1,
+			last_page: null,
 			showViewDialog: false,
 			showDummyDialog: false,
 			showGiftCardDialog: false,
 			viewId: null,
 			loader: false,
 			model: "products",
-			keyword: "",
-			pageLength: 0,
+			search_keyword: "",
 			selected_category: null
 		};
 	},
@@ -153,11 +150,42 @@ export default {
 		this.getAllCategories();
 	},
 	computed: {
+		keyword: {
+			get() {
+				return this.search_keyword;
+			},
+			set(value) {
+				if (!this.keyword) {
+					this.currentPage = 1;
+				}
+				this.search_keyword = value;
+			}
+		},
+		currentPage: {
+			get() {
+				return this.current_page;
+			},
+			set(value) {
+				this.current_page = value;
+			}
+		},
+		lastPage: {
+			get() {
+				return this.last_page;
+			},
+			set(value) {
+				this.last_page = value;
+			}
+		},
 		selectedCategory: {
 			get() {
 				return this.selected_category;
 			},
 			set(value) {
+				if (!this.selected_category) {
+					this.currentPage = 1;
+				}
+
 				this.selected_category = value;
 
 				if (value) {
@@ -185,7 +213,16 @@ export default {
 		}
 	},
 	methods: {
-		addToFavorites(product) {},
+		paginate() {
+			if (this.selectedCategory) {
+				this.getProductsFromCategoryID();
+			} else if (this.keyword) {
+				this.searchProduct();
+			} else {
+				this.getAllProducts();
+			}
+		},
+
 		initiateLoadingSearchResults(loading) {
 			if (loading) {
 				this.loader = true;
@@ -200,12 +237,18 @@ export default {
 
 			let payload = {
 				model: "products",
-				mutation: "setProductList"
+				mutation: "setProductList",
+				page: this.current_page
 			};
-			this.$store.dispatch("getAll", payload).finally(() => {
-				this.initiateLoadingSearchResults(false);
-				this.pageLength = this.productList.length / 4;
-			});
+			this.$store
+				.dispatch("getAll", payload)
+				.then(response => {
+					this.currentPage = response.current_page;
+					this.lastPage = response.last_page;
+				})
+				.finally(() => {
+					this.initiateLoadingSearchResults(false);
+				});
 		},
 		getAllCategories() {
 			this.initiateLoadingSearchResults(true);
@@ -227,29 +270,44 @@ export default {
 			let payload = {
 				model: "categories",
 				mutation: "setProductList",
+				page: this.currentPage,
 				data: {
 					id: this.selectedCategory,
 					model: "products"
 				}
 			};
-			this.$store.dispatch("getManyByOne", payload).finally(() => {
-				this.initiateLoadingSearchResults(false);
-			});
+			this.$store
+				.dispatch("getManyByOne", payload)
+				.then(response => {
+					this.currentPage = response.current_page;
+					this.lastPage = response.last_page;
+				})
+				.finally(() => {
+					this.initiateLoadingSearchResults(false);
+				});
 		},
-		searchProduct(keyword) {
+		searchProduct() {
 			this.selected_category = null;
-			if (keyword.length > 0) {
+
+			if (this.keyword.length > 0) {
 				this.initiateLoadingSearchResults(true);
 
 				let payload = {
 					model: "products",
 					mutation: "setProductList",
-					keyword: keyword
+					page: this.currentPage,
+					keyword: this.keyword
 				};
 
-				this.$store.dispatch("search", payload).finally(() => {
-					this.initiateLoadingSearchResults(false);
-				});
+				this.$store
+					.dispatch("search", payload)
+					.then(response => {
+						this.currentPage = response.current_page;
+						this.lastPage = response.last_page;
+					})
+					.finally(() => {
+						this.initiateLoadingSearchResults(false);
+					});
 			} else {
 				this.getAllProducts();
 			}

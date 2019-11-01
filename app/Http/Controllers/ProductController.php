@@ -57,10 +57,10 @@ class ProductController extends BaseController
             'page' => 'nullable|numeric',
         ]);
 
-        return $this->searchResult(['sku', 'name'],
+        return $this->searchResult(
+            ['sku', 'name'],
             $validatedData['keyword'],
-            array_key_exists('per_page', $validatedData) ? $validatedData['per_page'] : 0,
-            array_key_exists('page', $validatedData) ? $validatedData['page'] : 0
+            true
         );
     }
 
@@ -73,6 +73,6 @@ class ProductController extends BaseController
             return response('Model not found', 404);
         }
 
-        return response($this->model::limit(30)->get(), 200);
+        return response($this->model::paginate(), 200);
     }
 }

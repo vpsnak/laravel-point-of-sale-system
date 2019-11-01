@@ -8,9 +8,8 @@
 		<v-text-field v-model="formFields.name" label="Name" required></v-text-field>
 		<v-text-field v-model="formFields.sku" label="Sku" required></v-text-field>
 		<v-text-field v-model="formFields.url" label="Url" required></v-text-field>
-		<v-text-field v-model="formFields.photo_url" label="Phot url" required></v-text-field>
+		<v-text-field v-model="formFields.photo_url" label="Photo url" required></v-text-field>
 		<v-text-field v-model="formFields.description" label="Description" required></v-text-field>
-		<v-text-field type="number" v-model="formFields.stock" label="Stock" required></v-text-field>
 		<v-text-field type="number" v-model="formFields.final_price" label="Final price" required></v-text-field>
 		<v-select
 			v-model="formFields.categories"
@@ -22,19 +21,9 @@
 			item-value="id"
 			clearable
 		></v-select>
-		<v-row v-if="this.formFields.id == null">
-			<v-col v-for="store in stores" :key="store.id">
-				<v-card>
-					<v-card-title class="blue-grey pa-0" @click.stop>
-						<h6 class="px-2">{{store.name}}</h6>
-					</v-card-title>
-					<v-text-field type="number" v-model="formFields.stores[0].pivot.qty" label="Qty" required></v-text-field>
-				</v-card>
-			</v-col>
-		</v-row>
-
-		<v-row v-else>
-			<v-col v-for="store in formFields.stores" :key="store.id">
+		<v-row v-if="this.formFields.stores">
+			<!--			mporeis na valeis item, index gia na exeis access se poia epanalipsi eisai => na ksereis pio entry na peirakseis-->
+			<v-col :key="store.id" v-for="(store, index) in formFields.stores">
 				<v-card>
 					<v-card-title class="blue-grey pa-0" @click.stop>
 						<h6 class="px-2">{{store.name}}</h6>
@@ -42,8 +31,8 @@
 					<v-text-field
 						type="number"
 						label="Qty"
-						v-model="formFields.stores[0].pivot.qty"
-						:placeholder="store.pivot.qty"
+						:value="formFields.stores[index].pivot.qty"
+						v-model="formFields.stores[index].pivot.qty"
 						required
 					></v-text-field>
 				</v-card>
@@ -73,21 +62,10 @@ export default {
 				sku: null,
 				photo_url: null,
 				final_price: null,
-				stock: null,
 				url: null,
 				description: null,
-				category_ids: [],
 				categories: [{}],
-				store_id: null,
-				stores: [
-					{
-						pivot: {
-							product_id: null,
-							store_id: null,
-							qty: null
-						}
-					}
-				]
+				stores: []
 			}
 		};
 	},
@@ -142,7 +120,19 @@ export default {
 			this.getAll({
 				model: "stores"
 			}).then(stores => {
-				this.stores = stores;
+				// india gia na exoume default value sto qty twn stores
+				// @TODO fix object assign on product edit
+				stores = stores.map(item => {
+					return (item = { ...item, ...{ pivot: { qty: 0 } } });
+				});
+				if (
+					this.formFields.stores === undefined ||
+					this.formFields.stores.length == 0
+				) {
+					this.formFields.stores = stores;
+				}
+				// reset default values after getting and setting the stores
+				this.defaultValues = { ...this.formFields };
 			});
 		},
 

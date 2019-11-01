@@ -70,7 +70,7 @@ export default {
 					.substring(1);
 			};
 			this.giftCard.id = "giftCard" + "-" + random();
-			this.giftCard.sku = "giftCard" + "-" + random() + random();
+			this.giftCard.sku = "giftCard" + "-" + this.giftCard.code;
 		},
 		clear() {
 			this.giftCard = {
