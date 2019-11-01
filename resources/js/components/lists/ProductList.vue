@@ -61,12 +61,28 @@
 					<v-card :img="product.photo_url" @click="addProduct(product)" height="170px">
 						<v-card-title class="blue-grey pa-0" @click.stop>
 							<h6 class="px-2">{{product.name}}</h6>
-
 							<div class="flex-grow-1"></div>
-
-							<v-btn icon @click="viewItem(product)">
-								<v-icon>fas fa-eye</v-icon>
-							</v-btn>
+							<v-menu bottom left>
+								<template v-slot:activator="{ on }">
+									<v-btn dark icon v-on="on">
+										<v-icon>mdi-dots-vertical</v-icon>
+									</v-btn>
+								</template>
+								<v-list>
+									<v-list-item @click="viewItem(product)">
+										<v-icon class="pr-2">mdi-eye</v-icon>
+										<h5>View product</h5>
+									</v-list-item>
+									<v-list-item :href="product.plantcare_pdf" link :disabled="!product.plantcare_pdf">
+										<v-icon class="pr-2">mdi-flower-outline</v-icon>
+										<h5>Plant care</h5>
+									</v-list-item>
+									<v-list-item :href="product.url" link :disabled="!product.url">
+										<v-icon class="pr-2">fab fa-magento</v-icon>
+										<h5>View on Magento</h5>
+									</v-list-item>
+								</v-list>
+							</v-menu>
 						</v-card-title>
 						<v-card-actions>
 							<v-chip v-if="product.final_price != product.price.amount" class="mt-2 ml-1">
