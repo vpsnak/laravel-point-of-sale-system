@@ -159,6 +159,12 @@ export default {
 						paymentType: this.paymentType
 					};
 					break;
+				case "house-account":
+					payload = {
+						paymentAmount: this.paymentAmount,
+						paymentType: this.paymentType
+					};
+					break;
 				case "coupon":
 					payload = {
 						code: this.code,
@@ -182,7 +188,9 @@ export default {
 		},
 		limits() {
 			if (this.paymentType !== "cash") {
-				if (parseFloat(this.amount) > parseFloat(this.remainingAmount)) {
+				if (
+					parseFloat(this.amount) > parseFloat(this.remainingAmount)
+				) {
 					this.amount = this.remainingAmount.toFixed(2);
 				}
 			} else {
