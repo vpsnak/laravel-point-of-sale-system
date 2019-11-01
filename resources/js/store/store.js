@@ -267,19 +267,13 @@ export default new Vuex.Store({
         openCashRegister(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    // .get(this.state.baseUrl + "auth/logout", {
-                    //     headers: {
-                    //         Authorization: this.state.token
-                    //     }
-                    // })
                     .post(
-                        this.state.baseUrl + payload.model + "/open", {
+                        this.state.baseUrl + payload.model + "/open",
+                        payload.data, {
                         headers: {
                             Authorization: this.state.token
                         }
-                    },
-                        payload.data
-                    )
+                    })
                     .then(response => {
                         if (_.has(payload, "mutation")) {
                             context.commit(payload.mutation, response.data, {
@@ -304,8 +298,11 @@ export default new Vuex.Store({
                 axios
                     .post(
                         this.state.baseUrl + payload.model + "/close",
-                        payload.data
-                    )
+                        payload.data, {
+                        headers: {
+                            Authorization: this.state.token
+                        }
+                    })
                     .then(response => {
                         if (_.has(payload, "mutation")) {
                             context.commit(payload.mutation, response.data, {

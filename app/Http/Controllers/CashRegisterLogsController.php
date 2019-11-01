@@ -14,7 +14,7 @@ class CashRegisterLogsController extends BaseController
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'user_id' => 'required|exists:users,id',
+            // 'user_id' => 'required|exists:users,id',
             'cash_register_id' => 'required|exists:cash_registers,id',
             'opening_amount' => 'required|numeric',
             'closing_amount' => 'numeric',
@@ -26,7 +26,8 @@ class CashRegisterLogsController extends BaseController
             'note' => 'string',
         ]);
 
-        
+        $validatedData['opened_by'] = auth()->user()->id;
+        $validatedData['user_id'] = auth()->user()->id;
 
         $validatedID = $request->validate([
             'id' => 'nullable|exists:cash_register_logs,id'
@@ -35,7 +36,6 @@ class CashRegisterLogsController extends BaseController
         if (!empty($validatedID)) {
             return response($this->model::updateData($validatedID, $validatedData), 200);
         } else {
-            $validatedData['opened_by'] = auth()->user()->id;
             return response($this->model::store($validatedData), 201);
         }
     }
@@ -43,10 +43,12 @@ class CashRegisterLogsController extends BaseController
     public function close(Request $request)
     {
         $validatedData = $request->validate([
-            'user_id' => 'required|exists:users,id',
+            // 'user_id' => 'required|exists:users,id',
             'closing_amount' => 'required|numeric',
             // 'closed_by' => 'required|exists:users,id',
         ]);
+        
+        $validatedData['user_id'] = auth()->user()->id;
         $validatedData['closed_by'] = auth()->user()->id;
         $validatedData['status'] = 0;
         $validatedData['closing_time'] = Carbon::now();
@@ -59,12 +61,13 @@ class CashRegisterLogsController extends BaseController
     public function open(Request $request)
     {
         $validatedData = $request->validate([
-            'user_id' => 'required|exists:users,id',
+            // 'user_id' => 'required|exists:users,id',
             'cash_register_id' => 'required|exists:cash_registers,id',
-            'opening_amount' => 'required|numeric',
+            'opening_amount' => 'required|numeric', 
             // 'opened_by' => 'required|exists:users,id',
         ]);
 
+        $validatedData['user_id'] = auth()->user()->id;
         $validatedData['opened_by'] = auth()->user()->id;
         $validatedData['status'] = 1;
         $validatedData['opening_time'] = Carbon::now();
