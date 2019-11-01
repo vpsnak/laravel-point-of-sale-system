@@ -21,10 +21,12 @@ class CashRegisterLogsController extends BaseController
             'status' => 'required|boolean',
             'opening_time' => 'required|date',
             'closing_time' => 'date',
-            'opened_by' => 'required|exists:users,id',
-            'closed_by' => 'exists:users,id',
+            // 'opened_by' => 'required|exists:users,id',
+            // 'closed_by' => 'exists:users,id',
             'note' => 'string',
         ]);
+
+        
 
         $validatedID = $request->validate([
             'id' => 'nullable|exists:cash_register_logs,id'
@@ -33,6 +35,7 @@ class CashRegisterLogsController extends BaseController
         if (!empty($validatedID)) {
             return response($this->model::updateData($validatedID, $validatedData), 200);
         } else {
+            $validatedData['opened_by'] = auth()->user()->id;
             return response($this->model::store($validatedData), 201);
         }
     }
@@ -42,8 +45,9 @@ class CashRegisterLogsController extends BaseController
         $validatedData = $request->validate([
             'user_id' => 'required|exists:users,id',
             'closing_amount' => 'required|numeric',
-            'closed_by' => 'required|exists:users,id',
+            // 'closed_by' => 'required|exists:users,id',
         ]);
+        $validatedData['closed_by'] = auth()->user()->id;
         $validatedData['status'] = 0;
         $validatedData['closing_time'] = Carbon::now();
 
@@ -58,8 +62,10 @@ class CashRegisterLogsController extends BaseController
             'user_id' => 'required|exists:users,id',
             'cash_register_id' => 'required|exists:cash_registers,id',
             'opening_amount' => 'required|numeric',
-            'opened_by' => 'required|exists:users,id',
+            // 'opened_by' => 'required|exists:users,id',
         ]);
+
+        $validatedData['opened_by'] = auth()->user()->id;
         $validatedData['status'] = 1;
         $validatedData['opening_time'] = Carbon::now();
         if (!empty($this->getAlreadyOpenedRegister($validatedData['cash_register_id']))) {

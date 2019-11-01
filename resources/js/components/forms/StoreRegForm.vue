@@ -29,8 +29,8 @@
 			required
 		></v-text-field>
 
-		<v-btn class="mr-4" @click="submit">submit</v-btn>
-		<v-btn @click="clear">clear</v-btn>
+		<v-btn class="mr-4" @click="submit" :loading="loading">Open Cash Register</v-btn>
+		<v-btn @click="clear">Close Cash Register</v-btn>
 	</div>
 </template>
 <script>
@@ -39,6 +39,7 @@ import { mapActions } from "vuex";
 export default {
 	data() {
 		return {
+			loading: false,
 			stores: [],
 			cash_registers: [],
 			storeDisabled: true,
@@ -49,7 +50,7 @@ export default {
 				cash_register_id: null,
 				user_id: null,
 				opening_amount: null,
-				opened_by: 1,
+				opened_by: null,
 				opening_time: new Date()
 					.toJSON()
 					.slice(0, 10)
@@ -69,6 +70,7 @@ export default {
 	},
 	methods: {
 		submit() {
+			this.loading = true;
 			for (const store of this.stores) {
 				if (store.id == this.formFields.store_id) {
 					this.$store.state.store = store;
@@ -83,10 +85,21 @@ export default {
 				model: "cash-register-logs",
 				data: { ...this.formFields }
 			};
-			this.create(payload).then(() => {
-				this.clear();
-				this.$emit("submit", "cash-register-logs");
-			});
+			this.openCashRegister(payload)
+				.then(() => {
+					this.clear();
+					this.$emit("submit", {
+						model: "cash-register-logs",
+						notification: {
+							msg: "Cash register opened successfully",
+							type: "success"
+						}
+					});
+					this.clear();
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 		beforeDestroy() {
 			this.$off("submit");
@@ -126,6 +139,7 @@ export default {
 			getAll: "getAll",
 			getOne: "getOne",
 			create: "create",
+			openCashRegister: "openCashRegister",
 			delete: "delete"
 		})
 	},
