@@ -52,7 +52,7 @@ export default {
 					.substring(1);
 			};
 			this.dummyProduct.id = "dummy" + "-" + random();
-			this.dummyProduct.sku = "dummy" + "-" + random() + random();
+			this.dummyProduct.sku = "dummy" + "-" + random();
 		},
 		clear() {
 			this.dummyProduct = {

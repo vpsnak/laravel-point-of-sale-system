@@ -107,7 +107,7 @@
 		<interactiveDialog
 			v-if="showGiftCardDialog"
 			:show="showGiftCardDialog"
-			component="giftCardForm"
+			component="giftCardToCartForm"
 			title="Add a gift card"
 			@action="result"
 			cancelBtnTxt="Close"
