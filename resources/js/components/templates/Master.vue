@@ -13,13 +13,12 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions } from "vuex";
 import Cookies from "js-cookie";
 export default {
 	computed: {
-		...mapState(["token"]),
 		authorized() {
-			return this.token ? true : false;
+			return this.$store.state.token ? true : false;
 		},
 		loginRoute() {
 			return this.$router.currentRoute.name === "login" ? true : false;
