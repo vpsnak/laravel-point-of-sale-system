@@ -120,8 +120,10 @@ export default {
 	computed: {
 		remainingAmount() {
 			if (parseFloat(this.$props.remaining) >= 0) {
+				this.amount = parseFloat(this.$props.remaining);
 				return parseFloat(this.$props.remaining);
 			} else {
+				this.amount = parseFloat(this.$store.state.cart.cart_price);
 				return parseFloat(this.$store.state.cart.cart_price);
 			}
 		},
@@ -200,7 +202,7 @@ export default {
 			}
 		},
 		clearState() {
-			this.amount = null;
+			this.amount = this.remainingAmount;
 			this.code = null;
 
 			this.card.number = null;

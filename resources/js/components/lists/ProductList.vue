@@ -85,10 +85,10 @@
 							</v-menu>
 						</v-card-title>
 						<v-card-actions>
-							<v-chip v-if="product.final_price != product.price.amount" class="mt-2 ml-1">
-								<span>Final Price: {{ parseFloat(product.final_price).toFixed(2) }} $</span>
+							<v-chip class="mt-2 ml-1">
+								<span>Price: {{ parseFloat(product.final_price).toFixed(2) }} $</span>
 							</v-chip>
-							<v-chip v-else class="mt-2 ml-1">
+							<v-chip v-if="product.final_price != product.price.amount" class="mt-2 ml-1">
 								<span>Net Price: {{ parseFloat(product.final_price).toFixed(2) }} $</span>
 							</v-chip>
 						</v-card-actions>
