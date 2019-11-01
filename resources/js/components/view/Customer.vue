@@ -5,15 +5,17 @@
 				<v-card>
 					<v-card-title>Billing Information</v-card-title>
 					<v-card-text>
-						<div class="subtitle-1">First Name: {{customerData.first_name}}</div>
+						<customerForm :model="customerData"></customerForm>
+						<!-- <div class="subtitle-1">First Name: {{customerData.first_name}}</div>
 						<div class="subtitle-1">Last Name: {{customerData.last_name}}</div>
+						-->
 
-						<div class="subtitle-1">
+						<!-- <div class="subtitle-1">
 							Email:
 							<a :href="'mailto:' + customerData.email">{{customerData.email}}</a>
 						</div>
 						<div class="subtitle-1">Created at: {{customerData.created_at}}</div>
-						<div class="subtitle-1">Updated at: {{customerData.updated_at}}</div>
+						<div class="subtitle-1">Updated at: {{customerData.updated_at}}</div>-->
 					</v-card-text>
 				</v-card>
 			</v-col>

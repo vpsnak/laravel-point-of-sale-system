@@ -1,97 +1,9 @@
 <template>
 	<div>
 		<v-form @submit="submit">
-			<div class="text-center">
-				<v-chip color="primary" label>
-					<v-icon left>fas fa-user</v-icon>Customer Form
-				</v-chip>
-			</div>
-			<v-text-field v-model="firstName" label="First name" required></v-text-field>
-			<v-text-field v-model="lastName" label="Last name" required></v-text-field>
+			<v-text-field v-model="formFields.first_name" label="First name" required></v-text-field>
+			<v-text-field v-model="formFields.last_name" label="Last name" required></v-text-field>
 			<v-text-field v-model="formFields.email" label="Email" required></v-text-field>
-			<v-row v-if="this.$props.model == undefined">
-				<v-checkbox v-model="syncName" label="Use customer's name as default address name"></v-checkbox>
-				<v-col cols="4">
-					<v-text-field
-						v-model="formFields.addresses[0].first_name"
-						label="Address First name"
-						:disabled="loading || syncName"
-						required
-					></v-text-field>
-					<v-text-field v-model="formFields.addresses[0].city" label="City" :disabled="loading" required></v-text-field>
-					<v-select
-						v-model="formFields.addresses[0].region"
-						:items="regions"
-						label="Regions"
-						required
-						item-text="default_name"
-						item-value="id"
-					></v-select>
-					<v-text-field
-						v-model="formFields.addresses[0].company"
-						label="Company"
-						:disabled="loading"
-						required
-					></v-text-field>
-				</v-col>
-
-				<v-col cols="4">
-					<v-text-field
-						v-model="formFields.addresses[0].last_name"
-						label="Address Last name"
-						:disabled="loading || syncName"
-						required
-					></v-text-field>
-					<v-text-field
-						v-model="formFields.addresses[0].postcode"
-						label="Postcode"
-						:disabled="loading"
-						required
-					></v-text-field>
-					<v-select
-						v-model="formFields.addresses[0].country_id"
-						:items="countries"
-						label="Countries"
-						required
-						item-text="iso2_code"
-						item-value="iso2_code"
-					></v-select>
-					<v-text-field
-						v-model="formFields.addresses[0].vat_id"
-						label="Vat id"
-						:disabled="loading"
-						required
-					></v-text-field>
-				</v-col>
-				<v-col cols="4">
-					<v-text-field
-						v-model="formFields.addresses[0].street"
-						label="Street"
-						:disabled="loading"
-						required
-					></v-text-field>
-					<v-text-field
-						v-model="formFields.addresses[0].street2"
-						label="Second Street"
-						:disabled="loading"
-						required
-					></v-text-field>
-					<v-text-field
-						v-model="formFields.addresses[0].phone"
-						label="Phone"
-						type="number"
-						:min="0"
-						:disabled="loading"
-						required
-					></v-text-field>
-					<!-- <v-text-field
-			v-model="formFields.deliverydate"
-			label="Delivery date"
-			:disabled="loading"
-			required
-					></v-text-field>-->
-				</v-col>
-			</v-row>
 			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="loading">submit</v-btn>
 			<v-btn v-if="this.model === undefined" @click="clear">clear</v-btn>
 		</v-form>
@@ -108,74 +20,19 @@ export default {
 		return {
 			loading: false,
 			defaultValues: {},
-			syncName: true,
-			countries: [],
-			regions: [],
 			formFields: {
 				first_name: null,
 				last_name: null,
-				email: null,
-				addresses: [
-					{
-						first_name: null,
-						last_name: null,
-						street: null,
-						street2: null,
-						city: null,
-						country_id: null,
-						region: null,
-						postcode: null,
-						phone: null,
-						company: null,
-						vat_id: null,
-						deliverydate: null
-					}
-				]
+				email: null
 			}
 		};
 	},
 	mounted() {
-		this.getAll({
-			model: "regions"
-		}).then(regions => {
-			this.regions = regions;
-		});
-		this.getAll({
-			model: "countries"
-		}).then(countries => {
-			this.countries = countries;
-		});
 		this.defaultValues = { ...this.formFields };
 		if (this.$props.model) {
 			this.formFields = {
 				...this.$props.model
 			};
-		}
-	},
-	computed: {
-		firstName: {
-			get() {
-				return this.formFields.first_name;
-			},
-			set(value) {
-				if (this.syncName) {
-					this.formFields.addresses[0].first_name = this.formFields.first_name = value;
-				} else {
-					this.formFields.first_name = value;
-				}
-			}
-		},
-		lastName: {
-			get() {
-				return this.formFields.last_name;
-			},
-			set(value) {
-				if (this.syncName) {
-					this.formFields.addresses[0].last_name = this.formFields.last_name = value;
-				} else {
-					this.formFields.last_name = value;
-				}
-			}
 		}
 	},
 	methods: {
