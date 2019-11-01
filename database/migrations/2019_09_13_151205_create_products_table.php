@@ -20,8 +20,9 @@ class CreateProductsTable extends Migration
             $table->string('sku')->unique()->index();
             $table->string('name');
             $table->string('barcode')->nullable();
-            $table->string('photo_url');
+            $table->string('photo_url')->nullable();
             $table->string('url')->nullable();
+            $table->string('plantcare_pdf')->nullable();
             $table->text('description')->nullable();
             $table->softDeletes();
             $table->timestamps();
