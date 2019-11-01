@@ -19,6 +19,7 @@ class ProductSync
         'stock_id',
         'description',
         'image_url',
+        'plantcare_pdf',
     ];
 
     protected const productFieldsToRename = [

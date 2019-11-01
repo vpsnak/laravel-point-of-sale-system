@@ -21,6 +21,7 @@ class Product extends BaseModel
         'barcode',
         'photo_url',
         'url',
+        'plantcare_pdf',
         'description',
     ];
 
