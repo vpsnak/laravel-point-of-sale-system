@@ -54,7 +54,7 @@
 							</template>
 							<span>Recharge</span>
 						</v-tooltip>
-						<v-tooltip bottom>
+						<v-tooltip bottom v-if="tableForm != 'customerNewForm'">
 							<template v-slot:activator="{ on }">
 								<v-btn :disabled="btnDisable" @click.stop="editItem(item)" class="my-1" v-on="on" icon>
 									<v-icon small>edit</v-icon>

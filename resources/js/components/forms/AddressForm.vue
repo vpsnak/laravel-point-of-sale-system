@@ -1,10 +1,5 @@
 <template>
 	<v-form @submit="submit">
-		<div class="text-center">
-			<v-chip color="primary" label>
-				<v-icon left>fas fa-address-card</v-icon>Address Form
-			</v-chip>
-		</div>
 		<v-row>
 			<v-col cols="4">
 				<v-text-field v-model="formFields.first_name" label="First name" :disabled="loading" required></v-text-field>

@@ -15,7 +15,7 @@
 				<v-flex xs1>
 					<v-tooltip bottom>
 						<template v-slot:activator="{ on }">
-							<v-btn @click="showCreateDialog = true" class="my-3" v-on="on" icon>
+							<v-btn @click="showCreateDialog = true" class="my-3" v-on="on" icon :disabled="!editable">
 								<v-icon>mdi-plus</v-icon>
 							</v-btn>
 						</template>

@@ -5,15 +5,17 @@
 				<v-card>
 					<v-card-title>Billing Information</v-card-title>
 					<v-card-text>
-						<div class="subtitle-1">First Name: {{customerData.first_name}}</div>
+						<customerForm :model="customerData"></customerForm>
+						<!-- <div class="subtitle-1">First Name: {{customerData.first_name}}</div>
 						<div class="subtitle-1">Last Name: {{customerData.last_name}}</div>
+						-->
 
-						<div class="subtitle-1">
+						<!-- <div class="subtitle-1">
 							Email:
 							<a :href="'mailto:' + customerData.email">{{customerData.email}}</a>
 						</div>
 						<div class="subtitle-1">Created at: {{customerData.created_at}}</div>
-						<div class="subtitle-1">Updated at: {{customerData.updated_at}}</div>
+						<div class="subtitle-1">Updated at: {{customerData.updated_at}}</div>-->
 					</v-card-text>
 				</v-card>
 			</v-col>
@@ -71,15 +73,6 @@
 							<v-card flat>
 								<v-card-text>
 									<addressForm :model="address"></addressForm>
-									<div class="subtitle-1">First Name: {{address.first_name }}</div>
-									<div class="subtitle-1">Last Name: {{address.last_name }}</div>
-									<div class="subtitle-1">Street: {{address.street }}</div>
-									<div class="subtitle-1">Second Street: {{address.street2 }}</div>
-									<div class="subtitle-1">City: {{address.city }}</div>
-									<div class="subtitle-1">Country_id: {{address.country_id }}</div>
-									<div class="subtitle-1">Region: {{address.region }}</div>
-									<div class="subtitle-1">Post Code: {{address.postcode }}</div>
-									<div class="subtitle-1">Company: {{address.company }}</div>
 								</v-card-text>
 							</v-card>
 						</v-tab-item>

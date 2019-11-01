@@ -1,15 +1,9 @@
 <template>
 	<div>
 		<v-form @submit="submit">
-			<div class="text-center">
-				<v-chip color="primary" label>
-					<v-icon left>fas fa-user</v-icon>Customer Form
-				</v-chip>
-			</div>
 			<v-text-field v-model="formFields.first_name" label="First name" required></v-text-field>
 			<v-text-field v-model="formFields.last_name" label="Last name" required></v-text-field>
 			<v-text-field v-model="formFields.email" label="Email" required></v-text-field>
-
 			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="loading">submit</v-btn>
 			<v-btn v-if="this.model === undefined" @click="clear">clear</v-btn>
 		</v-form>
