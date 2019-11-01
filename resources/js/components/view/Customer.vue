@@ -71,15 +71,6 @@
 							<v-card flat>
 								<v-card-text>
 									<addressForm :model="address"></addressForm>
-									<div class="subtitle-1">First Name: {{address.first_name }}</div>
-									<div class="subtitle-1">Last Name: {{address.last_name }}</div>
-									<div class="subtitle-1">Street: {{address.street }}</div>
-									<div class="subtitle-1">Second Street: {{address.street2 }}</div>
-									<div class="subtitle-1">City: {{address.city }}</div>
-									<div class="subtitle-1">Country_id: {{address.country_id }}</div>
-									<div class="subtitle-1">Region: {{address.region }}</div>
-									<div class="subtitle-1">Post Code: {{address.postcode }}</div>
-									<div class="subtitle-1">Company: {{address.company }}</div>
 								</v-card-text>
 							</v-card>
 						</v-tab-item>
