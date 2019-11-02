@@ -9,6 +9,9 @@
 							<span class="body-2">$ {{ parseFloat(price(product)).toFixed(2) }}</span>
 						</div>
 						<v-spacer />
+						<v-btn v-if="editable" small icon @click.stop="viewItem(product)">
+							<v-icon small class="px-1">mdi-eye</v-icon>
+						</v-btn>
 						<div class="d-flex justify-content-center align-center">
 							<v-btn v-if="editable" small icon @click.stop="decreaseQty(product)">
 								<v-icon small class="px-1">remove</v-icon>
@@ -59,12 +62,29 @@
 				</v-expansion-panel-content>
 			</v-expansion-panel>
 		</v-expansion-panels>
+		<interactiveDialog
+			v-if="showViewDialog"
+			:show="showViewDialog"
+			title="View item"
+			:fullscreen="false"
+			:width="1000"
+			component="product"
+			:model="viewProduct"
+			@action="result"
+			action="newItem"
+			cancelBtnTxt="Close"
+		></interactiveDialog>
 	</div>
 </template>
 
 <script>
 import { mapState } from "vuex";
 export default {
+	data() {
+		return {
+			showViewDialog: false
+		};
+	},
 	props: {
 		products: Array,
 		editable: Boolean
@@ -90,6 +110,13 @@ export default {
 		removeItem(product) {
 			const index = this.products.indexOf(product);
 			this.products.splice(index, 1);
+		},
+		result(event) {
+			this.showViewDialog = false;
+		},
+		viewItem(product) {
+			this.viewProduct = product;
+			this.showViewDialog = true;
 		}
 	}
 };

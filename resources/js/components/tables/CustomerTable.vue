@@ -4,7 +4,7 @@
 		data-url="customers"
 		tableTitle="Customers"
 		tableBtnTitle="New Customer"
-		tableForm="customerForm"
+		tableForm="customerNewForm"
 		:tableBtnDisable="false"
 		tableViewComponent="customer"
 	>

@@ -1,40 +1,88 @@
 <template>
 	<v-container>
-		<v-form>
+		<v-form @submit.prevent="submit">
 			<v-card class="mx-auto pa-5">
-				<v-row>
-					<v-col :cols="3">
-						<v-switch
-							:color="kwloterorita"
-							v-model="endpoint"
-							false-value="SDK"
-							true-value="API"
-							:label="'Selected method: ' + endpoint"
-							@change="rainboW"
-						></v-switch>
-					</v-col>
-					<v-col :cols="3">
-						<v-text-field v-model="selected_transaction" label=""></v-text-field>
-					</v-col>
-					<v-col :cols="3">
-						<v-text-field v-model="selected_transaction" label=""></v-text-field>
-					</v-col>
-					<v-col :cols="3">
-						<v-text-field v-model="selected_transaction" label=""></v-text-field>
-					</v-col>
-				</v-row>
-				<v-row v-if="endpoint === 'SDK'">
-					<v-col :cols="3">
-						<v-text-field v-model="asd"></v-text-field>
-					</v-col>
-				</v-row>
-				<v-row v-else>
-					<v-col :cols="3">
-						<!-- <v-text-field v-model="asd"></v-text-field> -->
-					</v-col>
-				</v-row>
+				<v-card-text>
+					<v-row>
+						<v-col :cols="3">
+							<v-switch
+								:disabled="loading"
+								v-model="endpoint"
+								false-value="SDK"
+								true-value="API"
+								:label="'Selected method: ' + endpoint"
+							></v-switch>
+						</v-col>
+					</v-row>
+					<v-row v-if="endpoint === 'SDK'">
+						<v-col :cols="3">
+							<v-text-field v-model="sdk.test_case" label="Test case"></v-text-field>
+						</v-col>
+						<v-col :cols="3">
+							<v-select
+								:items="sdk.transaction_types"
+								v-model="sdk.selected_transaction"
+								label="Transaction type"
+							></v-select>
+						</v-col>
+						<v-col :cols="3">
+							<v-text-field v-model="sdk.amount" label="Amount"></v-text-field>
+						</v-col>
+						<v-col :cols="3">
+							<v-text-field
+								v-if="sdk.selected_transaction === 'PRE_AUTH_COMPLETE'"
+								v-model="sdk.originalTransId"
+								label="Original Trans ID"
+							></v-text-field>
+						</v-col>
+					</v-row>
+					<v-row v-else>
+						<v-col :cols="3">
+							<!-- <v-text-field v-model="asd"></v-text-field> -->
+						</v-col>
+					</v-row>
+				</v-card-text>
+				<v-card-actions>
+					<v-row>
+						<v-col :cols="12">
+							<v-btn type="submit" :loading="loading" :disabled="loading" color="success">submit</v-btn>
+							<v-btn
+								@click="getSdkLogs"
+								v-if="endpoint==='SDK'"
+								color="info"
+								:loading="loading"
+								:disabled="loading"
+							>get logs</v-btn>
+							<v-btn
+								@click="deleteSdkLogs"
+								v-if="endpoint==='SDK'"
+								color="error"
+								:loading="loading"
+								:disabled="loading"
+							>delete logs</v-btn>
+						</v-col>
+						<v-col :cols="12">
+							<v-data-table
+								v-if="endpoint === 'SDK'"
+								:items="sdkLogs"
+								:headers="sdkHeaders"
+								@click:row="openLog"
+								:loading="loading"
+							></v-data-table>
+						</v-col>
+					</v-row>
+				</v-card-actions>
 			</v-card>
 		</v-form>
+		<interactiveDialog
+			:width="600"
+			:title="'Log #' + item.id"
+			v-if="showLog"
+			actions
+			:show="showLog"
+			@action="showLog = false"
+			:content="'<pre><code style=\'max-width:100%\'>' + item.log + '</code></pre>'"
+		></interactiveDialog>
 	</v-container>
 </template>
 
@@ -42,17 +90,114 @@
 export default {
 	data() {
 		return {
+			loading: false,
 			endpoint: "SDK",
-			transaction_types: ["SALE", "", "", ""],
-			selected_transaction: null,
-			asd: "",
-			kwloterorita: "#FFFFFF"
+			sdk: {
+				originalTransId: "",
+				test_case: "",
+				transaction_types: ["SALE", "PRE_AUTH", "PRE_AUTH_COMPLETE", ""],
+				amount: null,
+				selected_transaction: null
+			},
+			sdkHeaders: [
+				{ text: "#", value: "id" },
+				{ text: "Test case", value: "test_case" },
+				{ text: "Payment gateway id", value: "payment_gateway_id" },
+				{ text: "Chan id", value: "chan_id" },
+				{ text: "Status", value: "status" },
+				{ text: "Log", value: "log" }
+			],
+			sdkLogs: [],
+			showLog: false,
+			item: {},
+
+			api: {}
 		};
 	},
 
+	computed: {
+		token() {
+			return this.$store.state.token;
+		}
+	},
+
 	methods: {
-		rainboW() {
-			this.kwloterorita = "#" + ((Math.random() * 0xffffff) << 0).toString(16);
+		openLog(item) {
+			this.item = item;
+			this.showLog = true;
+		},
+		getSdkLogs() {
+			this.loading = true;
+			axios
+				.get("/api/elavon/sdk/logs", {
+					headers: {
+						Authorization: this.token
+					}
+				})
+				.then(response => {
+					this.sdkLogs = response.data;
+				})
+				.finally(() => {
+					this.loading = false;
+				});
+		},
+		deleteSdkLogs() {
+			this.loading = true;
+			axios
+				.get("/api/elavon/sdk/logs/delete", {
+					headers: {
+						Authorization: this.token
+					}
+				})
+				.finally(() => {
+					this.loading = false;
+				});
+		},
+		submit() {
+			this.loading = true;
+			if (this.endpoint === "SDK") {
+				axios
+					.post("/api/elavon/sdk", this.sdk, {
+						headers: {
+							Authorization: this.token
+						}
+					})
+					.catch(error => {
+						alert(
+							"Status code: " +
+								error.response.status +
+								"\nMessage: " +
+								error.response.data.message
+						);
+						console.log(error.response);
+						this.loading = false;
+					})
+					.finally(() => {
+						this.getSdkLogs();
+						this.loading = false;
+					});
+			} else {
+				axios
+					.post("/api/elavon/api", this.api, {
+						headers: {
+							Authorization: this.token
+						}
+					})
+					.catch(error => {
+						alert(
+							"Status code: " +
+								error.response.status +
+								"\nMessage: " +
+								error.response.data.message
+						);
+						console.log(error.response);
+						this.loading = false;
+					})
+					.finally(() => {
+						this.getSdkLogs();
+						this.loading = false;
+					});
+			}
 		}
 	}
 };

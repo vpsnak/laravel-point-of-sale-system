@@ -19,15 +19,13 @@
 							<thead>
 								<tr>
 									<th class="text-left">Store name</th>
-									<th class="text-left">Tax ID</th>
-									<th class="text-left">Updated at</th>
+									<th class="text-left">Qty</th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr v-for="store in productData.stores" :key="store.id">
 									<td>{{ store.name }}</td>
-									<td>{{ store.tax_id }}</td>
-									<td>{{ store.updated_at }}</td>
+									<td>{{ store.pivot.qty }}</td>
 								</tr>
 							</tbody>
 						</template>

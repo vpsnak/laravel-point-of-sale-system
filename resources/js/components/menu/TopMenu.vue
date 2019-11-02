@@ -3,15 +3,24 @@
 		<v-app-bar-nav-icon @click.stop="mini = !mini"></v-app-bar-nav-icon>
 
 		<v-toolbar-title>Plantshed</v-toolbar-title>
-
 		<div class="flex-grow-1"></div>
-
+		<interactiveDialog
+			v-if="showViewDialog"
+			:show="showViewDialog"
+			title="Select store and cash register"
+			:fullscreen="false"
+			:width="600"
+			component="storeRegForm"
+			cancelBtnTxt="Close"
+			@action="result"
+			:titleCloseBtn="true"
+		></interactiveDialog>
 		<v-menu left bottom offset-x transition="scale-transition">
 			<template v-slot:activator="{ on }">
 				<v-btn icon v-on="on">
 					<v-icon>account_circle</v-icon>
 				</v-btn>
-				<v-chip class="ma-2" color="blue-grey" text-color="white">
+				<v-chip @click="showViewDialog = true" class="ma-2" color="blue-grey" text-color="white">
 					<v-avatar left>
 						<v-icon>fas fa-store-alt</v-icon>
 					</v-avatar>
@@ -70,12 +79,16 @@ import { mapState } from "vuex";
 export default {
 	data() {
 		return {
+			showViewDialog: false,
 			avatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg"
 		};
 	},
 	methods: {
 		invertTheme() {
 			this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+		},
+		result(event) {
+			this.showViewDialog = false;
 		}
 	},
 	computed: {

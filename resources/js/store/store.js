@@ -183,9 +183,9 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                            payload.model +
-                            "/" +
-                            payload.data.id
+                        payload.model +
+                        "/" +
+                        payload.data.id
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -212,12 +212,12 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                            payload.model +
-                            "/" +
-                            payload.data.id +
-                            "/" +
-                            payload.data.model +
-                            page
+                        payload.model +
+                        "/" +
+                        payload.data.id +
+                        "/" +
+                        payload.data.model +
+                        page
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -264,6 +264,66 @@ export default new Vuex.Store({
                     });
             });
         },
+        openCashRegister(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(
+                        this.state.baseUrl + payload.model + "/open",
+                        payload.data, {
+                        headers: {
+                            Authorization: this.state.token
+                        }
+                    })
+                    .then(response => {
+                        if (_.has(payload, "mutation")) {
+                            context.commit(payload.mutation, response.data, {
+                                root: true
+                            });
+                        }
+                        resolve(response.data);
+                    })
+                    .catch(error => {
+                        let notification = {
+                            msg: error.response.data.errors,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
+                        reject(error);
+                    });
+            });
+        },
+
+        closeCashRegister(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(
+                        this.state.baseUrl + payload.model + "/close",
+                        payload.data, {
+                        headers: {
+                            Authorization: this.state.token
+                        }
+                    })
+                    .then(response => {
+                        if (_.has(payload, "mutation")) {
+                            context.commit(payload.mutation, response.data, {
+                                root: true
+                            });
+                        }
+                        resolve(response.data);
+                    })
+                    .catch(error => {
+                        let notification = {
+                            msg: error.response.data.errors,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
+                        reject(error);
+                    });
+            });
+
+
+        },
+
         create(context, payload) {
             return new Promise((resolve, reject) => {
                 payload.data.created_by = this.state.user.id;

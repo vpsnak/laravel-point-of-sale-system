@@ -50,8 +50,8 @@ foreach ($baseRoutes as $route => $controller) {
 Route::get('/carts/hold', "{$baseRoutes['carts']}@getHold");
 Route::get('/product-listing/categories', "CategoryController@productListingCategories");
 
-Route::post('/cash-register-logs/open', "{$baseRoutes['cash-register-logs']}@open");
-Route::post('/cash-register-logs/close', "{$baseRoutes['cash-register-logs']}@close");
+Route::post('/cash-register-logs/open', "{$baseRoutes['cash-register-logs']}@open")->middleware('auth:api');
+Route::post('/cash-register-logs/close', "{$baseRoutes['cash-register-logs']}@close")->middleware('auth:api');
 
 Route::post('/shipping/timeslot', "TimeslotController@getTimeslots");
 
@@ -60,3 +60,11 @@ Route::get('/magento/authorize', 'Auth\MagentoOAuthController@authorizeMagento')
 // e-mail
 Route::get('/sendemail', 'SendEmailController@index');
 Route::get('/send/{order}', 'SendEmailController@send');
+
+// elavon certification
+Route::post('/elavon/sdk', 'ElavonSdkPaymentController@index')->middleware('auth:api');
+Route::get('/elavon/sdk/logs', 'ElavonSdkPaymentController@getLogs')->middleware('auth:api');
+Route::get('/elavon/sdk/logs/delete', 'ElavonSdkPaymentController@deleteAll')->middleware('auth:api');
+Route::post('/elavon/api', 'ElavonApiPaymentController@index')->middleware('auth:api');
+Route::get('/elavon/api/logs', 'ElavonApiPaymentController@getLogs')->middleware('auth:api');
+Route::get('/elavon/api/logs/delete', 'ElavonApiPaymentController@deleteAll')->middleware('auth:api');
