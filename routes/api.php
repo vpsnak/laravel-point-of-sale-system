@@ -37,28 +37,28 @@ $baseRoutes = [
     'countries' => 'CountryController',
 ];
 
-Route::get('categories/{category}/products', "CategoryController@productsByCategory");
+Route::get('categories/{category}/products', "CategoryController@productsByCategory")->middleware('auth:api');
 
 foreach ($baseRoutes as $route => $controller) {
     Route::get("/$route", "$controller@all");
     Route::get("/$route/{id}", "$controller@get");
-    Route::post("/$route/create", "$controller@create");
+    Route::post("/$route/create", "$controller@create")->middleware('auth:api');
     Route::post("/$route/search", "$controller@search");
-    Route::delete("/$route/{id}", "$controller@delete");
+    Route::delete("/$route/{id}", "$controller@delete")->middleware('auth:api');
 }
 
-Route::get('/carts/hold', "{$baseRoutes['carts']}@getHold");
-Route::get('/product-listing/categories', "CategoryController@productListingCategories");
+Route::get('/carts/hold', "{$baseRoutes['carts']}@getHold")->middleware('auth:api');
+Route::get('/product-listing/categories', "CategoryController@productListingCategories")->middleware('auth:api');
 
 Route::post('/cash-register-logs/open', "{$baseRoutes['cash-register-logs']}@open")->middleware('auth:api');
 Route::post('/cash-register-logs/close', "{$baseRoutes['cash-register-logs']}@close")->middleware('auth:api');
 
-Route::post('/shipping/timeslot', "TimeslotController@getTimeslots");
+Route::post('/shipping/timeslot', "TimeslotController@getTimeslots")->middleware('auth:api');
 
 Route::get('/magento/authorize', 'Auth\MagentoOAuthController@authorizeMagento');
 
 // e-mail
-Route::get('/sendemail', 'SendEmailController@index');
+Route::get('/sendemail', 'SendEmailController@index')->middleware('auth:api');
 Route::get('/send/{order}', 'SendEmailController@send');
 
 // elavon certification

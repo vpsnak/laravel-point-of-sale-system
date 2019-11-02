@@ -9,7 +9,12 @@
 							<span class="body-2">$ {{ parseFloat(price(product)).toFixed(2) }}</span>
 						</div>
 						<v-spacer />
-						<v-btn v-if="editable" small icon @click.stop="viewItem(product)">
+						<v-btn
+							v-if="editable && !(product.sku.startsWith('dummy') || product.sku.startsWith('giftCard'))"
+							small
+							icon
+							@click.stop="viewItem(product)"
+						>
 							<v-icon small class="px-1">mdi-eye</v-icon>
 						</v-btn>
 						<div class="d-flex justify-content-center align-center">
@@ -115,6 +120,7 @@ export default {
 			this.showViewDialog = false;
 		},
 		viewItem(product) {
+			console.log(product);
 			this.viewProduct = product;
 			this.showViewDialog = true;
 		}
