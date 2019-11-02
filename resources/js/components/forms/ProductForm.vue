@@ -44,9 +44,9 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+  import { mapActions } from 'vuex'
 
-export default {
+  export default {
 	props: {
 		model: Object || undefined
 	},
@@ -64,7 +64,7 @@ export default {
 				final_price: null,
 				url: null,
 				description: null,
-				categories: [{}],
+              categories: [],
 				stores: []
 			}
 		};
