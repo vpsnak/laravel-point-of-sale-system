@@ -10,7 +10,7 @@
 					label="Regions"
 					required
 					item-text="default_name"
-					item-value="id"
+					item-value="region_id"
 				></v-select>
 				<v-text-field v-model="formFields.company" label="Company" :disabled="loading" required></v-text-field>
 			</v-col>
