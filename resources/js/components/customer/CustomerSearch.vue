@@ -68,6 +68,7 @@ export default {
 			loading: false,
 			search: null,
 			showCustomerComments: false,
+			showCreateDialog: false,
 			customers: []
 		};
 	},
@@ -122,6 +123,7 @@ export default {
 				.finally(() => (this.loading = false));
 		},
 		result(event) {
+			this.showCreateDialog = false;
 			this.showCustomerComments = false;
 		}
 	},
