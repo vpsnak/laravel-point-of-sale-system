@@ -13,14 +13,14 @@
 			<v-row>
 				<v-col cols="4">
 					<v-text-field
-						v-model="formFields.addresses[0].first_name"
+						v-model="formFields.address.first_name"
 						label="Address First name"
 						:disabled="loading || syncName"
 						required
 					></v-text-field>
-					<v-text-field v-model="formFields.addresses[0].city" label="City" :disabled="loading" required></v-text-field>
+					<v-text-field v-model="formFields.address.city" label="City" :disabled="loading" required></v-text-field>
 					<v-select
-						v-model="formFields.addresses[0].region"
+						v-model="formFields.address.region"
 						:items="regions"
 						label="Regions"
 						required
@@ -28,7 +28,7 @@
 						item-value="id"
 					></v-select>
 					<v-text-field
-						v-model="formFields.addresses[0].company"
+						v-model="formFields.address.company"
 						label="Company"
 						:disabled="loading"
 						required
@@ -37,63 +37,47 @@
 
 				<v-col cols="4">
 					<v-text-field
-						v-model="formFields.addresses[0].last_name"
+						v-model="formFields.address.last_name"
 						label="Address Last name"
 						:disabled="loading || syncName"
 						required
 					></v-text-field>
 					<v-text-field
-						v-model="formFields.addresses[0].postcode"
+						v-model="formFields.address.postcode"
 						label="Postcode"
 						:disabled="loading"
 						required
 					></v-text-field>
 					<v-select
-						v-model="formFields.addresses[0].country_id"
+						v-model="formFields.address.country_id"
 						:items="countries"
 						label="Countries"
 						required
 						item-text="iso2_code"
 						item-value="iso2_code"
 					></v-select>
-					<v-text-field
-						v-model="formFields.addresses[0].vat_id"
-						label="Vat id"
-						:disabled="loading"
-						required
-					></v-text-field>
+					<v-text-field v-model="formFields.address.vat_id" label="Vat id" :disabled="loading" required></v-text-field>
 				</v-col>
 				<v-col cols="4">
+					<v-text-field v-model="formFields.address.street" label="Street" :disabled="loading" required></v-text-field>
 					<v-text-field
-						v-model="formFields.addresses[0].street"
-						label="Street"
-						:disabled="loading"
-						required
-					></v-text-field>
-					<v-text-field
-						v-model="formFields.addresses[0].street2"
+						v-model="formFields.address.street2"
 						label="Second Street"
 						:disabled="loading"
 						required
 					></v-text-field>
 					<v-text-field
-						v-model="formFields.addresses[0].phone"
+						v-model="formFields.address.phone"
 						label="Phone"
 						type="number"
 						:min="0"
 						:disabled="loading"
 						required
 					></v-text-field>
-					<!-- <v-text-field
-			v-model="formFields.deliverydate"
-			label="Delivery date"
-			:disabled="loading"
-			required
-					></v-text-field>-->
 				</v-col>
 			</v-row>
 			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="loading">submit</v-btn>
-			<v-btn v-if="this.model === undefined" @click="clear">clear</v-btn>
+			<v-btn @click="clear">clear</v-btn>
 		</v-form>
 	</div>
 </template> 
@@ -112,22 +96,20 @@ export default {
 				first_name: null,
 				last_name: null,
 				email: null,
-				addresses: [
-					{
-						first_name: null,
-						last_name: null,
-						street: null,
-						street2: null,
-						city: null,
-						country_id: null,
-						region: null,
-						postcode: null,
-						phone: null,
-						company: null,
-						vat_id: null,
-						deliverydate: null
-					}
-				]
+				address: {
+					first_name: null,
+					last_name: null,
+					street: null,
+					street2: null,
+					city: null,
+					country_id: null,
+					region: null,
+					postcode: null,
+					phone: null,
+					company: null,
+					vat_id: null,
+					deliverydate: null
+				}
 			}
 		};
 	},
@@ -151,7 +133,7 @@ export default {
 			},
 			set(value) {
 				if (this.syncName) {
-					this.formFields.addresses[0].first_name = this.formFields.first_name = value;
+					this.formFields.address.first_name = this.formFields.first_name = value;
 				} else {
 					this.formFields.first_name = value;
 				}
@@ -163,7 +145,7 @@ export default {
 			},
 			set(value) {
 				if (this.syncName) {
-					this.formFields.addresses[0].last_name = this.formFields.last_name = value;
+					this.formFields.address.last_name = this.formFields.last_name = value;
 				} else {
 					this.formFields.last_name = value;
 				}
