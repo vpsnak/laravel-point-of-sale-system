@@ -1,8 +1,8 @@
 <template>
 	<v-app id="app">
-		<sideMenu v-if="authorized || !loginRoute" />
+		<sideMenu v-if="authorized" />
 
-		<topMenu v-if="authorized || !loginRoute" />
+		<topMenu v-if="authorized" />
 
 		<notification />
 
@@ -23,9 +23,6 @@ export default {
 			] = this.$store.state.token;
 
 			return this.$store.state.token ? true : false;
-		},
-		loginRoute() {
-			return this.$router.currentRoute.name === "login" ? true : false;
 		}
 	},
 	methods: {
