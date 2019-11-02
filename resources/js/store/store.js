@@ -25,7 +25,7 @@ export default new Vuex.Store({
     state: {
         baseUrl: "/api/",
 
-        user: Cookies.get("user") ? JSON.parse(Cookies.get("user")) : {},
+        user: Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null,
 
         token: Cookies.get("token") || null,
 
@@ -55,8 +55,12 @@ export default new Vuex.Store({
         storeList: []
     },
     getters: {
-        token: state => {
-            return state.token || null;
+        authorized: state => {
+            if (state.user && state.token) {
+                return true;
+            } else {
+                return false;
+            }
         }
     },
     mutations: {
