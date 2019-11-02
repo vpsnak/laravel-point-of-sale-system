@@ -8,11 +8,11 @@
 		</div>
 		<v-divider />
 		<v-container grid-list-md text-xs-center>
-			<v-layout row wrap>
-				<v-flex xs11>
+			<v-row>
+				<v-col cols="10">
 					<customerSearch :editable="editable" :keywordLength="1" class="my-3"></customerSearch>
-				</v-flex>
-				<v-flex xs1>
+				</v-col>
+				<v-col cols="1">
 					<v-tooltip bottom>
 						<template v-slot:activator="{ on }">
 							<v-btn @click="showCreateDialog = true" class="my-3" v-on="on" icon :disabled="!editable">
@@ -21,8 +21,14 @@
 						</template>
 						<span>Add a customer</span>
 					</v-tooltip>
-				</v-flex>
-			</v-layout>
+				</v-col>
+				<v-col v-if="this.$store.state.cart.customer" cols="1">
+					{{this.$store.state.cart.customer.comment}}
+					<v-btn @click="showCreateDialog = true" class="my-3" text icon color="red">
+						<v-icon>mdi-emoticon-angry</v-icon>
+					</v-btn>
+				</v-col>
+			</v-row>
 		</v-container>
 
 		<cartProducts :products="items ? items : products" :editable="editable"></cartProducts>
