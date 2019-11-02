@@ -58,27 +58,26 @@ export default new Vuex.Store({
         // Compute derived state based on the current state. More like computed property.
     },
     mutations: {
+        logout(state) {
+            state.user = null;
+            state.token = null;
+            state.cashRegister = null;
+
+            Cookies.remove("user");
+            Cookies.remove("token");
+            Cookies.remove("cashRegister");
+        },
         setUser(state, user) {
-            if (user) {
-                state.user = user;
-                Cookies.set("user", user, {
-                    sameSite: "strict"
-                });
-            } else {
-                state.user = null;
-                Cookies.remove("user");
-            }
+            state.user = user;
+            Cookies.set("user", user, {
+                sameSite: "strict"
+            });
         },
         setToken(state, token) {
-            if (token) {
-                state.token = "Bearer " + token;
-                Cookies.set("token", "Bearer " + token, {
-                    sameSite: "strict"
-                });
-            } else {
-                state.token = null;
-                Cookies.remove("token");
-            }
+            state.token = "Bearer " + token;
+            Cookies.set("token", "Bearer " + token, {
+                sameSite: "strict"
+            });
         },
         setNotification(state, notification) {
             state.notification = notification;
@@ -141,10 +140,7 @@ export default new Vuex.Store({
                         reject(error);
                     })
                     .finally(() => {
-                        context.commit("setUser", null, {
-                            root: true
-                        });
-                        context.commit("setToken", null, {
+                        context.commit("logout", {
                             root: true
                         });
                     });
