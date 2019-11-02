@@ -14,33 +14,19 @@
 
 <script>
 import { mapActions } from "vuex";
-import Cookies from "js-cookie";
+
 export default {
 	computed: {
 		authorized() {
+			window.axios.defaults.headers.common[
+				"Authorization"
+			] = this.$store.state.token;
+
 			return this.$store.state.token ? true : false;
 		},
 		loginRoute() {
 			return this.$router.currentRoute.name === "login" ? true : false;
 		}
-	},
-	mounted() {
-		this.getOne({
-			model: "stores",
-			data: {
-				id: 1
-			}
-		}).then(result => {
-			this.$store.state.store = result;
-		});
-		this.getOne({
-			model: "cash-registers",
-			data: {
-				id: 1
-			}
-		}).then(result => {
-			this.$store.state.cashRegister = result;
-		});
 	},
 	methods: {
 		...mapActions({

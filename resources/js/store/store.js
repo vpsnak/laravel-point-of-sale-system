@@ -55,7 +55,9 @@ export default new Vuex.Store({
         storeList: []
     },
     getters: {
-        // Compute derived state based on the current state. More like computed property.
+        token: state => {
+            return state.token || null;
+        }
     },
     mutations: {
         logout(state) {

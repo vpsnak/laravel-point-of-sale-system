@@ -37,7 +37,7 @@ $baseRoutes = [
     'countries' => 'CountryController',
 ];
 
-Route::get('categories/{category}/products', "CategoryController@productsByCategory")->middleware('auth:api');
+Route::get('categories/{category}/products', "CategoryController@productsByCategory");
 
 foreach ($baseRoutes as $route => $controller) {
     Route::get("/$route", "$controller@all");
