@@ -67,7 +67,7 @@ class ProductController extends BaseController
         ]);
 
         return $this->searchResult(
-            ['sku', 'name'],
+            ['sku', 'name', 'description'],
             $validatedData['keyword'],
             true
         );

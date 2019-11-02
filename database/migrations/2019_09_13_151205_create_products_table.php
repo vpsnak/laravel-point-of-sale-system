@@ -18,7 +18,7 @@ class CreateProductsTable extends Migration
             $table->unsignedBigInteger('magento_id')->default(0);
             $table->unsignedBigInteger('stock_id')->default(0);
             $table->string('sku')->unique()->index();
-            $table->string('name');
+            $table->string('name')->index();
             $table->string('barcode')->nullable();
             $table->string('photo_url')->nullable();
             $table->string('url')->nullable();

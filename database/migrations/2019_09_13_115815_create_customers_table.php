@@ -17,8 +17,8 @@ class CreateCustomersTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('magento_id')->default(0);
             $table->string('email')->unique()->index();
-            $table->string('first_name', 100);
-            $table->string('last_name', 100);
+            $table->string('first_name', 100)->index();
+            $table->string('last_name', 100)->index();
             $table->boolean('house_account_status')->default(0);
             $table->string('house_account_number', 100)->nullable();
             $table->decimal('house_account_limit', 12,4)->nullable();
