@@ -45,6 +45,10 @@
 			required
 				></v-text-field>-->
 			</v-col>
+			<v-row justify="space-around">
+				<v-switch v-model="formFields.billing" label="Default billing"></v-switch>
+				<v-switch v-model="formFields.shipping" label="Default shipping"></v-switch>
+			</v-row>
 		</v-row>
 		<v-btn class="mr-4" type="submit" :loading="loading" :disabled="loading">submit</v-btn>
 		<v-btn v-if="this.model === undefined" @click="clear">clear</v-btn>
@@ -76,7 +80,9 @@ export default {
 				phone: null,
 				company: null,
 				vat_id: null,
-				deliverydate: null
+				deliverydate: null,
+				shipping: false,
+				billing: false
 			}
 		};
 	},

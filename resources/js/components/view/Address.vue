@@ -15,6 +15,8 @@
 						<div class="subtitle-1">Company: {{addressData.company}}</div>
 						<div class="subtitle-1">Vat ID: {{addressData.vat_id}}</div>
 						<div class="subtitle-1">Delivery date: {{addressData.delivery_date}}</div>
+						<div class="subtitle-1">Default Billing: {{addressData.billing ? 'Yes' : 'No'}}</div>
+						<div class="subtitle-1">Default Shipping: {{addressData.shipping ? 'Yes' : 'No'}}</div>
 						<div class="subtitle-1">Created at: {{addressData.created_at}}</div>
 						<div class="subtitle-1">Updated at: {{addressData.updated_at}}</div>
 					</v-card-text>
