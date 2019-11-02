@@ -3,75 +3,74 @@
 		<v-form @submit.prevent="submit">
 			<v-card class="mx-auto pa-5">
 				<v-card-text>
-					<v-row>
-						<v-col :cols="3">
-							<v-switch
-								:disabled="loading"
-								v-model="endpoint"
-								false-value="SDK"
-								true-value="API"
-								:label="'Selected method: ' + endpoint"
-							></v-switch>
-						</v-col>
-					</v-row>
+					<v-switch
+						:disabled="loading"
+						:loading="loading"
+						v-model="endpoint"
+						false-value="SDK"
+						true-value="API"
+						:label="'Selected method: ' + endpoint"
+					></v-switch>
+					<v-textarea label="Σκονάκι" v-model="sdkSkonaki" readonly :loading="loading"></v-textarea>
+					<v-btn type="submit" :loading="loading" :disabled="loading" color="success">submit</v-btn>
+					<v-btn
+						@click="getSdkLogs"
+						v-if="endpoint==='SDK'"
+						color="info"
+						:loading="loading"
+						:disabled="loading"
+					>get logs</v-btn>
+					<v-btn
+						@click="deleteSdkLogs"
+						v-if="endpoint==='SDK'"
+						color="error"
+						:loading="loading"
+						:disabled="loading"
+					>delete logs</v-btn>
+
 					<v-row v-if="endpoint === 'SDK'">
 						<v-col :cols="3">
-							<v-text-field v-model="sdk.test_case" label="Test case"></v-text-field>
+							<v-text-field
+								v-model="sdk.test_case"
+								:disabled="loading"
+								:loading="loading"
+								label="Test case"
+							></v-text-field>
 						</v-col>
 						<v-col :cols="3">
 							<v-select
+								:disabled="loading"
+								:loading="loading"
 								:items="sdk.transaction_types"
 								v-model="sdk.selected_transaction"
 								label="Transaction type"
 							></v-select>
 						</v-col>
-						<v-col :cols="3">
-							<v-text-field v-model="sdk.amount" label="Amount"></v-text-field>
+						<v-col :cols="3" v-if="sdk.selected_transaction !== 'PRE_AUTH_DELETE'">
+							<v-text-field v-model="sdk.amount" :disabled="loading" :loading="loading" label="Amount"></v-text-field>
 						</v-col>
-						<v-col :cols="3">
+						<v-col
+							:cols="3"
+							v-if="sdk.selected_transaction === 'PRE_AUTH_COMPLETE' || sdk.selected_transaction === 'PRE_AUTH_DELETE'"
+						>
 							<v-text-field
-								v-if="sdk.selected_transaction === 'PRE_AUTH_COMPLETE'"
+								:disabled="loading"
+								:loading="loading"
 								v-model="sdk.originalTransId"
 								label="Original Trans ID"
 							></v-text-field>
 						</v-col>
+						<v-col :cols="12" v-if="endpoint === 'SDK'">
+							<v-data-table :items="sdkLogs" :headers="sdkHeaders" @click:row="openLog" :loading="loading"></v-data-table>
+						</v-col>
 					</v-row>
+
 					<v-row v-else>
 						<v-col :cols="3">
 							<!-- <v-text-field v-model="asd"></v-text-field> -->
 						</v-col>
 					</v-row>
 				</v-card-text>
-				<v-card-actions>
-					<v-row>
-						<v-col :cols="12">
-							<v-btn type="submit" :loading="loading" :disabled="loading" color="success">submit</v-btn>
-							<v-btn
-								@click="getSdkLogs"
-								v-if="endpoint==='SDK'"
-								color="info"
-								:loading="loading"
-								:disabled="loading"
-							>get logs</v-btn>
-							<v-btn
-								@click="deleteSdkLogs"
-								v-if="endpoint==='SDK'"
-								color="error"
-								:loading="loading"
-								:disabled="loading"
-							>delete logs</v-btn>
-						</v-col>
-						<v-col :cols="12">
-							<v-data-table
-								v-if="endpoint === 'SDK'"
-								:items="sdkLogs"
-								:headers="sdkHeaders"
-								@click:row="openLog"
-								:loading="loading"
-							></v-data-table>
-						</v-col>
-					</v-row>
-				</v-card-actions>
 			</v-card>
 		</v-form>
 		<interactiveDialog
@@ -90,12 +89,19 @@
 export default {
 	data() {
 		return {
+			sdkSkonaki:
+				"SALE: sale\nPRE_AUTH: Auth Only\nPRE_AUTH_COMPLETE: Convert Auth Only to Sale\nPRE_AUTH_DELETE: Auth Only Reversal",
 			loading: false,
 			endpoint: "SDK",
 			sdk: {
 				originalTransId: "",
 				test_case: "",
-				transaction_types: ["SALE", "PRE_AUTH", "PRE_AUTH_COMPLETE", ""],
+				transaction_types: [
+					"SALE",
+					"PRE_AUTH",
+					"PRE_AUTH_COMPLETE",
+					"PRE_AUTH_DELETE"
+				],
 				amount: null,
 				selected_transaction: null
 			},
@@ -133,9 +139,14 @@ export default {
 		},
 		deleteSdkLogs() {
 			this.loading = true;
-			axios.get("/api/elavon/sdk/logs/delete").finally(() => {
-				this.loading = false;
-			});
+			axios
+				.get("/api/elavon/sdk/logs/delete")
+				.then(() => {
+					this.sdkLogs = [];
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 		submit() {
 			this.loading = true;

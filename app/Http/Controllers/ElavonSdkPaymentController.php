@@ -25,7 +25,8 @@ class ElavonSdkPaymentController extends Controller
 
     public function deleteAll()
     {
-        return response(ElavonSdkPayment::truncate());
+        ElavonSdkPayment::truncate();
+        return response('SDK Logs truncated');
     }
 
     public function index(Request $request)
@@ -34,7 +35,7 @@ class ElavonSdkPaymentController extends Controller
             'test_case' => 'sometimes|string',
             'selected_transaction' => 'required|string',
             'amount' => 'sometimes|numeric|min:0',
-            'originalTransId' => 'nullable|string'
+            'originalTransId' => 'nullable|string',
         ]);
 
         array_key_exists('originalTransId', $validatedData) ? $this->originalTransId = $validatedData['originalTransId'] : null;
@@ -51,6 +52,9 @@ class ElavonSdkPaymentController extends Controller
                 break;
             case 'PRE_AUTH_COMPLETE':
                 $response = $this->posPayment($validatedData['amount']);
+                break;
+            case 'PRE_AUTH_DELETE':
+                $response = $this->posPayment($validatedData['originalTransId']);
                 break;
             default:
                 return response('Payment method not found', 404);
@@ -119,6 +123,7 @@ class ElavonSdkPaymentController extends Controller
                 return ['errors' => 'POS Terminal is not initialized'];
             }
         } else {
+            $this->saveToSdkLog('POS Terminal is already initialized', 'info');
             return [];
         }
     }
@@ -199,11 +204,8 @@ class ElavonSdkPaymentController extends Controller
             sleep(1);
             $response = $this->getPaymentTransactionStatus();
         } while ($response['data']['paymentGatewayCommand']['completed'] === false);
-        $this->saveToSdkLog($response, 'success');
 
-        $response = $this->getTransactionResponse($response);
-
-        return $response;
+        return $this->getTransactionResponse($response);
     }
 
     private function sendRequest($payload, $verbose = true)
