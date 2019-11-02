@@ -83,10 +83,7 @@ class BaseController extends Controller
             return response('Did not found columns or keyword to search', 404);
         }
 
-        $query = $this->model::query();
-        foreach ($columns as $column) {
-            $query->orWhere($column, 'like', "%$keyword%");
-        }
+        $query = $this->model::query()->search($columns, $keyword);
 
         if ($pagination) {
             return response($query->paginate(), 200);

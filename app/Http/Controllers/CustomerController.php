@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class CustomerController extends BaseController
@@ -91,7 +92,14 @@ class CustomerController extends BaseController
         ]);
 
         return $this->searchResult(
-            ['first_name', 'last_name', 'email'],
+            [
+                'first_name',
+                'last_name',
+                'email',
+                'addresses.phone',
+                DB::raw("concat(first_name, ' ', last_name)"),
+                DB::raw("concat(last_name, ' ', first_name)"),
+            ],
             $validatedData['keyword']
         );
     }
