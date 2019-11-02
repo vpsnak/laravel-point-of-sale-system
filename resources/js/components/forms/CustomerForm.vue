@@ -5,7 +5,6 @@
 			<v-text-field v-model="formFields.last_name" label="Last name" required></v-text-field>
 			<v-text-field v-model="formFields.email" label="Email" required></v-text-field>
 			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="loading">submit</v-btn>
-			<v-btn v-if="this.model === undefined" @click="clear">clear</v-btn>
 		</v-form>
 	</div>
 </template> 
@@ -21,6 +20,7 @@ export default {
 			loading: false,
 			defaultValues: {},
 			formFields: {
+				id: null,
 				first_name: null,
 				last_name: null,
 				email: null
@@ -52,7 +52,6 @@ export default {
 							type: "success"
 						}
 					});
-					this.clear();
 				})
 				.finally(() => {
 					this.loading = false;
