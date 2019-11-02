@@ -8,27 +8,7 @@
 		</div>
 		<v-divider />
 		<v-container grid-list-md text-xs-center>
-			<v-row>
-				<v-col cols="10">
-					<customerSearch :editable="editable" :keywordLength="1" class="my-3"></customerSearch>
-				</v-col>
-				<v-col cols="1">
-					<v-tooltip bottom>
-						<template v-slot:activator="{ on }">
-							<v-btn @click="showCreateDialog = true" class="my-3" v-on="on" icon :disabled="!editable">
-								<v-icon>mdi-plus</v-icon>
-							</v-btn>
-						</template>
-						<span>Add a customer</span>
-					</v-tooltip>
-				</v-col>
-				<v-col v-if="this.$store.state.cart.customer" cols="1">
-					{{this.$store.state.cart.customer.comment}}
-					<v-btn @click="showCreateDialog = true" class="my-3" text icon color="red">
-						<v-icon>mdi-emoticon-angry</v-icon>
-					</v-btn>
-				</v-col>
-			</v-row>
+			<customerSearch :editable="editable" :keywordLength="1" class="my-3"></customerSearch>
 		</v-container>
 
 		<cartProducts :products="items ? items : products" :editable="editable"></cartProducts>
@@ -53,17 +33,6 @@
 				<cartActions :disabled="totalProducts" />
 			</div>
 		</div>
-		<interactiveDialog
-			v-if="showCreateDialog"
-			:show="showCreateDialog"
-			:model="{}"
-			component="customerForm"
-			title="Add a Customer"
-			@action="result"
-			cancelBtnTxt="Close"
-			persistent
-			titleCloseBtn
-		></interactiveDialog>
 	</v-card>
 </template>
 
@@ -71,11 +40,6 @@
 import { mapActions } from "vuex";
 
 export default {
-	data() {
-		return {
-			showCreateDialog: false
-		};
-	},
 	props: {
 		order: Array | null,
 		items: Array | null,
@@ -126,10 +90,6 @@ export default {
 			this.products.splice(0);
 			this.products = cart;
 		},
-		result(event) {
-			this.showCreateDialog = false;
-		},
-
 		...mapActions({
 			getAll: "getAll",
 			getOne: "getOne",
