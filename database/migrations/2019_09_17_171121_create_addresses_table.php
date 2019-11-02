@@ -24,7 +24,7 @@ class CreateAddressesTable extends Migration
             $table->string('country_id', 100);
             $table->string('region', 100);
             $table->string('postcode', 100);
-            $table->string('phone', 100);
+            $table->string('phone', 100)->index();
             $table->string('company', 100)->nullable();
             $table->string('vat_id', 100)->nullable();
             $table->boolean('billing')->default(0);
