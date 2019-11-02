@@ -9,7 +9,6 @@ use App\Order;
 use App\Payment;
 use App\PaymentType;
 use Illuminate\Http\Request;
-use App\Http\Controllers\PosTerminalController;
 
 class PaymentController extends BaseController
 {
@@ -186,16 +185,12 @@ class PaymentController extends BaseController
     public function search(Request $request)
     {
         $validatedData = $request->validate([
-            'keyword' => 'required|numeric',
-            'per_page' => 'nullable|numeric',
-            'page' => 'nullable|numeric',
+            'keyword' => 'required|numeric'
         ]);
 
         return $this->searchResult(
             ['order_id'],
-            $validatedData['keyword'],
-            array_key_exists('per_page', $validatedData) ? $validatedData['per_page'] : 0,
-            array_key_exists('page', $validatedData) ? $validatedData['page'] : 0
+            $validatedData['keyword']
         );
     }
 

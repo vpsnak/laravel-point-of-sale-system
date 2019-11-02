@@ -62,16 +62,12 @@ class CustomerController extends BaseController
     public function search(Request $request)
     {
         $validatedData = $request->validate([
-            'keyword' => 'required',
-            'per_page' => 'nullable|numeric',
-            'page' => 'nullable|numeric',
+            'keyword' => 'required'
         ]);
 
         return $this->searchResult(
             ['first_name', 'last_name', 'email'],
-            $validatedData['keyword'],
-            array_key_exists('per_page', $validatedData) ? $validatedData['per_page'] : 0,
-            array_key_exists('page', $validatedData) ? $validatedData['page'] : 0
+            $validatedData['keyword']
         );
     }
 }
