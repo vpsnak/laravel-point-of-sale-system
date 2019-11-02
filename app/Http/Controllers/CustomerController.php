@@ -31,7 +31,7 @@ class CustomerController extends BaseController
                 'house_account_limit' => 'nullable|numeric',
                 'no_tax' => 'nullable|bool',
                 'no_tax_file' => 'nullable|string',
-                'comment' => 'nullable|text',
+                'comment' => 'nullable|string',
             ]);
         } else {
             $validatedData = $request->validate([
@@ -43,7 +43,7 @@ class CustomerController extends BaseController
                 'house_account_limit' => 'nullable|numeric',
                 'no_tax' => 'nullable|bool',
                 'no_tax_file' => 'nullable|string',
-                'comment' => 'nullable|text',
+                'comment' => 'nullable|string',
             ]);
         }
 
