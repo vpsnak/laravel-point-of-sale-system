@@ -9,6 +9,19 @@
 			<v-text-field v-model="firstName" label="First name" required></v-text-field>
 			<v-text-field v-model="lastName" label="Last name" required></v-text-field>
 			<v-text-field v-model="formFields.email" label="Email" required></v-text-field>
+			<v-row justify="space-around">
+				<v-switch v-model="formFields.house_account_status" label="Has house account"></v-switch>
+				<v-switch v-model="formFields.no_tax" label="No tax"></v-switch>
+			</v-row>
+			<v-text-field v-model="formFields.house_account_number" label="House account number" required></v-text-field>
+			<v-text-field
+				type="number"
+				v-model="formFields.house_account_limit"
+				label="House account limit"
+				required
+			></v-text-field>
+			<v-text-field v-model="formFields.no_tax_file" label="No Tax Certification"></v-text-field>
+			<v-textarea rows="3" v-model="formFields.comment" label="Comments"></v-textarea>
 			<v-checkbox v-model="syncName" label="Use customer's name as default address name"></v-checkbox>
 			<v-row>
 				<v-col cols="4">
@@ -25,7 +38,7 @@
 						label="Regions"
 						required
 						item-text="default_name"
-						item-value="id"
+						item-value="region_id"
 					></v-select>
 					<v-text-field
 						v-model="formFields.address.company"
@@ -96,6 +109,12 @@ export default {
 				first_name: null,
 				last_name: null,
 				email: null,
+				house_account_number: null,
+				house_account_limit: null,
+				house_account_status: false,
+				no_tax: false,
+				no_tax_file: null,
+				comment: null,
 				address: {
 					first_name: null,
 					last_name: null,

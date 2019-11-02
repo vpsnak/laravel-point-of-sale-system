@@ -63,9 +63,7 @@ class ProductController extends BaseController
     public function search(Request $request)
     {
         $validatedData = $request->validate([
-            'keyword' => 'required|string',
-            'per_page' => 'nullable|numeric',
-            'page' => 'nullable|numeric',
+            'keyword' => 'required|string'
         ]);
 
         return $this->searchResult(

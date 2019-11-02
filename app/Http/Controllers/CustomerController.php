@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CustomerController extends BaseController
 {
@@ -11,16 +12,40 @@ class CustomerController extends BaseController
 
     public function create(Request $request)
     {
-        $validatedData = $request->validate([
-            'email' => 'required|email|unique:customers,email',
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
-        ]);
-
         $validatedExtra = $request->validate([
             'id' => 'nullable|exists:customers,id',
             'address' => 'nullable|array',
         ]);
+
+        if (!empty($validatedExtra['id'])) {
+            $validatedData = $request->validate([
+                'email' => [
+                    'required',
+                    'email',
+                    Rule::unique('customers', 'email')->ignore($validatedExtra['id'])
+                ],
+                'first_name' => 'required|string',
+                'last_name' => 'required|string',
+                'house_account_status' => 'nullable|bool',
+                'house_account_number' => 'nullable|string',
+                'house_account_limit' => 'nullable|numeric',
+                'no_tax' => 'nullable|bool',
+                'no_tax_file' => 'nullable|string',
+                'comment' => 'nullable|string',
+            ]);
+        } else {
+            $validatedData = $request->validate([
+                'email' => 'required|email|unique:customers,email',
+                'first_name' => 'required|string',
+                'last_name' => 'required|string',
+                'house_account_status' => 'nullable|bool',
+                'house_account_number' => 'nullable|string',
+                'house_account_limit' => 'nullable|numeric',
+                'no_tax' => 'nullable|bool',
+                'no_tax_file' => 'nullable|string',
+                'comment' => 'nullable|string',
+            ]);
+        }
 
         $customer = $this->getCustomer($validatedExtra['id'] ?? null, $validatedData);
 
@@ -62,16 +87,12 @@ class CustomerController extends BaseController
     public function search(Request $request)
     {
         $validatedData = $request->validate([
-            'keyword' => 'required',
-            'per_page' => 'nullable|numeric',
-            'page' => 'nullable|numeric',
+            'keyword' => 'required'
         ]);
 
         return $this->searchResult(
             ['first_name', 'last_name', 'email'],
-            $validatedData['keyword'],
-            array_key_exists('per_page', $validatedData) ? $validatedData['per_page'] : 0,
-            array_key_exists('page', $validatedData) ? $validatedData['page'] : 0
+            $validatedData['keyword']
         );
     }
 }

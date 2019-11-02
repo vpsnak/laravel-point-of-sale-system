@@ -67,17 +67,13 @@ class BaseController extends Controller
         }
 
         $validatedData = $request->validate([
-            'keyword' => 'required|string',
-            'per_page' => 'nullable|numeric',
-            'page' => 'nullable|numeric',
+            'keyword' => 'required|string'
         ]);
 
         $columns = Schema::getColumnListing((new $this->model)->getTable());
         return $this->searchResult(
             $columns,
-            $validatedData['keyword'],
-            $validatedData['per_page'],
-            $validatedData['page']
+            $validatedData['keyword']
         );
     }
 
