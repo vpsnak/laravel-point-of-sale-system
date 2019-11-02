@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<v-combobox
+			:no-filter="true"
 			v-if="editable"
 			v-model="cartCustomer"
 			clearable
