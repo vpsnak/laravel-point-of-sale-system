@@ -11,7 +11,7 @@
 						true-value="API"
 						:label="'Selected method: ' + endpoint"
 					></v-switch>
-					<v-textarea label="Σκονάκι" v-model="sdkSkonaki" readonly :loading="loading"></v-textarea>
+					<v-textarea outlined label="Σκονάκι" v-model="sdkSkonaki" readonly :loading="loading"></v-textarea>
 					<v-btn type="submit" :loading="loading" :disabled="loading" color="success">submit</v-btn>
 					<v-btn
 						@click="getSdkLogs"
@@ -46,12 +46,15 @@
 								label="Transaction type"
 							></v-select>
 						</v-col>
-						<v-col :cols="3" v-if="sdk.selected_transaction !== 'PRE_AUTH_DELETE'">
+						<v-col
+							:cols="3"
+							v-if="sdk.selected_transaction === 'SALE' || sdk.selected_transaction === 'PRE_AUTH' || sdk.selected_transaction === 'PRE_AUTH_COMPLETE' || sdk.selected_transaction === 'LINKED_REFUND' || sdk.selected_transaction === 'STANDALONE_REFUND'"
+						>
 							<v-text-field v-model="sdk.amount" :disabled="loading" :loading="loading" label="Amount"></v-text-field>
 						</v-col>
 						<v-col
 							:cols="3"
-							v-if="sdk.selected_transaction === 'PRE_AUTH_COMPLETE' || sdk.selected_transaction === 'PRE_AUTH_DELETE'"
+							v-if="sdk.selected_transaction === 'PRE_AUTH_COMPLETE' || sdk.selected_transaction === 'PRE_AUTH_DELETE' || sdk.selected_transaction === 'VOID' || sdk.selected_transaction === 'LINKED_REFUND'"
 						>
 							<v-text-field
 								:disabled="loading"
@@ -90,7 +93,7 @@ export default {
 	data() {
 		return {
 			sdkSkonaki:
-				"SALE: sale\nPRE_AUTH: Auth Only\nPRE_AUTH_COMPLETE: Convert Auth Only to Sale\nPRE_AUTH_DELETE: Auth Only Reversal",
+				"SALE: sale\nPRE_AUTH: Auth Only\nPRE_AUTH_COMPLETE: Convert Auth Only to Sale\nPRE_AUTH_DELETE: Auth Only Reversal\nVOID: Void\nLINKED_REFUND: Linked Refund\nSTANDALONE_REFUND: Stand Alone Refund\n",
 			loading: false,
 			endpoint: "SDK",
 			sdk: {
@@ -100,7 +103,10 @@ export default {
 					"SALE",
 					"PRE_AUTH",
 					"PRE_AUTH_COMPLETE",
-					"PRE_AUTH_DELETE"
+					"PRE_AUTH_DELETE",
+					"VOID",
+					"LINKED_REFUND",
+					"STANDALONE_REFUND"
 				],
 				amount: null,
 				selected_transaction: null

@@ -10,7 +10,6 @@ use \App\ElavonSdkPayment;
 class ElavonSdkPaymentController extends Controller
 {
     private $testCase;
-    private $transactionId;
     private $paymentGatewayId;
     private $chanId;
     private $selected_transaction;
@@ -29,39 +28,29 @@ class ElavonSdkPaymentController extends Controller
         return response('SDK Logs truncated');
     }
 
+    public function searchPayment(Request $request)
+    {
+        $validatedData = $request->validate([
+            '' => ''
+        ]);
+    }
+
     public function index(Request $request)
     {
         $validatedData = $request->validate([
             'test_case' => 'sometimes|string',
             'selected_transaction' => 'required|string',
-            'amount' => 'sometimes|numeric|min:0',
+            'amount' => 'nullable|numeric|min:0',
             'originalTransId' => 'nullable|string',
         ]);
 
+        array_key_exists('amount', $validatedData) ? $this->amount = 100 * $validatedData['amount'] : null;
         array_key_exists('originalTransId', $validatedData) ? $this->originalTransId = $validatedData['originalTransId'] : null;
         array_key_exists('test_case', $validatedData) ? $this->testCase = $validatedData['test_case'] : null;
 
         $this->selected_transaction = $validatedData['selected_transaction'];
 
-        switch ($validatedData['selected_transaction']) {
-            case 'SALE':
-                $response = $this->posPayment($validatedData['amount']);
-                break;
-            case 'PRE_AUTH':
-                $response = $this->posPayment($validatedData['amount']);
-                break;
-            case 'PRE_AUTH_COMPLETE':
-                $response = $this->posPayment($validatedData['amount']);
-                break;
-            case 'PRE_AUTH_DELETE':
-                $response = $this->posPayment($validatedData['originalTransId']);
-                break;
-            default:
-                return response('Payment method not found', 404);
-        }
-
-
-        return response($response);
+        return response($this->posPayment());
     }
 
     private function saveToSdkLog($data, $status)
@@ -178,13 +167,12 @@ class ElavonSdkPaymentController extends Controller
         }
     }
 
-    public function posPayment($amount, $ignoreInitErrors = true)
+    public function posPayment($ignoreInitErrors = true)
     {
         $response = $this->getPosTerminalStatus();
         if (array_key_exists('errors', $response) && !$ignoreInitErrors) {
             return $response;
         }
-        $amount *= 100;
 
         $response = $this->openPaymentGateway();
 
@@ -192,7 +180,7 @@ class ElavonSdkPaymentController extends Controller
             return $response;
         }
 
-        if (array_key_exists('errors', $this->startPaymentTransaction($amount))) {
+        if (array_key_exists('errors', $this->startPaymentTransaction())) {
             $msg = 'Error at starting transaction. Please try again.';
             $this->saveToSdkLog($msg, 'error');
             return ['errors' => $msg];
@@ -299,7 +287,7 @@ class ElavonSdkPaymentController extends Controller
         return $response['requestId'];
     }
 
-    private  function getCardReadersSearchStatus($id)
+    private function getCardReadersSearchStatus($id)
     {
         $requestId = idate("U");
 
@@ -366,7 +354,7 @@ class ElavonSdkPaymentController extends Controller
         }
     }
 
-    private  function startPaymentTransaction($transactionAmount)
+    private  function startPaymentTransaction()
     {
         $requestId = idate("U");
 
@@ -378,16 +366,20 @@ class ElavonSdkPaymentController extends Controller
             "parameters" => [
                 "paymentGatewayId" => $this->paymentGatewayId,
                 "transactionType" => $this->selected_transaction,
-                "baseTransactionAmount" => [
-                    "value" => (int) $transactionAmount,
-                    "currencyCode" => "USD"
-                ],
+
                 "tenderType" => "CARD",
                 "cardType" => null,
                 "isTaxInclusive" => true,
                 "discountAmounts" => null
             ]
         ];
+
+        if ($this->amount) {
+            $payload['parameters']['baseTransactionAmount'] = [
+                "value" => (int) $this->amount,
+                "currencyCode" => "USD"
+            ];
+        }
 
         if ($this->originalTransId) {
             $payload['parameters']['originalTransId'] =  $this->originalTransId;

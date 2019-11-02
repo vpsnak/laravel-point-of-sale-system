@@ -29,16 +29,13 @@ export default new Vuex.Store({
 
         token: Cookies.get("token") || null,
 
-        store: {
-            id: null,
-            name: "",
-            tax: {}
-        },
+        store: Cookies.get("cash_register")
+            ? JSON.parse(Cookies.get("cash_register")).store
+            : {},
 
-        cashRegister: {
-            id: null,
-            name: ""
-        },
+        cashRegister: Cookies.get("cash_register")
+            ? JSON.parse(Cookies.get("cash_register"))
+            : {},
 
         // notification
         notification: {
@@ -71,13 +68,33 @@ export default new Vuex.Store({
 
             Cookies.remove("user");
             Cookies.remove("token");
-            Cookies.remove("cashRegister");
+            Cookies.remove("cash_register");
+        },
+        setCashRegister(state, cashRegister) {
+            state.cashRegister = cashRegister;
+
+            if (!cashRegister) {
+                Cookies.remove("cash_register");
+            } else {
+                Cookies.set("cash_register", cashRegister, {
+                    sameSite: "strict"
+                });
+            }
         },
         setUser(state, user) {
             state.user = user;
             Cookies.set("user", user, {
                 sameSite: "strict"
             });
+
+            if (state.user.open_register) {
+                state.cashRegister = state.user.open_register.cash_register;
+                state.store = state.user.open_register.cash_register.store;
+
+                Cookies.set("cash_register", state.cashRegister, {
+                    sameSite: "strict"
+                });
+            }
         },
         setToken(state, token) {
             state.token = "Bearer " + token;
