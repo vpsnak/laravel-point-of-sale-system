@@ -129,11 +129,7 @@ export default new Vuex.Store({
         logout(context) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(this.state.baseUrl + "auth/logout", {
-                        headers: {
-                            Authorization: this.state.token
-                        }
-                    })
+                    .get(this.state.baseUrl + "auth/logout")
                     .then(response => {
                         context.commit(
                             "setNotification",
@@ -169,6 +165,7 @@ export default new Vuex.Store({
                         resolve(response.data);
                     })
                     .catch(error => {
+                        console.log(error.response);
                         let notification = {
                             msg: error.response.data.errors,
                             type: "error"
@@ -183,9 +180,9 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                        payload.model +
-                        "/" +
-                        payload.data.id
+                            payload.model +
+                            "/" +
+                            payload.data.id
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -212,12 +209,12 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                        payload.model +
-                        "/" +
-                        payload.data.id +
-                        "/" +
-                        payload.data.model +
-                        page
+                            payload.model +
+                            "/" +
+                            payload.data.id +
+                            "/" +
+                            payload.data.model +
+                            page
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -269,11 +266,8 @@ export default new Vuex.Store({
                 axios
                     .post(
                         this.state.baseUrl + payload.model + "/open",
-                        payload.data, {
-                        headers: {
-                            Authorization: this.state.token
-                        }
-                    })
+                        payload.data
+                    )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
                             context.commit(payload.mutation, response.data, {
@@ -298,11 +292,8 @@ export default new Vuex.Store({
                 axios
                     .post(
                         this.state.baseUrl + payload.model + "/close",
-                        payload.data, {
-                        headers: {
-                            Authorization: this.state.token
-                        }
-                    })
+                        payload.data
+                    )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
                             context.commit(payload.mutation, response.data, {
@@ -320,8 +311,6 @@ export default new Vuex.Store({
                         reject(error);
                     });
             });
-
-
         },
 
         create(context, payload) {

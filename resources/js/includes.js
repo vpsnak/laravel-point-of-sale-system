@@ -1,6 +1,7 @@
 import "@mdi/font/css/materialdesignicons.css";
 import "@fortawesome/fontawesome-free/css/all.css";
-import 'material-design-icons-iconfont/dist/material-design-icons.css'
+import "material-design-icons-iconfont/dist/material-design-icons.css";
+import store from "./store/store.js";
 
 window._ = require("lodash");
 
@@ -13,6 +14,7 @@ window._ = require("lodash");
 window.axios = require("axios");
 
 window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+window.axios.defaults.headers.common["Authorization"] = store.state.token;
 
 /**
  * Next we will register the CSRF Token as a common header with Axios so that
