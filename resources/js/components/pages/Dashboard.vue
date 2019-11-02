@@ -115,12 +115,6 @@ export default {
 		};
 	},
 
-	computed: {
-		token() {
-			return this.$store.state.token;
-		}
-	},
-
 	methods: {
 		openLog(item) {
 			this.item = item;
@@ -129,11 +123,7 @@ export default {
 		getSdkLogs() {
 			this.loading = true;
 			axios
-				.get("/api/elavon/sdk/logs", {
-					headers: {
-						Authorization: this.token
-					}
-				})
+				.get("/api/elavon/sdk/logs")
 				.then(response => {
 					this.sdkLogs = response.data;
 				})
@@ -143,25 +133,15 @@ export default {
 		},
 		deleteSdkLogs() {
 			this.loading = true;
-			axios
-				.get("/api/elavon/sdk/logs/delete", {
-					headers: {
-						Authorization: this.token
-					}
-				})
-				.finally(() => {
-					this.loading = false;
-				});
+			axios.get("/api/elavon/sdk/logs/delete").finally(() => {
+				this.loading = false;
+			});
 		},
 		submit() {
 			this.loading = true;
 			if (this.endpoint === "SDK") {
 				axios
-					.post("/api/elavon/sdk", this.sdk, {
-						headers: {
-							Authorization: this.token
-						}
-					})
+					.post("/api/elavon/sdk", this.sdk)
 					.catch(error => {
 						alert(
 							"Status code: " +
@@ -178,11 +158,7 @@ export default {
 					});
 			} else {
 				axios
-					.post("/api/elavon/api", this.api, {
-						headers: {
-							Authorization: this.token
-						}
-					})
+					.post("/api/elavon/api", this.api)
 					.catch(error => {
 						alert(
 							"Status code: " +

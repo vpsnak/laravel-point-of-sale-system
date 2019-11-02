@@ -91,10 +91,8 @@ export default {
 		}
 	},
 	computed: {
-		user: {
-			get() {
-				return this.$store.state.user;
-			}
+		user() {
+			return this.$store.state.user;
 		},
 		cashRegister: {
 			get() {

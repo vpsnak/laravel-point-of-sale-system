@@ -22,7 +22,7 @@ export default {
 				"Authorization"
 			] = this.$store.state.token;
 
-			return this.$store.state.token ? true : false;
+			return this.$store.getters.authorized;
 		}
 	},
 	methods: {
