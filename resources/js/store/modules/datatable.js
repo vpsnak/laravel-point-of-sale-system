@@ -19,7 +19,12 @@ const actions = {
         dispatch("getRequest", payload, { root: true })
             .then(result => {
                 commit("setLoading", false);
-                commit("setRows", result);
+                // @TODO change everywhere to data
+                if (result.data) {
+                    commit('setRows', result.data)
+                } else {
+                    commit('setRows', result)
+                }
             })
             .catch(error => {
                 commit("setLoading", false);

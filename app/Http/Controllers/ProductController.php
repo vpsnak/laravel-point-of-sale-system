@@ -23,18 +23,29 @@ class ProductController extends BaseController
 
         $validatedExtra = $request->validate([
             'id' => 'nullable|exists:products,id',
-            'category_ids' => 'required|array',
+            'categories' => 'required|array',
+            'stores' => 'required|array',
             'final_price' => 'required|numeric',
         ]);
 
         $product = $this->getProduct($validatedExtra['id'] ?? null, $validatedData);
 
-        $product->categories()->sync($validatedExtra['category_ids']);
+        $product->categories()->sync($validatedExtra['categories']);
+
+        foreach ($validatedExtra['stores'] as $store) {
+            if (!empty($store['pivot'])) {
+                $product->stores()->syncWithoutDetaching(
+                    [$store['id'] => ['qty' => $store['pivot']['qty'] ?? 0]]
+                );
+            }
+        }
 
 //        @TODO fix amount create or update
-//        $product->price()->updateOrCreate(['amount' => $validatedExtra['final_price']]);
-//        $product->price->save();
+        $product->price()->updateOrCreate(['amount' => $validatedExtra['final_price']]);
+        $product->price->save();
 
+//        $product->price->amount = $validatedExtra['final_price'];
+//        $product->price->save();
         return response($product, 200);
     }
 
