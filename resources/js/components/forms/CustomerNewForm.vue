@@ -13,14 +13,20 @@
 				<v-switch v-model="formFields.house_account_status" label="Has house account"></v-switch>
 				<v-switch v-model="formFields.no_tax" label="No tax"></v-switch>
 			</v-row>
-			<v-text-field v-model="formFields.house_account_number" label="House account number" required></v-text-field>
-			<v-text-field
-				type="number"
-				v-model="formFields.house_account_limit"
-				label="House account limit"
-				required
-			></v-text-field>
-			<v-text-field v-model="formFields.no_tax_file" label="No Tax Certification"></v-text-field>
+			<v-row justify="space-around">
+				<v-col v-if="formFields.house_account_status">
+					<v-text-field v-model="formFields.house_account_number" label="House account number" required></v-text-field>
+					<v-text-field
+						type="number"
+						v-model="formFields.house_account_limit"
+						label="House account limit"
+						required
+					></v-text-field>
+				</v-col>
+				<v-col v-if="formFields.no_tax">
+					<v-text-field v-model="formFields.no_tax_file" label="No Tax Certification"></v-text-field>
+				</v-col>
+			</v-row>
 			<v-textarea rows="3" v-model="formFields.comment" label="Comments"></v-textarea>
 			<v-checkbox v-model="syncName" label="Use customer's name as default address name"></v-checkbox>
 			<v-row>
