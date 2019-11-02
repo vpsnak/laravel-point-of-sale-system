@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<v-select
+			:loading="loading"
 			v-model="store_id"
 			:disabled="storeDisabled"
 			:items="stores"
@@ -12,6 +13,7 @@
 			v-on:input="enableCashRegisters"
 		></v-select>
 		<v-select
+			:loading="loading"
 			:disabled="cashRegisterDisabled"
 			v-model="cash_register_id"
 			:items="cash_registers"
@@ -22,10 +24,19 @@
 			v-on:input="enableOpeningAmount"
 		></v-select>
 		<v-text-field
+			:loading="loading"
 			:disabled="openingAmountDisabled"
 			v-model="opening_amount"
 			type="number"
 			label="Opening amount"
+			required
+		></v-text-field>
+
+		<v-text-field
+			:loading="loading"
+			v-model="closing_amount"
+			type="number"
+			label="Closing amount"
 			required
 		></v-text-field>
 
@@ -48,7 +59,7 @@ export default {
 			store_id: null,
 			cash_register_id: null,
 			opening_amount: null,
-			close_amount: null,
+			closing_amount: null,
 			status: true
 		};
 	},
@@ -63,16 +74,6 @@ export default {
 	methods: {
 		submit() {
 			this.loading = true;
-			for (const store of this.stores) {
-				if (store.id == this.store_id) {
-					this.$store.state.store = store;
-				}
-			}
-			for (const cash_register of this.cash_registers) {
-				if (cash_register.id == this.cash_register_id) {
-					this.$store.state.cashRegister = cash_register;
-				}
-			}
 			let payload = {
 				model: "cash-register-logs",
 				data: {
@@ -91,6 +92,16 @@ export default {
 							type: "success"
 						}
 					});
+					for (const store of this.stores) {
+						if (store.id == this.store_id) {
+							this.$store.state.store = store;
+						}
+					}
+					for (const cash_register of this.cash_registers) {
+						if (cash_register.id == this.cash_register_id) {
+							this.$store.state.cashRegister = cash_register;
+						}
+					}
 					this.clear();
 				})
 				.finally(() => {
@@ -100,16 +111,6 @@ export default {
 
 		close() {
 			this.loading = true;
-			for (const store of this.stores) {
-				if (store.id == this.store_id) {
-					this.$store.state.store = store;
-				}
-			}
-			for (const cash_register of this.cash_registers) {
-				if (cash_register.id == this.cash_register_id) {
-					this.$store.state.cashRegister = cash_register;
-				}
-			}
 			let payload = {
 				model: "cash-register-logs",
 				data: {
@@ -127,6 +128,8 @@ export default {
 							type: "success"
 						}
 					});
+					this.$store.state.store = null;
+					this.$store.state.cashRegister = null;
 					this.clear();
 				})
 				.finally(() => {
