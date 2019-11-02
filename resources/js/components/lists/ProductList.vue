@@ -137,7 +137,7 @@
 			:fullscreen="false"
 			:width="1000"
 			component="product"
-			:model="viewId"
+			:model="viewProduct"
 			@action="result"
 			action="newItem"
 			cancelBtnTxt="Close"
@@ -338,7 +338,7 @@ export default {
 		},
 
 		viewItem(product) {
-			this.viewId = product;
+			this.viewProduct = product;
 			this.showViewDialog = true;
 		}
 	}
