@@ -4,6 +4,25 @@
 			<v-text-field v-model="formFields.first_name" label="First name" required></v-text-field>
 			<v-text-field v-model="formFields.last_name" label="Last name" required></v-text-field>
 			<v-text-field v-model="formFields.email" label="Email" required></v-text-field>
+			<v-row justify="space-around">
+				<v-switch v-model="formFields.house_account_status" label="Has house account"></v-switch>
+				<v-switch v-model="formFields.no_tax" label="No tax"></v-switch>
+			</v-row>
+			<v-row justify="space-around">
+				<v-col v-if="formFields.house_account_status">
+					<v-text-field v-model="formFields.house_account_number" label="House account number" required></v-text-field>
+					<v-text-field
+						type="number"
+						v-model="formFields.house_account_limit"
+						label="House account limit"
+						required
+					></v-text-field>
+				</v-col>
+				<v-col v-if="formFields.no_tax">
+					<v-text-field v-model="formFields.no_tax_file" label="No Tax Certification"></v-text-field>
+				</v-col>
+			</v-row>
+			<v-textarea rows="3" v-model="formFields.comment" label="Comments"></v-textarea>
 			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="loading">submit</v-btn>
 		</v-form>
 	</div>
@@ -20,10 +39,15 @@ export default {
 			loading: false,
 			defaultValues: {},
 			formFields: {
-				id: null,
 				first_name: null,
 				last_name: null,
-				email: null
+				email: null,
+				house_account_number: null,
+				house_account_limit: null,
+				house_account_status: false,
+				no_tax: false,
+				no_tax_file: null,
+				comment: null
 			}
 		};
 	},

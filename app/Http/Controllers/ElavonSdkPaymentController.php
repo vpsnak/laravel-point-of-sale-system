@@ -34,7 +34,7 @@ class ElavonSdkPaymentController extends Controller
             'test_case' => 'sometimes|string',
             'selected_transaction' => 'required|string',
             'amount' => 'sometimes|numeric|min:0',
-            'originalTransId' => 'sometimes|string'
+            'originalTransId' => 'nullable|string'
         ]);
 
         array_key_exists('originalTransId', $validatedData) ? $this->originalTransId = $validatedData['originalTransId'] : null;
@@ -87,10 +87,7 @@ class ElavonSdkPaymentController extends Controller
 
         $id = $id['data']['cardReaderCommand']['id'];
 
-        $response = $this->startCardReadersSearch();
-        $this->saveToSdkLog($response, 'info');
-
-        $id = $response['requestId'];
+        $id = $this->startCardReadersSearch();
 
         do {
             sleep(1);
@@ -100,8 +97,12 @@ class ElavonSdkPaymentController extends Controller
         $this->saveToSdkLog($response, 'success');
 
         if (!count($response['data']['cardReadersSearch']['cardReaders'])) {
-
-            return ['errors' => 'POS Terminal failed to initialize properly'];
+            $msg = 'POS Terminal failed to initialize properly<br>Please restart ConvergeConnect service and try again';
+            $this->saveToSdkLog($response, 'error');
+            $this->saveToSdkLog($msg, 'error');
+            return ['errors' => $msg];
+        } else {
+            return [];
         }
     }
 
@@ -117,6 +118,8 @@ class ElavonSdkPaymentController extends Controller
             } else {
                 return ['errors' => 'POS Terminal is not initialized'];
             }
+        } else {
+            return [];
         }
     }
 
@@ -170,15 +173,18 @@ class ElavonSdkPaymentController extends Controller
         }
     }
 
-    public function posPayment($amount)
+    public function posPayment($amount, $ignoreInitErrors = true)
     {
-        $this->getPosTerminalStatus();
+        $response = $this->getPosTerminalStatus();
+        if (array_key_exists('errors', $response) && !$ignoreInitErrors) {
+            return $response;
+        }
         $amount *= 100;
 
-        $errors = $this->openPaymentGateway();
+        $response = $this->openPaymentGateway();
 
-        if (array_key_exists('errors', $errors)) {
-            return $errors;
+        if (array_key_exists('errors', $response)) {
+            return $response;
         }
 
         if (array_key_exists('errors', $this->startPaymentTransaction($amount))) {
@@ -285,7 +291,10 @@ class ElavonSdkPaymentController extends Controller
             ]
         ];
 
-        return $this->sendRequest($payload);
+        $response = $this->sendRequest($payload);
+        $this->saveToSdkLog($response, 'info');
+
+        return $response['requestId'];
     }
 
     private  function getCardReadersSearchStatus($id)

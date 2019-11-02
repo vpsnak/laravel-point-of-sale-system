@@ -112,6 +112,7 @@
 			:show="showCreateDialog"
 			:component="form"
 			:title="btnTitle"
+			:width="800"
 			@action="result"
 			cancelBtnTxt="Close"
 			titleCloseBtn
