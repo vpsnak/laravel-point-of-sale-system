@@ -35,6 +35,7 @@ $baseRoutes = [
     'coupons' => 'CouponController',
     'regions' => 'RegionController',
     'countries' => 'CountryController',
+    'store-pickups' => 'StorePickupController',
 ];
 
 Route::get('categories/{category}/products', "CategoryController@productsByCategory");
