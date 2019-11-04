@@ -16,6 +16,7 @@ class ElavonSdkPaymentController extends Controller
     private $selected_transaction;
     private $amount;
     private $originalTransId;
+    private $taxFree;
 
     public function getLogs($test_case = null)
     {
@@ -76,11 +77,13 @@ class ElavonSdkPaymentController extends Controller
             'selected_transaction' => 'required|string',
             'amount' => 'nullable|numeric|min:0',
             'originalTransId' => 'nullable|string',
+            'tax_free' => 'nullable'
         ]);
 
         array_key_exists('amount', $validatedData) ? $this->amount = 100 * $validatedData['amount'] : null;
         array_key_exists('originalTransId', $validatedData) ? $this->originalTransId = $validatedData['originalTransId'] : null;
         array_key_exists('test_case', $validatedData) ? $this->testCase = $validatedData['test_case'] : null;
+        array_key_exists('tax_free', $validatedData) ? $this->taxFree = true : false;
 
         $this->selected_transaction = $validatedData['selected_transaction'];
 
@@ -398,10 +401,16 @@ class ElavonSdkPaymentController extends Controller
                 "transactionType" => $this->selected_transaction,
                 "tenderType" => "CARD",
                 "cardType" => null,
-                "isTaxInclusive" => true,
                 "discountAmounts" => null
             ]
         ];
+
+        if ($this->taxFree) {
+            $payload['parameters']['isTaxInclusive'] = false;
+            $payload['parameters']['taxAmounts'] = ["value" => 0, "currencyCode" => "USD"];
+        } else {
+            $payload['parameters']['isTaxInclusive'] = true;
+        }
 
         if ($this->amount) {
             $payload['parameters']['baseTransactionAmount'] = [
