@@ -86,7 +86,7 @@
 						</v-col>
 						<v-col
 							:cols="3"
-							v-if="sdk.selected_transaction === 'PRE_AUTH_COMPLETE' || sdk.selected_transaction === 'PRE_AUTH_DELETE' || sdk.selected_transaction === 'VOID' || sdk.selected_transaction === 'LINKED_REFUND'"
+							v-if="sdk.selected_transaction === 'PRE_AUTH_COMPLETE' || sdk.selected_transaction === 'SALE' || sdk.selected_transaction === 'LINKED_REFUND' || sdk.selected_transaction === 'PRE_AUTH'"
 						>
 							<v-text-field
 								:disabled="loading"
