@@ -53,6 +53,7 @@
 							<v-text-field v-model="sdk.amount" :disabled="loading" :loading="loading" label="Amount"></v-text-field>
 						</v-col>
 						<v-switch
+							class="mx-2"
 							v-if="sdk.selected_transaction === 'PRE_AUTH_COMPLETE' || sdk.selected_transaction === 'PRE_AUTH' || sdk.selected_transaction === 'SALE'"
 							:disabled="loading"
 							:loading="loading"
@@ -60,6 +61,7 @@
 							:label="'Tax free'"
 						></v-switch>
 						<v-switch
+							class="mx-2"
 							v-if="sdk.selected_transaction === 'PRE_AUTH_COMPLETE' || sdk.selected_transaction === 'PRE_AUTH' || sdk.selected_transaction === 'SALE'"
 							:disabled="loading"
 							:loading="loading"
@@ -67,6 +69,7 @@
 							:label="'Keyed'"
 						></v-switch>
 						<v-switch
+							class="mx-2"
 							v-if="sdk.selected_transaction === 'PRE_AUTH_COMPLETE' || sdk.selected_transaction === 'PRE_AUTH' || sdk.selected_transaction === 'SALE'"
 							:disabled="loading"
 							:loading="loading"
@@ -86,7 +89,7 @@
 						</v-col>
 						<v-col
 							:cols="3"
-							v-if="sdk.selected_transaction === 'PRE_AUTH_COMPLETE' || sdk.selected_transaction === 'PRE_AUTH_DELETE' || sdk.selected_transaction === 'VOID' || sdk.selected_transaction === 'LINKED_REFUND'"
+							v-if="sdk.selected_transaction === 'PRE_AUTH_COMPLETE' || sdk.selected_transaction === 'SALE' || sdk.selected_transaction === 'LINKED_REFUND' || sdk.selected_transaction === 'PRE_AUTH'"
 						>
 							<v-text-field
 								:disabled="loading"
