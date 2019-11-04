@@ -2,7 +2,7 @@
 	<v-form @submit="submit">
 		<v-text-field v-model="formFields.name" label="Name" :disabled="loading" required></v-text-field>
 		<v-select
-			v-model="formFields.region"
+			v-model="formFields.region_id"
 			:items="regions"
 			label="Regions"
 			required
@@ -23,7 +23,7 @@
 		<v-btn v-if="this.model === undefined" @click="clear">clear</v-btn>
 	</v-form>
 </template>
- 
+
 <script>
 import { mapActions } from "vuex";
 
@@ -71,14 +71,14 @@ export default {
 		submit() {
 			this.loading = true;
 			let payload = {
-				model: "store_pickups",
+				model: "store-pickups",
 				data: { ...this.formFields }
 			};
 			this.create(payload)
 				.then(() => {
 					this.$emit("submit", {
 						getRows: true,
-						model: "store_pickups",
+						model: "store-pickups",
 						notification: {
 							msg: "Store pickup added successfully!",
 							type: "success"
