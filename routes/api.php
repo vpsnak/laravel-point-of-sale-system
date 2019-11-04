@@ -67,7 +67,7 @@ Route::post('/elavon/sdk', 'ElavonSdkPaymentController@index')->middleware('auth
 Route::post('/elavon/sdk/lookup', 'ElavonSdkPaymentController@lookup')->middleware('auth:api');
 Route::get('/elavon/sdk/logs', 'ElavonSdkPaymentController@getLogs')->middleware('auth:api');
 Route::get('/elavon/sdk/logs/{test_case}', 'ElavonSdkPaymentController@getLogs')->middleware('auth:api');
-Route::get('/elavon/sdk/logs/delete', 'ElavonSdkPaymentController@deleteAll')->middleware('auth:api');
+Route::delete('/elavon/sdk/logs/delete', 'ElavonSdkPaymentController@deleteAll')->middleware('auth:api');
 
 Route::post('/elavon/api', 'ElavonApiPaymentController@index')->middleware('auth:api');
 Route::post('/elavon/api/lookup', 'ElavonApiPaymentController@lookup')->middleware('auth:api');
