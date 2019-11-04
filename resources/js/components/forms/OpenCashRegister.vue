@@ -54,11 +54,14 @@ export default {
 		};
 	},
 	mounted() {
+		this.loading = true;
+
 		this.getAll({
 			model: "stores"
 		}).then(stores => {
 			this.stores = stores;
 			this.storeDisabled = false;
+			this.loading = false;
 		});
 	},
 	computed: {
@@ -71,20 +74,15 @@ export default {
 	},
 	methods: {
 		submit() {
-			this.loading = true;
 			let payload = {
 				store_id: this.store_id,
 				cash_register_id: this.cash_register_id,
 				opening_amount: this.opening_amount,
 				status: this.status
 			};
-			this.openCashRegister(payload)
-				.then(response => {
-					this.$emit("submit");
-				})
-				.finally(() => {
-					this.loading = false;
-				});
+			this.openCashRegister(payload).then(response => {
+				this.$emit("submit");
+			});
 		},
 		changeCashRegisters() {
 			for (const store of this.stores) {
@@ -108,11 +106,16 @@ export default {
 			});
 		},
 		getAllCashRegisters() {
+			this.loading = true;
 			this.getAll({
 				model: "cash-registers"
-			}).then(cash_registers => {
-				this.cash_registers = cash_registers;
-			});
+			})
+				.then(cash_registers => {
+					this.cash_registers = cash_registers;
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 		...mapActions({
 			getAll: "getAll",
