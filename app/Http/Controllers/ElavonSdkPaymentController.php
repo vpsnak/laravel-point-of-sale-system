@@ -77,7 +77,7 @@ class ElavonSdkPaymentController extends Controller
             'selected_transaction' => 'required|string',
             'amount' => 'nullable|numeric|min:0',
             'originalTransId' => 'nullable|string',
-            'tax_free' => 'required|boolean'
+            'tax_free' => 'nullable|boolean'
         ]);
 
         array_key_exists('amount', $validatedData) ? $this->amount = 100 * $validatedData['amount'] : null;
