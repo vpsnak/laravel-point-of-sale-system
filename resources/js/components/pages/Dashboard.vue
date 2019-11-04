@@ -67,7 +67,7 @@
 							<v-text-field
 								:disabled="loading"
 								:loading="loading"
-								v-model="sdkLookup.originalTransId"
+								v-model="sdkLookup.transId"
 								label="Transaction ID"
 								hint="This parameter must be combined with UTC Date"
 							></v-text-field>
@@ -242,7 +242,7 @@ export default {
 		deleteSdkLogs() {
 			this.loading = true;
 			axios
-				.get("/api/elavon/sdk/logs/delete")
+				.delete("/api/elavon/sdk/logs/delete")
 				.then(() => {
 					this.sdkLogs = [];
 				})
@@ -253,22 +253,41 @@ export default {
 		submit() {
 			this.loading = true;
 			if (this.endpoint === "SDK") {
-				axios
-					.post("/api/elavon/sdk", this.sdk)
-					.catch(error => {
-						alert(
-							"Status code: " +
-								error.response.status +
-								"\nMessage: " +
-								error.response.data.message
-						);
-						console.log(error.response);
-						this.loading = false;
-					})
-					.finally(() => {
-						this.getSdkLogs();
-						this.loading = false;
-					});
+				if (this.sdk.selected_transaction === "Transaction Lookup") {
+					axios
+						.post("/api/elavon/sdk/lookup", this.sdkLookup)
+						.catch(error => {
+							alert(
+								"Status code: " +
+									error.response.status +
+									"\nMessage: " +
+									error.response.data.message
+							);
+							console.log(error.response);
+							this.loading = false;
+						})
+						.finally(() => {
+							this.getSdkLogs();
+							this.loading = false;
+						});
+				} else {
+					axios
+						.post("/api/elavon/sdk", this.sdk)
+						.catch(error => {
+							alert(
+								"Status code: " +
+									error.response.status +
+									"\nMessage: " +
+									error.response.data.message
+							);
+							console.log(error.response);
+							this.loading = false;
+						})
+						.finally(() => {
+							this.getSdkLogs();
+							this.loading = false;
+						});
+				}
 			} else {
 				axios
 					.post("/api/elavon/api", this.api)
