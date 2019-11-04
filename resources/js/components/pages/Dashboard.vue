@@ -84,6 +84,17 @@
 								label="Original Trans ID"
 							></v-text-field>
 						</v-col>
+						<v-col
+							:cols="3"
+							v-if="sdk.selected_transaction === 'PRE_AUTH_COMPLETE' || sdk.selected_transaction === 'PRE_AUTH_DELETE' || sdk.selected_transaction === 'VOID' || sdk.selected_transaction === 'LINKED_REFUND'"
+						>
+							<v-text-field
+								:disabled="loading"
+								:loading="loading"
+								v-model="sdk.invoiceNumber"
+								label="Invoice number"
+							></v-text-field>
+						</v-col>
 						<v-col :cols="3" v-if="sdk.selected_transaction === 'Transaction Lookup'">
 							<v-text-field
 								:disabled="loading"
@@ -181,6 +192,7 @@ export default {
 			loading: false,
 			endpoint: "SDK",
 			sdk: {
+				invoiceNumber: null,
 				taxFree: false,
 				keyed: false,
 				voiceReferral: false,
