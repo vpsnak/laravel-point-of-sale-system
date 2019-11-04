@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\ElavonSdkPayment;
+use App\Payment;
 use GuzzleHttp\Client;
-use \App\Payment;
-use \App\ElavonSdkPayment;
+use Illuminate\Http\Request;
 
 class ElavonSdkPaymentController extends Controller
 {
@@ -236,6 +236,9 @@ class ElavonSdkPaymentController extends Controller
     {
         $url = config('elavon.hostPC.ip') . ':' . config('elavon.hostPC.port') . '/rest/command';
         $client = new Client(['verify' => false]);
+        if ($verbose) {
+            $this->saveToSdkLog($payload, 'payload');
+        }
 
         try {
             $response = $client->post($url, [
@@ -337,7 +340,7 @@ class ElavonSdkPaymentController extends Controller
             ]
         ];
 
-        return $this->sendRequest($payload, false);
+        return $this->sendRequest($payload);
     }
 
     private  function getCardReaderInfo()
@@ -411,7 +414,7 @@ class ElavonSdkPaymentController extends Controller
 
         if ($this->amount) {
             $payload['parameters']['baseTransactionAmount'] = [
-                "value" => (int) $this->amount,
+                "value" => (int)round($this->amount, 0),
                 "currencyCode" => "USD"
             ];
         }
