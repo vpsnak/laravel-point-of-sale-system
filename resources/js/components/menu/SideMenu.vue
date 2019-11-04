@@ -103,7 +103,7 @@ export default {
 				{
 					id: 14,
 					title: "Addresses",
-					icon: "fas fa-address-card",
+					icon: "mdi-account-card-details",
 					to: "addresses"
 				},
 				{
