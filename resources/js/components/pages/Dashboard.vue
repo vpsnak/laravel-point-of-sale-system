@@ -67,8 +67,63 @@
 							<v-text-field
 								:disabled="loading"
 								:loading="loading"
-								v-model="sdk.originalTransId"
-								label="Original Trans ID"
+								v-model="sdkLookup.originalTransId"
+								label="Transaction ID"
+								hint="This parameter must be combined with UTC Date"
+							></v-text-field>
+						</v-col>
+						<v-col :cols="3" v-if="sdk.selected_transaction === 'Transaction Lookup'">
+							<v-text-field
+								:disabled="loading"
+								:loading="loading"
+								v-model="sdkLookup.creditCard"
+								label="Credit card"
+								hint="You can combine this parameter with beginDate and/or endDate"
+							></v-text-field>
+						</v-col>
+						<v-col :cols="2" v-if="sdk.selected_transaction === 'Transaction Lookup'">
+							<v-text-field
+								:disabled="loading"
+								:loading="loading"
+								v-model="sdkLookup.last4CC"
+								label="Last four cc"
+								hint="You can combine this parameter with beginDate and/or endDate"
+							></v-text-field>
+						</v-col>
+						<v-col :cols="2" v-if="sdk.selected_transaction === 'Transaction Lookup'">
+							<v-text-field
+								:disabled="loading"
+								:loading="loading"
+								v-model="sdkLookup.beginDate"
+								label="Begin date"
+								hint="Format: YYYYMMDD. Important: The date range must not exceed 31 days. You can combine this parameter with creditCard or last4CC"
+							></v-text-field>
+						</v-col>
+						<v-col :cols="2" v-if="sdk.selected_transaction === 'Transaction Lookup'">
+							<v-text-field
+								:disabled="loading"
+								:loading="loading"
+								v-model="sdkLookup.endDate"
+								label="End date"
+								hint="Format: YYYYMMDD. Important: The date range must not exceed 31 days. You can combine this parameter with creditCard or last4CC"
+							></v-text-field>
+						</v-col>
+						<v-col :cols="2" v-if="sdk.selected_transaction === 'Transaction Lookup'">
+							<v-text-field
+								:disabled="loading"
+								:loading="loading"
+								v-model="sdkLookup.utcDate"
+								label="UTC Date"
+								hint="Format: yyyy/MM/dd hh/mm/ss Important: This parameter must be supplied if Transaction ID is also included."
+							></v-text-field>
+						</v-col>
+						<v-col :cols="2" v-if="sdk.selected_transaction === 'Transaction Lookup'">
+							<v-text-field
+								:disabled="loading"
+								:loading="loading"
+								v-model="sdkLookup.merchantTransactionReference"
+								label="Merchant Transaction Reference"
+								hint="This parameter must be combined with one or more of begin Date, End Date, last4CC, or Credit Card"
 							></v-text-field>
 						</v-col>
 						<v-col :cols="12" v-if="endpoint === 'SDK'">
