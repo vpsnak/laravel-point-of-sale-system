@@ -74,15 +74,21 @@ export default {
 	},
 	methods: {
 		submit() {
+			this.loading = true;
+
 			let payload = {
 				store_id: this.store_id,
 				cash_register_id: this.cash_register_id,
 				opening_amount: this.opening_amount,
 				status: this.status
 			};
-			this.openCashRegister(payload).then(response => {
-				this.$emit("submit");
-			});
+			this.openCashRegister(payload)
+				.then(response => {
+					this.$emit("submit");
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 		changeCashRegisters() {
 			for (const store of this.stores) {
