@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\ElavonSdkPayment;
-use App\Payment;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use GuzzleHttp\Client;
+use \App\Payment;
+use \App\ElavonSdkPayment;
+use DB;
 
 class ElavonSdkPaymentController extends Controller
 {
@@ -27,7 +28,7 @@ class ElavonSdkPaymentController extends Controller
 
     public function deleteAll()
     {
-        ElavonSdkPayment::truncate();
+        DB::table('elavon_sdk_payments')->truncate();
         return response('SDK Logs truncated');
     }
 
@@ -63,10 +64,7 @@ class ElavonSdkPaymentController extends Controller
                 'paymentGatewayId' => $this->paymentGatewayId
             ]
         ];
-
-        $payload['parameters'][] = $parameters;
-
-        return response($payload['parameters']);
+        $payload['parameters'] += $parameters;
 
         return $this->sendRequest($payload);
     }
@@ -358,11 +356,9 @@ class ElavonSdkPaymentController extends Controller
 
     private function openPaymentGateway()
     {
-        $requestId = idate("U");
-
         $payload = [
             "method" => "openPaymentGateway",
-            "requestId" => $requestId,
+            "requestId" => idate("U"),
             "targetType" => "paymentGatewayConverge",
             "version" => "1.0",
             "parameters" => [
@@ -393,13 +389,11 @@ class ElavonSdkPaymentController extends Controller
         }
     }
 
-    private  function startPaymentTransaction()
+    private function startPaymentTransaction()
     {
-        $requestId = idate("U");
-
         $payload = [
             "method" => "startPaymentTransaction",
-            "requestId" => $requestId,
+            "requestId" => idate("U"),
             "targetType" => "paymentGatewayConverge",
             "version" => "1.0",
             "parameters" => [
@@ -429,13 +423,11 @@ class ElavonSdkPaymentController extends Controller
         return [];
     }
 
-    private  function getPaymentTransactionStatus()
+    private function getPaymentTransactionStatus()
     {
-        $requestId = idate("U");
-
         $payload = [
             "method" => "getPaymentTransactionStatus",
-            "requestId" => $requestId,
+            "requestId" => idate("U"),
             "targetType" => "paymentGatewayConverge",
             "version" => "1.0",
             "parameters" => [
@@ -449,40 +441,14 @@ class ElavonSdkPaymentController extends Controller
 
     private function cancelPaymentTransaction()
     {
-        $requestId = idate("U");
-
         $payload = [
             "method" => "cancelPaymentTransaction",
-            "requestId" => $requestId,
+            "requestId" => idate("U"),
             "targetType" => "paymentGatewayConverge",
             "version" => "1.0",
             "parameters" => [
                 "paymentGatewayId" => $this->paymentGatewayId,
                 "chanId" => $this->chanId
-            ]
-        ];
-
-        return $this->sendRequest($payload);
-    }
-
-    private  function linkedRefund(Payment $payment)
-    {
-        $requestId = idate("U");
-
-        $payload = [
-            "method" => "startPaymenTransaction",
-            "requestId" => $requestId,
-            "targetType" => "paymentGatewayConverge",
-            "version" => "1.0",
-            "parameters" => [
-                "paymentGatewayId" => "e9b2f3cd-ad49-482b-9982-d39d76a79a7f",
-                "originalTransId" => "070316A15-0A81D9AD-6700-4E07-A82D-DF17E41F91A6",
-                "transactionType" => "LINKED_REFUND",
-                "tenderType" => "CARD",
-                "baseTransactionAmount" => [
-                    "value" => 2500,
-                    "currencyCode" => "USD"
-                ],
             ]
         ];
 
