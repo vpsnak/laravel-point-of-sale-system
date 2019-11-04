@@ -29,7 +29,7 @@
 					>delete logs</v-btn>
 
 					<v-row v-if="endpoint === 'SDK'">
-						<v-col :cols="3">
+						<v-col :cols="1">
 							<v-text-field
 								v-model="sdk.test_case"
 								:disabled="loading"
@@ -81,7 +81,7 @@
 								hint="You can combine this parameter with beginDate and/or endDate"
 							></v-text-field>
 						</v-col>
-						<v-col :cols="2" v-if="sdk.selected_transaction === 'Transaction Lookup'">
+						<v-col :cols="1" v-if="sdk.selected_transaction === 'Transaction Lookup'">
 							<v-text-field
 								:disabled="loading"
 								:loading="loading"
