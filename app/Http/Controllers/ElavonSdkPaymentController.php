@@ -77,13 +77,13 @@ class ElavonSdkPaymentController extends Controller
             'selected_transaction' => 'required|string',
             'amount' => 'nullable|numeric|min:0',
             'originalTransId' => 'nullable|string',
-            'tax_free' => 'nullable'
+            'tax_free' => 'required|boolean'
         ]);
 
         array_key_exists('amount', $validatedData) ? $this->amount = 100 * $validatedData['amount'] : null;
         array_key_exists('originalTransId', $validatedData) ? $this->originalTransId = $validatedData['originalTransId'] : null;
         array_key_exists('test_case', $validatedData) ? $this->testCase = $validatedData['test_case'] : null;
-        array_key_exists('tax_free', $validatedData) ? $this->taxFree = true : false;
+        array_key_exists('tax_free', $validatedData) ? $this->taxFree = $validatedData['tax_free'] : $this->taxFree = false;
 
         $this->selected_transaction = $validatedData['selected_transaction'];
 
@@ -417,7 +417,7 @@ class ElavonSdkPaymentController extends Controller
 
         if ($this->amount) {
             $payload['parameters']['baseTransactionAmount'] = [
-                "value" => (int)round($this->amount, 0),
+                "value" => (int) round($this->amount, 0),
                 "currencyCode" => "USD"
             ];
         }
