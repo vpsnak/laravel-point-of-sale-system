@@ -29,13 +29,12 @@ export default new Vuex.Store({
 
         token: Cookies.get("token") || null,
 
-        store: Cookies.get("cash_register")
-            ? JSON.parse(Cookies.get("cash_register")).store
-            : {},
+        store: Cookies.get("store")
+            ? JSON.parse(Cookies.get("store")) : null,
 
         cashRegister: Cookies.get("cash_register")
             ? JSON.parse(Cookies.get("cash_register"))
-            : {},
+            : null,
 
         // notification
         notification: {
@@ -65,20 +64,32 @@ export default new Vuex.Store({
             state.user = null;
             state.token = null;
             state.cashRegister = null;
+            state.store = null;
 
             Cookies.remove("user");
             Cookies.remove("token");
             Cookies.remove("cash_register");
         },
         setCashRegister(state, cashRegister) {
-            state.cashRegister = cashRegister;
-
-            if (!cashRegister) {
-                Cookies.remove("cash_register");
-            } else {
+            if (cashRegister) {
+                state.cashRegister = cashRegister;
                 Cookies.set("cash_register", cashRegister, {
                     sameSite: "strict"
                 });
+            } else {
+                state.cashRegister = null;
+                Cookies.remove("cash_register");
+            }
+        },
+        setStore(state, store) {
+            if (store) {
+                state.store = store;
+                Cookies.set("store", store, {
+                    sameSite: "strict"
+                });
+            } else {
+                state.store = null;
+                Cookies.remove("store");
             }
         },
         setUser(state, user) {
@@ -199,9 +210,9 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                            payload.model +
-                            "/" +
-                            payload.data.id
+                        payload.model +
+                        "/" +
+                        payload.data.id
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -228,12 +239,12 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                            payload.model +
-                            "/" +
-                            payload.data.id +
-                            "/" +
-                            payload.data.model +
-                            page
+                        payload.model +
+                        "/" +
+                        payload.data.id +
+                        "/" +
+                        payload.data.model +
+                        page
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -288,11 +299,13 @@ export default new Vuex.Store({
                         payload.data
                     )
                     .then(response => {
-                        if (_.has(payload, "mutation")) {
-                            context.commit(payload.mutation, response.data, {
-                                root: true
-                            });
-                        }
+                        context.commit('setCashRegister', response.data.cash_register, {
+                            root: true
+                        });
+                        context.commit('setStore', response.data.cash_register.store, {
+                            root: true
+                        });
+
                         resolve(response.data);
                     })
                     .catch(error => {
@@ -313,13 +326,11 @@ export default new Vuex.Store({
                         this.state.baseUrl + payload.model + "/close",
                         payload.data
                     )
-                    .then(response => {
-                        if (_.has(payload, "mutation")) {
-                            context.commit(payload.mutation, response.data, {
-                                root: true
-                            });
-                        }
-                        resolve(response.data);
+                    .then(() => {
+                        this.$store.commit("setCashRegister", null);
+                        this.$store.commit("setStore", null);
+
+                        resolve();
                     })
                     .catch(error => {
                         let notification = {

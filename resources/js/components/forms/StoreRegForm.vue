@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<v-select
+			v-if="!cashRegister && !store"
 			:loading="loading"
 			v-model="store_id"
 			:disabled="storeDisabled"
@@ -13,6 +14,7 @@
 			v-on:input="enableCashRegisters"
 		></v-select>
 		<v-select
+			v-if="!cashRegister && !store"
 			:loading="loading"
 			:disabled="cashRegisterDisabled"
 			v-model="cash_register_id"
@@ -24,6 +26,7 @@
 			v-on:input="enableOpeningAmount"
 		></v-select>
 		<v-text-field
+			v-if="!cashRegister && !store"
 			:loading="loading"
 			:disabled="openingAmountDisabled"
 			v-model="opening_amount"
@@ -33,6 +36,7 @@
 		></v-text-field>
 
 		<v-text-field
+			v-if="cashRegister && store"
 			:loading="loading"
 			v-model="closing_amount"
 			type="number"
@@ -40,8 +44,8 @@
 			required
 		></v-text-field>
 
-		<v-btn class="mr-4" @click="submit" :loading="loading">Open Cash Register</v-btn>
-		<v-btn @click="close" :loading="loading">Close Cash Register</v-btn>
+		<v-btn v-if="!cashRegister" class="mr-4" @click="submit" :loading="loading">Open Cash Register</v-btn>
+		<v-btn v-if="cashRegister && store" @click="close" :loading="loading">Close Cash Register</v-btn>
 	</div>
 </template>
 <script>
@@ -71,6 +75,14 @@ export default {
 			this.storeDisabled = false;
 		});
 	},
+	computed: {
+		store() {
+			return this.$store.state.store;
+		},
+		cashRegister() {
+			return this.$store.state.cashRegister;
+		}
+	},
 	methods: {
 		submit() {
 			this.loading = true;
@@ -84,7 +96,7 @@ export default {
 				}
 			};
 			this.openCashRegister(payload)
-				.then(() => {
+				.then(response => {
 					this.$emit("submit", {
 						model: "cash-register-logs",
 						notification: {
@@ -92,16 +104,7 @@ export default {
 							type: "success"
 						}
 					});
-					for (const store of this.stores) {
-						if (store.id == this.store_id) {
-							this.$store.state.store = store;
-						}
-					}
-					for (const cash_register of this.cash_registers) {
-						if (cash_register.id == this.cash_register_id) {
-							this.$store.state.cashRegister = cash_register;
-						}
-					}
+
 					this.clear();
 				})
 				.finally(() => {
@@ -116,7 +119,7 @@ export default {
 				data: {
 					store_id: this.store_id,
 					cash_register_id: this.cash_register_id,
-					closing_amount: 12
+					closing_amount: this.closing_amount
 				}
 			};
 			this.closeCashRegister(payload)
@@ -128,17 +131,12 @@ export default {
 							type: "success"
 						}
 					});
-					this.$store.state.store = null;
-					this.$store.state.cashRegister = null;
+
 					this.clear();
 				})
 				.finally(() => {
 					this.loading = false;
 				});
-		},
-
-		beforeDestroy() {
-			this.$off("submit");
 		},
 		changeCashRegisters() {
 			for (const store of this.stores) {
@@ -180,10 +178,8 @@ export default {
 			delete: "delete"
 		})
 	},
-	computed: {
-		user_id() {
-			return this.$store.state.user.id;
-		}
+	beforeDestroy() {
+		this.$off("submit");
 	}
 };
 </script>

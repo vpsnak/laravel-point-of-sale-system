@@ -10,7 +10,7 @@
 			title="Select store and cash register"
 			:fullscreen="false"
 			:width="600"
-			component="storeRegForm"
+			:component="whatever"
 			cancelBtnTxt="Close"
 			@action="result"
 			:titleCloseBtn="true"
@@ -20,14 +20,21 @@
 				<v-btn v-on="on" icon>
 					<v-icon>mdi-account-circle</v-icon>
 				</v-btn>
-				<v-chip @click="showViewDialog = true" class="ma-2" color="blue-grey" text-color="white">
+				<v-chip
+					v-if="cashRegister && store"
+					@click="whatever='storeRegForm', showViewDialog = true"
+					class="ma-2"
+					color="blue-grey"
+					text-color="white"
+				>
 					<v-avatar left>
 						<v-icon>mdi-store</v-icon>
 					</v-avatar>
-					{{store.name}}
+					<span>{{store.name}}</span>
 					<v-icon class="px-2">mdi-cash-register</v-icon>
 					{{cashRegister.name}}
 				</v-chip>
+				<v-btn v-else text @click="showViewDialog = true">Select cash register</v-btn>
 			</template>
 			<v-list dense>
 				<v-list-item-group>
@@ -79,6 +86,7 @@ import { mapState } from "vuex";
 export default {
 	data() {
 		return {
+			whatever: "",
 			showViewDialog: false
 		};
 	},
@@ -94,15 +102,11 @@ export default {
 		user() {
 			return this.$store.state.user;
 		},
-		cashRegister: {
-			get() {
-				return this.$store.state.cashRegister;
-			}
+		cashRegister() {
+			return this.$store.state.cashRegister;
 		},
-		store: {
-			get() {
-				return this.$store.state.store;
-			}
+		store() {
+			return this.$store.state.store;
 		},
 		darkMode: {
 			get() {
