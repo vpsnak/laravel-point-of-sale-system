@@ -59,6 +59,20 @@
 							v-model="sdk.taxFree"
 							:label="'Tax free'"
 						></v-switch>
+						<v-switch
+							v-if="sdk.selected_transaction === 'PRE_AUTH_COMPLETE' || sdk.selected_transaction === 'PRE_AUTH' || sdk.selected_transaction === 'SALE'"
+							:disabled="loading"
+							:loading="loading"
+							v-model="sdk.keyed"
+							:label="'Keyed'"
+						></v-switch>
+						<v-switch
+							v-if="sdk.selected_transaction === 'PRE_AUTH_COMPLETE' || sdk.selected_transaction === 'PRE_AUTH' || sdk.selected_transaction === 'SALE'"
+							:disabled="loading"
+							:loading="loading"
+							v-model="sdk.voiceReferral"
+							:label="'Voice Referral'"
+						></v-switch>
 						<v-col
 							:cols="3"
 							v-if="sdk.selected_transaction === 'PRE_AUTH_COMPLETE' || sdk.selected_transaction === 'PRE_AUTH_DELETE' || sdk.selected_transaction === 'VOID' || sdk.selected_transaction === 'LINKED_REFUND'"
@@ -168,6 +182,8 @@ export default {
 			endpoint: "SDK",
 			sdk: {
 				taxFree: false,
+				keyed: false,
+				voiceReferral: false,
 				originalTransId: "",
 				test_case: "",
 				transaction_types: [

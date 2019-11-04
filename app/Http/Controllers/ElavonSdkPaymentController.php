@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\ElavonSdkPayment;
-use DB;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use GuzzleHttp\Client;
+use \App\Payment;
+use \App\ElavonSdkPayment;
+use DB;
 
 class ElavonSdkPaymentController extends Controller
 {
@@ -16,6 +17,8 @@ class ElavonSdkPaymentController extends Controller
     private $amount;
     private $originalTransId;
     private $taxFree;
+    private $keyed;
+    private $voiceReferral;
 
     public function getLogs($test_case = null)
     {
@@ -76,14 +79,17 @@ class ElavonSdkPaymentController extends Controller
             'selected_transaction' => 'required|string',
             'amount' => 'nullable|numeric|min:0',
             'originalTransId' => 'nullable|string',
-            'taxFree' => 'nullable|boolean'
+            'taxFree' => 'nullable|boolean',
+            'keyed' => 'nullable|boolean',
+            'voiceReferral' => 'nullable|boolean'
         ]);
 
         array_key_exists('amount', $validatedData) ? $this->amount = 100 * $validatedData['amount'] : null;
         array_key_exists('originalTransId', $validatedData) ? $this->originalTransId = $validatedData['originalTransId'] : null;
         array_key_exists('test_case', $validatedData) ? $this->testCase = $validatedData['test_case'] : null;
-        array_key_exists('taxFree',
-            $validatedData) ? $this->taxFree = $validatedData['taxFree'] : $this->taxFree = false;
+        array_key_exists('keyed', $validatedData) ? $this->keyed = $validatedData['keyed'] : null;
+        array_key_exists('voiceReferral', $validatedData) ? $this->voiceReferral = '321zxc' : $this->voiceReferral = false;
+        array_key_exists('taxFree', $validatedData) ? $this->taxFree = $validatedData['taxFree'] : $this->taxFree = false;
 
         $this->selected_transaction = $validatedData['selected_transaction'];
 
@@ -228,9 +234,46 @@ class ElavonSdkPaymentController extends Controller
         do {
             sleep(1);
             $response = $this->getPaymentTransactionStatus();
+
+            if (array_key_exists('requiredInformation', $response['data']['paymentGatewayCommand'])) {
+                if (is_array($response['data']['paymentGatewayCommand']['requiredInformation'])) {
+                    switch ($response['data']['paymentGatewayCommand']['requiredInformation'][0]) {
+                        case 'VoiceReferral':
+                        case 'CardPresent':
+                            $this->continuePaymentTransaction();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         } while ($response['data']['paymentGatewayCommand']['completed'] === false);
 
         return $this->getTransactionResponse($response);
+    }
+
+    private function continuePaymentTransaction()
+    {
+        $payload = [
+            'method' => 'continuePaymentTransaction',
+            'requestId' => idate("U"),
+            'targetType' => 'paymentGatewayConverge',
+            'version' => '1.0',
+            'parameters' => [
+                'paymentGatewayId' => $this->paymentGatewayId,
+                'chanId' => $this->chanId
+            ]
+        ];
+
+        if ($this->keyed) {
+            $payload['parameters']['CardPresent'] = false;
+        }
+
+        if ($this->voiceReferral) {
+            $payload['parameters']['VoiceReferral'] = $this->voiceReferral;
+        }
+
+        return $this->sendRequest($payload);
     }
 
     private function sendRequest($payload, $verbose = true)
@@ -266,11 +309,9 @@ class ElavonSdkPaymentController extends Controller
 
     private function startCardReaderConfiguration()
     {
-        $requestId = idate("U");
-
         $payload = [
             'method' => 'startCardReaderConfiguration',
-            'requestId' => $requestId,
+            'requestId' => idate("U"),
             'targetType' => 'cardReader',
             'version' => '1.0',
             'parameters' => [
@@ -407,6 +448,14 @@ class ElavonSdkPaymentController extends Controller
                 "discountAmounts" => null
             ]
         ];
+
+        if ($this->keyed) {
+            $payload['parameters']['CardEntryTypes'] = ['MANUALLY_ENTERED'];
+        }
+
+        if ($this->voiceReferral) {
+            $payload['parameters']['forceTransaction'] = true;
+        }
 
         if ($this->taxFree) {
             $payload['parameters']['isTaxInclusive'] = false;

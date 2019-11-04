@@ -26,6 +26,7 @@
 			@action="result"
 			:titleCloseBtn="true"
 		></interactiveDialog>
+
 		<v-menu left bottom offset-x transition="scale-transition">
 			<template v-slot:activator="{ on }">
 				<v-btn v-on="on" icon>
