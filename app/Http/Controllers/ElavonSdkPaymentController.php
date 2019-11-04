@@ -16,10 +16,13 @@ class ElavonSdkPaymentController extends Controller
     private $amount;
     private $originalTransId;
 
-    public function getLogs()
+    public function getLogs($test_case = null)
     {
-        // return response(ElavonSdkPayment::whereNotNull('test_case')->get());
-        return response(ElavonSdkPayment::all());
+        if ($test_case) {
+            return response(ElavonSdkPayment::whereTestCase($test_case)->get());
+        } else {
+            return response(ElavonSdkPayment::all());
+        }
     }
 
     public function deleteAll()
@@ -28,11 +31,44 @@ class ElavonSdkPaymentController extends Controller
         return response('SDK Logs truncated');
     }
 
-    public function searchPayment(Request $request)
+    public function lookup(Request $request)
     {
         $validatedData = $request->validate([
-            '' => ''
+            'creditCard' => 'nullable',
+            'last4CC' => 'nullable|numeric|digits:4',
+            'beginDate' => 'nullable',
+            'endDate' => 'nullable',
+            'transId' => 'nullable',
+            'utcDate' => 'nullable|required_with:transId',
+            'merchantTransactionReference' => 'nullable'
         ]);
+
+        $response = $this->openPaymentGateway();
+
+        if (array_key_exists('errors', $response)) {
+            return $response;
+        }
+
+        return $this->searchPaymentTransaction($validatedData);
+    }
+
+    private function searchPaymentTransaction(array $parameters)
+    {
+        $payload = [
+            "method" => "searchPaymentTransaction",
+            "requestId" => "19183388",
+            "targetType" => "paymentGatewayConverge",
+            "version" => "1.0",
+            "parameters" => [
+                'paymentGatewayId' => $this->paymentGatewayId
+            ]
+        ];
+
+        $payload['parameters'][] = $parameters;
+
+        return response($payload['parameters']);
+
+        return $this->sendRequest($payload);
     }
 
     public function index(Request $request)
@@ -366,7 +402,6 @@ class ElavonSdkPaymentController extends Controller
             "parameters" => [
                 "paymentGatewayId" => $this->paymentGatewayId,
                 "transactionType" => $this->selected_transaction,
-
                 "tenderType" => "CARD",
                 "cardType" => null,
                 "isTaxInclusive" => true,
@@ -423,39 +458,6 @@ class ElavonSdkPaymentController extends Controller
                 "chanId" => $this->chanId
             ]
         ];
-
-        return $this->sendRequest($payload);
-    }
-
-    private  function searchPaymentTransaction($parameters)
-    {
-        // params example
-        // $parameters = [
-        //     "first6CC" => null,
-        //     "creditCard" => null,
-        //     "utcDate" => null,
-        //     "paymentGatewayId" => $paymentGatewayId,
-        //     "transId" => null,
-        //     "endDate" => "20160307",
-        //     "last4CC" => "4243",
-        //     "beginDate" => "20160307",
-        //     "note" => ""
-        // ];
-
-        if (!count($parameters)) {
-            return ['errors' => 'No parameters specified'];
-        }
-
-        $requestId = idate("U");
-
-        $payload = [
-            "method" => "searchPaymentTransaction",
-            "requestId" => $requestId,
-            "targetType" => "paymentGatewayConverge",
-            "version" => "1.0",
-        ];
-
-        $payload[] = $parameters;
 
         return $this->sendRequest($payload);
     }

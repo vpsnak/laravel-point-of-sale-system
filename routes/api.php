@@ -64,8 +64,15 @@ Route::get('/send/{order}', 'SendEmailController@send');
 
 // elavon certification
 Route::post('/elavon/sdk', 'ElavonSdkPaymentController@index')->middleware('auth:api');
+Route::post('/elavon/sdk/lookup', 'ElavonSdkPaymentController@lookup')->middleware('auth:api');
 Route::get('/elavon/sdk/logs', 'ElavonSdkPaymentController@getLogs')->middleware('auth:api');
+Route::get('/elavon/sdk/logs/{test_case}', 'ElavonSdkPaymentController@getLogs')->middleware('auth:api');
 Route::get('/elavon/sdk/logs/delete', 'ElavonSdkPaymentController@deleteAll')->middleware('auth:api');
+
 Route::post('/elavon/api', 'ElavonApiPaymentController@index')->middleware('auth:api');
+Route::post('/elavon/api/lookup', 'ElavonApiPaymentController@lookup')->middleware('auth:api');
 Route::get('/elavon/api/logs', 'ElavonApiPaymentController@getLogs')->middleware('auth:api');
+Route::get('/elavon/api/logs/{test_case}', 'ElavonApiPaymentController@getLogs')->middleware('auth:api');
+
+
 Route::get('/elavon/api/logs/delete', 'ElavonApiPaymentController@deleteAll')->middleware('auth:api');

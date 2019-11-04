@@ -63,6 +63,14 @@
 								label="Original Trans ID"
 							></v-text-field>
 						</v-col>
+						<v-col :cols="3" v-if="sdk.selected_transaction === 'Transaction Lookup'">
+							<v-text-field
+								:disabled="loading"
+								:loading="loading"
+								v-model="sdk.originalTransId"
+								label="Original Trans ID"
+							></v-text-field>
+						</v-col>
 						<v-col :cols="12" v-if="endpoint === 'SDK'">
 							<v-data-table :items="sdkLogs" :headers="sdkHeaders" @click:row="openLog" :loading="loading"></v-data-table>
 						</v-col>
@@ -106,10 +114,20 @@ export default {
 					"PRE_AUTH_DELETE",
 					"VOID",
 					"LINKED_REFUND",
-					"STANDALONE_REFUND"
+					"STANDALONE_REFUND",
+					"Transaction Lookup"
 				],
 				amount: null,
 				selected_transaction: null
+			},
+			sdkLookup: {
+				creditCard: null,
+				last4CC: null,
+				beginDate: null,
+				endDate: null,
+				transId: null,
+				utcDate: null,
+				merchantTransactionReference: null
 			},
 			sdkHeaders: [
 				{ text: "#", value: "id" },
@@ -120,10 +138,14 @@ export default {
 				{ text: "Log", value: "log" }
 			],
 			sdkLogs: [],
+			apiLogs: [],
 			showLog: false,
 			item: {},
 
-			api: {}
+			api: {
+				amount: null,
+				selected_transaction: null
+			}
 		};
 	},
 
@@ -134,10 +156,29 @@ export default {
 		},
 		getSdkLogs() {
 			this.loading = true;
+
+			let url = "/api/elavon/sdk/logs";
+
+			this.sdk.test_case ? (url += "/" + this.sdk.test_case) : null;
 			axios
-				.get("/api/elavon/sdk/logs")
+				.get(url)
 				.then(response => {
 					this.sdkLogs = response.data;
+				})
+				.finally(() => {
+					this.loading = false;
+				});
+		},
+		getApiLogs() {
+			this.loading = true;
+
+			let url = "/api/elavon/api/logs";
+
+			this.sdk.test_case ? (url += "/" + this.sdk.test_case) : null;
+			axios
+				.get(url)
+				.then(response => {
+					this.apiLogs = response.data;
 				})
 				.finally(() => {
 					this.loading = false;
@@ -187,7 +228,7 @@ export default {
 						this.loading = false;
 					})
 					.finally(() => {
-						this.getSdkLogs();
+						// this.getApiLogs();
 						this.loading = false;
 					});
 			}
