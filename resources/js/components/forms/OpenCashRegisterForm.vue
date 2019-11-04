@@ -86,7 +86,7 @@ export default {
 			};
 			this.openCashRegister(payload)
 				.then(response => {
-					this.$emit("submit");
+					this.$emit("submit", true);
 				})
 				.finally(() => {
 					this.loading = false;
