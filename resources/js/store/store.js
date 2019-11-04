@@ -57,6 +57,13 @@ export default new Vuex.Store({
             } else {
                 return false;
             }
+        },
+        openedRegister: state => {
+            if (state.store && state.cashRegister) {
+                return true;
+            } else {
+                return false;
+            }
         }
     },
     mutations: {
@@ -77,6 +84,7 @@ export default new Vuex.Store({
                     sameSite: "strict"
                 });
             } else {
+                console.log('alvanizer')
                 state.cashRegister = null;
                 Cookies.remove("cash_register");
             }
@@ -121,9 +129,6 @@ export default new Vuex.Store({
         },
         setCategoryList(state, categories) {
             state.categoryList = categories;
-        },
-        setStoreList(state, stores) {
-            state.storeList = stores;
         },
         closeAllDialogs(state) {
             state.cartRestoreDialog = false;
@@ -295,22 +300,23 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 axios
                     .post(
-                        this.state.baseUrl + payload.model + "/open",
-                        payload.data
+                        this.state.baseUrl + "cash-register-logs/open",
+                        payload
                     )
                     .then(response => {
-                        context.commit('setCashRegister', response.data.cash_register, {
-                            root: true
-                        });
-                        context.commit('setStore', response.data.cash_register.store, {
-                            root: true
+                        console.log(response);
+                        context.commit('setCashRegister', response.data.cash_register);
+                        context.commit('setStore', response.data.cash_register.store);
+                        context.commit("setNotification", {
+                            msg: "Cash register opened successfully",
+                            type: "success"
                         });
 
-                        resolve(response.data);
+                        resolve(true);
                     })
                     .catch(error => {
                         let notification = {
-                            msg: error.response.data.errors,
+                            msg: error.response,
                             type: "error"
                         };
                         context.commit("setNotification", notification);
@@ -323,18 +329,23 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 axios
                     .post(
-                        this.state.baseUrl + payload.model + "/close",
+                        this.state.baseUrl + "cash-register-logs/close",
                         payload.data
                     )
                     .then(() => {
-                        this.$store.commit("setCashRegister", null);
-                        this.$store.commit("setStore", null);
+                        context.commit("setCashRegister", null);
+                        context.commit("setStore", null);
+                        context.commit("setNotification", {
+                            msg: "Cash register closed successfully",
+                            type: "success"
+                        });
 
-                        resolve();
+                        resolve(true);
                     })
                     .catch(error => {
+                        console.log(error.response)
                         let notification = {
-                            msg: error.response.data.errors,
+                            msg: error.response,
                             type: "error"
                         };
                         context.commit("setNotification", notification);

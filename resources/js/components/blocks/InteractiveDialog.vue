@@ -106,23 +106,25 @@ export default {
 		}),
 
 		submit(payload) {
-			if (payload.getRows && payload.model) {
-				this.getRows({
-					url: payload.model
-				});
-			}
-
-			if (payload.notification) {
-				this.$store.commit("setNotification", {
-					msg: payload.notification.msg,
-					type: payload.notification.type
-				});
-			}
-
-			if (payload.data) {
-				this.fire(payload.data);
-			} else {
+			if (!payload) {
 				this.fire(true);
+			} else {
+				if (payload.getRows && payload.model) {
+					this.getRows({
+						url: payload.model
+					});
+				}
+
+				if (payload.notification) {
+					this.$store.commit("setNotification", {
+						msg: payload.notification.msg,
+						type: payload.notification.type
+					});
+				}
+
+				if (payload.data) {
+					this.fire(payload.data);
+				}
 			}
 		},
 
