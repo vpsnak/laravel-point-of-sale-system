@@ -32,7 +32,7 @@
 				<v-btn v-on="on" icon>
 					<v-icon>mdi-account-circle</v-icon>
 				</v-btn>
-				<v-btn v-if="!openedRegister" text @click="OpenCashRegisterDialog = true">Open cash register</v-btn>
+				<v-chip v-if="!openedRegister" text @click="OpenCashRegisterDialog = true">Open cash register</v-chip>
 				<v-chip
 					v-else
 					@click="CloseCashRegisterDialog = true"
