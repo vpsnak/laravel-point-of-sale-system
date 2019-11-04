@@ -32,16 +32,7 @@
 			required
 		></v-text-field>
 
-		<v-text-field
-			:loading="loading"
-			v-model="closing_amount"
-			type="number"
-			label="Closing amount"
-			required
-		></v-text-field>
-
 		<v-btn class="mr-4" @click="submit" :loading="loading">Open Cash Register</v-btn>
-		<v-btn @click="close" :loading="loading">Close Cash Register</v-btn>
 	</div>
 </template>
 <script>
@@ -59,7 +50,6 @@ export default {
 			store_id: null,
 			cash_register_id: null,
 			opening_amount: null,
-			closing_amount: null,
 			status: true
 		};
 	},
@@ -71,74 +61,30 @@ export default {
 			this.storeDisabled = false;
 		});
 	},
+	computed: {
+		store() {
+			return this.$store.state.store;
+		},
+		cashRegister() {
+			return this.$store.state.cashRegister;
+		}
+	},
 	methods: {
 		submit() {
 			this.loading = true;
 			let payload = {
-				model: "cash-register-logs",
-				data: {
-					store_id: this.store_id,
-					cash_register_id: this.cash_register_id,
-					opening_amount: this.opening_amount,
-					status: this.status
-				}
+				store_id: this.store_id,
+				cash_register_id: this.cash_register_id,
+				opening_amount: this.opening_amount,
+				status: this.status
 			};
 			this.openCashRegister(payload)
-				.then(() => {
-					this.$emit("submit", {
-						model: "cash-register-logs",
-						notification: {
-							msg: "Cash register opened successfully",
-							type: "success"
-						}
-					});
-					for (const store of this.stores) {
-						if (store.id == this.store_id) {
-							this.$store.state.store = store;
-						}
-					}
-					for (const cash_register of this.cash_registers) {
-						if (cash_register.id == this.cash_register_id) {
-							this.$store.state.cashRegister = cash_register;
-						}
-					}
-					this.clear();
+				.then(response => {
+					this.$emit("submit");
 				})
 				.finally(() => {
 					this.loading = false;
 				});
-		},
-
-		close() {
-			this.loading = true;
-			let payload = {
-				model: "cash-register-logs",
-				data: {
-					store_id: this.store_id,
-					cash_register_id: this.cash_register_id,
-					closing_amount: 12
-				}
-			};
-			this.closeCashRegister(payload)
-				.then(() => {
-					this.$emit("submit", {
-						model: "cash-register-logs",
-						notification: {
-							msg: "Cash register closed successfully",
-							type: "success"
-						}
-					});
-					this.$store.state.store = null;
-					this.$store.state.cashRegister = null;
-					this.clear();
-				})
-				.finally(() => {
-					this.loading = false;
-				});
-		},
-
-		beforeDestroy() {
-			this.$off("submit");
 		},
 		changeCashRegisters() {
 			for (const store of this.stores) {
@@ -153,9 +99,6 @@ export default {
 
 		enableOpeningAmount() {
 			this.openingAmountDisabled = false;
-		},
-		clear() {
-			this.formFields = null;
 		},
 		getAllStores() {
 			this.getAll({
@@ -176,14 +119,11 @@ export default {
 			getOne: "getOne",
 			create: "create",
 			openCashRegister: "openCashRegister",
-			closeCashRegister: "closeCashRegister",
 			delete: "delete"
 		})
 	},
-	computed: {
-		user_id() {
-			return this.$store.state.user.id;
-		}
+	beforeDestroy() {
+		this.$off("submit");
 	}
 };
 </script>

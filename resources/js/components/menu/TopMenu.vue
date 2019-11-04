@@ -5,12 +5,23 @@
 		<v-toolbar-title>Plantshed</v-toolbar-title>
 		<div class="flex-grow-1"></div>
 		<interactiveDialog
-			v-if="showViewDialog"
-			:show="showViewDialog"
-			title="Select store and cash register"
+			v-if="OpenCashRegisterDialog"
+			:show="OpenCashRegisterDialog"
+			title="Open cash register"
 			:fullscreen="false"
 			:width="600"
-			component="storeRegForm"
+			component="openCashRegister"
+			cancelBtnTxt="Close"
+			@action="result"
+			:titleCloseBtn="true"
+		></interactiveDialog>
+		<interactiveDialog
+			v-if="CloseCashRegisterDialog"
+			:show="CloseCashRegisterDialog"
+			title="Close cash register"
+			:fullscreen="false"
+			:width="600"
+			component="closeCashRegister"
 			cancelBtnTxt="Close"
 			@action="result"
 			:titleCloseBtn="true"
@@ -20,11 +31,18 @@
 				<v-btn v-on="on" icon>
 					<v-icon>mdi-account-circle</v-icon>
 				</v-btn>
-				<v-chip @click="showViewDialog = true" class="ma-2" color="blue-grey" text-color="white">
+				<v-btn v-if="!openedRegister" text @click="OpenCashRegisterDialog = true">Open cash register</v-btn>
+				<v-chip
+					v-else
+					@click="CloseCashRegisterDialog = true"
+					class="ma-2"
+					color="blue-grey"
+					text-color="white"
+				>
 					<v-avatar left>
 						<v-icon>mdi-store</v-icon>
 					</v-avatar>
-					{{store.name}}
+					<span>{{store.name}}</span>
 					<v-icon class="px-2">mdi-cash-register</v-icon>
 					{{cashRegister.name}}
 				</v-chip>
@@ -79,7 +97,9 @@ import { mapState } from "vuex";
 export default {
 	data() {
 		return {
-			showViewDialog: false
+			whatever: "",
+			OpenCashRegisterDialog: false,
+			CloseCashRegisterDialog: false
 		};
 	},
 	methods: {
@@ -87,22 +107,22 @@ export default {
 			this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
 		},
 		result(event) {
-			this.showViewDialog = false;
+			this.OpenCashRegisterDialog = false;
+			this.CloseCashRegisterDialog = false;
 		}
 	},
 	computed: {
+		openedRegister() {
+			return this.$store.getters.openedRegister;
+		},
 		user() {
 			return this.$store.state.user;
 		},
-		cashRegister: {
-			get() {
-				return this.$store.state.cashRegister;
-			}
+		cashRegister() {
+			return this.$store.state.cashRegister;
 		},
-		store: {
-			get() {
-				return this.$store.state.store;
-			}
+		store() {
+			return this.$store.state.store;
 		},
 		darkMode: {
 			get() {

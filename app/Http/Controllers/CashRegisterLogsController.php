@@ -43,18 +43,17 @@ class CashRegisterLogsController extends BaseController
     public function close(Request $request)
     {
         $validatedData = $request->validate([
-            // 'user_id' => 'required|exists:users,id',
+            'cash_register_id' => 'required|exists:cash_registers,id',
             'closing_amount' => 'required|numeric',
-            // 'closed_by' => 'required|exists:users,id',
         ]);
         
-        $validatedData['user_id'] = auth()->user()->id;
         $validatedData['closed_by'] = auth()->user()->id;
         $validatedData['status'] = 0;
         $validatedData['closing_time'] = Carbon::now();
 
-        $user = User::find($validatedData['user_id']);
+        $user = auth()->user();
         $log = $user->open_register()->update($validatedData);
+
         return response($log, 200);
     }
 
