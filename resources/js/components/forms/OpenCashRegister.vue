@@ -31,8 +31,10 @@
 			label="Opening amount"
 			required
 		></v-text-field>
-
-		<v-btn class="mr-4" @click="submit" :loading="loading">Open Cash Register</v-btn>
+		<div class="d-flex align-center mt-5">
+			<div class="flex-grow-1"></div>
+			<v-btn @click="submit" :loading="loading">Open Cash Register</v-btn>
+		</div>
 	</div>
 </template>
 <script>

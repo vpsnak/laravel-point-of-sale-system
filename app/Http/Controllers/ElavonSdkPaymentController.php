@@ -80,21 +80,21 @@ class ElavonSdkPaymentController extends Controller
             'selected_transaction' => 'required|string',
             'amount' => 'nullable|numeric|min:0',
             'originalTransId' => 'nullable|string',
-            'tax_free' => 'nullable|boolean',
+            'taxFree' => 'nullable|boolean',
             'keyed' => 'nullable|boolean',
             'voiceReferral' => 'nullable|boolean',
             'invoiceNumber' => 'nullable|string'
         ]);
 
+        $this->selected_transaction = $validatedData['selected_transaction'];
+
         array_key_exists('amount', $validatedData) ? $this->amount = 100 * $validatedData['amount'] : null;
         array_key_exists('originalTransId', $validatedData) ? $this->originalTransId = $validatedData['originalTransId'] : null;
         array_key_exists('test_case', $validatedData) ? $this->testCase = $validatedData['test_case'] : null;
-        array_key_exists('tax_free', $validatedData) ? $this->taxFree = $validatedData['tax_free'] : $this->taxFree = false;
         array_key_exists('keyed', $validatedData) ? $this->keyed = $validatedData['keyed'] : null;
         array_key_exists('voiceReferral', $validatedData) ? $this->voiceReferral = '321zxc' : $this->voiceReferral = false;
         array_key_exists('invoiceNumber', $validatedData) ? $this->invoiceNumber =  $validatedData['invoiceNumber'] : $this->invoiceNumber = null;
-
-        $this->selected_transaction = $validatedData['selected_transaction'];
+        array_key_exists('taxFree', $validatedData) ? $this->taxFree = $validatedData['taxFree'] : $this->taxFree = false;
 
         return response($this->posPayment());
     }
