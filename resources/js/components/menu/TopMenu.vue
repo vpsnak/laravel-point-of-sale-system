@@ -22,10 +22,10 @@
 				</v-btn>
 				<v-chip @click="showViewDialog = true" class="ma-2" color="blue-grey" text-color="white">
 					<v-avatar left>
-						<v-icon>fas fa-store-alt</v-icon>
+						<v-icon>mdi-store</v-icon>
 					</v-avatar>
 					{{store.name}}
-					<v-icon class="px-2">fas fa-cash-register</v-icon>
+					<v-icon class="px-2">mdi-cash-register</v-icon>
 					{{cashRegister.name}}
 				</v-chip>
 			</template>
