@@ -16,6 +16,8 @@ import CashRegisters from "./components/pages/CashRegisters";
 import GiftCards from "./components/pages/GiftCards";
 import Coupons from "./components/pages/Coupons";
 import Addresses from "./components/pages/Addresses";
+import StorePickups from "./components/pages/StorePickups";
+
 
 export default [
     {
@@ -81,6 +83,12 @@ export default [
         name: "Users",
         path: "/users",
         component: Users,
+        meta: { requiresAuth: true }
+    },
+    {
+        name: "StorePickups",
+        path: "/store-pickups",
+        component: StorePickups,
         meta: { requiresAuth: true }
     },
     {
