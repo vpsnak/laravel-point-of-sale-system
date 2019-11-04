@@ -74,9 +74,6 @@ export default {
 				this.clear();
 			});
 		},
-		beforeDestroy() {
-			this.$off("submit");
-		},
 		clear() {
 			this.formFields = { ...this.defaultValues };
 		},
@@ -86,6 +83,9 @@ export default {
 			create: "create",
 			delete: "delete"
 		})
+	},
+	beforeDestroy() {
+		this.$off("submit");
 	}
 };
 </script>

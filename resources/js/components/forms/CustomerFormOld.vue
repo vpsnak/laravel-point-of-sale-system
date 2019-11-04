@@ -81,16 +81,16 @@ export default {
 			this.formFields = { ...this.defaultValues };
 			this.addressClear = true;
 		},
-		beforeDestroy() {
-			this.$off("clearAddress");
-			this.$off("submit");
-		},
 		...mapActions({
 			getAll: "getAll",
 			getOne: "getOne",
 			create: "create",
 			delete: "delete"
 		})
+	},
+	beforeDestroy() {
+		this.$off("clearAddress");
+		this.$off("submit");
 	}
 };
 </script>

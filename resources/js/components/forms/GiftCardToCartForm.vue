@@ -58,9 +58,6 @@ export default {
 			});
 		},
 		beforeDestroy() {
-			this.$off("submit");
-		},
-		beforeDestroy() {
 			this.$off("addtocart");
 		},
 		IdAndSkuGenerator() {
@@ -87,6 +84,9 @@ export default {
 			create: "create",
 			delete: "delete"
 		})
+	},
+	beforeDestroy() {
+		this.$off("submit");
 	}
 };
 </script>

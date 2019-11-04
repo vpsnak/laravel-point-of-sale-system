@@ -84,15 +84,15 @@ export default {
 		clear() {
 			this.formFields = { ...this.defaultValues };
 		},
-		beforeDestroy() {
-			this.$off("submit");
-		},
 		...mapActions({
 			getAll: "getAll",
 			getOne: "getOne",
 			create: "create",
 			delete: "delete"
 		})
+	},
+	beforeDestroy() {
+		this.$off("submit");
 	}
 };
 </script>

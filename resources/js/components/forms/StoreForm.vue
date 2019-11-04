@@ -59,6 +59,13 @@ export default {
 			};
 		}
 	},
+	computed: {
+		user_id: {
+			get() {
+				return this.$store.state.user.id;
+			}
+		}
+	},
 	methods: {
 		submit() {
 			let payload = {
@@ -85,9 +92,6 @@ export default {
 					this.loading = false;
 				});
 		},
-		beforeDestroy() {
-			this.$off("submit");
-		},
 		clear() {
 			this.formFields = this.defaultValues;
 		},
@@ -105,12 +109,8 @@ export default {
 			delete: "delete"
 		})
 	},
-	computed: {
-		user_id: {
-			get() {
-				return this.$store.state.user.id;
-			}
-		}
+	beforeDestroy() {
+		this.$off("submit");
 	}
 };
 </script>
