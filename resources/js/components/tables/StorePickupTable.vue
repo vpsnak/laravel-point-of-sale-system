@@ -5,7 +5,7 @@
 		tableTitle="Store pickups"
 		tableBtnTitle="New Store Pickup"
 		tableForm="storePickupForm"
-		tableViewComponent="storePickUp"
+		tableViewComponent="storePickup"
 	/>
 </template>
 
