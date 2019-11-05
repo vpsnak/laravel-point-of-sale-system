@@ -43,7 +43,7 @@
 					<v-date-picker v-model="shipping.date" @input="getTimeSlots" :min="new Date().toJSON()"></v-date-picker>
 				</v-menu>
 			</v-col>
-			<v-col cols="4" lg="3" v-if="shipping.method === 'delivery'">
+			<v-col cols="4" lg="2" v-if="shipping.method === 'delivery' || shipping.method === 'pickup'">
 				<v-select
 					:loading="loading"
 					label="At"
@@ -52,6 +52,17 @@
 					:items="timeSlots"
 					item-text="label"
 					v-model="shipping.timeSlotLabel"
+					@input="setCost"
+					@click:append-outer="addTimeSlotDialog = true"
+				></v-select>
+			</v-col>
+			<v-col cols="4" lg="2" v-if="shipping.method === 'delivery' || shipping.method === 'pickup'">
+				<v-select
+					:loading="loading"
+					label="Occasion"
+					:items="occasions"
+					item-text="label"
+					v-model="shipping.occasion"
 					@input="setCost"
 					@click:append-outer="addTimeSlotDialog = true"
 				></v-select>
@@ -96,6 +107,9 @@ export default {
 	},
 
 	computed: {
+		occasions() {
+			return this.$store.state.cart.occasions;
+		},
 		timeSlots: {
 			get() {
 				return this.time_slots;
