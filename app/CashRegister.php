@@ -12,7 +12,10 @@ class CashRegister extends BaseModel
     protected $fillable = [
         'name',
         'store_id',
-        'created_by'
+        'created_by',
+        'barcode',
+        'pos_terminal',
+        'printer',
     ];
 
     public function getStoreAttribute()
