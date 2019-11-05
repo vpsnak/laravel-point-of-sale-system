@@ -29,8 +29,7 @@ export default new Vuex.Store({
 
         token: Cookies.get("token") || null,
 
-        store: Cookies.get("store")
-            ? JSON.parse(Cookies.get("store")) : null,
+        store: Cookies.get("store") ? JSON.parse(Cookies.get("store")) : null,
 
         cashRegister: Cookies.get("cash_register")
             ? JSON.parse(Cookies.get("cash_register"))
@@ -75,6 +74,7 @@ export default new Vuex.Store({
 
             Cookies.remove("user");
             Cookies.remove("token");
+            Cookies.remove("store");
             Cookies.remove("cash_register");
         },
         setCashRegister(state, cashRegister) {
@@ -84,7 +84,7 @@ export default new Vuex.Store({
                     sameSite: "strict"
                 });
             } else {
-                console.log('alvanizer')
+                console.log("alvanizer");
                 state.cashRegister = null;
                 Cookies.remove("cash_register");
             }
@@ -215,9 +215,9 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                        payload.model +
-                        "/" +
-                        payload.data.id
+                            payload.model +
+                            "/" +
+                            payload.data.id
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -244,12 +244,12 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                        payload.model +
-                        "/" +
-                        payload.data.id +
-                        "/" +
-                        payload.data.model +
-                        page
+                            payload.model +
+                            "/" +
+                            payload.data.id +
+                            "/" +
+                            payload.data.model +
+                            page
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -304,9 +304,14 @@ export default new Vuex.Store({
                         payload
                     )
                     .then(response => {
-                        console.log(response);
-                        context.commit('setCashRegister', response.data.cash_register);
-                        context.commit('setStore', response.data.cash_register.store);
+                        context.commit(
+                            "setCashRegister",
+                            response.data.cash_register
+                        );
+                        context.commit(
+                            "setStore",
+                            response.data.cash_register.store
+                        );
                         context.commit("setNotification", {
                             msg: "Cash register opened successfully",
                             type: "success"
@@ -343,7 +348,6 @@ export default new Vuex.Store({
                         resolve(true);
                     })
                     .catch(error => {
-                        console.log(error.response)
                         let notification = {
                             msg: error.response,
                             type: "error"

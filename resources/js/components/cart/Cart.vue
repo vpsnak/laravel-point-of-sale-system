@@ -4,7 +4,7 @@
 			<v-icon class="pr-2">{{ icon }}</v-icon>
 			<h4 class="title-2">{{ title }}</h4>
 			<v-spacer></v-spacer>
-			<v-switch @change="saveOneClick" label="Retail" :disabled="!editable"></v-switch>
+			<v-switch v-model="toggleRetail" label="Retail" :disabled="!editable"></v-switch>
 		</div>
 		<v-divider />
 		<v-container grid-list-md text-xs-center>
@@ -49,6 +49,14 @@ export default {
 		actions: Boolean | null
 	},
 	computed: {
+		toggleRetail: {
+			get() {
+				return this.$store.state.cart.retail;
+			},
+			set(value) {
+				this.$store.commit("cart/toggleRetail", value);
+			}
+		},
 		cartDiscount() {
 			let discount = {
 				discount_type: this.$store.state.cart.discount_type,
@@ -79,13 +87,6 @@ export default {
 	},
 
 	methods: {
-		saveOneClick(e) {
-			e
-				? ((this.$store.state.cart.checkoutSteps[0].completed = true),
-				  (this.$store.state.cart.currentCheckoutStep = 2))
-				: ((this.$store.state.cart.checkoutSteps[0].completed = false),
-				  (this.$store.state.cart.currentCheckoutStep = 1));
-		},
 		addAll(cart) {
 			this.products.splice(0);
 			this.products = cart;
