@@ -31,6 +31,7 @@ $baseRoutes = [
     'payment-types' => 'PaymentTypeController',
     'cash-registers' => 'CashRegisterController',
     'cash-register-logs' => 'CashRegisterLogsController',
+    'cash-register-reports' => 'CashRegisterReportController',
     'gift-cards' => 'GiftCardController',
     'coupons' => 'CouponController',
     'regions' => 'RegionController',
