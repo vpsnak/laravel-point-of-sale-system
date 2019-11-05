@@ -8,10 +8,10 @@
 
 			<v-spacer></v-spacer>
 
-			<div class="pt-1 pr-2">
+			<div class="pt-5 pr-2">
 				<v-label>Delivery</v-label>
 			</div>
-			<v-switch class="my-0" v-model="toggleRetail" label="Retail" :disabled="!editable"></v-switch>
+			<v-switch class="my-0 pt-5" v-model="toggleRetail" label="Retail" :disabled="!editable"></v-switch>
 		</div>
 		<v-divider />
 		<v-container grid-list-md text-xs-center>
