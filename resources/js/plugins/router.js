@@ -45,6 +45,17 @@ router.beforeEach((to, from, next) => {
         });
     }
 
+    // guard sales page if no register is selected
+    else if (
+        to.matched.some(record => record.name === "orders") &&
+        !store.getters.openedRegister
+    ) {
+        next({
+            path: "/open-cash-register",
+            query: { redirect: to.fullPath }
+        });
+    }
+
     // guard open register route if already logged in
     else if (
         to.matched.some(record => record.name === "openCashRegister") &&

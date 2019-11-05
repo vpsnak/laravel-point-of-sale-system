@@ -62,6 +62,10 @@ Route::get('/magento/authorize', 'Auth\MagentoOAuthController@authorizeMagento')
 Route::get('/sendemail', 'SendEmailController@index')->middleware('auth:api');
 Route::get('/send/{order}', 'SendEmailController@send');
 
+// guest email list
+Route::get('/guest-email', 'GuestEmailListController@all');
+Route::post('/guest-email/create', 'GuestEmailListController@create');
+
 // elavon certification
 Route::post('/elavon/sdk', 'ElavonSdkPaymentController@index')->middleware('auth:api');
 Route::post('/elavon/sdk/lookup', 'ElavonSdkPaymentController@lookup')->middleware('auth:api');

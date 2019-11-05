@@ -2,7 +2,7 @@ export default {
     namespaced: true,
 
     state: {
-        skipOneClickToggle: false,
+        retail: true,
 
         discountTypes: [
             {
@@ -25,7 +25,7 @@ export default {
                 name: "Delivery options",
                 icon: "local_shipping",
                 component: "shippingStep",
-                completed: false
+                completed: true
             },
             {
                 id: 2,
@@ -42,7 +42,7 @@ export default {
                 completed: false
             }
         ],
-        currentCheckoutStep: 1,
+        currentCheckoutStep: 2,
 
         customer: undefined,
         products: [],
@@ -64,6 +64,17 @@ export default {
     },
 
     mutations: {
+        toggleRetail(state, retail) {
+            if (retail) {
+                state.retail = true;
+                state.checkoutSteps[0].completed = true;
+                state.currentCheckoutStep = 2;
+            } else {
+                state.retail = false;
+                state.checkoutSteps[0].completed = false;
+                state.currentCheckoutStep = 1;
+            }
+        },
         addProduct(state, product) {
             let index = _.findIndex(state.products, productState => {
                 return productState.id === product.id;
