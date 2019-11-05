@@ -113,13 +113,22 @@ export default new Vuex.Store({
                 Cookies.set("cash_register", state.cashRegister, {
                     sameSite: "strict"
                 });
+
+                Cookies.set("store", state.store, {
+                    sameSite: "strict"
+                });
             }
         },
         setToken(state, token) {
-            state.token = "Bearer " + token;
-            Cookies.set("token", "Bearer " + token, {
-                sameSite: "strict"
-            });
+            if (token) {
+                state.token = "Bearer " + token;
+                Cookies.set("token", "Bearer " + token, {
+                    sameSite: "strict"
+                });
+            } else {
+                state.token = null;
+                Cookies.remove("token");
+            }
         },
         setNotification(state, notification) {
             state.notification = notification;
