@@ -31,10 +31,21 @@
 			label="Opening amount"
 			required
 		></v-text-field>
-		<div class="d-flex align-center mt-5">
+		<v-row>
+			<v-col cols="6" v-if="remainingAmount !== undefined">
+				<span class="title">
+					Remaining:
+					<span class="amber--text" v-text="'$ ' + remainingAmount.toFixed(2)" />
+				</span>
+			</v-col>
+			<v-col cols="6">
+				<v-btn @click="submit" :loading="loading">Open Cash Register</v-btn>
+			</v-col>
+		</v-row>
+		<!-- <div class="d-flex align-center mt-5">
 			<div class="flex-grow-1"></div>
 			<v-btn @click="submit" :loading="loading">Open Cash Register</v-btn>
-		</div>
+		</div>-->
 	</div>
 </template>
 <script>
@@ -52,7 +63,8 @@ export default {
 			store_id: null,
 			cash_register_id: null,
 			opening_amount: null,
-			status: true
+			status: true,
+			remainingAmount: 121231.123131
 		};
 	},
 	mounted() {
