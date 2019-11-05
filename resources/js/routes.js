@@ -17,7 +17,7 @@ import GiftCards from "./components/pages/GiftCards";
 import Coupons from "./components/pages/Coupons";
 import Addresses from "./components/pages/Addresses";
 import StorePickups from "./components/pages/StorePickups";
-
+import OpenCashRegister from "./components/pages/OpenCashRegister";
 
 export default [
     {
@@ -41,6 +41,12 @@ export default [
         name: "logout",
         path: "/logout",
         component: Logout,
+        meta: { requiresAuth: true }
+    },
+    {
+        name: "openCashRegister",
+        path: "/open-cash-register",
+        component: OpenCashRegister,
         meta: { requiresAuth: true }
     },
     {

@@ -10,7 +10,7 @@
 			title="Open cash register"
 			:fullscreen="false"
 			:width="600"
-			component="openCashRegister"
+			component="openCashRegisterForm"
 			cancelBtnTxt="Close"
 			@action="result"
 			:titleCloseBtn="true"
@@ -21,7 +21,7 @@
 			title="Close cash register"
 			:fullscreen="false"
 			:width="600"
-			component="closeCashRegister"
+			component="closeCashRegisterForm"
 			cancelBtnTxt="Close"
 			@action="result"
 			:titleCloseBtn="true"
@@ -32,7 +32,7 @@
 				<v-btn v-on="on" icon>
 					<v-icon>mdi-account-circle</v-icon>
 				</v-btn>
-				<v-btn v-if="!openedRegister" text @click="OpenCashRegisterDialog = true">Open cash register</v-btn>
+				<v-chip v-if="!openedRegister" text @click="OpenCashRegisterDialog = true">Open cash register</v-chip>
 				<v-chip
 					v-else
 					@click="CloseCashRegisterDialog = true"

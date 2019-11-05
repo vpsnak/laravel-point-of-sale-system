@@ -44,9 +44,9 @@
 </template>
 
 <script>
-  import { mapActions } from 'vuex'
+import { mapActions } from "vuex";
 
-  export default {
+export default {
 	props: {
 		model: Object || undefined
 	},
@@ -64,7 +64,7 @@
 				final_price: null,
 				url: null,
 				description: null,
-              categories: [],
+				categories: [],
 				stores: []
 			}
 		};
@@ -102,9 +102,6 @@
 				.finally(() => {
 					this.loading = false;
 				});
-		},
-		beforeDestroy() {
-			this.$off("submit");
 		},
 		clear() {
 			this.formFields = { ...this.defaultValues };
@@ -149,6 +146,9 @@
 			create: "create",
 			delete: "delete"
 		})
+	},
+	beforeDestroy() {
+		this.$off("submit");
 	}
 };
 </script>

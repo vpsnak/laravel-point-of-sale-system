@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\ElavonSdkPayment;
-use DB;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use GuzzleHttp\Client;
+use \App\Payment;
+use \App\ElavonSdkPayment;
+use DB;
 
 class ElavonSdkPaymentController extends Controller
 {
@@ -18,6 +19,7 @@ class ElavonSdkPaymentController extends Controller
     private $taxFree;
     private $keyed;
     private $voiceReferral;
+    private $invoiceNumber;
 
     public function getLogs($test_case = null)
     {
@@ -80,18 +82,19 @@ class ElavonSdkPaymentController extends Controller
             'originalTransId' => 'nullable|string',
             'taxFree' => 'nullable|boolean',
             'keyed' => 'nullable|boolean',
-            'voiceReferral' => 'nullable|boolean'
+            'voiceReferral' => 'nullable|boolean',
+            'invoiceNumber' => 'nullable|string'
         ]);
+
+        $this->selected_transaction = $validatedData['selected_transaction'];
 
         array_key_exists('amount', $validatedData) ? $this->amount = 100 * $validatedData['amount'] : null;
         array_key_exists('originalTransId', $validatedData) ? $this->originalTransId = $validatedData['originalTransId'] : null;
         array_key_exists('test_case', $validatedData) ? $this->testCase = $validatedData['test_case'] : null;
         array_key_exists('keyed', $validatedData) ? $this->keyed = $validatedData['keyed'] : null;
-        array_key_exists('voiceReferral',
-            $validatedData) && $this->voiceReferral == true ? $this->voiceReferral = '321zxc' : $this->voiceReferral = false;
+        array_key_exists('voiceReferral', $validatedData) && $this->voiceReferral == true ? $this->voiceReferral = '321zxc' : $this->voiceReferral = false;
+        array_key_exists('invoiceNumber', $validatedData) ? $this->invoiceNumber =  $validatedData['invoiceNumber'] : $this->invoiceNumber = null;
         array_key_exists('taxFree', $validatedData) ? $this->taxFree = $validatedData['taxFree'] : $this->taxFree = false;
-
-        $this->selected_transaction = $validatedData['selected_transaction'];
 
         return response($this->posPayment());
     }
@@ -204,7 +207,7 @@ class ElavonSdkPaymentController extends Controller
 
             return ['success' => $response['data']['paymentGatewayCommand']['eventQueue']];
         } else {
-            $this->saveToSdkLog($response, 'failed');
+            $this->saveToSdkLog($response, 'unhandled');
 
             return ['errors' => $response];
         }
@@ -448,6 +451,10 @@ class ElavonSdkPaymentController extends Controller
                 "discountAmounts" => null
             ]
         ];
+
+        if ($this->invoiceNumber) {
+            $payload['parameters']['invoiceNumber'] = $this->invoiceNumber;
+        }
 
         if ($this->keyed != false) {
             $payload['parameters']['cardEntryTypes'] = ['MANUALLY_ENTERED'];
