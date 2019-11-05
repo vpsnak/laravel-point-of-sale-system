@@ -31,6 +31,7 @@ $baseRoutes = [
     'payment-types' => 'PaymentTypeController',
     'cash-registers' => 'CashRegisterController',
     'cash-register-logs' => 'CashRegisterLogsController',
+    'cash-register-reports' => 'CashRegisterReportController',
     'gift-cards' => 'GiftCardController',
     'coupons' => 'CouponController',
     'regions' => 'RegionController',
@@ -47,6 +48,8 @@ foreach ($baseRoutes as $route => $controller) {
     Route::post("/$route/search", "$controller@search");
     Route::delete("/$route/{id}", "$controller@delete")->middleware('auth:api');
 }
+
+Route::get('/products/barcode/{id}', "{$baseRoutes['products']}@getBarcode");
 
 Route::get('/carts/hold', "{$baseRoutes['carts']}@getHold")->middleware('auth:api');
 Route::get('/product-listing/categories', "CategoryController@productListingCategories")->middleware('auth:api');

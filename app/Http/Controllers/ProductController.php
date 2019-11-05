@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Product;
+use CodeItNow\BarcodeBundle\Utils\BarcodeGenerator;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -83,5 +84,20 @@ class ProductController extends BaseController
         }
 
         return response($this->model::paginate(), 200);
+    }
+
+    public function getBarcode(Product $product)
+    {
+        $barcode = new BarcodeGenerator();
+        $barcode->setText($product->sku);
+        $barcode->setType(BarcodeGenerator::Code39);
+        $barcode->setScale(2);
+        $barcode->setThickness(25);
+        $barcode->setFontSize(10);
+        $code = $barcode->generate();
+        return response([
+            'barcode' => $code,
+            'type' => 'data:image/png;base64'
+        ], 200);
     }
 }

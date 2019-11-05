@@ -20,6 +20,15 @@
 				></v-text-field>
 				<v-tooltip bottom>
 					<template v-slot:activator="{ on }">
+						<v-btn outlined icon @click="enableScan" :color=" btnactive ? 'red' : ''" v-on="on">
+							<v-icon>mdi-barcode-scan</v-icon>
+						</v-btn>
+					</template>
+					<span v-if="btnactive">Disable scan mode</span>
+					<span v-else>Enable scan mode</span>
+				</v-tooltip>
+				<v-tooltip bottom>
+					<template v-slot:activator="{ on }">
 						<v-btn @click="showDummyDialog = true" class="my-1" v-on="on" icon>
 							<v-icon>mdi-plus</v-icon>
 						</v-btn>
@@ -158,7 +167,8 @@ export default {
 			loader: false,
 			model: "products",
 			search_keyword: "",
-			selected_category: null
+			selected_category: null,
+			btnactive: false
 		};
 	},
 	mounted() {
@@ -229,6 +239,13 @@ export default {
 		}
 	},
 	methods: {
+		enableScan() {
+			if (this.btnactive == false) {
+				this.btnactive = true;
+			} else {
+				this.btnactive = false;
+			}
+		},
 		paginate() {
 			if (this.selectedCategory) {
 				this.getProductsFromCategoryID();
