@@ -48,6 +48,8 @@ foreach ($baseRoutes as $route => $controller) {
     Route::delete("/$route/{id}", "$controller@delete")->middleware('auth:api');
 }
 
+Route::get('/products/barcode/{id}', "{$baseRoutes['products']}@getBarcode");
+
 Route::get('/carts/hold', "{$baseRoutes['carts']}@getHold")->middleware('auth:api');
 Route::get('/product-listing/categories', "CategoryController@productListingCategories")->middleware('auth:api');
 
