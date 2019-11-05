@@ -92,7 +92,7 @@ class ElavonSdkPaymentController extends Controller
         array_key_exists('originalTransId', $validatedData) ? $this->originalTransId = $validatedData['originalTransId'] : null;
         array_key_exists('test_case', $validatedData) ? $this->testCase = $validatedData['test_case'] : null;
         array_key_exists('keyed', $validatedData) ? $this->keyed = $validatedData['keyed'] : null;
-        array_key_exists('voiceReferral', $validatedData) ? $this->voiceReferral = '321zxc' : $this->voiceReferral = false;
+        array_key_exists('voiceReferral', $validatedData) && $this->voiceReferral == true ? $this->voiceReferral = '321zxc' : $this->voiceReferral = false;
         array_key_exists('invoiceNumber', $validatedData) ? $this->invoiceNumber =  $validatedData['invoiceNumber'] : $this->invoiceNumber = null;
         array_key_exists('taxFree', $validatedData) ? $this->taxFree = $validatedData['taxFree'] : $this->taxFree = false;
 
@@ -268,11 +268,11 @@ class ElavonSdkPaymentController extends Controller
             ]
         ];
 
-        if ($this->keyed) {
+        if ($this->keyed != false) {
             $payload['parameters']['CardPresent'] = false;
         }
 
-        if ($this->voiceReferral) {
+        if ($this->voiceReferral != false) {
             $payload['parameters']['VoiceReferral'] = $this->voiceReferral;
         }
 
@@ -456,11 +456,11 @@ class ElavonSdkPaymentController extends Controller
             $payload['parameters']['invoiceNumber'] = $this->invoiceNumber;
         }
 
-        if ($this->keyed) {
-            $payload['parameters']['CardEntryTypes'] = ['MANUALLY_ENTERED'];
+        if ($this->keyed != false) {
+            $payload['parameters']['cardEntryTypes'] = ['MANUALLY_ENTERED'];
         }
 
-        if ($this->voiceReferral) {
+        if ($this->voiceReferral != false) {
             $payload['parameters']['forceTransaction'] = true;
         }
 
