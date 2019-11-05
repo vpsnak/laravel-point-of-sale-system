@@ -24,7 +24,8 @@
 							<v-icon>mdi-barcode-scan</v-icon>
 						</v-btn>
 					</template>
-					<span>Enable scan mode</span>
+					<span v-if="btnactive">Disable scan mode</span>
+					<span v-else>Enable scan mode</span>
 				</v-tooltip>
 				<v-tooltip bottom>
 					<template v-slot:activator="{ on }">
