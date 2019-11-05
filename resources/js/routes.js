@@ -56,31 +56,31 @@ export default [
         meta: { requiresAuth: true }
     },
     {
-        name: "Orders",
+        name: "orders",
         path: "/orders",
         component: Orders,
         meta: { requiresAuth: true }
     },
     {
-        name: "Customers",
+        name: "customers",
         path: "/customers",
         component: Customers,
         meta: { requiresAuth: true }
     },
     {
-        name: "Products",
+        name: "products",
         path: "/products",
         component: Products,
         meta: { requiresAuth: true }
     },
     {
-        name: "Categories",
+        name: "categories",
         path: "/categories",
         component: Categories,
         meta: { requiresAuth: true }
     },
     {
-        name: "Stores",
+        name: "stores",
         path: "/stores",
         component: Stores,
         meta: { requiresAuth: true }
@@ -95,12 +95,6 @@ export default [
         name: "StorePickups",
         path: "/store-pickups",
         component: StorePickups,
-        meta: { requiresAuth: true }
-    },
-    {
-        name: "testc",
-        path: "/chris",
-        component: CTest,
         meta: { requiresAuth: true }
     },
     {
