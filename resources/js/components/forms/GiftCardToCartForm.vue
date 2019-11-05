@@ -13,7 +13,7 @@
 import { mapActions } from "vuex";
 
 export default {
-	data() {
+	data() {``
 		return {
 			giftCard: {
 				id: null,
@@ -56,9 +56,6 @@ export default {
 					type: "success"
 				}
 			});
-		},
-		beforeDestroy() {
-			this.$off("addtocart");
 		},
 		IdAndSkuGenerator() {
 			let random = function() {

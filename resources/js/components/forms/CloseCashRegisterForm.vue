@@ -7,10 +7,21 @@
 			label="Closing amount"
 			required
 		></v-text-field>
-		<div class="d-flex align-center mt-5">
+		<v-row>
+			<v-col cols="6" v-if="remainingAmount !== undefined">
+				<span class="title">
+					Remaining:
+					<span class="amber--text" v-text="'$ ' + remainingAmount.toFixed(2)" />
+				</span>
+			</v-col>
+			<v-col cols="6">
+				<v-btn @click="close" :loading="loading">Close Cash Register</v-btn>
+			</v-col>
+		</v-row>
+		<!-- <div class="d-flex align-center mt-5">
 			<div class="flex-grow-1"></div>
 			<v-btn @click="close" :loading="loading">Close Cash Register</v-btn>
-		</div>
+		</div>-->
 	</div>
 </template>
 <script>
@@ -20,7 +31,8 @@ export default {
 	data() {
 		return {
 			loading: false,
-			closing_amount: null
+			closing_amount: null,
+			remainingAmount: 121231.123131
 		};
 	},
 	computed: {
