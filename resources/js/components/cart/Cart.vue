@@ -1,10 +1,17 @@
 <template>
 	<v-card class="pa-3 d-flex flex-column" style="max-height: 90vh;">
-		<div class="d-flex align-center justify-center">
-			<v-icon class="pr-2">{{ icon }}</v-icon>
-			<h4 class="title-2">{{ title }}</h4>
+		<div class="d-flex">
+			<div class="d-flex align-center justify-center">
+				<v-icon class="pr-2">{{ icon }}</v-icon>
+				<h4 class="title-2">{{ title }}</h4>
+			</div>
+
 			<v-spacer></v-spacer>
-			<v-switch v-model="toggleRetail" label="Retail" :disabled="!editable"></v-switch>
+
+			<div class="pt-1 pr-2">
+				<v-label>Delivery</v-label>
+			</div>
+			<v-switch class="my-0" v-model="toggleRetail" label="Retail" :disabled="!editable"></v-switch>
 		</div>
 		<v-divider />
 		<v-container grid-list-md text-xs-center>

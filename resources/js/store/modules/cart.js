@@ -4,6 +4,29 @@ export default {
     state: {
         retail: true,
 
+        locations: [
+            "Apartment",
+            "Business",
+            "Private House",
+            "Hotel",
+            "Hospital",
+            "Funeral Home",
+            "Church",
+            "School"
+        ],
+
+        occasions: [
+            "Anniversary",
+            "Get Well",
+            "Birthday",
+            "Business Gifting",
+            "Holiday",
+            "New Baby",
+            "Just Because",
+            "Sympathy",
+            "All Others"
+        ],
+
         discountTypes: [
             {
                 label: "None",
@@ -57,7 +80,9 @@ export default {
             method: "retail",
             date: undefined,
             timeSlotLabel: null,
-            timeSlotCost: 0
+            timeSlotCost: 0,
+            location: null,
+            occasion: null
         },
 
         order: undefined
