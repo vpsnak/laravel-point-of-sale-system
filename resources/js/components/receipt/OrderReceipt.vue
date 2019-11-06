@@ -75,6 +75,7 @@ export default {
 			if (this.customer) {
 				if (this.customer.email !== this.customerEmail) {
 					this.$store.dispatch("cart/saveGuestEmail", this.customerEmail);
+					this.$store.dispatch("cart/mailReceipt", this.customerEmail);
 				}
 			} else {
 				this.$store.dispatch("cart/saveGuestEmail", {
