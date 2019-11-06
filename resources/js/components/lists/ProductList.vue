@@ -182,7 +182,6 @@ export default {
 		this.getAllProducts();
 		this.getAllCategories();
 		this.$root.$on("barcodeScan", sku => {
-			console.log(sku);
 			if (this.btnactive) {
 				this.getSingleProduct(sku, true);
 			} else {
@@ -349,7 +348,6 @@ export default {
 			this.$store
 				.dispatch("search", payload)
 				.then(response => {
-					console.log(response);
 					this.currentPage = response.current_page;
 					this.lastPage = response.last_page;
 					if (addToCart) {
