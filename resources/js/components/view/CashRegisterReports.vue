@@ -1,20 +1,18 @@
 <template>
-	<v-container v-if="cashRegisterReportsReportsData">
+	<v-container v-if="cashRegisterReportsData">
 		<v-row>
 			<v-col cols="12">
 				<v-card>
-					<v-card-title>{{cashRegisterReportsReportsData.report_name}} REPORTS</v-card-title>
+					<v-card-title>{{cashRegisterReportsData.report_name}} REPORTS</v-card-title>
 					<v-card-text>
-						<div class="subtitle-1">Report type: {{ cashRegisterReportsReportsData.report_type }}</div>
-						<div class="subtitle-1">Created by: {{ cashRegisterReportsReportsData.created_by }}</div>
-						<div
-							class="subtitle-1"
-						>Cash register ID: {{ cashRegisterReportsReportsData.cash_register_id }}</div>
-						<div class="subtitle-1">opening_amount: {{ cashRegisterReportsReportsData.opening_amount }}</div>
-						<div class="subtitle-1">closing_amount: {{ cashRegisterReportsReportsData.closing_amount }}</div>
-						<div class="subtitle-1">Subtotal: {{ cashRegisterReportsReportsData.subtotal }} $</div>
-						<div class="subtitle-1">Tax: {{ cashRegisterReportsReportsData.tax }} $</div>
-						<div class="subtitle-1">Total: {{ cashRegisterReportsReportsData.total }} $</div>
+						<div class="subtitle-1">Report type: {{ cashRegisterReportsData.report_type }}</div>
+						<div class="subtitle-1">Created by: {{ cashRegisterReportsData.created_by }}</div>
+						<div class="subtitle-1">Cash register ID: {{ cashRegisterReportsData.cash_register_id }}</div>
+						<div class="subtitle-1">opening_amount: {{ cashRegisterReportsData.opening_amount }}</div>
+						<div class="subtitle-1">closing_amount: {{ cashRegisterReportsData.closing_amount }}</div>
+						<div class="subtitle-1">Subtotal: {{ cashRegisterReportsData.subtotal }} $</div>
+						<div class="subtitle-1">Tax: {{ cashRegisterReportsData.tax }} $</div>
+						<div class="subtitle-1">Total: {{ cashRegisterReportsData.total }} $</div>
 					</v-card-text>
 				</v-card>
 			</v-col>
@@ -32,7 +30,7 @@ export default {
 	},
 	data() {
 		return {
-			cashRegisterReportsReports: null
+			cashRegisterReports: null
 		};
 	},
 	mounted() {
@@ -47,7 +45,7 @@ export default {
 			});
 	},
 	computed: {
-		cashRegisterReportsReportsData() {
+		cashRegisterReportsData() {
 			return this.cashRegisterReports;
 		}
 	},
