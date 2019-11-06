@@ -21,30 +21,40 @@ class CashRegisterReportController extends BaseController
 //            'type' => 'required|in:x,z', // @TODO eval if needed
         ]);
 
-        $cash_register = CashRegister::getOne($validatedData['cash_register_id']);
-        $open_log = $cash_register->logs->where('status', 1)->first();
-        if (!empty($open_log)) {
-            $report = $this->generateReport($open_log->id);
-            $report['created_by'] = auth()->user()->id;
-            $report['cash_register_id'] = $validatedData['cash_register_id'];
-            $report['report_type'] = 'x';
-            $report['report_name'] = 'Report ' . strtoupper($report['report_type']) . ' ' . now();
-            return response($this->model::store($report), 200);
+        $report = self::generateReportByCashRegisterId($validatedData['cash_register_id']);
+        if (!empty($report)) {
+            return response($report, 201);
         } else {
-            $log = $cash_register->logs->latest()->first();
-            if (!empty($log)) {
-                $report = $this->generateReport($log->id);
-                $report['created_by'] = auth()->user()->id;
-                $report['cash_register_id'] = $validatedData['cash_register_id'];
-                $report['report_type'] = 'z';
-                $report['report_name'] = 'Report ' . strtoupper($report['report_type']) . ' ' . now();
-                return response($this->model::store($report), 200);
-            }
             return response(['message' => 'No logs found'], 404);
         }
     }
 
-    public function generateReport($id)
+    public static function generateReportByCashRegisterId($id)
+    {
+        $cash_register = CashRegister::getOne($id);
+        $open_log = $cash_register->logs->where('status', 1)->first();
+        if (!empty($open_log)) {
+            $report = self::generateReport($open_log->id);
+            $report['created_by'] = auth()->user()->id;
+            $report['cash_register_id'] = $id;
+            $report['report_type'] = 'x';
+            $report['report_name'] = 'Report ' . strtoupper($report['report_type']) . ' ' . now();
+            return CashRegisterReport::store($report);
+        } else {
+            $log = $cash_register->logs->latest()->first();
+            if (!empty($log)) {
+                $report = self::generateReport($log->id);
+                $report['created_by'] = auth()->user()->id;
+                $report['cash_register_id'] = $id;
+                $report['report_type'] = 'z';
+                $report['report_name'] = 'Report ' . strtoupper($report['report_type']) . ' ' . now();
+                return CashRegisterReport::store($report);
+            }
+            return null;
+        }
+    }
+
+    public static function generateReport($id)
     {
         $cash_register_log = CashRegisterLogs::findOrFail($id);
         $payments = Payment::where('cash_register_id', '=', $cash_register_log->cash_register->id)
