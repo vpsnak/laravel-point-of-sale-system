@@ -84,9 +84,9 @@ export default {
 				},
 				{
 					id: 11,
-					title: "Cash register reports",
+					title: "Reports",
 					icon: "mdi-file-document-box",
-					to: "cash-register-reports"
+					to: "reports"
 				},
 				{
 					id: 12,
