@@ -3,16 +3,22 @@
 		<v-row>
 			<v-col cols="12">
 				<v-card>
-					<v-card-title>{{cashRegisterReportsData.report_name}} REPORTS</v-card-title>
+					<v-card-title>{{cashRegisterReportsData.report_name}}</v-card-title>
 					<v-card-text>
 						<div class="subtitle-1">Report type: {{ cashRegisterReportsData.report_type }}</div>
 						<div class="subtitle-1">Created by: {{ cashRegisterReportsData.created_by }}</div>
 						<div class="subtitle-1">Cash register ID: {{ cashRegisterReportsData.cash_register_id }}</div>
-						<div class="subtitle-1">opening_amount: {{ cashRegisterReportsData.opening_amount }}</div>
-						<div class="subtitle-1">closing_amount: {{ cashRegisterReportsData.closing_amount }}</div>
-						<div class="subtitle-1">Subtotal: {{ cashRegisterReportsData.subtotal }} $</div>
-						<div class="subtitle-1">Tax: {{ cashRegisterReportsData.tax }} $</div>
-						<div class="subtitle-1">Total: {{ cashRegisterReportsData.total }} $</div>
+						<div
+							class="subtitle-1"
+						>Opening amount: {{parseFloat(cashRegisterReportsData.opening_amount).toFixed(2)}} $</div>
+						<div
+							class="subtitle-1"
+						>Closing_amount: {{parseFloat(cashRegisterReportsData.closing_amount).toFixed(2)}} $</div>
+						<div
+							class="subtitle-1"
+						>Subtotal: {{ parseFloat(cashRegisterReportsData.subtotal).toFixed(2) }} $</div>
+						<div class="subtitle-1">Tax: {{ parseFloat(cashRegisterReportsData.tax).toFixed(2) }} $</div>
+						<div class="subtitle-1">Total: {{ parseFloat(cashRegisterReportsData.total).toFixed(2) }} $</div>
 					</v-card-text>
 				</v-card>
 			</v-col>
