@@ -15,7 +15,6 @@ import {
     ValidationObserver
 } from "vee-validate/dist/vee-validate.full";
 import store from "./store/store";
-import { VMenu } from "vuetify/lib";
 
 window.Vue = require("vue");
 

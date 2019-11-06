@@ -125,6 +125,7 @@ export default {
 				if (payload.data) {
 					this.fire(payload.data);
 				}
+				this.fire(true);
 			}
 		},
 

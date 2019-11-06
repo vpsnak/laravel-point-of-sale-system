@@ -2,23 +2,23 @@
 	<v-container fluid>
 		<v-row>
 			<v-col>
-				<v-slide-group show-arrows v-model="selectedTable">
-					<v-slide-item v-slot:default="{ active, toggle }">
+				<v-slide-group show-arrows>
+					<v-slide-item>
 						<v-btn
 							v-model="cashRegister"
-							:color="active ? 'blue-grey' : ''"
+							color="blue-grey"
 							class="mx-1"
-							@click="toggle, cashRegister = true, user = false;"
+							@click="cashRegister = true, user = false;"
 							depressed
 							rounded
 						>Cash Register</v-btn>
 					</v-slide-item>
-					<v-slide-item v-slot:default="{ active, toggle }">
+					<v-slide-item>
 						<v-btn
 							v-model="user"
-							:color="active ? 'blue-grey' : ''"
+							color="blue-grey"
 							class="mx-1"
-							@click="toggle, cashRegister = false, user = true;"
+							@click="cashRegister = false, user = true;"
 							depressed
 							rounded
 						>User</v-btn>
@@ -39,8 +39,7 @@
 export default {
 	data() {
 		return {
-			selectedTable: null,
-			cashRegister: false,
+			cashRegister: true,
 			user: false
 		};
 	}

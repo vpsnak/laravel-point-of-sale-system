@@ -175,7 +175,7 @@ export default {
 			model: "products",
 			search_keyword: "",
 			selected_category: null,
-			btnactive: false
+			btnactive: true
 		};
 	},
 	mounted() {
@@ -338,6 +338,7 @@ export default {
 				});
 		},
 		getSingleProduct(sku, addToCart) {
+			this.showViewDialog = false;
 			this.initiateLoadingSearchResults(true);
 			let payload = {
 				model: "products",
