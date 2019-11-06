@@ -52,7 +52,7 @@ class CashRegisterLogsController extends BaseController
         $validatedData['closing_time'] = Carbon::now();
 
         $user = auth()->user();
-        $open_register_id = $user->open_register()->id;
+        $open_register_id = $user->open_register->id;
         $log = $user->open_register()->update($validatedData);
         CashRegisterReportController::generateReportByCashRegisterId($open_register_id);
 

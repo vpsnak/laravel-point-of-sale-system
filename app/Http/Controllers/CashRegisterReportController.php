@@ -41,7 +41,7 @@ class CashRegisterReportController extends BaseController
             $report['report_name'] = 'Report ' . strtoupper($report['report_type']) . ' ' . now();
             return CashRegisterReport::store($report);
         } else {
-            $log = $cash_register->logs->latest()->first();
+            $log = $cash_register->logs()->latest()->first();
             if (!empty($log)) {
                 $report = self::generateReport($log->id);
                 $report['created_by'] = auth()->user()->id;
