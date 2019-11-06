@@ -62,8 +62,8 @@ Route::post('/shipping/timeslot', "TimeslotController@getTimeslots")->middleware
 Route::get('/magento/authorize', 'Auth\MagentoOAuthController@authorizeMagento');
 
 // e-mail
-Route::get('/sendemail', 'SendEmailController@index')->middleware('auth:api');
-Route::get('/send/{order}', 'SendEmailController@send');
+Route::get('/mail-receipt', 'MailReceiptController@template')->middleware('auth:api');
+Route::post('/mail-receipt/{order}', 'MailReceiptController@send');
 
 // guest email list
 Route::get('/guest-email', 'GuestEmailListController@all')->middleware('auth:api');

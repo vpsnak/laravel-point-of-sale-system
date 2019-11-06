@@ -150,12 +150,8 @@ export default new Vuex.Store({
                 axios
                     .post(this.state.baseUrl + "auth/login", payload)
                     .then(response => {
-                        context.commit("setUser", response.data.user, {
-                            root: true
-                        });
-                        context.commit("setToken", response.data.token, {
-                            root: true
-                        });
+                        context.commit("setUser", response.data.user);
+                        context.commit("setToken", response.data.token);
                         context.commit(
                             "setNotification",
                             response.data.notification
