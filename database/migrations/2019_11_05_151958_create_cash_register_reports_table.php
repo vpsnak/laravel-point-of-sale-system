@@ -19,6 +19,8 @@ class CreateCashRegisterReportsTable extends Migration
             $table->string('report_type');
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('cash_register_id');
+            $table->decimal('opening_amount', 12, 4)->default(0);
+            $table->decimal('closing_amount', 12, 4)->default(0);
             $table->decimal('subtotal', 12, 4)->default(0);
             $table->decimal('tax', 12, 4)->default(0);
             $table->decimal('total', 12, 4)->default(0);

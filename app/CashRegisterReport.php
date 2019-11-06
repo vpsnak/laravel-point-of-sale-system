@@ -9,6 +9,8 @@ class CashRegisterReport extends BaseModel
         'report_type',
         'created_by',
         'cash_register_id',
+        'opening_amount',
+        'closing_amount',
         'subtotal',
         'tax',
         'total',

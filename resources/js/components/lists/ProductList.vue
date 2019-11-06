@@ -67,7 +67,12 @@
 			</v-row>
 			<v-row v-if="productList.length" style="height:61vh; overflow-y:auto;">
 				<v-col v-for="product in productList" :key="product.id" cols="12" md="6" lg="4">
-					<v-card :img="product.photo_url" @click="addProduct(product)" height="170px">
+					<v-card
+						v-model="current_product"
+						:img="product.photo_url"
+						@click="addProduct(product)"
+						height="170px"
+					>
 						<v-card-title class="blue-grey pa-0" @click.stop>
 							<h6 class="px-2">{{product.name}}</h6>
 							<div class="flex-grow-1"></div>
@@ -155,9 +160,11 @@
 </template>
 
 <script>
+import { log } from "util";
 export default {
 	data() {
 		return {
+			current_product: null,
 			current_page: 1,
 			last_page: null,
 			showViewDialog: false,
@@ -174,6 +181,17 @@ export default {
 	mounted() {
 		this.getAllProducts();
 		this.getAllCategories();
+		this.$root.$on("barcodeScan", sku => {
+			console.log(sku);
+			if (this.btnactive) {
+				this.getSingleProduct(sku, true);
+			} else {
+				this.getSingleProduct(sku, false);
+			}
+		});
+	},
+	beforeDestroy() {
+		this.$root.$off("barcodeScan");
 	},
 	computed: {
 		keyword: {
@@ -314,6 +332,30 @@ export default {
 				.then(response => {
 					this.currentPage = response.current_page;
 					this.lastPage = response.last_page;
+				})
+				.finally(() => {
+					this.initiateLoadingSearchResults(false);
+				});
+		},
+		getSingleProduct(sku, addToCart) {
+			this.initiateLoadingSearchResults(true);
+			let payload = {
+				model: "products",
+				mutation: "setProductList",
+				page: this.currentPage,
+				keyword: sku
+			};
+			this.$store
+				.dispatch("search", payload)
+				.then(response => {
+					console.log(response);
+					this.currentPage = response.current_page;
+					this.lastPage = response.last_page;
+					if (addToCart) {
+						this.$store.commit("cart/addProduct", response.data[0]);
+					} else {
+						this.viewItem(response.data[0]);
+					}
 				})
 				.finally(() => {
 					this.initiateLoadingSearchResults(false);
