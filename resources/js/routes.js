@@ -18,6 +18,8 @@ import Coupons from "./components/pages/Coupons";
 import Addresses from "./components/pages/Addresses";
 import StorePickups from "./components/pages/StorePickups";
 import OpenCashRegister from "./components/pages/OpenCashRegister";
+import CashRegisterReports from "./components/pages/CashRegisterReports";
+
 
 export default [
     {
@@ -119,6 +121,12 @@ export default [
         name: "CashRegisters",
         path: "/cash-registers",
         component: CashRegisters,
+        meta: { requiresAuth: true }
+    },
+    {
+        name: "CashRegisterReports",
+        path: "/cash-register-reports",
+        component: CashRegisterReports,
         meta: { requiresAuth: true }
     },
     {

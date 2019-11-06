@@ -5,13 +5,12 @@
 				<v-card>
 					<v-card-title>{{cashRegisterData.name}}</v-card-title>
 					<v-card-text>
-						<div class="subtitle-1">Company name: {{ cashRegisterData.created_by }}</div>
 						<div class="subtitle-1">Created at: {{ cashRegisterData.created_at }}</div>
 						<div class="subtitle-1">Updated at: {{ cashRegisterData.updated_at }}</div>
 					</v-card-text>
 				</v-card>
 			</v-col>
-			<v-col cols="12" v-if="cashRegisterData.logs.length > 0">
+			<v-col cols="12" v-if="cashRegisterData.logs">
 				<v-card>
 					<v-card-title>Logs</v-card-title>
 					<v-card-text>

@@ -6,6 +6,7 @@
 		tableBtnTitle="New Cash Register"
 		tableForm="cashRegisterForm"
 		tableViewComponent="cashRegisterReports"
+		:tableBtnDisable="true"
 	/>
 </template>
 
@@ -21,8 +22,36 @@ export default {
 					value: "id"
 				},
 				{
-					text: "Name",
-					value: "name"
+					text: "Report name",
+					value: "report_name"
+				},
+				{
+					text: "Report type",
+					value: "report_type"
+				},
+				{
+					text: "Cash register ID",
+					value: "cash_register_id"
+				},
+				{
+					text: "Opening amount",
+					value: "opening_amount"
+				},
+				{
+					text: "Closing amount",
+					value: "closing_amount"
+				},
+				{
+					text: "Subtotal",
+					value: "subtotal"
+				},
+				{
+					text: "Tax",
+					value: "tax"
+				},
+				{
+					text: "Total",
+					value: "total"
 				},
 				{ text: "Actions", value: "action", sortable: false }
 			]
