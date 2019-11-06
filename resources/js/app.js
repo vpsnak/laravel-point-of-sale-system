@@ -58,7 +58,7 @@ const app = new Vue({
         scanner.on((code, event) => {
             event.preventDefault();
 
-            this.$emit('barcodeScan', code);
+            this.$emit("barcodeScan", code);
         });
     }
 });
