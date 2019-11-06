@@ -21,6 +21,7 @@ class CreatePaymentsTable extends Migration
             $table->unsignedBigInteger('cash_register_id')->nullable();
             $table->string('code')->nullable();
             $table->string('status');
+            $table->boolean('refunded')->default(0);
 
             $table->unsignedBigInteger('created_by');
             $table->timestamps();

@@ -201,7 +201,10 @@ class PaymentController extends BaseController
         }
 
         $payment = Payment::findOrFail($id);
-        $payment->status = 'refunded';
+        $refund = $payment->replicate();
+        $refund->status = 'refunded';
+        $refund->save();
+        $payment->refunded = 1;
         $payment->save();
 
         return response(['msg' => 'Refund completed successfully!', 'status' => 'success'], 200);

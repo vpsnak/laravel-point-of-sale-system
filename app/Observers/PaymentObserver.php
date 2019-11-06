@@ -35,7 +35,7 @@ class PaymentObserver
     {
         $this->updateOrderStatus($payment);
 
-        if ($payment->status == 'refunded') {
+        if ($payment->status == 'approved' && $payment->refunded == 1) {
             switch ($payment->paymentType->type) {
                 case 'card':
                     $paymentResponse = CreditCardController::cardPayment(
