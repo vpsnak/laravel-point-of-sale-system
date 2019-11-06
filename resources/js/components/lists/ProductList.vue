@@ -181,6 +181,17 @@ export default {
 	mounted() {
 		this.getAllProducts();
 		this.getAllCategories();
+		this.$root.$on("barcodeScan", sku => {
+			console.log(sku);
+			if (this.btnactive) {
+				this.getSingleProduct(sku, true);
+			} else {
+				this.getSingleProduct(sku, false);
+			}
+		});
+	},
+	beforeDestroy() {
+		this.$root.$off("barcodeScan");
 	},
 	computed: {
 		keyword: {
@@ -326,6 +337,30 @@ export default {
 					this.initiateLoadingSearchResults(false);
 				});
 		},
+		getSingleProduct(sku, addToCart) {
+			this.initiateLoadingSearchResults(true);
+			let payload = {
+				model: "products",
+				mutation: "setProductList",
+				page: this.currentPage,
+				keyword: sku
+			};
+			this.$store
+				.dispatch("search", payload)
+				.then(response => {
+					console.log(response);
+					this.currentPage = response.current_page;
+					this.lastPage = response.last_page;
+					if (addToCart) {
+						this.$store.commit("cart/addProduct", response.data[0]);
+					} else {
+						this.viewItem(response.data[0]);
+					}
+				})
+				.finally(() => {
+					this.initiateLoadingSearchResults(false);
+				});
+		},
 		searchProduct() {
 			this.selected_category = null;
 
@@ -346,14 +381,6 @@ export default {
 						this.lastPage = response.last_page;
 					})
 					.finally(() => {
-						if (
-							this.productList.length === 1 &&
-							this.btnactive == true
-						) {
-							for (const product of this.productList) {
-								this.addProduct(product);
-							}
-						}
 						this.initiateLoadingSearchResults(false);
 					});
 			} else {

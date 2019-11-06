@@ -1,17 +1,17 @@
 <template>
-	<v-container v-if="cashRegisterData">
+	<v-container v-if="cashRegisterReportsData">
 		<v-row>
 			<v-col cols="12">
 				<v-card>
-					<v-card-title>{{cashRegisterData.name}}</v-card-title>
+					<v-card-title>{{cashRegisterReportsData.name}}</v-card-title>
 					<v-card-text>
-						<div class="subtitle-1">Company name: {{ cashRegisterData.created_by }}</div>
-						<div class="subtitle-1">Created at: {{ cashRegisterData.created_at }}</div>
-						<div class="subtitle-1">Updated at: {{ cashRegisterData.updated_at }}</div>
+						<div class="subtitle-1">Company name: {{ cashRegisterReportsData.created_by }}</div>
+						<div class="subtitle-1">Created at: {{ cashRegisterReportsData.created_at }}</div>
+						<div class="subtitle-1">Updated at: {{ cashRegisterReportsData.updated_at }}</div>
 					</v-card-text>
 				</v-card>
 			</v-col>
-			<v-col cols="12" v-if="cashRegisterData.logs.length > 0">
+			<v-col cols="12" v-if="cashRegisterReportsData.logs.length > 0">
 				<v-card>
 					<v-card-title>Logs</v-card-title>
 					<v-card-text>
@@ -30,7 +30,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr v-for="log in cashRegisterData.logs" :key="log.id">
+									<tr v-for="log in cashRegisterReportsData.logs" :key="log.id">
 										<td>{{ log.opening_amount }}</td>
 										<td>{{ log.closing_amount }}</td>
 										<td>{{ log.status }}</td>
@@ -79,7 +79,7 @@ export default {
 			});
 	},
 	computed: {
-		cashRegisterData() {
+		cashRegisterReportsData() {
 			return this.cashRegister;
 		}
 	},
