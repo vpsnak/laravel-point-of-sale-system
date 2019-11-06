@@ -203,11 +203,11 @@ export default {
         }
     },
     actions: {
-        emailReceipt(context, payload) {
+        mailReceipt({ state, rootState, context }, payload) {
             return new Promise((resolve, reject) => {
                 axios
                     .post(
-                        `${this.state.baseUrl}/send/${state.order.id}`,
+                        `${rootState.baseUrl}mail-receipt/${state.order.id}`,
                         payload
                     )
                     .then(response => {
@@ -223,10 +223,10 @@ export default {
                     });
             });
         },
-        saveGuestEmail(state, payload) {
+        saveGuestEmail({ rootState }, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(this.state.baseUrl + "guest-email/create", payload)
+                    .post(rootState.baseUrl + "guest-email/create", payload)
                     .then(response => {
                         resolve(response);
                     })
