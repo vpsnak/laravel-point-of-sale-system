@@ -15,7 +15,6 @@ import {
     ValidationObserver
 } from "vee-validate/dist/vee-validate.full";
 import store from "./store/store";
-import { VMenu } from "vuetify/lib";
 
 window.Vue = require("vue");
 
@@ -59,7 +58,7 @@ const app = new Vue({
         scanner.on((code, event) => {
             event.preventDefault();
 
-            this.$emit('barcodeScan', code);
+            this.$emit("barcodeScan", code);
         });
     }
 });
