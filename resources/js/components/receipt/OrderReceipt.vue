@@ -74,14 +74,19 @@ export default {
 		mailReceipt() {
 			if (this.customer) {
 				if (this.customer.email !== this.customerEmail) {
-					this.$store.dispatch("cart/saveGuestEmail", this.customerEmail);
-					this.$store.dispatch("cart/mailReceipt", this.customerEmail);
+					this.$store.dispatch("cart/saveGuestEmail", {
+						email: this.customerEmail
+					});
 				}
 			} else {
 				this.$store.dispatch("cart/saveGuestEmail", {
 					email: this.customerEmail
 				});
 			}
+
+			this.$store.dispatch("cart/mailReceipt", {
+				email: this.customerEmail
+			});
 		}
 	}
 };
