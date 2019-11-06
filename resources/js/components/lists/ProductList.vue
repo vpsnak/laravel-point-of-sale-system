@@ -175,7 +175,7 @@ export default {
 			model: "products",
 			search_keyword: "",
 			selected_category: null,
-			btnactive: false
+			btnactive: true
 		};
 	},
 	mounted() {
@@ -338,6 +338,7 @@ export default {
 				});
 		},
 		getSingleProduct(sku, addToCart) {
+			this.showViewDialog = false;
 			this.initiateLoadingSearchResults(true);
 			let payload = {
 				model: "products",
@@ -353,7 +354,7 @@ export default {
 					this.lastPage = response.last_page;
 					if (addToCart) {
 						this.$store.commit("cart/addProduct", response.data[0]);
-					} else {
+					} else if (response.data[0]) {
 						this.viewItem(response.data[0]);
 					}
 				})
