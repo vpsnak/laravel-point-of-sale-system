@@ -71,7 +71,17 @@ export default {
 	},
 	methods: {
 		printReceipt() {},
-		mailReceipt() {}
+		mailReceipt() {
+			if (this.customer) {
+				if (this.customer.email !== this.customerEmail) {
+					this.$store.dispatch("cart/saveGuestEmail", this.customerEmail);
+				}
+			} else {
+				this.$store.dispatch("cart/saveGuestEmail", {
+					email: this.customerEmail
+				});
+			}
+		}
 	}
 };
 </script>

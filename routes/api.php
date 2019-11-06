@@ -66,7 +66,7 @@ Route::get('/sendemail', 'SendEmailController@index')->middleware('auth:api');
 Route::get('/send/{order}', 'SendEmailController@send');
 
 // guest email list
-Route::get('/guest-email', 'GuestEmailListController@all');
+Route::get('/guest-email', 'GuestEmailListController@all')->middleware('auth:api');
 Route::post('/guest-email/create', 'GuestEmailListController@create');
 
 // elavon certification
@@ -80,6 +80,4 @@ Route::post('/elavon/api', 'ElavonApiPaymentController@index')->middleware('auth
 Route::post('/elavon/api/lookup', 'ElavonApiPaymentController@lookup')->middleware('auth:api');
 Route::get('/elavon/api/logs', 'ElavonApiPaymentController@getLogs')->middleware('auth:api');
 Route::get('/elavon/api/logs/{test_case}', 'ElavonApiPaymentController@getLogs')->middleware('auth:api');
-
-
-Route::get('/elavon/api/logs/delete', 'ElavonApiPaymentController@deleteAll')->middleware('auth:api');
+Route::delete('/elavon/api/logs/delete', 'ElavonApiPaymentController@deleteAll')->middleware('auth:api');

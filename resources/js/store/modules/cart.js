@@ -1,3 +1,5 @@
+import Axios from "axios";
+
 export default {
     namespaced: true,
 
@@ -201,6 +203,19 @@ export default {
         }
     },
     actions: {
+        saveGuestEmail(state, payload) {
+            return new Promise((resolve, reject) => {
+                console.log(payload);
+                axios
+                    .post(this.state.baseUrl + "guest-email/create", payload)
+                    .then(response => {
+                        resolve(response);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
         submitOrder({ state, commit, dispatch }) {
             return new Promise((resolve, reject) => {
                 let payload = {

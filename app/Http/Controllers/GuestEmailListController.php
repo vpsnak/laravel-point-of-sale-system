@@ -15,7 +15,7 @@ class GuestEmailListController extends Controller
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'email' => 'required|email|unique:guest_email_list,email'
+            'email' => 'required|email|unique:guest_email_lists,email'
         ]);
 
         (new GuestEmailList($validatedData))->save();
