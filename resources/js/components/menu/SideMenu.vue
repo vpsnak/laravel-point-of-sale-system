@@ -84,42 +84,48 @@ export default {
 				},
 				{
 					id: 11,
+					title: "Cash register reports",
+					icon: "mdi-file-document-box",
+					to: "cash-register-reports"
+				},
+				{
+					id: 12,
 					title: "Gift Cards",
 					icon: "mdi-wallet-giftcard",
 					to: "gift-cards"
 				},
 				{
-					id: 12,
+					id: 13,
 					title: "Coupons",
 					icon: "mdi-ticket-percent",
 					to: "coupons"
 				},
 				{
-					id: 13,
+					id: 14,
 					title: "Users",
 					icon: "mdi-account-multiple",
 					to: "users"
 				},
 				{
-					id: 14,
+					id: 15,
 					title: "Addresses",
 					icon: "mdi-account-card-details",
 					to: "addresses"
 				},
 				{
-					id: 15,
+					id: 16,
 					title: "Forms",
 					icon: "fas fa-cat",
 					to: "forms"
 				}
 				// {
-				// 	id: 16,
+				// 	id: 17,
 				// 	title: "List Data",
 				// 	icon: "fas fa-female",
 				// 	to: "list-data"
 				// },
 				// {
-				// 	id: 17,
+				// 	id: 18,
 				// 	title: "Chris",
 				// 	icon: "fa-cannabis",
 				// 	to: "chris"

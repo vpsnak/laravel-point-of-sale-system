@@ -203,9 +203,28 @@ export default {
         }
     },
     actions: {
+        emailReceipt(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(
+                        `${this.state.baseUrl}/send/${state.order.id}`,
+                        payload
+                    )
+                    .then(response => {
+                        resolve(response);
+                        context.commit(
+                            "setNotification",
+                            response.data.notification,
+                            { root: true }
+                        );
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
         saveGuestEmail(state, payload) {
             return new Promise((resolve, reject) => {
-                console.log(payload);
                 axios
                     .post(this.state.baseUrl + "guest-email/create", payload)
                     .then(response => {

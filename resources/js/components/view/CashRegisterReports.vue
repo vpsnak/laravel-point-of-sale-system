@@ -1,54 +1,22 @@
 <template>
-	<v-container v-if="cashRegisterReportsData">
+	<v-container v-if="cashRegisterReportsReportsData">
 		<v-row>
 			<v-col cols="12">
 				<v-card>
-					<v-card-title>{{cashRegisterReportsData.name}}</v-card-title>
+					<v-card-title>{{cashRegisterReportsReportsData.report_name}} REPORTS</v-card-title>
 					<v-card-text>
-						<div class="subtitle-1">Company name: {{ cashRegisterReportsData.created_by }}</div>
-						<div class="subtitle-1">Created at: {{ cashRegisterReportsData.created_at }}</div>
-						<div class="subtitle-1">Updated at: {{ cashRegisterReportsData.updated_at }}</div>
+						<div class="subtitle-1">Report type: {{ cashRegisterReportsReportsData.report_type }}</div>
+						<div class="subtitle-1">Created by: {{ cashRegisterReportsReportsData.created_by }}</div>
+						<div
+							class="subtitle-1"
+						>Cash register ID: {{ cashRegisterReportsReportsData.cash_register_id }}</div>
+						<div class="subtitle-1">opening_amount: {{ cashRegisterReportsReportsData.opening_amount }}</div>
+						<div class="subtitle-1">closing_amount: {{ cashRegisterReportsReportsData.closing_amount }}</div>
+						<div class="subtitle-1">Subtotal: {{ cashRegisterReportsReportsData.subtotal }} $</div>
+						<div class="subtitle-1">Tax: {{ cashRegisterReportsReportsData.tax }} $</div>
+						<div class="subtitle-1">Total: {{ cashRegisterReportsReportsData.total }} $</div>
 					</v-card-text>
 				</v-card>
-			</v-col>
-			<v-col cols="12" v-if="cashRegisterReportsData.logs.length > 0">
-				<v-card>
-					<v-card-title>Logs</v-card-title>
-					<v-card-text>
-						<v-simple-table dense>
-							<template v-slot:default>
-								<thead>
-									<tr>
-										<th class="text-left">Opening amount</th>
-										<th class="text-left">Closing amount</th>
-										<th class="text-left">Status</th>
-										<th class="text-left">Opening time</th>
-										<th class="text-left">Closing time</th>
-										<th class="text-left">Opened by</th>
-										<th class="text-left">Closed by</th>
-										<th class="text-left">note</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr v-for="log in cashRegisterReportsData.logs" :key="log.id">
-										<td>{{ log.opening_amount }}</td>
-										<td>{{ log.closing_amount }}</td>
-										<td>{{ log.status }}</td>
-										<td>{{ log.opening_time }}</td>
-										<td>{{ log.closing_time }}</td>
-										<td>{{ log.opened_by }}</td>
-										<td>{{ log.closed_by }}</td>
-										<td>{{ log.note }}</td>
-									</tr>
-								</tbody>
-							</template>
-						</v-simple-table>
-					</v-card-text>
-				</v-card>
-			</v-col>
-			<v-col cols="12" v-else>
-				<v-card-title>Logs</v-card-title>
-				<v-card-text>There are no logs for this this cash register</v-card-text>
 			</v-col>
 		</v-row>
 	</v-container>
@@ -64,23 +32,23 @@ export default {
 	},
 	data() {
 		return {
-			cashRegister: null
+			cashRegisterReportsReports: null
 		};
 	},
 	mounted() {
 		if (this.model)
 			this.getOne({
-				model: "cash-registers",
+				model: "cash-register-reports",
 				data: {
 					id: this.model.id
 				}
 			}).then(result => {
-				this.cashRegister = result;
+				this.cashRegisterReports = result;
 			});
 	},
 	computed: {
-		cashRegisterReportsData() {
-			return this.cashRegister;
+		cashRegisterReportsReportsData() {
+			return this.cashRegisterReports;
 		}
 	},
 	methods: {
