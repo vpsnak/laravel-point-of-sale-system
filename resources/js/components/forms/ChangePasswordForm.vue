@@ -41,7 +41,6 @@
 					:success="valid"
 					name="input-10-1"
 					label="Retype the new password"
-					hint="At least 8 characters"
 					counter
 					@click:append="showRetypePassoword = !showRetypePassoword"
 				></v-text-field>
@@ -99,6 +98,7 @@ export default {
 			});
 		},
 		clear() {
+			this.$refs.obs.reset();
 			this.formFields = { ...this.defaultValues };
 			this.retypePassword = null;
 		},
