@@ -16,10 +16,12 @@ window._ = require("lodash");
 window.axios = require("axios");
 window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 
-window.axios.interceptors.response.use(undefined, function(error) {
+window.axios.interceptors.response.use(undefined, function (error) {
     if (error.response.status === 401) {
         store.commit("logout");
         router.push({ name: "login" });
+        return Promise.reject(error);
+    } else {
         return Promise.reject(error);
     }
 });

@@ -159,10 +159,7 @@ export default new Vuex.Store({
                         resolve(response.data);
                     })
                     .catch(error => {
-                        context.commit("setNotification", {
-                            msg: error.notification.msg,
-                            type: error.notification.type
-                        });
+                        context.commit("setNotification", error.response.data.notification);
 
                         reject(error);
                     });
@@ -219,9 +216,9 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                            payload.model +
-                            "/" +
-                            payload.data.id
+                        payload.model +
+                        "/" +
+                        payload.data.id
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -248,12 +245,12 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                            payload.model +
-                            "/" +
-                            payload.data.id +
-                            "/" +
-                            payload.data.model +
-                            page
+                        payload.model +
+                        "/" +
+                        payload.data.id +
+                        "/" +
+                        payload.data.model +
+                        page
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
