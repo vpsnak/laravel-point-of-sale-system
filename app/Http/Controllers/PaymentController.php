@@ -111,11 +111,12 @@ class PaymentController extends BaseController
 
                 $order = Order::findOrFail($validatedData['order_id']);
 
-                $validatedData['amount'] = $order->subtotal - Price::calculateDiscount(
+                $payment->amount = $order->subtotal - Price::calculateDiscount(
                     $order->subtotal,
                     $coupon->discount->type,
                     $coupon->discount->amount
                 );
+                $payment->save();
 
                 $coupon->uses--;
                 $coupon->save();
