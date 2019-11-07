@@ -77,6 +77,27 @@ export default {
 			this.storeDisabled = false;
 			this.loading = false;
 		});
+
+		this.getAll({
+			model: "cash-registers"
+		})
+			.then(cash_registers => {
+				this.cash_registers = cash_registers;
+			})
+			.finally(() => {
+				this.loading = false;
+			});
+
+		this.$root.$on("barcodeScan", barcode => {
+			for (const cash_register of this.cash_registers) {
+				if (cash_register.barcode == barcode) {
+					this.cash_register_id = cash_register.id;
+					this.store_id = cash_register.store.id;
+					this.storeDisabled = true;
+					this.enableOpeningAmount();
+				}
+			}
+		});
 	},
 	computed: {
 		store() {
