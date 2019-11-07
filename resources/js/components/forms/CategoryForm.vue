@@ -75,6 +75,7 @@ export default {
 			});
 		},
 		clear() {
+			this.$refs.obs.reset();
 			this.formFields = { ...this.defaultValues };
 		},
 		...mapActions({

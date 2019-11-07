@@ -13,9 +13,9 @@
 
 // auth
 
-Route::post('/auth/login', "UserController@login");
+Route::post('/auth/login', "UserController@login")->middleware('guest');
 
-Route::get('/auth/logout', "UserController@logout")->middleware('auth:api');
+Route::get('/auth/logout', "UserController@logout")->middleware('scope:admin,cashier');;
 
 $baseRoutes = [
     'users' => 'UserController',
@@ -66,8 +66,8 @@ Route::get('/mail-receipt', 'MailReceiptController@template')->middleware('auth:
 Route::post('/mail-receipt/{order}', 'MailReceiptController@send');
 
 // guest email list
-Route::get('/guest-email', 'GuestEmailListController@all')->middleware('auth:api');
-Route::post('/guest-email/create', 'GuestEmailListController@create');
+Route::get('/guest-email', 'GuestEmailListController@all')->middleware('scope:admin,cashier');
+Route::post('/guest-email/create', 'GuestEmailListController@create')->middleware('scope:admin,cashier');
 
 // elavon certification
 Route::post('/elavon/sdk', 'ElavonSdkPaymentController@index')->middleware('auth:api');

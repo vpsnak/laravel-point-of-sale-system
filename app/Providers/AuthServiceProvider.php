@@ -24,6 +24,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Passport::tokensCan(config('roles'));
+
         $this->registerPolicies();
 
         Passport::routes();

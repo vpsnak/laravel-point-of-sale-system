@@ -182,7 +182,9 @@ export default {
                 method: "retail",
                 date: undefined,
                 timeSlotLabel: null,
-                timeSlotCost: 0
+                timeSlotCost: 0,
+                location: null,
+                occasion: null
             };
         },
         resetShipping(state) {
@@ -193,7 +195,9 @@ export default {
                 method: "retail",
                 date: undefined,
                 timeSlotLabel: null,
-                timeSlotCost: 0
+                timeSlotCost: 0,
+                location: null,
+                occasion: null
             };
 
             state.currentCheckoutStep = 1;
