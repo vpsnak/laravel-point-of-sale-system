@@ -46,6 +46,11 @@
 			<div class="flex-grow-1"></div>
 			<v-btn @click="submit" :loading="loading">Open Cash Register</v-btn>
 		</div>-->
+		<v-alert v-if="cash_register_is_open" dense outlined type="error">
+			The
+			<strong>{{opened_cash_register}}</strong> is
+			<strong>opened</strong> !!
+		</v-alert>
 	</div>
 </template>
 <script>
@@ -60,6 +65,8 @@ export default {
 			storeDisabled: true,
 			cashRegisterDisabled: true,
 			openingAmountDisabled: true,
+			cash_register_is_open: false,
+			opened_cash_register: "",
 			store_id: null,
 			cash_register_id: null,
 			opening_amount: null,
@@ -89,12 +96,26 @@ export default {
 			});
 
 		this.$root.$on("barcodeScan", barcode => {
+			this.cash_register_is_open = false;
 			for (const cash_register of this.cash_registers) {
-				if (cash_register.barcode == barcode) {
+				if (
+					cash_register.barcode == barcode &&
+					cash_register.is_open == false
+				) {
 					this.cash_register_id = cash_register.id;
 					this.store_id = cash_register.store.id;
 					this.storeDisabled = true;
 					this.enableOpeningAmount();
+				} else if (
+					cash_register.barcode == barcode &&
+					cash_register.is_open == true
+				) {
+					this.cash_register_id = null;
+					this.store_id = null;
+					this.storeDisabled = false;
+					this.cash_register_is_open = true;
+					this.openingAmountDisabled = true;
+					this.opened_cash_register = cash_register.name;
 				}
 			}
 		});
