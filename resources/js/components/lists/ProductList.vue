@@ -304,13 +304,12 @@ export default {
 			this.initiateLoadingSearchResults(true);
 
 			let payload = {
-				url: "product-listing/categories"
+				model: "product-listing/categories",
+				mutation: "setCategoryList"
 			};
 			this.$store
-				.dispatch("getRequest", payload, { root: true })
-				.then(result => {
-					this.$store.commit("setCategoryList", result.data);
-				})
+				.dispatch("getAll", payload)
+				.then()
 				.finally(() => {
 					this.initiateLoadingSearchResults(false);
 				});

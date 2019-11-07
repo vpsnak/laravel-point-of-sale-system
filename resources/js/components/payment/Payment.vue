@@ -139,6 +139,7 @@ export default {
 
 		getPaymentTypes() {
 			this.getAll({ model: "payment-types" }).then(response => {
+				console.log(response);
 				this.paymentTypes = response;
 			});
 		},
