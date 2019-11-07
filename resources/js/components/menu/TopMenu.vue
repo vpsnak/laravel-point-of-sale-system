@@ -3,18 +3,9 @@
 		<v-app-bar-nav-icon @click.stop="mini = !mini"></v-app-bar-nav-icon>
 
 		<v-toolbar-title>Plantshed</v-toolbar-title>
+
 		<div class="flex-grow-1"></div>
-		<interactiveDialog
-			v-if="OpenCashRegisterDialog"
-			:show="OpenCashRegisterDialog"
-			title="Open cash register"
-			:fullscreen="false"
-			:width="600"
-			component="openCashRegisterForm"
-			cancelBtnTxt="Close"
-			@action="result"
-			:titleCloseBtn="true"
-		></interactiveDialog>
+
 		<interactiveDialog
 			v-if="CloseCashRegisterDialog"
 			:show="CloseCashRegisterDialog"
@@ -43,7 +34,11 @@
 				<v-btn v-on="on" icon>
 					<v-icon>mdi-account-circle</v-icon>
 				</v-btn>
-				<v-chip v-if="!openedRegister" text @click="OpenCashRegisterDialog = true">Open cash register</v-chip>
+				<v-chip
+					v-if="!openedRegister"
+					text
+					@click="$router.push({name: 'openCashRegister'})"
+				>Open cash register</v-chip>
 				<v-chip
 					v-else
 					@click="CloseCashRegisterDialog = true"

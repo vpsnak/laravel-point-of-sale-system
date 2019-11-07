@@ -41,7 +41,7 @@ class UserController extends Controller
                     'msg' => '<h2>Invalid credentials</h2>',
                     'type' => 'error'
                 ]
-            ], 401);
+            ], 422);
         } else {
             $role = ($user->roles)[0]['name'];
             $response = $http->post(config('app.url') . '/oauth/token', [

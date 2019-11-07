@@ -60,7 +60,6 @@ class CashRegisterLogsController extends BaseController
     public function open(Request $request)
     {
         $validatedData = $request->validate([
-            // 'user_id' => 'required|exists:users,id',
             'cash_register_id' => 'required|exists:cash_registers,id',
             'opening_amount' => 'required|numeric',
             // 'opened_by' => 'required|exists:users,id',
@@ -71,13 +70,24 @@ class CashRegisterLogsController extends BaseController
         $validatedData['status'] = 1;
         $validatedData['opening_time'] = Carbon::now();
         if (!empty($this->getAlreadyOpenedRegister($validatedData['cash_register_id']))) {
-            return response('Cash register already open', 500);
+            return response([
+                'notification' => [
+                    'msg' => 'Cash register already open',
+                    'type' => 'error'
+                ]
+            ], 422);
         }
 
         $user = User::find($validatedData['user_id']);
         if (!empty($user->open_register)) {
-            return response('You already have an open cash register', 500);
+            return response([
+                'notification' => [
+                    'msg' => 'You already have an open cash register',
+                    'type' => 'error'
+                ]
+            ], 422);
         }
+
         return response($this->model::store($validatedData), 201);
     }
 

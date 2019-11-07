@@ -18,7 +18,11 @@ export default {
 	methods: {
 		submit(event) {
 			if (event) {
-				this.$router.push(this.$route.query.redirect);
+				if (this.$route.query.redirect) {
+					this.$router.push(this.$route.query.redirect);
+				} else {
+					this.$router.go(-1);
+				}
 			}
 		}
 	}

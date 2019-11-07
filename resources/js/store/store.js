@@ -159,11 +159,11 @@ export default new Vuex.Store({
                         resolve(response.data);
                     })
                     .catch(error => {
-                        let notification = {
-                            msg: error.response.data.errors,
-                            type: "error"
-                        };
-                        context.commit("setNotification", notification);
+                        context.commit("setNotification", {
+                            msg: error.notification.msg,
+                            type: error.notification.type
+                        });
+
                         reject(error);
                     });
             });
@@ -257,9 +257,12 @@ export default new Vuex.Store({
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
-                            context.commit(payload.mutation, response.data);
+                            context.commit(
+                                payload.mutation,
+                                response.data.data || response.data
+                            );
                         }
-                        resolve(response.data);
+                        resolve(response.data.data || response.data);
                     })
                     .catch(error => {
                         let notification = {
@@ -320,14 +323,14 @@ export default new Vuex.Store({
                             type: "success"
                         });
 
-                        resolve(true);
+                        resolve(response.data);
                     })
                     .catch(error => {
-                        let notification = {
+                        console.log(error);
+                        context.commit("setNotification", {
                             msg: error.response,
                             type: "error"
-                        };
-                        context.commit("setNotification", notification);
+                        });
                         reject(error);
                     });
             });

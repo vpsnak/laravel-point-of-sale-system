@@ -121,6 +121,9 @@ export default {
 				.then(response => {
 					this.$emit("submit", true);
 				})
+				.catch(error => {
+					console.log(error);
+				})
 				.finally(() => {
 					this.loading = false;
 				});
