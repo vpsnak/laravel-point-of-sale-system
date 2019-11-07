@@ -15,8 +15,8 @@ class RoleSeeder extends Seeder
         // Reset cached roles and permissions
         app()['cache']->forget('spatie.permission.cache');
 
-        Role::create(['name' => 'admin']);
-        Role::create(['name' => 'cashier']);
-        Role::create(['name' => 'karkatselis']);
+        foreach (config('roles') as $key => $role) {
+            Role::create(['name' => $key]);
+        }
     }
 }
