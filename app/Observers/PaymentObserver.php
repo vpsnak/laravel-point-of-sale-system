@@ -38,13 +38,14 @@ class PaymentObserver
         if ($payment->status == 'approved' && $payment->refunded == 1) {
             switch ($payment->paymentType->type) {
                 case 'card':
-                    $paymentResponse = CreditCardController::cardPayment(
+                    $paymentResponse = (new CreditCardController)->cardRefund(
                         '5472063333333330',
                         '1224',
                         '123',
+                        'Test Holder Name',
                         $payment->amount
                     );
-                    if (isset($paymentResponse->errorCode)) {
+                    if (isset($paymentResponse['error'])) {
                         return false;
                     }
                     return true;
