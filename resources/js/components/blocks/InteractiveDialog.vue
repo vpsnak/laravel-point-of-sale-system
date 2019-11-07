@@ -9,6 +9,7 @@
 	>
 		<v-card>
 			<v-card-title>
+				<v-icon v-if="icon" class="pr-2">{{ icon }}</v-icon>
 				{{ title }}
 				<v-spacer v-if="titleCloseBtn"></v-spacer>
 				<v-btn v-if="titleCloseBtn" @click.stop="fire(false)" icon>
@@ -52,6 +53,7 @@ export default {
 		show: Boolean,
 		persistent: Boolean,
 		width: Number,
+		icon: String,
 		title: String,
 		titleCloseBtn: Boolean,
 
