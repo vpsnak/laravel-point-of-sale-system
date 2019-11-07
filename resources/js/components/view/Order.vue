@@ -38,12 +38,14 @@
             </v-col>
             <v-col cols="12" md="5" v-if="orderData.shipping_type">
                 <v-card>
-                    <v-card-title>Shipping</v-card-title>
+                    <v-card-title>Delivery</v-card-title>
                     <v-card-text>
-                        <div class="subtitle-1" v-if="orderData.shipping_address">Shipping Address: {{orderData.shipping_address}}</div>
-                        <div class="subtitle-1">Shipping Type: {{orderData.shipping_type}}</div>
-                        <div class="subtitle-1" v-if="orderData.delivery_date">Delivery Type: {{orderData.delivery_date}}</div>
-                        <div class="subtitle-1">Shipping Cost: {{orderData.shipping_cost.toFixed(2)}} $</div>
+                        <div class="subtitle-1">Delivery Type: {{orderData.shipping_type}}</div>
+                        <div class="subtitle-1" v-if="orderData.delivery_date">Delivery Date: {{orderData.delivery_date}}</div>
+                        <div class="subtitle-1">Delivery Cost: {{orderData.shipping_cost.toFixed(2)}} $</div>
+                        <div class="subtitle-1" v-if="orderData.location">Location: {{orderData.location}}</div>
+                        <div class="subtitle-1" v-if="orderData.occasion">Occasion: {{orderData.occasion}}</div>
+                        <div class="subtitle-1" v-if="orderData.shipping_address">Delivery Address: {{orderData.shipping_address}}</div>
                     </v-card-text>
                 </v-card>
             </v-col>
@@ -63,6 +65,33 @@
                         <div class="subtitle-1">Shipping Cost: {{orderData.shipping_cost.toFixed(2)}} $</div>
                         <div class="subtitle-1">Tax ({{orderData.tax}}%) : {{(orderData.total - orderData.subtotal - orderData.shipping_cost).toFixed(2)}} $</div>
                         <div class="headline">Total: {{orderData.total.toFixed(2)}} $</div>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+            <v-col cols="12" v-if="orderData.payments.length">
+                <v-card>
+                    <v-card-title>Payment History</v-card-title>
+                    <v-card-text>
+                        <v-simple-table>
+                            <template v-slot:default>
+                                <thead>
+                                <tr>
+                                    <th class="text-left">Operator</th>
+                                    <th class="text-left">Type</th>
+                                    <th class="text-left">Status</th>
+                                    <th class="text-left">Amount</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr :key="item.id" v-for="item in orderData.payments">
+                                    <td>{{ item.created_by.name }}</td>
+                                    <td>{{ item.payment_type.name }}</td>
+                                    <td>{{ item.status }}</td>
+                                    <td>{{ item.amount }}</td>
+                                </tr>
+                                </tbody>
+                            </template>
+                        </v-simple-table>
                     </v-card-text>
                 </v-card>
             </v-col>

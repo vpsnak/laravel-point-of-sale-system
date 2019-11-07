@@ -39,8 +39,8 @@ class CreateOrder extends Command
     public function handle()
     {
         $order_data = array(
-            'customer_id' => 2,
-            'created_by' => 1,
+            'customer_id' => 3,
+            'created_by' => 33,
             'store_id' => 1,
             'status' => 'pending',
             'discount_type' => '',
@@ -49,75 +49,257 @@ class CreateOrder extends Command
                 array(
                     0 =>
                         array(
+                            'id' => 2,
+                            'magento_id' => 0,
+                            'stock_id' => 0,
+                            'sku' => 'ff56c4e5-0ea7-3d53-a544-bac37af023f9',
+                            'name' => 'Friends Forever',
+                            'barcode' => null,
+                            'photo_url' => 'https://www.plantshed.com//media/catalog/product/cache/1/image/551x/9df78eab33525d08d6e5fb8d27136e95/p/s/ps10572.jpg',
+                            'url' => null,
+                            'plantcare_pdf' => null,
+                            'description' => null,
+                            'deleted_at' => null,
+                            'created_at' => '2019-11-07 09:06:37',
+                            'updated_at' => '2019-11-07 09:06:37',
+                            'final_price' => '94.0000',
+                            'stock' => 8,
+                            'magento_stock' => null,
+                            'laravel_stock' => 8,
+                            'stores' =>
+                                array(
+                                    0 =>
+                                        array(
+                                            'id' => 1,
+                                            'name' => 'Plantshed Laravel',
+                                            'tax_id' => 1,
+                                            'created_by' => 1,
+                                            'created_at' => null,
+                                            'updated_at' => null,
+                                            'pivot' =>
+                                                array(
+                                                    'product_id' => 2,
+                                                    'store_id' => 1,
+                                                    'qty' => 8,
+                                                ),
+                                            'tax' =>
+                                                array(
+                                                    'id' => 1,
+                                                    'name' => 'Zero Tax',
+                                                    'percentage' => 0,
+                                                    'is_default' => 0,
+                                                    'created_at' => null,
+                                                    'updated_at' => null,
+                                                ),
+                                        ),
+                                ),
+                            'price' =>
+                                array(
+                                    'id' => 2,
+                                    'amount' => '94.0000',
+                                    'discount_id' => NULL,
+                                    'priceable_id' => 2,
+                                    'priceable_type' => 'App\\Product',
+                                    'created_at' => '2019-11-07 09:06:37',
+                                    'updated_at' => '2019-11-07 09:06:37',
+                                    'discount' => NULL,
+                                ),
+                            'categories' =>
+                                array(
+                                    0 =>
+                                        array(
+                                            'id' => 2,
+                                            'name' => 'Dawsonview',
+                                            'in_product_listing' => 1,
+                                            'created_at' => '2019-11-07 09:06:38',
+                                            'updated_at' => '2019-11-07 09:06:38',
+                                            'pivot' =>
+                                                array(
+                                                    'product_id' => 2,
+                                                    'category_id' => 2,
+                                                ),
+                                        ),
+                                    1 =>
+                                        array(
+                                            'id' => 3,
+                                            'name' => 'North Hilton',
+                                            'in_product_listing' => 0,
+                                            'created_at' => '2019-11-07 09:06:38',
+                                            'updated_at' => '2019-11-07 09:06:38',
+                                            'pivot' =>
+                                                array(
+                                                    'product_id' => 2,
+                                                    'category_id' => 3,
+                                                ),
+                                        ),
+                                    2 =>
+                                        array(
+                                            'id' => 9,
+                                            'name' => 'Port Keaganfort',
+                                            'in_product_listing' => 0,
+                                            'created_at' => '2019-11-07 09:06:38',
+                                            'updated_at' => '2019-11-07 09:06:38',
+                                            'pivot' =>
+                                                array(
+                                                    'product_id' => 2,
+                                                    'category_id' => 9,
+                                                ),
+                                        ),
+                                    3 =>
+                                        array(
+                                            'id' => 10,
+                                            'name' => 'Lake Craigberg',
+                                            'in_product_listing' => 1,
+                                            'created_at' => '2019-11-07 09:06:38',
+                                            'updated_at' => '2019-11-07 09:06:38',
+                                            'pivot' =>
+                                                array(
+                                                    'product_id' => 2,
+                                                    'category_id' => 10,
+                                                ),
+                                        ),
+                                ),
+                            'qty' => 1,
+                            'notes' => 'asdasdasd',
+                        ),
+                    1 =>
+                        array(
                             'id' => 6,
                             'magento_id' => 0,
                             'stock_id' => 0,
-                            'sku' => '7376f94e-0072-3155-a8c9-24497e1b5576',
-                            'name' => 'Friends Forever',
-                            'barcode' => null,
-                            'photo_url' => 'https://www.plantshed.com//media/catalog/product/cache/1/image/551x/9df78eab33525d08d6e5fb8d27136e95/p/s/ps10555_make_me_blush.jpg',
-                            'url' => null,
-                            'description' => null,
-                            'deleted_at' => null,
-                            'created_at' => '2019-10-26 14:26:57',
-                            'updated_at' => '2019-10-26 14:26:57',
-                            'final_price' => '57.0000',
-                            'stock' => 4,
-                            'magento_stock' => null,
-                            'laravel_stock' => 4,
+                            'sku' => '6faf2bdc-0799-38d3-aef3-493cf8431e26',
+                            'name' => 'Limoncello Duo',
+                            'barcode' => NULL,
+                            'photo_url' => 'https://www.plantshed.com//media/catalog/product/cache/1/image/551x/9df78eab33525d08d6e5fb8d27136e95/p/s/ps10572.jpg',
+                            'url' => NULL,
+                            'plantcare_pdf' => NULL,
+                            'description' => NULL,
+                            'deleted_at' => NULL,
+                            'created_at' => '2019-11-07 09:06:37',
+                            'updated_at' => '2019-11-07 09:06:37',
+                            'final_price' => '28.0000',
+                            'stock' => -34,
+                            'magento_stock' => NULL,
+                            'laravel_stock' => -34,
+                            'stores' =>
+                                array(
+                                    0 =>
+                                        array(
+                                            'id' => 1,
+                                            'name' => 'Plantshed Laravel',
+                                            'tax_id' => 1,
+                                            'created_by' => 1,
+                                            'created_at' => NULL,
+                                            'updated_at' => NULL,
+                                            'pivot' =>
+                                                array(
+                                                    'product_id' => 6,
+                                                    'store_id' => 1,
+                                                    'qty' => -34,
+                                                ),
+                                            'tax' =>
+                                                array(
+                                                    'id' => 1,
+                                                    'name' => 'Zero Tax',
+                                                    'percentage' => 0,
+                                                    'is_default' => 0,
+                                                    'created_at' => NULL,
+                                                    'updated_at' => NULL,
+                                                ),
+                                        ),
+                                ),
                             'price' =>
                                 array(
-                                    'id' => 9,
-                                    'amount' => '57.0000',
-                                    'discount_id' => null,
+                                    'id' => 6,
+                                    'amount' => '28.0000',
+                                    'discount_id' => NULL,
                                     'priceable_id' => 6,
                                     'priceable_type' => 'App\\Product',
-                                    'created_at' => '2019-10-26 14:26:57',
-                                    'updated_at' => '2019-10-26 14:26:57',
+                                    'created_at' => '2019-11-07 09:06:37',
+                                    'updated_at' => '2019-11-07 09:06:37',
+                                    'discount' => NULL,
+                                ),
+                            'categories' =>
+                                array(
+                                    0 =>
+                                        array(
+                                            'id' => 6,
+                                            'name' => 'Port Geovanni',
+                                            'in_product_listing' => 0,
+                                            'created_at' => '2019-11-07 09:06:38',
+                                            'updated_at' => '2019-11-07 09:06:38',
+                                            'pivot' =>
+                                                array(
+                                                    'product_id' => 6,
+                                                    'category_id' => 6,
+                                                ),
+                                        ),
+                                    1 =>
+                                        array(
+                                            'id' => 9,
+                                            'name' => 'Port Keaganfort',
+                                            'in_product_listing' => 0,
+                                            'created_at' => '2019-11-07 09:06:38',
+                                            'updated_at' => '2019-11-07 09:06:38',
+                                            'pivot' =>
+                                                array(
+                                                    'product_id' => 6,
+                                                    'category_id' => 9,
+                                                ),
+                                        ),
                                 ),
                             'qty' => 1,
+                            'notes' => 'asdasd',
                         ),
                 ),
             'shipping' =>
                 array(
-                    'notes' => 'comment',
+                    'notes' => 'asdasdasd',
                     'address' =>
                         array(
-                            'id' => 4,
-                            'first_name' => 'Oceane',
-                            'last_name' => 'Stiedemann',
-                            'street' => '74105 Fay Wells Apt. 880',
-                            'street2' => null,
-                            'city' => 'Bahringerton',
-                            'country_id' => 'SE',
-                            'region' => 'Saint Martin',
-                            'postcode' => '01561',
-                            'phone' => '1-705-738-9431 x865',
-                            'company' => null,
-                            'vat_id' => null,
-                            'deliverydate' => null,
-                            'created_at' => '2019-10-26 14:26:57',
-                            'updated_at' => '2019-10-26 14:26:57',
-                            'address_country' => 'SE',
-                            'address_region' => null,
+                            'id' => 5,
+                            'first_name' => 'Shemar',
+                            'last_name' => 'Eichmann',
+                            'street' => '233 Cronin Mills',
+                            'street2' => NULL,
+                            'city' => 'East Abdullah',
+                            'country_id' => 'TH',
+                            'region' => 'Saint Helena',
+                            'postcode' => '01524',
+                            'phone' => '1-747-320-9878',
+                            'company' => NULL,
+                            'vat_id' => NULL,
+                            'billing' => 0,
+                            'shipping' => 0,
+                            'created_at' => '2019-11-07 09:06:36',
+                            'updated_at' => '2019-11-07 09:06:36',
+                            'address_country' => 'TH',
+                            'address_region' => 'Saint Helena',
+                            'pivot' =>
+                                array(
+                                    'customer_id' => 3,
+                                    'address_id' => 5,
+                                ),
                             'country' =>
                                 array(
                                     'country_id' => 0,
-                                    'iso2_code' => 'SE',
-                                    'iso3_code' => 'SWE',
+                                    'iso2_code' => 'TH',
+                                    'iso3_code' => 'THA',
                                 ),
-                            'region_id' => null,
-                            'region_name' => null,
+                            'region_id' => NULL,
+                            'region_name' => NULL,
                         ),
                     'method' => 'delivery',
-                    'date' => '2019-10-29',
-                    'timeSlotLabel' => '01:00-02:00',
-                    'timeSlotCost' => '23',
+                    'date' => '2019-11-20',
+                    'timeSlotLabel' => '17:00-20:00',
+                    'timeSlotCost' => '30',
+                    'location' => 'Hospital',
+                    'occasion' => 'Birthday',
                 ),
         );
 
         $create_order = (new Client())
-            ->post('http://localhost:8000/api/orders/create', [
+            ->post('http://plantshed.local/api/orders/create', [
                 'headers' => [
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json'
