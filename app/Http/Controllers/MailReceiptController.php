@@ -23,9 +23,9 @@ class MailReceiptController extends Controller
         Mail::to($validatedData['email'])->send(new SendMail($order));
 
         if (!Mail::failures()) {
-            return response(['notification' => ['type' => 'success', 'msg' => 'Email sent successfully']]);
+            return response(['info' => ['Email' => 'Receipt sent successfully!']]);
         } else {
-            return response(['notification' => ['type' => 'error', 'msg' => 'There was an error sending the e-mail<br>Please try again']]);
+            return response(['errors' => Mail::failures()]);
         }
     }
 }

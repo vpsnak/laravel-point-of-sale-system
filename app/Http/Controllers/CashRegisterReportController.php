@@ -18,14 +18,14 @@ class CashRegisterReportController extends BaseController
     {
         $validatedData = $request->validate([
             'cash_register_id' => 'required|exists:cash_registers,id',
-//            'type' => 'required|in:x,z', // @TODO eval if needed
+            //            'type' => 'required|in:x,z', // @TODO eval if needed
         ]);
 
         $report = self::generateReportByCashRegisterId($validatedData['cash_register_id']);
         if (!empty($report)) {
             return response($report, 201);
         } else {
-            return response(['message' => 'No logs found'], 404);
+            return response(['errors' => ['Logs' => 'No logs found']], 404);
         }
     }
 

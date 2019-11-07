@@ -36,12 +36,9 @@ class UserController extends Controller
         $http = new Client;
         $user = User::whereEmail($validatedData['username'])->first();
         if (!$user) {
-            return response([
-                'notification' => [
-                    'msg' => '<h2>Invalid credentials</h2>',
-                    'type' => 'error'
-                ]
-            ], 422);
+            return response(['errors' => [
+                'Login' => '<h3>Invalid credentials</h3>',
+            ]], 422);
         } else {
             $role = ($user->roles)[0]['name'];
             $response = $http->post(config('app.url') . '/oauth/token', [
@@ -58,10 +55,7 @@ class UserController extends Controller
             $token = (json_decode((string) $response->getBody(), true))['access_token'];
 
             return response([
-                'notification' => [
-                    'msg' => '<h2>Welcome ' . $user->name . '</h2>',
-                    'type' => 'info'
-                ],
+                'info' => ['Login:' => '<h2>Welcome ' . $user->name . '</h2>'],
                 'user' => $user,
                 'token' => $token
             ], 200);
@@ -72,11 +66,6 @@ class UserController extends Controller
     {
         auth()->user()->token()->revoke();
 
-        return response([
-            'notification' => [
-                'type' => 'info',
-                'msg' => '<h2>Bye . . .</h2>'
-            ]
-        ], 200);
+        return response(['info' => ['Logout: ' => '<h2>Goodbye...</h2>']], 200);
     }
 }

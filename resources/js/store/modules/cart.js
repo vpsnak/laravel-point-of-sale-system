@@ -215,15 +215,17 @@ export default {
                         payload
                     )
                     .then(response => {
-                        commit("setNotification", response.data.notification, {
+                        commit("setNotification", response.data, {
                             root: true
                         });
                         resolve(response);
                     })
                     .catch(error => {
-                        commit("setNotification", response.data.notification, {
-                            root: true
-                        });
+                        let notification = {
+                            msg: error.response.data.errors,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
                         reject(error);
                     });
             });
