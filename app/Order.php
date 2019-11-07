@@ -22,6 +22,8 @@ class Order extends BaseModel
         'shipping_cost',
         'shipping_address',
         'delivery_date',
+        'location',
+        'occasion',
         'notes',
     ];
 

@@ -53,10 +53,11 @@ class PaymentController extends BaseController
                 break;
 
             case 'card':
-                $paymentResponse = CreditCardController::cardPayment(
+                $paymentResponse = (new CreditCardController)->cardPayment(
                     $validatedData['card']['number'],
                     $validatedData['card']['exp_date'],
                     $validatedData['card']['cvc'],
+                    $validatedData['card']['card_holder'] ?? '',
                     $validatedData['amount']
                 );
                 if (isset($paymentResponse->errorCode)) {
@@ -110,11 +111,12 @@ class PaymentController extends BaseController
 
                 $order = Order::findOrFail($validatedData['order_id']);
 
-                $validatedData['amount'] = $order->subtotal - Price::calculateDiscount(
+                $payment->amount = $order->subtotal - Price::calculateDiscount(
                     $order->subtotal,
                     $coupon->discount->type,
                     $coupon->discount->amount
                 );
+                $payment->save();
 
                 $coupon->uses--;
                 $coupon->save();
