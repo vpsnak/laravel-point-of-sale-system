@@ -26,6 +26,17 @@
 			@action="result"
 			:titleCloseBtn="true"
 		></interactiveDialog>
+		<interactiveDialog
+			v-if="changePasswordDialog"
+			:show="changePasswordDialog"
+			title="Change Password"
+			:fullscreen="false"
+			:width="600"
+			component="changePasswordForm"
+			cancelBtnTxt="Close"
+			@action="result"
+			:titleCloseBtn="true"
+		></interactiveDialog>
 
 		<v-menu left bottom offset-x transition="scale-transition">
 			<template v-slot:activator="{ on }">
@@ -66,7 +77,7 @@
 							<v-list-item-title>Sign out</v-list-item-title>
 						</v-list-item-content>
 					</v-list-item>
-					<v-list-item>
+					<v-list-item @click="changePasswordDialog = true">
 						<v-list-item-avatar>
 							<v-icon>mdi-key</v-icon>
 						</v-list-item-avatar>
@@ -100,7 +111,8 @@ export default {
 		return {
 			whatever: "",
 			OpenCashRegisterDialog: false,
-			CloseCashRegisterDialog: false
+			CloseCashRegisterDialog: false,
+			changePasswordDialog: false
 		};
 	},
 	methods: {
@@ -110,6 +122,7 @@ export default {
 		result(event) {
 			this.OpenCashRegisterDialog = false;
 			this.CloseCashRegisterDialog = false;
+			this.changePasswordDialog = false;
 		}
 	},
 	computed: {
