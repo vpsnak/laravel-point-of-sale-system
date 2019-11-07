@@ -96,28 +96,7 @@ export default {
 			});
 
 		this.$root.$on("barcodeScan", barcode => {
-			this.cash_register_is_open = false;
-			for (const cash_register of this.cash_registers) {
-				if (
-					cash_register.barcode == barcode &&
-					cash_register.is_open == false
-				) {
-					this.cash_register_id = cash_register.id;
-					this.store_id = cash_register.store.id;
-					this.storeDisabled = true;
-					this.enableOpeningAmount();
-				} else if (
-					cash_register.barcode == barcode &&
-					cash_register.is_open == true
-				) {
-					this.cash_register_id = null;
-					this.store_id = null;
-					this.storeDisabled = false;
-					this.cash_register_is_open = true;
-					this.openingAmountDisabled = true;
-					this.opened_cash_register = cash_register.name;
-				}
-			}
+			this.barcodeHandling(barcode);
 		});
 	},
 	computed: {
@@ -178,6 +157,30 @@ export default {
 				.finally(() => {
 					this.loading = false;
 				});
+		},
+		barcodeHandling(barcode) {
+			this.cash_register_is_open = false;
+			for (const cash_register of this.cash_registers) {
+				if (
+					cash_register.barcode == barcode &&
+					cash_register.is_open == false
+				) {
+					this.cash_register_id = cash_register.id;
+					this.store_id = cash_register.store.id;
+					this.storeDisabled = true;
+					this.enableOpeningAmount();
+				} else if (
+					cash_register.barcode == barcode &&
+					cash_register.is_open == true
+				) {
+					this.cash_register_id = null;
+					this.store_id = null;
+					this.storeDisabled = false;
+					this.cash_register_is_open = true;
+					this.openingAmountDisabled = true;
+					this.opened_cash_register = cash_register.name;
+				}
+			}
 		},
 		...mapActions({
 			getAll: "getAll",
