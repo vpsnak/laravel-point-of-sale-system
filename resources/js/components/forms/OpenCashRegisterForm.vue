@@ -46,7 +46,7 @@
 			<div class="flex-grow-1"></div>
 			<v-btn @click="submit" :loading="loading">Open Cash Register</v-btn>
 		</div>-->
-		<v-alert v-if="cash_register_is_open" dense outlined type="error">
+		<v-alert v-if="cash_register_is_open" dense outlined type="info">
 			The
 			<strong>{{opened_cash_register}}</strong> is
 			<strong>opened</strong> !!
