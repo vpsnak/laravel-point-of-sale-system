@@ -231,16 +231,22 @@ export default {
 	},
 	methods: {
 		paginate(e) {
+			this.setLoading(true);
+
 			this.getAll({
 				model: this.dataUrl,
 				page: e.page
-			}).then(response => {
-				this.setRows(response);
+			})
+				.then(response => {
+					this.setRows(response);
 
-				if (response.total !== this.totalItems) {
-					this.totalItems = response.total;
-				}
-			});
+					if (response.total !== this.totalItems) {
+						this.totalItems = response.total;
+					}
+				})
+				.finally(() => {
+					this.setLoading(false);
+				});
 		},
 		cancelOrderConfirmation(event) {
 			if (event) {
@@ -298,7 +304,8 @@ export default {
 			setBtnTitle: "setBtnTitle",
 			setForm: "setForm",
 			setBtnDisable: "setBtnDisable",
-			setRows: "setRows"
+			setRows: "setRows",
+			setLoading: "setLoading"
 		}),
 		...mapActions({
 			getAll: "getAll",
