@@ -4,9 +4,10 @@ namespace App;
 
 class CashRegister extends BaseModel
 {
-    protected $appends = ['is_open', 'store'];
+    protected $appends = ['is_open', 'store', 'payments'];
     protected $with = [
-//        'logs'
+//        'logs',
+//        'payments'
     ];
 
     protected $fillable = [
@@ -26,6 +27,11 @@ class CashRegister extends BaseModel
     public function getIsOpenAttribute()
     {
         return $this->hasMany(CashRegisterLogs::class)->whereStatus(1)->count() > 0;
+    }
+
+    public function getPaymentsAttribute()
+    {
+        return $this->hasMany(Payment::class, 'cash_register_id', 'id')->without(['order', 'created_by'])->get();
     }
 
     public function logs()
