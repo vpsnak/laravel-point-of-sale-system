@@ -5,6 +5,7 @@
 			action="update"
 			:show="addTimeSlotDialog"
 			title="Add time slot"
+			icon="mdi-clock"
 			component="timeSlotForm"
 			@action="closedDialog"
 		/>
@@ -28,6 +29,8 @@
 					return-object
 				></v-combobox>
 			</v-col>
+		</v-row>
+		<v-row v-if="shipping.method !== 'retail'">
 			<v-col cols="4" lg="2" offset-lg="3">
 				<v-menu v-model="datePicker" transition="scale-transition" offset-y min-width="290px">
 					<template v-slot:activator="{ on }">
@@ -43,7 +46,7 @@
 					<v-date-picker v-model="shipping.date" @input="getTimeSlots" :min="new Date().toJSON()"></v-date-picker>
 				</v-menu>
 			</v-col>
-			<v-col cols="4" lg="2" v-if="shipping.method === 'delivery' || shipping.method === 'pickup'">
+			<v-col cols="4" lg="3" v-if="shipping.method !== 'retail'">
 				<v-select
 					:loading="loading"
 					label="At"
@@ -56,18 +59,7 @@
 					@click:append-outer="addTimeSlotDialog = true"
 				></v-select>
 			</v-col>
-			<v-col cols="4" lg="2" v-if="shipping.method === 'delivery' || shipping.method === 'pickup'">
-				<v-select
-					:loading="loading"
-					label="Occasion"
-					:items="occasions"
-					item-text="label"
-					v-model="shipping.occasion"
-					@input="setCost"
-					@click:append-outer="addTimeSlotDialog = true"
-				></v-select>
-			</v-col>
-			<v-col cols="4" lg="1" v-if="shipping.method === 'delivery'">
+			<v-col cols="4" lg="1" v-if="shipping.method !== 'retail'">
 				<v-text-field
 					type="number"
 					label="Cost"
@@ -75,6 +67,28 @@
 					prepend-icon="mdi-currency-usd"
 					v-model="shipping.timeSlotCost"
 				></v-text-field>
+			</v-col>
+		</v-row>
+		<v-row v-if="shipping.method !== 'retail'">
+			<v-col offset-lg="3" cols="6" lg="2">
+				<v-select
+					:loading="loading"
+					label="Occasion"
+					:items="occasions"
+					item-text="label"
+					v-model="shipping.occasion"
+					prepend-icon="mdi-star-face"
+				></v-select>
+			</v-col>
+			<v-col offset-lg="2" cols="6" lg="2" v-if="shipping.method === 'delivery'">
+				<v-select
+					:loading="loading"
+					label="Location"
+					:items="locations"
+					item-text="label"
+					v-model="shipping.location"
+					prepend-icon="mdi-city"
+				></v-select>
 			</v-col>
 		</v-row>
 		<v-row>
@@ -107,6 +121,9 @@ export default {
 	},
 
 	computed: {
+		locations() {
+			return this.$store.state.cart.locations;
+		},
 		occasions() {
 			return this.$store.state.cart.occasions;
 		},
@@ -144,7 +161,7 @@ export default {
 
 	methods: {
 		closedDialog(event) {
-			if (event) {
+			if (event && event !== true) {
 				this.timeSlots.push(event);
 				this.shipping.timeSlotLabel = event.label;
 				this.shipping.cost = event.cost;
