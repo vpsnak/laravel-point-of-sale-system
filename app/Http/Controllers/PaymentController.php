@@ -53,10 +53,11 @@ class PaymentController extends BaseController
                 break;
 
             case 'card':
-                $paymentResponse = CreditCardController::cardPayment(
+                $paymentResponse = (new CreditCardController)->cardPayment(
                     $validatedData['card']['number'],
                     $validatedData['card']['exp_date'],
                     $validatedData['card']['cvc'],
+                    $validatedData['card']['card_holder'] ?? '',
                     $validatedData['amount']
                 );
                 if (isset($paymentResponse->errorCode)) {
