@@ -84,7 +84,6 @@ export default new Vuex.Store({
                     sameSite: "strict"
                 });
             } else {
-                console.log("alvanizer");
                 state.cashRegister = null;
                 Cookies.remove("cash_register");
             }
@@ -134,7 +133,7 @@ export default new Vuex.Store({
             state.notification = notification;
         },
         setProductList(state, products) {
-            state.productList = products.data;
+            state.productList = products;
         },
         setCategoryList(state, categories) {
             state.categoryList = categories;
@@ -198,14 +197,14 @@ export default new Vuex.Store({
                     .get(this.state.baseUrl + payload.model + page)
                     .then(response => {
                         if (_.has(payload, "mutation")) {
-                            context.commit(payload.mutation, response.data, {
-                                root: true
-                            });
+                            context.commit(
+                                payload.mutation,
+                                response.data.data || response.data
+                            );
                         }
-                        resolve(response.data);
+                        resolve(response.data.data || response.data);
                     })
                     .catch(error => {
-                        console.log(error.response);
                         let notification = {
                             msg: error.response.data.errors,
                             type: "error"
@@ -230,7 +229,7 @@ export default new Vuex.Store({
                                 root: true
                             });
                         }
-                        resolve(response.data);
+                        resolve(response.data.data || response.data);
                     })
                     .catch(error => {
                         let notification = {
@@ -258,9 +257,7 @@ export default new Vuex.Store({
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
-                            context.commit(payload.mutation, response.data, {
-                                root: true
-                            });
+                            context.commit(payload.mutation, response.data);
                         }
                         resolve(response.data);
                     })
@@ -285,11 +282,12 @@ export default new Vuex.Store({
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
-                            context.commit(payload.mutation, response.data, {
-                                root: true
-                            });
+                            context.commit(
+                                payload.mutation,
+                                response.data.data || response.data
+                            );
                         }
-                        resolve(response.data);
+                        resolve(response.data.data || response.data);
                     })
                     .catch(error => {
                         let notification = {
@@ -374,11 +372,12 @@ export default new Vuex.Store({
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
-                            context.commit(payload.mutation, response.data, {
-                                root: true
-                            });
+                            context.commit(
+                                payload.mutation,
+                                response.data.data || response.data
+                            );
                         }
-                        resolve(response.data);
+                        resolve(response.data.data || response.data);
                     })
                     .catch(error => {
                         let notification = {
@@ -414,39 +413,18 @@ export default new Vuex.Store({
                     });
             });
         },
-        getRequest(context, payload) {
-            return new Promise((resolve, reject) => {
-                axios
-                    .get(this.state.baseUrl + payload.url)
-                    .then(response => {
-                        if (_.has(payload, "mutation")) {
-                            context.commit(payload.mutation, response.data, {
-                                root: true
-                            });
-                        }
-                        resolve(response.data);
-                    })
-                    .catch(error => {
-                        let notification = {
-                            msg: error.response.data.errors,
-                            type: "error"
-                        };
-                        context.commit("setNotification", notification);
-                        reject(error);
-                    });
-            });
-        },
         postRequest(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
                     .post(this.state.baseUrl + payload.url, payload.data)
                     .then(response => {
                         if (_.has(payload, "mutation")) {
-                            context.commit(payload.mutation, response.data, {
-                                root: true
-                            });
+                            context.commit(
+                                payload.mutation,
+                                response.data.data || response.data
+                            );
                         }
-                        resolve(response.data);
+                        resolve(response.data.data || response.data);
                     })
                     .catch(error => {
                         let notification = {
@@ -464,9 +442,10 @@ export default new Vuex.Store({
                     .delete(this.state.baseUrl + payload.url)
                     .then(response => {
                         if (_.has(payload, "mutation")) {
-                            context.commit(payload.mutation, response.data, {
-                                root: true
-                            });
+                            context.commit(
+                                payload.mutation,
+                                response.data.data || response.data
+                            );
                         }
                         resolve(response.data);
                     })

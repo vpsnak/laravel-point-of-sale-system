@@ -16,10 +16,10 @@ class BaseModel extends Model
         return get_called_class()::create($data);
     }
 
-//    public static function updateOrStore($uniqueColumns,$data)
-//    {
-//        return get_called_class()::updateOrCreate($uniqueColumns,$data);
-//    }
+    //    public static function updateOrStore($uniqueColumns,$data)
+    //    {
+    //        return get_called_class()::updateOrCreate($uniqueColumns,$data);
+    //    }
 
     public static function getOne($id)
     {
@@ -43,7 +43,7 @@ class BaseModel extends Model
 
     public static function allData()
     {
-        return get_called_class()::all();
+        return get_called_class()::paginate();
     }
 
     public static function getInsertedId($data)

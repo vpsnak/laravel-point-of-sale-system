@@ -207,7 +207,7 @@ export default {
         }
     },
     actions: {
-        mailReceipt({ state, rootState, context }, payload) {
+        mailReceipt({ commit, state, rootState }, payload) {
             return new Promise((resolve, reject) => {
                 axios
                     .post(
@@ -215,14 +215,15 @@ export default {
                         payload
                     )
                     .then(response => {
+                        commit("setNotification", response.data.notification, {
+                            root: true
+                        });
                         resolve(response);
-                        context.commit(
-                            "setNotification",
-                            response.data.notification,
-                            { root: true }
-                        );
                     })
                     .catch(error => {
+                        commit("setNotification", response.data.notification, {
+                            root: true
+                        });
                         reject(error);
                     });
             });

@@ -38,7 +38,6 @@
 					<v-card-text>
 						<storeForm></storeForm>
 						<giftCardForm class="mt-6"></giftCardForm>
-						<storeRegForm></storeRegForm>
 					</v-card-text>
 				</v-card>
 			</v-slide-item>

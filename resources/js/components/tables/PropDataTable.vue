@@ -13,7 +13,18 @@
 		</v-card-title>
 		<v-layout column>
 			<v-flex md10 style="overflow: auto">
-				<v-data-table dense :headers="headers" :items="rows" :loading="loading" :search="search">
+				<v-data-table
+					dense
+					:headers="headers"
+					:items="rows"
+					:loading="loading"
+					:search="search"
+					:items-per-page="15"
+					:page.sync="currentPage"
+					:server-items-length="totalItems"
+					@pagination="paginate"
+					:footer-props="{'disable-items-per-page':true, options: {itemsPerPage: 15, page: currentPage}}"
+				>
 					<template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
 						<slot :name="slot" v-bind="scope" />
 					</template>
@@ -150,6 +161,8 @@ import { mapActions, mapMutations, mapState } from "vuex";
 export default {
 	data() {
 		return {
+			current_page: 1,
+			total_items: null,
 			cancelOrderDialog: false,
 			showCreateDialog: false,
 			showEditDialog: false,
@@ -172,25 +185,37 @@ export default {
 	],
 	mounted() {
 		this.setHeaders(this.tableHeaders);
-		this.getRows({
-			url: this.dataUrl
-		});
 		this.setTitle(this.tableTitle);
 		this.setBtnTitle(this.tableBtnTitle);
 		this.setBtnDisable(this.tableBtnDisable);
 		this.setForm(this.tableForm);
 	},
 	computed: {
+		totalItems: {
+			get() {
+				return this.total_items;
+			},
+			set(value) {
+				this.total_items = value;
+			}
+		},
+		currentPage: {
+			get() {
+				return this.current_page;
+			},
+			set(value) {
+				this.current_page = value;
+			}
+		},
 		checkoutDialog: {
 			get() {
-				if (this.$store.state.checkoutDialog === false) {
-					this.getRows({
-						url: this.dataUrl
-					});
-				}
 				return this.$store.state.checkoutDialog;
 			},
 			set(value) {
+				if (!value) {
+					this.paginate();
+				}
+
 				this.$store.state.checkoutDialog = value;
 			}
 		},
@@ -205,6 +230,24 @@ export default {
 		})
 	},
 	methods: {
+		paginate(e) {
+			this.setLoading(true);
+
+			this.getAll({
+				model: this.dataUrl,
+				page: e.page
+			})
+				.then(response => {
+					this.setRows(response);
+
+					if (response.total !== this.totalItems) {
+						this.totalItems = response.total;
+					}
+				})
+				.finally(() => {
+					this.setLoading(false);
+				});
+		},
 		cancelOrderConfirmation(event) {
 			if (event) {
 				let payload = {
@@ -213,9 +256,7 @@ export default {
 				};
 
 				this.delete(payload).then(response => {
-					this.getRows({
-						url: this.dataUrl
-					});
+					this.paginate();
 				});
 			}
 			this.closePrompt = false;
@@ -229,9 +270,7 @@ export default {
 		},
 		submitEvent(event) {
 			if (event) {
-				this.getRows({
-					url: this.dataUrl
-				});
+				this.paginate();
 			}
 		},
 
@@ -257,7 +296,6 @@ export default {
 		},
 
 		...mapActions("datatable", {
-			getRows: "getRows",
 			deleteRow: "deleteRow"
 		}),
 		...mapMutations("datatable", {
@@ -265,7 +303,9 @@ export default {
 			setTitle: "setTitle",
 			setBtnTitle: "setBtnTitle",
 			setForm: "setForm",
-			setBtnDisable: "setBtnDisable"
+			setBtnDisable: "setBtnDisable",
+			setRows: "setRows",
+			setLoading: "setLoading"
 		}),
 		...mapActions({
 			getAll: "getAll",

@@ -6,7 +6,7 @@ const state = {
     rows: [],
     loading: false,
     form: "Form",
-    btnDisable: false,
+    btnDisable: false
 };
 
 // getters
@@ -14,23 +14,6 @@ const getters = {};
 
 // actions
 const actions = {
-    getRows({ dispatch, commit }, payload) {
-        commit("setLoading", true);
-        dispatch("getRequest", payload, { root: true })
-            .then(result => {
-                commit("setLoading", false);
-                // @TODO change everywhere to data
-                if (result.data) {
-                    commit('setRows', result.data)
-                } else {
-                    commit('setRows', result)
-                }
-            })
-            .catch(error => {
-                commit("setLoading", false);
-                console.log(error);
-            });
-    },
     deleteRow({ dispatch, commit }, payload) {
         commit("setLoading", true);
         dispatch("deleteRequest", payload, { root: true })
@@ -42,7 +25,6 @@ const actions = {
             })
             .catch(error => {
                 commit("setLoading", false);
-                console.log(error);
             });
     }
 };
@@ -74,7 +56,7 @@ const mutations = {
         state.rows = _.filter(state.rows, row => {
             return row.id !== id;
         });
-    },
+    }
 };
 
 export default {

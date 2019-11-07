@@ -17,14 +17,14 @@ class CashRegisterSeeder extends Seeder
                 'name' => 'Main Cash Register',
                 'store_id' => 1,
                 'created_by' => 1,
-                'barcode' => '',
+                'barcode' => 'PS28148',
                 'created_at' => now()
             ],
             [
                 'name' => 'Main Cash Register 2',
                 'store_id' => 1,
                 'created_by' => 1,
-                'barcode' => 'CASHIER-3',
+                'barcode' => 'PS20174',
                 'created_at' => now()
             ],
             [
