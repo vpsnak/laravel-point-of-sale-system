@@ -83,7 +83,6 @@ export default {
 	},
 	methods: {
 		submit() {
-			console.log(this.formFields.categories);
 			if (
 				this.formFields.categories != null &&
 				typeof this.formFields.categories[0] === "object"

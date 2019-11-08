@@ -120,7 +120,6 @@ export default {
 			this.showViewDialog = false;
 		},
 		viewItem(product) {
-			console.log(product);
 			this.viewProduct = product;
 			this.showViewDialog = true;
 		}
