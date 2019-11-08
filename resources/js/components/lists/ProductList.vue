@@ -350,9 +350,9 @@ export default {
 					this.currentPage = response.current_page;
 					this.lastPage = response.last_page;
 					if (addToCart) {
-						this.$store.commit("cart/addProduct", response.data[0]);
-					} else if (response.data[0]) {
-						this.viewItem(response.data[0]);
+						this.$store.commit("cart/addProduct", response[0]);
+					} else if (response[0]) {
+						this.viewItem(response[0]);
 					}
 				})
 				.finally(() => {
