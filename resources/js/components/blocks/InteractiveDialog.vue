@@ -110,7 +110,9 @@ export default {
 			} else {
 				if (payload.getRows && payload.model) {
 					this.getAll({
-						model: payload.model
+						model: payload.model,
+						mutation: "datatable/setRows",
+						dataTable: true
 					});
 				}
 

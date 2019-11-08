@@ -5,7 +5,7 @@
 				<v-card>
 					<v-card-title>Billing Information</v-card-title>
 					<v-card-text>
-						<customerForm :model="customerData"></customerForm>
+						<customerForm :model="customerData" @submit="submit"></customerForm>
 						<!-- <div class="subtitle-1">First Name: {{customerData.first_name}}</div>
 						<div class="subtitle-1">Last Name: {{customerData.last_name}}</div>
 						-->
@@ -113,9 +113,15 @@ export default {
 		}
 	},
 	methods: {
+		submit() {
+			this.$emit("submit", true);
+		},
 		...mapActions({
 			getOne: "getOne"
 		})
+	},
+	beforeDestroy() {
+		this.$off("submit");
 	}
 };
 </script>
