@@ -28,7 +28,7 @@ class AddressController extends BaseController
         ]);
 
         $validatedID = $request->validate([
-            'id' => 'nullable|exists:address,id'
+            'id' => 'nullable|exists:addresses,id'
         ]);
 
         if (!empty($validatedID)) {

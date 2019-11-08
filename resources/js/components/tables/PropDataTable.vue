@@ -235,10 +235,11 @@ export default {
 
 			this.getAll({
 				model: this.dataUrl,
-				page: e.page
+				page: e.page,
+				dataTable: true
 			})
 				.then(response => {
-					this.setRows(response);
+					this.setRows(response.data);
 
 					if (response.total !== this.totalItems) {
 						this.totalItems = response.total;

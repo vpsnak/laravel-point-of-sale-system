@@ -102,11 +102,6 @@ export default {
 	},
 
 	methods: {
-		...mapActions("datatable", {
-			getRows: "getRows",
-			deleteRow: "deleteRow"
-		}),
-
 		...mapActions(["getAll"]),
 
 		submit(payload) {
@@ -115,7 +110,7 @@ export default {
 			} else {
 				if (payload.getRows && payload.model) {
 					this.getAll({
-						url: payload.model
+						model: payload.model
 					});
 				}
 

@@ -209,7 +209,12 @@ export default new Vuex.Store({
                                 response.data.data || response.data
                             );
                         }
-                        resolve(response.data.data || response.data);
+
+                        if (payload.dataTable) {
+                            resolve(response.data);
+                        } else {
+                            resolve(response.data.data || response.data);
+                        }
                     })
                     .catch(error => {
                         let notification = {
@@ -266,10 +271,10 @@ export default new Vuex.Store({
                         if (_.has(payload, "mutation")) {
                             context.commit(
                                 payload.mutation,
-                                response.data.data || response.data
+                                response.data.data
                             );
                         }
-                        resolve(response.data.data || response.data);
+                        resolve(response.data);
                     })
                     .catch(error => {
                         let notification = {
@@ -297,7 +302,11 @@ export default new Vuex.Store({
                                 response.data.data || response.data
                             );
                         }
-                        resolve(response.data.data || response.data);
+                        if (payload.dataTable) {
+                            resolve(response.data);
+                        } else {
+                            resolve(response.data.data || response.data);
+                        }
                     })
                     .catch(error => {
                         let notification = {

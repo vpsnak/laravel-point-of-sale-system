@@ -288,7 +288,8 @@ export default {
 			let payload = {
 				model: "products",
 				mutation: "setProductList",
-				page: this.current_page
+				page: this.current_page,
+				dataTable: true
 			};
 			this.$store
 				.dispatch("getAll", payload)
@@ -369,7 +370,8 @@ export default {
 					model: "products",
 					mutation: "setProductList",
 					page: this.currentPage,
-					keyword: this.keyword
+					keyword: this.keyword,
+					dataTable: true
 				};
 
 				this.$store
