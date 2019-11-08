@@ -107,12 +107,14 @@ export default {
 			deleteRow: "deleteRow"
 		}),
 
+		...mapActions(["getAll"]),
+
 		submit(payload) {
 			if (!payload) {
 				this.fire(true);
 			} else {
 				if (payload.getRows && payload.model) {
-					this.getRows({
+					this.getAll({
 						url: payload.model
 					});
 				}

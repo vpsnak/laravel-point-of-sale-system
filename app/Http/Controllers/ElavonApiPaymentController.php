@@ -15,9 +15,14 @@ class ElavonApiPaymentController extends Controller
     protected static $user_id = 'convergeapi';
     protected static $pin = 'LWUY8K81466BXK4Y6I7FERJMOLDRM1XL37JPP4ATK3JORDUMAYDRICE9H7QVL6M8';
     protected static $test_mode = 'false';
+
     private $txn_id;
     private $test_case;
-    private $card_number;
+
+    private $ssl_card_number;
+    private $ssl_amount;
+    private $ssl_cvv2cvc2_indicator;
+    private $ssl_cvv2cvc2;
 
     public function getLogs($test_case = null)
     {
@@ -50,13 +55,17 @@ class ElavonApiPaymentController extends Controller
     {
         $validatedData = $request->validate([
             'test_case' => 'nullable|string',
-            'card_number' => 'nullable|numeric',
-            '' => '',
-            '' => '',
+            'ssl_card_number' => 'nullable|numeric',
+            'ssl_amount' => 'nullable|numeric',
+            'ssl_cvv2cvc2_indicator' => 'nullable|numeric',
+            'ssl_cvv2cvc2' => 'nullable|numeric',
         ]);
 
         $this->test_case = isset($validatedData['test_case']) ? $validatedData['test_case'] : null;
-        $this->card_number = isset($validatedData['card_number']) ? $validatedData['card_number'] : null;
+        $this->ssl_card_number = isset($validatedData['ssl_card_number']) ? $validatedData['ssl_card_number'] : null;
+        $this->ssl_amount = isset($validatedData['ssl_amount']) ? $validatedData['ssl_amount'] : null;
+        $this->ssl_cvv2cvc2_indicator = isset($validatedData['ssl_cvv2cvc2_indicator']) ? $validatedData['ssl_cvv2cvc2_indicator'] : null;
+        $this->ssl_cvv2cvc2 = isset($validatedData['ssl_cvv2cvc2']) ? $validatedData['ssl_cvv2cvc2'] : null;
     }
 
     public static function doTransaction($type, array $data)

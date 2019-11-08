@@ -431,7 +431,7 @@ export default {
 						this.loading = false;
 					})
 					.finally(() => {
-						// this.getApiLogs();
+						this.getApiLogs();
 						this.loading = false;
 					});
 			}
