@@ -12,6 +12,7 @@
 		<v-text-field v-model="formFields.description" label="Description" required></v-text-field>
 		<v-text-field type="number" v-model="formFields.final_price" label="Final price" required></v-text-field>
 		<v-select
+			:loading="loading"
 			v-model="formFields.categories"
 			:items="categories"
 			chips
@@ -118,10 +119,12 @@ export default {
 			this.formFields = { ...this.defaultValues };
 		},
 		getAllCategories() {
+			this.loading = true;
 			this.getAll({
 				model: "categories"
 			}).then(categories => {
 				this.categories = categories;
+				this.loading = false;
 			});
 		},
 		getAllStores() {
