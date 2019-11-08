@@ -72,7 +72,7 @@
 						<v-tab-item v-for="address in customerData.addresses" :key="address.id">
 							<v-card flat>
 								<v-card-text>
-									<addressForm :model="address"></addressForm>
+									<addressForm @submit="submit" :model="address"></addressForm>
 								</v-card-text>
 							</v-card>
 						</v-tab-item>
@@ -114,7 +114,14 @@ export default {
 	},
 	methods: {
 		submit() {
-			this.$emit("submit", true);
+			this.$emit("submit", {
+				getRows: true,
+				model: "customers",
+				notification: {
+					msg: "Customer updated successfully",
+					type: "success"
+				}
+			});
 		},
 		...mapActions({
 			getOne: "getOne"
