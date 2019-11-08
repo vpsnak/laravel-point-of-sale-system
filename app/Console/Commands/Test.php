@@ -2,8 +2,10 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\Magento\Script\CustomerSync;
 use App\Http\Controllers\Magento\Script\GetCustomers;
+use App\Http\Controllers\MasOrderController;
+use App\Http\Controllers\OrderMASController;
+use App\Order;
 use Illuminate\Console\Command;
 
 class Test extends Command
@@ -39,7 +41,8 @@ class Test extends Command
      */
     public function handle()
     {
-        CustomerSync::getFromMagento();
-        CustomerSync::sendToMagento();
+        $o = Order::getOne(4);
+        $res = (new MasOrderController())->submitToMas($o);
+        dd($res);
     }
 }
