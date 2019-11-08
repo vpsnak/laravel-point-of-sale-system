@@ -91,7 +91,7 @@ export default new Vuex.Store({
         setStore(state, store) {
             if (store) {
                 state.store = store;
-                Cookies.set("store", store, {
+                Cookies.set("store", state.store, {
                     sameSite: "strict"
                 });
             } else {
@@ -100,28 +100,33 @@ export default new Vuex.Store({
             }
         },
         setUser(state, user) {
-            state.user = user;
-            Cookies.set("user", user, {
-                sameSite: "strict"
-            });
-
-            if (state.user.open_register) {
-                state.cashRegister = state.user.open_register.cash_register;
-                state.store = state.user.open_register.cash_register.store;
-
-                Cookies.set("cash_register", state.cashRegister, {
+            if (user) {
+                state.user = user;
+                Cookies.set("user", state.user, {
                     sameSite: "strict"
                 });
 
-                Cookies.set("store", state.store, {
-                    sameSite: "strict"
-                });
+                if (state.user.open_register) {
+                    state.cashRegister = state.user.open_register.cash_register;
+                    state.store = state.user.open_register.cash_register.store;
+
+                    Cookies.set("cash_register", state.cashRegister, {
+                        sameSite: "strict"
+                    });
+
+                    Cookies.set("store", state.store, {
+                        sameSite: "strict"
+                    });
+                }
+            } else {
+                state.user = null;
+                Cookies.remove("user");
             }
         },
         setToken(state, token) {
             if (token) {
                 state.token = "Bearer " + token;
-                Cookies.set("token", "Bearer " + token, {
+                Cookies.set("token", state.token, {
                     sameSite: "strict"
                 });
             } else {
@@ -149,12 +154,14 @@ export default new Vuex.Store({
                 axios
                     .post(this.state.baseUrl + "auth/login", payload)
                     .then(response => {
+                        let notification = {
+                            msg: response.data.info,
+                            type: "info"
+                        };
+
                         context.commit("setUser", response.data.user);
                         context.commit("setToken", response.data.token);
-                        context.commit(
-                            "setNotification",
-                            response.data.notification
-                        );
+                        context.commit("setNotification", notification);
 
                         resolve(response.data);
                     })
@@ -174,19 +181,18 @@ export default new Vuex.Store({
                 axios
                     .get(this.state.baseUrl + "auth/logout")
                     .then(response => {
-                        context.commit(
-                            "setNotification",
-                            response.data.notification
-                        );
+                        let notification = {
+                            msg: response.data.info,
+                            type: "info"
+                        };
+                        context.commit("setNotification", notification);
                         resolve(response.data);
                     })
                     .catch(error => {
                         reject(error);
                     })
                     .finally(() => {
-                        context.commit("logout", {
-                            root: true
-                        });
+                        context.commit("logout", null);
                     });
             });
         },
@@ -311,18 +317,20 @@ export default new Vuex.Store({
                         payload
                     )
                     .then(response => {
+                        let notification = {
+                            msg: response.data.info,
+                            type: "success"
+                        };
+
                         context.commit(
                             "setCashRegister",
-                            response.data.cash_register
+                            response.data.cashRegister.cash_register
                         );
                         context.commit(
                             "setStore",
-                            response.data.cash_register.store
+                            response.data.cashRegister.cash_register.store
                         );
-                        context.commit("setNotification", {
-                            msg: "Cash register opened successfully",
-                            type: "success"
-                        });
+                        context.commit("setNotification", notification);
 
                         resolve(response.data);
                     })

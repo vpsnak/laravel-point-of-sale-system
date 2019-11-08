@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use DOMDocument;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
+use App\ElavonApiPayment;
 
 class ElavonApiPaymentController extends Controller
 {
@@ -14,6 +15,49 @@ class ElavonApiPaymentController extends Controller
     protected static $user_id = 'convergeapi';
     protected static $pin = 'LWUY8K81466BXK4Y6I7FERJMOLDRM1XL37JPP4ATK3JORDUMAYDRICE9H7QVL6M8';
     protected static $test_mode = 'false';
+    private $txn_id;
+    private $test_case;
+    private $card_number;
+
+    public function getLogs($test_case = null)
+    {
+        if ($test_case) {
+            return response(ElavonApiPayment::whereTestCase($test_case)->get());
+        } else {
+            return response(ElavonApiPayment::all());
+        }
+    }
+
+    public function deleteAll()
+    {
+        DB::table('elavon_api_payments')->truncate();
+        return response('API Logs truncated');
+    }
+
+    private function saveToApiLog($data, $status)
+    {
+        $elavonApiPayment = new ElavonApiPayment();
+
+        $elavonApiPayment->test_case = $this->test_case;
+        $elavonApiPayment->txn_id = $this->txn_id;
+        $elavonApiPayment->status = $status;
+        $elavonApiPayment->log = is_Array($data) ? json_encode($data) : strip_tags($data);
+
+        $elavonApiPayment->save();
+    }
+
+    public function index(Request $request)
+    {
+        $validatedData = $request->validate([
+            'test_case' => 'nullable|string',
+            'card_number' => 'nullable|numeric',
+            '' => '',
+            '' => '',
+        ]);
+
+        $this->test_case = isset($validatedData['test_case']) ? $validatedData['test_case'] : null;
+        $this->card_number = isset($validatedData['card_number']) ? $validatedData['card_number'] : null;
+    }
 
     public static function doTransaction($type, array $data)
     {
@@ -29,7 +73,7 @@ class ElavonApiPaymentController extends Controller
         $payload = array_merge($defaults, $data);
         $html = self::generateHtmlPayload($payload);
         $response = self::sendTransaction($html);
-        return (array)$response;
+        return (array) $response;
     }
 
     private static function generateHtmlPayload(array $data)

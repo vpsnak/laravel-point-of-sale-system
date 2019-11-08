@@ -78,7 +78,7 @@ class CashRegisterLogsController extends BaseController
             return response(['errors' => ['Cash register' => 'You already have an open cash register']], 422);
         }
 
-        return response($this->model::store($validatedData), 201);
+        return response(['info' => 'Cash register opened successfully', 'cashRegister' => $this->model::store($validatedData)], 201);
     }
 
     public function getAlreadyOpenedRegister($cash_register_id)

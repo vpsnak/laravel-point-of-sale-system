@@ -55,7 +55,7 @@ class UserController extends Controller
             $token = (json_decode((string) $response->getBody(), true))['access_token'];
 
             return response([
-                'info' => ['Login:' => '<h2>Welcome ' . $user->name . '</h2>'],
+                'info' => ['Login' => '<h2>Welcome ' . $user->name . '</h2>'],
                 'user' => $user,
                 'token' => $token
             ], 200);
@@ -66,6 +66,6 @@ class UserController extends Controller
     {
         auth()->user()->token()->revoke();
 
-        return response(['info' => ['Logout: ' => '<h2>Goodbye...</h2>']], 200);
+        return response(['info' => ['Logout' => '<h2>Goodbye...</h2>']], 200);
     }
 }

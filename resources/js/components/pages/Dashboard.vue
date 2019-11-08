@@ -11,18 +11,40 @@
 						true-value="API"
 						:label="'Selected method: ' + endpoint"
 					></v-switch>
-					<v-textarea outlined label="Σκονάκι" v-model="sdkSkonaki" readonly :loading="loading"></v-textarea>
+					<v-textarea outlined label="Σκονάκι" v-model="sdkSkonaki" readonly :loading="loading" v-if="endpoint === 'SDK'"></v-textarea>
+					<v-row v-if="endpoint === 'API'">
+						<v-col :cols="6">
+							<v-textarea outlined label="Test cards" v-model="testCards" readonly :loading="loading" auto-grow></v-textarea>
+						</v-col>
+						<v-col :cols="6">
+							<v-textarea outlined label="CCV2/CVC2 RESPONSE CODE" v-model="apiSkonaki" readonly :loading="loading" auto-grow></v-textarea>
+						</v-col>
+					</v-row>
 					<v-btn type="submit" :loading="loading" :disabled="loading" color="success">submit</v-btn>
 					<v-btn
 						@click="getSdkLogs"
-						v-if="endpoint==='SDK'"
+						v-if="endpoint === 'SDK'"
+						color="info"
+						:loading="loading"
+						:disabled="loading"
+					>get logs</v-btn>
+					<v-btn
+						@click="getApiLogs"
+						v-if="endpoint === 'API'"
 						color="info"
 						:loading="loading"
 						:disabled="loading"
 					>get logs</v-btn>
 					<v-btn
 						@click="deleteSdkLogs"
-						v-if="endpoint==='SDK'"
+						v-if="endpoint === 'SDK'"
+						color="error"
+						:loading="loading"
+						:disabled="loading"
+					>delete logs</v-btn>
+					<v-btn
+						@click="deleteApiLogs"
+						v-if="endpoint === 'API'"
 						color="error"
 						:loading="loading"
 						:disabled="loading"
@@ -161,14 +183,58 @@
 								hint="This parameter must be combined with one or more of begin Date, End Date, last4CC, or Credit Card"
 							></v-text-field>
 						</v-col>
-						<v-col :cols="12" v-if="endpoint === 'SDK'">
+						<v-col :cols="12">
 							<v-data-table :items="sdkLogs" :headers="sdkHeaders" @click:row="openLog" :loading="loading"></v-data-table>
 						</v-col>
 					</v-row>
 
 					<v-row v-else>
-						<v-col :cols="3">
-							<!-- <v-text-field v-model="asd"></v-text-field> -->
+						<v-col :cols="1">
+							<v-text-field
+								v-model="api.test_case"
+								:disabled="loading"
+								:loading="loading"
+								label="Test case"
+							></v-text-field>
+						</v-col>
+						<v-col :cols="2">
+							<v-text-field
+								:disabled="loading"
+								:loading="loading"
+								v-model="api.ssl_card_number"
+								label="Card number"
+							></v-text-field>
+						</v-col>
+						<v-col :cols="2">
+							<v-text-field
+								:disabled="loading"
+								:loading="loading"
+								v-model="api.ssl_cvv2cvc2"
+								label="CVC"
+							></v-text-field>
+						</v-col>
+						<v-col :cols="2">
+							<v-text-field
+								type="number"
+								:disabled="loading"
+								:loading="loading"
+								v-model="api.ssl_amount"
+								label="Amount"
+							></v-text-field>
+						</v-col>
+						<v-col :cols="2">
+							<v-select
+								:disabled="loading"
+								:loading="loading"
+								:items="apiCvcs"
+								item-text="label"
+								item-value="value"
+								v-model="api.ssl_cvv2cvc2_indicator"
+								label="Card Validation Code Indicator"
+							></v-select>
+						</v-col>
+						<v-col :cols="12">
+							<v-data-table :items="apiLogs" :headers="apiHeaders" @click:row="openLog" :loading="loading"></v-data-table>
 						</v-col>
 					</v-row>
 				</v-card-text>
@@ -190,8 +256,12 @@
 export default {
 	data() {
 		return {
+			apiSkonaki: 
+			'M	CVV2/CVC2 Match\nN	CVV2/CVC2 No match\nP	Not processed\nS	Issuer indicates that the CVV2/CVC2 data should be present on the card, but the merchant has indicated that the CVV2/CVC2 data is not resent on the card\nU	Issuer has not certified for CVV2/CVC2 or Issuer has not provided Visa with the CVV2/CVC2 encryption keys',
 			sdkSkonaki:
 				"SALE: sale\nPRE_AUTH: Auth Only\nPRE_AUTH_COMPLETE: Convert Auth Only to Sale\nPRE_AUTH_DELETE: Auth Only Reversal\nVOID: Void\nLINKED_REFUND: Linked Refund\nSTANDALONE_REFUND: Stand Alone Refund\n",
+			testCards: 
+				'Visa (Also works for 3D Secure)	4000000000000002\nVisa Corporate (Allows for the capture of additional Level 2 Data)	4159288888888882\nMasterCard	5121212121212124\nDiscover	6011000000000004\nDiners Club	36111111111111 (14 digit), 3811112222222222 (16 digit)\nAmerican Express	370000000000002\nJCB	3566664444444445\nElectronic Gift Card (EGC)	6032610007325520\nForeign Currency Cards	4032769999999992 (CAD), 5432675555555552 (EUR)',
 			loading: false,
 			endpoint: "SDK",
 			sdk: {
@@ -231,14 +301,23 @@ export default {
 				{ text: "Status", value: "status" },
 				{ text: "Log", value: "log" }
 			],
+			apiHeaders: [
+				{ text: "#", value: "id" },
+				{ text: "Test case", value: "test_case" },
+				{ text: "Transaction Id", value: "txn_id" },
+				{ text: "Status", value: "status" },
+				{ text: "Log", value: "log" }
+			],
 			sdkLogs: [],
 			apiLogs: [],
 			showLog: false,
 			item: {},
-
+			apiCvcs: [{label: 'Bypassed', value: 0}, {label: 'Present', value: 1}, {label: 'Illegible', value: 2}, {label: 'Not Present', value: 9}],
 			api: {
-				amount: null,
-				selected_transaction: null
+				ssl_card_number: null,
+				ssl_amount: null,
+				ssl_cvv2cvc2_indicator: null,
+				ssl_cvv2cvc2: null
 			}
 		};
 	},
@@ -268,7 +347,7 @@ export default {
 
 			let url = "/api/elavon/api/logs";
 
-			this.sdk.test_case ? (url += "/" + this.sdk.test_case) : null;
+			this.api.test_case ? (url += "/" + this.api.test_case) : null;
 			axios
 				.get(url)
 				.then(response => {
@@ -284,6 +363,17 @@ export default {
 				.delete("/api/elavon/sdk/logs/delete")
 				.then(() => {
 					this.sdkLogs = [];
+				})
+				.finally(() => {
+					this.loading = false;
+				});
+		},
+		deleteApiLogs() {
+			this.loading = true;
+			axios
+				.delete("/api/elavon/api/logs/delete")
+				.then(() => {
+					this.apiLogs = [];
 				})
 				.finally(() => {
 					this.loading = false;
