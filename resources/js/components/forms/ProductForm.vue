@@ -82,6 +82,16 @@ export default {
 	},
 	methods: {
 		submit() {
+			if (
+				this.formFields.categories != null &&
+				typeof this.formFields.categories == "object"
+			) {
+				let category_ids = [];
+				for (const category of this.formFields.categories) {
+					category_ids.push(category.id);
+				}
+				this.formFields.categories = category_ids;
+			}
 			this.loading = true;
 			let payload = {
 				model: "products",
