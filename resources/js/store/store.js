@@ -388,7 +388,7 @@ export default new Vuex.Store({
                     .then(() => {
                         if (
                             router.currentRoute.name === "sales" ||
-                            route.currentRoute.name === "orders"
+                            router.currentRoute.name === "orders"
                         ) {
                             router.push({
                                 name: "dashboard"
