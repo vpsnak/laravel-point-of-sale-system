@@ -8,6 +8,7 @@
 				<v-btn-toggle v-model="paymentType" mandatory @change="clearState">
 					<v-btn
 						v-for="(paymentType, index) in types"
+						v-if="(paymentType.type === 'house-account' && houseAccount) || paymentType.type !== 'house-account'"
 						:key="index"
 						:value="paymentType.type"
 						:disabled="loading || orderLoading"
@@ -118,6 +119,14 @@ export default {
 	},
 
 	computed: {
+		houseAccount() {
+			if (this.$store.state.cart.customer && this.$store.state.cart.customer.house_account_status) {
+				return true;
+			} else {
+				return false;
+			}
+			
+		},
 		remainingAmount() {
 			if (parseFloat(this.$props.remaining) >= 0) {
 				this.amount = parseFloat(this.$props.remaining);
@@ -190,9 +199,7 @@ export default {
 		},
 		limits() {
 			if (this.paymentType !== "cash") {
-				if (
-					parseFloat(this.amount) > parseFloat(this.remainingAmount)
-				) {
+				if (parseFloat(this.amount) > parseFloat(this.remainingAmount)) {
 					this.amount = this.remainingAmount.toFixed(2);
 				}
 			} else {
