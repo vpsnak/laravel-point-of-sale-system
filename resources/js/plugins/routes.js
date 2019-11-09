@@ -1,30 +1,29 @@
-import Dashboard from "./components/pages/Dashboard";
-import Login from "./components/auth/Login";
-import Logout from "./components/auth/Logout";
-import Sales from "./components/pages/Sales";
-import Forms from "./components/pages/Forms";
-import Orders from "./components/pages/Orders";
-import Customers from "./components/pages/Customers";
-import Products from "./components/pages/Products";
-import Categories from "./components/pages/Categories";
-import Stores from "./components/pages/Stores";
-import Users from "./components/pages/Users";
-import CTest from "./components/pages/CTest";
-import ListData from "./components/pages/ListData";
-import Taxes from "./components/pages/Taxes";
-import CashRegisters from "./components/pages/CashRegisters";
-import GiftCards from "./components/pages/GiftCards";
-import Coupons from "./components/pages/Coupons";
-import Addresses from "./components/pages/Addresses";
-import StorePickups from "./components/pages/StorePickups";
-import OpenCashRegister from "./components/pages/OpenCashRegister";
-import Reports from "./components/pages/Reports";
-
+import Dashboard from "../components/pages/Dashboard";
+import Login from "../components/auth/Login";
+import Logout from "../components/auth/Logout";
+import Sales from "../components/pages/Sales";
+import Forms from "../components/pages/Forms";
+import Orders from "../components/pages/Orders";
+import Customers from "../components/pages/Customers";
+import Products from "../components/pages/Products";
+import Categories from "../components/pages/Categories";
+import Stores from "../components/pages/Stores";
+import Users from "../components/pages/Users";
+import ListData from "../components/pages/ListData";
+import Taxes from "../components/pages/Taxes";
+import CashRegisters from "../components/pages/CashRegisters";
+import GiftCards from "../components/pages/GiftCards";
+import Coupons from "../components/pages/Coupons";
+import Addresses from "../components/pages/Addresses";
+import StorePickups from "../components/pages/StorePickups";
+import OpenCashRegister from "../components/pages/OpenCashRegister";
+import Reports from "../components/pages/Reports";
 
 export default [
     {
         path: "*",
         redirect: "/",
+        name: "*",
         meta: { requiresAuth: true }
     },
     {
