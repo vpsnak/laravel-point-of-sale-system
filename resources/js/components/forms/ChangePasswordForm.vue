@@ -59,31 +59,17 @@
 import { mapActions } from "vuex";
 
 export default {
-	props: {
-		model: Object || undefined
-	},
 	data() {
 		return {
 			showCurrentPassword: false,
 			showPassword: false,
 			showPasswordConfirmation: false,
-			defaultValues: {},
 			formFields: {
-				name: null,
-				email: null,
 				current_password: null,
 				password: null,
 				password_confirmation: null
 			}
 		};
-	},
-	mounted() {
-		this.defaultValues = { ...this.formFields };
-		if (this.$props.model) {
-			this.formFields = {
-				...this.$props.model
-			};
-		}
 	},
 	computed: {
 		disableSubmit() {
@@ -92,22 +78,20 @@ export default {
 	},
 	methods: {
 		submit() {
-			let payload = {
-				model: "users",
-				data: { ...this.formFields }
-			};
-			this.create(payload).then(() => {
-				this.clear();
+			this.changePassword(this.formFields).then(() => {
 				this.$emit("submit", "users");
+			}).finally(() => {
+				this.clear();
 			});
 		},
 		clear() {
 			this.$refs.obs.reset();
-			this.formFields = { ...this.defaultValues };
+
+			this.formFields.current_password = null;
+			this.formFields.password = null;
+			this.formFields.password_confirmation = null;
 		},
-		...mapActions({
-			create: "create"
-		})
+		...mapActions(['changePassword'])
 	},
 	beforeDestroy() {
 		this.$off("submit");
