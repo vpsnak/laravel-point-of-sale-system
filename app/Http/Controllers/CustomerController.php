@@ -28,7 +28,7 @@ class CustomerController extends BaseController
                 'first_name' => 'required|string',
                 'last_name' => 'required|string',
                 'house_account_status' => 'nullable|bool',
-                'house_account_number' => 'nullable|string',
+                'house_account_number' => 'nullable|string|unique:customers,house_account_number',
                 'house_account_limit' => 'nullable|numeric',
                 'no_tax' => 'nullable|bool',
                 'no_tax_file' => 'nullable|string',
