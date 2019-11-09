@@ -40,11 +40,7 @@ export default {
 		};
 	},
 	mounted() {
-		this.getAll({
-			model: "stores"
-		}).then(stores => {
-			this.stores = stores;
-		});
+		this.getAllStores();
 		this.defaultValues = { ...this.formFields };
 		if (this.$props.model) {
 			this.formFields = {
@@ -84,10 +80,12 @@ export default {
 			this.formFields = { ...this.defaultValues };
 		},
 		getAllStores() {
+			this.loading = true;
 			this.getAll({
 				model: "stores"
 			}).then(stores => {
 				this.stores = stores;
+				this.loading = false;
 			});
 		},
 		...mapActions({
