@@ -2,9 +2,11 @@
 
 namespace App;
 
+use App\Http\Controllers\CashRegisterReportController;
+
 class CashRegister extends BaseModel
 {
-    protected $appends = ['is_open', 'store', 'payments'];
+    protected $appends = ['is_open', 'store', 'payments', 'earnings'];
     protected $with = [
 //        'logs',
 //        'payments'
@@ -18,6 +20,14 @@ class CashRegister extends BaseModel
         'pos_terminal',
         'printer',
     ];
+
+    public function getEarningsAttribute()
+    {
+        if ($this->is_open) {
+            return CashRegisterReportController::generateReport($this->getOpenLog()->id);
+        }
+        return null;
+    }
 
     public function getStoreAttribute()
     {
