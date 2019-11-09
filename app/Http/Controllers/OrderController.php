@@ -39,8 +39,9 @@ class OrderController extends BaseController
             'shipping_cost' => 'numeric|nullable',
             'notes' => 'string|nullable',
             'store_id' => 'required|exists:stores,id',
-            'created_by' => 'required|exists:users,id',
         ]);
+
+        $validatedData['created_by'] = auth()->user()->id;
 
         $shippingData = $request->validate([
             'shipping.method' => 'string|string',
