@@ -51,10 +51,10 @@ class CashRegisterLogsController extends BaseController
         $validatedData['status'] = 0;
         $validatedData['closing_time'] = Carbon::now();
 
-        $log = auth()->user()->open_register()->update($validatedData);
+        auth()->user()->open_register()->update($validatedData);
         CashRegisterReportController::generateReportByCashRegisterId($validatedData['cash_register_id']);
 
-        return response($log, 200);
+        return response(['info' => ['Cash Register' => 'Cash register closed successfully!']], 200);
     }
 
     public function open(Request $request)
