@@ -70,7 +70,7 @@ class PaymentController extends BaseController
 
                     return response([
                         'errors' => [
-                            "Error $paymentResponse->errorCode" => "$paymentResponse->errorName"
+                            "Error $paymentResponse->errorCode" => ["$paymentResponse->errorName"]
                         ]
                     ], 500);
                 }
@@ -97,7 +97,7 @@ class PaymentController extends BaseController
 
                     return response([
                         'errors' => [
-                            'Coupon' => 'This coupon has expired'
+                            'Coupon' => ['This coupon has expired']
                         ]
                     ], 403);
                 } else {
@@ -107,7 +107,7 @@ class PaymentController extends BaseController
 
                         return response([
                             'errors' => [
-                                'Coupon' => 'Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))
+                                'Coupon' => ['Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))]
                             ]
                         ], 403);
                     }
@@ -133,7 +133,7 @@ class PaymentController extends BaseController
 
                     return response([
                         'errors' => [
-                            'Gift card' => 'This gift card is inactive'
+                            'Gift card' => ['This gift card is inactive']
                         ]
                     ], 403);
                 } else {
@@ -143,7 +143,7 @@ class PaymentController extends BaseController
 
                         return response([
                             'errors' => [
-                                'Gift card' => 'This gift card has insufficient balance to complete the transaction'
+                                'Gift card' => ['This gift card has insufficient balance to complete the transaction']
                             ]
                         ], 403);
                     } else {
@@ -166,7 +166,7 @@ class PaymentController extends BaseController
 
                     return response([
                         'errors' => [
-                            'POS Terminal' => $paymentResponse['errors']
+                            'POS Terminal' => [$paymentResponse['errors']]
                         ]
                     ], 403);
                 }
@@ -179,7 +179,7 @@ class PaymentController extends BaseController
                     $payment->save();
                     return response([
                         'errors' => [
-                            'House Account' => 'House account does not exist.'
+                            'House Account' => ['House account does not exist.']
                         ]
                     ], 403);
                 }
@@ -188,7 +188,7 @@ class PaymentController extends BaseController
                     $payment->save();
                     return response([
                         'errors' => [
-                            'House Account' => 'House account has insufficient balance.' . $customer->house_account_limit
+                            'House Account' => ['House account has insufficient balance.<br>Balance available: ' . $customer->house_account_limit]
                         ]
                     ], 403);
                 }

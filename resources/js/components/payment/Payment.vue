@@ -182,13 +182,6 @@ export default {
 					};
 					this.setNotification(notification);
 				})
-				.catch(error => {
-					let notification = {
-						msg: error.response.data.message,
-						type: "error"
-					};
-					this.setNotification(notification);
-				})
 				.finally(() => {
 					this.paymentAmount = null;
 					this.paymentActionsLoading = false;
