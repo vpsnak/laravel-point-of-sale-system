@@ -19,6 +19,24 @@
 						>Subtotal: {{ parseFloat(cashRegisterReportsData.subtotal).toFixed(2) }} $</div>
 						<div class="subtitle-1">Tax: {{ parseFloat(cashRegisterReportsData.tax).toFixed(2) }} $</div>
 						<div class="subtitle-1">Total: {{ parseFloat(cashRegisterReportsData.total).toFixed(2) }} $</div>
+						<div
+							class="subtitle-1"
+						>Cash total: {{ parseFloat(cashRegisterReportsData.cash_total).toFixed(2) }} $</div>
+						<div
+							class="subtitle-1"
+						>Gift card total: {{ parseFloat(cashRegisterReportsData.gift_card_total).toFixed(2) }} $</div>
+						<div
+							class="subtitle-1"
+						>Credit card total: {{ parseFloat(cashRegisterReportsData.credit_card_total).toFixed(2) }} $</div>
+						<div
+							class="subtitle-1"
+						>Pos Terminal Total: {{ parseFloat(cashRegisterReportsData.pos_terminal_total).toFixed(2) }} $</div>
+						<div
+							class="subtitle-1"
+						>Change Total: {{ parseFloat(cashRegisterReportsData.change_total).toFixed(2) }} $</div>
+						<div
+							class="subtitle-1"
+						>Cash tax: {{ parseFloat(cashRegisterReportsData.cash_tax).toFixed(2) }} $</div>
 					</v-card-text>
 				</v-card>
 			</v-col>
