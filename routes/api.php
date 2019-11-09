@@ -14,8 +14,8 @@
 // auth
 
 Route::post('/auth/login', "UserController@login")->middleware('guest');
-
-Route::get('/auth/logout', "UserController@logout")->middleware('scope:admin,cashier');;
+Route::get('/auth/logout', "UserController@logout")->middleware('scope:admin,cashier');
+Route::post('/auth/change-password', "UserController@changePassword")->middleware('scope:admin,cashier');
 
 $baseRoutes = [
     'users' => 'UserController',
@@ -69,13 +69,14 @@ Route::post('/mail-receipt/{order}', 'MailReceiptController@send');
 Route::get('/guest-email', 'GuestEmailListController@all')->middleware('scope:admin,cashier');
 Route::post('/guest-email/create', 'GuestEmailListController@create')->middleware('scope:admin,cashier');
 
-// elavon certification
+// elavon sdk certification
 Route::post('/elavon/sdk', 'ElavonSdkPaymentController@index')->middleware('auth:api');
 Route::post('/elavon/sdk/lookup', 'ElavonSdkPaymentController@lookup')->middleware('auth:api');
 Route::get('/elavon/sdk/logs', 'ElavonSdkPaymentController@getLogs')->middleware('auth:api');
 Route::get('/elavon/sdk/logs/{test_case}', 'ElavonSdkPaymentController@getLogs')->middleware('auth:api');
 Route::delete('/elavon/sdk/logs/delete', 'ElavonSdkPaymentController@deleteAll')->middleware('auth:api');
 
+// elavon api certification
 Route::post('/elavon/api', 'ElavonApiPaymentController@index')->middleware('auth:api');
 Route::post('/elavon/api/lookup', 'ElavonApiPaymentController@lookup')->middleware('auth:api');
 Route::get('/elavon/api/logs', 'ElavonApiPaymentController@getLogs')->middleware('auth:api');

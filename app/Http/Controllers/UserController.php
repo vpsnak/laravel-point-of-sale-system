@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -34,10 +35,12 @@ class UserController extends Controller
 
         $http = new Client;
         $user = User::whereEmail($validatedData['username'])->first();
+
         if (!$user) {
-            return response(['errors' => [
-                'Login' => '<h3>Invalid credentials</h3>',
-            ]], 422);
+            if (Hash::verify($validatedData['password'], $user->password))
+                return response(['errors' => [
+                    'Login' => 'Invalid credentials',
+                ]], 422);
         } else {
             $role = ($user->roles)[0]['name'];
             $response = $http->post(config('app.url') . '/oauth/token', [
@@ -54,69 +57,32 @@ class UserController extends Controller
             $token = (json_decode((string) $response->getBody(), true))['access_token'];
 
             return response([
-                'info' => ['Login' => '<h2>Welcome ' . $user->name . '</h2>'],
+                'info' => ['Login' => 'Welcome <strong>' . $user->name . '</strong>'],
                 'user' => $user,
                 'token' => $token
             ], 200);
         }
     }
-    
-    
-    public function postCredentials(Request $request)
-        {
-            if(Auth::Check())
-            {
-                $request_data = $request->All();
-                $validator = $this->admin_credential_rules($request_data);
-                if($validator->fails())
-                {
-                return response()->json(array('error' => $validator->getMessageBag()->toArray()), 400);
-                }
-                else
-                {  
-                $current_password = Auth::User()->password;           
-                if(Hash::check($request_data['current_password'], $current_password))
-                {           
-                    $user_id = Auth::User()->id;                       
-                    $obj_user = User::find($user_id);
-                    $obj_user->password = Hash::make($request_data['password']);;
-                    $obj_user->save(); 
-                    return "ok";
-                }
-                else
-                {           
-                    $error = array('current_password' => 'Please enter correct current password');
-                    return response()->json(array('error' => $error), 400);   
-                }
-                }        
-            }
-            else
-            {
-                return redirect()->to('/');
-            }    
-        }
-        
-        
-        public function admin_credential_rules(array $data)
-        {
-            $messages = [
-                'current_password.required' => 'Please enter current password',
-                'password.required' => 'Please enter password',
-            ];
 
-            $validator = Validator::make($data, [
-                'current_password' => 'required',
-                'password' => 'required|same:password',
-                'password_confirmation' => 'required|same:password',     
-            ], $messages);
+    public function changePassword(Request $request)
+    {
+        $validatedData = $request->validate([
+            'current_password' => 'required|string',
+            'password' => 'required|string|confirmed',
+            'password_confirmation' => 'required|string',
+        ]);
 
-            return $validator;
-            }  
+        $user = auth()->user();
+        $user->password = Hash::make($validatedData['password']);
+        $user->save();
 
-                public function logout()
-                {
-                    auth()->user()->token()->revoke();
+        return response(['info' => ['Auth' => 'Password changed successfully!']]);
+    }
 
-                    return response(['info' => ['Logout' => '<h2>Goodbye...</h2>']], 200);
-                }
-        }
+    public function logout()
+    {
+        auth()->user()->token()->revoke();
+
+        return response(['info' => ['Logout' => 'Goodbye...']], 200);
+    }
+}
