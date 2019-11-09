@@ -107,18 +107,19 @@ export default new Vuex.Store({
                     sameSite: "strict"
                 });
 
-                if (state.user.open_register) {
-                    state.cashRegister = state.user.open_register.cash_register;
-                    state.store = state.user.open_register.cash_register.store;
+                // retrieve automatically opened cash register
+                // if (state.user.open_register) {
+                //     state.cashRegister = state.user.open_register.cash_register;
+                //     state.store = state.user.open_register.cash_register.store;
 
-                    Cookies.set("cash_register", state.cashRegister, {
-                        sameSite: "strict"
-                    });
+                //     Cookies.set("cash_register", state.cashRegister, {
+                //         sameSite: "strict"
+                //     });
 
-                    Cookies.set("store", state.store, {
-                        sameSite: "strict"
-                    });
-                }
+                //     Cookies.set("store", state.store, {
+                //         sameSite: "strict"
+                //     });
+                // }
             } else {
                 state.user = null;
                 Cookies.remove("user");
