@@ -13,7 +13,7 @@ class CategorySeeder extends Seeder
     {
         factory(App\Category::class, 10)->make()->each(function ($category) {
             $category->save();
-            $products = App\Product::allData()->random(10);
+            $products = App\Product::all()->random(10);
             $category->products()->attach($products);
         });
     }

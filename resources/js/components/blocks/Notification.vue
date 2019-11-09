@@ -1,7 +1,7 @@
 <template>
 	<v-snackbar v-model="show" :color="type" :type="type" top absolute class="d-flex align-center">
 		<v-icon v-if="show" large>{{ icon() }}</v-icon>
-		<span class="pl-3" v-html="displayErrors()"></span>
+		<span class="pl-3" v-html="displayMessages()"></span>
 
 		<div class="flex-grow-1"></div>
 	</v-snackbar>
@@ -52,21 +52,25 @@ export default {
 		icon() {
 			return _.find(this.icons, { name: this.type }).icon;
 		},
-		displayErrors() {
+		displayMessages() {
 			if (typeof this.message === "object") {
-				let errors = "";
+				let msg = "";
 
 				for (const [key, value] of Object.entries(this.message)) {
-					errors +=
-						"<strong>" +
-						_.capitalize(key) +
-						"</strong>" +
-						": " +
-						value +
-						"<br>";
+					if (this.type === 'error') {
+						msg +=
+							"<strong>" +
+							_.capitalize(key) +
+							"</strong>" +
+							": " +
+							value +
+							"<br>";
+					} else {
+						msg += value + "<br>";
+					}
 				}
 
-				return errors;
+				return msg;
 			} else {
 				return _.capitalize(this.message);
 			}

@@ -18,10 +18,6 @@
 				<v-btn @click="close" :loading="loading">Close Cash Register</v-btn>
 			</v-col>
 		</v-row>
-		<!-- <div class="d-flex align-center mt-5">
-			<div class="flex-grow-1"></div>
-			<v-btn @click="close" :loading="loading">Close Cash Register</v-btn>
-		</div>-->
 	</div>
 </template>
 <script>
@@ -37,11 +33,9 @@ export default {
 	},
 	computed: {
 		store() {
-			console.log(this.$store.state.store);
 			return this.$store.state.store || false;
 		},
 		cashRegister() {
-			console.log(this.$store.state.cashRegister);
 			return this.$store.state.cashRegister || false;
 		}
 	},
@@ -56,20 +50,14 @@ export default {
 				}
 			};
 			this.closeCashRegister(payload)
-				.then(() => {
+				.then(() => {					
 					this.$emit("submit");
 				})
 				.finally(() => {
 					this.loading = false;
 				});
 		},
-		...mapActions({
-			getAll: "getAll",
-			getOne: "getOne",
-			create: "create",
-			closeCashRegister: "closeCashRegister",
-			delete: "delete"
-		})
+		...mapActions(["closeCashRegister"])
 	},
 	beforeDestroy() {
 		this.$off("submit");

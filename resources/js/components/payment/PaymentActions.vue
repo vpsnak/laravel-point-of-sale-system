@@ -8,6 +8,7 @@
 				<v-btn-toggle v-model="paymentType" mandatory @change="clearState">
 					<v-btn
 						v-for="(paymentType, index) in types"
+						v-if="(paymentType.type === 'house-account' && houseAccount) || paymentType.type !== 'house-account'"
 						:key="index"
 						:value="paymentType.type"
 						:disabled="loading || orderLoading"
@@ -118,6 +119,19 @@ export default {
 	},
 
 	computed: {
+		houseAccount() {
+			if (this.$store.state.cart.customer) {
+				if (this.$store.state.cart.customer.house_account_status && this.$store.state.cart.customer.house_account_number && this.$store.state.cart.customer.house_account_limit > 0) {
+					return true;
+				}
+			} else {
+				return false;
+			}
+			
+		},
+		houseAccountLimit() {
+			return parseFloat(this.$store.state.cart.customer.house_account_limit);
+		},
 		remainingAmount() {
 			if (parseFloat(this.$props.remaining) >= 0) {
 				this.amount = parseFloat(this.$props.remaining);
@@ -190,9 +204,12 @@ export default {
 		},
 		limits() {
 			if (this.paymentType !== "cash") {
-				if (
-					parseFloat(this.amount) > parseFloat(this.remainingAmount)
-				) {
+				if (this.paymentType === "house-account") {
+					if (parseFloat(this.amount) > this.houseAccountLimit) {
+						this.amount = this.houseAccountLimit
+					}
+				} 
+				if (parseFloat(this.amount) > parseFloat(this.remainingAmount)) {
 					this.amount = this.remainingAmount.toFixed(2);
 				}
 			} else {

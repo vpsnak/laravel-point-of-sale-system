@@ -3,6 +3,7 @@ import Vuex from "vuex";
 
 import "es6-promise/auto";
 import Cookies from "js-cookie";
+import router from "../plugins/router";
 
 //modules
 import topMenu from "./menu/topMenu";
@@ -196,6 +197,28 @@ export default new Vuex.Store({
                     });
             });
         },
+        changePassword(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(this.state.baseUrl + "auth/change-password", payload)
+                    .then(response => {
+                        let notification = {
+                            msg: response.data.info,
+                            type: "info"
+                        };
+                        context.commit("setNotification", notification);
+                        resolve(response.data);
+                    })
+                    .catch(error => {
+                        let notification = {
+                            msg: error.response.data.errors,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
+                        reject(error);
+                    });
+            });
+        },
         getAll(context, payload) {
             return new Promise((resolve, reject) => {
                 let page = payload.page ? "?page=" + payload.page : "";
@@ -363,6 +386,14 @@ export default new Vuex.Store({
                         payload.data
                     )
                     .then(() => {
+                        if (
+                            router.currentRoute.name === "sales" ||
+                            route.currentRoute.name === "orders"
+                        ) {
+                            router.push({
+                                name: "dashboard"
+                            });
+                        }
                         context.commit("setCashRegister", null);
                         context.commit("setStore", null);
                         context.commit("setNotification", {
@@ -386,8 +417,6 @@ export default new Vuex.Store({
 
         create(context, payload) {
             return new Promise((resolve, reject) => {
-                payload.data.created_by = this.state.user.id;
-
                 axios
                     .post(
                         this.state.baseUrl + payload.model + "/create",

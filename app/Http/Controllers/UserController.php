@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -12,7 +13,7 @@ class UserController extends Controller
 
     public function all()
     {
-        return response($this->model::all(), 200);
+        return response($this->model::paginate(), 200);
     }
 
     public function get($id)
@@ -20,10 +21,9 @@ class UserController extends Controller
         return response($this->model::find($id), 200);
     }
 
-    public function delete($id)
+    public function delete(User $user)
     {
-        $deleted = $this->model::where('id', $id)->delete();
-        return response($deleted, 200);
+        return response($user->delete(), 200);
     }
 
     public function login(Request $request)
@@ -35,10 +35,12 @@ class UserController extends Controller
 
         $http = new Client;
         $user = User::whereEmail($validatedData['username'])->first();
+
         if (!$user) {
-            return response(['errors' => [
-                'Login' => '<h3>Invalid credentials</h3>',
-            ]], 422);
+            if (Hash::verify($validatedData['password'], $user->password))
+                return response(['errors' => [
+                    'Login' => 'Invalid credentials',
+                ]], 422);
         } else {
             $role = ($user->roles)[0]['name'];
             $response = $http->post(config('app.url') . '/oauth/token', [
@@ -55,17 +57,32 @@ class UserController extends Controller
             $token = (json_decode((string) $response->getBody(), true))['access_token'];
 
             return response([
-                'info' => ['Login' => '<h2>Welcome ' . $user->name . '</h2>'],
+                'info' => ['Login' => 'Welcome <strong>' . $user->name . '</strong>'],
                 'user' => $user,
                 'token' => $token
             ], 200);
         }
     }
 
+    public function changePassword(Request $request)
+    {
+        $validatedData = $request->validate([
+            'current_password' => 'required|string',
+            'password' => 'required|string|confirmed',
+            'password_confirmation' => 'required|string',
+        ]);
+
+        $user = auth()->user();
+        $user->password = Hash::make($validatedData['password']);
+        $user->save();
+
+        return response(['info' => ['Auth' => 'Password changed successfully!']]);
+    }
+
     public function logout()
     {
         auth()->user()->token()->revoke();
 
-        return response(['info' => ['Logout' => '<h2>Goodbye...</h2>']], 200);
+        return response(['info' => ['Logout' => 'Goodbye...']], 200);
     }
 }
