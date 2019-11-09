@@ -235,7 +235,7 @@ export default {
 
 			this.getAll({
 				model: this.dataUrl,
-				page: e.page,
+				page: e ? e.page : this.currentPage,
 				dataTable: true
 			})
 				.then(response => {
@@ -294,6 +294,10 @@ export default {
 			this.showCreateDialog = false;
 			this.showEditDialog = false;
 			this.showViewDialog = false;
+
+			if (event) {
+				this.paginate();
+			}
 		},
 
 		...mapActions("datatable", {

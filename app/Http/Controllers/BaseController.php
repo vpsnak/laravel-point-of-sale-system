@@ -24,7 +24,7 @@ class BaseController extends Controller
             return response('Model not found', 404);
         }
 
-        return response($this->model::allData(), 200);
+        return response($this->model::paginate(), 200);
     }
 
     public function get($id)

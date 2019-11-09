@@ -108,14 +108,6 @@ export default {
 			if (!payload) {
 				this.fire(true);
 			} else {
-				if (payload.getRows && payload.model) {
-					this.getAll({
-						model: payload.model,
-						mutation: "datatable/setRows",
-						dataTable: true
-					});
-				}
-
 				if (payload.notification) {
 					this.$store.commit("setNotification", {
 						msg: payload.notification.msg,
@@ -125,8 +117,9 @@ export default {
 
 				if (payload.data) {
 					this.fire(payload.data);
+				} else {
+					this.fire(true);
 				}
-				this.fire(true);
 			}
 		},
 

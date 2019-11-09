@@ -46,10 +46,10 @@ foreach ($baseRoutes as $route => $controller) {
     Route::get("/$route/{id}", "$controller@get");
     Route::post("/$route/create", "$controller@create")->middleware('auth:api');
     Route::post("/$route/search", "$controller@search");
-    Route::delete("/$route/{id}", "$controller@delete")->middleware('auth:api');
+    Route::delete("/$route/{id}", "$controller@delete")->middleware('scope:admin');;
 }
 
-Route::get('/products/barcode/{id}', "{$baseRoutes['products']}@getBarcode");
+Route::get('/products/barcode/{id}', "{$baseRoutes['products']}@getBarcode")->middleware('scope:admin,cashier');
 
 Route::get('/carts/hold', "{$baseRoutes['carts']}@getHold")->middleware('auth:api');
 Route::get('/product-listing/categories', "CategoryController@productListingCategories")->middleware('auth:api');

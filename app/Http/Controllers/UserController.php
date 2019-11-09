@@ -12,7 +12,7 @@ class UserController extends Controller
 
     public function all()
     {
-        return response($this->model::all(), 200);
+        return response($this->model::paginate(), 200);
     }
 
     public function get($id)
@@ -20,10 +20,9 @@ class UserController extends Controller
         return response($this->model::find($id), 200);
     }
 
-    public function delete($id)
+    public function delete(User $user)
     {
-        $deleted = $this->model::where('id', $id)->delete();
-        return response($deleted, 200);
+        return response($user->delete(), 200);
     }
 
     public function login(Request $request)

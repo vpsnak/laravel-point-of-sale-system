@@ -39,7 +39,6 @@ class StoreController extends BaseController
             return response('Model not found', 404);
         }
 
-        return response($this->model::with(['cash_registers'])->get(), 200);
+        return response($this->model::with(['cash_registers'])->paginate(), 200);
     }
-
 }
