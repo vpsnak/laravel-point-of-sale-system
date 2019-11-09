@@ -116,6 +116,12 @@ export default {
 		},
 		clear() {
 			this.formFields = { ...this.defaultValues };
+
+			for (let index in this.formFields.stores) {
+				if (this.formFields.stores.hasOwnProperty(index)) {
+					this.formFields.stores[index].pivot.qty = null;
+				}
+			}
 		},
 		getAllCategories() {
 			this.loading = true;
