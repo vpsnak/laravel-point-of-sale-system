@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Coupon;
+use App\Customer;
 use App\Giftcard;
 use App\Helper\Price;
 use App\Order;
@@ -31,7 +32,9 @@ class PaymentController extends BaseController
             'card.exp_date' => 'nullable|required_if:payment_type,card|after_or_equal:today',
 
             // coupon/giftcard validation
-            'code' => 'required_if:payment_type,coupon|required_if:payment_type,giftcard'
+            'code' => 'required_if:payment_type,coupon|required_if:payment_type,giftcard',
+
+            'house_account_number' => 'required_if:payment_type,house-account'
         ]);
 
         $validatedData['created_by'] = auth()->user()->id;
@@ -65,9 +68,11 @@ class PaymentController extends BaseController
                     $payment->status = 'failed';
                     $payment->save();
 
-                    return response(['errors' => [
-                        "Error $paymentResponse->errorCode" => ["$paymentResponse->errorName"]
-                    ]], 500);
+                    return response([
+                        'errors' => [
+                            "Error $paymentResponse->errorCode" => ["$paymentResponse->errorName"]
+                        ]
+                    ], 500);
                 }
 
                 break;
@@ -79,41 +84,44 @@ class PaymentController extends BaseController
                     $payment->status = 'failed';
                     $payment->save();
 
-                    return response(['errors' => [
-                        'Coupon' => ['Coupon does not exist']
-                    ]], 404);
+                    return response([
+                        'errors' => [
+                            'Coupon' => ['Coupon does not exist']
+                        ]
+                    ], 404);
                 }
 
                 if (date('Y-m-d H:i:s') > $coupon->to || $coupon->uses === 0) {
                     $payment->status = 'failed';
                     $payment->save();
 
-                    return response(['errors' => [
-                        'Coupon' => ['This coupon has expired']
-                    ]], 403);
+                    return response([
+                        'errors' => [
+                            'Coupon' => ['This coupon has expired']
+                        ]
+                    ], 403);
                 } else {
                     if ($coupon->from > date('Y-m-d H:i:s')) {
                         $payment->status = 'failed';
                         $payment->save();
 
-                        return response(['errors' => [
-                            'Coupon' => ['Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))]
-                        ]], 403);
+                        return response([
+                            'errors' => [
+                                'Coupon' => ['Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))]
+                            ]
+                        ], 403);
                     }
                 }
 
                 $order = Order::findOrFail($validatedData['order_id']);
 
                 $payment->amount = $order->subtotal - Price::calculateDiscount(
-                    $order->subtotal,
-                    $coupon->discount->type,
-                    $coupon->discount->amount
-                );
+                        $order->subtotal,
+                        $coupon->discount->type,
+                        $coupon->discount->amount
+                    );
                 $payment->save();
-
-                $coupon->uses--;
-                $coupon->save();
-
+                $coupon->decrement('uses');
                 break;
 
             case 'giftcard':
@@ -123,38 +131,67 @@ class PaymentController extends BaseController
                     $payment->status = 'failed';
                     $payment->save();
 
-                    return response(['errors' => [
-                        'Gift card' => ['This gift card is inactive']
-                    ]], 403);
+                    return response([
+                        'errors' => [
+                            'Gift card' => ['This gift card is inactive']
+                        ]
+                    ], 403);
                 } else {
                     if ($giftcard->amount < $validatedData['amount']) {
                         $payment->status = 'failed';
                         $payment->save();
 
-                        return response(['errors' => [
-                            'Gift card' => ['This gift card has insufficient balance to complete the transaction']
-                        ]], 403);
+                        return response([
+                            'errors' => [
+                                'Gift card' => ['This gift card has insufficient balance to complete the transaction']
+                            ]
+                        ], 403);
                     } else {
                         // subtract the payed amount from giftcard
-                        $giftcard->amount -= $validatedData['amount'];
-                        $giftcard->save();
+                        $giftcard->decrement('amount', $validatedData['amount']);
                     }
                 }
                 break;
 
             case 'pos-terminal':
-                $posTerminalController = new PosTerminalController($payment, array_key_exists('test_case', $validatedData) ? $validatedData['test_case'] : null);
+                $posTerminalController = new PosTerminalController($payment,
+                    array_key_exists('test_case', $validatedData) ? $validatedData['test_case'] : null);
                 $paymentResponse = $posTerminalController->posPayment($validatedData['amount']);
 
                 if (array_key_exists('errors', $paymentResponse)) {
                     $payment->status = 'failed';
                     $payment->save();
 
-                    return response(['errors' => [
-                        'POS Terminal' => [$paymentResponse['errors']]
-                    ]], 403);
+                    return response([
+                        'errors' => [
+                            'POS Terminal' => [$paymentResponse['errors']]
+                        ]
+                    ], 403);
                 }
 
+                break;
+            case 'house-account':
+                $customer = Customer::getFirst('house_account_number', $validatedData['house_account_number']);
+                if (empty($customer)) {
+                    $payment->status = 'failed';
+                    $payment->save();
+                    return response([
+                        'errors' => [
+                            'House Account' => ['House account does not exist.']
+                        ]
+                    ], 403);
+                }
+                if ($validatedData['amount'] > $customer->house_account_limit) {
+                    $payment->status = 'failed';
+                    $payment->save();
+                    return response([
+                        'errors' => [
+                            'House Account' => ['House account has insufficient balance.' . $customer->house_account_limit]
+                        ]
+                    ], 403);
+                }
+                $customer->decrement('house_account_limit', $validatedData['amount']);
+                $payment->code = $validatedData['house_account_number'];
                 break;
         }
 
