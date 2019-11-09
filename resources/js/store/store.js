@@ -385,7 +385,7 @@ export default new Vuex.Store({
                         this.state.baseUrl + "cash-register-logs/close",
                         payload.data
                     )
-                    .then(() => {
+                    .then(response => {
                         if (
                             router.currentRoute.name === "sales" ||
                             router.currentRoute.name === "orders"
@@ -394,12 +394,15 @@ export default new Vuex.Store({
                                 name: "dashboard"
                             });
                         }
+
+                        let notification = {
+                            msg: response.data.info,
+                            type: "success"
+                        };
+
                         context.commit("setCashRegister", null);
                         context.commit("setStore", null);
-                        context.commit("setNotification", {
-                            msg: "Cash register closed successfully",
-                            type: "success"
-                        });
+                        context.commit("setNotification", notification);
 
                         resolve(true);
                     })

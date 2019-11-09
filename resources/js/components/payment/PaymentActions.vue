@@ -8,10 +8,9 @@
 				<v-btn-toggle v-model="paymentType" mandatory @change="clearState">
 					<v-btn
 						v-for="(paymentType, index) in types"
-						v-if="(paymentType.type === 'house-account' && houseAccount) || paymentType.type !== 'house-account'"
+						:disabled="(paymentType.type === 'house-account' && houseAccount) || loading || orderLoading"
 						:key="index"
 						:value="paymentType.type"
-						:disabled="loading || orderLoading"
 					>
 						<v-icon class="pr-2">{{ paymentType.icon }}</v-icon>
 						{{ paymentType.name }}
@@ -119,15 +118,25 @@ export default {
 	},
 
 	computed: {
+		houseAccountNumber() {
+			if (this.houseAccount) {
+				return this.$store.state.cart.customer.house_account_number;
+			} else {
+				return false;
+			}
+		},
 		houseAccount() {
 			if (this.$store.state.cart.customer) {
-				if (this.$store.state.cart.customer.house_account_status && this.$store.state.cart.customer.house_account_number && this.$store.state.cart.customer.house_account_limit > 0) {
+				if (
+					this.$store.state.cart.customer.house_account_status &&
+					this.$store.state.cart.customer.house_account_number &&
+					this.$store.state.cart.customer.house_account_limit > 0
+				) {
 					return true;
 				}
 			} else {
 				return false;
 			}
-			
 		},
 		houseAccountLimit() {
 			return parseFloat(this.$store.state.cart.customer.house_account_limit);
@@ -177,6 +186,7 @@ export default {
 					break;
 				case "house-account":
 					payload = {
+						house_account_number: this.houseAccountNumber,
 						paymentAmount: this.paymentAmount,
 						paymentType: this.paymentType
 					};
@@ -206,9 +216,9 @@ export default {
 			if (this.paymentType !== "cash") {
 				if (this.paymentType === "house-account") {
 					if (parseFloat(this.amount) > this.houseAccountLimit) {
-						this.amount = this.houseAccountLimit
+						this.amount = this.houseAccountLimit;
 					}
-				} 
+				}
 				if (parseFloat(this.amount) > parseFloat(this.remainingAmount)) {
 					this.amount = this.remainingAmount.toFixed(2);
 				}
