@@ -81,7 +81,7 @@ class UserController extends Controller
 
     public function logout()
     {
-        auth()->user()->token()->revoke();
+        auth()->user()->token()->delete();
 
         return response(['info' => ['Logout' => 'Goodbye...']], 200);
     }

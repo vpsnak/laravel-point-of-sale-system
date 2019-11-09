@@ -44,41 +44,41 @@ Route::get('categories/{category}/products', "CategoryController@productsByCateg
 foreach ($baseRoutes as $route => $controller) {
     Route::get("/$route", "$controller@all");
     Route::get("/$route/{id}", "$controller@get");
-    Route::post("/$route/create", "$controller@create")->middleware('auth:api');
+    Route::post("/$route/create", "$controller@create")->middleware('scope:admin,cashier');
     Route::post("/$route/search", "$controller@search");
     Route::delete("/$route/{id}", "$controller@delete")->middleware('scope:admin');;
 }
 
 Route::get('/products/barcode/{id}', "{$baseRoutes['products']}@getBarcode")->middleware('scope:admin,cashier');
 
-Route::get('/carts/hold', "{$baseRoutes['carts']}@getHold")->middleware('auth:api');
-Route::get('/product-listing/categories', "CategoryController@productListingCategories")->middleware('auth:api');
+Route::get('/carts/hold', "{$baseRoutes['carts']}@getHold")->middleware('scope:admin,cashier');
+Route::get('/product-listing/categories', "CategoryController@productListingCategories")->middleware('scope:admin,cashier');
 
-Route::post('/cash-register-logs/open', "{$baseRoutes['cash-register-logs']}@open")->middleware('auth:api');
-Route::post('/cash-register-logs/close', "{$baseRoutes['cash-register-logs']}@close")->middleware('auth:api');
+Route::post('/cash-register-logs/open', "{$baseRoutes['cash-register-logs']}@open")->middleware('scope:admin,cashier');
+Route::post('/cash-register-logs/close', "{$baseRoutes['cash-register-logs']}@close")->middleware('scope:admin,cashier');
 
-Route::post('/shipping/timeslot', "TimeslotController@getTimeslots")->middleware('auth:api');
+Route::post('/shipping/timeslot', "TimeslotController@getTimeslots")->middleware('scope:admin,cashier');
 
 Route::get('/magento/authorize', 'Auth\MagentoOAuthController@authorizeMagento');
 
 // e-mail
-Route::get('/mail-receipt', 'MailReceiptController@template')->middleware('auth:api');
-Route::post('/mail-receipt/{order}', 'MailReceiptController@send');
+Route::get('/mail-receipt', 'MailReceiptController@template');
+Route::post('/mail-receipt/{order}', 'MailReceiptController@send')->middleware('scope:admin,cashier');
 
 // guest email list
 Route::get('/guest-email', 'GuestEmailListController@all')->middleware('scope:admin,cashier');
 Route::post('/guest-email/create', 'GuestEmailListController@create')->middleware('scope:admin,cashier');
 
 // elavon sdk certification
-Route::post('/elavon/sdk', 'ElavonSdkPaymentController@index')->middleware('auth:api');
-Route::post('/elavon/sdk/lookup', 'ElavonSdkPaymentController@lookup')->middleware('auth:api');
-Route::get('/elavon/sdk/logs', 'ElavonSdkPaymentController@getLogs')->middleware('auth:api');
-Route::get('/elavon/sdk/logs/{test_case}', 'ElavonSdkPaymentController@getLogs')->middleware('auth:api');
-Route::delete('/elavon/sdk/logs/delete', 'ElavonSdkPaymentController@deleteAll')->middleware('auth:api');
+Route::post('/elavon/sdk', 'ElavonSdkPaymentController@index')->middleware('scope:admin,cashier');
+Route::post('/elavon/sdk/lookup', 'ElavonSdkPaymentController@lookup')->middleware('scope:admin,cashier');
+Route::get('/elavon/sdk/logs', 'ElavonSdkPaymentController@getLogs')->middleware('scope:admin,cashier');
+Route::get('/elavon/sdk/logs/{test_case}', 'ElavonSdkPaymentController@getLogs')->middleware('scope:admin,cashier');
+Route::delete('/elavon/sdk/logs/delete', 'ElavonSdkPaymentController@deleteAll')->middleware('scope:admin,cashier');
 
 // elavon api certification
-Route::post('/elavon/api', 'ElavonApiPaymentController@index')->middleware('auth:api');
-Route::post('/elavon/api/lookup', 'ElavonApiPaymentController@lookup')->middleware('auth:api');
-Route::get('/elavon/api/logs', 'ElavonApiPaymentController@getLogs')->middleware('auth:api');
-Route::get('/elavon/api/logs/{test_case}', 'ElavonApiPaymentController@getLogs')->middleware('auth:api');
-Route::delete('/elavon/api/logs/delete', 'ElavonApiPaymentController@deleteAll')->middleware('auth:api');
+Route::post('/elavon/api', 'ElavonApiPaymentController@index')->middleware('scope:admin,cashier');
+Route::post('/elavon/api/lookup', 'ElavonApiPaymentController@lookup')->middleware('scope:admin,cashier');
+Route::get('/elavon/api/logs', 'ElavonApiPaymentController@getLogs')->middleware('scope:admin,cashier');
+Route::get('/elavon/api/logs/{test_case}', 'ElavonApiPaymentController@getLogs')->middleware('scope:admin,cashier');
+Route::delete('/elavon/api/logs/delete', 'ElavonApiPaymentController@deleteAll')->middleware('scope:admin,cashier');

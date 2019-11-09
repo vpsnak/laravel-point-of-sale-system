@@ -118,10 +118,10 @@ export default {
 				switch (_.lowerCase(type)) {
 					case "flat":
 						return parseFloat(price) - parseFloat(amount);
-						break;
 					case "percentage":
 						return parseFloat(price) - (parseFloat(price) * amount) / 100;
-						break;
+					default: 
+						return price;
 				}
 			}
 			return price;

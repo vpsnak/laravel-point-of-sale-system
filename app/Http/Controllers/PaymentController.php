@@ -21,7 +21,6 @@ class PaymentController extends BaseController
             'amount' => 'nullable|required_unless:payment_type,coupon|numeric|min:0.01',
             'order_id' => 'required|exists:orders,id',
             'cash_register_id' => 'required|exists:cash_registers,id',
-            'created_by' => 'required|exists:users,id',
 
             // test case for API/SDK
             'test_case' => 'sometimes|string',
@@ -34,6 +33,8 @@ class PaymentController extends BaseController
             // coupon/giftcard validation
             'code' => 'required_if:payment_type,coupon|required_if:payment_type,giftcard'
         ]);
+
+        $validatedData['created_by'] = auth()->user()->id;
 
         $newPayment = $validatedData;
         $newPayment['payment_type'] = PaymentType::getFirst('type', $validatedData['payment_type'])->id;

@@ -20,7 +20,7 @@
 				v-model="amount"
 				type="number"
 				label="Amount"
-				min="1"
+				:min="0"
 				:disabled="!editable"
 			></v-text-field>
 		</v-col>
