@@ -6,7 +6,6 @@ use App\CashRegister;
 use App\CashRegisterLogs;
 use App\CashRegisterReport;
 use App\Order;
-use App\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -57,48 +56,83 @@ class CashRegisterReportController extends BaseController
     public static function generateReport($id)
     {
         $cash_register_log = CashRegisterLogs::findOrFail($id);
-        $payments = Payment::where('cash_register_id', '=', $cash_register_log->cash_register->id)
-            ->whereStatus('approved')
-            ->where('created_at', '>=', $cash_register_log->opening_time)
+        $orders = Order::where('updated_at', '>=', $cash_register_log->opening_time)
             ->where('updated_at', '<', $cash_register_log->closing_time ?? Carbon::now()->toDateTimeString())
             ->get();
 
-        $orders = Order::where('status', '!=', 'canceled')
-            ->where('created_at', '>=', $cash_register_log->opening_time)
-            ->where('updated_at', '<', $cash_register_log->closing_time ?? Carbon::now()->toDateTimeString())
-            ->get();
-
-        $cash = $payments->where('payment_type', 2);
-        $gift_card = $payments->where('payment_type', 6);
-        $credit_card = $payments->where('payment_type', 3);
-        $pos_terminal = $payments->where('payment_type', 1);
         $canceled_orders = $orders->where('status', 'canceled');
         $complete_orders = $orders->where('status', 'complete');
+        $cash = 0;
+        $cash_tax = 0;
+        $gift_card = 0;
+        $gift_card_tax = 0;
+        $house_account = 0;
+        $house_account_tax = 0;
+        $credit_card = 0;
+        $credit_card_tax = 0;
+        $pos_terminal = 0;
+        $pos_terminal_tax = 0;
+        foreach ($complete_orders as $order) {
+            $payments = $order->payments()->where('cash_register_id', '=', $cash_register_log->cash_register->id)
+                ->whereStatus('approved')
+                ->where('created_at', '>=', $cash_register_log->opening_time)
+                ->where('updated_at', '<', $cash_register_log->closing_time ?? Carbon::now()->toDateTimeString())
+                ->get();
+
+            $tax = $order->tax / 100;
+
+            if ($order->total_paid > $order->total) {
+                $amount = $order->total_paid - $order->total;
+                $cash += -$amount;
+                $cash_tax += -$amount * $tax;
+            }
+
+            foreach ($payments as $payment) {
+                $amount = $payment->amount;
+                if ($payment->refunded == 1) {
+                    $amount = 0;
+                }
+                switch ($payment->paymentType->type) {
+                    case 'cash':
+                        $cash += $amount;
+                        $cash_tax += $amount * $tax;
+                        break;
+                    case 'card':
+                        $credit_card += $amount;
+                        $credit_card_tax += $amount * $tax;
+                        break;
+                    case 'pos-terminal':
+                        $pos_terminal += $amount;
+                        $pos_terminal_tax += $amount * $tax;
+                        break;
+                    case 'house-account':
+                        $house_account += $amount;
+                        $house_account_tax += $amount * $tax;
+                        break;
+                    case 'giftcard':
+                        $gift_card += $amount;
+                        $gift_card_tax += $amount * $tax;
+                        break;
+                }
+            }
+        }
         return [
             'opening_amount' => $cash_register_log->opening_amount,
-            'closing_amount' => $cash_register_log->closing_amount,
-            'subtotal' => $orders->sum('subtotal'),
-            'tax' => $orders->sum(function ($row) {
+            'closing_amount' => $cash_register_log->closing_amount ?? 0,
+            'subtotal' => $complete_orders->sum('subtotal'),
+            'tax' => $complete_orders->sum(function ($row) {
                 return ($row->tax / 100) * $row->subtotal;
             }),
-            'total' => $orders->sum('total'),
-            'cash_total' => $cash->sum('amount') + $cash_register_log->opening_amount,
-            'gift_card_total' => $gift_card->sum('amount'),
-            'credit_card_total' => $credit_card->sum('amount'),
-            'pos_terminal_total' => $pos_terminal->sum('amount'),
-            'change_total' => round($orders->sum('total_paid') - $orders->sum('total'), 2),
-            'cash_tax' => round($cash->sum(function ($row) {
-                return ($row->order->tax / 100) * $row->amount;
-            }), 2),
-            'gift_card_tax' => round($gift_card->sum(function ($row) {
-                return ($row->order->tax / 100) * $row->amount;
-            }), 2),
-            'credit_card_tax' => round($credit_card->sum(function ($row) {
-                return ($row->order->tax / 100) * $row->amount;
-            }), 2),
-            'pos_terminal_tax' => round($pos_terminal->sum(function ($row) {
-                return ($row->order->tax / 100) * $row->amount;
-            }), 2),
+            'total' => $complete_orders->sum('total'),
+            'cash_total' => $cash + $cash_register_log->opening_amount,
+            'gift_card_total' => $gift_card,
+            'credit_card_total' => $credit_card,
+            'pos_terminal_total' => $pos_terminal,
+            'change_total' => round($complete_orders->sum('total_paid') - $complete_orders->sum('total'), 2),
+            'cash_tax' => $cash_tax,
+            'gift_card_tax' => $gift_card_tax,
+            'credit_card_tax' => $credit_card_tax,
+            'pos_terminal_tax' => $pos_terminal_tax,
             'order_count' => $orders->count(),
             'order_product_count' => $orders->sum(function ($row) {
                 return $row->items->count();
