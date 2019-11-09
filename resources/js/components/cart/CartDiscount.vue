@@ -49,6 +49,7 @@ export default {
 
 				if (value === "None") {
 					this.amount = 0;
+				} else {
 				}
 			}
 		},

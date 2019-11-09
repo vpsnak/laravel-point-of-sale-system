@@ -32,7 +32,7 @@ export default {
         discountTypes: [
             {
                 label: "None",
-                value: "None"
+                value: null
             },
             {
                 label: "Flat",

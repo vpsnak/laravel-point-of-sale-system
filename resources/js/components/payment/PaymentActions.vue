@@ -8,10 +8,9 @@
 				<v-btn-toggle v-model="paymentType" mandatory @change="clearState">
 					<v-btn
 						v-for="(paymentType, index) in types"
-						v-if="(paymentType.type === 'house-account' && houseAccount) || paymentType.type !== 'house-account'"
+						:disabled="(paymentType.type === 'house-account' && houseAccount) || loading || orderLoading"
 						:key="index"
 						:value="paymentType.type"
-						:disabled="loading || orderLoading"
 					>
 						<v-icon class="pr-2">{{ paymentType.icon }}</v-icon>
 						{{ paymentType.name }}
