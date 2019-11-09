@@ -120,12 +120,17 @@ export default {
 
 	computed: {
 		houseAccount() {
-			if (this.$store.state.cart.customer && this.$store.state.cart.customer.house_account_status) {
-				return true;
+			if (this.$store.state.cart.customer) {
+				if (this.$store.state.cart.customer.house_account_status && this.$store.state.cart.customer.house_account_number && this.$store.state.cart.customer.house_account_limit > 0) {
+					return true;
+				}
 			} else {
 				return false;
 			}
 			
+		},
+		houseAccountLimit() {
+			return parseFloat(this.$store.state.cart.customer.house_account_limit);
 		},
 		remainingAmount() {
 			if (parseFloat(this.$props.remaining) >= 0) {
@@ -199,6 +204,11 @@ export default {
 		},
 		limits() {
 			if (this.paymentType !== "cash") {
+				if (this.paymentType === "house-account") {
+					if (parseFloat(this.amount) > this.houseAccountLimit) {
+						this.amount = this.houseAccountLimit
+					}
+				} 
 				if (parseFloat(this.amount) > parseFloat(this.remainingAmount)) {
 					this.amount = this.remainingAmount.toFixed(2);
 				}
