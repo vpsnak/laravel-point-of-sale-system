@@ -15,7 +15,7 @@ class CreateCashRegisterLogsTable extends Migration
     {
         Schema::create('cash_register_logs', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('cash_register_id');
             $table->double('opening_amount')->nullable();
             $table->double('closing_amount')->nullable();

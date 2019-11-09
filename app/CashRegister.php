@@ -26,7 +26,15 @@ class CashRegister extends BaseModel
 
     public function getIsOpenAttribute()
     {
-        return $this->hasMany(CashRegisterLogs::class)->whereStatus(1)->count() > 0;
+        if (!empty($this->getOpenLog())) {
+            return true;
+        }
+        return false;
+    }
+
+    public function getOpenLog()
+    {
+        return $this->hasMany(CashRegisterLogs::class)->whereStatus(1)->first();
     }
 
     public function getPaymentsAttribute()

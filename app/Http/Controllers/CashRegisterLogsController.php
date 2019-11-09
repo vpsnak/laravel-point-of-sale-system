@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\CashRegister;
 use App\CashRegisterLogs;
-use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -51,39 +51,85 @@ class CashRegisterLogsController extends BaseController
         $validatedData['status'] = 0;
         $validatedData['closing_time'] = Carbon::now();
 
-        auth()->user()->open_register()->update($validatedData);
+        $log = auth()->user()->open_register()->update($validatedData);
         CashRegisterReportController::generateReportByCashRegisterId($validatedData['cash_register_id']);
 
-        return response(['info' => ['Cash Register' => 'Cash register closed successfully!']], 200);
+        return response($log, 200);
     }
 
     public function open(Request $request)
     {
         $validatedData = $request->validate([
             'cash_register_id' => 'required|exists:cash_registers,id',
-            'opening_amount' => 'required|numeric',
-            // 'opened_by' => 'required|exists:users,id',
+            'opening_amount' => 'nullable|numeric',
         ]);
 
-        $validatedData['user_id'] = auth()->user()->id;
-        $validatedData['opened_by'] = auth()->user()->id;
-        $validatedData['status'] = 1;
-        $validatedData['opening_time'] = Carbon::now();
-        if (!empty($this->getAlreadyOpenedRegister($validatedData['cash_register_id']))) {
-            return response(['errors' => ['Cash register' => 'The selected cash register is already open']], 422);
+        $user = auth()->user();
+//        @TODO refactor
+        if (empty($user)) {
+            return response('Unauthorized!', 401);
         }
 
-        $user = User::find($validatedData['user_id']);
-        if (!empty($user->open_register)) {
-            return response(['errors' => ['Cash register' => 'You already have an open cash register']], 422);
-        }
+        $cash_register = CashRegister::getOne($validatedData['cash_register_id']);
+        if ($cash_register->is_open) {
+            $validatedData['user_id'] = $user->id;
+            return $this->handleOpenRegister($cash_register->getOpenLog());
+        } else {
+            $validatedData['user_id'] = $user->id;
+            $validatedData['opened_by'] = $user->id;
+            $validatedData['status'] = 1;
+            $validatedData['opening_time'] = Carbon::now();
 
-        return response(['info' => 'Cash register opened successfully', 'cashRegister' => $this->model::store($validatedData)], 201);
+            return response([
+                'info' => 'Cash register opened successfully',
+                'cashRegister' => $this->model::store($validatedData)
+            ], 201);
+        }
     }
 
-    public function getAlreadyOpenedRegister($cash_register_id)
+    private function handleOpenRegister(CashRegisterLogs $cash_register_log)
     {
-        return CashRegisterLogs::whereStatus(1)
-            ->whereCashRegisterId($cash_register_id)->first();
+        // an other user is online on the requested register
+        if (empty($cash_register_log->user_id)) {
+            return response([
+                'error' => 'An other user is using this register atm',
+                'cashRegister' => $cash_register_log
+            ], 400);
+        }
+
+        $user = auth()->user();
+        // user isn't assigned to a register
+        if (empty($user->open_register)) {
+            $cash_register_log->user_id = $user->id;
+            $cash_register_log->save();
+            return response([
+                'info' => 'User assigned to this cash register',
+                'cashRegister' => $cash_register_log
+            ], 200);
+        }
+
+        // if user already have open register and its the same as this one return it
+        if ($user->open_register->id == $cash_register_log->id) {
+            return response([
+                'info' => 'User is already assigned to this cash register',
+                'cashRegister' => $user->open_register
+            ], 200);
+        }
+
+        // user now have already an open register so we remove him
+        // so kick remove current user from the previous register to open this one if needed
+        if ($user->open_register->user_id == $user->id) {
+            $user->open_register->user_id = null;
+            $user->open_register->save();
+        }
+
+        // open cash requested cash register
+        $cash_register_log->user_id = $user->id;
+        $cash_register_log->save();
+
+        return response([
+            'info' => 'User cash register changed',
+            'cashRegister' => $cash_register_log
+        ], 200);
     }
 }
