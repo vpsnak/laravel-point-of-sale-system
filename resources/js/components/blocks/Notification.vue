@@ -66,12 +66,10 @@ export default {
 							value +
 							"<br>";
 					} else {
-						msg +=
-							value +
-							"<br>";
+						msg += value + "<br>";
 					}
 				}
-				
+
 				return msg;
 			} else {
 				return _.capitalize(this.message);

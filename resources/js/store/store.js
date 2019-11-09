@@ -3,6 +3,7 @@ import Vuex from "vuex";
 
 import "es6-promise/auto";
 import Cookies from "js-cookie";
+import router from "../plugins/router";
 
 //modules
 import topMenu from "./menu/topMenu";
@@ -385,6 +386,14 @@ export default new Vuex.Store({
                         payload.data
                     )
                     .then(() => {
+                        if (
+                            router.currentRoute.name === "sales" ||
+                            route.currentRoute.name === "orders"
+                        ) {
+                            router.push({
+                                name: "dashboard"
+                            });
+                        }
                         context.commit("setCashRegister", null);
                         context.commit("setStore", null);
                         context.commit("setNotification", {
