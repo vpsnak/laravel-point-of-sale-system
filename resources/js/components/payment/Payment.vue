@@ -139,7 +139,6 @@ export default {
 
 		getPaymentTypes() {
 			this.getAll({ model: "payment-types" }).then(response => {
-				console.log(response);
 				this.paymentTypes = response;
 			});
 		},
@@ -151,9 +150,9 @@ export default {
 				model: "payments",
 				data: {
 					payment_type: event.paymentType,
-					amount: event.paymentAmount ? event.paymentAmount : null,
+					amount: event.paymentAmount || null,
 					order_id: this.$props.order_id,
-					cash_register_id: 1
+					cash_register_id: this.$store.state.cashRegister.id
 				}
 			};
 
@@ -168,6 +167,8 @@ export default {
 				case "giftcard":
 					payload.data["code"] = event.code;
 					break;
+				case "house-account":
+					payload.data["house_account_number"] = event.house_account_number;
 			}
 
 			this.create(payload)
@@ -178,13 +179,6 @@ export default {
 					let notification = {
 						msg: "Payment received",
 						type: "success"
-					};
-					this.setNotification(notification);
-				})
-				.catch(error => {
-					let notification = {
-						msg: error.response.data.message,
-						type: "error"
 					};
 					this.setNotification(notification);
 				})

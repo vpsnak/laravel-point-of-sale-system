@@ -57,8 +57,11 @@ export default {
 				return this.$props.model.discount_amount;
 			},
 			set(value) {
-				if (value || value === 0) {
+				if (value) {
 					this.$set(this.$props.model, "discount_amount", parseFloat(value));
+					this.$store.commit("cart/setDiscount", this.$props.model);
+				} else {
+					this.$set(this.$props.model, "discount_amount", null);
 					this.$store.commit("cart/setDiscount", this.$props.model);
 				}
 			}

@@ -116,10 +116,10 @@ class PaymentController extends BaseController
                 $order = Order::findOrFail($validatedData['order_id']);
 
                 $payment->amount = $order->subtotal - Price::calculateDiscount(
-                        $order->subtotal,
-                        $coupon->discount->type,
-                        $coupon->discount->amount
-                    );
+                    $order->subtotal,
+                    $coupon->discount->type,
+                    $coupon->discount->amount
+                );
                 $payment->save();
                 $coupon->decrement('uses');
                 break;
@@ -154,8 +154,10 @@ class PaymentController extends BaseController
                 break;
 
             case 'pos-terminal':
-                $posTerminalController = new PosTerminalController($payment,
-                    array_key_exists('test_case', $validatedData) ? $validatedData['test_case'] : null);
+                $posTerminalController = new PosTerminalController(
+                    $payment,
+                    array_key_exists('test_case', $validatedData) ? $validatedData['test_case'] : null
+                );
                 $paymentResponse = $posTerminalController->posPayment($validatedData['amount']);
 
                 if (array_key_exists('errors', $paymentResponse)) {
@@ -186,7 +188,7 @@ class PaymentController extends BaseController
                     $payment->save();
                     return response([
                         'errors' => [
-                            'House Account' => ['House account has insufficient balance.' . $customer->house_account_limit]
+                            'House Account' => ['House account has insufficient balance.<br>Balance available: $ ' . round($customer->house_account_limit, 2)]
                         ]
                     ], 403);
                 }

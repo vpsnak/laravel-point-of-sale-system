@@ -439,6 +439,7 @@ export default new Vuex.Store({
                             msg: error.response.data.errors,
                             type: "error"
                         };
+                        console.log(notification);
                         context.commit("setNotification", notification);
                         reject(error);
                     });
