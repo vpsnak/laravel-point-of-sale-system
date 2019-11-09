@@ -7,10 +7,10 @@
 			<div class="d-flex justify-space-evenly align-center">
 				<v-btn-toggle v-model="paymentType" mandatory @change="clearState">
 					<v-btn
-						v-for="(paymentType, index) in types"
-						:disabled="(paymentType.type === 'house-account' && houseAccount) || loading || orderLoading"
+						v-for="(paymentType, index) in paymentTypes"
 						:key="index"
 						:value="paymentType.type"
+						:disabled="loading || orderLoading"
 					>
 						<v-icon class="pr-2">{{ paymentType.icon }}</v-icon>
 						{{ paymentType.name }}
@@ -118,6 +118,15 @@ export default {
 	},
 
 	computed: {
+		paymentTypes() {
+			if (this.houseAccount) {
+				return this.$props.types;
+			} else {
+				return _.filter(this.$props.types, function(o) {
+					return o.type !== "house-account";
+				});
+			}
+		},
 		houseAccountNumber() {
 			if (this.houseAccount) {
 				return this.$store.state.cart.customer.house_account_number;
@@ -203,7 +212,6 @@ export default {
 						paymentAmount: this.paymentAmount,
 						paymentType: this.paymentType
 					};
-
 					break;
 				default:
 					break;
@@ -215,10 +223,17 @@ export default {
 		limits() {
 			if (this.paymentType !== "cash") {
 				if (this.paymentType === "house-account") {
-					if (parseFloat(this.amount) > this.houseAccountLimit) {
+					if (this.houseAccountLimit > parseFloat(this.remainingAmount)) {
+						this.amount = this.remainingAmount;
+					} else if (
+						parseFloat(this.amount) > parseFloat(this.houseAccountLimit)
+					) {
 						this.amount = this.houseAccountLimit;
 					}
+				} else {
+					this.amount = this.remainingAmount.toFixed(2);
 				}
+
 				if (parseFloat(this.amount) > parseFloat(this.remainingAmount)) {
 					this.amount = this.remainingAmount.toFixed(2);
 				}
@@ -229,12 +244,13 @@ export default {
 			}
 		},
 		clearState() {
-			this.amount = this.remainingAmount;
 			this.code = null;
 
 			this.card.number = null;
 			this.card.cvc = null;
 			this.card.exp_date = null;
+
+			this.limits();
 		},
 		sendPayment() {
 			this.orderLoading = true;
