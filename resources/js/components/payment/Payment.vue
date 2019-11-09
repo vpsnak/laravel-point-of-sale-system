@@ -182,9 +182,9 @@ export default {
 					};
 					this.setNotification(notification);
 
-					if (payload.payment_type === "house-account") {
+					if (payload.data.payment_type === "house-account") {
 						this.$store.state.cart.customer.house_account_limit -=
-							payload.amount;
+							payload.data.amount;
 					}
 				})
 				.finally(() => {
