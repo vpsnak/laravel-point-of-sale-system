@@ -188,7 +188,7 @@ class PaymentController extends BaseController
                     $payment->save();
                     return response([
                         'errors' => [
-                            'House Account' => ['House account has insufficient balance.<br>Balance available: ' . $customer->house_account_limit]
+                            'House Account' => ['House account has insufficient balance.<br>Balance available: $ ' . round($customer->house_account_limit, 2)]
                         ]
                     ], 403);
                 }
