@@ -24,7 +24,7 @@
 			v-on:input="enableOpeningAmount"
 		></v-select>
 		<v-text-field
-			v-if="cash_registers && cash_register_id && !cash_registers[cash_register_id - 1].is_open"
+			v-if="!cashRegisterIsopen"
 			:loading="loading"
 			:disabled="openingAmountDisabled"
 			v-model="opening_amount"
@@ -47,12 +47,7 @@
 			<div class="flex-grow-1"></div>
 			<v-btn @click="submit" :loading="loading">Open Cash Register</v-btn>
 		</div>-->
-		<v-alert
-			v-if="cash_registers && cash_register_id && cash_registers[cash_register_id - 1].is_open"
-			dense
-			outlined
-			type="warning"
-		>
+		<v-alert v-if="cashRegisterIsopen" dense outlined type="warning">
 			The cash register is
 			<strong>opened</strong> !
 		</v-alert>
@@ -70,7 +65,6 @@ export default {
 			storeDisabled: true,
 			cashRegisterDisabled: true,
 			openingAmountDisabled: true,
-			cash_register_is_open: false,
 			store_id: null,
 			cash_register_id: null,
 			opening_amount: null,
@@ -109,6 +103,16 @@ export default {
 		},
 		cashRegister() {
 			return this.$store.state.cashRegister;
+		},
+		cashRegisterIsopen() {
+			for (const cash_register of this.cash_registers) {
+				if (
+					cash_register.id == this.cash_register_id &&
+					cash_register.is_open
+				) {
+					return true;
+				}
+			}
 		}
 	},
 	methods: {
@@ -166,26 +170,14 @@ export default {
 				});
 		},
 		barcodeHandling(barcode) {
-			this.cash_register_is_open = false;
 			for (const cash_register of this.cash_registers) {
-				if (
-					cash_register.barcode == barcode &&
-					cash_register.is_open == false
-				) {
+				if (cash_register.barcode === barcode) {
 					this.cash_register_id = cash_register.id;
 					this.store_id = cash_register.store.id;
 					this.storeDisabled = true;
-					this.enableOpeningAmount();
-				} else if (
-					cash_register.barcode == barcode &&
-					cash_register.is_open == true
-				) {
-					this.cash_register_id = null;
-					this.store_id = null;
-					this.storeDisabled = false;
-					this.cash_register_is_open = true;
-					this.openingAmountDisabled = true;
-					this.opening_amount = null;
+					if (cash_register.is_open === false) {
+						this.enableOpeningAmount();
+					}
 				}
 			}
 		},
