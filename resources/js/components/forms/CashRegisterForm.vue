@@ -83,10 +83,13 @@ export default {
 			this.loading = true;
 			this.getAll({
 				model: "stores"
-			}).then(stores => {
-				this.stores = stores;
-				this.loading = false;
-			});
+			})
+				.then(response => {
+					this.stores = response;
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 		...mapActions({
 			getAll: "getAll",
