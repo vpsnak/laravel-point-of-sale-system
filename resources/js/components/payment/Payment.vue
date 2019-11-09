@@ -181,6 +181,11 @@ export default {
 						type: "success"
 					};
 					this.setNotification(notification);
+
+					if (payload.payment_type === "house-account") {
+						this.$store.state.cart.customer.house_account_limit -=
+							payload.amount;
+					}
 				})
 				.finally(() => {
 					this.paymentAmount = null;
