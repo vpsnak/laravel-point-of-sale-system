@@ -1,9 +1,6 @@
 <template>
 	<ValidationObserver v-slot="{ invalid }" ref="obs">
 		<v-form>
-			<div
-				class="text-center"
-			>Use the form below to change your current_password. Your current_password cannot be the same as your username.</div>
 			<ValidationProvider rules="required|min:8" v-slot="{ errors, valid }" name="Password">
 				<v-text-field
 					v-model="formFields.current_password"

@@ -5,7 +5,7 @@
 				<v-card class="elevation-12">
 					<v-form @submit.prevent="submit">
 						<v-toolbar flat>
-							<v-toolbar-title>Login form</v-toolbar-title>
+							<v-toolbar-title>Plantshed Sales Management - Login</v-toolbar-title>
 							<div class="flex-grow-1"></div>
 						</v-toolbar>
 						<v-card-text>
