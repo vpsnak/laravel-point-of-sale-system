@@ -255,9 +255,9 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                            payload.model +
-                            "/" +
-                            payload.data.id
+                        payload.model +
+                        "/" +
+                        payload.data.id
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -284,12 +284,12 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                            payload.model +
-                            "/" +
-                            payload.data.id +
-                            "/" +
-                            payload.data.model +
-                            page
+                        payload.model +
+                        "/" +
+                        payload.data.id +
+                        "/" +
+                        payload.data.model +
+                        page
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -368,11 +368,20 @@ export default new Vuex.Store({
                         resolve(response.data);
                     })
                     .catch(error => {
-                        let notification = {
-                            msg: error.response.data.errors,
-                            type: "error"
-                        };
-                        context.commit("setNotification", notification);
+                        if (error.response) {
+                            let notification = {
+                                msg: error.response.data.errors,
+                                type: "error"
+                            };
+                            context.commit("setNotification", notification);
+                        } else {
+                            let notification = {
+                                msg: 'Unexpected error occured. Check console for more info',
+                                type: "error"
+                            };
+                            console.log(error)
+                            context.commit("setNotification", notification);
+                        }
 
                         reject(error);
                     });
@@ -408,11 +417,20 @@ export default new Vuex.Store({
                         resolve(true);
                     })
                     .catch(error => {
-                        let notification = {
-                            msg: error.response.data.errors,
-                            type: "error"
-                        };
-                        context.commit("setNotification", notification);
+                        if (error.response) {
+                            let notification = {
+                                msg: error.response.data.errors,
+                                type: "error"
+                            };
+                            context.commit("setNotification", notification);
+                        } else {
+                            let notification = {
+                                msg: 'Unexpected error occured. Check console for more info',
+                                type: "error"
+                            };
+                            console.log(error)
+                            context.commit("setNotification", notification);
+                        }
 
                         reject(error);
                     });

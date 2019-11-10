@@ -43,13 +43,9 @@
 				<v-btn @click="submit" :loading="loading">Open Cash Register</v-btn>
 			</v-col>
 		</v-row>
-		<!-- <div class="d-flex align-center mt-5">
-			<div class="flex-grow-1"></div>
-			<v-btn @click="submit" :loading="loading">Open Cash Register</v-btn>
-		</div>-->
 		<v-alert v-if="cashRegisterIsopen" dense outlined type="warning">
-			The cash register is
-			<strong>opened</strong> !
+			Warning: The selected cash register is already
+			<strong>open</strong>
 		</v-alert>
 	</div>
 </template>
