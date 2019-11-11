@@ -1,9 +1,5 @@
 # plantshed
 
-# backend
-
-# frontend
-
 ## Project setup
 
 ```
