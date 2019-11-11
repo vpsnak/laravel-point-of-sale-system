@@ -29,6 +29,9 @@
 					return-object
 				></v-combobox>
 			</v-col>
+			<v-col v-if="shipping.method === 'delivery'" cols="12" lg="6" offset-lg="3">
+				<addressDeliveryForm :model="shipping.address"></addressDeliveryForm>
+			</v-col>
 		</v-row>
 		<v-row v-if="shipping.method !== 'retail'">
 			<v-col cols="4" lg="2" offset-lg="3">
