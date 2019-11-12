@@ -33,7 +33,7 @@
 			required
 		></v-text-field>
 		<v-row>
-			<v-col cols="6" v-if="remainingAmount !== undefined">
+			<v-col cols="6" v-if="remainingAmount && cash_register_id && cashRegisterIsopen">
 				<span class="title">
 					Remaining:
 					<span class="amber--text" v-text="'$ ' + remainingAmount.toFixed(2)" />
@@ -65,7 +65,7 @@ export default {
 			cash_register_id: null,
 			opening_amount: null,
 			status: true,
-			remainingAmount: 121231.123131
+			remainingAmount: null
 		};
 	},
 	mounted() {
@@ -106,6 +106,7 @@ export default {
 					cash_register.id == this.cash_register_id &&
 					cash_register.is_open
 				) {
+					this.remainingAmount = cash_register.earnings.cash_total;
 					return true;
 				}
 			}

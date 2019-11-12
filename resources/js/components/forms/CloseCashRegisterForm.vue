@@ -8,10 +8,13 @@
 			required
 		></v-text-field>
 		<v-row>
-			<v-col cols="6" v-if="remainingAmount !== undefined">
+			<v-col cols="6" v-if="cashRegister.earnings.cash_total">
 				<span class="title">
 					Remaining:
-					<span class="amber--text" v-text="'$ ' + remainingAmount.toFixed(2)" />
+					<span
+						class="amber--text"
+						v-text="'$ ' + cashRegister.earnings.cash_total.toFixed(2)"
+					/>
 				</span>
 			</v-col>
 			<v-col cols="6">
@@ -27,8 +30,7 @@ export default {
 	data() {
 		return {
 			loading: false,
-			closing_amount: null,
-			remainingAmount: 121231.123131
+			closing_amount: null
 		};
 	},
 	computed: {
@@ -50,7 +52,7 @@ export default {
 				}
 			};
 			this.closeCashRegister(payload)
-				.then(() => {					
+				.then(() => {
 					this.$emit("submit");
 				})
 				.finally(() => {
