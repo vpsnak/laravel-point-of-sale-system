@@ -14,11 +14,14 @@ class RoleController extends Controller
         return response(Role::all());
     }
 
-    public function setRole(Request $request, User $user)
+    public function setRole(Request $request)
     {
         $validatedData = $request->validate([
+            'user_id' => 'required|exists:users,id',
             'role_id' => 'required|exists:roles,id'
         ]);
+
+        $user = User::firstOrFail($validatedData['user_id']);
 
         if ($user->roles) {
             foreach ($user->roles as $assignedRole) {
