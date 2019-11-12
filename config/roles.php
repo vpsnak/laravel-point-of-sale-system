@@ -2,5 +2,6 @@
 
 return [
     'admin' => 'Administrator',
-    'cashier' => 'Cashier/Operator'
+    'cashier' => 'Cashier/Operator',
+    'store manager' => 'StoreManager/Operator'
 ];

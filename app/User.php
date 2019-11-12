@@ -13,7 +13,7 @@ class User extends Authenticatable
 
     protected $guard_name = 'api';
 
-    protected $with = ['open_register'];
+    protected $with = ['open_register', 'roles'];
     /**
      * The attributes that are mass assignable.
      *
@@ -58,8 +58,5 @@ class User extends Authenticatable
         return $openLog->whereStatus(1);
     }
 
-    // public function findForPassport($username)
-    // {
-    //     return $this->orWhere('email', $username)->orWhere('phone', $username)->first();
-    // }
+ 
 }

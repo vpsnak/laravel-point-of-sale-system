@@ -258,9 +258,9 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                            payload.model +
-                            "/" +
-                            payload.data.id
+                        payload.model +
+                        "/" +
+                        payload.data.id
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -287,12 +287,12 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                            payload.model +
-                            "/" +
-                            payload.data.id +
-                            "/" +
-                            payload.data.model +
-                            page
+                        payload.model +
+                        "/" +
+                        payload.data.id +
+                        "/" +
+                        payload.data.model +
+                        page
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -436,6 +436,34 @@ export default new Vuex.Store({
                             console.log(error);
                             context.commit("setNotification", notification);
                         }
+
+                        reject(error);
+                    });
+            });
+        },
+
+        setRole(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(
+                        this.state.baseUrl + "roles/set",
+                        payload.data
+                    )
+                    .then(response => {
+                        let notification = {
+                            msg: response.data.info,
+                            type: "success"
+                        };
+                        context.commit("setNotification", notification);
+
+                        resolve(response.data);
+                    })
+                    .catch(error => {
+                        let notification = {
+                            msg: error.response.data.errors,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
 
                         reject(error);
                     });

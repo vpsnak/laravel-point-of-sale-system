@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
@@ -21,7 +21,7 @@ class RoleController extends Controller
             'role_id' => 'required|exists:roles,id'
         ]);
 
-        $user = User::firstOrFail($validatedData['user_id']);
+        $user = User::findOrFail($validatedData['user_id']);
 
         if ($user->roles) {
             foreach ($user->roles as $assignedRole) {
