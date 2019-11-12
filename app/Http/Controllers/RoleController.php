@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\User;
+use DB;
 
 
 class RoleController extends Controller
@@ -32,7 +33,15 @@ class RoleController extends Controller
         $role = Role::findOrFail($validatedData['role_id']);
         $user->assignRole($role->name);
 
-        $user->token()->delete();
+        // remove user's tokens
+
+        $tokens = DB::table('oauth_access_tokens')->where('user_id', $user->id)->get();
+        if ($tokens) {
+            foreach($tokens as $token) {
+                DB::table('oauth_refresh_tokens')->where('user_id', $token->access_token_id)->delete();
+            }
+            DB::table('oauth_access_tokens')->where('user_id', $user->id)->delete();
+        }
 
         return response([
             'info' => ['Auth' => 'Role ' . $role->name . ' assigned to ' . $user->name . ' successfully!']
