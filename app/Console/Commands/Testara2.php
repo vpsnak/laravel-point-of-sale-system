@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Address;
+use App\Http\Controllers\CreditCardController;
 use Illuminate\Console\Command;
 
 class Testara2 extends Command
@@ -38,7 +38,25 @@ class Testara2 extends Command
      */
     public function handle()
     {
-        $a = Address::getOne(50);
-        var_dump($a->country);
+        $card = [
+            'type' => 'visa',
+            'number' => '4000000000000002',
+            'exp_date' => '1219',
+            'cvc' => '123',
+            'name' => 'Test Name',
+        ];
+        $response = (new CreditCardController)->creditCardAction(
+            'ccsale',
+            $card['number'],
+            $card['exp_date'],
+            $card['cvc'],
+            $card['name'],
+            25
+        );
+        var_dump($response);
+        $response = (new CreditCardController)->transactionAction('ccvoid', [
+            'ssl_txn_id' => $response['id']
+        ]);
+        var_dump($response);
     }
 }

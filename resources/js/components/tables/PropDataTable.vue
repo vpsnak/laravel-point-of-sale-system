@@ -13,7 +13,18 @@
 		</v-card-title>
 		<v-layout column>
 			<v-flex md10 style="overflow: auto">
-				<v-data-table dense :headers="headers" :items="rows" :loading="loading" :search="search">
+				<v-data-table
+					dense
+					:headers="headers"
+					:items="rows"
+					:loading="loading"
+					:search="search"
+					:items-per-page="15"
+					:page.sync="currentPage"
+					:server-items-length="totalItems"
+					@pagination="paginate"
+					:footer-props="{'disable-items-per-page':true, options: {itemsPerPage: 15, page: currentPage}}"
+				>
 					<template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
 						<slot :name="slot" v-bind="scope" />
 					</template>
@@ -54,7 +65,30 @@
 							</template>
 							<span>Recharge</span>
 						</v-tooltip>
-						<v-tooltip bottom>
+						<!-- user roles actions -->
+						<v-tooltip bottom v-if="tableForm === 'userForm'">
+							<template v-slot:activator="{ on }">
+								<v-btn @click="showRoleDialog = true, selectedItem = item" class="my-1" v-on="on" icon>
+									<v-icon small>mdi-account-key</v-icon>
+								</v-btn>
+							</template>
+							<span>Edit Role</span>
+						</v-tooltip>
+						<v-tooltip bottom v-if="tableForm === 'userForm'">
+							<template v-slot:activator="{ on }">
+								<v-btn
+									@click="showChangePasswordDialog = true, selectedItem = item"
+									class="my-1"
+									v-on="on"
+									icon
+								>
+									<v-icon small>mdi-key</v-icon>
+								</v-btn>
+							</template>
+							<span>Change {{item.name}} password</span>
+						</v-tooltip>
+
+						<v-tooltip bottom v-if="tableForm != 'customerNewForm'">
 							<template v-slot:activator="{ on }">
 								<v-btn :disabled="btnDisable" @click.stop="editItem(item)" class="my-1" v-on="on" icon>
 									<v-icon small>edit</v-icon>
@@ -95,6 +129,32 @@
 		></interactiveDialog>
 
 		<interactiveDialog
+			v-if="showRoleDialog"
+			:show="showRoleDialog"
+			title="Edit Role"
+			:width="600"
+			component="userRoleForm"
+			:model="selectedItem"
+			@action="result"
+			persistent
+			action="edit"
+			titleCloseBtn
+		></interactiveDialog>
+
+		<interactiveDialog
+			v-if="showChangePasswordDialog"
+			:show="showChangePasswordDialog"
+			title="Change user's password"
+			:width="600"
+			component="changePasswordForm"
+			:model="selectedItem"
+			@action="result"
+			persistent
+			action="edit"
+			titleCloseBtn
+		></interactiveDialog>
+
+		<interactiveDialog
 			v-if="showViewDialog"
 			:show="showViewDialog"
 			title="View item"
@@ -112,6 +172,7 @@
 			:show="showCreateDialog"
 			:component="form"
 			:title="btnTitle"
+			:width="800"
 			@action="result"
 			cancelBtnTxt="Close"
 			titleCloseBtn
@@ -149,10 +210,14 @@ import { mapActions, mapMutations, mapState } from "vuex";
 export default {
 	data() {
 		return {
+			current_page: 1,
+			total_items: null,
 			cancelOrderDialog: false,
 			showCreateDialog: false,
 			showEditDialog: false,
 			showViewDialog: false,
+			showRoleDialog: false,
+			showChangePasswordDialog: false,
 			rechargeGiftcardDialog: false,
 			defaultObject: {},
 			viewId: null,
@@ -171,25 +236,37 @@ export default {
 	],
 	mounted() {
 		this.setHeaders(this.tableHeaders);
-		this.getRows({
-			url: this.dataUrl
-		});
 		this.setTitle(this.tableTitle);
 		this.setBtnTitle(this.tableBtnTitle);
 		this.setBtnDisable(this.tableBtnDisable);
 		this.setForm(this.tableForm);
 	},
 	computed: {
+		totalItems: {
+			get() {
+				return this.total_items;
+			},
+			set(value) {
+				this.total_items = value;
+			}
+		},
+		currentPage: {
+			get() {
+				return this.current_page;
+			},
+			set(value) {
+				this.current_page = value;
+			}
+		},
 		checkoutDialog: {
 			get() {
-				if (this.$store.state.checkoutDialog === false) {
-					this.getRows({
-						url: this.dataUrl
-					});
-				}
 				return this.$store.state.checkoutDialog;
 			},
 			set(value) {
+				if (!value) {
+					this.paginate();
+				}
+
 				this.$store.state.checkoutDialog = value;
 			}
 		},
@@ -204,6 +281,25 @@ export default {
 		})
 	},
 	methods: {
+		paginate(e) {
+			this.setLoading(true);
+
+			this.getAll({
+				model: this.dataUrl,
+				page: e ? e.page : this.currentPage,
+				dataTable: true
+			})
+				.then(response => {
+					this.setRows(response.data);
+
+					if (response.total !== this.totalItems) {
+						this.totalItems = response.total;
+					}
+				})
+				.finally(() => {
+					this.setLoading(false);
+				});
+		},
 		cancelOrderConfirmation(event) {
 			if (event) {
 				let payload = {
@@ -212,9 +308,7 @@ export default {
 				};
 
 				this.delete(payload).then(response => {
-					this.getRows({
-						url: this.dataUrl
-					});
+					this.paginate();
 				});
 			}
 			this.closePrompt = false;
@@ -228,9 +322,7 @@ export default {
 		},
 		submitEvent(event) {
 			if (event) {
-				this.getRows({
-					url: this.dataUrl
-				});
+				this.paginate();
 			}
 		},
 
@@ -253,10 +345,15 @@ export default {
 			this.showCreateDialog = false;
 			this.showEditDialog = false;
 			this.showViewDialog = false;
+			this.showRoleDialog = false;
+			this.showChangePasswordDialog = false;
+
+			if (event) {
+				this.paginate();
+			}
 		},
 
 		...mapActions("datatable", {
-			getRows: "getRows",
 			deleteRow: "deleteRow"
 		}),
 		...mapMutations("datatable", {
@@ -264,7 +361,9 @@ export default {
 			setTitle: "setTitle",
 			setBtnTitle: "setBtnTitle",
 			setForm: "setForm",
-			setBtnDisable: "setBtnDisable"
+			setBtnDisable: "setBtnDisable",
+			setRows: "setRows",
+			setLoading: "setLoading"
 		}),
 		...mapActions({
 			getAll: "getAll",

@@ -1,10 +1,5 @@
 <template>
 	<v-form @submit="submit">
-		<div class="text-center">
-			<v-chip color="primary" label>
-				<v-icon left>fas fa-address-card</v-icon>Address Form
-			</v-chip>
-		</div>
 		<v-row>
 			<v-col cols="4">
 				<v-text-field v-model="formFields.first_name" label="First name" :disabled="loading" required></v-text-field>
@@ -15,7 +10,7 @@
 					label="Regions"
 					required
 					item-text="default_name"
-					item-value="id"
+					item-value="region_id"
 				></v-select>
 				<v-text-field v-model="formFields.company" label="Company" :disabled="loading" required></v-text-field>
 			</v-col>
@@ -50,6 +45,10 @@
 			required
 				></v-text-field>-->
 			</v-col>
+			<v-row justify="space-around">
+				<v-switch v-model="formFields.billing" label="Default billing"></v-switch>
+				<v-switch v-model="formFields.shipping" label="Default shipping"></v-switch>
+			</v-row>
 		</v-row>
 		<v-btn class="mr-4" type="submit" :loading="loading" :disabled="loading">submit</v-btn>
 		<v-btn v-if="this.model === undefined" @click="clear">clear</v-btn>
@@ -81,7 +80,9 @@ export default {
 				phone: null,
 				company: null,
 				vat_id: null,
-				deliverydate: null
+				deliverydate: null,
+				shipping: false,
+				billing: false
 			}
 		};
 	},
@@ -123,7 +124,7 @@ export default {
 							type: "success"
 						}
 					});
-					this.clear();
+					// this.clear();
 				})
 				.finally(() => {
 					this.loading = false;

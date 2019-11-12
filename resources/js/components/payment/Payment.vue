@@ -150,9 +150,9 @@ export default {
 				model: "payments",
 				data: {
 					payment_type: event.paymentType,
-					amount: event.paymentAmount ? event.paymentAmount : null,
+					amount: event.paymentAmount || null,
 					order_id: this.$props.order_id,
-					cash_register_id: 1
+					cash_register_id: this.$store.state.cashRegister.id
 				}
 			};
 
@@ -167,6 +167,8 @@ export default {
 				case "giftcard":
 					payload.data["code"] = event.code;
 					break;
+				case "house-account":
+					payload.data["house_account_number"] = event.house_account_number;
 			}
 
 			this.create(payload)
@@ -179,13 +181,11 @@ export default {
 						type: "success"
 					};
 					this.setNotification(notification);
-				})
-				.catch(error => {
-					let notification = {
-						msg: error.response.data.message,
-						type: "error"
-					};
-					this.setNotification(notification);
+
+					if (payload.data.payment_type === "house-account") {
+						this.$store.state.cart.customer.house_account_limit -=
+							payload.data.amount;
+					}
 				})
 				.finally(() => {
 					this.paymentAmount = null;

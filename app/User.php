@@ -4,13 +4,16 @@ namespace App;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, Notifiable, HasRoles;
 
-    protected $with = ['open_register'];
+    protected $guard_name = 'api';
+
+    protected $with = ['open_register', 'roles'];
     /**
      * The attributes that are mass assignable.
      *
@@ -55,8 +58,5 @@ class User extends Authenticatable
         return $openLog->whereStatus(1);
     }
 
-    // public function findForPassport($username)
-    // {
-    //     return $this->orWhere('email', $username)->orWhere('phone', $username)->first();
-    // }
+ 
 }

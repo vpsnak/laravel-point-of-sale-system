@@ -39,8 +39,9 @@ class OrderController extends BaseController
             'shipping_cost' => 'numeric|nullable',
             'notes' => 'string|nullable',
             'store_id' => 'required|exists:stores,id',
-            'created_by' => 'required|exists:users,id',
         ]);
+
+        $validatedData['created_by'] = auth()->user()->id;
 
         $shippingData = $request->validate([
             'shipping.method' => 'string|string',
@@ -48,6 +49,8 @@ class OrderController extends BaseController
             'shipping.timeSlotLabel' => 'string|nullable',
             'shipping.timeSlotCost' => 'numeric',
             'shipping.notes' => 'string|nullable',
+            'shipping.location' => 'string|nullable',
+            'shipping.occasion' => 'string|nullable',
             'shipping.address' => 'sometimes|nullable',
             'shipping.address.id' => 'numeric|exists:addresses,id|nullable',
         ]);
@@ -69,6 +72,8 @@ class OrderController extends BaseController
         $validatedData['shipping_cost'] = $shippingData['shipping']['timeSlotCost'] ?? null;
         $validatedData['shipping_address'] = $concatAddress ?? null;
         $validatedData['delivery_date'] = $shippingData['shipping']['timeSlotLabel'] ?? null;
+        $validatedData['location'] = $shippingData['shipping']['location'] ?? null;
+        $validatedData['occasion'] = $shippingData['shipping']['occasion'] ?? null;
         $validatedData['notes'] = $shippingData['shipping']['notes'] ?? null;
 
         $order_items = $request->validate([

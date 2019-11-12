@@ -20,7 +20,7 @@
 				v-model="amount"
 				type="number"
 				label="Amount"
-				min="1"
+				:min="0"
 				:disabled="!editable"
 			></v-text-field>
 		</v-col>
@@ -57,8 +57,11 @@ export default {
 				return this.$props.model.discount_amount;
 			},
 			set(value) {
-				if (value || value === 0) {
+				if (value) {
 					this.$set(this.$props.model, "discount_amount", parseFloat(value));
+					this.$store.commit("cart/setDiscount", this.$props.model);
+				} else {
+					this.$set(this.$props.model, "discount_amount", null);
 					this.$store.commit("cart/setDiscount", this.$props.model);
 				}
 			}

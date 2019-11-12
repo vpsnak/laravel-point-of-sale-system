@@ -7,7 +7,7 @@
 			<div class="d-flex justify-space-evenly align-center">
 				<v-btn-toggle v-model="paymentType" mandatory @change="clearState">
 					<v-btn
-						v-for="(paymentType, index) in types"
+						v-for="(paymentType, index) in paymentTypes"
 						:key="index"
 						:value="paymentType.type"
 						:disabled="loading || orderLoading"
@@ -118,10 +118,44 @@ export default {
 	},
 
 	computed: {
+		paymentTypes() {
+			if (this.houseAccount) {
+				return this.$props.types;
+			} else {
+				return _.filter(this.$props.types, function(o) {
+					return o.type !== "house-account";
+				});
+			}
+		},
+		houseAccountNumber() {
+			if (this.houseAccount) {
+				return this.$store.state.cart.customer.house_account_number;
+			} else {
+				return false;
+			}
+		},
+		houseAccount() {
+			if (this.$store.state.cart.customer) {
+				if (
+					this.$store.state.cart.customer.house_account_status &&
+					this.$store.state.cart.customer.house_account_number &&
+					this.$store.state.cart.customer.house_account_limit > 0
+				) {
+					return true;
+				}
+			} else {
+				return false;
+			}
+		},
+		houseAccountLimit() {
+			return parseFloat(this.$store.state.cart.customer.house_account_limit);
+		},
 		remainingAmount() {
 			if (parseFloat(this.$props.remaining) >= 0) {
+				this.amount = parseFloat(this.$props.remaining);
 				return parseFloat(this.$props.remaining);
 			} else {
+				this.amount = parseFloat(this.$store.state.cart.cart_price);
 				return parseFloat(this.$store.state.cart.cart_price);
 			}
 		},
@@ -159,6 +193,13 @@ export default {
 						paymentType: this.paymentType
 					};
 					break;
+				case "house-account":
+					payload = {
+						house_account_number: this.houseAccountNumber,
+						paymentAmount: this.paymentAmount,
+						paymentType: this.paymentType
+					};
+					break;
 				case "coupon":
 					payload = {
 						code: this.code,
@@ -171,7 +212,6 @@ export default {
 						paymentAmount: this.paymentAmount,
 						paymentType: this.paymentType
 					};
-
 					break;
 				default:
 					break;
@@ -182,6 +222,18 @@ export default {
 		},
 		limits() {
 			if (this.paymentType !== "cash") {
+				if (this.paymentType === "house-account") {
+					if (this.houseAccountLimit > parseFloat(this.remainingAmount)) {
+						this.amount = this.remainingAmount;
+					} else if (
+						parseFloat(this.amount) > parseFloat(this.houseAccountLimit)
+					) {
+						this.amount = this.houseAccountLimit;
+					}
+				} else {
+					this.amount = this.remainingAmount.toFixed(2);
+				}
+
 				if (parseFloat(this.amount) > parseFloat(this.remainingAmount)) {
 					this.amount = this.remainingAmount.toFixed(2);
 				}
@@ -192,12 +244,13 @@ export default {
 			}
 		},
 		clearState() {
-			this.amount = null;
 			this.code = null;
 
 			this.card.number = null;
 			this.card.cvc = null;
 			this.card.exp_date = null;
+
+			this.limits();
 		},
 		sendPayment() {
 			this.orderLoading = true;

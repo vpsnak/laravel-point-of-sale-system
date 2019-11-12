@@ -30,14 +30,14 @@ class CategoryController extends BaseController
 
     public function productListingCategories()
     {
-        return response(Category::getAllPaginate('in_product_listing', 1, 20), 200);
+        return response(Category::paginate(), 200);
     }
 
     public function productsByCategory(Category $category)
     {
         $products = Product::whereHas('categories', function ($query) use ($category) {
             $query->where('id', $category->id);
-        })->get();
+        })->paginate();
 
         return response($products, 200);
     }

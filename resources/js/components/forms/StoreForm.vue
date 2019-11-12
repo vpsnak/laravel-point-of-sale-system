@@ -1,25 +1,26 @@
 <template>
 	<div>
-		<v-form v-model="valid">
+		<v-form @submit="submit">
 			<div class="text-center">
 				<v-chip color="blue-grey" label>
 					<v-icon left>fas fa-warehouse</v-icon>Store Form
 				</v-chip>
 			</div>
-			<v-text-field v-model="formFields.name" :counter="30" label="Name" required></v-text-field>
+			<v-text-field v-model="formFields.name" :counter="30" label="Name" :disabled="loading" required></v-text-field>
 			<v-row justify="space-around">
-				<v-switch v-model="formFields.taxable" label="Taxable"></v-switch>
-				<v-switch v-model="formFields.is_default" label="Default"></v-switch>
+				<v-switch :disabled="loading" v-model="formFields.taxable" label="Taxable"></v-switch>
+				<v-switch :disabled="loading" v-model="formFields.is_default" label="Default"></v-switch>
 			</v-row>
 			<v-select
 				v-model="formFields.tax_id"
 				:items="taxes"
 				label="Taxes"
 				required
+				:disabled="loading"
 				item-text="name"
 				item-value="id"
 			></v-select>
-			<v-btn class="mr-4" @click="submit">submit</v-btn>
+			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="loading">submit</v-btn>
 			<v-btn v-if="this.model === undefined" @click="clear">clear</v-btn>
 		</v-form>
 	</div>
@@ -34,6 +35,7 @@ export default {
 	},
 	data() {
 		return {
+			loading: false,
 			valid: true,
 			taxes: [],
 			defaultValues: {},
@@ -47,16 +49,19 @@ export default {
 		};
 	},
 	mounted() {
-		this.getAll({
-			model: "taxes"
-		}).then(taxes => {
-			this.taxes = taxes;
-		});
+		this.getAllTaxes();
 		this.defaultValues = { ...this.formFields };
 		if (this.$props.model) {
 			this.formFields = {
 				...this.$props.model
 			};
+		}
+	},
+	computed: {
+		user_id: {
+			get() {
+				return this.$store.state.user.id;
+			}
 		}
 	},
 	methods: {
@@ -85,18 +90,20 @@ export default {
 					this.loading = false;
 				});
 		},
-		beforeDestroy() {
-			this.$off("submit");
-		},
 		clear() {
 			this.formFields = this.defaultValues;
 		},
 		getAllTaxes() {
+			this.loading = true;
 			this.getAll({
 				model: "taxes"
-			}).then(taxes => {
-				this.taxes = taxes;
-			});
+			})
+				.then(response => {
+					this.taxes = response;
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 		...mapActions({
 			getAll: "getAll",
@@ -105,12 +112,8 @@ export default {
 			delete: "delete"
 		})
 	},
-	computed: {
-		user_id: {
-			get() {
-				return this.$store.state.user.id;
-			}
-		}
+	beforeDestroy() {
+		this.$off("submit");
 	}
 };
 </script>

@@ -1,27 +1,30 @@
-import Dashboard from './components/pages/Dashboard'
-import Login from './components/auth/Login'
-import Logout from './components/auth/Logout'
-import Sales from './components/pages/Sales'
-import Forms from './components/pages/Forms'
-import Orders from './components/pages/Orders'
-import Customers from './components/pages/Customers'
-import Products from './components/pages/Products'
-import Categories from './components/pages/Categories'
-import Stores from './components/pages/Stores'
-import Users from './components/pages/Users'
-import CTest from './components/pages/CTest'
-import ListData from './components/pages/ListData'
-import Taxes from './components/pages/Taxes'
-import CashRegisters from './components/pages/CashRegisters'
-import GiftCards from './components/pages/GiftCards'
-import Coupons from './components/pages/Coupons'
-import Addresses from './components/pages/Addresses'
-
+import Dashboard from "../components/pages/Dashboard";
+import Login from "../components/auth/Login";
+import Logout from "../components/auth/Logout";
+import Sales from "../components/pages/Sales";
+import Forms from "../components/pages/Forms";
+import Orders from "../components/pages/Orders";
+import Customers from "../components/pages/Customers";
+import Products from "../components/pages/Products";
+import Categories from "../components/pages/Categories";
+import Stores from "../components/pages/Stores";
+import Users from "../components/pages/Users";
+import ListData from "../components/pages/ListData";
+import Taxes from "../components/pages/Taxes";
+import CashRegisters from "../components/pages/CashRegisters";
+import GiftCards from "../components/pages/GiftCards";
+import Coupons from "../components/pages/Coupons";
+import Addresses from "../components/pages/Addresses";
+import StorePickups from "../components/pages/StorePickups";
+import OpenCashRegister from "../components/pages/OpenCashRegister";
+import Reports from "../components/pages/Reports";
 
 export default [
     {
         path: "*",
-        redirect: "/"
+        redirect: "/",
+        name: "*",
+        meta: { requiresAuth: true }
     },
     {
         name: "dashboard",
@@ -32,12 +35,19 @@ export default [
     {
         name: "login",
         path: "/login",
-        component: Login
+        component: Login,
+        meta: { requiresAuth: false }
     },
     {
         name: "logout",
         path: "/logout",
         component: Logout,
+        meta: { requiresAuth: true }
+    },
+    {
+        name: "openCashRegister",
+        path: "/open-cash-register",
+        component: OpenCashRegister,
         meta: { requiresAuth: true }
     },
     {
@@ -47,31 +57,31 @@ export default [
         meta: { requiresAuth: true }
     },
     {
-        name: "Orders",
+        name: "orders",
         path: "/orders",
         component: Orders,
         meta: { requiresAuth: true }
     },
     {
-        name: "Customers",
+        name: "customers",
         path: "/customers",
         component: Customers,
         meta: { requiresAuth: true }
     },
     {
-        name: "Products",
+        name: "products",
         path: "/products",
         component: Products,
         meta: { requiresAuth: true }
     },
     {
-        name: "Categories",
+        name: "categories",
         path: "/categories",
         component: Categories,
         meta: { requiresAuth: true }
     },
     {
-        name: "Stores",
+        name: "stores",
         path: "/stores",
         component: Stores,
         meta: { requiresAuth: true }
@@ -83,9 +93,9 @@ export default [
         meta: { requiresAuth: true }
     },
     {
-        name: "testc",
-        path: "/chris",
-        component: CTest,
+        name: "StorePickups",
+        path: "/store-pickups",
+        component: StorePickups,
         meta: { requiresAuth: true }
     },
     {
@@ -110,6 +120,12 @@ export default [
         name: "CashRegisters",
         path: "/cash-registers",
         component: CashRegisters,
+        meta: { requiresAuth: true }
+    },
+    {
+        name: "Reports",
+        path: "/reports",
+        component: Reports,
         meta: { requiresAuth: true }
     },
     {

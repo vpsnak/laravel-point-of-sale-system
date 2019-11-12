@@ -9,7 +9,7 @@
 			</v-col>
 			<v-col :cols="12">
 				<v-spacer></v-spacer>
-				<v-btn type="submit">OK</v-btn>
+				<v-btn type="submit" :disabled="!(timeSlot.from_h && timeSlot.to_h)">OK</v-btn>
 			</v-col>
 		</v-row>
 	</v-form>

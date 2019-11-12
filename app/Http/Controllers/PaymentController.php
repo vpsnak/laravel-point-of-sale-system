@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Coupon;
+use App\Customer;
 use App\Giftcard;
 use App\Helper\Price;
 use App\Order;
 use App\Payment;
 use App\PaymentType;
 use Illuminate\Http\Request;
-use App\Http\Controllers\PosTerminalController;
 
 class PaymentController extends BaseController
 {
@@ -22,7 +22,6 @@ class PaymentController extends BaseController
             'amount' => 'nullable|required_unless:payment_type,coupon|numeric|min:0.01',
             'order_id' => 'required|exists:orders,id',
             'cash_register_id' => 'required|exists:cash_registers,id',
-            'created_by' => 'required|exists:users,id',
 
             // test case for API/SDK
             'test_case' => 'sometimes|string',
@@ -33,8 +32,12 @@ class PaymentController extends BaseController
             'card.exp_date' => 'nullable|required_if:payment_type,card|after_or_equal:today',
 
             // coupon/giftcard validation
-            'code' => 'required_if:payment_type,coupon|required_if:payment_type,giftcard'
+            'code' => 'required_if:payment_type,coupon|required_if:payment_type,giftcard',
+
+            'house_account_number' => 'required_if:payment_type,house-account'
         ]);
+
+        $validatedData['created_by'] = auth()->user()->id;
 
         $newPayment = $validatedData;
         $newPayment['payment_type'] = PaymentType::getFirst('type', $validatedData['payment_type'])->id;
@@ -47,17 +50,18 @@ class PaymentController extends BaseController
                 $payment->status = 'failed';
                 $payment->save();
 
-                return response(['msg' => 'This payment method does not exist. ', 'status' => 'error'], 500);
+                return response(['errors' => ['Payment method' => 'This payment method does not exist']], 422);
                 break;
             case 'cash':
                 // nothing to do here, move on
                 break;
 
             case 'card':
-                $paymentResponse = CreditCardController::cardPayment(
+                $paymentResponse = (new CreditCardController)->cardPayment(
                     $validatedData['card']['number'],
                     $validatedData['card']['exp_date'],
                     $validatedData['card']['cvc'],
+                    $validatedData['card']['card_holder'] ?? '',
                     $validatedData['amount']
                 );
                 if (isset($paymentResponse->errorCode)) {
@@ -65,8 +69,9 @@ class PaymentController extends BaseController
                     $payment->save();
 
                     return response([
-                        'errors' => ["Error $paymentResponse->errorCode" => ["$paymentResponse->errorName"]],
-                        'message' => $paymentResponse
+                        'errors' => [
+                            "Error $paymentResponse->errorCode" => ["$paymentResponse->errorName"]
+                        ]
                     ], 500);
                 }
 
@@ -80,8 +85,9 @@ class PaymentController extends BaseController
                     $payment->save();
 
                     return response([
-                        'errors' => ['Coupon' => ['Coupon does not exist']],
-                        'message' => 'Coupon does not exist'
+                        'errors' => [
+                            'Coupon' => ['Coupon does not exist']
+                        ]
                     ], 404);
                 }
 
@@ -90,8 +96,9 @@ class PaymentController extends BaseController
                     $payment->save();
 
                     return response([
-                        'errors' => ['Coupon' => ['This coupon has expired']],
-                        'message' => 'This coupon has expired'
+                        'errors' => [
+                            'Coupon' => ['This coupon has expired']
+                        ]
                     ], 403);
                 } else {
                     if ($coupon->from > date('Y-m-d H:i:s')) {
@@ -100,26 +107,21 @@ class PaymentController extends BaseController
 
                         return response([
                             'errors' => [
-                                'Coupon' => [
-                                    'Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))
-                                ]
-                            ],
-                            'message' => 'Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))
+                                'Coupon' => ['Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))]
+                            ]
                         ], 403);
                     }
                 }
 
                 $order = Order::findOrFail($validatedData['order_id']);
 
-                $validatedData['amount'] = $order->subtotal - Price::calculateDiscount(
+                $payment->amount = $order->subtotal - Price::calculateDiscount(
                     $order->subtotal,
                     $coupon->discount->type,
                     $coupon->discount->amount
                 );
-
-                $coupon->uses--;
-                $coupon->save();
-
+                $payment->save();
+                $coupon->decrement('uses');
                 break;
 
             case 'giftcard':
@@ -130,8 +132,9 @@ class PaymentController extends BaseController
                     $payment->save();
 
                     return response([
-                        'errors' => ['Gift card' => ['This gift card is inactive']],
-                        'message' => 'This gift card is inactive'
+                        'errors' => [
+                            'Gift card' => ['This gift card is inactive']
+                        ]
                     ], 403);
                 } else {
                     if ($giftcard->amount < $validatedData['amount']) {
@@ -139,19 +142,22 @@ class PaymentController extends BaseController
                         $payment->save();
 
                         return response([
-                            'errors' => ['Gift card' => ['This gift card has insufficient balance to complete the transaction']],
-                            'message' => 'This gift card has insufficient balance to complete the transaction'
+                            'errors' => [
+                                'Gift card' => ['This gift card has insufficient balance to complete the transaction']
+                            ]
                         ], 403);
                     } else {
                         // subtract the payed amount from giftcard
-                        $giftcard->amount -= $validatedData['amount'];
-                        $giftcard->save();
+                        $giftcard->decrement('amount', $validatedData['amount']);
                     }
                 }
                 break;
 
             case 'pos-terminal':
-                $posTerminalController = new PosTerminalController($payment, array_key_exists('test_case', $validatedData) ? $validatedData['test_case'] : null);
+                $posTerminalController = new PosTerminalController(
+                    $payment,
+                    array_key_exists('test_case', $validatedData) ? $validatedData['test_case'] : null
+                );
                 $paymentResponse = $posTerminalController->posPayment($validatedData['amount']);
 
                 if (array_key_exists('errors', $paymentResponse)) {
@@ -160,14 +166,34 @@ class PaymentController extends BaseController
 
                     return response([
                         'errors' => [
-                            'POS Terminal' => [
-                                $paymentResponse['errors']
-                            ]
-                        ],
-                        'message' => $paymentResponse['errors']
+                            'POS Terminal' => [$paymentResponse['errors']]
+                        ]
                     ], 403);
                 }
 
+                break;
+            case 'house-account':
+                $customer = Customer::getFirst('house_account_number', $validatedData['house_account_number']);
+                if (empty($customer)) {
+                    $payment->status = 'failed';
+                    $payment->save();
+                    return response([
+                        'errors' => [
+                            'House Account' => ['House account does not exist.']
+                        ]
+                    ], 403);
+                }
+                if ($validatedData['amount'] > $customer->house_account_limit) {
+                    $payment->status = 'failed';
+                    $payment->save();
+                    return response([
+                        'errors' => [
+                            'House Account' => ['House account has insufficient balance.<br>Balance available: $ ' . round($customer->house_account_limit, 2)]
+                        ]
+                    ], 403);
+                }
+                $customer->decrement('house_account_limit', $validatedData['amount']);
+                $payment->code = $validatedData['house_account_number'];
                 break;
         }
 
@@ -186,16 +212,12 @@ class PaymentController extends BaseController
     public function search(Request $request)
     {
         $validatedData = $request->validate([
-            'keyword' => 'required|numeric',
-            'per_page' => 'nullable|numeric',
-            'page' => 'nullable|numeric',
+            'keyword' => 'required|numeric'
         ]);
 
         return $this->searchResult(
             ['order_id'],
-            $validatedData['keyword'],
-            array_key_exists('per_page', $validatedData) ? $validatedData['per_page'] : 0,
-            array_key_exists('page', $validatedData) ? $validatedData['page'] : 0
+            $validatedData['keyword']
         );
     }
 
@@ -206,9 +228,12 @@ class PaymentController extends BaseController
         }
 
         $payment = Payment::findOrFail($id);
-        $payment->status = 'refunded';
+        $refund = $payment->replicate();
+        $refund->status = 'refunded';
+        $refund->save();
+        $payment->refunded = 1;
         $payment->save();
 
-        return response(['msg' => 'Refund completed successfully!', 'status' => 'success'], 200);
+        return response(['info' => ['Refund' => 'Refund completed successfully!']], 200);
     }
 }

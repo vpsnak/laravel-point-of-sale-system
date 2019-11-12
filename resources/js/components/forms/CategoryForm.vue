@@ -74,10 +74,8 @@ export default {
 				this.clear();
 			});
 		},
-		beforeDestroy() {
-			this.$off("submit");
-		},
 		clear() {
+			this.$refs.obs.reset();
 			this.formFields = { ...this.defaultValues };
 		},
 		...mapActions({
@@ -86,6 +84,9 @@ export default {
 			create: "create",
 			delete: "delete"
 		})
+	},
+	beforeDestroy() {
+		this.$off("submit");
 	}
 };
 </script>

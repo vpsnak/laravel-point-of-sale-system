@@ -18,12 +18,15 @@ class CreateCashRegistersTable extends Migration
             $table->string('name');
             $table->unsignedBigInteger('store_id');
             $table->unsignedBigInteger('created_by');
+            $table->string('barcode')->nullable();
+            $table->string('pos_terminal')->nullable();
+            $table->string('printer')->nullable();
             $table->timestamps();
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
         });
     }
-    
+
     /**
      * Reverse the migrations.
      *

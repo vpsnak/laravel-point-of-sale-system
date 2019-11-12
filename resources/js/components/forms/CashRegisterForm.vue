@@ -40,11 +40,7 @@ export default {
 		};
 	},
 	mounted() {
-		this.getAll({
-			model: "stores"
-		}).then(stores => {
-			this.stores = stores;
-		});
+		this.getAllStores();
 		this.defaultValues = { ...this.formFields };
 		if (this.$props.model) {
 			this.formFields = {
@@ -80,18 +76,20 @@ export default {
 					this.loading = false;
 				});
 		},
-		beforeDestroy() {
-			this.$off("submit");
-		},
 		clear() {
 			this.formFields = { ...this.defaultValues };
 		},
 		getAllStores() {
+			this.loading = true;
 			this.getAll({
 				model: "stores"
-			}).then(stores => {
-				this.stores = stores;
-			});
+			})
+				.then(response => {
+					this.stores = response;
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 		...mapActions({
 			getAll: "getAll",
@@ -99,6 +97,9 @@ export default {
 			create: "create",
 			delete: "delete"
 		})
+	},
+	beforeDestroy() {
+		this.$off("submit");
 	}
 };
 </script>

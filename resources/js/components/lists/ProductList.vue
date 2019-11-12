@@ -7,17 +7,26 @@
 
 		<v-card-text>
 			<v-row align="center" justify="center">
-				<v-btn icon @click="searchProduct(keyword)" class="mx-2">
+				<v-btn icon @click="searchProduct" class="mx-2">
 					<v-icon>mdi-magnify</v-icon>
 				</v-btn>
 				<v-text-field
 					v-model="keyword"
 					placeholder="Search product"
 					class="mx-2"
-					@keyup.enter="searchProduct(keyword)"
+					@keyup.enter="searchProduct"
 					clearable
-					@click:clear="getAllProducts"
+					@click:clear="currentPage = 1, getAllProducts()"
 				></v-text-field>
+				<v-tooltip bottom>
+					<template v-slot:activator="{ on }">
+						<v-btn outlined icon @click="enableScan" :color=" btnactive ? 'red' : ''" v-on="on">
+							<v-icon>mdi-barcode-scan</v-icon>
+						</v-btn>
+					</template>
+					<span v-if="btnactive">Disable scan mode</span>
+					<span v-else>Enable scan mode</span>
+				</v-tooltip>
 				<v-tooltip bottom>
 					<template v-slot:activator="{ on }">
 						<v-btn @click="showDummyDialog = true" class="my-1" v-on="on" icon>
@@ -46,19 +55,24 @@
 							:value="category.id"
 						>
 							<v-btn
-								:color="active ? 'primary' : ''"
+								:color="active ? 'blue-grey' : ''"
 								class="mx-1"
 								@click="toggle"
 								depressed
 								rounded
-							>{{category.name}}</v-btn>
+							>{{ category.name }}</v-btn>
 						</v-slide-item>
 					</v-slide-group>
 				</v-col>
 			</v-row>
 			<v-row v-if="productList.length" style="height:61vh; overflow-y:auto;">
 				<v-col v-for="product in productList" :key="product.id" cols="12" md="6" lg="4">
-					<v-card :img="product.photo_url" @click="addProduct(product)" height="170px">
+					<v-card
+						v-model="current_product"
+						:img="product.photo_url"
+						@click="addProduct(product)"
+						height="170px"
+					>
 						<v-card-title class="blue-grey pa-0" @click.stop>
 							<h6 class="px-2">{{product.name}}</h6>
 							<div class="flex-grow-1"></div>
@@ -69,23 +83,29 @@
 									</v-btn>
 								</template>
 								<v-list>
-									<v-list-item @click="addToFavorites(product)">
-										<v-icon class="pr-2">mdi-heart</v-icon>
-										<h5>Add to favorites</h5>
-									</v-list-item>
 									<v-list-item @click="viewItem(product)">
-										<v-icon class="pr-2">fas fa-eye</v-icon>
+										<v-icon class="pr-2">mdi-eye</v-icon>
 										<h5>View product</h5>
+									</v-list-item>
+									<v-list-item :href="product.plantcare_pdf" link :disabled="!product.plantcare_pdf">
+										<v-icon class="pr-2">mdi-flower-outline</v-icon>
+										<h5>Plant care</h5>
+									</v-list-item>
+									<v-list-item :href="product.url" link :disabled="!product.url">
+										<v-icon class="pr-2">fab fa-magento</v-icon>
+										<h5>View on Magento</h5>
 									</v-list-item>
 								</v-list>
 							</v-menu>
 						</v-card-title>
-						<v-chip v-if="product.final_price != product.price.amount" class="mt-2 ml-1">
-							<span>Final Price: {{parseFloat(product.final_price).toFixed(2)}} $</span>
-						</v-chip>
-						<v-chip v-else class="mt-2 ml-1">
-							<span>Net Price: {{parseFloat(product.final_price).toFixed(2)}} $</span>
-						</v-chip>
+						<v-card-actions>
+							<v-chip class="mt-2 ml-1">
+								<span>Price: {{ parseFloat(product.final_price).toFixed(2) }} $</span>
+							</v-chip>
+							<v-chip v-if="product.final_price != product.price.amount" class="mt-2 ml-1">
+								<span>Net Price: {{ parseFloat(product.final_price).toFixed(2) }} $</span>
+							</v-chip>
+						</v-card-actions>
 					</v-card>
 				</v-col>
 			</v-row>
@@ -94,9 +114,16 @@
 				<v-progress-circular v-else dark indeterminate color="white"></v-progress-circular>
 			</v-row>
 		</v-card-text>
-		<v-pagination v-model="page" :length="productList.length/4" circle></v-pagination>
+		<v-pagination
+			v-model="currentPage"
+			@input="paginate"
+			:length="lastPage"
+			color="blue-grey"
+			:disabled="loader"
+			@previous="currentPage -= 1"
+			@next="currentPage += 1"
+		></v-pagination>
 
-		<v-card-actions></v-card-actions>
 		<interactiveDialog
 			v-if="showDummyDialog"
 			:show="showDummyDialog"
@@ -110,7 +137,7 @@
 		<interactiveDialog
 			v-if="showGiftCardDialog"
 			:show="showGiftCardDialog"
-			component="giftCardForm"
+			component="giftCardToCartForm"
 			title="Add a gift card"
 			@action="result"
 			cancelBtnTxt="Close"
@@ -124,7 +151,7 @@
 			:fullscreen="false"
 			:width="1000"
 			component="product"
-			:model="viewId"
+			:model="viewProduct"
 			@action="result"
 			action="newItem"
 			cancelBtnTxt="Close"
@@ -133,30 +160,75 @@
 </template>
 
 <script>
+import { log } from "util";
 export default {
 	data() {
 		return {
-			page: 1,
+			current_product: null,
+			current_page: 1,
+			last_page: null,
 			showViewDialog: false,
 			showDummyDialog: false,
 			showGiftCardDialog: false,
 			viewId: null,
 			loader: false,
 			model: "products",
-			keyword: "",
-			selected_category: null
+			search_keyword: "",
+			selected_category: null,
+			btnactive: true
 		};
 	},
 	mounted() {
 		this.getAllProducts();
 		this.getAllCategories();
+		this.$root.$on("barcodeScan", sku => {
+			if (this.btnactive) {
+				this.getSingleProduct(sku, true);
+			} else {
+				this.getSingleProduct(sku, false);
+			}
+		});
+	},
+	beforeDestroy() {
+		this.$root.$off("barcodeScan");
 	},
 	computed: {
+		keyword: {
+			get() {
+				return this.search_keyword;
+			},
+			set(value) {
+				if (!this.keyword) {
+					this.currentPage = 1;
+				}
+				this.search_keyword = value;
+			}
+		},
+		currentPage: {
+			get() {
+				return this.current_page;
+			},
+			set(value) {
+				this.current_page = value;
+			}
+		},
+		lastPage: {
+			get() {
+				return this.last_page;
+			},
+			set(value) {
+				this.last_page = value;
+			}
+		},
 		selectedCategory: {
 			get() {
 				return this.selected_category;
 			},
 			set(value) {
+				if (!this.selected_category) {
+					this.currentPage = 1;
+				}
+
 				this.selected_category = value;
 
 				if (value) {
@@ -184,7 +256,23 @@ export default {
 		}
 	},
 	methods: {
-		addToFavorites(product) {},
+		enableScan() {
+			if (this.btnactive == false) {
+				this.btnactive = true;
+			} else {
+				this.btnactive = false;
+			}
+		},
+		paginate() {
+			if (this.selectedCategory) {
+				this.getProductsFromCategoryID();
+			} else if (this.keyword) {
+				this.searchProduct();
+			} else {
+				this.getAllProducts();
+			}
+		},
+
 		initiateLoadingSearchResults(loading) {
 			if (loading) {
 				this.loader = true;
@@ -199,23 +287,30 @@ export default {
 
 			let payload = {
 				model: "products",
-				mutation: "setProductList"
+				mutation: "setProductList",
+				page: this.current_page,
+				dataTable: true
 			};
-			this.$store.dispatch("getAll", payload).finally(() => {
-				this.initiateLoadingSearchResults(false);
-			});
+			this.$store
+				.dispatch("getAll", payload)
+				.then(response => {
+					this.currentPage = response.current_page;
+					this.lastPage = response.last_page;
+				})
+				.finally(() => {
+					this.initiateLoadingSearchResults(false);
+				});
 		},
 		getAllCategories() {
 			this.initiateLoadingSearchResults(true);
 
 			let payload = {
-				url: "product-listing/categories"
+				model: "product-listing/categories",
+				mutation: "setCategoryList"
 			};
 			this.$store
-				.dispatch("getRequest", payload, { root: true })
-				.then(result => {
-					this.$store.commit("setCategoryList", result.data);
-				})
+				.dispatch("getAll", payload)
+				.then()
 				.finally(() => {
 					this.initiateLoadingSearchResults(false);
 				});
@@ -225,29 +320,69 @@ export default {
 			let payload = {
 				model: "categories",
 				mutation: "setProductList",
+				page: this.currentPage,
 				data: {
 					id: this.selectedCategory,
 					model: "products"
 				}
 			};
-			this.$store.dispatch("getManyByOne", payload).finally(() => {
-				this.initiateLoadingSearchResults(false);
-			});
+			this.$store
+				.dispatch("getManyByOne", payload)
+				.then(response => {
+					this.currentPage = response.current_page;
+					this.lastPage = response.last_page;
+				})
+				.finally(() => {
+					this.initiateLoadingSearchResults(false);
+				});
 		},
-		searchProduct(keyword) {
+		getSingleProduct(sku, addToCart) {
+			this.showViewDialog = false;
+			this.initiateLoadingSearchResults(true);
+			let payload = {
+				model: "products",
+				mutation: "setProductList",
+				page: this.currentPage,
+				keyword: sku
+			};
+			this.$store
+				.dispatch("search", payload)
+				.then(response => {
+					this.currentPage = response.current_page;
+					this.lastPage = response.last_page;
+					if (addToCart) {
+						this.$store.commit("cart/addProduct", response[0]);
+					} else if (response[0]) {
+						this.viewItem(response[0]);
+					}
+				})
+				.finally(() => {
+					this.initiateLoadingSearchResults(false);
+				});
+		},
+		searchProduct() {
 			this.selected_category = null;
-			if (keyword.length > 0) {
+
+			if (this.keyword.length > 0) {
 				this.initiateLoadingSearchResults(true);
 
 				let payload = {
 					model: "products",
 					mutation: "setProductList",
-					keyword: keyword
+					page: this.currentPage,
+					keyword: this.keyword,
+					dataTable: true
 				};
 
-				this.$store.dispatch("search", payload).finally(() => {
-					this.initiateLoadingSearchResults(false);
-				});
+				this.$store
+					.dispatch("search", payload)
+					.then(response => {
+						this.currentPage = response.current_page;
+						this.lastPage = response.last_page;
+					})
+					.finally(() => {
+						this.initiateLoadingSearchResults(false);
+					});
 			} else {
 				this.getAllProducts();
 			}
@@ -262,7 +397,7 @@ export default {
 		},
 
 		viewItem(product) {
-			this.viewId = product;
+			this.viewProduct = product;
 			this.showViewDialog = true;
 		}
 	}

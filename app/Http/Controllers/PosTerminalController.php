@@ -32,7 +32,7 @@ class PosTerminalController extends Controller
 
         $elavonSdkPayment->test_case = $this->testCase;
         $elavonSdkPayment->status = $status;
-        $elavonSdkPayment->log = $data;
+        $elavonSdkPayment->log = is_Array($data) ? json_encode($data) : strip_tags($data);
 
         $elavonSdkPayment->save();
     }
@@ -45,13 +45,14 @@ class PosTerminalController extends Controller
 
     private function initPosTerminal()
     {
-        $id = json_decode($this->startCardReaderConfiguration(), true);
+        $id = $this->startCardReaderConfiguration();
 
         if ($id['statusDetails'] === 'TARGET_UNAVAILABLE') {
             $this->setPaymentStatus('failed');
-            $this->saveToSdkLog('POS Terminal initialization failed. Please restart Converge Service and try again.', 'error');
+            $msg = 'POS Terminal initialization failed.<br>Please restart Converge Service and try again.';
+            $this->saveToSdkLog($msg, 'error');
 
-            return ['errors' => 'POS Terminal initialization failed.<br>Please restart Converge Service and try again.'];
+            return ['errors' => $msg];
         }
 
         $id = $id['data']['cardReaderCommand']['id'];
@@ -59,12 +60,11 @@ class PosTerminalController extends Controller
         $response = $this->startCardReadersSearch();
         $this->saveToSdkLog($response, 'info');
 
-        $id = json_decode($response, true);
-        $id = $id['requestId'];
+        $id = $response['requestId'];
 
         do {
             sleep(1);
-            $response = json_decode($this->getCardReadersSearchStatus($id), true);
+            $response = $this->getCardReadersSearchStatus($id);
         } while ($response['data']['cardReadersSearch']['completed'] === false);
 
         $this->saveToSdkLog($response, 'success');
@@ -78,7 +78,7 @@ class PosTerminalController extends Controller
 
     private function getPosTerminalStatus($autoInit = true)
     {
-        $cardReaderInfo = json_decode($this->getCardReaderInfo(), true);
+        $cardReaderInfo = $this->getCardReaderInfo();
 
         if ($cardReaderInfo['data']['cardReaderInfo'] === null) {
             $this->saveToSdkLog('POS Terminal is not initialized.', 'error');
@@ -86,7 +86,7 @@ class PosTerminalController extends Controller
                 $this->saveToSdkLog('Starting automatic initialization process...', 'info');
                 return $this->initPosTerminal();
             } else {
-                return false;
+                return ['errors' => 'POS Terminal is not initialized'];
             }
         }
     }
@@ -95,47 +95,51 @@ class PosTerminalController extends Controller
     {
         if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'FAILED') {
             $this->setPaymentStatus('failed');
-            $this->saveToSdkLog(json_encode($response), 'failed');
+            $this->saveToSdkLog($response, 'failed');
 
             switch ($response['data']['paymentGatewayCommand']['paymentTransactionData']['errors'][0]) {
                 case 'ECLCommerceError ECLCardReaderCanceled':
                     $msg = 'Transaction canceled';
-                    $this->setPaymentStatus($msg);
+                    $this->setPaymentStatus(strip_tags($msg));
                     return ['errors' => $msg];
                 case 'ECLCommerceError ECLTransactionCardNeedsRemoval':
                     $msg = 'Remove the card and try again<br>Insert the card only when prompted by the POS Terminal';
-                    $this->setPaymentStatus($msg);
+                    $this->setPaymentStatus(strip_tags($msg));
                     return ['errors' => $msg];
                 case 'ECLCommerceError ECLTransactionCardRemoved':
                     $msg = 'Card has been removed before the transaction completed';
-                    $this->setPaymentStatus($msg);
+                    $this->setPaymentStatus(strip_tags($msg));
                     return ['errors' => $msg];
                 case 'ECLCommerceError ECLCardReaderCannotConnect':
                     $msg = 'POS Terminal disconnected<br>Please verify that POS Terminal is properly connected and try again';
-                    $this->setPaymentStatus($msg);
+                    $this->setPaymentStatus(strip_tags($msg));
                     return ['errors' => $msg];
                 case 'ECLCommerceError ECLCardReaderCardDataInvalid':
                     $msg = 'Invalid card';
-                    $this->setPaymentStatus($msg);
+                    $this->setPaymentStatus(strip_tags($msg));
+                    return ['errors' => $msg];
+                case 'ECLCommerceError ECLTransactionCardReaderNoneAvailable':
+                    $msg = 'POS Terminal is not available<br>Please verify the POS Terminal is properly connected and try again';
+                    $this->setPaymentStatus(strip_tags($msg));
                     return ['errors' => $msg];
                 default:
                     $msg = 'Warning: Unhandled error occured. Please check log file entry above';
-                    $this->setPaymentStatus($msg);
+                    $this->setPaymentStatus(strip_tags($msg));
                     return ['errors' => $msg];
             }
         } else if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'DECLINED') {
             $this->setPaymentStatus('declined');
-            $this->saveToSdkLog(json_encode($response), 'declined');
+            $this->saveToSdkLog($response, 'declined');
 
             return ['errors' => 'Card declined by issuer'];
         } else if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'APPROVED') {
             $this->setPaymentStatus('approved');
-            $this->saveToSdkLog(json_encode($response), 'approved');
+            $this->saveToSdkLog($response, 'approved');
 
             return ['success' => $response['data']['paymentGatewayCommand']['eventQueue']];
         } else {
             $this->setPaymentStatus('failed');
-            $this->saveToSdkLog(json_encode($response), 'failed');
+            $this->saveToSdkLog($response, 'failed');
 
             return ['errors' => $response];
         }
@@ -154,17 +158,18 @@ class PosTerminalController extends Controller
         }
 
         if (array_key_exists('errors', $this->startPaymentTransaction($amount))) {
-            $this->saveToSdkLog('Error at starting transaction. Please try again.', 'error');
-            return ['errors' => 'Error at starting transaction.<br>Please try again.'];
+            $msg = 'Error at starting transaction. Please try again.';
+            $this->saveToSdkLog($msg, 'error');
+            return ['errors' => $msg];
         }
 
         set_time_limit(300);
 
         do {
             sleep(1);
-            $response = json_decode($this->getPaymentTransactionStatus(), true);
+            $response = $this->getPaymentTransactionStatus();
         } while ($response['data']['paymentGatewayCommand']['completed'] === false);
-        $this->saveToSdkLog(json_encode($response), 'success');
+        $this->saveToSdkLog($response, 'success');
 
         $response = $this->getTransactionResponse($response);
 
@@ -197,7 +202,7 @@ class PosTerminalController extends Controller
             $this->saveToSdkLog($response, 'success');
         }
 
-        return $response;
+        return json_decode($response, true);
     }
 
     private function startCardReaderConfiguration()
@@ -314,7 +319,7 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        $paymentGateway = json_decode($this->sendRequest($payload), true);
+        $paymentGateway = $this->sendRequest($payload);
 
         if ($paymentGateway['data']['paymentGatewayCommand']['openPaymentGatewayData']['result'] !== 'SUCCESS') {
             $this->setPaymentStatus('failed');
@@ -351,7 +356,7 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        $response = json_decode($this->sendRequest($payload), true);
+        $response = $this->sendRequest($payload);
         $this->chanId = $response['data']['paymentGatewayCommand']['chanId'];
 
         return [];
@@ -375,7 +380,7 @@ class PosTerminalController extends Controller
         return $this->sendRequest($payload, false);
     }
 
-    private  function cancelPaymentTransaction($paymentGatewayId, $chanId)
+    private function cancelPaymentTransaction()
     {
         $requestId = idate("U");
 
@@ -385,8 +390,8 @@ class PosTerminalController extends Controller
             "targetType" => "paymentGatewayConverge",
             "version" => "1.0",
             "parameters" => [
-                "paymentGatewayId" => $paymentGatewayId,
-                "chanId" => $chanId
+                "paymentGatewayId" => $this->paymentGatewayId,
+                "chanId" => $this->chanId
             ]
         ];
 

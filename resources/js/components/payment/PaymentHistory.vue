@@ -28,7 +28,7 @@
 								@click="refundConfirmation = true, refundItem = item"
 								icon
 								v-on="on"
-								v-if="item.status === 'approved'"
+								v-if="item.status === 'approved' && item.refunded !== 1"
 							>
 								<v-icon v-if="item.payment_type.type === 'cash'">mdi-cash-refund</v-icon>
 								<v-icon v-else>mdi-credit-card-refund</v-icon>

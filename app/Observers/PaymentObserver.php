@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Coupon;
+use App\Customer;
 use App\Giftcard;
 use App\Http\Controllers\CreditCardController;
 use App\Payment;
@@ -35,28 +36,31 @@ class PaymentObserver
     {
         $this->updateOrderStatus($payment);
 
-        if ($payment->status == 'refunded') {
+        if ($payment->status == 'approved' && $payment->refunded == 1) {
             switch ($payment->paymentType->type) {
                 case 'card':
-                    $paymentResponse = CreditCardController::cardPayment(
+                    $paymentResponse = (new CreditCardController)->cardRefund(
                         '5472063333333330',
                         '1224',
                         '123',
+                        'Test Holder Name',
                         $payment->amount
                     );
-                    if (isset($paymentResponse->errorCode)) {
+                    if (isset($paymentResponse['error'])) {
                         return false;
                     }
                     return true;
                 case 'coupon':
                     $coupon = Coupon::whereCode($payment->code)->firstOrFail();
-                    $coupon->uses++;
-                    $coupon->save();
+                    $coupon->increment('uses');
                     return true;
                 case 'giftcard':
                     $giftcard = Giftcard::whereCode($payment->code)->firstOrFail();
-                    $giftcard->amount += $payment['amount'];
-                    $giftcard->save();
+                    $giftcard->increment('amount', $payment->amount);
+                    return true;
+                case 'house-account':
+                    $customer = Customer::where('house_account_number', $payment->code)->firstOrFail();
+                    $customer->increment('house_account_limit', $payment->amount);
                     return true;
                 case 'cash':
                 default:

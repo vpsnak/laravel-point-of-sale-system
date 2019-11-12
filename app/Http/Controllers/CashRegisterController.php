@@ -14,8 +14,9 @@ class CashRegisterController extends BaseController
         $validatedData = $request->validate([
             'name' => 'required|string',
             'store_id' => 'required|exists:stores,id',
-            'created_by' => 'required|exists:users,id',
         ]);
+
+        $validatedData['created_by'] = auth()->user()->id;
 
         $validatedID = $request->validate([
             'id' => 'nullable|exists:cash_registers,id'

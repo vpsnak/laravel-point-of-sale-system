@@ -22,6 +22,8 @@ class Order extends BaseModel
         'shipping_cost',
         'shipping_address',
         'delivery_date',
+        'location',
+        'occasion',
         'notes',
     ];
 
@@ -55,6 +57,9 @@ class Order extends BaseModel
         foreach ($this->payments as $payment) {
             if ($payment->status === 'approved') {
                 $total_paid += $payment->amount;
+            }
+            if ($payment->status === 'refunded') {
+                $total_paid -= $payment->amount;
             }
         };
         return $total_paid;

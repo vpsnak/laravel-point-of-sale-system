@@ -1,11 +1,38 @@
+import Axios from "axios";
+
 export default {
     namespaced: true,
 
     state: {
+        retail: true,
+
+        locations: [
+            "Apartment",
+            "Business",
+            "Private House",
+            "Hotel",
+            "Hospital",
+            "Funeral Home",
+            "Church",
+            "School"
+        ],
+
+        occasions: [
+            "Anniversary",
+            "Get Well",
+            "Birthday",
+            "Business Gifting",
+            "Holiday",
+            "New Baby",
+            "Just Because",
+            "Sympathy",
+            "All Others"
+        ],
+
         discountTypes: [
             {
                 label: "None",
-                value: "None"
+                value: null
             },
             {
                 label: "Flat",
@@ -23,7 +50,7 @@ export default {
                 name: "Delivery options",
                 icon: "local_shipping",
                 component: "shippingStep",
-                completed: false
+                completed: true
             },
             {
                 id: 2,
@@ -40,7 +67,7 @@ export default {
                 completed: false
             }
         ],
-        currentCheckoutStep: 1,
+        currentCheckoutStep: 2,
 
         customer: undefined,
         products: [],
@@ -55,13 +82,26 @@ export default {
             method: "retail",
             date: undefined,
             timeSlotLabel: null,
-            timeSlotCost: 0
+            timeSlotCost: 0,
+            location: null,
+            occasion: null
         },
 
         order: undefined
     },
 
     mutations: {
+        toggleRetail(state, retail) {
+            if (retail) {
+                state.retail = true;
+                state.checkoutSteps[0].completed = true;
+                state.currentCheckoutStep = 2;
+            } else {
+                state.retail = false;
+                state.checkoutSteps[0].completed = false;
+                state.currentCheckoutStep = 1;
+            }
+        },
         addProduct(state, product) {
             let index = _.findIndex(state.products, productState => {
                 return productState.id === product.id;
@@ -142,7 +182,9 @@ export default {
                 method: "retail",
                 date: undefined,
                 timeSlotLabel: null,
-                timeSlotCost: 0
+                timeSlotCost: 0,
+                location: null,
+                occasion: null
             };
         },
         resetShipping(state) {
@@ -153,7 +195,9 @@ export default {
                 method: "retail",
                 date: undefined,
                 timeSlotLabel: null,
-                timeSlotCost: 0
+                timeSlotCost: 0,
+                location: null,
+                occasion: null
             };
 
             state.currentCheckoutStep = 1;
@@ -163,6 +207,41 @@ export default {
         }
     },
     actions: {
+        mailReceipt({ commit, state, rootState }, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(
+                        `${rootState.baseUrl}mail-receipt/${state.order.id}`,
+                        payload
+                    )
+                    .then(response => {
+                        commit("setNotification", response.data, {
+                            root: true
+                        });
+                        resolve(response);
+                    })
+                    .catch(error => {
+                        let notification = {
+                            msg: error.response.data.errors,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
+                        reject(error);
+                    });
+            });
+        },
+        saveGuestEmail({ rootState }, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(rootState.baseUrl + "guest-email/create", payload)
+                    .then(response => {
+                        resolve(response);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
         submitOrder({ state, commit, dispatch }) {
             return new Promise((resolve, reject) => {
                 let payload = {

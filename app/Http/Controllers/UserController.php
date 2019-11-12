@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -12,7 +13,7 @@ class UserController extends Controller
 
     public function all()
     {
-        return response($this->model::all(), 200);
+        return response($this->model::paginate(), 200);
     }
 
     public function get($id)
@@ -20,10 +21,9 @@ class UserController extends Controller
         return response($this->model::find($id), 200);
     }
 
-    public function delete($id)
+    public function delete(User $user)
     {
-        $deleted = $this->model::where('id', $id)->delete();
-        return response($deleted, 200);
+        return response($user->delete(), 200);
     }
 
     public function login(Request $request)
@@ -34,40 +34,55 @@ class UserController extends Controller
         ]);
 
         $http = new Client;
+        $user = User::whereEmail($validatedData['username'])->first();
 
-        $response = $http->post(config('app.url') . '/oauth/token', [
-            'form_params' => [
-                'grant_type' => 'password',
-                'client_id' => '2',
-                'client_secret' => 'wtx0OMH1wmzMjVu8KV72vC6QXDqijRrBJygHJRV7',
-                'username' => $validatedData['username'],
-                'password' => $validatedData['password'],
-                'scope' => '',
-            ],
+        if (!$user) {
+            if (Hash::verify($validatedData['password'], $user->password))
+                return response(['errors' => [
+                    'Login' => 'Invalid credentials',
+                ]], 422);
+        } else {
+            $role = ($user->roles)[0]['name'];
+            $response = $http->post(config('app.url') . '/oauth/token', [
+                'form_params' => [
+                    'grant_type' => 'password',
+                    'client_id' => '2',
+                    'client_secret' => 'wtx0OMH1wmzMjVu8KV72vC6QXDqijRrBJygHJRV7',
+                    'username' => $validatedData['username'],
+                    'password' => $validatedData['password'],
+                    'scope' => $role,
+                ],
+            ]);
+
+            $token = (json_decode((string) $response->getBody(), true))['access_token'];
+
+            return response([
+                'info' => ['Login' => 'Welcome <strong>' . $user->name . '</strong>'],
+                'user' => $user,
+                'token' => $token
+            ], 200);
+        }
+    }
+
+    public function changePassword(Request $request)
+    {
+        $validatedData = $request->validate([
+            'current_password' => 'required|string',
+            'password' => 'required|string|confirmed',
+            'password_confirmation' => 'required|string',
         ]);
 
-        $user = User::whereEmail($validatedData['username'])->firstOrFail();
-        $token = (json_decode((string) $response->getBody(), true))['access_token'];
+        $user = auth()->user();
+        $user->password = Hash::make($validatedData['password']);
+        $user->save();
 
-        return response([
-            'notification' => [
-                'msg' => '<h2>Welcome ' . $user->name . '</h2>',
-                'type' => 'info'
-            ],
-            'user' => $user,
-            'token' => $token
-        ], 200);
+        return response(['info' => ['Auth' => 'Password changed successfully!']]);
     }
 
     public function logout()
     {
-        auth()->user()->token()->revoke();
+        auth()->user()->token()->delete();
 
-        return response([
-            'notification' => [
-                'type' => 'info',
-                'msg' => '<h2>Bye . . .</h2>'
-            ]
-        ], 200);
+        return response(['info' => ['Logout' => 'Goodbye...']], 200);
     }
 }

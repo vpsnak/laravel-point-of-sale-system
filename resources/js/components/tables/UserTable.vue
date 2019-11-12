@@ -5,7 +5,8 @@
 		tableTitle="Users"
 		tableBtnTitle="New User"
 		tableForm="userForm"
-		:tableBtnDisable="true"
+		:tableBtnDisable="false"
+		tableViewComponent="user"
 	>
 		<template v-slot:item.email="{item}">
 			<a :href="'mailto:' + item.email">{{ item.email }}</a>

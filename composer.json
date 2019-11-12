@@ -10,6 +10,7 @@
     "require": {
         "php": "^7.2",
         "ext-json": "^1.5",
+        "codeitnowin/barcode": "^3.0",
         "fideloper/proxy": "^4.0",
         "giberti/ext-oauth-shim": "^1.0",
         "guzzlehttp/guzzle": "^6.3",

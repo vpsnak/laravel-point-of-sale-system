@@ -16,8 +16,9 @@ class StoreController extends BaseController
         $validatedData = $request->validate([
             'name' => 'required|string',
             'tax_id' => 'required|exists:taxes,id',
-            'created_by' => 'required|exists:users,id',
         ]);
+
+        $validatedData['created_by'] = auth()->user()->id;
 
         $validatedID = $request->validate([
             'id' => 'nullable|exists:stores,id'
@@ -39,7 +40,6 @@ class StoreController extends BaseController
             return response('Model not found', 404);
         }
 
-        return response($this->model::with(['cash_registers'])->get(), 200);
+        return response($this->model::with(['cash_registers'])->paginate(), 200);
     }
-
 }

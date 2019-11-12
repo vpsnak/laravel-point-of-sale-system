@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import routes from "../routes";
+import routes from "./routes";
 import store from "../store/store";
 
 Vue.use(VueRouter);
@@ -26,11 +26,44 @@ router.beforeEach((to, from, next) => {
         next();
     }
 
+    // guard login route if already logged in
     if (
         to.matched.some(record => record.name === "login") &&
         store.state.token
     ) {
         next({ path: "/" });
+    }
+
+    // guard sales page if no register is selected
+    else if (
+        to.matched.some(record => record.name === "sales") &&
+        !store.getters.openedRegister
+    ) {
+        next({
+            path: "/open-cash-register",
+            query: { redirect: to.fullPath }
+        });
+    }
+
+    // guard sales page if no register is selected
+    else if (
+        to.matched.some(record => record.name === "orders") &&
+        !store.getters.openedRegister
+    ) {
+        next({
+            path: "/open-cash-register",
+            query: { redirect: to.fullPath }
+        });
+    }
+
+    // guard open register route if already logged in
+    else if (
+        to.matched.some(record => record.name === "openCashRegister") &&
+        store.getters.openedRegister
+    ) {
+        next({ path: "/" });
+    } else {
+        next();
     }
 });
 

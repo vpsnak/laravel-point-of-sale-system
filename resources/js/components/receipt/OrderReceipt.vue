@@ -25,6 +25,8 @@
 						prepend-inner-icon="mdi-email-newsletter"
 						append-outer-icon="mdi-send"
 						@click:append-outer="mailReceipt"
+						:loading="loading"
+						:disabled="loading"
 					></v-text-field>
 				</v-list-item-content>
 			</v-list-item>
@@ -36,6 +38,7 @@
 export default {
 	data() {
 		return {
+			loading: false,
 			customer_email: ""
 		};
 	},
@@ -71,7 +74,23 @@ export default {
 	},
 	methods: {
 		printReceipt() {},
-		mailReceipt() {}
+		mailReceipt() {
+			this.loading = true;
+
+			if (this.customer && this.customer.email !== this.customerEmail) {
+				this.$store.dispatch("cart/saveGuestEmail", {
+					email: this.customerEmail
+				});
+			}
+
+			this.$store
+				.dispatch("cart/mailReceipt", {
+					email: this.customerEmail
+				})
+				.finally(() => {
+					this.loading = false;
+				});
+		}
 	}
 };
 </script>

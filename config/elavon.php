@@ -2,7 +2,8 @@
 
 return [
     'hostPC' => [
-        'ip' => 'https://192.168.1.117',
+        'ip' => 'https://192.168.1.117', // pavlos
+//        'ip' => 'https://192.168.1.114', // vaggelis
         'port' => '9790',
     ],
 

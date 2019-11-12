@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Product;
+use CodeItNow\BarcodeBundle\Utils\BarcodeGenerator;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -16,32 +17,60 @@ class ProductController extends BaseController
         $validatedData = $request->validate([
             'name' => 'required|string',
             'sku' => 'required|string',
+            'url' => 'nullable|string',
+            'photo_url' => 'nullable|string',
+            'description' => 'nullable|string',
         ]);
 
-
-        $validatedID = $request->validate([
-            'id' => 'nullable|exists:products,id'
+        $validatedExtra = $request->validate([
+            'id' => 'nullable|exists:products,id',
+            'categories' => 'required|array',
+            'stores' => 'required|array',
+            'final_price' => 'required|numeric',
         ]);
 
-        if (!empty($validatedID)) {
-            return response($this->model::updateData($validatedID, $validatedData), 200);
-        } else {
-            return response($this->model::store($validatedData), 201);
+        $product = $this->getProduct($validatedExtra['id'] ?? null, $validatedData);
+
+        $product->categories()->sync($validatedExtra['categories']);
+
+        foreach ($validatedExtra['stores'] as $store) {
+            if (!empty($store['pivot'])) {
+                $product->stores()->syncWithoutDetaching(
+                    [$store['id'] => ['qty' => $store['pivot']['qty'] ?? 0]]
+                );
+            }
         }
+
+        //        @TODO fix amount create or update
+        $product->price()->updateOrCreate(['amount' => $validatedExtra['final_price']]);
+        $product->price->save();
+
+        //        $product->price->amount = $validatedExtra['final_price'];
+        //        $product->price->save();
+        return response($product, 200);
+    }
+
+    private function getProduct($id, $data)
+    {
+        if (!empty($id)) {
+            $this->model::updateData($id, $data);
+            $model = $this->model::getOne($id);
+        } else {
+            $model = $this->model::store($data);
+        }
+        return $model;
     }
 
     public function search(Request $request)
     {
         $validatedData = $request->validate([
-            'keyword' => 'required|string',
-            'per_page' => 'nullable|numeric',
-            'page' => 'nullable|numeric',
+            'keyword' => 'required|string'
         ]);
 
-        return $this->searchResult(['sku', 'name'],
+        return $this->searchResult(
+            ['sku', 'name', 'description'],
             $validatedData['keyword'],
-            array_key_exists('per_page', $validatedData) ? $validatedData['per_page'] : 0,
-            array_key_exists('page', $validatedData) ? $validatedData['page'] : 0
+            true
         );
     }
 
@@ -54,6 +83,21 @@ class ProductController extends BaseController
             return response('Model not found', 404);
         }
 
-        return response($this->model::limit(30)->get(), 200);
+        return response($this->model::paginate(), 200);
+    }
+
+    public function getBarcode(Product $product)
+    {
+        $barcode = new BarcodeGenerator();
+        $barcode->setText($product->sku);
+        $barcode->setType(BarcodeGenerator::Code39);
+        $barcode->setScale(2);
+        $barcode->setThickness(25);
+        $barcode->setFontSize(10);
+        $code = $barcode->generate();
+        return response([
+            'barcode' => $code,
+            'type' => 'data:image/png;base64'
+        ], 200);
     }
 }

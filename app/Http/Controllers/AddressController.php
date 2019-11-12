@@ -15,18 +15,20 @@ class AddressController extends BaseController
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'street' => 'required|string',
-            'street2' => 'required|string',
+            'street2' => 'nullable|string',
             'city' => 'required|string',
-            'country_id' => 'nullable|string',
-            'region' => 'required|string',
+            'country_id' => 'required|exists:countries,country_id',
+            'region' => 'required|exists:regions,region_id',
             'postcode' => 'required|string',
             'phone' => 'required|numeric',
-            'company' => 'required|string',
-            'vat_id' => 'required|string'
+            'company' => 'nullable|string',
+            'vat_id' => 'nullable|string',
+            'billing' => 'nullable|bool',
+            'shipping' => 'nullable|bool',
         ]);
 
         $validatedID = $request->validate([
-            'id' => 'nullable|exists:address,id'
+            'id' => 'nullable|exists:addresses,id'
         ]);
 
         if (!empty($validatedID)) {

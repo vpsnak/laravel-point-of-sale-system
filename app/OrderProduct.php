@@ -2,8 +2,12 @@
 
 namespace App;
 
+use App\Helper\Price;
+
 class OrderProduct extends BaseModel
 {
+    protected $appends = ['final_price'];
+
     protected $fillable = [
         'order_id',
         'name',
@@ -23,5 +27,14 @@ class OrderProduct extends BaseModel
     public function product()
     {
         return $this->belongsTo(Product::class, 'sku', 'sku');
+    }
+
+    public function getFinalPriceAttribute()
+    {
+        if (!empty($this->discount_type)) {
+            return Price::calculateDiscount($this->price, $this->discount_type,
+                $this->discount_amount);
+        }
+        return $this->price;
     }
 }

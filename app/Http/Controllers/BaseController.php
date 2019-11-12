@@ -24,7 +24,7 @@ class BaseController extends Controller
             return response('Model not found', 404);
         }
 
-        return response($this->model::allData(), 200);
+        return response($this->model::paginate(), 200);
     }
 
     public function get($id)
@@ -67,30 +67,26 @@ class BaseController extends Controller
         }
 
         $validatedData = $request->validate([
-            'keyword' => 'required|string',
-            'per_page' => 'nullable|numeric',
-            'page' => 'nullable|numeric',
+            'keyword' => 'required|string'
         ]);
 
         $columns = Schema::getColumnListing((new $this->model)->getTable());
-        return $this->searchResult($columns, $validatedData['keyword'], $validatedData['per_page'],
-            $validatedData['page']);
+        return $this->searchResult(
+            $columns,
+            $validatedData['keyword']
+        );
     }
 
-    public function searchResult($columns, $keyword, $perPage = 20, $page = 1)
+    public function searchResult($columns, $keyword, $pagination = false)
     {
         if (empty($columns) || empty($keyword)) {
             return response('Did not found columns or keyword to search', 404);
         }
 
-        $query = $this->model::query();
-        foreach ($columns as $column) {
-            $query->orWhere($column, 'like', "%$keyword%");
-        }
+        $query = $this->model::query()->search($columns, $keyword);
 
-        if (!empty($perPage)) {
-            $page = !empty($page) ? $page : 1;
-            return response($query->paginate($perPage, ['*'], 'page', $page), 200);
+        if ($pagination) {
+            return response($query->paginate(), 200);
         } else {
             return response($query->get(), 200);
         }

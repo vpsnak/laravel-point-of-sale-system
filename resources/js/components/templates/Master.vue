@@ -1,8 +1,8 @@
 <template>
 	<v-app id="app">
-		<sideMenu v-if="authorized || !loginRoute" />
+		<sideMenu v-if="authorized" />
 
-		<topMenu v-if="authorized || !loginRoute" />
+		<topMenu v-if="authorized" />
 
 		<notification />
 
@@ -13,35 +13,17 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
-import Cookies from "js-cookie";
+import { mapActions } from "vuex";
+
 export default {
 	computed: {
-		...mapState(["token"]),
 		authorized() {
-			return this.token ? true : false;
-		},
-		loginRoute() {
-			return this.$router.currentRoute.name === "login" ? true : false;
+			window.axios.defaults.headers.common[
+				"Authorization"
+			] = this.$store.state.token;
+
+			return this.$store.getters.authorized;
 		}
-	},
-	mounted() {
-		this.getOne({
-			model: "stores",
-			data: {
-				id: 1
-			}
-		}).then(result => {
-			this.$store.state.store = result;
-		});
-		this.getOne({
-			model: "cash-registers",
-			data: {
-				id: 1
-			}
-		}).then(result => {
-			this.$store.state.cashRegister = result;
-		});
 	},
 	methods: {
 		...mapActions({

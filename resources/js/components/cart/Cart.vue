@@ -1,26 +1,21 @@
 <template>
 	<v-card class="pa-3 d-flex flex-column" style="max-height: 90vh;">
-		<div class="d-flex align-center justify-center py-5">
-			<v-icon class="pr-2">{{ icon }}</v-icon>
-			<h4 class="title-2">{{ title }}</h4>
+		<div class="d-flex">
+			<div class="d-flex align-center justify-center">
+				<v-icon class="pr-2">{{ icon }}</v-icon>
+				<h4 class="title-2">{{ title }}</h4>
+			</div>
+
+			<v-spacer></v-spacer>
+
+			<div class="pt-5 pr-2">
+				<v-label>Delivery</v-label>
+			</div>
+			<v-switch class="my-0 pt-5" v-model="toggleRetail" label="Retail" :disabled="!editable"></v-switch>
 		</div>
 		<v-divider />
 		<v-container grid-list-md text-xs-center>
-			<v-layout row wrap>
-				<v-flex xs11>
-					<customerSearch :editable="editable" :keywordLength="1" class="my-3"></customerSearch>
-				</v-flex>
-				<v-flex xs1>
-					<v-tooltip bottom>
-						<template v-slot:activator="{ on }">
-							<v-btn @click="showCreateDialog = true" class="my-3" v-on="on" icon>
-								<v-icon>mdi-plus</v-icon>
-							</v-btn>
-						</template>
-						<span>Add a customer</span>
-					</v-tooltip>
-				</v-flex>
-			</v-layout>
+			<customerSearch :editable="editable" :keywordLength="1" class="my-3"></customerSearch>
 		</v-container>
 
 		<cartProducts :products="items ? items : products" :editable="editable"></cartProducts>
@@ -45,17 +40,6 @@
 				<cartActions :disabled="totalProducts" />
 			</div>
 		</div>
-		<interactiveDialog
-			v-if="showCreateDialog"
-			:show="showCreateDialog"
-			:model="{}"
-			component="customerForm"
-			title="Add a Customer"
-			@action="result"
-			cancelBtnTxt="Close"
-			persistent
-			titleCloseBtn
-		></interactiveDialog>
 	</v-card>
 </template>
 
@@ -63,11 +47,6 @@
 import { mapActions } from "vuex";
 
 export default {
-	data() {
-		return {
-			showCreateDialog: false
-		};
-	},
 	props: {
 		order: Array | null,
 		items: Array | null,
@@ -77,6 +56,14 @@ export default {
 		actions: Boolean | null
 	},
 	computed: {
+		toggleRetail: {
+			get() {
+				return this.$store.state.cart.retail;
+			},
+			set(value) {
+				this.$store.commit("cart/toggleRetail", value);
+			}
+		},
 		cartDiscount() {
 			let discount = {
 				discount_type: this.$store.state.cart.discount_type,
@@ -111,10 +98,6 @@ export default {
 			this.products.splice(0);
 			this.products = cart;
 		},
-		result(event) {
-			this.showCreateDialog = false;
-		},
-
 		...mapActions({
 			getAll: "getAll",
 			getOne: "getOne",

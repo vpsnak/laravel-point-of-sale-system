@@ -16,8 +16,9 @@ class PaymentTypeController extends BaseController
             'type' => 'required|boolean',
             'status' => 'required|boolean',
             'is_default' => 'required|boolean',
-            'created_by' => 'required|exists:users,id',
         ]);
+
+        $validatedData['created_by'] = auth()->user()->id;
 
         $validatedID = $request->validate([
             'id' => 'nullable|exists:payment_types,id'

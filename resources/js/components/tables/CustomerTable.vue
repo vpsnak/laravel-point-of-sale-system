@@ -4,7 +4,7 @@
 		data-url="customers"
 		tableTitle="Customers"
 		tableBtnTitle="New Customer"
-		tableForm="customerForm"
+		tableForm="customerNewForm"
 		:tableBtnDisable="false"
 		tableViewComponent="customer"
 	>
@@ -42,8 +42,13 @@ export default {
 					sortable: false
 				},
 				{
-					text: "Address",
-					value: "addresses[0].street",
+					text: "No tax",
+					value: "no_tax",
+					sortable: false
+				},
+				{
+					text: "House Account",
+					value: "house_account_status",
 					sortable: false
 				},
 				{

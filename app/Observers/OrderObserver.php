@@ -16,8 +16,11 @@ class OrderObserver
     {
         if ($order->status == 'canceled') {
             foreach ($order->payments as $payment) {
-                if ($payment->status === 'approved') {
-                    $payment->status = 'refunded';
+                if ($payment->status === 'approved' && $payment->refunded != 1) {
+                    $refund = $payment->replicate();
+                    $refund->status = 'refunded';
+                    $refund->save();
+                    $payment->refunded = 1;
                     $payment->save();
                 }
             }
