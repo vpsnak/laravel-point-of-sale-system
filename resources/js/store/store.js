@@ -51,6 +51,9 @@ export default new Vuex.Store({
         storeList: []
     },
     getters: {
+        role: state => {
+            return state.user.roles[0].name;
+        },
         authorized: state => {
             if (state.user && state.token) {
                 return true;
@@ -255,9 +258,9 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                        payload.model +
-                        "/" +
-                        payload.data.id
+                            payload.model +
+                            "/" +
+                            payload.data.id
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -284,12 +287,12 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                        payload.model +
-                        "/" +
-                        payload.data.id +
-                        "/" +
-                        payload.data.model +
-                        page
+                            payload.model +
+                            "/" +
+                            payload.data.id +
+                            "/" +
+                            payload.data.model +
+                            page
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -376,10 +379,11 @@ export default new Vuex.Store({
                             context.commit("setNotification", notification);
                         } else {
                             let notification = {
-                                msg: 'Unexpected error occured. Check console for more info',
+                                msg:
+                                    "Unexpected error occured. Check console for more info",
                                 type: "error"
                             };
-                            console.log(error)
+                            console.log(error);
                             context.commit("setNotification", notification);
                         }
 
@@ -425,10 +429,11 @@ export default new Vuex.Store({
                             context.commit("setNotification", notification);
                         } else {
                             let notification = {
-                                msg: 'Unexpected error occured. Check console for more info',
+                                msg:
+                                    "Unexpected error occured. Check console for more info",
                                 type: "error"
                             };
-                            console.log(error)
+                            console.log(error);
                             context.commit("setNotification", notification);
                         }
 
