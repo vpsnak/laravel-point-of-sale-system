@@ -38,7 +38,7 @@ class RoleController extends Controller
         $tokens = DB::table('oauth_access_tokens')->where('user_id', $user->id)->get();
         if ($tokens) {
             foreach($tokens as $token) {
-                DB::table('oauth_refresh_tokens')->where('user_id', $token->access_token_id)->delete();
+                DB::table('oauth_refresh_tokens')->where('access_token_id', $token->id)->delete();
             }
             DB::table('oauth_access_tokens')->where('user_id', $user->id)->delete();
         }
