@@ -45,10 +45,10 @@ $baseRoutes = [
 Route::get('categories/{category}/products', "CategoryController@productsByCategory")->middleware('scope:admin,cashier,store_manager');
 
 foreach ($baseRoutes as $route => $controller) {
-    Route::get("/$route", "$controller@all");
-    Route::get("/$route/{id}", "$controller@get");
+    Route::get("/$route", "$controller@all")->middleware('scope:admin,cashier,store_manager');
+    Route::get("/$route/{id}", "$controller@get")->middleware('scope:admin,cashier,store_manager');
     Route::post("/$route/create", "$controller@create")->middleware('scope:admin,cashier,store_manager');
-    Route::post("/$route/search", "$controller@search");
+    Route::post("/$route/search", "$controller@search")->middleware('scope:admin,cashier,store_manager');
     Route::delete("/$route/{id}", "$controller@delete")->middleware('scope:admin');;
 }
 
