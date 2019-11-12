@@ -225,7 +225,6 @@ export default {
 	},
 	computed: {
 		role() {
-			console.log(this.$store.getters.role);
 			return this.$store.getters.role;
 		},
 		...mapState("topMenu", ["mini"])
