@@ -32,6 +32,8 @@ class RoleController extends Controller
         $role = Role::findOrFail($validatedData['role_id']);
         $user->assignRole($role->name);
 
+        $user->token()->delete();
+
         return response([
             'info' => ['Auth' => 'Role ' . $role->name . ' assigned to ' . $user->name . ' successfully!']
         ]);
