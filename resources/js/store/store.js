@@ -258,9 +258,9 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                        payload.model +
-                        "/" +
-                        payload.data.id
+                            payload.model +
+                            "/" +
+                            payload.data.id
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -287,12 +287,12 @@ export default new Vuex.Store({
                 axios
                     .get(
                         this.state.baseUrl +
-                        payload.model +
-                        "/" +
-                        payload.data.id +
-                        "/" +
-                        payload.data.model +
-                        page
+                            payload.model +
+                            "/" +
+                            payload.data.id +
+                            "/" +
+                            payload.data.model +
+                            page
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -445,10 +445,7 @@ export default new Vuex.Store({
         setRole(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(
-                        this.state.baseUrl + "roles/set",
-                        payload.data
-                    )
+                    .post(this.state.baseUrl + "roles/set", payload.data)
                     .then(response => {
                         let notification = {
                             msg: response.data.info,
