@@ -74,6 +74,19 @@
 							</template>
 							<span>Edit Role</span>
 						</v-tooltip>
+						<v-tooltip bottom v-if="tableForm === 'userForm'">
+							<template v-slot:activator="{ on }">
+								<v-btn
+									@click="showChangePasswordDialog = true, selectedItem = item"
+									class="my-1"
+									v-on="on"
+									icon
+								>
+									<v-icon small>mdi-key</v-icon>
+								</v-btn>
+							</template>
+							<span>Change {{item.name}} password</span>
+						</v-tooltip>
 
 						<v-tooltip bottom v-if="tableForm != 'customerNewForm'">
 							<template v-slot:activator="{ on }">
@@ -121,6 +134,19 @@
 			title="Edit Role"
 			:width="600"
 			component="userRoleForm"
+			:model="selectedItem"
+			@action="result"
+			persistent
+			action="edit"
+			titleCloseBtn
+		></interactiveDialog>
+
+		<interactiveDialog
+			v-if="showChangePasswordDialog"
+			:show="showChangePasswordDialog"
+			title="Change user's password"
+			:width="600"
+			component="changePasswordForm"
 			:model="selectedItem"
 			@action="result"
 			persistent
@@ -191,6 +217,7 @@ export default {
 			showEditDialog: false,
 			showViewDialog: false,
 			showRoleDialog: false,
+			showChangePasswordDialog: false,
 			rechargeGiftcardDialog: false,
 			defaultObject: {},
 			viewId: null,
@@ -319,6 +346,7 @@ export default {
 			this.showEditDialog = false;
 			this.showViewDialog = false;
 			this.showRoleDialog = false;
+			this.showChangePasswordDialog = false;
 
 			if (event) {
 				this.paginate();
