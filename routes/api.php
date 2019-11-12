@@ -12,10 +12,13 @@
 */
 
 // auth
-
 Route::post('/auth/login', "UserController@login")->middleware('guest');
 Route::get('/auth/logout', "UserController@logout")->middleware('scope:admin,cashier');
 Route::post('/auth/change-password', "UserController@changePassword")->middleware('scope:admin,cashier');
+
+// auth - roles
+Route::get('/auth/roles', "RoleController@all")->middleware('scope:admin');
+Route::post('/auth/roles/{user}', "RoleController@setRole")->middleware('scope:admin');
 
 $baseRoutes = [
     'users' => 'UserController',
