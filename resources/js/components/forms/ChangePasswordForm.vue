@@ -14,7 +14,12 @@
 					@click:append="showCurrentPassword = !showCurrentPassword"
 				></v-text-field>
 			</ValidationProvider>
-			<ValidationProvider rules="required|min:8" v-slot="{ errors, valid }" name="New Password">
+			<ValidationProvider
+				rules="required|min:8"
+				v-slot="{ errors, valid }"
+				name="New Password"
+				vid="confirmation"
+			>
 				<v-text-field
 					v-model="formFields.password"
 					:append-icon="showPassword ? 'visibility' : 'visibility_off'"
@@ -30,7 +35,7 @@
 			</ValidationProvider>
 
 			<ValidationProvider
-				rules="required|min:8"
+				rules="required|min:8|confirmed:confirmation"
 				v-slot="{ errors, valid }"
 				name="Password Confirmation"
 			>
@@ -75,11 +80,13 @@ export default {
 	},
 	methods: {
 		submit() {
-			this.changePassword(this.formFields).then(() => {
-				this.$emit("submit", "users");
-			}).finally(() => {
-				this.clear();
-			});
+			this.changePassword(this.formFields)
+				.then(() => {
+					this.$emit("submit", "users");
+				})
+				.finally(() => {
+					this.clear();
+				});
 		},
 		clear() {
 			this.$refs.obs.reset();
@@ -88,7 +95,7 @@ export default {
 			this.formFields.password = null;
 			this.formFields.password_confirmation = null;
 		},
-		...mapActions(['changePassword'])
+		...mapActions(["changePassword"])
 	},
 	beforeDestroy() {
 		this.$off("submit");
