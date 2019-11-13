@@ -53,7 +53,6 @@
 					@click:append="showPassword = !showPassword"
 				></v-text-field>
 			</ValidationProvider>
-
 			<v-btn
 				class="mr-4"
 				type="submit"
