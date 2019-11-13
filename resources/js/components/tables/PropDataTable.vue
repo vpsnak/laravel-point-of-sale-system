@@ -320,14 +320,6 @@ export default {
 		},
 		role() {
 			return this.$store.getters.role;
-		},
-
-		storeManagerDisabled() {
-			if (this.role == "admin") {
-				return false;
-			} else {
-				return true;
-			}
 		}
 	},
 	methods: {
