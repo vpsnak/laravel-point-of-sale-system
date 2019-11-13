@@ -74,6 +74,7 @@
 									class="my-1"
 									icon
 									v-on="on"
+									:disabled="cancelOrderDisabled(item)"
 								>
 									<v-icon small>mdi-cancel</v-icon>
 								</v-btn>
@@ -313,9 +314,31 @@ export default {
 			btnTitle: "btnTitle",
 			form: "form",
 			btnDisable: "btnDisable"
-		})
+		}),
+		user() {
+			return this.$store.state.user;
+		},
+		role() {
+			return this.$store.getters.role;
+		},
+
+		storeManagerDisabled() {
+			if (this.role == "admin") {
+				return false;
+			} else {
+				return true;
+			}
+		}
 	},
 	methods: {
+		cancelOrderDisabled(item) {
+			if (this.role == "admin" || item.created_by.id == this.user.id) {
+				return false;
+			} else {
+				return true;
+			}
+		},
+
 		setItem(item) {
 			this.selectedItem = item;
 			this.selectedItem["action"] = "change";
