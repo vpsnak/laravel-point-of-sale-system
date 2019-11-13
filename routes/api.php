@@ -14,9 +14,11 @@
 // auth
 Route::post('/auth/login', "UserController@login")->middleware('guest');
 Route::get('/auth/logout', "UserController@logout")->middleware('scope:admin,cashier,store_manager');
+Route::post('/auth/verify', "UserController@verifySelfPwd")->middleware('scope:admin,cashier,store_manager');
 Route::post('/auth/password', "UserController@changeSelfPwd")->middleware('scope:admin,store_manager');
-Route::post('/user/password', "UserController@changeUserPwd")->middleware('scope:admin');
 
+// user pwd
+Route::post('/user/password', "UserController@changeUserPwd")->middleware('scope:admin');
 
 // roles
 Route::get('/roles', "RoleController@all")->middleware('scope:admin');
