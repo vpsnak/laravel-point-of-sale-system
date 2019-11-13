@@ -20,7 +20,7 @@ class Order extends BaseModel
         'subtotal',
         'shipping_type',
         'shipping_cost',
-        'shipping_address',
+        'shipping_address_id',
         'delivery_date',
         'location',
         'occasion',
@@ -83,6 +83,11 @@ class Order extends BaseModel
     public function store_id()
     {
         return $this->belongsTo(Store::class, 'store_id');
+    }
+
+    public function shipping_address()
+    {
+        return $this->hasOne(OrderAddress::class, 'shipping_address_id');
     }
 
     public function created_by()

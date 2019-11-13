@@ -55,22 +55,22 @@ class OrderController extends BaseController
             'shipping.address.id' => 'numeric|exists:addresses,id|nullable',
         ]);
 
-        if (!empty($shippingData['shipping']['address'])) {
-            $address = $shippingData['shipping']['address'];
-            $concatAddress = $address['first_name'];
-            $concatAddress .= ' ' . $address['last_name'];
-            $concatAddress .= ' ' . $address['street'];
-            $concatAddress .= ' ' . $address['street2'];
-            $concatAddress .= ' ' . $address['city'];
-            $concatAddress .= ' ' . $address['address_region'];
-            $concatAddress .= ' ' . $address['address_country'];
-            $concatAddress .= ' ' . $address['postcode'];
-            $concatAddress .= ' ' . $address['phone'];
-        }
+        $shippingAddressData = $request->validate([
+            'shipping.address.first_name' => 'required|string',
+            'shipping.address.last_name' => 'required|string',
+            'shipping.address.street' => 'required|string',
+            'shipping.address.street2' => 'nullable|string',
+            'shipping.address.city' => 'required|string',
+            'shipping.address.country_id' => 'required|exists:countries,country_id',
+            'shipping.address.region' => 'required|exists:regions,region_id',
+            'shipping.address.postcode' => 'required|string',
+            'shipping.address.phone' => 'required|numeric',
+            'shipping.address.company' => 'nullable|string',
+            'shipping.address.vat_id' => 'nullable|string',
+        ]);
 
         $validatedData['shipping_type'] = $shippingData['shipping']['method'] ?? null;
         $validatedData['shipping_cost'] = $shippingData['shipping']['cost'] ?? null;
-        $validatedData['shipping_address'] = $concatAddress ?? null;
         $validatedData['delivery_date'] = $shippingData['shipping']['timeSlotLabel'] ?? null;
         $validatedData['location'] = $shippingData['shipping']['location'] ?? null;
         $validatedData['occasion'] = $shippingData['shipping']['occasion'] ?? null;
@@ -93,6 +93,21 @@ class OrderController extends BaseController
         $order = $this->model::store($validatedData);
         if (empty($order)) {
             return response($order, 500);
+        }
+
+        if (!empty($shippingData['shipping']['address'])) {
+            $address = $shippingAddressData['shipping']['address'];
+//            $concatAddress = $address['first_name'];
+//            $concatAddress .= ' ' . $address['last_name'];
+//            $concatAddress .= ' ' . $address['street'];
+//            $concatAddress .= ' ' . $address['street2'];
+//            $concatAddress .= ' ' . $address['city'];
+//            $concatAddress .= ' ' . $address['address_region'];
+//            $concatAddress .= ' ' . $address['address_country'];
+//            $concatAddress .= ' ' . $address['postcode'];
+//            $concatAddress .= ' ' . $address['phone'];
+            $shipping_address = $order->shipping_address()->create($address);
+            $validatedData['shipping_address'] = $shipping_address->id ?? null;
         }
 
         foreach ($order_items['products'] as $product) {
@@ -142,7 +157,7 @@ class OrderController extends BaseController
         $order->save();
         return response($order, 200);
     }
-    
+
     public function search(Request $request)
     {
         $validatedData = $request->validate([
@@ -150,7 +165,7 @@ class OrderController extends BaseController
         ]);
 
         return $this->searchResult(
-            ['status','occasion','location'],
+            ['status', 'occasion', 'location'],
             $validatedData['keyword'],
             true
         );
