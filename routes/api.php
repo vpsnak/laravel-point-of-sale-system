@@ -40,6 +40,14 @@ $baseRoutes = [
     'regions' => 'RegionController',
     'countries' => 'CountryController',
     'store-pickups' => 'StorePickupController',
+    // 'asd' => [
+    //     'controller' => 'asdasController',
+    //     'routes' => [
+    //         'methods' => ['all','get','create','search','delete'],
+    //         'status' => true,
+    //         'middleware' => 'scope:admin,cashier,store_manager'
+    //     ],
+    // ]
 ];
 
 Route::get('categories/{category}/products', "CategoryController@productsByCategory")->middleware('scope:admin,cashier,store_manager');
