@@ -346,7 +346,7 @@ $allRoutes = [
         ]
     ],
     'gift-cards' => [
-        'controller' => 'GiftCardController',
+        'controller' => 'GiftcardController',
         'endpoints' => [
             'get' => [
                 $routeAll,
