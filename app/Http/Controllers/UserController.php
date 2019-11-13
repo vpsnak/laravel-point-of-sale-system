@@ -66,7 +66,7 @@ class UserController extends Controller
         }
     }
 
-    public function changePassword(Request $request)
+    public function changeSelfPwd(Request $request)
     {
         $validatedData = $request->validate([
             'current_password' => 'required|string',
@@ -81,6 +81,21 @@ class UserController extends Controller
         return response(['info' => ['Auth' => 'Password changed successfully!']]);
     }
 
+    public function changeUserPwd(Request $request)
+    {
+        $validatedData = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'password' => 'required|string|confirmed',
+            'password_confirmation' => 'required|string',
+        ]);
+
+        $user = User::firstOrFail($validatedData['user_id']);
+        $user->password = Hash::make($validatedData['password']);
+        $user->save();
+
+        return response(['info' => ['Auth' => 'Password changed successfully!']]);
+    }
+
     public function logout()
     {
         auth()->user()->token()->delete();
@@ -88,7 +103,7 @@ class UserController extends Controller
         return response(['info' => ['Logout' => 'Goodbye...']], 200);
     }
 
-    
+
     public function search(Request $request)
     {
         $validatedData = $request->validate([
@@ -96,7 +111,7 @@ class UserController extends Controller
         ]);
 
         return $this->searchResult(
-            ['username', 'name', 'email','phone'],
+            ['username', 'name', 'email', 'phone'],
             $validatedData['keyword'],
             true
         );

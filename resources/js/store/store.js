@@ -201,10 +201,10 @@ export default new Vuex.Store({
                     });
             });
         },
-        changePassword(context, payload) {
+        changeSelfPwd(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(this.state.baseUrl + "auth/change-password", payload)
+                    .post(this.state.baseUrl + "auth/password/", payload)
                     .then(response => {
                         let notification = {
                             msg: response.data.info,
