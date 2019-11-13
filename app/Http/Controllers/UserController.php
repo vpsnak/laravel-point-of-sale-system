@@ -66,7 +66,7 @@ class UserController extends Controller
         }
     }
 
-    public function changePassword(Request $request)
+    public function changeSelfPwd(Request $request)
     {
         $validatedData = $request->validate([
             'current_password' => 'required|string',
@@ -75,6 +75,41 @@ class UserController extends Controller
         ]);
 
         $user = auth()->user();
+
+        if (Hash::check($validatedData['current_password'], $user->password)) {
+            $user->password = Hash::make($validatedData['password']);
+            $user->save();
+
+            return response(['info' => ['Auth' => 'Password changed successfully!']]);
+        } else {
+            return response(['errors' => ['Auth' => 'Current password mismatch']], 422);
+        }
+    }
+
+    public function verifySelfPwd(Request $request)
+    {
+        $validatedData = $request->validate([
+            'password' => 'required|string'
+        ]);
+
+        $user = auth()->user();
+
+        if (Hash::check($validatedData['current_password'], $user->password)) {
+            return response(['info' => ['Verification' => 'Password verification succeeded!']]);
+        } else {
+            return response(['errors' => ['Verification' => 'Password verification failed']], 403);
+        }
+    }
+
+    public function changeUserPwd(Request $request)
+    {
+        $validatedData = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'password' => 'required|string|confirmed',
+            'password_confirmation' => 'required|string',
+        ]);
+
+        $user = User::findOrFail($validatedData['user_id']);
         $user->password = Hash::make($validatedData['password']);
         $user->save();
 
@@ -88,7 +123,7 @@ class UserController extends Controller
         return response(['info' => ['Logout' => 'Goodbye...']], 200);
     }
 
-    
+
     public function search(Request $request)
     {
         $validatedData = $request->validate([
@@ -96,7 +131,7 @@ class UserController extends Controller
         ]);
 
         return $this->searchResult(
-            ['username', 'name', 'email','phone'],
+            ['username', 'name', 'email', 'phone'],
             $validatedData['keyword'],
             true
         );
