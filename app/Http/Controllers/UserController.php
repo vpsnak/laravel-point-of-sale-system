@@ -85,4 +85,21 @@ class UserController extends Controller
 
         return response(['info' => ['Logout' => 'Goodbye...']], 200);
     }
+
+    public function create(Request $request)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|unique:users,email',
+            'phone' => 'required|unique:users,phone',
+            'password' => 'required|string'
+        ]);
+
+        $validatedData['password'] = Hash::make($validatedData['password']);
+
+        $user = new User($validatedData);
+        $user->save();
+
+        return response(['info' => ['User ' . $user->name . ' created successfully!']]);
+    }
 }

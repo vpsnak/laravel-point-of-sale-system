@@ -22,7 +22,8 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
+        'phone',
+        'password'
     ];
 
     /**
@@ -32,7 +33,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
+        'remember_token'
     ];
 
     /**
@@ -58,5 +59,8 @@ class User extends Authenticatable
         return $openLog->whereStatus(1);
     }
 
- 
+    public function findForPassport($username)
+    {
+        return $this->orWhere('email', $username)->orWhere('phone', $username)->first();
+    }
 }
