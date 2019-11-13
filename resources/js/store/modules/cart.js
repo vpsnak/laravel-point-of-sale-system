@@ -82,7 +82,7 @@ export default {
             method: "retail",
             date: undefined,
             timeSlotLabel: null,
-            timeSlotCost: 0,
+            cost: 0,
             location: null,
             occasion: null
         },
@@ -133,7 +133,7 @@ export default {
             }
         },
         setDiscount(state, model) {
-            if (Array.isArray(model)) {
+            if (_.has(model, "products")) {
                 state.discount_type = model.discount_type;
 
                 state.discount_amount = parseFloat(model.discount_amount);
@@ -182,7 +182,7 @@ export default {
                 method: "retail",
                 date: undefined,
                 timeSlotLabel: null,
-                timeSlotCost: 0,
+                cost: 0,
                 location: null,
                 occasion: null
             };
@@ -195,7 +195,7 @@ export default {
                 method: "retail",
                 date: undefined,
                 timeSlotLabel: null,
-                timeSlotCost: 0,
+                cost: 0,
                 location: null,
                 occasion: null
             };

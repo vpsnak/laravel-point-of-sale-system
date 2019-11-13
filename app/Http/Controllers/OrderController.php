@@ -47,7 +47,7 @@ class OrderController extends BaseController
             'shipping.method' => 'string|string',
             'shipping.date' => 'string|date',
             'shipping.timeSlotLabel' => 'string|nullable',
-            'shipping.timeSlotCost' => 'numeric',
+            'shipping.cost' => 'numeric',
             'shipping.notes' => 'string|nullable',
             'shipping.location' => 'string|nullable',
             'shipping.occasion' => 'string|nullable',
@@ -69,7 +69,7 @@ class OrderController extends BaseController
         }
 
         $validatedData['shipping_type'] = $shippingData['shipping']['method'] ?? null;
-        $validatedData['shipping_cost'] = $shippingData['shipping']['timeSlotCost'] ?? null;
+        $validatedData['shipping_cost'] = $shippingData['shipping']['cost'] ?? null;
         $validatedData['shipping_address'] = $concatAddress ?? null;
         $validatedData['delivery_date'] = $shippingData['shipping']['timeSlotLabel'] ?? null;
         $validatedData['location'] = $shippingData['shipping']['location'] ?? null;
