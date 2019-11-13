@@ -107,7 +107,6 @@ export default {
         },
         loadCart() {
             let cart = JSON.parse(this.selectedCart.cart).products;
-            this.$store.state.cart.id = 1;
             this.$store.state.cart.products = cart.products;
             this.$store.state.cart.shipping.notes = cart.shipping.notes;
             this.$store.state.cart.discount_type = cart.discount_type;
