@@ -91,6 +91,9 @@ export default {
     },
 
     mutations: {
+        setShippingCost(state, value) {
+            state.shipping.cost = value;
+        },
         toggleRetail(state, retail) {
             if (retail) {
                 state.retail = true;

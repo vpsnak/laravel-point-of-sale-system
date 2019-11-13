@@ -185,8 +185,7 @@ export default {
                 return this.$store.state.cart.shipping.cost;
             },
             set(value) {
-                this.$store.state.cart.shipping.cost = value;
-                console.log(this.$store.state.cart.shipping.cost);
+                this.$store.commit("cart/setShippingCost", value);
             }
         },
         addresses() {
@@ -210,16 +209,16 @@ export default {
             if (event && event !== true) {
                 this.timeSlots.push(event);
                 this.shipping.timeSlotLabel = event.label;
-                this.shipping.cost = event.cost;
+                this.shippingCost = event.cost;
             }
 
             this.addTimeSlotDialog = false;
         },
         setCost(item) {
             if (_.has(item, "cost")) {
-                this.shipping.cost = item.cost;
+                this.shippingCost = item.cost;
             } else {
-                this.shipping.cost = null;
+                this.shippingCost = null;
             }
         },
         getTimeSlots() {
