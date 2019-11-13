@@ -27,4 +27,17 @@ class TaxController extends BaseController
             return response($this->model::store($validatedData), 201);
         }
     }
+
+       public function search(Request $request)
+    {
+        $validatedData = $request->validate([
+            'keyword' => 'required|string'
+        ]);
+
+        return $this->searchResult(
+            ['name'],
+            $validatedData['keyword'],
+            true
+        );
+    }
 }

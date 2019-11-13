@@ -146,4 +146,17 @@ class CashRegisterReportController extends BaseController
             'order_delivery_count' => 0,
         ];
     }
+
+     public function search(Request $request)
+    {
+        $validatedData = $request->validate([
+            'keyword' => 'required|string'
+        ]);
+
+        return $this->searchResult(
+            ['report_name','report_type'],
+            $validatedData['keyword'],
+            true
+        );
+    }
 }

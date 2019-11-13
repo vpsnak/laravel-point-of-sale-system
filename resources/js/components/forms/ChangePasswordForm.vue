@@ -1,7 +1,12 @@
 <template>
 	<ValidationObserver v-slot="{ invalid }" ref="obs">
 		<v-form>
-			<ValidationProvider rules="required|min:8" v-slot="{ errors, valid }" name="Password">
+			<ValidationProvider
+				v-if="true"
+				rules="required|min:8"
+				v-slot="{ errors, valid }"
+				name="Password"
+			>
 				<v-text-field
 					v-model="formFields.current_password"
 					:append-icon="showCurrentPassword ? 'visibility' : 'visibility_off'"
@@ -15,7 +20,7 @@
 				></v-text-field>
 			</ValidationProvider>
 			<ValidationProvider
-				rules="required|min:8"
+				v-if="false"
 				v-slot="{ errors, valid }"
 				name="New Password"
 				vid="confirmation"
@@ -35,6 +40,7 @@
 			</ValidationProvider>
 
 			<ValidationProvider
+				v-if="true"
 				rules="required|min:8|confirmed:confirmation"
 				v-slot="{ errors, valid }"
 				name="Password Confirmation"
@@ -61,6 +67,11 @@
 import { mapActions } from "vuex";
 
 export default {
+	props: {
+		change_password: Object || undefined,
+		change_another_user_password: Object || undefined,
+		password_demand: Object || undefined
+	},
 	data() {
 		return {
 			showCurrentPassword: false,
