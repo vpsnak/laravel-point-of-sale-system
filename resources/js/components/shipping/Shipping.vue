@@ -97,7 +97,7 @@
                     label="Cost"
                     :min="0"
                     prepend-icon="mdi-currency-usd"
-                    v-model="shipping.cost"
+                    v-model="shippingCost"
                 ></v-text-field>
             </v-col>
         </v-row>
@@ -177,7 +177,16 @@ export default {
                 return this.$store.state.cart.shipping;
             },
             set(value) {
+                this.$store.state.cart.shipping = value;
+            }
+        },
+        shippingCost: {
+            get() {
+                return this.$store.state.cart.shipping.cost;
+            },
+            set(value) {
                 this.$store.state.cart.shipping.cost = value;
+                console.log(this.$store.state.cart.shipping.cost);
             }
         },
         addresses() {
