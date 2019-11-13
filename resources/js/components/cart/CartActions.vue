@@ -177,7 +177,9 @@ export default {
                             ? this.$store.state.cart.customer.id
                             : null
                     },
-                    shipping: this.$store.state.cart.shipping,
+                    discount_type: this.$store.state.cart.discount_type,
+                    discount_amount: this.$store.state.cart.discount_amount,
+                    shipping: { notes: this.$store.state.cart.shipping.notes },
                     product_count: product_count,
                     total_price: this.cart.cart_price
                 }
