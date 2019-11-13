@@ -34,7 +34,9 @@ class UserController extends Controller
         ]);
 
         $http = new Client;
-        $user = User::whereEmail($validatedData['username'])->first();
+        $user = User::orWhere('email', $validatedData['username'])
+            ->orWhere('username', $validatedData['username'])
+            ->orWhere('phone', $validatedData['username'])->first();
 
         if (!$user) {
             if (Hash::verify($validatedData['password'], $user->password))
