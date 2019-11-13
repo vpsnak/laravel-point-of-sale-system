@@ -11,15 +11,6 @@
 |
 */
 
-// auth
-Route::post('/auth/login', "UserController@login")->middleware('guest');
-Route::get('/auth/logout', "UserController@logout")->middleware('scope:admin,cashier,store_manager');
-Route::post('/auth/verify', "UserController@verifySelfPwd")->middleware('scope:admin,cashier,store_manager');
-Route::post('/auth/password', "UserController@changeSelfPwd")->middleware('scope:admin,store_manager');
-
-// user pwd
-Route::post('/user/password', "UserController@changeUserPwd")->middleware('scope:admin');
-
 // roles
 Route::get('/roles', "RoleController@all")->middleware('scope:admin');
 Route::post('/roles/set', "RoleController@setRole")->middleware('scope:admin');
@@ -72,6 +63,35 @@ $baseEndpoints = [
 ];
 
 $allRoutes = [
+    'auth' => [
+        'controller' => 'UserController',
+        'endpoints' => [
+            'get' => [
+                [
+                    'url' => '/logout',
+                    'action' => 'logout',
+                    'middleware' => "scope:$allRoles"
+                ]
+            ],
+            'post' => [
+                [
+                    'url' => '/login',
+                    'action' => 'login',
+                    'middleware' => "scope:guest"
+                ],
+                [
+                    'url' => '/verify',
+                    'action' => 'verifySelfPwd',
+                    'middleware' => "scope:$allRoles"
+                ],
+                [
+                    'url' => '/password',
+                    'action' => 'changeSelfPwd',
+                    'middleware' => "scope:$admin:$store_manager"
+                ],
+            ]
+        ]
+    ],
     'users' => [
         'controller' => 'UserController',
         'endpoints' => [
@@ -81,7 +101,11 @@ $allRoutes = [
             ],
             'post' => [
                 $routeCreate,
-                $routeSearch
+                [
+                    'url' => '/password',
+                    'action' => 'changeUserPwd',
+                    'middleware' => "scope:$admin"
+                ],
             ],
             'delete' => [
                 $routeDelete
@@ -447,19 +471,15 @@ Route::get('/guest-email', 'GuestEmailListController@all')->middleware("scope:$a
 Route::post('/guest-email/create', 'GuestEmailListController@create')->middleware("scope:$allRoles");
 
 // elavon sdk certification
-Route::post('/elavon/sdk', 'ElavonSdkPaymentController@index')->middleware('scope:admin,cashier,store_manager');
-Route::post('/elavon/sdk/lookup', 'ElavonSdkPaymentController@lookup')->middleware('scope:admin,cashier,store_manager');
-Route::get('/elavon/sdk/logs', 'ElavonSdkPaymentController@getLogs')->middleware('scope:admin,cashier,store_manager');
-Route::get('/elavon/sdk/logs/{test_case}',
-    'ElavonSdkPaymentController@getLogs')->middleware('scope:admin,cashier,store_manager');
-Route::delete('/elavon/sdk/logs/delete',
-    'ElavonSdkPaymentController@deleteAll')->middleware('scope:admin,cashier,store_manager');
+Route::post('/elavon/sdk', 'ElavonSdkPaymentController@index')->middleware("scope:$allRoles");
+Route::post('/elavon/sdk/lookup', 'ElavonSdkPaymentController@lookup')->middleware("scope:$allRoles");
+Route::get('/elavon/sdk/logs', 'ElavonSdkPaymentController@getLogs')->middleware("scope:$allRoles");
+Route::get('/elavon/sdk/logs/{test_case}', 'ElavonSdkPaymentController@getLogs')->middleware("scope:$allRoles");
+Route::delete('/elavon/sdk/logs/delete', 'ElavonSdkPaymentController@deleteAll')->middleware("scope:$allRoles");
 
 // elavon api certification
-Route::post('/elavon/api', 'ElavonApiPaymentController@index')->middleware('scope:admin,cashier,store_manager');
-Route::post('/elavon/api/lookup', 'ElavonApiPaymentController@lookup')->middleware('scope:admin,cashier,store_manager');
-Route::get('/elavon/api/logs', 'ElavonApiPaymentController@getLogs')->middleware('scope:admin,cashier,store_manager');
-Route::get('/elavon/api/logs/{test_case}',
-    'ElavonApiPaymentController@getLogs')->middleware('scope:admin,cashier,store_manager');
-Route::delete('/elavon/api/logs/delete',
-    'ElavonApiPaymentController@deleteAll')->middleware('scope:admin,cashier,store_manager');
+Route::post('/elavon/api', 'ElavonApiPaymentController@index')->middleware("scope:$allRoles");
+Route::post('/elavon/api/lookup', 'ElavonApiPaymentController@lookup')->middleware("scope:$allRoles");
+Route::get('/elavon/api/logs', 'ElavonApiPaymentController@getLogs')->middleware("scope:$allRoles");
+Route::get('/elavon/api/logs/{test_case}', 'ElavonApiPaymentController@getLogs')->middleware("scope:$allRoles");
+Route::delete('/elavon/api/logs/delete', 'ElavonApiPaymentController@deleteAll')->middleware("scope:$allRoles");
