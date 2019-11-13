@@ -21,6 +21,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
         'phone',
         'password'
@@ -61,6 +62,6 @@ class User extends Authenticatable
 
     public function findForPassport($username)
     {
-        return $this->orWhere('email', $username)->orWhere('phone', $username)->first();
+        return $this->orWhere('email', $username)->orWhere('username', $username)->orWhere('phone', $username)->first();
     }
 }
