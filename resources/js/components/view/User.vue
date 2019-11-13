@@ -10,6 +10,10 @@
 							<a :href="'mailto:' + userData.email">{{userData.email}}</a>
 						</div>
 						<div class="subtitle-1">Email verified at: {{userData.email_verified_at}}</div>
+						<div class="subtitle-1">
+							Phone:
+							<a :href="'tel:' + userData.phone">{{userData.phone}}</a>
+						</div>
 						<div class="subtitle-1">Created at: {{userData.created_at}}</div>
 						<div class="subtitle-1">Updated at: {{userData.updated_at}}</div>
 					</v-card-text>
@@ -48,7 +52,36 @@
 			</v-col>
 			<v-col cols="12" md="8" v-else>
 				<v-card-title>Open registers</v-card-title>
-				<v-card-text>There are no open register for this user</v-card-text>
+				<v-card-text>There are no open register for {{userData.name}}</v-card-text>
+			</v-col>
+			<v-col cols="12" v-if="userData.roles">
+				<v-card>
+					<v-card-title>{{userData.name}} Roles</v-card-title>
+					<v-card-text>
+						<v-simple-table dense>
+							<template v-slot:default>
+								<thead>
+									<tr>
+										<th class="text-left">Name</th>
+										<th class="text-left">Created at</th>
+										<th class="text-left">Updated at</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="role in userData.roles" :key="role.id">
+										<td>{{ role.name }}</td>
+										<td>{{ role.created_at }}</td>
+										<td>{{ role.updated_at }}</td>
+									</tr>
+								</tbody>
+							</template>
+						</v-simple-table>
+					</v-card-text>
+				</v-card>
+			</v-col>
+			<v-col cols="12" md="8" v-else>
+				<v-card-title>User Roles</v-card-title>
+				<v-card-text>There are no roles for {{userData.name}}</v-card-text>
 			</v-col>
 		</v-row>
 	</v-container>
@@ -77,14 +110,16 @@ export default {
 				}
 			}).then(result => {
 				this.user = result;
-				this.getOne({
-					model: "cash-registers",
-					data: {
-						id: this.userData.open_register.cash_register_id
-					}
-				}).then(response => {
-					this.opened_cash_register = response.name;
-				});
+				if (this.userData.open_register) {
+					this.getOne({
+						model: "cash-registers",
+						data: {
+							id: this.userData.open_register.cash_register_id
+						}
+					}).then(response => {
+						this.opened_cash_register = response.name;
+					});
+				}
 			});
 	},
 	computed: {
