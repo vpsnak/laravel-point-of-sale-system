@@ -7,13 +7,6 @@
 
         <v-divider />
 
-        <div class="d-flex justify-space-between pa-2 bb-1">
-            <span>Tax</span>
-            <span>$ {{ tax.toFixed(2) }}</span>
-        </div>
-
-        <v-divider />
-
         <div class="d-flex justify-space-between pa-2" v-if="totalDiscount">
             <span>Total discount</span>
             <span>$ {{ totalDiscount.toFixed(2) }}</span>
@@ -24,6 +17,13 @@
         <div class="d-flex justify-space-between pa-2" v-if="shippingCost">
             <span>Shipping cost</span>
             <span>$ {{ shippingCost.toFixed(2) }}</span>
+        </div>
+
+        <v-divider />
+
+        <div class="d-flex justify-space-between pa-2 bb-1">
+            <span>Tax</span>
+            <span>$ {{ tax.toFixed(2) }}</span>
         </div>
 
         <v-divider />
@@ -46,9 +46,11 @@ export default {
     computed: {
         shippingCost() {
             if (this.$props.order) {
-                return;
+                return parseFloat(this.$props.order.shipping_cost);
             } else if (this.$store.state.cart.shipping.cost) {
-                return this.$store.state.cart.shipping.cost;
+                return parseFloat(this.$store.state.cart.shipping.cost);
+            } else {
+                return 0;
             }
         },
         subTotalwDiscount() {
@@ -124,7 +126,7 @@ export default {
                     "cart/setCartPrice",
                     this.subTotalwDiscount + this.tax
                 );
-                return this.subTotalwDiscount + this.tax;
+                return this.subTotalwDiscount + this.tax + this.shippingCost;
             }
         }
     },
