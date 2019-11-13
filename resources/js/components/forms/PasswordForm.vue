@@ -79,7 +79,7 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
-		model: Object
+		model: Object || undefined
 	},
 	data() {
 		return {
@@ -98,7 +98,18 @@ export default {
 			return this.$props.model.action;
 		},
 		disableSubmit() {
-			return this.formFields.current_password ? false : true;
+			switch (this.action) {
+				case "change_self":
+					return this.formFields.current_password ? false : true;
+					break;
+				case "change":
+					return this.formFields.password ? false : true;
+					break;
+				case "verify":
+					return this.formFields.current_password ? false : true;
+
+					break;
+			}
 		}
 	},
 	methods: {
@@ -114,8 +125,23 @@ export default {
 						});
 					break;
 				case "change":
+					this.formFields.user_id = this.$props.model.id;
+					this.changeUserPwd(this.formFields)
+						.then(() => {
+							this.$emit("submit", true);
+						})
+						.finally(() => {
+							this.clear();
+						});
 					break;
 				case "verify":
+					this.verifySelf(this.formFields)
+						.then(() => {
+							this.$emit("submit", true);
+						})
+						.finally(() => {
+							this.clear();
+						});
 					break;
 			}
 		},
@@ -126,7 +152,7 @@ export default {
 			this.formFields.password = null;
 			this.formFields.password_confirmation = null;
 		},
-		...mapActions(["changeSelfPwd"])
+		...mapActions(["changeSelfPwd", "changeUserPwd", "verifySelf"])
 	},
 	beforeDestroy() {
 		this.$off("submit");
