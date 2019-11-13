@@ -88,6 +88,20 @@ class UserController extends Controller
         return response(['info' => ['Logout' => 'Goodbye...']], 200);
     }
 
+    
+    public function search(Request $request)
+    {
+        $validatedData = $request->validate([
+            'keyword' => 'required|string'
+        ]);
+
+        return $this->searchResult(
+            ['username', 'name', 'email','phone'],
+            $validatedData['keyword'],
+            true
+        );
+    }
+
     public function create(Request $request)
     {
         $validatedData = $request->validate([

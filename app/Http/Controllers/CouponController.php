@@ -43,4 +43,17 @@ class CouponController extends BaseController
             return response($coupon, 201);
         }
     }
+    
+    public function search(Request $request)
+    {
+        $validatedData = $request->validate([
+            'keyword' => 'required|string'
+        ]);
+
+        return $this->searchResult(
+            ['name','code'],
+            $validatedData['keyword'],
+            true
+        );
+    }
 }

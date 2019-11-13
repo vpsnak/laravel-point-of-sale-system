@@ -142,4 +142,17 @@ class OrderController extends BaseController
         $order->save();
         return response($order, 200);
     }
+    
+    public function search(Request $request)
+    {
+        $validatedData = $request->validate([
+            'keyword' => 'required|string'
+        ]);
+
+        return $this->searchResult(
+            ['status','occasion','location'],
+            $validatedData['keyword'],
+            true
+        );
+    }
 }
