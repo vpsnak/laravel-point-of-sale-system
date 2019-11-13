@@ -95,7 +95,7 @@ export default {
         },
         tax() {
             if (this.$props.order) {
-                return parseFloat(
+                let tax = parseFloat(
                     this.$props.order.total - this.$props.order.subtotal
                 );
             } else {
@@ -104,15 +104,16 @@ export default {
                         parseFloat(this.$store.state.store.tax.percentage)) /
                         100
                 );
-                if (this.customer) {
-                    if (this.customer.no_tax) {
-                        return 0;
-                    } else {
-                        return tax;
-                    }
+            }
+
+            if (this.customer) {
+                if (this.customer.no_tax) {
+                    return 0;
                 } else {
                     return tax;
                 }
+            } else {
+                return tax;
             }
         },
         totalDiscount() {
