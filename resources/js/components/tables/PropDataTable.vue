@@ -320,19 +320,18 @@ export default {
 		},
 		role() {
 			return this.$store.getters.role;
-		},
-
-		storeManagerDisabled() {
-			if (this.role == "admin") {
-				return false;
-			} else {
-				return true;
-			}
 		}
 	},
 	methods: {
 		cancelOrderDisabled(item) {
 			if (this.role == "admin" || item.created_by.id == this.user.id) {
+				return false;
+			} else {
+				return true;
+			}
+		},
+		cashierDisabled() {
+			if (this.role == "admin" || this.role == "store_manager") {
 				return false;
 			} else {
 				return true;

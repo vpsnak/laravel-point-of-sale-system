@@ -39,11 +39,15 @@ class UserController extends Controller
             ->orWhere('phone', $validatedData['username'])->first();
 
         if (!$user) {
-            if (Hash::verify($validatedData['password'], $user->password))
+            return response(['errors' => [
+                'Login' => 'Invalid credentials',
+            ]], 422);
+        } else {
+            if (!Hash::check($validatedData['password'], $user->password)) {
                 return response(['errors' => [
                     'Login' => 'Invalid credentials',
                 ]], 422);
-        } else {
+            }
             $role = ($user->roles)[0]['name'];
             $response = $http->post(config('app.url') . '/oauth/token', [
                 'form_params' => [

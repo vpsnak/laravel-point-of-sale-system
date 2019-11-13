@@ -44,6 +44,9 @@ export default {
     },
 
     computed: {
+        customer() {
+            return this.$store.state.cart.customer;
+        },
         shippingCost() {
             if (this.$props.order) {
                 return parseFloat(this.$props.order.shipping_cost);
@@ -96,11 +99,20 @@ export default {
                     this.$props.order.total - this.$props.order.subtotal
                 );
             } else {
-                return parseFloat(
+                let tax = parseFloat(
                     (this.subTotalwDiscount *
                         parseFloat(this.$store.state.store.tax.percentage)) /
                         100
                 );
+                if (this.customer) {
+                    if (this.customer.no_tax) {
+                        return 0;
+                    } else {
+                        return tax;
+                    }
+                } else {
+                    return tax;
+                }
             }
         },
         totalDiscount() {
