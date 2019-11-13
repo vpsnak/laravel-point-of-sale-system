@@ -110,14 +110,16 @@ export default {
 				}
 			}).then(result => {
 				this.user = result;
-				this.getOne({
-					model: "cash-registers",
-					data: {
-						id: this.userData.open_register.cash_register_id
-					}
-				}).then(response => {
-					this.opened_cash_register = response.name;
-				});
+				if (this.userData.open_register) {
+					this.getOne({
+						model: "cash-registers",
+						data: {
+							id: this.userData.open_register.cash_register_id
+						}
+					}).then(response => {
+						this.opened_cash_register = response.name;
+					});
+				}
 			});
 	},
 	computed: {
