@@ -77,7 +77,7 @@ $allRoutes = [
                 [
                     'url' => '/login',
                     'action' => 'login',
-                    'middleware' => "scope:guest"
+                    'middleware' => "guest"
                 ],
                 [
                     'url' => '/verify',

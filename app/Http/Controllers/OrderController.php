@@ -46,7 +46,7 @@ class OrderController extends BaseController
         $validatedData['created_by'] = auth()->user()->id;
 
         $shippingData = $request->validate([
-            'shipping.method' => 'string|string',
+            'shipping.method' => 'string',
             'shipping.date' => 'string|date',
             'shipping.timeSlotLabel' => 'string|nullable',
             'shipping.cost' => 'numeric',
@@ -58,15 +58,15 @@ class OrderController extends BaseController
         ]);
 
         $shippingAddressData = $request->validate([
-            'shipping.address.first_name' => 'required|string',
-            'shipping.address.last_name' => 'required|string',
-            'shipping.address.street' => 'required|string',
+            'shipping.address.first_name' => 'required_if:shipping.method,delivery|string',
+            'shipping.address.last_name' => 'required_if:shipping.method,delivery|string',
+            'shipping.address.street' => 'required_if:shipping.method,delivery|string',
             'shipping.address.street2' => 'nullable|string',
-            'shipping.address.city' => 'required|string',
-            'shipping.address.country_id' => 'required|exists:countries,country_id',
-            'shipping.address.region' => 'required|exists:regions,region_id',
-            'shipping.address.postcode' => 'required|string',
-            'shipping.address.phone' => 'required|numeric',
+            'shipping.address.city' => 'required_if:shipping.method,delivery|string',
+            'shipping.address.country_id' => 'required_if:shipping.method,delivery|exists:countries,country_id',
+            'shipping.address.region' => 'required_if:shipping.method,delivery|exists:regions,region_id',
+            'shipping.address.postcode' => 'required_if:shipping.method,delivery|string',
+            'shipping.address.phone' => 'required_if:shipping.method,delivery|numeric',
             'shipping.address.company' => 'nullable|string',
             'shipping.address.vat_id' => 'nullable|string',
         ]);
