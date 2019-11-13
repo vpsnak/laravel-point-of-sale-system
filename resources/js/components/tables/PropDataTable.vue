@@ -338,6 +338,13 @@ export default {
 				return true;
 			}
 		},
+		cashierDisabled() {
+			if (this.role == "admin" || this.role == "store_manager") {
+				return false;
+			} else {
+				return true;
+			}
+		},
 
 		setItem(item) {
 			this.selectedItem = item;

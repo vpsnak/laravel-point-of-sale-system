@@ -219,6 +219,12 @@ export default {
 					title: "Customers",
 					icon: "mdi-account-group",
 					to: "customers"
+				},
+				{
+					id: 4,
+					title: "Products",
+					icon: "mdi-package-variant",
+					to: "products"
 				}
 			]
 		};

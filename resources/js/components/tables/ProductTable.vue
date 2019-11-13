@@ -5,7 +5,7 @@
 		tableTitle="Products"
 		tableBtnTitle="New Product"
 		tableForm="productForm"
-		:tableBtnDisable="false"
+		:tableBtnDisable="cashierDisabled()"
 		tableViewComponent="product"
 	/>
 </template>
@@ -30,7 +30,19 @@ export default {
 	mounted() {
 		this.setRows([]);
 	},
+	computed: {
+		role() {
+			return this.$store.getters.role;
+		}
+	},
 	methods: {
+		cashierDisabled() {
+			if (this.role == "admin" || this.role == "store_manager") {
+				return false;
+			} else {
+				return true;
+			}
+		},
 		...mapMutations("datatable", {
 			setRows: "setRows",
 			deleteRow: "deleteRow"
