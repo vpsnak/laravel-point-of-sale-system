@@ -109,7 +109,7 @@ class UserController extends Controller
             'password_confirmation' => 'required|string',
         ]);
 
-        $user = User::firstOrFail($validatedData['user_id']);
+        $user = User::findOrFail($validatedData['user_id']);
         $user->password = Hash::make($validatedData['password']);
         $user->save();
 
