@@ -5,7 +5,7 @@
             <span>$ {{ subTotalwDiscount.toFixed(2) }}</span>
         </div>
 
-        <v-divider />
+        <v-divider v-if="totalDiscount" />
 
         <div class="d-flex justify-space-between pa-2" v-if="totalDiscount">
             <span>Total discount</span>
@@ -94,26 +94,22 @@ export default {
             return subtotal;
         },
         tax() {
+            if (this.customer) {
+                if (this.customer.no_tax) {
+                    return 0;
+                }
+            }
+
             if (this.$props.order) {
-                let tax = parseFloat(
+                return parseFloat(
                     this.$props.order.total - this.$props.order.subtotal
                 );
             } else {
-                let tax = parseFloat(
+                return parseFloat(
                     (this.subTotalwDiscount *
                         parseFloat(this.$store.state.store.tax.percentage)) /
                         100
                 );
-            }
-
-            if (this.customer) {
-                if (this.customer.no_tax) {
-                    return 0;
-                } else {
-                    return tax;
-                }
-            } else {
-                return tax;
             }
         },
         totalDiscount() {
