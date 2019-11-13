@@ -201,10 +201,54 @@ export default new Vuex.Store({
                     });
             });
         },
+        verifySelf(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(this.state.baseUrl + "auth/verify/", payload)
+                    .then(response => {
+                        let notification = {
+                            msg: response.data.info,
+                            type: "info"
+                        };
+                        context.commit("setNotification", notification);
+                        resolve(response.data);
+                    })
+                    .catch(error => {
+                        let notification = {
+                            msg: error.response.data.errors,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
+                        reject(error);
+                    });
+            });
+        },
         changeSelfPwd(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
                     .post(this.state.baseUrl + "auth/password/", payload)
+                    .then(response => {
+                        let notification = {
+                            msg: response.data.info,
+                            type: "info"
+                        };
+                        context.commit("setNotification", notification);
+                        resolve(response.data);
+                    })
+                    .catch(error => {
+                        let notification = {
+                            msg: error.response.data.errors,
+                            type: "error"
+                        };
+                        context.commit("setNotification", notification);
+                        reject(error);
+                    });
+            });
+        },
+        changeUserPwd(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(this.state.baseUrl + "user/password/", payload)
                     .then(response => {
                         let notification = {
                             msg: response.data.info,
