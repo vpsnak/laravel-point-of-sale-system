@@ -1,7 +1,7 @@
 <template>
 	<v-container v-if="cashRegisterData">
 		<v-row>
-			<v-col cols="12">
+			<v-col cols="12" md="5">
 				<v-card>
 					<v-card-title>{{cashRegisterData.name}}</v-card-title>
 					<v-card-text>
@@ -10,34 +10,53 @@
 					</v-card-text>
 				</v-card>
 			</v-col>
-			<v-col cols="12" v-if="cashRegisterData.logs">
+			<v-col cols="12" md="7" v-if="cashRegisterData.store">
 				<v-card>
-					<v-card-title>Logs</v-card-title>
+					<v-card-title>Store</v-card-title>
 					<v-card-text>
 						<v-simple-table dense>
 							<template v-slot:default>
 								<thead>
 									<tr>
-										<th class="text-left">Opening amount</th>
-										<th class="text-left">Closing amount</th>
-										<th class="text-left">Status</th>
-										<th class="text-left">Opening time</th>
-										<th class="text-left">Closing time</th>
-										<th class="text-left">Opened by</th>
-										<th class="text-left">Closed by</th>
-										<th class="text-left">note</th>
+										<th class="text-left">ID</th>
+										<th class="text-left">Name</th>
+										<th class="text-left">Tax</th>
 									</tr>
 								</thead>
 								<tbody>
-									<tr v-for="log in cashRegisterData.logs" :key="log.id">
-										<td>{{ log.opening_amount }}</td>
-										<td>{{ log.closing_amount }}</td>
-										<td>{{ log.status }}</td>
-										<td>{{ log.opening_time }}</td>
-										<td>{{ log.closing_time }}</td>
-										<td>{{ log.opened_by }}</td>
-										<td>{{ log.closed_by }}</td>
-										<td>{{ log.note }}</td>
+									<tr>
+										<td>{{ cashRegisterData.store.id }}</td>
+										<td>{{ cashRegisterData.store.name }}</td>
+										<td>{{ cashRegisterData.store.tax.name }}</td>
+									</tr>
+								</tbody>
+							</template>
+						</v-simple-table>
+					</v-card-text>
+				</v-card>
+			</v-col>
+			<v-col cols="12" v-if="cashRegisterData.payments.length > 0">
+				<v-card>
+					<v-card-title>Payments</v-card-title>
+					<v-card-text>
+						<v-simple-table dense>
+							<template v-slot:default>
+								<thead>
+									<tr>
+										<th class="text-left">Name</th>
+										<th class="text-left">Amount</th>
+										<th class="text-left">Status</th>
+										<th class="text-left">Refunded</th>
+										<th class="text-left">Created by</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr v-for="payment in cashRegisterData.payments" :key="payment.id">
+										<td>{{ payment.payment_type.name }}</td>
+										<td>{{ payment.amount }}</td>
+										<td>{{ payment.status }}</td>
+										<td>{{ payment.refunded }}</td>
+										<td>{{ payment.created_by }}</td>
 									</tr>
 								</tbody>
 							</template>
@@ -46,8 +65,11 @@
 				</v-card>
 			</v-col>
 			<v-col cols="12" v-else>
-				<v-card-title>Logs</v-card-title>
-				<v-card-text>There are no logs for this this cash register</v-card-text>
+				<v-card-title>Payments</v-card-title>
+				<v-card-text>
+					There are no paymens
+					that have been made by this cash register
+				</v-card-text>
 			</v-col>
 		</v-row>
 	</v-container>
