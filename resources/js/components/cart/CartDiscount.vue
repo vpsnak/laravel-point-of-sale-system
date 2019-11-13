@@ -45,7 +45,6 @@ export default {
         ...mapState("cart", ["discountTypes"]),
         discountType: {
             get() {
-                console.log(this.$props.model);
                 return this.$props.model.discount_type
                     ? this.$props.model.discount_type
                     : "None";
