@@ -18,20 +18,6 @@
 					label="E-mail"
 				></v-text-field>
 			</ValidationProvider>
-			<ValidationProvider rules="required|min:8" v-slot="{ errors, valid }" name="Password">
-				<v-text-field
-					v-model="formFields.password"
-					:append-icon="showPassword ? 'visibility' : 'visibility_off'"
-					:type="showPassword ? 'text' : 'password'"
-					:error-messages="errors"
-					:success="valid"
-					name="input-10-1"
-					label="Password"
-					hint="At least 8 characters"
-					counter
-					@click:append="showPassword = !showPassword"
-				></v-text-field>
-			</ValidationProvider>
 			<v-btn
 				class="mr-4"
 				type="submit"
@@ -52,7 +38,6 @@ export default {
 	},
 	data() {
 		return {
-			showPassword: false,
 			defaultValues: {},
 			formFields: {
 				id: null,
