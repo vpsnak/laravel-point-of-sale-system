@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Customer;
 use App\Helper\Price;
 use App\Order;
+use App\OrderAddress;
 use App\OrderProduct;
 use App\Store;
 use Illuminate\Http\Request;
@@ -87,8 +89,18 @@ class OrderController extends BaseController
             'products.*.notes' => 'string|nullable',
         ]);
 
+        $has_tax = true;
+        $customer = Customer::getOne($validatedData['customer_id']);
+        if (!empty($customer)) {
+            $has_tax = $customer->no_tax ? false : true;
+        }
+
         $validatedData = $this->setSubtotal($validatedData, $order_items['products']);
-        $validatedData = $this->setTax($validatedData, $validatedData['store_id']);
+        if ($has_tax) {
+            $validatedData = $this->setTax($validatedData, $validatedData['store_id']);
+        } else {
+            $validatedData['tax'] = 0;
+        }
 
         $order = $this->model::store($validatedData);
         if (empty($order)) {
@@ -96,18 +108,9 @@ class OrderController extends BaseController
         }
 
         if (!empty($shippingData['shipping']['address'])) {
-            $address = $shippingAddressData['shipping']['address'];
-//            $concatAddress = $address['first_name'];
-//            $concatAddress .= ' ' . $address['last_name'];
-//            $concatAddress .= ' ' . $address['street'];
-//            $concatAddress .= ' ' . $address['street2'];
-//            $concatAddress .= ' ' . $address['city'];
-//            $concatAddress .= ' ' . $address['address_region'];
-//            $concatAddress .= ' ' . $address['address_country'];
-//            $concatAddress .= ' ' . $address['postcode'];
-//            $concatAddress .= ' ' . $address['phone'];
-            $shipping_address = $order->shipping_address()->create($address);
-            $validatedData['shipping_address'] = $shipping_address->id ?? null;
+            $shipping_address = OrderAddress::store($shippingAddressData['shipping']['address']);
+            $order->shipping_address_id = $shipping_address->id;
+            $order->save();
         }
 
         foreach ($order_items['products'] as $product) {

@@ -27,7 +27,7 @@ class Order extends BaseModel
         'notes',
     ];
 
-    protected $with = ['items', 'payments', 'customer', 'store_id', 'created_by'];
+    protected $with = ['items', 'payments', 'customer', 'store_id', 'created_by', 'shipping_address'];
 
     public function getTotalAttribute()
     {
@@ -87,7 +87,7 @@ class Order extends BaseModel
 
     public function shipping_address()
     {
-        return $this->hasOne(OrderAddress::class, 'shipping_address_id');
+        return $this->hasOne(OrderAddress::class, 'id', 'shipping_address_id');
     }
 
     public function created_by()

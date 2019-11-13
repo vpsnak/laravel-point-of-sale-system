@@ -20,12 +20,17 @@ class OrderAddress extends BaseModel
         'vat_id',
     ];
 
+    public function order()
+    {
+        return $this->belongsTo(Order::class, 'id', 'shipping_address_id');
+    }
+
     public function country()
     {
         return $this->belongsTo(Country::class, 'country_id', 'country_id');
     }
 
-    protected function region_id()
+    public function region_id()
     {
         return $this->belongsTo(Region::class, 'region', 'region_id');
     }
