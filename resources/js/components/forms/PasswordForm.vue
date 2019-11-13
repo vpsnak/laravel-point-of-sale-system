@@ -2,7 +2,7 @@
     <ValidationObserver v-slot="{ invalid }" ref="obs">
         <v-form>
             <ValidationProvider
-                v-if="action === 'self_change' || action === 'verify'"
+                v-if="action === 'change_self' || action === 'verify'"
                 rules="required|min:8"
                 v-slot="{ errors, valid }"
                 name="Password"
@@ -22,7 +22,7 @@
                 ></v-text-field>
             </ValidationProvider>
             <ValidationProvider
-                v-if="action === 'change' || action === 'self_change'"
+                v-if="action === 'change' || action === 'change_self'"
                 v-slot="{ errors, valid }"
                 name="New Password"
                 vid="confirmation"
@@ -44,7 +44,7 @@
             </ValidationProvider>
 
             <ValidationProvider
-                v-if="action === 'change' || action === 'self_change'"
+                v-if="action === 'change' || action === 'change_self'"
                 rules="required|min:8|confirmed:confirmation"
                 v-slot="{ errors, valid }"
                 name="Password Confirmation"
@@ -108,7 +108,7 @@ export default {
     methods: {
         submit() {
             switch (this.action) {
-                case "change-self":
+                case "change_self":
                     this.changeSelfPwd(this.formFields)
                         .then(() => {
                             this.$emit("submit", true);
