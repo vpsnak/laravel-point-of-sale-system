@@ -108,16 +108,20 @@ export default {
 			}
 		},
 		getOrder() {
-			let payload = {
-				model: "orders",
-				data: { id: this.$props.order_id }
-			};
-			this.getOne(payload).then(response => {
-				this.order = response;
+			if (this.$props.order_id) {
+				let payload = {
+					model: "orders",
+					data: { id: this.$props.order_id }
+				};
+				this.getOne(payload).then(response => {
+					this.order = response;
 
-				this.remaining = this.order.total - this.order.total_paid;
-				this.$emit("amountPending", this.remaining);
-			});
+					this.$store.state.cart.order = response;
+
+					this.remaining = this.order.total - this.order.total_paid;
+					this.$emit("amountPending", this.remaining);
+				});
+			}
 		},
 		getPaymentHistory() {
 			if (this.$props.order_id > 0) {

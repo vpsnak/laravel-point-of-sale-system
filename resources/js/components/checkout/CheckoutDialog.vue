@@ -75,13 +75,12 @@ export default {
 	},
 	computed: {
 		closeBtnTxt() {
-			return this.order ? "Cancel order" : "Close";
+			return this.order && this.$store.state.cart.currentCheckoutStep !== 3
+				? "Cancel order"
+				: "Close";
 		},
 		showHoldBtn() {
-			if (
-				this.order &&
-				this.$store.state.cart.currentCheckoutStep !== 3
-			) {
+			if (this.order && this.$store.state.cart.currentCheckoutStep !== 3) {
 				return true;
 			} else {
 				return false;
@@ -117,11 +116,7 @@ export default {
 			if (this.order && this.order.status === "complete") {
 				this.resetState();
 				this.state = false;
-			} else if (
-				this.order &&
-				(this.order.status === "pending" ||
-					this.order.status === "pending_payment")
-			) {
+			} else if (this.order && this.order.status !== "complete") {
 				this.closePrompt = true;
 			} else {
 				this.state = false;
