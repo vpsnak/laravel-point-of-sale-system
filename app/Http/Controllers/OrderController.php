@@ -55,6 +55,7 @@ class OrderController extends BaseController
             'shipping.occasion' => 'string|nullable',
             'shipping.address' => 'sometimes|nullable',
             'shipping.address.id' => 'numeric|exists:addresses,id|nullable',
+            'shipping.pickup_point.id' => 'required_if:shipping.method,pickup|numeric',
         ]);
 
         $shippingAddressData = $request->validate([
@@ -72,6 +73,7 @@ class OrderController extends BaseController
         ]);
 
         $validatedData['shipping_type'] = $shippingData['shipping']['method'] ?? null;
+        $validatedData['store_pickup_id'] = $shippingData['shipping']['pickup_point']['id'] ?? null;
         $validatedData['shipping_cost'] = $shippingData['shipping']['cost'] ?? null;
         $validatedData['delivery_date'] = $shippingData['shipping']['timeSlotLabel'] ?? null;
         $validatedData['location'] = $shippingData['shipping']['location'] ?? null;

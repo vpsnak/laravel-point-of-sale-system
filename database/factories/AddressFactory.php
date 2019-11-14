@@ -11,9 +11,10 @@ $factory->define(Address::class, function (Faker $faker) {
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,
         'street' => $faker->streetAddress,
+        'street2' => $faker->streetAddress,
         'city' => $faker->city,
         'country_id' => $faker->countryCode,
-        'region' => $faker->country,
+        'region' => rand(1, 100),
         'postcode' => $faker->randomElement(['00606', '10025', '01524', '01561', '97029', '0']),
         'phone' => $faker->phoneNumber
     ];
