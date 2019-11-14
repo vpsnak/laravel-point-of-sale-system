@@ -401,7 +401,7 @@ export default {
 				width: 1000,
 				title: `View item #${item.id}`,
 				titleCloseBtn: true,
-				icon: "mdi-account-key",
+				icon: "mdi-watch",
 				component: this.tableViewComponent,
 				model: item,
 				persistent: true

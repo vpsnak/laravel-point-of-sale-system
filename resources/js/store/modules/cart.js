@@ -221,7 +221,12 @@ export default {
                         payload
                     )
                     .then(response => {
-                        commit("setNotification", response.data, {
+                        let notification = {
+                            msg: response.data.info,
+                            type: "success"
+                        };
+
+                        commit("setNotification", notification, {
                             root: true
                         });
                         resolve(response);
