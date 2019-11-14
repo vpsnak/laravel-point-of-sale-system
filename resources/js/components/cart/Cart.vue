@@ -22,7 +22,7 @@
         <v-container grid-list-md text-xs-center>
             <customerSearch
                 :editable="editable"
-                :keywordLength="1"
+                :keywordLength="3"
                 class="my-3"
             ></customerSearch>
         </v-container>
