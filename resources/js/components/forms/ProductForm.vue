@@ -127,10 +127,13 @@ export default {
 			this.loading = true;
 			this.getAll({
 				model: "categories"
-			}).then(categories => {
-				this.categories = categories;
-				this.loading = false;
-			});
+			})
+				.then(categories => {
+					this.categories = categories;
+				})
+				.finally(() => {
+					this.loading = false;
+				});
 		},
 		getAllStores() {
 			this.getAll({

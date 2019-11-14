@@ -5,7 +5,8 @@
 				<v-text-field v-model="formFields.first_name" label="First name" :disabled="loading" required></v-text-field>
 				<v-text-field v-model="formFields.city" label="City" :disabled="loading" required></v-text-field>
 				<v-select
-					v-model="formFields.region"
+					:loading="loading"
+					v-model="formFields.region_id"
 					:items="regions"
 					label="Regions"
 					required
@@ -18,6 +19,7 @@
 				<v-text-field v-model="formFields.last_name" label="Last name" :disabled="loading" required></v-text-field>
 				<v-text-field v-model="formFields.postcode" label="Postcode" :disabled="loading" required></v-text-field>
 				<v-select
+					:loading="loading"
 					v-model="formFields.country_id"
 					:items="countries"
 					label="Countries"
@@ -75,7 +77,7 @@ export default {
 				street2: null,
 				city: null,
 				country_id: null,
-				region: null,
+				region_id: null,
 				postcode: null,
 				phone: null,
 				company: null,
@@ -87,16 +89,8 @@ export default {
 		};
 	},
 	mounted() {
-		this.getAll({
-			model: "regions"
-		}).then(regions => {
-			this.regions = regions;
-		});
-		this.getAll({
-			model: "countries"
-		}).then(countries => {
-			this.countries = countries;
-		});
+		this.getAllRegions();
+		this.getAllCountries();
 		this.defaultValues = { ...this.formFields };
 		if (this.$props.model) {
 			this.formFields = {
@@ -132,6 +126,26 @@ export default {
 		},
 		clear() {
 			this.formFields = { ...this.defaultValues };
+		},
+
+		getAllRegions() {
+			this.loading = true;
+			this.getAll({
+				model: "regions"
+			})
+				.then(regions => {
+					this.regions = regions;
+				})
+				.finally(() => {
+					this.loading = false;
+				});
+		},
+		getAllCountries() {
+			this.getAll({
+				model: "countries"
+			}).then(countries => {
+				this.countries = countries;
+			});
 		},
 
 		...mapActions({

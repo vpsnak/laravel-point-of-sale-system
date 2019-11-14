@@ -198,15 +198,17 @@
                                             <td colspan="3" align="right" style="padding:3px 9px">Subtotal</td>
                                             <td align="right" style="padding:3px 9px">${{ $data['subtotal'] }}</td>
                                         </tr>
+                                        @if($data['shipping_cost'])
                                         <tr>
                                             <td colspan="3" align="right" style="padding:3px 9px">Shipping Cost</td>
                                             <td align="right" style="padding:3px 9px">${{ $data['shipping_cost'] }}</td>
                                         </tr>
+                                        @endif
                                         <tr>
                                             <td colspan="3" align="right" style="padding:3px 9px"><strong>Grand Total
                                                     (Excl.Tax)</strong></td>
                                             <td align="right" style="padding:3px 9px">
-                                                <strong>${{ $data['subtotal'] }}</strong></td>
+                                                <strong>${{ $data['total_without_tax'] }}</strong></td>
                                         </tr>
                                         <tr>
                                             <td colspan="3" align="right" style="padding:3px 9px">
@@ -234,7 +236,7 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                 @if(!$data['shipping_address'])
+                                 @if(!$data['shipping_address'] && $data['notes'] )
                                 <br />
                                 <table cellspacing="0" cellpadding="0" border="0" width="650"
                                     style="border:1px solid rgb(234,234,234)">
