@@ -21,6 +21,7 @@ class Order extends BaseModel
         'shipping_type',
         'shipping_cost',
         'shipping_address_id',
+        'store_pickup_id',
         'delivery_date',
         'location',
         'occasion',
@@ -88,6 +89,11 @@ class Order extends BaseModel
     public function shipping_address()
     {
         return $this->hasOne(OrderAddress::class, 'id', 'shipping_address_id');
+    }
+
+    public function store_pickup()
+    {
+        return $this->hasOne(StorePickup::class, 'id', 'store_pickup_id');
     }
 
     public function created_by()
