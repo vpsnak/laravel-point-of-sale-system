@@ -48,26 +48,36 @@
                                         <tr>
                                             <td valign="top"
                                                 style="padding:7px 9px 9px 9px; border:1px solid #bebcb7; border-top:0; background:#f8f7f5;">
+                                                @if($data['customer'])
                                                 <p>{{$data['customer']['first_name']}}{{$data['customer']['last_name']}}
                                                 </p>
                                                 <p>{{$data['customer']['phone']}}</p>
-                                                <p>{{$data['customer']['email']}}</p>
+                                                <p>E: {{$data['customer']['email']}}</p>
+                                                <p>T: <a href="tel:+{{$data['shipping_address']['phone']}}">{{$data['shipping_address']['phone']}}</a></p>
                                                 <p>{{$data['customer']['company_name']}}</p>
+                                                @else
+                                                <p>Guest</p>  
+                                                @endif
                                             </td>
                                             <td>&nbsp;</td>
                                             <td valign="top"
                                                 style="padding:7px 9px 9px 9px; border:1px solid #bebcb7; border-top:0; background:#f8f7f5;">
                                                 @foreach(json_decode($data['payments'] , true) as $payment)
                                                 <h4>{{ $payment['payment_type']['name']}}</h4>
-                                                <p>Type : {{$payment['payment_type']['type']}}</p>
-                                                <p>Created by: {{$payment['created_by']['name']}}</p>
+                                                Type : {{$payment['payment_type']['type']}}
+                                                <br />
+                                                Amount: ${{$payment['amount']}}
+                                                @if($payment['code'])
+                                                <br />
+                                                Code: {{$payment['code']}}
+                                                @endif
                                                 @endforeach
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                                 <br />
-                                <br />
+                                @if($data['shipping_address'])
                                 <table cellspacing="0" cellpadding="0" border="0" width="100%">
                                     <thead>
                                         <tr>
@@ -84,17 +94,29 @@
                                         <tr>
                                             <td valign="top"
                                                 style="padding:7px 9px 9px 9px; border:1px solid #bebcb7; border-top:0; background:#f8f7f5;">
+                                                {{$data['shipping_address']['first_name']}} {{$data['shipping_address']['last_name']}}
+                                                <br />
+                                                {{$data['shipping_address']['street']}}
+                                                <br />
+                                                {{$data['shipping_address']['street2']}}
+                                                <br />
+                                                {{$data['shipping_address']['city']}} {{$data['shipping_address']['region_id']['default_name']}} {{$data['shipping_address']['postcode']}}
+                                                <br />
+                                                {{$data['shipping_address']['country_id']}}
+                                                <br />
+                                               {{$data['shipping_address']['company']}}
+                                               <br />
+                                                T: <a href="tel:+{{$data['shipping_address']['phone']}}">{{$data['shipping_address']['phone']}}</a></p>
                                             </td>
                                             <td>&nbsp;</td>
                                             <td valign="top"
                                                 style="padding:7px 9px 9px 9px; border:1px solid #bebcb7; border-top:0; background:#f8f7f5;">
                                                 <p>Shipping type : {{ $data['shipping_type'] }}.</p>
-                                                <p>Shipping cost : {{ $data['shipping_cost'] }}.</p>
+                                                <p>Shipping cost : ${{ $data['shipping_cost'] }}.</p>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
-                                <br />
                                 <br />
                                 <table cellspacing="0" cellpadding="0" border="0" width="100%">
                                     <thead>
@@ -112,15 +134,20 @@
                                         <tr>
                                             <td valign="top"
                                                 style="padding:7px 9px 9px 9px; border:1px solid #bebcb7; border-top:0; background:#f8f7f5;">
+                                                <p>Delivery date: {{$data['delivery_date']}}</p>
+                                                <p>Occasion: {{$data['occasion']}}</p>
+                                                <p>Location: {{$data['location']}}</p>
                                             </td>
                                             <td>&nbsp;</td>
                                             <td valign="top"
                                                 style="padding:7px 9px 9px 9px; border:1px solid #bebcb7; border-top:0; background:#f8f7f5;">
+                                                <p> {{$data['notes']}}</p>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                                 <br />
+                                @endif
                                 <table cellspacing="0" cellpadding="0" border="0" width="650"
                                     style="border:1px solid rgb(234,234,234)">
                                     <thead>
@@ -151,10 +178,19 @@
                                             <td align="center" valign="top"
                                                 style="padding:3px 9px;border-bottom:1px dotted rgb(204,204,204)">
                                                 {{ $item['qty'] }}</td>
-                                            <td align="right" valign="top"
-                                                style="padding:3px 9px;border-bottom:1px dotted rgb(204,204,204)">
+                                            <td align="right" valign="top" style="padding:3px 9px; border-bottom:1px dotted rgb(204,204,204)">
                                                 ${{ $item['price'] }}</td>
                                         </tr>
+                                        @if($item['notes'])
+                                        <tr align="left" bgcolor="#F6F6F6" valign="top"
+                                                style="padding:3px 9px; border-bottom:1px dotted rgb(204,204,204)">
+                                            <td align="left"style="padding:3px 9px; border-bottom:1px dotted rgb(204,204,204)">
+                                                <strong> Notes : </strong>{{ $item['notes'] }} </td>
+                                                <td style="padding:3px 9px; border-bottom:1px dotted rgb(204,204,204)"> </td>
+                                                <td style="padding:3px 9px; border-bottom:1px dotted rgb(204,204,204)"> </td>
+                                                <td style="padding:3px 9px; border-bottom:1px dotted rgb(204,204,204)"> </td>
+                                        </tr>
+                                        @endif
                                     </tbody>
                                     @endforeach
                                     <tbody>
@@ -176,14 +212,19 @@
                                             <td colspan="3" align="right" style="padding:3px 9px">
                                                 <div>Tax</div>
                                             </td>
-                                            <td align="right" style="padding:3px 9px">$ {{ $data['tax'] }} </td>
+                                            <td align="right" style="padding:3px 9px">
+                                                @if(!$data['customer']['no_tax'])
+                                                $ {{ $data['total'] - $data['total_without_tax'] }} </td>
+                                                @else
+                                                $ 0
+                                                @endif
                                         </tr>
-                                        <tr>
+                                        {{-- <tr>
                                             <td colspan="3" align="right" style="padding:3px 9px">Discount type and
                                                 amount<br></td>
                                             <td align="right" rowspan="1" style="padding:3px 9px">
                                                 {{ $data['discount_type'] }} ${{ $data['discount_amount'] }}</td>
-                                        </tr>
+                                        </tr> --}}
                                         <tr>
                                             <td colspan="3" align="right" style="padding:3px 9px"><strong>Grand Total
                                                     (Incl.Tax)</strong></td>
@@ -193,6 +234,25 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                                 @if(!$data['shipping_address'])
+                                <br />
+                                <table cellspacing="0" cellpadding="0" border="0" width="650"
+                                    style="border:1px solid rgb(234,234,234)">
+                                    <thead>
+                                        <tr>
+                                            <th align="left" bgcolor="#EAEAEA" style="font-size:13px;padding:3px 9px">
+                                                Notes
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <td align="left" style="padding:3px 9px">
+                                            <p>{{ $data['notes'] }}</p>
+                                        </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                @endif
                                 <br />
                                 <p>Thank you again,<br /><strong>Plantshed</strong></p>
                             </td>
