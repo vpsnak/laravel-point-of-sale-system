@@ -59,16 +59,18 @@ export default {
 		},
 		customerEmail: {
 			get() {
-				if (this.customer_email) {
-					return this.customer_email;
-				} else if (this.customer) {
-					return this.customer.email ? this.customer.email : undefined;
+				if (this.customer) {
+					return this.customer.email;
 				} else {
-					return undefined;
+					return this.customer_email;
 				}
 			},
 			set(value) {
-				this.customer_email = value;
+				if (this.customer) {
+					this.customer.email = value;
+				} else {
+					this.customer_email = value;
+				}
 			}
 		}
 	},
@@ -77,11 +79,11 @@ export default {
 		mailReceipt() {
 			this.loading = true;
 
-			if (this.customer && this.customer.email !== this.customerEmail) {
-				this.$store.dispatch("cart/saveGuestEmail", {
+			this.$store
+				.dispatch("cart/saveGuestEmail", {
 					email: this.customerEmail
-				});
-			}
+				})
+				.catch();
 
 			this.$store
 				.dispatch("cart/mailReceipt", {
