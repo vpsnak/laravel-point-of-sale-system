@@ -6,7 +6,9 @@
 		tableBtnTitle="New Category"
 		tableForm="categoryForm"
 		tableViewComponent="category"
-	/>
+	>
+		<template v-slot:item.in_product_listing="{item}">{{(item.in_product_listing? 'Yes' : 'No')}}</template>
+	</prop-data-table>
 </template>
 
 <script>
