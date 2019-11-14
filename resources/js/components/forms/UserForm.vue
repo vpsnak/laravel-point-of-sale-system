@@ -18,7 +18,28 @@
 					label="E-mail"
 				></v-text-field>
 			</ValidationProvider>
-			<ValidationProvider rules="required|min:8" v-slot="{ errors, valid }" name="Password">
+			<ValidationProvider rules="required|min:8|max:14" v-slot="{ errors, valid }" name="Phone">
+				<v-text-field
+					v-model="formFields.phone"
+					:error-messages="errors"
+					:success="valid"
+					label="Phone"
+				></v-text-field>
+			</ValidationProvider>
+			<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Username">
+				<v-text-field
+					v-model="formFields.username"
+					:error-messages="errors"
+					:success="valid"
+					label="Username"
+				></v-text-field>
+			</ValidationProvider>
+			<ValidationProvider
+				v-if="!model"
+				rules="required|min:8"
+				v-slot="{ errors, valid }"
+				name="Password"
+			>
 				<v-text-field
 					v-model="formFields.password"
 					:append-icon="showPassword ? 'visibility' : 'visibility_off'"
@@ -58,6 +79,8 @@ export default {
 				id: null,
 				name: null,
 				email: null,
+				phone: null,
+				username: null,
 				password: null
 			}
 		};

@@ -41,4 +41,17 @@ class CategoryController extends BaseController
 
         return response($products, 200);
     }
+
+    public function search(Request $request)
+    {
+        $validatedData = $request->validate([
+            'keyword' => 'required|string'
+        ]);
+
+        return $this->searchResult(
+            ['name','in_product_listing'],
+            $validatedData['keyword'],
+            true
+        );
+    }
 }

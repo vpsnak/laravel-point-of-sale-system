@@ -3,27 +3,40 @@
 		<v-card-title>
 			{{ this.title }}
 			<v-spacer></v-spacer>
-			<v-text-field append-icon="search" hide-details label="Search" single-line v-model="search"></v-text-field>
+			<v-text-field
+				:disabled="loading"
+				:search="search"
+				append-icon="search"
+				hide-details
+				label="Search"
+				single-line
+				v-model="keyword"
+				@click:append="search"
+				@keyup.enter="search"
+			></v-text-field>
 			<v-divider class="mx-4" inset vertical></v-divider>
 			<v-btn
 				:disabled="btnDisable"
 				color="primary"
 				@click.stop="showCreateDialog = true"
-			>{{this.btnTitle }}</v-btn>
+			>{{ this.btnTitle }}</v-btn>
 		</v-card-title>
 		<v-layout column>
 			<v-flex md10 style="overflow: auto">
 				<v-data-table
 					dense
-					:headers="headers"
+					:disable-filtering="true"
+					:headers="$store.state.datatable.headers"
 					:items="rows"
 					:loading="loading"
-					:search="search"
 					:items-per-page="15"
 					:page.sync="currentPage"
 					:server-items-length="totalItems"
 					@pagination="paginate"
-					:footer-props="{'disable-items-per-page':true, options: {itemsPerPage: 15, page: currentPage}}"
+					:footer-props="{
+                        'disable-items-per-page': true,
+                        options: { itemsPerPage: 15, page: currentPage }
+                    }"
 				>
 					<template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
 						<slot :name="slot" v-bind="scope" />
@@ -32,7 +45,11 @@
 						<!-- order actions -->
 						<v-tooltip
 							bottom
-							v-if="tableViewComponent === 'order' && (item.status === 'pending_payment' || item.status === 'pending')"
+							v-if="
+                                tableViewComponent === 'order' &&
+                                    (item.status === 'pending_payment' ||
+                                        item.status === 'pending')
+                            "
 						>
 							<template v-slot:activator="{ on }">
 								<v-btn @click="checkout(item)" class="my-1" icon v-on="on">
@@ -41,9 +58,21 @@
 							</template>
 							<span>Continue checkout</span>
 						</v-tooltip>
-						<v-tooltip bottom v-if="tableViewComponent === 'order' && item.status !== 'canceled'">
+						<v-tooltip
+							bottom
+							v-if="
+                                tableViewComponent === 'order' &&
+                                    item.status !== 'canceled'
+                            "
+						>
 							<template v-slot:activator="{ on }">
-								<v-btn @click="selectedItem = item, cancelOrderDialog = true" class="my-1" icon v-on="on">
+								<v-btn
+									@click="cancelOrder(item)"
+									class="my-1"
+									icon
+									v-on="on"
+									:disabled="cancelOrderDisabled(item)"
+								>
 									<v-icon small>mdi-cancel</v-icon>
 								</v-btn>
 							</template>
@@ -54,7 +83,10 @@
 						<v-tooltip bottom v-else-if="tableForm === 'giftCardForm'">
 							<template v-slot:activator="{ on }">
 								<v-btn
-									@click="rechargeGiftcardDialog = true, selectedItem = item"
+									@click="
+                                        (rechargeGiftcardDialog = true),
+                                            (selectedItem = item)
+                                    "
 									:disabled="btnDisable"
 									class="my-1"
 									icon
@@ -68,7 +100,15 @@
 						<!-- user roles actions -->
 						<v-tooltip bottom v-if="tableForm === 'userForm'">
 							<template v-slot:activator="{ on }">
-								<v-btn @click="showRoleDialog = true, selectedItem = item" class="my-1" v-on="on" icon>
+								<v-btn
+									@click="
+                                        (showRoleDialog = true),
+                                            (selectedItem = item)
+                                    "
+									class="my-1"
+									v-on="on"
+									icon
+								>
 									<v-icon small>mdi-account-key</v-icon>
 								</v-btn>
 							</template>
@@ -76,16 +116,11 @@
 						</v-tooltip>
 						<v-tooltip bottom v-if="tableForm === 'userForm'">
 							<template v-slot:activator="{ on }">
-								<v-btn
-									@click="showChangePasswordDialog = true, selectedItem = item"
-									class="my-1"
-									v-on="on"
-									icon
-								>
+								<v-btn @click="setItem(item)" class="my-1" v-on="on" icon>
 									<v-icon small>mdi-key</v-icon>
 								</v-btn>
 							</template>
-							<span>Change {{item.name}} password</span>
+							<span>Change {{ item.name }} password</span>
 						</v-tooltip>
 
 						<v-tooltip bottom v-if="tableForm != 'customerNewForm'">
@@ -105,12 +140,10 @@
 							<span>View</span>
 						</v-tooltip>
 					</template>
-					<v-alert
-						:value="true"
-						color="error"
-						icon="warning"
-						slot="no-results"
-					>Your search for "{{ search }}" found no results.</v-alert>
+					<v-alert :value="true" color="error" icon="warning" slot="no-results">
+						Your search for "{{ keyword }}" found no
+						results.
+					</v-alert>
 				</v-data-table>
 			</v-flex>
 		</v-layout>
@@ -146,7 +179,7 @@
 			:show="showChangePasswordDialog"
 			title="Change user's password"
 			:width="600"
-			component="changePasswordForm"
+			component="passwordForm"
 			:model="selectedItem"
 			@action="result"
 			persistent
@@ -194,11 +227,10 @@
 		<interactiveDialog
 			v-if="cancelOrderDialog"
 			:show="cancelOrderDialog"
-			action="confirmation"
-			title="Cancel order?"
-			content="Are you sure you want to <strong>cancel</strong> the selected order?"
+			component="passwordForm"
+			:model="{action:'verify'}"
+			:title="'Verify your password to cancel order #' + selectedItem.id"
 			@action="cancelOrderConfirmation"
-			actions
 			persistent
 		/>
 	</v-card>
@@ -221,7 +253,7 @@ export default {
 			rechargeGiftcardDialog: false,
 			defaultObject: {},
 			viewId: null,
-			search: "",
+			keyword: "",
 			selectedItem: {}
 		};
 	},
@@ -278,9 +310,65 @@ export default {
 			btnTitle: "btnTitle",
 			form: "form",
 			btnDisable: "btnDisable"
-		})
+		}),
+		user() {
+			return this.$store.state.user;
+		},
+		role() {
+			return this.$store.getters.role;
+		}
 	},
 	methods: {
+		cancelOrder(item) {
+			this.selectedItem = item;
+			this.cancelOrderDialog = true;
+		},
+		cancelOrderDisabled(item) {
+			if (this.role == "admin" || item.created_by.id === this.user.id) {
+				return false;
+			} else {
+				return true;
+			}
+		},
+		cashierDisabled() {
+			if (this.role == "admin" || this.role == "store_manager") {
+				return false;
+			} else {
+				return true;
+			}
+		},
+
+		setItem(item) {
+			this.selectedItem = item;
+			this.selectedItem["action"] = "change";
+			this.showChangePasswordDialog = true;
+		},
+		search() {
+			if (this.keyword) {
+				this.setLoading(true);
+
+				let payload = {
+					model: this.dataUrl,
+					page: 1,
+					keyword: this.keyword,
+					dataTable: true
+				};
+
+				this.searchRequest(payload)
+					.then(response => {
+						this.setRows(response.data);
+
+						if (response.total !== this.totalItems) {
+							this.totalItems = response.total;
+						}
+					})
+					.finally(() => {
+						this.setLoading(false);
+					});
+			} else {
+				this.paginate();
+			}
+		},
 		paginate(e) {
 			this.setLoading(true);
 
@@ -311,6 +399,7 @@ export default {
 					this.paginate();
 				});
 			}
+			this.cancelOrderDialog = false;
 			this.closePrompt = false;
 		},
 		checkout(item) {
@@ -369,7 +458,8 @@ export default {
 			getAll: "getAll",
 			getOne: "getOne",
 			create: "create",
-			delete: "delete"
+			delete: "delete",
+			searchRequest: "search"
 		})
 	}
 };

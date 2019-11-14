@@ -11,6 +11,9 @@
 		<template v-slot:item.email="{item}">
 			<a :href="'mailto:' + item.email">{{ item.email }}</a>
 		</template>
+		<template v-slot:item.phone="{item}">
+			<a :href="'tel:' + item.phone">{{ item.phone }}</a>
+		</template>
 	</prop-data-table>
 </template>
 
@@ -34,8 +37,8 @@ export default {
 					value: "email"
 				},
 				{
-					text: "email_verified_at",
-					value: "email_verified_at"
+					text: "phone",
+					value: "phone"
 				},
 				{
 					text: "created_at",

@@ -23,7 +23,8 @@
 			title="Change Password"
 			:fullscreen="false"
 			:width="600"
-			component="changePasswordForm"
+			:model="{action:'change_self'}"
+			component="PasswordForm"
 			cancelBtnTxt="Close"
 			@action="result"
 			:titleCloseBtn="true"
@@ -37,7 +38,7 @@
 				<v-chip
 					v-if="!openedRegister"
 					text
-					@click="$router.push({name: 'openCashRegister'})"
+					@click="$router.push({ name: 'openCashRegister' })"
 				>Open cash register</v-chip>
 				<v-chip
 					v-else
@@ -49,18 +50,30 @@
 					<v-avatar left>
 						<v-icon>mdi-store</v-icon>
 					</v-avatar>
-					<span>{{store.name}}</span>
+					<span>{{ store.name }}</span>
 					<v-icon class="px-2">mdi-cash-register</v-icon>
-					{{cashRegister.name}}
+					{{ cashRegister.name }}
 				</v-chip>
 			</template>
 			<v-list dense>
 				<v-list-item-group>
 					<v-list-item inactive two-line @click.stop :ripple="false">
-						<v-list-item-avatar color="orange">{{ user.name.charAt(0) }}</v-list-item-avatar>
+						<v-list-item-avatar color="orange">
+							{{
+							user.name.charAt(0)
+							}}
+						</v-list-item-avatar>
 						<v-list-item-content>
-							<v-list-item-title>{{ user.name }}</v-list-item-title>
-							<v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
+							<v-list-item-title>
+								{{
+								user.name
+								}}
+							</v-list-item-title>
+							<v-list-item-subtitle>
+								{{
+								user.email
+								}}
+							</v-list-item-subtitle>
 						</v-list-item-content>
 					</v-list-item>
 					<v-divider />

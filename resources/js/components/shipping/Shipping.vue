@@ -13,8 +13,8 @@
 		<div class="d-flex justify-center">
 			<v-radio-group v-model="shipping.method" row>
 				<v-radio label="Retail" value="retail"></v-radio>
-				<v-radio label="In store pickup" value="pickup" :disabled="! customer"></v-radio>
-				<v-radio label="Delivery" value="delivery" :disabled="! customer"></v-radio>
+				<v-radio label="In store pickup" value="pickup" :disabled="!customer"></v-radio>
+				<v-radio label="Delivery" value="delivery" :disabled="!customer"></v-radio>
 			</v-radio-group>
 		</div>
 		<v-row v-if="shipping.method !== 'retail'">
@@ -68,12 +68,23 @@
 					label="Cost"
 					:min="0"
 					prepend-icon="mdi-currency-usd"
-					v-model="shipping.timeSlotCost"
+					v-model="shippingCost"
 				></v-text-field>
 			</v-col>
 		</v-row>
 		<v-row v-if="shipping.method !== 'retail'">
-			<v-col offset-lg="3" cols="6" lg="2">
+			<v-col offset-lg="3" cols="6" lg="4">
+				<v-select
+					:loading="loading"
+					label="From"
+					:items="storePickups"
+					item-text="name"
+					v-model="shipping.pickup_point"
+					prepend-icon="mdi-store"
+					return-object
+				></v-select>
+			</v-col>
+			<v-col cols="6" lg="2">
 				<v-select
 					:loading="loading"
 					label="Occasion"
@@ -119,11 +130,20 @@ export default {
 			addTimeSlotDialog: false,
 			loading: false,
 			time_slots: [],
-			datePicker: false
+			datePicker: false,
+			store_pickups: []
 		};
 	},
 
 	computed: {
+		storePickups: {
+			get() {
+				return this.store_pickups;
+			},
+			set(value) {
+				this.store_pickups = value;
+			}
+		},
 		locations() {
 			return this.$store.state.cart.locations;
 		},
@@ -143,7 +163,15 @@ export default {
 				return this.$store.state.cart.shipping;
 			},
 			set(value) {
-				this.$store.state.cart.timeSlotCost = value;
+				this.$store.state.cart.shipping = value;
+			}
+		},
+		shippingCost: {
+			get() {
+				return this.$store.state.cart.shipping.cost;
+			},
+			set(value) {
+				this.$store.commit("cart/setShippingCost", value);
 			}
 		},
 		addresses() {
@@ -162,21 +190,31 @@ export default {
 		}
 	},
 
+	mounted() {
+		this.getStores();
+	},
+
 	methods: {
+		getStores() {
+			this.getAll({ model: "store-pickups" }).then(response => {
+				console.log(response);
+				this.storePickups = response;
+			});
+		},
 		closedDialog(event) {
 			if (event && event !== true) {
 				this.timeSlots.push(event);
 				this.shipping.timeSlotLabel = event.label;
-				this.shipping.cost = event.cost;
+				this.shippingCost = event.cost;
 			}
 
 			this.addTimeSlotDialog = false;
 		},
 		setCost(item) {
 			if (_.has(item, "cost")) {
-				this.shipping.timeSlotCost = item.cost;
+				this.shippingCost = item.cost;
 			} else {
-				this.shipping.timeSlotCost = null;
+				this.shippingCost = null;
 			}
 		},
 		getTimeSlots() {
@@ -219,7 +257,7 @@ export default {
 				item.address_country
 			);
 		},
-		...mapActions(["postRequest"])
+		...mapActions(["postRequest", "getAll"])
 	},
 	beforeDestroy() {
 		this.$off("shipping");

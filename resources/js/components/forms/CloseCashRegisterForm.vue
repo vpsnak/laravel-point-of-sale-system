@@ -8,7 +8,7 @@
 			required
 		></v-text-field>
 		<v-row>
-			<v-col cols="6" v-if="cashRegister.earnings.cash_total">
+			<v-col cols="6" v-if="cashRegister.earnings">
 				<span class="title">
 					Remaining:
 					<span

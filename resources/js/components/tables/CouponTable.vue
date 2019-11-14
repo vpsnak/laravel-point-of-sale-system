@@ -9,6 +9,7 @@
 	/>
 </template>
 
+
 <script>
 import { mapMutations } from "vuex";
 
@@ -33,8 +34,12 @@ export default {
 					value: "uses"
 				},
 				{
-					text: "Discount ID",
-					value: "discount_id"
+					text: "Discount Type",
+					value: "discount.type"
+				},
+				{
+					text: "Discount Amount",
+					value: "discount.amount"
 				},
 				{
 					text: "Actions",

@@ -77,12 +77,13 @@ export default {
         discount_amount: 0,
 
         shipping: {
+            pickup_point: undefined,
             address: undefined,
             notes: "",
             method: "retail",
             date: undefined,
             timeSlotLabel: null,
-            timeSlotCost: 0,
+            cost: 0,
             location: null,
             occasion: null
         },
@@ -91,6 +92,9 @@ export default {
     },
 
     mutations: {
+        setShippingCost(state, value) {
+            state.shipping.cost = value;
+        },
         toggleRetail(state, retail) {
             if (retail) {
                 state.retail = true;
@@ -133,7 +137,7 @@ export default {
             }
         },
         setDiscount(state, model) {
-            if (Array.isArray(model)) {
+            if (_.has(model, "products")) {
                 state.discount_type = model.discount_type;
 
                 state.discount_amount = parseFloat(model.discount_amount);
@@ -182,7 +186,7 @@ export default {
                 method: "retail",
                 date: undefined,
                 timeSlotLabel: null,
-                timeSlotCost: 0,
+                cost: 0,
                 location: null,
                 occasion: null
             };
@@ -195,7 +199,7 @@ export default {
                 method: "retail",
                 date: undefined,
                 timeSlotLabel: null,
-                timeSlotCost: 0,
+                cost: 0,
                 location: null,
                 occasion: null
             };

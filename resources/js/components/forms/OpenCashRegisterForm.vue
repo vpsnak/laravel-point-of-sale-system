@@ -40,7 +40,11 @@
 				</span>
 			</v-col>
 			<v-col cols="6">
-				<v-btn @click="submit" :loading="loading">Open Cash Register</v-btn>
+				<v-btn
+					@click="submit"
+					:loading="loading"
+					:disabled="disableOpenCashRegister()"
+				>Open Cash Register</v-btn>
 			</v-col>
 		</v-row>
 		<v-alert v-if="cashRegisterIsopen" dense outlined type="warning">
@@ -75,7 +79,9 @@ export default {
 			model: "stores"
 		}).then(stores => {
 			this.stores = stores;
-			this.storeDisabled = false;
+			if (this.role == "admin") {
+				this.storeDisabled = false;
+			}
 			this.loading = false;
 		});
 
@@ -110,9 +116,23 @@ export default {
 					return true;
 				}
 			}
+			return false;
+		},
+		role() {
+			return this.$store.getters.role;
 		}
 	},
 	methods: {
+		disableOpenCashRegister() {
+			if (
+				(this.store_id != null && this.opening_amount != null) ||
+				this.cashRegisterIsopen
+			) {
+				return false;
+			} else {
+				return true;
+			}
+		},
 		submit() {
 			this.loading = true;
 
@@ -138,6 +158,13 @@ export default {
 				if (store.id == this.store_id) {
 					this.cash_registers = store.cash_registers;
 				}
+			}
+		},
+		cashierDisabled() {
+			if (this.role == "admin" || this.role == "store_manager") {
+				return false;
+			} else {
+				return true;
 			}
 		},
 		enableCashRegisters() {

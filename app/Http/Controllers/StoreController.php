@@ -42,4 +42,17 @@ class StoreController extends BaseController
 
         return response($this->model::with(['cash_registers'])->paginate(), 200);
     }
+    
+    public function search(Request $request)
+    {
+        $validatedData = $request->validate([
+            'keyword' => 'required|string'
+        ]);
+
+        return $this->searchResult(
+            ['name','tax_id'],
+            $validatedData['keyword'],
+            true
+        );
+    }
 }

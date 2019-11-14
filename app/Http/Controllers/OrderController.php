@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Customer;
 use App\Helper\Price;
 use App\Order;
+use App\OrderAddress;
 use App\OrderProduct;
 use App\Store;
 use Illuminate\Http\Request;
@@ -44,33 +46,35 @@ class OrderController extends BaseController
         $validatedData['created_by'] = auth()->user()->id;
 
         $shippingData = $request->validate([
-            'shipping.method' => 'string|string',
+            'shipping.method' => 'string',
             'shipping.date' => 'string|date',
             'shipping.timeSlotLabel' => 'string|nullable',
-            'shipping.timeSlotCost' => 'numeric',
+            'shipping.cost' => 'numeric',
             'shipping.notes' => 'string|nullable',
             'shipping.location' => 'string|nullable',
             'shipping.occasion' => 'string|nullable',
             'shipping.address' => 'sometimes|nullable',
             'shipping.address.id' => 'numeric|exists:addresses,id|nullable',
+            'shipping.pickup_point.id' => 'required_if:shipping.method,pickup|numeric',
         ]);
 
-        if (!empty($shippingData['shipping']['address'])) {
-            $address = $shippingData['shipping']['address'];
-            $concatAddress = $address['first_name'];
-            $concatAddress .= ' ' . $address['last_name'];
-            $concatAddress .= ' ' . $address['street'];
-            $concatAddress .= ' ' . $address['street2'];
-            $concatAddress .= ' ' . $address['city'];
-            $concatAddress .= ' ' . $address['address_region'];
-            $concatAddress .= ' ' . $address['address_country'];
-            $concatAddress .= ' ' . $address['postcode'];
-            $concatAddress .= ' ' . $address['phone'];
-        }
+        $shippingAddressData = $request->validate([
+            'shipping.address.first_name' => 'required_if:shipping.method,delivery|string',
+            'shipping.address.last_name' => 'required_if:shipping.method,delivery|string',
+            'shipping.address.street' => 'required_if:shipping.method,delivery|string',
+            'shipping.address.street2' => 'nullable|string',
+            'shipping.address.city' => 'required_if:shipping.method,delivery|string',
+            'shipping.address.country_id' => 'required_if:shipping.method,delivery|exists:countries,country_id',
+            'shipping.address.region' => 'required_if:shipping.method,delivery|exists:regions,region_id',
+            'shipping.address.postcode' => 'required_if:shipping.method,delivery|string',
+            'shipping.address.phone' => 'required_if:shipping.method,delivery|numeric',
+            'shipping.address.company' => 'nullable|string',
+            'shipping.address.vat_id' => 'nullable|string',
+        ]);
 
         $validatedData['shipping_type'] = $shippingData['shipping']['method'] ?? null;
-        $validatedData['shipping_cost'] = $shippingData['shipping']['timeSlotCost'] ?? null;
-        $validatedData['shipping_address'] = $concatAddress ?? null;
+        $validatedData['store_pickup_id'] = $shippingData['shipping']['pickup_point']['id'] ?? null;
+        $validatedData['shipping_cost'] = $shippingData['shipping']['cost'] ?? null;
         $validatedData['delivery_date'] = $shippingData['shipping']['timeSlotLabel'] ?? null;
         $validatedData['location'] = $shippingData['shipping']['location'] ?? null;
         $validatedData['occasion'] = $shippingData['shipping']['occasion'] ?? null;
@@ -87,12 +91,28 @@ class OrderController extends BaseController
             'products.*.notes' => 'string|nullable',
         ]);
 
+        $has_tax = true;
+        $customer = Customer::getOne($validatedData['customer_id']);
+        if (!empty($customer)) {
+            $has_tax = $customer->no_tax ? false : true;
+        }
+
         $validatedData = $this->setSubtotal($validatedData, $order_items['products']);
-        $validatedData = $this->setTax($validatedData, $validatedData['store_id']);
+        if ($has_tax) {
+            $validatedData = $this->setTax($validatedData, $validatedData['store_id']);
+        } else {
+            $validatedData['tax'] = 0;
+        }
 
         $order = $this->model::store($validatedData);
         if (empty($order)) {
             return response($order, 500);
+        }
+
+        if (!empty($shippingData['shipping']['address'])) {
+            $shipping_address = OrderAddress::store($shippingAddressData['shipping']['address']);
+            $order->shipping_address_id = $shipping_address->id;
+            $order->save();
         }
 
         foreach ($order_items['products'] as $product) {
@@ -141,5 +161,18 @@ class OrderController extends BaseController
         $order->status = 'canceled';
         $order->save();
         return response($order, 200);
+    }
+
+    public function search(Request $request)
+    {
+        $validatedData = $request->validate([
+            'keyword' => 'required|string'
+        ]);
+
+        return $this->searchResult(
+            ['status', 'occasion', 'location'],
+            $validatedData['keyword'],
+            true
+        );
     }
 }
