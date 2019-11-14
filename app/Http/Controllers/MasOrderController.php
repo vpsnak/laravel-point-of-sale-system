@@ -20,30 +20,32 @@ class MasOrderController extends Controller
         $payload = [];
         $payload['SenderMdNumber'] = self::$mas_direct_id;
         $payload['FulfillerMDNumber'] = self::$mas_direct_id;
-        $payload['PriorityType'] = 1; // @TODO ask whats that
+        $payload['PriorityType'] = 1;
         $payload['MessageType'] = 0;
-        $payload['MessageText'] = 'test comment';
+        $payload['MessageText'] = $order->id;
 
+        // Delivery Time slots will be sent in SpecialInstructions , you can also put an abbreviated version in ShippingPriority (IE> 5P-9P for 5pm to 9pm)
+        $shipping_address = $order->shipping_address;
         $payload['RecipientDetail'] = [
             'ExtensionData' => null,
-            'RecipientFirstName' => 'Test',
-            'RecipientLastName' => 'Order',
-            'RecipientAttention' => 'Test Company',
-            'RecipientEmail' => 'test@testing.com',
-            'RecipientAddress' => '123 Test Dr',
-            'RecipientAddress2' => 'Suite 23',
-            'RecipientCity' => 'Dallas',
-            'RecipientState' => 'TX',
-            'RecipientCountry' => 'US',
-            'RecipientZip' => '80211',
-            'RecipientPhone' => '2149994455',
+            'RecipientFirstName' => $shipping_address->first_name,
+            'RecipientLastName' => $shipping_address->last_name,
+            'RecipientAttention' => $shipping_address->company,
+            'RecipientEmail' => $shipping_address->first_name,
+            'RecipientAddress' => $shipping_address->street,
+            'RecipientAddress2' => $shipping_address->street2,
+            'RecipientCity' => $shipping_address->city,
+            'RecipientState' => $shipping_address->region->default_name,
+            'RecipientCountry' => $shipping_address->country,
+            'RecipientZip' => $shipping_address->postcode,
+            'RecipientPhone' => $shipping_address->phone,
             'RecipientLatLong' => '',
             'SpecialInstructions' => '',
             'DeliveryDate' => '02/14/2030',
             'DeliveryEndDate' => '02/14/2030',
             'CardMessage' => 'This is a message for you!',
-            'OccasionType' => 2,
-            'ResidenceType' => 6,
+            'OccasionType' => $order->occasion,
+            'ResidenceType' => $order->location,
         ];
 
 //        @TODO add order comments in recipient
@@ -57,11 +59,9 @@ class MasOrderController extends Controller
             $payload['Payments'] = $payments;
         }
 
-        $subtotal = $order->subtotal + $order->shipping_cost;
-        $payload['MdseAmount'] = $subtotal;
-        $payload['TaxAmount'] = $subtotal * $order->tax / 100;
+        $payload['MdseAmount'] = $order->total_without_tax;
+        $payload['TaxAmount'] = $order->total - $order->total_without_tax;
         $payload['TotalAmount'] = $order->total;
-        $payload['OrderId'] = $order->id;
 
         print_r(json_encode($payload));
 
