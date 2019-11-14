@@ -230,6 +230,8 @@ class PaymentController extends BaseController
         $payment = Payment::findOrFail($id);
         $refund = $payment->replicate();
         $refund->status = 'refunded';
+        $refund->created_by = auth()->user()->id;
+        $refund->cash_register_id = auth()->user()->open_register->cash_register_id;
         $refund->save();
         $payment->refunded = 1;
         $payment->save();

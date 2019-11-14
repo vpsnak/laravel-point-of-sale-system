@@ -42,7 +42,6 @@ class Order extends BaseModel
     public function getTotalAttribute()
     {
         $total = $this->total_without_tax;
-        $total += $this->shipping_cost;
         $total = Price::calculateTax($total, $this->tax);
 
         return $total;
@@ -57,6 +56,7 @@ class Order extends BaseModel
         };
 
         $total = Price::calculateDiscount($total, $this->discount_type, $this->discount_amount);
+        $total += $this->shipping_cost;
 
         return $total;
     }
