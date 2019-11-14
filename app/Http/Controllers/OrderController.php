@@ -46,15 +46,18 @@ class OrderController extends BaseController
         $validatedData['created_by'] = auth()->user()->id;
 
         $shippingData = $request->validate([
-            'shipping.method' => 'string',
-            'shipping.date' => 'string|date',
-            'shipping.timeSlotLabel' => 'string|nullable',
-            'shipping.cost' => 'numeric',
-            'shipping.notes' => 'string|nullable',
-            'shipping.location' => 'string|nullable',
-            'shipping.occasion' => 'string|nullable',
-            'shipping.address' => 'sometimes|nullable',
-            'shipping.address.id' => 'numeric|exists:addresses,id|nullable',
+            'shipping.method' => 'required|in:retail,pickup,delivery',
+            'shipping.notes' => 'nullable|string',
+
+            'shipping.cost' => 'required_if:shipping.method,pickup,delivery|numeric',
+            'shipping.date' => 'required_if:shipping.method,pickup,delivery|date',
+            'shipping.timeSlotLabel' => 'required_if:shipping.method,pickup,delivery|string',
+            'shipping.location' => 'nullable|required_if:shipping.method,delivery|numeric',
+            'shipping.occasion' => 'nullable|required_if:shipping.method,pickup,delivery|numeric',
+
+            'shipping.address' => 'nullable|required_if:shipping.method,delivery',
+            'shipping.address.id' => 'nullable|required_if:shipping.method,delivery|numeric|exists:addresses,id',
+
             'shipping.pickup_point.id' => 'required_if:shipping.method,pickup|numeric',
         ]);
 
@@ -75,7 +78,8 @@ class OrderController extends BaseController
         $validatedData['shipping_type'] = $shippingData['shipping']['method'] ?? null;
         $validatedData['store_pickup_id'] = $shippingData['shipping']['pickup_point']['id'] ?? null;
         $validatedData['shipping_cost'] = $shippingData['shipping']['cost'] ?? null;
-        $validatedData['delivery_date'] = $shippingData['shipping']['timeSlotLabel'] ?? null;
+        $validatedData['delivery_date'] = $shippingData['shipping']['date'] ?? null;
+        $validatedData['delivery_slot'] = $shippingData['shipping']['timeSlotLabel'] ?? null;
         $validatedData['location'] = $shippingData['shipping']['location'] ?? null;
         $validatedData['occasion'] = $shippingData['shipping']['occasion'] ?? null;
         $validatedData['notes'] = $shippingData['shipping']['notes'] ?? null;

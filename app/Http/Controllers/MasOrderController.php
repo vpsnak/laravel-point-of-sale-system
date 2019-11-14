@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\MasOrder;
 use App\Order;
+use Exception;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
 
 class MasOrderController extends Controller
 {
+    const LOG_PREFIX = 'MAS';
     protected static $mas_direct_id = 'USZZ000035';
     protected static $user = 'pshed';
     protected static $pass = '9JNH76k#';
@@ -19,37 +22,44 @@ class MasOrderController extends Controller
     {
         $payload = [];
         $payload['SenderMdNumber'] = self::$mas_direct_id;
-        $payload['FulfillerMDNumber'] = self::$mas_direct_id;
-        $payload['PriorityType'] = 1; // @TODO ask whats that
+        $payload['FulfillerMDNumber'] = 'USNY000012';
+//        $payload['FulfillerMDNumber'] = 'USZZ000035';
+        $payload['PriorityType'] = 1;
         $payload['MessageType'] = 0;
-        $payload['MessageText'] = 'test comment';
+        $payload['MessageText'] = $order->id;
 
+        // Delivery Time slots will be sent in SpecialInstructions , you can also put an abbreviated version in ShippingPriority (IE> 5P-9P for 5pm to 9pm)
+        $shipping_address = $order->shipping_address;
+        if (empty($shipping_address)) {
+            return;
+        }
+        $shipping_notes = '';
+        if (!empty($shipping_address->company)) {
+            $shipping_notes .= 'Company: ' . $shipping_address->company;
+        }
+        if (!empty($order->notes)) {
+            $shipping_notes .= 'Notes: ' . $order->notes;
+        }
         $payload['RecipientDetail'] = [
             'ExtensionData' => null,
-            'RecipientFirstName' => 'Test',
-            'RecipientLastName' => 'Order',
-            'RecipientAttention' => 'Test Company',
-            'RecipientEmail' => 'test@testing.com',
-            'RecipientAddress' => '123 Test Dr',
-            'RecipientAddress2' => 'Suite 23',
-            'RecipientCity' => 'Dallas',
-            'RecipientState' => 'TX',
-            'RecipientCountry' => 'US',
-            'RecipientZip' => '80211',
-            'RecipientPhone' => '2149994455',
-            'RecipientLatLong' => '',
-            'SpecialInstructions' => '',
-            'DeliveryDate' => '02/14/2030',
-            'DeliveryEndDate' => '02/14/2030',
-            'CardMessage' => 'This is a message for you!',
-            'OccasionType' => 2,
-            'ResidenceType' => 6,
+            'RecipientFirstName' => $shipping_address->first_name,
+            'RecipientLastName' => $shipping_address->last_name,
+            'RecipientAttention' => $shipping_notes,
+            'RecipientEmail' => $shipping_address->first_name,
+            'RecipientAddress' => $shipping_address->street,
+            'RecipientAddress2' => $shipping_address->street2,
+            'RecipientCity' => $shipping_address->city,
+            'RecipientState' => $shipping_address->region_id->default_name,
+            'RecipientCountry' => $shipping_address->country_id,
+            'RecipientZip' => $shipping_address->postcode,
+            'RecipientPhone' => $shipping_address->phone,
+            'SpecialInstructions' => $order->delivery_slot,
+            'DeliveryDate' => $order->delivery_date,
+            'DeliveryEndDate' => $order->delivery_date,
+            'CardMessage' => '',
+            'OccasionType' => $order->occasion,
+            'ResidenceType' => $order->location,
         ];
-
-//        @TODO add order comments in recipient
-//        if (!empty($order->notes)) {
-//            $payload['MessageText'] = $order->notes;
-//        }
 
         $payload['OrderItems'] = $this->parseOrderItems($order->items);
 
@@ -57,26 +67,29 @@ class MasOrderController extends Controller
             $payload['Payments'] = $payments;
         }
 
-        $subtotal = $order->subtotal + $order->shipping_cost;
-        $payload['MdseAmount'] = $subtotal;
-        $payload['TaxAmount'] = $subtotal * $order->tax / 100;
+        $payload['MdseAmount'] = $order->total_without_tax;
+        $payload['TaxAmount'] = $order->total - $order->total_without_tax;
         $payload['TotalAmount'] = $order->total;
-        $payload['OrderId'] = $order->id;
 
-        print_r(json_encode($payload));
+        self::log('Payload: ' . json_encode($payload));
+        try {
+            $client = new Client();
+            $response = $client->post(self::$new_order_endpoint, [
+                'headers' => [
+                    'Authorization' => 'Basic ' . base64_encode(self::$user . ':' . self::$pass . ':' . self::$mas_direct_id),
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json'
+                ],
+                'connect_timeout' => 30,
+                'body' => json_encode($payload)
+            ]);
 
-        $client = new Client();
-        $response = $client->post(self::$new_order_endpoint, [
-            'headers' => [
-                'Authorization' => 'Basic ' . base64_encode(self::$user . ':' . self::$pass . ':' . self::$mas_direct_id),
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json'
-            ],
-            'connect_timeout' => 30,
-            'body' => json_encode($payload)
-        ]);
-
-        return $response->getBody()->getContents();
+            self::log('Response: ' . (string)$response->getBody()->getContents());
+            return json_decode($response->getBody()->getContents());
+        } catch (Exception $e) {
+            self::log('Error: ' . (string)$e->getResponse()->getBody());
+            return;
+        }
     }
 
     private function parseOrderItems($items)
@@ -106,10 +119,6 @@ class MasOrderController extends Controller
                 continue;
             }
 
-            $response[$payment->id] = [
-                'PaymentAmount' => $payment->amount
-            ];
-
             switch ($payment->paymentType->type) {
                 case 'cash':
                     $response[$payment->id]['PaymentAmount'] = $payment->amount;
@@ -135,5 +144,10 @@ class MasOrderController extends Controller
             }
         }
         return array_values($response);
+    }
+
+    private static function log($message)
+    {
+        Log::channel('connector')->info(self::LOG_PREFIX . ': ' . $message);
     }
 }

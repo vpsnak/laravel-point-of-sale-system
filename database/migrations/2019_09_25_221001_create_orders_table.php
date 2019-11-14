@@ -28,6 +28,7 @@ class CreateOrdersTable extends Migration
             $table->string('shipping_address_id')->nullable();
             $table->string('store_pickup_id')->nullable();
             $table->string('delivery_date')->nullable();
+            $table->string('delivery_slot')->nullable();
             $table->string('location')->nullable();
             $table->string('occasion')->nullable();
             $table->unsignedBigInteger('store_id');

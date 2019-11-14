@@ -24,6 +24,7 @@ class Order extends BaseModel
         'shipping_address_id',
         'store_pickup_id',
         'delivery_date',
+        'delivery_slot',
         'location',
         'occasion',
         'notes',

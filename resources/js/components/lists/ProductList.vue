@@ -87,11 +87,16 @@
 										<v-icon class="pr-2">mdi-eye</v-icon>
 										<h5>View product</h5>
 									</v-list-item>
-									<v-list-item :href="product.plantcare_pdf" link :disabled="!product.plantcare_pdf">
+									<v-list-item
+										:href="product.plantcare_pdf"
+										target="_blank"
+										link
+										:disabled="!product.plantcare_pdf"
+									>
 										<v-icon class="pr-2">mdi-flower-outline</v-icon>
 										<h5>Plant care</h5>
 									</v-list-item>
-									<v-list-item :href="product.url" link :disabled="!product.url">
+									<v-list-item :href="product.url" target="_blank" link :disabled="!product.url">
 										<v-icon class="pr-2">fab fa-magento</v-icon>
 										<h5>View on Magento</h5>
 									</v-list-item>

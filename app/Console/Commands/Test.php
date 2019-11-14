@@ -41,7 +41,7 @@ class Test extends Command
      */
     public function handle()
     {
-        $o = Order::getOne(4);
+        $o = Order::getOne(3);
         $res = (new MasOrderController())->submitToMas($o);
         dd($res);
     }
