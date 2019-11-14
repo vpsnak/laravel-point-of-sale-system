@@ -22,14 +22,19 @@ class StorePickupController extends BaseController
         $validatedID = $request->validate([
             'id' => 'nullable|exists:store_pickups,id'
         ]);
-  
+
         if (!empty($validatedID)) {
             return response($this->model::updateData($validatedID, $validatedData), 200);
         } else {
             return response($this->model::store($validatedData), 201);
         }
     }
-    
+
+    public function all()
+    {
+        return response(StorePickup::all());
+    }
+
     public function search(Request $request)
     {
         $validatedData = $request->validate([
@@ -37,7 +42,7 @@ class StorePickupController extends BaseController
         ]);
 
         return $this->searchResult(
-            ['name','street','street1','country_id','region_id'],
+            ['name', 'street', 'street1', 'country_id', 'region_id'],
             $validatedData['keyword'],
             true
         );

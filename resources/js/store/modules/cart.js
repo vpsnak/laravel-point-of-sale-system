@@ -77,6 +77,7 @@ export default {
         discount_amount: 0,
 
         shipping: {
+            pickup_point: undefined,
             address: undefined,
             notes: "",
             method: "retail",
