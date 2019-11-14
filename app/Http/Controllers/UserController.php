@@ -34,14 +34,20 @@ class UserController extends Controller
         ]);
 
         $http = new Client;
-        $user = User::whereEmail($validatedData['username'])->first();
+        $user = User::orWhere('email', $validatedData['username'])
+            ->orWhere('username', $validatedData['username'])
+            ->orWhere('phone', $validatedData['username'])->first();
 
         if (!$user) {
-            if (Hash::verify($validatedData['password'], $user->password))
+            return response(['errors' => [
+                'Login' => 'Invalid credentials',
+            ]], 422);
+        } else {
+            if (!Hash::check($validatedData['password'], $user->password)) {
                 return response(['errors' => [
                     'Login' => 'Invalid credentials',
                 ]], 422);
-        } else {
+            }
             $role = ($user->roles)[0]['name'];
             $response = $http->post(config('app.url') . '/oauth/token', [
                 'form_params' => [
@@ -64,7 +70,7 @@ class UserController extends Controller
         }
     }
 
-    public function changePassword(Request $request)
+    public function changeSelfPwd(Request $request)
     {
         $validatedData = $request->validate([
             'current_password' => 'required|string',
@@ -73,6 +79,41 @@ class UserController extends Controller
         ]);
 
         $user = auth()->user();
+
+        if (Hash::check($validatedData['current_password'], $user->password)) {
+            $user->password = Hash::make($validatedData['password']);
+            $user->save();
+
+            return response(['info' => ['Auth' => 'Password changed successfully!']]);
+        } else {
+            return response(['errors' => ['Auth' => 'Current password mismatch']], 422);
+        }
+    }
+
+    public function verifySelfPwd(Request $request)
+    {
+        $validatedData = $request->validate([
+            'current_password' => 'required|string'
+        ]);
+
+        $user = auth()->user();
+
+        if (Hash::check($validatedData['current_password'], $user->password)) {
+            return response(['info' => ['Verification' => 'Password verification succeeded!']]);
+        } else {
+            return response(['errors' => ['Verification' => 'Password verification failed']], 403);
+        }
+    }
+
+    public function changeUserPwd(Request $request)
+    {
+        $validatedData = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'password' => 'required|string|confirmed',
+            'password_confirmation' => 'required|string',
+        ]);
+
+        $user = User::findOrFail($validatedData['user_id']);
         $user->password = Hash::make($validatedData['password']);
         $user->save();
 
@@ -84,5 +125,37 @@ class UserController extends Controller
         auth()->user()->token()->delete();
 
         return response(['info' => ['Logout' => 'Goodbye...']], 200);
+    }
+
+
+    public function search(Request $request)
+    {
+        $validatedData = $request->validate([
+            'keyword' => 'required|string'
+        ]);
+
+        return $this->searchResult(
+            ['username', 'name', 'email', 'phone'],
+            $validatedData['keyword'],
+            true
+        );
+    }
+
+    public function create(Request $request)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string',
+            'username' => 'required|string',
+            'email' => 'required|unique:users,email',
+            'phone' => 'required|unique:users,phone',
+            'password' => 'required|string'
+        ]);
+
+        $validatedData['password'] = Hash::make($validatedData['password']);
+
+        $user = new User($validatedData);
+        $user->save();
+
+        return response(['info' => ['User ' . $user->name . ' created successfully!']]);
     }
 }

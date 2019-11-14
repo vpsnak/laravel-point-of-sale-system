@@ -12,8 +12,8 @@
 						tableViewComponent="order"
 					>
 						<template
-							v-slot:item.customer_id="{item}"
-						>{{ item.customer_id ? item.customer_id.email : 'Guest' }}</template>
+							v-slot:item.customer="{item}"
+						>{{ item.customer.email ? item.customer.email : 'Guest' }}</template>
 						<template v-slot:item.store_id="{item}">{{ item.store_id.name }}</template>
 						<template v-slot:item.created_by="{item}">{{ item.created_by.email }}</template>
 					</prop-data-table>
@@ -36,7 +36,7 @@ export default {
 				},
 				{
 					text: "Customer",
-					value: "customer_id"
+					value: "customer.email"
 				},
 				{
 					text: "Store",

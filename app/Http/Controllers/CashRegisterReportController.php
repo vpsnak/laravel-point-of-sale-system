@@ -141,9 +141,37 @@ class CashRegisterReportController extends BaseController
             'order_refund_total' => $canceled_orders->sum('total'),
             'order_complete_count' => $complete_orders->count(),
             'order_complete_total' => $complete_orders->sum('total'),
-            'order_retail_count' => 0,
-            'order_in_store_count' => 0,
-            'order_delivery_count' => 0,
+            'order_retail_count' => $orders->sum(function ($row) {
+                if ($row->shipping_type == 'retail') {
+                    return 1;
+                }
+                return 0;
+            }),
+            'order_in_store_count' => $orders->sum(function ($row) {
+                if ($row->shipping_type == 'pickup') {
+                    return 1;
+                }
+                return 0;
+            }),
+            'order_delivery_count' => $orders->sum(function ($row) {
+                if ($row->shipping_type == 'delivery') {
+                    return 1;
+                }
+                return 0;
+            }),
         ];
+    }
+
+    public function search(Request $request)
+    {
+        $validatedData = $request->validate([
+            'keyword' => 'required|string'
+        ]);
+
+        return $this->searchResult(
+            ['report_name', 'report_type'],
+            $validatedData['keyword'],
+            true
+        );
     }
 }

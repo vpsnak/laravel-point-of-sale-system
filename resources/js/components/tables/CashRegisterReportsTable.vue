@@ -7,7 +7,7 @@
 		tableForm="cashRegisterForm"
 		tableViewComponent="cashRegisterReports"
 		:tableBtnDisable="true"
-	/>
+	></prop-data-table>
 </template>
 
 <script>

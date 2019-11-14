@@ -24,7 +24,8 @@ class CreateOrdersTable extends Migration
             $table->string('notes')->nullable();
             $table->string('shipping_type')->nullable();
             $table->unsignedTinyInteger('shipping_cost')->nullable()->default(0);
-            $table->string('shipping_address')->nullable();
+            $table->string('shipping_address_id')->nullable();
+            $table->string('store_pickup_id')->nullable();
             $table->string('delivery_date')->nullable();
             $table->string('location')->nullable();
             $table->string('occasion')->nullable();

@@ -108,7 +108,9 @@ export default {
         loadCart() {
             let cart = JSON.parse(this.selectedCart.cart).products;
             this.$store.state.cart.products = cart.products;
-            this.$store.state.cart.shipping = cart.shipping;
+            this.$store.state.cart.shipping.notes = cart.shipping.notes;
+            this.$store.state.cart.discount_type = cart.discount_type;
+            this.$store.state.cart.discount_amount = cart.discount_amount;
 
             this.getOne({
                 model: "customers",

@@ -80,9 +80,11 @@ class CashRegisterLogsController extends BaseController
             $validatedData['status'] = 1;
             $validatedData['opening_time'] = Carbon::now();
 
+            $log = $this->model::store($validatedData);
+
             return response([
                 'info' => 'Cash register opened successfully',
-                'cashRegister' => $this->model::store($validatedData)
+                'cashRegister' => $this->model::getOne($log->id)
             ], 201);
         }
     }
