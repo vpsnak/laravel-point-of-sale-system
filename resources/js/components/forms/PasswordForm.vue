@@ -68,8 +68,13 @@
                     "
 				></v-text-field>
 			</ValidationProvider>
-			<v-btn class="mr-4" @click.prevent="submit" :disabled="invalid || disableSubmit">submit</v-btn>
-			<v-btn @click="clear">clear</v-btn>
+			<v-btn
+				class="mr-4 mt-2"
+				@click.prevent="submit"
+				:loading="loading"
+				:disabled="invalid || disableSubmit"
+			>submit</v-btn>
+			<v-btn class="mt-2" @click="clear">clear</v-btn>
 		</v-form>
 	</ValidationObserver>
 </template>
@@ -86,6 +91,7 @@ export default {
 			showCurrentPassword: false,
 			showPassword: false,
 			showPasswordConfirmation: false,
+			loading: false,
 			formFields: {
 				current_password: null,
 				password: null,
@@ -116,30 +122,36 @@ export default {
 		submit() {
 			switch (this.action) {
 				case "change_self":
+					this.loading = true;
 					this.changeSelfPwd(this.formFields)
 						.then(() => {
 							this.$emit("submit", true);
 						})
 						.finally(() => {
+							this.loading = false;
 							this.clear();
 						});
 					break;
 				case "change":
+					this.loading = true;
 					this.formFields.user_id = this.$props.model.id;
 					this.changeUserPwd(this.formFields)
 						.then(() => {
 							this.$emit("submit", true);
 						})
 						.finally(() => {
+							this.loading = false;
 							this.clear();
 						});
 					break;
 				case "verify":
+					this.loading = true;
 					this.verifySelf(this.formFields)
 						.then(() => {
 							this.$emit("submit", true);
 						})
 						.finally(() => {
+							this.loading = false;
 							this.clear();
 						});
 					break;

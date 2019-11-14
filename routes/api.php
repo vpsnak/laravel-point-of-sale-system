@@ -87,7 +87,7 @@ $allRoutes = [
                 [
                     'url' => '/password',
                     'action' => 'changeSelfPwd',
-                    'middleware' => "scope:$admin:$store_manager"
+                    'middleware' => "scope:$admin,$store_manager"
                 ],
             ]
         ]
