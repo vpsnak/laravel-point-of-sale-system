@@ -104,6 +104,8 @@ export default {
 	methods: {
 		submit() {
 			this.loading = true;
+			this.formFields.region = this.formFields.region_id;
+
 			let payload = {
 				model: "addresses",
 				data: { ...this.formFields }
