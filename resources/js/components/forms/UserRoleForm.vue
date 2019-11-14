@@ -3,8 +3,6 @@
 		<v-form @submit.prevent="submit">
 			<ValidationProvider v-slot="{ errors, valid }" name="Role">
 				<v-select
-					chips
-					rounded
 					hide-selected
 					v-model="role_id"
 					:items="roles"
@@ -26,7 +24,7 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
-		model: Object || undefined
+		model: Object
 	},
 	data() {
 		return {

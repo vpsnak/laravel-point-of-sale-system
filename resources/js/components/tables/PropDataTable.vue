@@ -6,12 +6,14 @@
 			<v-text-field
 				:disabled="loading"
 				:search="search"
-				append-icon="search"
+				prepend-icon="search"
 				hide-details
 				label="Search"
 				single-line
 				v-model="keyword"
-				@click:append="search"
+				append-icon="mdi-close"
+				@click:append="keyword=null, paginate()"
+				@click:prepend="search"
 				@keyup.enter="search"
 			></v-text-field>
 			<v-divider class="mx-4" inset vertical></v-divider>
@@ -38,16 +40,18 @@
 						<slot :name="slot" v-bind="scope" />
 					</template>
 					<template
+						v-if="dataUrl=== 'customers'"
 						v-slot:item.customer.email="{ item }"
 					>{{item.customer ? item.customer.email : 'Guest'}}</template>
+
 					<template v-slot:item.action="{ item }">
 						<!-- order actions -->
 						<v-tooltip
 							bottom
 							v-if="
                                 tableViewComponent === 'order' &&
-                                    (item.status === 'pending_payment' ||
-                                        item.status === 'pending')
+                                    (item.status !== 'complete' &&
+                                        item.status !== 'canceled')
                             "
 						>
 							<template v-slot:activator="{ on }">
@@ -306,7 +310,7 @@ export default {
 			};
 		},
 		search() {
-			if (this.keyword) {
+			if (this.keyword.length > 2) {
 				this.setLoading(true);
 
 				let payload = {
@@ -327,8 +331,6 @@ export default {
 					.finally(() => {
 						this.setLoading(false);
 					});
-			} else {
-				this.paginate();
 			}
 		},
 
@@ -411,7 +413,7 @@ export default {
 		roleDialog(item) {
 			this.dialog = {
 				show: true,
-				width: 600,
+				width: 450,
 				title: `Edit role for: ${item.name}`,
 				titleCloseBtn: true,
 				icon: "mdi-account-key",

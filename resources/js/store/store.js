@@ -1,14 +1,14 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from "vue";
+import Vuex from "vuex";
 
-import 'es6-promise/auto'
-import Cookies from 'js-cookie'
-import router from '../plugins/router'
+import "es6-promise/auto";
+import Cookies from "js-cookie";
+import router from "../plugins/router";
 //modules
-import topMenu from './menu/topMenu'
-import cart from './modules/cart'
-import endpoints from './modules/endpoints'
-import datatable from './modules/datatable'
+import topMenu from "./menu/topMenu";
+import cart from "./modules/cart";
+import endpoints from "./modules/endpoints";
+import datatable from "./modules/datatable";
 
 Vue.use(Vuex);
 
@@ -247,7 +247,7 @@ export default new Vuex.Store({
         changeUserPwd(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(this.state.baseUrl + 'users/password/', payload)
+                    .post(this.state.baseUrl + "users/password/", payload)
                     .then(response => {
                         let notification = {
                             msg: response.data.info,

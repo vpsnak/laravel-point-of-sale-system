@@ -1,15 +1,19 @@
 <template>
 	<v-row>
 		<interactiveDialog
-			v-if="refundConfirmation"
-			:show="refundConfirmation"
-			title="Confirm refund"
-			content="Are you sure you want to make a refund?"
-			action="confirmation"
-			cancelBtnTxt="No"
-			confirmationBtnTxt="Yes"
-			@action="refundEvent"
-		/>
+			v-if="dialog.show"
+			:show="dialog.show"
+			:title="dialog.title"
+			:titleCloseBtn="dialog.titleCloseBtn"
+			:icon="dialog.icon"
+			:width="dialog.width"
+			:component="dialog.component"
+			:content="dialog.content"
+			:model="dialog.model"
+			@action="dialogEvent"
+			:persistent="dialog.persistent"
+		></interactiveDialog>
+
 		<v-col cols="12">
 			<h3 class="mb-3">Payment history</h3>
 			<v-data-table
@@ -25,7 +29,7 @@
 					<v-tooltip bottom>
 						<template v-slot:activator="{ on }">
 							<v-btn
-								@click="refundConfirmation = true, refundItem = item"
+								@click="refundDialog(item)"
 								icon
 								v-on="on"
 								v-if="item.status === 'approved' && item.refunded !== 1"
@@ -52,8 +56,18 @@ export default {
 	},
 	data() {
 		return {
-			refundConfirmation: null,
-			refundItem: null,
+			dialog: {
+				show: false,
+				width: 600,
+				icon: "",
+				title: "",
+				titleCloseBtn: false,
+				component: "",
+				content: "",
+				model: "",
+				persistent: false
+			},
+			paymentID: null,
 			headers: [
 				{
 					text: "Operator",
@@ -83,22 +97,57 @@ export default {
 		};
 	},
 	methods: {
-		refundEvent(event) {
+		dialogEvent(event) {
 			if (event) {
 				this.refund();
 			}
-			this.refundConfirmation = false;
+
+			this.resetDialog();
 		},
 		refund() {
 			let payload = {
 				model: "payments",
-				id: this.refundItem.id
+				id: this.paymentID
 			};
 
 			this.delete(payload).then(response => {
 				this.$emit("refund", response);
 			});
 		},
+
+		refundDialog(item) {
+			this.dialog = {
+				show: true,
+				width: 600,
+				title: `Verify your password to refund payment #${item.id}`,
+				titleCloseBtn: true,
+				icon: "mdi-lock-alert",
+				component: "passwordForm",
+				model: { action: "verify" },
+				persistent: true
+			};
+
+			this.paymentID = item.id;
+
+			this.action = "cancelOrder";
+		},
+
+		resetDialog() {
+			this.dialog = {
+				show: false,
+				width: 600,
+				title: "",
+				titleCloseBtn: false,
+				icon: "",
+				component: "",
+				content: "",
+				model: "",
+				persistent: false
+			};
+
+			this.action = "";
+		},
+
 		...mapActions(["delete"]),
 
 		beforeDestroy() {

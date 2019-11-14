@@ -55,6 +55,7 @@ export default {
 					return this.order.customer;
 				}
 			}
+
 			return undefined;
 		},
 		customerEmail: {
