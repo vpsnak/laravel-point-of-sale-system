@@ -83,14 +83,14 @@ export default {
 				.dispatch("cart/saveGuestEmail", {
 					email: this.customerEmail
 				})
-				.catch();
-
-			this.$store
-				.dispatch("cart/mailReceipt", {
-					email: this.customerEmail
-				})
 				.finally(() => {
-					this.loading = false;
+					this.$store
+						.dispatch("cart/mailReceipt", {
+							email: this.customerEmail
+						})
+						.finally(() => {
+							this.loading = false;
+						});
 				});
 		}
 	}
