@@ -73,7 +73,7 @@
 			</v-col>
 		</v-row>
 		<v-row v-if="shipping.method !== 'retail'">
-			<v-col offset-lg="3" cols="6" lg="4">
+			<v-col offset-lg="3" cols="6" lg="4" v-if="shipping.method === 'pickup'">
 				<v-select
 					:loading="loading"
 					label="From"
@@ -84,7 +84,7 @@
 					return-object
 				></v-select>
 			</v-col>
-			<v-col cols="6" lg="2">
+			<v-col cols="6" lg="2" :offset-lg="shipping.method === 'pickup' ? 0 : 3">
 				<v-select
 					:loading="loading"
 					label="Occasion"
@@ -197,7 +197,6 @@ export default {
 	methods: {
 		getStores() {
 			this.getAll({ model: "store-pickups" }).then(response => {
-				console.log(response);
 				this.storePickups = response;
 			});
 		},

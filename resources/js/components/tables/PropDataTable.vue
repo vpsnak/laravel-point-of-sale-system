@@ -37,6 +37,9 @@
 					<template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
 						<slot :name="slot" v-bind="scope" />
 					</template>
+					<template
+						v-slot:item.customer.email="{ item }"
+					>{{item.customer ? item.customer.email : 'Guest'}}</template>
 					<template v-slot:item.action="{ item }">
 						<!-- order actions -->
 						<v-tooltip
