@@ -6,9 +6,8 @@
 		tableBtnTitle="New Store"
 		tableForm="storeForm"
 		tableViewComponent="store"
-	/>
+	></prop-data-table>
 </template>
-
 <script>
 import { mapMutations } from "vuex";
 

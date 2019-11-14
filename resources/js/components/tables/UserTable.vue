@@ -33,19 +33,23 @@ export default {
 					value: "name"
 				},
 				{
-					text: "email",
+					text: "Email",
 					value: "email"
 				},
 				{
-					text: "phone",
+					text: "Phone",
 					value: "phone"
 				},
 				{
-					text: "created_at",
+					text: "Role",
+					value: "roles[0].name"
+				},
+				{
+					text: "Created_at",
 					value: "created_at"
 				},
 				{
-					text: "updated_at",
+					text: "Updated_at",
 					value: "updated_at"
 				},
 				{
