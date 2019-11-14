@@ -124,7 +124,7 @@
 						</v-tooltip>
 						<v-tooltip bottom>
 							<template v-slot:activator="{ on }">
-								<v-btn @click.stop="viewItem(item)" class="my-1" v-on="on" icon>
+								<v-btn @click.stop="viewItemDialog(item)" class="my-1" v-on="on" icon>
 									<v-icon small>watch</v-icon>
 								</v-btn>
 							</template>
@@ -402,8 +402,8 @@ export default {
 				title: `View item #${item.id}`,
 				titleCloseBtn: true,
 				icon: "mdi-account-key",
-				component: "tableViewComponent",
-				model: item.id,
+				component: this.tableViewComponent,
+				model: item,
 				persistent: true
 			};
 		},

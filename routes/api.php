@@ -23,13 +23,11 @@ $allRoles = "$admin,$store_manager,$cashier";
 $routeAll = [
     'url' => '/',
     'action' => 'all',
-    'middleware' => "scope:$allRoles"
 ];
 
 $routeGet = [
     'url' => '/{id}',
     'action' => 'get',
-    'middleware' => "scope:$allRoles"
 ];
 
 $routeCreate = [

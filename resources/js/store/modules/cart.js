@@ -1,5 +1,3 @@
-import Axios from "axios";
-
 export default {
     namespaced: true,
 
@@ -7,26 +5,30 @@ export default {
         retail: true,
 
         locations: [
-            "Apartment",
-            "Business",
-            "Private House",
-            "Hotel",
-            "Hospital",
-            "Funeral Home",
-            "Church",
-            "School"
+            { id: 1, label: "Funeral Home" },
+            { id: 2, label: "Church" },
+            { id: 3, label: "Reception Hall" },
+            { id: 4, label: "Hospital" },
+            { id: 5, label: "Business" },
+            { id: 6, label: "Home" },
+            { id: 7, label: "Apartment" },
+            { id: 8, label: "Hotel" },
+            { id: 9, label: "International City" },
+            { id: 10, label: "School" },
+            { id: 11, label: "Other" },
+            { id: 12, label: "Pick Up or Will Call" }
         ],
 
         occasions: [
-            "Anniversary",
-            "Get Well",
-            "Birthday",
-            "Business Gifting",
-            "Holiday",
-            "New Baby",
-            "Just Because",
-            "Sympathy",
-            "All Others"
+            { id: 1, label: "Wedding" },
+            { id: 2, label: "Birthday" },
+            { id: 3, label: "Holiday" },
+            { id: 4, label: "Anniversary" },
+            { id: 5, label: "Business" },
+            { id: 6, label: "New Baby" },
+            { id: 7, label: "Get Well" },
+            { id: 8, label: "Funeral" },
+            { id: 9, label: "Other" }
         ],
 
         discountTypes: [
