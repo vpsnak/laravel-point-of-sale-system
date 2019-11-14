@@ -90,6 +90,7 @@
 					label="Occasion"
 					:items="occasions"
 					item-text="label"
+					item-value="id"
 					v-model="shipping.occasion"
 					prepend-icon="mdi-star-face"
 				></v-select>
@@ -100,6 +101,7 @@
 					label="Location"
 					:items="locations"
 					item-text="label"
+					item-value="id"
 					v-model="shipping.location"
 					prepend-icon="mdi-city"
 				></v-select>
