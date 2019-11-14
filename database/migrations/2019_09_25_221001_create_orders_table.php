@@ -21,6 +21,7 @@ class CreateOrdersTable extends Migration
             $table->unsignedSmallInteger('discount_amount')->default(0)->nullable();
             $table->decimal('tax', 4)->unsigned();
             $table->decimal('subtotal');
+            $table->decimal('change')->default(0);
             $table->string('notes')->nullable();
             $table->string('shipping_type')->nullable();
             $table->unsignedTinyInteger('shipping_cost')->nullable()->default(0);

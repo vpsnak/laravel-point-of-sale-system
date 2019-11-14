@@ -18,6 +18,7 @@ class Order extends BaseModel
         'discount_amount',
         'tax',
         'subtotal',
+        'change',
         'shipping_type',
         'shipping_cost',
         'shipping_address_id',
@@ -28,7 +29,15 @@ class Order extends BaseModel
         'notes',
     ];
 
-    protected $with = ['items', 'payments', 'customer', 'store_id', 'created_by', 'shipping_address'];
+    protected $with = [
+        'items',
+        'payments',
+        'customer',
+        'store_id',
+        'created_by',
+        'shipping_address',
+        'store_pickup'
+    ];
 
     public function getTotalAttribute()
     {
@@ -63,7 +72,7 @@ class Order extends BaseModel
                 $total_paid -= $payment->amount;
             }
         };
-        return $total_paid;
+        return $total_paid + $this->change;
     }
 
     public function items()
