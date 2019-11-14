@@ -67,10 +67,7 @@
 						>
 							<template v-slot:activator="{ on }">
 								<v-btn
-									@click="
-                                        (selectedItem = item),
-                                            (cancelOrderDialog = true)
-                                    "
+									@click="cancelOrder(item)"
 									class="my-1"
 									icon
 									v-on="on"
@@ -232,7 +229,7 @@
 			:show="cancelOrderDialog"
 			component="passwordForm"
 			:model="{action:'verify'}"
-			title="Verify your password to cancel this order"
+			:title="'Verify your password to cancel order #' + selectedItem.id"
 			@action="cancelOrderConfirmation"
 			persistent
 		/>
@@ -322,8 +319,13 @@ export default {
 		}
 	},
 	methods: {
+		cancelOrder(item) {
+			this.selectedItem = item;
+			console.log(item);
+			this.cancelOrderDialog = true;
+		},
 		cancelOrderDisabled(item) {
-			if (this.role == "admin" || item.created_by.id == this.user.id) {
+			if (this.role == "admin" || item.created_by.id === this.user.id) {
 				return false;
 			} else {
 				return true;
