@@ -321,7 +321,6 @@ export default {
 	methods: {
 		cancelOrder(item) {
 			this.selectedItem = item;
-			console.log(item);
 			this.cancelOrderDialog = true;
 		},
 		cancelOrderDisabled(item) {
