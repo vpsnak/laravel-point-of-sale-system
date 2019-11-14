@@ -15,11 +15,7 @@
 				@keyup.enter="search"
 			></v-text-field>
 			<v-divider class="mx-4" inset vertical></v-divider>
-			<v-btn
-				:disabled="btnDisable"
-				color="primary"
-				@click.stop="showCreateDialog = true"
-			>{{ this.btnTitle }}</v-btn>
+			<v-btn :disabled="btnDisable" color="primary" @click="createItemDialog">{{ this.btnTitle }}</v-btn>
 		</v-card-title>
 		<v-layout column>
 			<v-flex md10 style="overflow: auto">
@@ -67,7 +63,7 @@
 						>
 							<template v-slot:activator="{ on }">
 								<v-btn
-									@click="cancelOrder(item)"
+									@click="cancelOrderDialog(item)"
 									class="my-1"
 									icon
 									v-on="on"
@@ -100,15 +96,7 @@
 						<!-- user roles actions -->
 						<v-tooltip bottom v-if="tableForm === 'userForm'">
 							<template v-slot:activator="{ on }">
-								<v-btn
-									@click="
-                                        (showRoleDialog = true),
-                                            (selectedItem = item)
-                                    "
-									class="my-1"
-									v-on="on"
-									icon
-								>
+								<v-btn @click="roleDialog(item)" class="my-1" v-on="on" icon>
 									<v-icon small>mdi-account-key</v-icon>
 								</v-btn>
 							</template>
@@ -116,8 +104,8 @@
 						</v-tooltip>
 						<v-tooltip bottom v-if="tableForm === 'userForm'">
 							<template v-slot:activator="{ on }">
-								<v-btn @click="setItem(item)" class="my-1" v-on="on" icon>
-									<v-icon small>mdi-key</v-icon>
+								<v-btn @click="changePasswordDialog(item)" class="my-1" v-on="on" icon>
+									<v-icon small>mdi-lock-reset</v-icon>
 								</v-btn>
 							</template>
 							<span>Change {{ item.name }} password</span>
@@ -125,7 +113,7 @@
 
 						<v-tooltip bottom v-if="tableForm != 'customerNewForm'">
 							<template v-slot:activator="{ on }">
-								<v-btn :disabled="btnDisable" @click.stop="editItem(item)" class="my-1" v-on="on" icon>
+								<v-btn :disabled="btnDisable" @click="editItemDialog(item)" class="my-1" v-on="on" icon>
 									<v-icon small>edit</v-icon>
 								</v-btn>
 							</template>
@@ -147,92 +135,22 @@
 				</v-data-table>
 			</v-flex>
 		</v-layout>
-		<!-- view/edit dialog -->
-		<interactiveDialog
-			v-if="showEditDialog"
-			:show="showEditDialog"
-			title="Edit item"
-			:width="600"
-			:component="form"
-			:model="defaultObject"
-			@action="result"
-			persistent
-			action="edit"
-			titleCloseBtn
-		></interactiveDialog>
 
 		<interactiveDialog
-			v-if="showRoleDialog"
-			:show="showRoleDialog"
-			title="Edit Role"
-			:width="600"
-			component="userRoleForm"
-			:model="selectedItem"
-			@action="result"
-			persistent
-			action="edit"
-			titleCloseBtn
-		></interactiveDialog>
-
-		<interactiveDialog
-			v-if="showChangePasswordDialog"
-			:show="showChangePasswordDialog"
-			title="Change user's password"
-			:width="600"
-			component="passwordForm"
-			:model="selectedItem"
-			@action="result"
-			persistent
-			action="edit"
-			titleCloseBtn
-		></interactiveDialog>
-
-		<interactiveDialog
-			v-if="showViewDialog"
-			:show="showViewDialog"
-			title="View item"
-			:fullscreen="false"
-			:width="1000"
-			:component="tableViewComponent"
-			:model="viewId"
-			@action="result"
-			action="newItem"
-			cancelBtnTxt="Close"
-		></interactiveDialog>
-
-		<interactiveDialog
-			v-if="showCreateDialog"
-			:show="showCreateDialog"
-			:component="form"
-			:title="btnTitle"
-			:width="800"
-			@action="result"
-			cancelBtnTxt="Close"
-			titleCloseBtn
+			v-if="dialog.show"
+			:show="dialog.show"
+			:title="dialog.title"
+			:titleCloseBtn="dialog.titleCloseBtn"
+			:icon="dialog.icon"
+			:width="dialog.width"
+			:component="dialog.component"
+			:content="dialog.content"
+			:model="dialog.model"
+			@action="dialogEvent"
+			:persistent="dialog.persistent"
 		></interactiveDialog>
 
 		<checkoutDialog :show="checkoutDialog" />
-
-		<interactiveDialog
-			v-if="rechargeGiftcardDialog"
-			:show="rechargeGiftcardDialog"
-			:model="selectedItem"
-			:width="800"
-			:title="'Recharge gift card #' + selectedItem.id"
-			component="rechargeGiftcard"
-			action="edit"
-			@action="rechargeEvent"
-		/>
-
-		<interactiveDialog
-			v-if="cancelOrderDialog"
-			:show="cancelOrderDialog"
-			component="passwordForm"
-			:model="{action:'verify'}"
-			:title="'Verify your password to cancel order #' + selectedItem.id"
-			@action="cancelOrderConfirmation"
-			persistent
-		/>
 	</v-card>
 </template>
 
@@ -242,15 +160,20 @@ import { mapActions, mapMutations, mapState } from "vuex";
 export default {
 	data() {
 		return {
+			dialog: {
+				show: false,
+				width: 600,
+				icon: "",
+				title: "",
+				titleCloseBtn: false,
+				component: "",
+				content: "",
+				model: "",
+				persistent: false
+			},
 			current_page: 1,
 			total_items: null,
-			cancelOrderDialog: false,
-			showCreateDialog: false,
-			showEditDialog: false,
-			showViewDialog: false,
-			showRoleDialog: false,
-			showChangePasswordDialog: false,
-			rechargeGiftcardDialog: false,
+			action: "",
 			defaultObject: {},
 			viewId: null,
 			keyword: "",
@@ -319,9 +242,36 @@ export default {
 		}
 	},
 	methods: {
-		cancelOrder(item) {
+		resetDialog() {
+			this.dialog = {
+				show: false,
+				width: 600,
+				title: "",
+				titleCloseBtn: false,
+				icon: "",
+				component: "",
+				content: "",
+				model: "",
+				persistent: false
+			};
+
+			this.action = "";
+		},
+		cancelOrderDialog(item) {
+			this.dialog = {
+				show: true,
+				width: 600,
+				title: `Verify your password to cancel order #${item.id}`,
+				titleCloseBtn: true,
+				icon: "mdi-lock-alert",
+				component: "passwordForm",
+				model: { action: "verify" },
+				persistent: true
+			};
+
 			this.selectedItem = item;
-			this.cancelOrderDialog = true;
+
+			this.action = "cancelOrder";
 		},
 		cancelOrderDisabled(item) {
 			if (this.role == "admin" || item.created_by.id === this.user.id) {
@@ -337,11 +287,20 @@ export default {
 				return true;
 			}
 		},
-
-		setItem(item) {
+		changePasswordDialog(item) {
 			this.selectedItem = item;
 			this.selectedItem["action"] = "change";
-			this.showChangePasswordDialog = true;
+
+			this.dialog = {
+				show: true,
+				width: 600,
+				title: `Change password for user: ${item.name}`,
+				titleCloseBtn: true,
+				icon: "mdi-lock-reset",
+				component: "passwordForm",
+				model: item,
+				persistent: true
+			};
 		},
 		search() {
 			if (this.keyword) {
@@ -369,6 +328,7 @@ export default {
 				this.paginate();
 			}
 		},
+
 		paginate(e) {
 			this.setLoading(true);
 
@@ -388,20 +348,18 @@ export default {
 					this.setLoading(false);
 				});
 		},
-		cancelOrderConfirmation(event) {
-			if (event) {
-				let payload = {
-					model: "orders",
-					id: this.selectedItem.id
-				};
 
-				this.delete(payload).then(response => {
-					this.paginate();
-				});
-			}
-			this.cancelOrderDialog = false;
-			this.closePrompt = false;
+		cancelOrder() {
+			let payload = {
+				model: "orders",
+				id: this.selectedItem.id
+			};
+
+			this.delete(payload).then(response => {
+				this.paginate();
+			});
 		},
+
 		checkout(item) {
 			this.$store.commit("cart/setOrder", item);
 			this.$store.state.cart.checkoutSteps[0].completed = true;
@@ -409,42 +367,76 @@ export default {
 
 			this.checkoutDialog = true;
 		},
-		submitEvent(event) {
+
+		editItemDialog(item) {
+			this.dialog = {
+				show: true,
+				width: 600,
+				title: `Edit item #${item.id}`,
+				titleCloseBtn: true,
+				icon: "mdi-pencil",
+				component: this.form,
+				model: item,
+				persistent: true
+			};
+		},
+
+		createItemDialog() {
+			this.dialog = {
+				show: true,
+				width: 600,
+				title: `${this.btnTitle}`,
+				titleCloseBtn: true,
+				component: this.form,
+				persistent: true
+			};
+		},
+
+		viewItemDialog(item) {
+			this.dialog = {
+				show: true,
+				width: 1000,
+				title: `View item #${item.id}`,
+				titleCloseBtn: true,
+				icon: "mdi-account-key",
+				component: "tableViewComponent",
+				model: item.id,
+				persistent: true
+			};
+		},
+
+		roleDialog(item) {
+			this.dialog = {
+				show: true,
+				width: 600,
+				title: `Edit role for: ${item.name}`,
+				titleCloseBtn: true,
+				icon: "mdi-account-key",
+				component: "userRoleForm",
+				model: item,
+				persistent: true
+			};
+		},
+
+		dialogEvent(event) {
 			if (event) {
+				switch (this.action) {
+					case "cancelOrder":
+						this.cancelOrder();
+						break;
+					default:
+						break;
+				}
 				this.paginate();
 			}
-		},
 
-		editItem(item) {
-			this.defaultObject = item;
-			this.action = "edit";
-			this.showEditDialog = true;
-		},
-
-		viewItem(item) {
-			this.viewId = { id: item.id };
-			this.showViewDialog = true;
-		},
-
-		rechargeEvent(event) {
-			this.rechargeGiftcardDialog = false;
-		},
-
-		result(event) {
-			this.showCreateDialog = false;
-			this.showEditDialog = false;
-			this.showViewDialog = false;
-			this.showRoleDialog = false;
-			this.showChangePasswordDialog = false;
-
-			if (event) {
-				this.paginate();
-			}
+			this.resetDialog();
 		},
 
 		...mapActions("datatable", {
 			deleteRow: "deleteRow"
 		}),
+
 		...mapMutations("datatable", {
 			setHeaders: "setHeaders",
 			setTitle: "setTitle",
@@ -454,6 +446,7 @@ export default {
 			setRows: "setRows",
 			setLoading: "setLoading"
 		}),
+
 		...mapActions({
 			getAll: "getAll",
 			getOne: "getOne",
