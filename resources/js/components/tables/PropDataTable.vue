@@ -230,11 +230,10 @@
 		<interactiveDialog
 			v-if="cancelOrderDialog"
 			:show="cancelOrderDialog"
-			action="confirmation"
-			title="Cancel order?"
-			content="Are you sure you want to <strong>cancel</strong> the selected order?"
+			component="passwordForm"
+			:model="{action:'verify'}"
+			title="Verify your password to cancel this order"
 			@action="cancelOrderConfirmation"
-			actions
 			persistent
 		/>
 	</v-card>
@@ -399,6 +398,7 @@ export default {
 					this.paginate();
 				});
 			}
+			this.cancelOrderDialog = false;
 			this.closePrompt = false;
 		},
 		checkout(item) {

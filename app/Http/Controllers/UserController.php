@@ -93,7 +93,7 @@ class UserController extends Controller
     public function verifySelfPwd(Request $request)
     {
         $validatedData = $request->validate([
-            'password' => 'required|string'
+            'current_password' => 'required|string'
         ]);
 
         $user = auth()->user();
