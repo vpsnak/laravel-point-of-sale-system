@@ -221,7 +221,12 @@ export default {
                         payload
                     )
                     .then(response => {
-                        commit("setNotification", response.data, {
+                        let notification = {
+                            msg: response.data.info,
+                            type: "success"
+                        };
+
+                        commit("setNotification", notification, {
                             root: true
                         });
                         resolve(response);
@@ -231,12 +236,14 @@ export default {
                             msg: error.response.data.errors,
                             type: "error"
                         };
-                        context.commit("setNotification", notification);
+                        commit("setNotification", notification, {
+                            root: true
+                        });
                         reject(error);
                     });
             });
         },
-        saveGuestEmail({ rootState }, payload) {
+        saveGuestEmail({ commit, rootState }, payload) {
             return new Promise((resolve, reject) => {
                 axios
                     .post(rootState.baseUrl + "guest-email/create", payload)
@@ -244,6 +251,13 @@ export default {
                         resolve(response);
                     })
                     .catch(error => {
+                        let notification = {
+                            msg: error.response.data.errors,
+                            type: "error"
+                        };
+                        commit("setNotification", notification, {
+                            root: true
+                        });
                         reject(error);
                     });
             });

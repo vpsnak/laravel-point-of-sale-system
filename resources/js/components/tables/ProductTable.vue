@@ -7,7 +7,9 @@
 		tableForm="productForm"
 		:tableBtnDisable="cashierDisabled()"
 		tableViewComponent="product"
-	/>
+	>
+		<template v-slot:item.final_price="{item}">{{ parseFloat(item.final_price).toFixed(2)}} $</template>
+	</prop-data-table>
 </template>
 <script>
 import { mapMutations } from "vuex";

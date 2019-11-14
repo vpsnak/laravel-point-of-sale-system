@@ -14,6 +14,8 @@
 		<template v-slot:item.phone="{item}">
 			<a :href="'tel:' + item.phone">{{ item.phone }}</a>
 		</template>
+		<template v-slot:item.no_tax="{item}">{{(item.no_tax? 'Yes' : 'No')}}</template>
+		<template v-slot:item.house_account_status="{item}">{{(item.house_account_status? 'Yes' : 'No')}}</template>
 	</prop-data-table>
 </template>
 
