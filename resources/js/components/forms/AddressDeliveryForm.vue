@@ -75,7 +75,7 @@
 							:success="valid"
 						></v-select>
 					</ValidationProvider>
-					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Country">
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Vat ID">
 						<v-text-field
 							v-model="formFields.vat_id"
 							label="Vat id"
