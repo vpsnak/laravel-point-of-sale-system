@@ -47,6 +47,22 @@ class CustomerController extends BaseController
                 'file' => 'nullable|required_if:no_tax,1|file|mimes:jpeg,jpg,png,pdf',
                 'comment' => 'nullable|string',
             ]);
+
+            $addressData = $request->validate([
+                'address.first_name' => 'required|string',
+                'address.last_name' => 'required|string',
+                'address.street' => 'required|string',
+                'address.street2' => 'nullable|string',
+                'address.city' => 'required|string',
+                'address.country_id' => 'required|exists:countries,country_id',
+                'address.region' => 'required|exists:regions,region_id',
+                'address.postcode' => 'required|string',
+                'address.phone' => 'required|numeric',
+                'address.company' => 'nullable|string',
+                'address.vat_id' => 'nullable|string',
+                'address.billing' => 'nullable|bool',
+                'address.shipping' => 'nullable|bool',
+            ]);
         }
 
         $timestamp = idate("U");
@@ -67,24 +83,6 @@ class CustomerController extends BaseController
             }
 
             unset($validatedData['file']);
-        }
-
-        if (empty($validatedExtra['id'])) {
-            $addressData = $request->validate([
-                'address.first_name' => 'required|string',
-                'address.last_name' => 'required|string',
-                'address.street' => 'required|string',
-                'address.street2' => 'nullable|string',
-                'address.city' => 'required|string',
-                'address.country_id' => 'required|exists:countries,country_id',
-                'address.region' => 'required|exists:regions,region_id',
-                'address.postcode' => 'required|string',
-                'address.phone' => 'required|numeric',
-                'address.company' => 'nullable|string',
-                'address.vat_id' => 'nullable|string',
-                'address.billing' => 'nullable|bool',
-                'address.shipping' => 'nullable|bool',
-            ]);
         }
 
         $customer = $this->getCustomer($validatedExtra['id'] ?? null, $validatedData);
