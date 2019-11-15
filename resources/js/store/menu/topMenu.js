@@ -8,9 +8,9 @@ export default {
 
     mutations: {
         toggleMini(state) {
-            state.mini = !state.mini
+            state.mini = !state.mini;
         }
     },
 
-    actions: {},
-}
+    actions: {}
+};

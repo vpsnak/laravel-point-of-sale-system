@@ -1,14 +1,14 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from "vue";
+import Vuex from "vuex";
 
-import 'es6-promise/auto'
-import Cookies from 'js-cookie'
-import router from '../plugins/router'
+import "es6-promise/auto";
+import Cookies from "js-cookie";
+import router from "../plugins/router";
 //modules
-import topMenu from './menu/topMenu'
-import cart from './modules/cart'
-import endpoints from './modules/endpoints'
-import datatable from './modules/datatable'
+import topMenu from "./menu/topMenu";
+import cart from "./modules/cart";
+import endpoints from "./modules/endpoints";
+import datatable from "./modules/datatable";
 
 Vue.use(Vuex);
 
@@ -50,12 +50,16 @@ export default new Vuex.Store({
         storeList: []
     },
     getters: {
-        role: state => {
-            return state.user.roles[0].name;
-        },
         authorized: state => {
-            if (state.user && state.token) {
+            if (state.token && state.user) {
                 return true;
+            } else {
+                return false;
+            }
+        },
+        role: state => {
+            if (state.user) {
+                return state.user.roles[0].name;
             } else {
                 return false;
             }
@@ -79,6 +83,12 @@ export default new Vuex.Store({
             Cookies.remove("token");
             Cookies.remove("store");
             Cookies.remove("cash_register");
+
+            if (router.currentRoute.name !== "login") {
+                router.push({
+                    name: "login"
+                });
+            }
         },
         setCashRegister(state, cashRegister) {
             if (cashRegister) {
@@ -196,7 +206,7 @@ export default new Vuex.Store({
                         reject(error);
                     })
                     .finally(() => {
-                        context.commit("logout", null);
+                        context.commit("logout");
                     });
             });
         },
@@ -247,7 +257,7 @@ export default new Vuex.Store({
         changeUserPwd(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(this.state.baseUrl + 'users/password/', payload)
+                    .post(this.state.baseUrl + "users/password/", payload)
                     .then(response => {
                         let notification = {
                             msg: response.data.info,
@@ -512,10 +522,19 @@ export default new Vuex.Store({
 
         create(context, payload) {
             return new Promise((resolve, reject) => {
+                let options;
+                if (payload.data instanceof FormData) {
+                    options = {
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
+                    };
+                }
                 axios
                     .post(
                         this.state.baseUrl + payload.model + "/create",
-                        payload.data
+                        payload.data,
+                        options
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {

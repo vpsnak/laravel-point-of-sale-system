@@ -13,8 +13,8 @@ class TaxSeeder extends Seeder
     public function run()
     {
         DB::table('taxes')->insert([
-            'name' => 'Zero Tax',
-            'percentage' => 0,
+            'name' => '10% Tax',
+            'percentage' => 10,
         ]);
         DB::table('taxes')->insert([
             'name' => '8% Tax',

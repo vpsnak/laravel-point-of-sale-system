@@ -17,16 +17,22 @@ class PaymentObserver
 
     public function updateOrderStatus(Payment $payment)
     {
-        if ($payment->order->status != 'complete' && $payment->order->status != 'canceled') {
-            if ($payment->order->total - $payment->order->total_paid > 0) {
-                if ($payment->order->status != 'pending_payment') {
-                    $payment->order->status = 'pending_payment';
-                    $payment->order->save();
+        $order = $payment->order()->firstOrFail();
+        if ($order->status != 'complete' && $order->status != 'canceled') {
+            $change = $order->total - $order->total_paid;
+            if ($change > 0) {
+                if ($order->status != 'pending_payment') {
+                    $order->change = 0;
+                    $order->status = 'pending_payment';
+                    $order->save();
                 }
             } else {
-                if ($payment->order->status != 'paid') {
-                    $payment->order->status = 'paid';
-                    $payment->order->save();
+                // change is negative so fix payment amount and save the change to order
+                $payment->increment('amount', $change);
+                if ($order->status != 'paid') {
+                    $order->change = abs($change);
+                    $order->status = 'paid';
+                    $order->save();
                 }
             }
         }
@@ -39,13 +45,7 @@ class PaymentObserver
         if ($payment->status == 'approved' && $payment->refunded == 1) {
             switch ($payment->paymentType->type) {
                 case 'card':
-                    $paymentResponse = (new CreditCardController)->cardRefund(
-                        '5472063333333330',
-                        '1224',
-                        '123',
-                        'Test Holder Name',
-                        $payment->amount
-                    );
+                    $paymentResponse = (new CreditCardController)->cardRefund($payment->code);
                     if (isset($paymentResponse['error'])) {
                         return false;
                     }

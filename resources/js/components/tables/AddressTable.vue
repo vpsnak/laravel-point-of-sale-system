@@ -46,7 +46,7 @@ export default {
 				},
 				{
 					text: "Region",
-					value: "region"
+					value: "address_region.default_name"
 				},
 				{
 					text: "Postcode",
@@ -55,10 +55,6 @@ export default {
 				{
 					text: "Phone",
 					value: "phone"
-				},
-				{
-					text: "Company",
-					value: "company"
 				},
 				{ text: "Actions", value: "action", sortable: false }
 			]

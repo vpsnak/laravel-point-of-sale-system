@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\MasOrder;
 use App\Order;
+use Carbon\Carbon;
+use Exception;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Log;
 
 class MasOrderController extends Controller
 {
+    const LOG_PREFIX = 'MAS';
     protected static $mas_direct_id = 'USZZ000035';
     protected static $user = 'pshed';
     protected static $pass = '9JNH76k#';
@@ -15,71 +19,140 @@ class MasOrderController extends Controller
 
     protected $model = MasOrder::class;
 
-    public function submitToMas(Order $order)
+    public static function submitToMas(Order $order)
     {
         $payload = [];
         $payload['SenderMdNumber'] = self::$mas_direct_id;
-        $payload['FulfillerMDNumber'] = self::$mas_direct_id;
-        $payload['PriorityType'] = 1; // @TODO ask whats that
+        $payload['FulfillerMDNumber'] = 'USNY000012';
+//        $payload['FulfillerMDNumber'] = 'USZZ000035';
+        $payload['PriorityType'] = 1;
         $payload['MessageType'] = 0;
-        $payload['MessageText'] = 'test comment';
+        $payload['MessageText'] = $order->id;
 
-        $payload['RecipientDetail'] = [
-            'ExtensionData' => null,
-            'RecipientFirstName' => 'Test',
-            'RecipientLastName' => 'Order',
-            'RecipientAttention' => 'Test Company',
-            'RecipientEmail' => 'test@testing.com',
-            'RecipientAddress' => '123 Test Dr',
-            'RecipientAddress2' => 'Suite 23',
-            'RecipientCity' => 'Dallas',
-            'RecipientState' => 'TX',
-            'RecipientCountry' => 'US',
-            'RecipientZip' => '80211',
-            'RecipientPhone' => '2149994455',
-            'RecipientLatLong' => '',
-            'SpecialInstructions' => '',
-            'DeliveryDate' => '02/14/2030',
-            'DeliveryEndDate' => '02/14/2030',
-            'CardMessage' => 'This is a message for you!',
-            'OccasionType' => 2,
-            'ResidenceType' => 6,
-        ];
+        $payload['RecipientDetail'] = self::parseOrderRecipient($order);
 
-//        @TODO add order comments in recipient
-//        if (!empty($order->notes)) {
-//            $payload['MessageText'] = $order->notes;
-//        }
+        $payload['OrderItems'] = self::parseOrderItems($order->items);
 
-        $payload['OrderItems'] = $this->parseOrderItems($order->items);
-
-        if ($payments = $this->parseOrderPayments($order->payments)) {
+        if ($payments = self::parseOrderPayments($order->payments)) {
             $payload['Payments'] = $payments;
         }
 
-        $subtotal = $order->subtotal + $order->shipping_cost;
-        $payload['MdseAmount'] = $subtotal;
-        $payload['TaxAmount'] = $subtotal * $order->tax / 100;
+        $payload['MdseAmount'] = $order->total_without_tax;
+        $payload['TaxAmount'] = $order->total - $order->total_without_tax;
         $payload['TotalAmount'] = $order->total;
-        $payload['OrderId'] = $order->id;
 
-        print_r(json_encode($payload));
+        self::log('Payload: ' . json_encode($payload));
+        try {
+            $client = new Client();
+            $response = $client->post(self::$new_order_endpoint, [
+                'headers' => [
+                    'Authorization' => 'Basic ' . base64_encode(self::$user . ':' . self::$pass . ':' . self::$mas_direct_id),
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json'
+                ],
+                'connect_timeout' => 30,
+                'body' => json_encode($payload)
+            ]);
 
-        $client = new Client();
-        $response = $client->post(self::$new_order_endpoint, [
-            'headers' => [
-                'Authorization' => 'Basic ' . base64_encode(self::$user . ':' . self::$pass . ':' . self::$mas_direct_id),
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json'
-            ],
-            'connect_timeout' => 30,
-            'body' => json_encode($payload)
-        ]);
+            $json = (string)$response->getBody()->getContents();
+            self::log('Response: ' . $json);
+        } catch (Exception $e) {
+            $json = (string)$e->getResponse()->getBody();
+            self::log('Error: ' . $json);
+        }
 
-        return $response->getBody()->getContents();
+        $response = json_decode($json);
+
+        if (isset($response->ErrorMessage)) {
+            MasOrder::updateOrCreate(['order_id' => $order->id], [
+                'status' => 'error',
+            ]);
+            $errors = [];
+            foreach ($response->ErrorMessage as $error) {
+                $errors[] = $error->MessageNumber . ' - ' . $error->Message;
+            }
+            return ['errors' => $errors];
+        }
+        if (!empty($response->Messages)) {
+            MasOrder::updateOrCreate(['order_id' => $order->id], [
+                'mas_id' => $response->Messages->ControlNumber,
+                'status' => 'success',
+            ]);
+            return ['success' => $response->Messages->MessageNumber . ' - ' . $response->Messages->Message];
+        } else {
+            MasOrder::updateOrCreate(['order_id' => $order->id], [
+                'status' => 'error on success',
+            ]);
+            return ['error' => $response->Messages->MessageNumber . ' - ' . $response->Messages->Message];
+        }
     }
 
-    private function parseOrderItems($items)
+    private static function parseOrderRecipient(Order $order)
+    {
+        $shipping_notes = '';
+        if (!empty($order->notes)) {
+            $shipping_notes .= 'Notes: ' . $order->notes;
+        }
+        $response = [
+            'ExtensionData' => null,
+            'RecipientFirstName' => 'Guest',
+            'RecipientLastName' => 'Customer',
+            'RecipientAttention' => $shipping_notes,
+            'RecipientEmail' => 'vpallis@webo2.gr',
+            'RecipientAddress' => '555 Columbus Ave',
+            'RecipientAddress2' => '',
+            'RecipientCity' => 'Manhattan',
+            'RecipientState' => 'NY',
+            'RecipientCountry' => 'US',
+            'RecipientZip' => '10024',
+            'RecipientPhone' => '+6974526666',
+            'SpecialInstructions' => $order->delivery_slot,
+            'DeliveryDate' => Carbon::parse($order->delivery_date ?? $order->updated_at)->toDateString(),
+            'DeliveryEndDate' => Carbon::parse($order->delivery_date ?? $order->updated_at)->toDateString(),
+            'CardMessage' => '',
+            'OccasionType' => 9,
+            'ResidenceType' => 11,
+        ];
+
+        $customer = $order->customer;
+        if (empty($customer)) {
+            return $response;
+        }
+        $shipping_address = $order->shipping_address;
+        if (empty($shipping_address)) {
+            return $response;
+        }
+        if (!empty($shipping_address->company)) {
+            $shipping_notes .= 'Company: ' . $shipping_address->company;
+        }
+        // Delivery Time slots will be sent in SpecialInstructions , you can also put an abbreviated version in ShippingPriority (IE> 5P-9P for 5pm to 9pm)
+        $response['RecipientFirstName'] = $shipping_address->first_name;
+        $response['RecipientLastName'] = $shipping_address->last_name;
+        $response['RecipientAttention'] = $shipping_notes;
+        $response['RecipientEmail'] = $customer->email;
+        $response['RecipientAddress'] = $shipping_address->street;
+        $response['RecipientAddress2'] = $shipping_address->street2;
+        $response['RecipientCity'] = $shipping_address->city;
+        $response['RecipientState'] = $shipping_address->region_id->default_name;
+        $response['RecipientCountry'] = $shipping_address->country_id;
+        $response['RecipientZip'] = $shipping_address->postcode;
+        $response['RecipientPhone'] = $shipping_address->phone;
+
+        if (!empty($order->occasion)) {
+            $response['OccasionType'] = $order->occasion;
+        }
+        if (!empty($order->location)) {
+            $response['ResidenceType'] = $order->location;
+        }
+
+        if (!empty($order->delivery_slot)) {
+            $response['SpecialInstructions'] = $order->delivery_slot;
+        }
+
+        return $response;
+    }
+
+    private static function parseOrderItems($items)
     {
         $response = [];
         foreach ($items as $item) {
@@ -98,17 +171,13 @@ class MasOrderController extends Controller
         return array_values($response);
     }
 
-    private function parseOrderPayments($payments)
+    private static function parseOrderPayments($payments)
     {
         $response = [];
         foreach ($payments as $payment) {
             if ($payment->status != 'approved' || $payment->refunded == 1) {
                 continue;
             }
-
-            $response[$payment->id] = [
-                'PaymentAmount' => $payment->amount
-            ];
 
             switch ($payment->paymentType->type) {
                 case 'cash':
@@ -135,5 +204,10 @@ class MasOrderController extends Controller
             }
         }
         return array_values($response);
+    }
+
+    private static function log($message)
+    {
+        Log::channel('connector')->info(self::LOG_PREFIX . ': ' . $message);
     }
 }

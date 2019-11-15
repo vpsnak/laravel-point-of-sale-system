@@ -1,6 +1,6 @@
 <template>
 	<ValidationObserver v-slot="{ invalid }" ref="obs">
-		<v-form>
+		<v-form @submit.prevent="submit">
 			<ValidationProvider
 				v-if="action === 'change_self' || action === 'verify'"
 				rules="required|min:8"
@@ -70,11 +70,10 @@
 			</ValidationProvider>
 			<v-btn
 				class="mr-4 mt-2"
-				@click.prevent="submit"
+				type="submit"
 				:loading="loading"
 				:disabled="invalid || disableSubmit"
 			>submit</v-btn>
-			<v-btn class="mt-2" @click="clear">clear</v-btn>
 		</v-form>
 	</ValidationObserver>
 </template>
@@ -107,14 +106,12 @@ export default {
 			switch (this.action) {
 				case "change_self":
 					return this.formFields.current_password ? false : true;
-					break;
 				case "change":
 					return this.formFields.password ? false : true;
-					break;
 				case "verify":
 					return this.formFields.current_password ? false : true;
-
-					break;
+				default:
+					return true;
 			}
 		}
 	},
@@ -129,7 +126,6 @@ export default {
 						})
 						.finally(() => {
 							this.loading = false;
-							this.clear();
 						});
 					break;
 				case "change":
@@ -141,7 +137,6 @@ export default {
 						})
 						.finally(() => {
 							this.loading = false;
-							this.clear();
 						});
 					break;
 				case "verify":
@@ -152,17 +147,9 @@ export default {
 						})
 						.finally(() => {
 							this.loading = false;
-							this.clear();
 						});
 					break;
 			}
-		},
-		clear() {
-			this.$refs.obs.reset();
-
-			this.formFields.current_password = null;
-			this.formFields.password = null;
-			this.formFields.password_confirmation = null;
 		},
 		...mapActions(["changeSelfPwd", "changeUserPwd", "verifySelf"])
 	},

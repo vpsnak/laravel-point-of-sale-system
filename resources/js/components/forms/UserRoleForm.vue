@@ -1,17 +1,12 @@
 <template>
 	<ValidationObserver v-slot="{ invalid }" ref="obs">
-		<v-form>
-			<div class="text-center">
-				<v-chip>
-					<v-icon left color="primary">mdi-account</v-icon>
-					{{ user_name}}
-				</v-chip>
-			</div>
+		<v-form @submit.prevent="submit">
 			<ValidationProvider v-slot="{ errors, valid }" name="Role">
 				<v-select
+					hide-selected
 					v-model="role_id"
 					:items="roles"
-					label="Roles"
+					label="Role"
 					required
 					:loading="loading"
 					:disabled="loading"
@@ -20,13 +15,7 @@
 				></v-select>
 			</ValidationProvider>
 
-			<v-btn
-				class="mr-4"
-				type="submit"
-				:loading="loading"
-				:disabled="loading"
-				@click.prevent="submit"
-			>submit</v-btn>
+			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="loading">submit</v-btn>
 		</v-form>
 	</ValidationObserver>
 </template>
@@ -35,7 +24,7 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
-		model: Object || undefined
+		model: Object
 	},
 	data() {
 		return {

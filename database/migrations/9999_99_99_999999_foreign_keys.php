@@ -28,11 +28,6 @@ class ForeignKeys extends Migration
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
         });
 
-        Schema::table('order_payment', function (Blueprint $table) {
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
-            $table->foreign('payment_id')->references('id')->on('payments')->onDelete('cascade');
-        });
-
         Schema::table('prices', function (Blueprint $table) {
             $table->foreign('discount_id')->references('id')->on('discounts')->onDelete('cascade');
         });
@@ -57,11 +52,6 @@ class ForeignKeys extends Migration
         Schema::table('address_customer', function (Blueprint $table) {
             $table->dropForeign(['address_id']);
             $table->dropForeign(['customer_id']);
-        });
-
-        Schema::table('order_payment', function (Blueprint $table) {
-            $table->dropForeign(['order_id']);
-            $table->dropForeign(['payment_id']);
         });
 
         Schema::table('prices', function (Blueprint $table) {

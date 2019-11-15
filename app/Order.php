@@ -18,22 +18,31 @@ class Order extends BaseModel
         'discount_amount',
         'tax',
         'subtotal',
+        'change',
         'shipping_type',
         'shipping_cost',
         'shipping_address_id',
         'store_pickup_id',
         'delivery_date',
+        'delivery_slot',
         'location',
         'occasion',
         'notes',
     ];
 
-    protected $with = ['items', 'payments', 'customer', 'store_id', 'created_by', 'shipping_address'];
+    protected $with = [
+        'items',
+        'payments',
+        'customer',
+        'store_id',
+        'created_by',
+        'shipping_address',
+        'store_pickup'
+    ];
 
     public function getTotalAttribute()
     {
         $total = $this->total_without_tax;
-        $total += $this->shipping_cost;
         $total = Price::calculateTax($total, $this->tax);
 
         return $total;
@@ -48,6 +57,7 @@ class Order extends BaseModel
         };
 
         $total = Price::calculateDiscount($total, $this->discount_type, $this->discount_amount);
+        $total += $this->shipping_cost;
 
         return $total;
     }
@@ -63,7 +73,7 @@ class Order extends BaseModel
                 $total_paid -= $payment->amount;
             }
         };
-        return $total_paid;
+        return $total_paid + $this->change;
     }
 
     public function items()

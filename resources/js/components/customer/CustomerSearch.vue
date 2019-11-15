@@ -18,6 +18,7 @@
 				placeholder="Start typing to Search"
 				prepend-icon="mdi-account-search"
 				return-object
+				@blur="checkIfObjectEvent"
 			></v-combobox>
 			<v-text-field v-else :value="getCustomerFullname(cartCustomer)" disabled prepend-icon="person"></v-text-field>
 			<v-tooltip bottom>
@@ -101,6 +102,11 @@ export default {
 		}
 	},
 	methods: {
+		checkIfObjectEvent() {
+			if (!_.isObjectLike(this.cartCustomer)) {
+				this.search = null;
+			}
+		},
 		getCustomerFullname(item) {
 			if (item) {
 				return item.first_name + " " + item.last_name;

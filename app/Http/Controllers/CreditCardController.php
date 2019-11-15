@@ -41,7 +41,7 @@ class CreditCardController extends Controller
                 return $this->prepareResponse($response);
                 break;
             default:
-                return ['errors' => 'Invalid API action'];
+                return ['errors' => ['Invalid API action']];
                 break;
         }
     }
@@ -100,18 +100,18 @@ class CreditCardController extends Controller
     {
         if (array_key_exists('errorCode', $response)) {
             return [
-                'errors' => $response['errorName'] . ' - ' . $response['errorMessage']
+                'errors' => [$response['errorName'] . ' - ' . $response['errorMessage']]
             ];
         }
         return [
-            'success' => $response['ssl_result_message'],
+            'success' => [$response['ssl_result_message']],
             'id' => $response['ssl_txn_id']
         ];
     }
 
-    public function cardRefund($card_number, $exp_date, $cvc, $card_holder, $amount)
+    public function cardRefund($transaction_id)
     {
-        return $this->creditCardAction('cccredit', $card_number, $exp_date, $cvc, $card_holder, $amount);
+        return $this->transactionAction('ccreturn', ['ssl_txn_id' => $transaction_id]);
     }
 
     public function transactionAction($type, $params)
@@ -131,10 +131,8 @@ class CreditCardController extends Controller
             case 'ccdelete':
                 $response = ElavonApiPaymentController::doTransaction($type, $payload);
                 return $this->prepareResponse($response);
-                break;
             default:
-                return ['errors' => 'Invalid API action'];
-                break;
+                return ['errors' => ['Invalid API action']];
         }
     }
 
@@ -158,10 +156,14 @@ class CreditCardController extends Controller
         ]);
 
         array_key_exists('amount', $validatedData) ? $this->amount = $validatedData['amount'] : null;
-        array_key_exists('cvc2_indicator',
-            $validatedData) ? $this->cvc2_indicator = $validatedData['cvc2_indicator'] : $this->cvc2_indicator = 1;
-        array_key_exists('invoiceNumber',
-            $validatedData) ? $this->invoice_number = 'INV101' : $this->invoice_number = null;
+        array_key_exists(
+            'cvc2_indicator',
+            $validatedData
+        ) ? $this->cvc2_indicator = $validatedData['cvc2_indicator'] : $this->cvc2_indicator = 1;
+        array_key_exists(
+            'invoiceNumber',
+            $validatedData
+        ) ? $this->invoice_number = 'INV101' : $this->invoice_number = null;
         array_key_exists('address', $validatedData) ? $this->address = '10025' : $this->address = null;
         array_key_exists('zipcode', $validatedData) ? $this->zipcode = '10025' : $this->zipcode = null;
     }

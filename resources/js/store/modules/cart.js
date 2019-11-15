@@ -1,32 +1,35 @@
-import Axios from "axios";
-
 export default {
     namespaced: true,
 
     state: {
         retail: true,
+        disableBtn: false,
 
         locations: [
-            "Apartment",
-            "Business",
-            "Private House",
-            "Hotel",
-            "Hospital",
-            "Funeral Home",
-            "Church",
-            "School"
+            { id: 1, label: "Funeral Home" },
+            { id: 2, label: "Church" },
+            { id: 3, label: "Reception Hall" },
+            { id: 4, label: "Hospital" },
+            { id: 5, label: "Business" },
+            { id: 6, label: "Home" },
+            { id: 7, label: "Apartment" },
+            { id: 8, label: "Hotel" },
+            { id: 9, label: "International City" },
+            { id: 10, label: "School" },
+            { id: 11, label: "Other" },
+            { id: 12, label: "Pick Up or Will Call" }
         ],
 
         occasions: [
-            "Anniversary",
-            "Get Well",
-            "Birthday",
-            "Business Gifting",
-            "Holiday",
-            "New Baby",
-            "Just Because",
-            "Sympathy",
-            "All Others"
+            { id: 1, label: "Wedding" },
+            { id: 2, label: "Birthday" },
+            { id: 3, label: "Holiday" },
+            { id: 4, label: "Anniversary" },
+            { id: 5, label: "Business" },
+            { id: 6, label: "New Baby" },
+            { id: 7, label: "Get Well" },
+            { id: 8, label: "Funeral" },
+            { id: 9, label: "Other" }
         ],
 
         discountTypes: [
@@ -92,6 +95,9 @@ export default {
     },
 
     mutations: {
+        setDisableBtn(state, value) {
+            state.disableBtn = value;
+        },
         setShippingCost(state, value) {
             state.shipping.cost = value;
         },
@@ -153,7 +159,11 @@ export default {
             }
         },
         setCustomer(state, customer) {
-            state.customer = customer;
+            if (_.isObjectLike(customer)) {
+                state.customer = customer;
+            } else {
+                state.customer = null;
+            }
         },
         completeStep(state) {
             let index = -1 + state.currentCheckoutStep;
@@ -219,7 +229,12 @@ export default {
                         payload
                     )
                     .then(response => {
-                        commit("setNotification", response.data, {
+                        let notification = {
+                            msg: response.data.info,
+                            type: "success"
+                        };
+
+                        commit("setNotification", notification, {
                             root: true
                         });
                         resolve(response);
@@ -229,12 +244,14 @@ export default {
                             msg: error.response.data.errors,
                             type: "error"
                         };
-                        context.commit("setNotification", notification);
+                        commit("setNotification", notification, {
+                            root: true
+                        });
                         reject(error);
                     });
             });
         },
-        saveGuestEmail({ rootState }, payload) {
+        saveGuestEmail({ commit, rootState }, payload) {
             return new Promise((resolve, reject) => {
                 axios
                     .post(rootState.baseUrl + "guest-email/create", payload)
@@ -242,6 +259,13 @@ export default {
                         resolve(response);
                     })
                     .catch(error => {
+                        let notification = {
+                            msg: error.response.data.errors,
+                            type: "error"
+                        };
+                        commit("setNotification", notification, {
+                            root: true
+                        });
                         reject(error);
                     });
             });
