@@ -42,7 +42,7 @@
                     <v-card-text>
                         <div class="subtitle-1">Delivery Type: {{orderData.shipping_type}}</div>
                         <div class="subtitle-1" v-if="orderData.delivery_date">Delivery Date: {{orderData.delivery_date}}</div>
-                        <div class="subtitle-1">Delivery Cost: {{orderData.shipping_cost.toFixed(2)}} $</div>
+                        <div class="subtitle-1">Delivery Cost: {{orderData.shipping_cost}} $</div>
                         <div class="subtitle-1" v-if="orderData.location">Location: {{orderData.location}}</div>
                         <div class="subtitle-1" v-if="orderData.occasion">Occasion: {{orderData.occasion}}</div>
                         <div class="subtitle-1" v-if="orderData.shipping_address">Delivery Address: {{orderData.shipping_address}}</div>
@@ -62,7 +62,7 @@
                     <v-card-title>Totals</v-card-title>
                     <v-card-text>
                         <div class="subtitle-1">Subtotal: {{orderData.subtotal}} $</div>
-                        <div class="subtitle-1">Shipping Cost: {{orderData.shipping_cost.toFixed(2)}} $</div>
+                        <div class="subtitle-1">Delivery Cost: {{orderData.shipping_cost}} $</div>
                         <div class="subtitle-1">Tax ({{orderData.tax}}%) : {{(orderData.total - orderData.subtotal - orderData.shipping_cost).toFixed(2)}} $</div>
                         <div class="headline">Total: {{orderData.total.toFixed(2)}} $</div>
                     </v-card-text>

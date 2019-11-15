@@ -19,10 +19,10 @@ RewriteRule ^(.*)$ public/$1 [L]
    php_value max_input_time 180
    php_value max_input_vars 75000
    php_value memory_limit 512M
-   php_value post_max_size 16M
+   php_value post_max_size 50M
    php_value session.gc_maxlifetime 3600
    php_value session.save_path "/var/cpanel/php/sessions/ea-php73"
-   php_value upload_max_filesize 5M
+   php_value upload_max_filesize 50M
    php_flag zlib.output_compression Off
 </IfModule>
 <IfModule lsapi_module>
@@ -31,10 +31,10 @@ RewriteRule ^(.*)$ public/$1 [L]
    php_value max_input_time 180
    php_value max_input_vars 75000
    php_value memory_limit 512M
-   php_value post_max_size 16M
+   php_value post_max_size 50M
    php_value session.gc_maxlifetime 3600
    php_value session.save_path "/var/cpanel/php/sessions/ea-php73"
-   php_value upload_max_filesize 5M
+   php_value upload_max_filesize 50M
    php_flag zlib.output_compression Off
 </IfModule>
 # END cPanel-generated php ini directives, do not edit
