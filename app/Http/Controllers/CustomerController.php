@@ -52,7 +52,7 @@ class CustomerController extends BaseController
         $timestamp = idate("U");
 
         if (array_key_exists('file', $validatedData) && $validatedData['no_tax']) {
-            if ($validatedExtra['id']) {
+            if (!empty($validatedExtra['id'])) {
                 $validatedData['no_tax_file'] = $request->file('file')->storeAs(
                     'public/uploads/no_tax',
                     $validatedExtra['id'] . '.' . $request->file('file')->extension()
