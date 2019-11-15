@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Customer;
 use App\Helper\Price;
+use App\Jobs\ProcessOrder;
 use App\Order;
 use App\OrderAddress;
 use App\OrderProduct;
 use App\Store;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class OrderController extends BaseController
@@ -27,9 +29,11 @@ class OrderController extends BaseController
                 'shipping_cost' => 'numeric|nullable',
             ]);
 
-            $this->model::updateData($validatedID, $validatedData);
+            Order::updateData($validatedID, $validatedData);
 
-            return response(Order::findOrFail($validatedID)->first(), 200);
+            $order = Order::getOne($validatedID['id']);
+            ProcessOrder::dispatchNow($order);
+            return response($order, 200);
         }
 
         $validatedData = $request->validate([
@@ -51,7 +55,7 @@ class OrderController extends BaseController
 
             'shipping.cost' => 'required_if:shipping.method,pickup,delivery|numeric',
             'shipping.date' => 'required_if:shipping.method,pickup,delivery|date',
-            'shipping.timeSlotLabel' => 'required_if:shipping.method,pickup,delivery|string',
+            'shipping.timeSlotLabel' => 'nullable|required_if:shipping.method,pickup,delivery|string',
             'shipping.location' => 'nullable|required_if:shipping.method,delivery|numeric',
             'shipping.occasion' => 'nullable|required_if:shipping.method,pickup,delivery|numeric',
 
@@ -78,7 +82,7 @@ class OrderController extends BaseController
         $validatedData['shipping_type'] = $shippingData['shipping']['method'] ?? null;
         $validatedData['store_pickup_id'] = $shippingData['shipping']['pickup_point']['id'] ?? null;
         $validatedData['shipping_cost'] = $shippingData['shipping']['cost'] ?? null;
-        $validatedData['delivery_date'] = $shippingData['shipping']['date'] ?? null;
+        $validatedData['delivery_date'] = $shippingData['shipping']['date'] ?? Carbon::today();
         $validatedData['delivery_slot'] = $shippingData['shipping']['timeSlotLabel'] ?? null;
         $validatedData['location'] = $shippingData['shipping']['location'] ?? null;
         $validatedData['occasion'] = $shippingData['shipping']['occasion'] ?? null;
@@ -124,8 +128,11 @@ class OrderController extends BaseController
             $product = $this->setProductPrice($product);
             OrderProduct::store($product);
         }
+        $order = Order::getOne($order->id);
 
-        return response($this->model::getOne($order->id), 201);
+        ProcessOrder::dispatchNow($order);
+
+        return response($order, 201);
     }
 
     private function setSubtotal($orderData, $products)
