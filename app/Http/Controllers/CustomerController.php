@@ -32,7 +32,7 @@ class CustomerController extends BaseController
                 'house_account_number' => 'nullable|string',
                 'house_account_limit' => 'nullable|numeric',
                 'no_tax' => 'nullable|bool',
-                'file' => 'nullable|required_if:no_tax,1|file|mimes:jpeg,jpg,png,pdf',
+                'file' => 'nullable|file|mimes:jpeg,jpg,png,pdf',
                 'comment' => 'nullable|string',
             ]);
         } else {
@@ -69,12 +69,14 @@ class CustomerController extends BaseController
 
         $customer = $this->getCustomer($validatedExtra['id'] ?? null, $validatedData);
 
-        if (!$validatedExtra['id'] && array_key_exists('file', $validatedData) && $validatedData['no_tax']) {
+        if (array_key_exists('file', $validatedData) && $validatedData['no_tax']) {
             Storage::move('public/uploads/no_tax/' . $timestamp, 'public/uploads/no_tax/' . $customer->id . '.' . $request->file('file')->extension());
-        }
 
-        $customer->no_tax_file = '/storage/uploads/no_tax/' . $customer->id . '.' . $request->file('file')->extension();
-        $customer->save();
+            if (!$validatedExtra['id']) {
+                $customer->no_tax_file = '/storage/uploads/no_tax/' . $customer->id . '.' . $request->file('file')->extension();
+                $customer->save();
+            }
+        }
 
         if (!empty($validatedExtra['address'])) {
             $addressData = $request->validate([
