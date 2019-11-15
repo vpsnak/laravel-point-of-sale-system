@@ -155,7 +155,11 @@ export default {
             }
         },
         setCustomer(state, customer) {
-            state.customer = customer;
+            if (_.isObjectLike(customer)) {
+                state.customer = customer;
+            } else {
+                state.customer = null
+            }
         },
         completeStep(state) {
             let index = -1 + state.currentCheckoutStep;
