@@ -35,6 +35,13 @@
 						style="max-width:300px;"
 					></v-text-field>
 					<v-text-field
+						label="Card holder's name"
+						type="number"
+						prepend-inner-icon="mdi-account-box"
+						v-model="card.card_holder"
+						style="max-width:300px;"
+					></v-text-field>
+					<v-text-field
 						label="Exp date"
 						v-model="card.exp_date"
 						style="max-width:300px;"
@@ -112,6 +119,7 @@ export default {
 			code: null,
 
 			card: {
+				card_holder: null,
 				number: null,
 				cvc: null,
 				exp_date: null
@@ -220,7 +228,7 @@ export default {
 			}
 
 			this.$emit("sendPayment", payload);
-			this.clearState();
+			this.limits();
 		},
 		limits() {
 			if (this.paymentType !== "cash") {
@@ -232,10 +240,7 @@ export default {
 					) {
 						this.amount = this.houseAccountLimit;
 					}
-				} else {
-					this.amount = this.remainingAmount.toFixed(2);
 				}
-
 				if (parseFloat(this.amount) > parseFloat(this.remainingAmount)) {
 					this.amount = this.remainingAmount.toFixed(2);
 				}
@@ -247,8 +252,8 @@ export default {
 		},
 		clearState() {
 			this.code = null;
-
 			this.card.number = null;
+			this.card.card_holder = null;
 			this.card.cvc = null;
 			this.card.exp_date = null;
 
