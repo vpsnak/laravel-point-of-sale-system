@@ -144,16 +144,22 @@ class UserController extends Controller
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required|string',
-            'username' => 'required|string',
-            'email' => 'required|unique:users,email',
-            'phone' => 'required|unique:users,phone',
-            'password' => 'required|string'
+            'id' => 'sometimes|exists:users,id',
+            'name' => 'nullable|required_without:id|string',
+            'username' => 'nullable|required_without:id|string',
+            'email' => 'nullable|required_without:id|unique:users,email',
+            'phone' => 'nullable|required_without:id|unique:users,phone',
+            'password' => 'nullable|required_without:id|string'
         ]);
 
         $validatedData['password'] = Hash::make($validatedData['password']);
 
-        $user = new User($validatedData);
+        if (!empty($validatedData['id'])) {
+            $user = User::findOrFail($validatedData['id']);
+            $user = $validatedData;
+        } else {
+            $user = new User($validatedData);
+        }
         $user->save();
 
         return response(['info' => ['User ' . $user->name . ' created successfully!']]);
