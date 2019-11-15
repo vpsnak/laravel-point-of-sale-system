@@ -69,17 +69,6 @@ class CustomerController extends BaseController
             unset($validatedData['file']);
         }
 
-        $customer = $this->getCustomer($validatedExtra['id'] ?? null, $validatedData);
-
-        if ($request->file('file') && $validatedData['no_tax']) {
-            if (empty($validatedExtra['id'])) {
-                Storage::move('public/uploads/no_tax/' . $timestamp . $fileExt, 'public/uploads/no_tax/' . $customer->id . $fileExt);
-            }
-
-            $customer->no_tax_file = '/storage/uploads/no_tax/' . $customer->id . $fileExt;
-            $customer->save();
-        }
-
         if (empty($validatedExtra['id'])) {
             $addressData = $request->validate([
                 'address.first_name' => 'required|string',
@@ -96,11 +85,24 @@ class CustomerController extends BaseController
                 'address.billing' => 'nullable|bool',
                 'address.shipping' => 'nullable|bool',
             ]);
+        }
 
+        $customer = $this->getCustomer($validatedExtra['id'] ?? null, $validatedData);
+
+        if ($request->file('file') && $validatedData['no_tax']) {
+            if (empty($validatedExtra['id'])) {
+                Storage::move('public/uploads/no_tax/' . $timestamp . $fileExt, 'public/uploads/no_tax/' . $customer->id . $fileExt);
+            }
+
+            $customer->no_tax_file = '/storage/uploads/no_tax/' . $customer->id . $fileExt;
+
+            $customer->save();
+        }
+
+        if (empty($validatedExtra['id'])) {
             $customer->addresses()->create($addressData['address']);
         }
 
-        // @TODO fix update
         return response($customer, empty($validatedExtra['id']) ? 201 : 200);
     }
 
