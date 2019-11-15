@@ -3,10 +3,8 @@
 namespace App\Providers;
 
 use App\Observers\OrderObserver;
-use App\Observers\OrderProductObserver;
 use App\Observers\PaymentObserver;
 use App\Order;
-use App\OrderProduct;
 use App\Payment;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
@@ -35,7 +33,6 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
         Order::observe(OrderObserver::class);
-        OrderProduct::observe(OrderProductObserver::class);
         Payment::observe(PaymentObserver::class);
 
         Builder::macro('search', function ($attributes, string $searchTerm) {
