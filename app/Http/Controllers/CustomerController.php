@@ -32,7 +32,7 @@ class CustomerController extends BaseController
                 'house_account_number' => 'nullable|string',
                 'house_account_limit' => 'nullable|numeric',
                 'no_tax' => 'nullable|bool',
-                'file' => 'nullable|file|mimes:jpeg,jpg,png,pdf',
+                'file' => 'nullable|file|max:15000|mimes:jpeg,jpg,png,pdf',
                 'comment' => 'nullable|string',
             ]);
         } else {
@@ -44,7 +44,7 @@ class CustomerController extends BaseController
                 'house_account_number' => 'nullable|string|unique:customers,house_account_number',
                 'house_account_limit' => 'nullable|numeric',
                 'no_tax' => 'nullable|bool',
-                'file' => 'nullable|required_if:no_tax,1|file|mimes:jpeg,jpg,png,pdf',
+                'file' => 'nullable|required_if:no_tax,1|file|max:15000|mimes:jpeg,jpg,png,pdf',
                 'comment' => 'nullable|string',
             ]);
 
