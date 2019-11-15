@@ -109,9 +109,9 @@ class CreditCardController extends Controller
         ];
     }
 
-    public function cardRefund($card_number, $exp_date, $cvc, $card_holder, $amount)
+    public function cardRefund($transaction_id)
     {
-        return $this->creditCardAction('cccredit', $card_number, $exp_date, $cvc, $card_holder, $amount);
+        return $this->transactionAction('ccreturn', ['ssl_txn_id' => $transaction_id]);
     }
 
     public function transactionAction($type, $params)
