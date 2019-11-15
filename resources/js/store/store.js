@@ -50,12 +50,16 @@ export default new Vuex.Store({
         storeList: []
     },
     getters: {
-        role: state => {
-            return state.user.roles[0].name;
-        },
         authorized: state => {
-            if (state.user && state.token) {
+            if (state.token && state.user) {
                 return true;
+            } else {
+                return false;
+            }
+        },
+        role: state => {
+            if (state.user) {
+                return state.user.roles[0].name;
             } else {
                 return false;
             }
@@ -79,6 +83,12 @@ export default new Vuex.Store({
             Cookies.remove("token");
             Cookies.remove("store");
             Cookies.remove("cash_register");
+
+            if (router.currentRoute.name !== "login") {
+                router.push({
+                    name: "login"
+                });
+            }
         },
         setCashRegister(state, cashRegister) {
             if (cashRegister) {
@@ -196,7 +206,7 @@ export default new Vuex.Store({
                         reject(error);
                     })
                     .finally(() => {
-                        context.commit("logout", null);
+                        context.commit("logout");
                     });
             });
         },
