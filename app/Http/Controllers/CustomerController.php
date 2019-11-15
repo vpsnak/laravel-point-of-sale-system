@@ -80,7 +80,7 @@ class CustomerController extends BaseController
             $customer->save();
         }
 
-        if (!empty($validatedExtra['address'])) {
+        if (empty($validatedExtra['id'])) {
             $addressData = $request->validate([
                 'address.first_name' => 'required|string',
                 'address.last_name' => 'required|string',
@@ -91,6 +91,24 @@ class CustomerController extends BaseController
                 'address.region' => 'required|exists:regions,region_id',
                 'address.postcode' => 'required|string',
                 'address.phone' => 'required|numeric',
+                'address.company' => 'nullable|string',
+                'address.vat_id' => 'nullable|string',
+                'address.billing' => 'nullable|bool',
+                'address.shipping' => 'nullable|bool',
+            ]);
+
+            $customer->addresses()->create($addressData['address']);
+        } else {
+            $addressData = $request->validate([
+                'address.first_name' => 'nullable|string',
+                'address.last_name' => 'nullable|string',
+                'address.street' => 'nullable|string',
+                'address.street2' => 'nullable|string',
+                'address.city' => 'nullable|string',
+                'address.country_id' => 'nullable|exists:countries,country_id',
+                'address.region' => 'nullable|exists:regions,region_id',
+                'address.postcode' => 'nullable|string',
+                'address.phone' => 'nullable|numeric',
                 'address.company' => 'nullable|string',
                 'address.vat_id' => 'nullable|string',
                 'address.billing' => 'nullable|bool',
