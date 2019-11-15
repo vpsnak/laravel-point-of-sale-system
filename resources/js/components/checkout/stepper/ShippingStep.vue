@@ -4,7 +4,7 @@
 		<v-card-actions>
 			<span class="title" v-if="shipping.cost">Shipping cost: $ {{ shipping.cost }}</span>
 			<div class="flex-grow-1"></div>
-			<v-btn color="primary" v-if="showNext" @click="completeStep">
+			<v-btn color="primary" :disabled="!isValid" @click="completeStep">
 				Next
 				<v-icon small right>mdi-chevron-right</v-icon>
 			</v-btn>
@@ -33,30 +33,8 @@ export default {
 	},
 
 	computed: {
-		showNext() {
-			switch (this.shipping.method) {
-				case undefined:
-				case "retail":
-					return true;
-				case "pickup":
-					if (this.shipping.date && this.shipping.timeSlot) {
-						return true;
-					} else {
-						return false;
-					}
-				case "delivery":
-					if (
-						this.shipping.date &&
-						this.shipping.timeSlot &&
-						this.shipping.address
-					) {
-						return true;
-					} else {
-						return false;
-					}
-				default:
-					return false;
-			}
+		isValid() {
+			return this.$store.state.cart.isValid;
 		}
 	},
 
