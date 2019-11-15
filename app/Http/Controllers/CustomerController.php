@@ -6,6 +6,7 @@ use App\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends BaseController
 {
@@ -28,10 +29,10 @@ class CustomerController extends BaseController
                 'first_name' => 'required|string',
                 'last_name' => 'required|string',
                 'house_account_status' => 'nullable|bool',
-                'house_account_number' => 'nullable|string|unique:customers,house_account_number',
+                'house_account_number' => 'nullable|string',
                 'house_account_limit' => 'nullable|numeric',
                 'no_tax' => 'nullable|bool',
-                'no_tax_file' => 'nullable|string',
+                'file' => 'nullable|required_if:no_tax,1|file|mimes:jpeg,jpg,png,pdf',
                 'comment' => 'nullable|string',
             ]);
         } else {
@@ -40,15 +41,39 @@ class CustomerController extends BaseController
                 'first_name' => 'required|string',
                 'last_name' => 'required|string',
                 'house_account_status' => 'nullable|bool',
-                'house_account_number' => 'nullable|string',
+                'house_account_number' => 'nullable|string|unique:customers,house_account_number',
                 'house_account_limit' => 'nullable|numeric',
                 'no_tax' => 'nullable|bool',
-                'no_tax_file' => 'nullable|string',
+                'file' => 'nullable|required_if:no_tax,1|file|mimes:jpeg,jpg,png,pdf',
                 'comment' => 'nullable|string',
             ]);
         }
 
+        if (array_key_exists('file', $validatedData) && $validatedData['no_tax']) {
+            if ($validatedExtra['id']) {
+                $validatedData['no_tax_file'] = $request->file('file')->storeAs(
+                    'uploads/no_tax',
+                    $validatedExtra['id'] . '.' . $request->file('file')->extension()
+                );
+            } else {
+                $timestamp = idate("U");
+
+                $validatedData['no_tax_file'] = $request->file('file')->storeAs(
+                    'uploads/no_tax',
+                    $timestamp . '.' . $request->file('file')->extension()
+                );
+            }
+
+            unset($validatedData['file']);
+        }
+
         $customer = $this->getCustomer($validatedExtra['id'] ?? null, $validatedData);
+
+        if (!$validatedExtra['id']) {
+            Storage::move('uploads/no_tax' . $timestamp, 'uploads/no_tax/' . $customer->id . '.' . $request->file('no_tax_file')->extension());
+            $customer->no_tax_file = 'uploads/no_tax' . $customer->id . '.' . $request->file('no_tax_file')->extension();
+            $customer->save();
+        }
 
         if (!empty($validatedExtra['address'])) {
             $addressData = $request->validate([
@@ -71,7 +96,7 @@ class CustomerController extends BaseController
         }
 
         // @TODO fix update
-        return response($customer, 201);
+        return response($customer, empty($validatedExtra['id']) ? 201 : 200);
     }
 
     private function getCustomer($id, $data)
