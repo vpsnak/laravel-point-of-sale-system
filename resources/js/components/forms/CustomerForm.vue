@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<ValidationObserver v-slot="{ invalid }" ref="obs">
 		<v-form @submit.prevent="submit">
 			<v-text-field v-model="formFields.first_name" label="First name" required></v-text-field>
 			<v-text-field v-model="formFields.last_name" label="Last name" required></v-text-field>
@@ -42,7 +42,7 @@
 			<v-textarea rows="3" v-model="formFields.comment" label="Comments"></v-textarea>
 			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="loading">submit</v-btn>
 		</v-form>
-	</div>
+	</ValidationObserver>
 </template> 
 <script>
 import { mapActions, mapState, mapGetters } from "vuex";

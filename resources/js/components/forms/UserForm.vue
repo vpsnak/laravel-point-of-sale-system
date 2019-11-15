@@ -1,6 +1,6 @@
 <template>
 	<ValidationObserver v-slot="{ invalid }" ref="obs">
-		<v-form>
+		<v-form @submit.prevent="submit">
 			<div class="text-center">
 				<v-chip color="indigo darken-4" label>
 					<v-icon left>fas fa-user-circle</v-icon>User Form
@@ -53,12 +53,7 @@
 					@click:append="showPassword = !showPassword"
 				></v-text-field>
 			</ValidationProvider>
-			<v-btn
-				class="mr-4"
-				type="submit"
-				@click.prevent="submit"
-				:disabled="invalid || disableSubmit"
-			>submit</v-btn>
+			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="invalid || disableSubmit">submit</v-btn>
 			<v-btn v-if="!model" @click="clear">clear</v-btn>
 		</v-form>
 	</ValidationObserver>
@@ -73,6 +68,7 @@ export default {
 	},
 	data() {
 		return {
+			loading: false,
 			showPassword: false,
 			defaultValues: {},
 			formFields: {
@@ -100,6 +96,7 @@ export default {
 	},
 	methods: {
 		submit() {
+			this.loading = true;
 			let payload = {
 				model: "users",
 				data: { ...this.formFields }
@@ -113,8 +110,9 @@ export default {
 						msg: "User added successfully",
 						type: "success"
 					}
+				}).finally(() => {
+					this.loading = false;
 				});
-				this.clear();
 			});
 		},
 		clear() {
