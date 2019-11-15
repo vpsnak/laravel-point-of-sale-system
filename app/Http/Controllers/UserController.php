@@ -145,11 +145,11 @@ class UserController extends Controller
     {
         $validatedData = $request->validate([
             'id' => 'sometimes|exists:users,id',
-            'name' => 'nullable|required_with:id|string',
-            'username' => 'nullable|required_with:id|string',
-            'email' => 'nullable|required_with:id|unique:users,email',
-            'phone' => 'nullable|required_with:id|unique:users,phone',
-            'password' => 'nullable|required_with:id|string'
+            'name' => 'nullable|required_without:id|string',
+            'username' => 'nullable|required_without:id|string',
+            'email' => 'nullable|required_without:id|unique:users,email',
+            'phone' => 'nullable|required_without:id|unique:users,phone',
+            'password' => 'nullable|required_without:id|string'
         ]);
 
         $validatedData['password'] = Hash::make($validatedData['password']);
