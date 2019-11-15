@@ -3,7 +3,7 @@ export default {
 
     state: {
         retail: true,
-        disableBtn: false,
+        isValid: false,
 
         locations: [
             { id: 1, label: "Funeral Home" },
@@ -95,8 +95,8 @@ export default {
     },
 
     mutations: {
-        setDisableBtn(state, value) {
-            state.disableBtn = value;
+        setIsValid(state, value) {
+            state.isValid = value;
         },
         setShippingCost(state, value) {
             state.shipping.cost = value;

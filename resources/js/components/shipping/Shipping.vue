@@ -1,5 +1,5 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="obs">
+	<div>
 		<interactiveDialog
 			v-if="addTimeSlotDialog"
 			action="update"
@@ -9,134 +9,137 @@
 			component="timeSlotForm"
 			@action="closedDialog"
 		/>
-
-		<div class="d-flex justify-center">
-			<v-radio-group v-model="shipping.method" row>
-				<v-radio label="Retail" value="retail"></v-radio>
-				<v-radio label="In store pickup" value="pickup" :disabled="!customer"></v-radio>
-				<v-radio label="Delivery" value="delivery" :disabled="!customer"></v-radio>
-			</v-radio-group>
-		</div>
-		<v-row v-if="shipping.method !== 'retail'">
-			<v-col v-if="shipping.method === 'delivery'" cols="12" lg="6" offset-lg="3">
-				<v-combobox
-					@input="getTimeSlots"
-					:items="addresses"
-					prepend-icon="mdi-map-marker"
-					label="Address"
-					v-model="shipping.address"
-					:item-text="getAddressText"
-					return-object
-				></v-combobox>
-			</v-col>
-			<v-col v-if="shipping.method === 'delivery'" cols="12" lg="6" offset-lg="3">
-				<addressDeliveryForm :model="shipping.address"></addressDeliveryForm>
-			</v-col>
-		</v-row>
-		<v-row v-if="shipping.method !== 'retail'">
-			<v-col cols="4" lg="2" offset-lg="3">
-				<v-menu v-model="datePicker" transition="scale-transition" offset-y min-width="290px">
-					<template v-slot:activator="{ on }">
-						<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Date">
-							<v-text-field
-								v-model="shipping.date"
-								label="Date"
-								prepend-icon="event"
-								:error-messages="errors"
-								:success="valid"
-								v-on="on"
-								readonly
-								@input="getTimeSlots"
-							></v-text-field>
-						</ValidationProvider>
-					</template>
-					<v-date-picker v-model="shipping.date" @input="getTimeSlots" :min="new Date().toJSON()"></v-date-picker>
-				</v-menu>
-			</v-col>
-			<v-col cols="4" lg="3" v-if="shipping.method !== 'retail'">
-				<ValidationProvider rules="required" v-slot="{ errors, valid }" name="At">
-					<v-select
-						:loading="loading"
-						label="At"
-						prepend-icon="mdi-clock"
-						append-outer-icon="mdi-plus"
-						:items="timeSlots"
-						:error-messages="errors"
-						:success="valid"
-						item-text="label"
-						v-model="shipping.timeSlotLabel"
-						@input="setCost"
-						@click:append-outer="addTimeSlotDialog = true"
-					></v-select>
-				</ValidationProvider>
-			</v-col>
-			<v-col cols="4" lg="1" v-if="shipping.method !== 'retail'">
-				<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Cost">
-					<v-text-field
-						type="number"
-						label="Cost"
-						:error-messages="errors"
-						:success="valid"
-						:min="0"
-						prepend-icon="mdi-currency-usd"
-						v-model="shippingCost"
-					></v-text-field>
-				</ValidationProvider>
-			</v-col>
-		</v-row>
-		<v-row v-if="shipping.method !== 'retail'">
-			<v-col offset-lg="3" cols="6" lg="4" v-if="shipping.method === 'pickup'">
-				<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Store Pickup">
-					<v-select
-						:error-messages="errors"
-						:success="valid"
-						:loading="loading"
-						label="From"
-						:items="storePickups"
-						item-text="name"
-						v-model="shipping.pickup_point"
-						prepend-icon="mdi-store"
+		<ValidationObserver
+			v-slot="{ invalid }"
+			tag="form"
+			ref="obs"
+			@change="isValid()"
+			@input="isValid()"
+		>
+			<div class="d-flex justify-center">
+				<v-radio-group v-model="shipping.method" row>
+					<v-radio label="Retail" value="retail"></v-radio>
+					<v-radio label="In store pickup" value="pickup" :disabled="!customer"></v-radio>
+					<v-radio label="Delivery" value="delivery" :disabled="!customer"></v-radio>
+				</v-radio-group>
+			</div>
+			<v-row v-if="shipping.method !== 'retail'">
+				<v-col v-if="shipping.method === 'delivery'" cols="12" lg="6" offset-lg="3">
+					<v-combobox
+						@input="getTimeSlots"
+						:items="addresses"
+						prepend-icon="mdi-map-marker"
+						label="Address"
+						v-model="shipping.address"
+						:item-text="getAddressText"
 						return-object
-					></v-select>
-				</ValidationProvider>
-			</v-col>
-			<v-col cols="6" lg="2" :offset-lg="shipping.method === 'pickup' ? 0 : 3">
-				<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Occasion">
-					<v-select
-						:error-messages="errors"
-						:success="valid"
-						:loading="loading"
-						label="Occasion"
-						:items="occasions"
-						item-text="label"
-						item-value="id"
-						v-model="shipping.occasion"
-						prepend-icon="mdi-star-face"
-					></v-select>
-				</ValidationProvider>
-			</v-col>
-			<v-col offset-lg="2" cols="6" lg="2" v-if="shipping.method === 'delivery'">
-				<ValidationProvider rules="required" v-slot="{ errors, valid }" name="At">
-					<v-select
-						:error-messages="errors"
-						:success="valid"
-						:loading="loading"
-						label="Location"
-						:items="locations"
-						item-text="label"
-						item-value="id"
-						v-model="shipping.location"
-						prepend-icon="mdi-city"
-					></v-select>
-				</ValidationProvider>
-			</v-col>
-		</v-row>
-		<v-row>
-			<v-col cols="12" lg="6" offset-lg="3">
-				<ValidationProvider rules="required" v-slot="{ errors, valid }" name="At">
+					></v-combobox>
+				</v-col>
+				<v-col v-if="shipping.method === 'delivery'" cols="12" lg="6" offset-lg="3">
+					<addressDeliveryForm :model="shipping.address"></addressDeliveryForm>
+				</v-col>
+			</v-row>
+			<v-row v-if="shipping.method !== 'retail'">
+				<v-col cols="4" lg="2" offset-lg="3">
+					<v-menu v-model="datePicker" transition="scale-transition" offset-y min-width="290px">
+						<template v-slot:activator="{ on }">
+							<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Date">
+								<v-text-field
+									v-model="shipping.date"
+									label="Date"
+									prepend-icon="event"
+									:error-messages="errors"
+									:success="valid"
+									v-on="on"
+									readonly
+									@input="getTimeSlots"
+								></v-text-field>
+							</ValidationProvider>
+						</template>
+						<v-date-picker v-model="shipping.date" @input="getTimeSlots" :min="new Date().toJSON()"></v-date-picker>
+					</v-menu>
+				</v-col>
+				<v-col cols="4" lg="3" v-if="shipping.method !== 'retail'">
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="At">
+						<v-select
+							:loading="loading"
+							label="At"
+							prepend-icon="mdi-clock"
+							append-outer-icon="mdi-plus"
+							:items="timeSlots"
+							:error-messages="errors"
+							:success="valid"
+							item-text="label"
+							v-model="shipping.timeSlotLabel"
+							@input="setCost"
+							@click:append-outer="addTimeSlotDialog = true"
+						></v-select>
+					</ValidationProvider>
+				</v-col>
+				<v-col cols="4" lg="1" v-if="shipping.method !== 'retail'">
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Cost">
+						<v-text-field
+							type="number"
+							label="Cost"
+							:error-messages="errors"
+							:success="valid"
+							:min="0"
+							prepend-icon="mdi-currency-usd"
+							v-model="shippingCost"
+						></v-text-field>
+					</ValidationProvider>
+				</v-col>
+			</v-row>
+			<v-row v-if="shipping.method !== 'retail'">
+				<v-col offset-lg="3" cols="6" lg="4" v-if="shipping.method === 'pickup'">
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="From">
+						<v-select
+							:error-messages="errors"
+							:success="valid"
+							:loading="loading"
+							label="From"
+							:items="storePickups"
+							item-text="name"
+							v-model="shipping.pickup_point"
+							prepend-icon="mdi-store"
+							return-object
+						></v-select>
+					</ValidationProvider>
+				</v-col>
+				<v-col cols="6" lg="2" :offset-lg="shipping.method === 'pickup' ? 0 : 3">
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Occasion">
+						<v-select
+							:error-messages="errors"
+							:success="valid"
+							:loading="loading"
+							label="Occasion"
+							:items="occasions"
+							item-text="label"
+							item-value="id"
+							v-model="shipping.occasion"
+							prepend-icon="mdi-star-face"
+						></v-select>
+					</ValidationProvider>
+				</v-col>
+				<v-col offset-lg="2" cols="6" lg="2" v-if="shipping.method === 'delivery'">
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Location">
+						<v-select
+							:error-messages="errors"
+							:success="valid"
+							:loading="loading"
+							label="Location"
+							:items="locations"
+							item-text="label"
+							item-value="id"
+							v-model="shipping.location"
+							prepend-icon="mdi-city"
+						></v-select>
+					</ValidationProvider>
+				</v-col>
+			</v-row>
+			<v-row>
+				<v-col cols="12" lg="6" offset-lg="3">
 					<v-textarea
-						:error-messages="errors"
-						:success="valid"
 						label="Notes"
 						prepend-icon="mdi-note-text"
 						v-model="shipping.notes"
@@ -145,10 +148,10 @@
 						no-resize
 						outlined
 					></v-textarea>
-				</ValidationProvider>
-			</v-col>
-		</v-row>
-	</ValidationObserver>
+				</v-col>
+			</v-row>
+		</ValidationObserver>
+	</div>
 </template>
 
 <script>
@@ -225,6 +228,13 @@ export default {
 	},
 
 	methods: {
+		async isValid() {
+			this.$store.commit("cart/setIsValid", false);
+
+			if (this.$refs.obs) {
+				this.$store.commit("cart/setIsValid", await this.$refs.obs.validate());
+			}
+		},
 		getStores() {
 			this.getAll({ model: "store-pickups" }).then(response => {
 				this.storePickups = response;
