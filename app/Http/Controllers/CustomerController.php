@@ -70,9 +70,8 @@ class CustomerController extends BaseController
         $customer = $this->getCustomer($validatedExtra['id'] ?? null, $validatedData);
 
         if (array_key_exists('file', $validatedData) && $validatedData['no_tax']) {
-            Storage::move('public/uploads/no_tax/' . $timestamp, 'public/uploads/no_tax/' . $customer->id . '.' . $request->file('file')->extension());
-
-            if (!$validatedExtra['id']) {
+            if (empty($validatedExtra['id'])) {
+                Storage::move('public/uploads/no_tax/' . $timestamp, 'public/uploads/no_tax/' . $customer->id . '.' . $request->file('file')->extension());
                 $customer->no_tax_file = '/storage/uploads/no_tax/' . $customer->id . '.' . $request->file('file')->extension();
                 $customer->save();
             }
