@@ -64,16 +64,13 @@ class PaymentController extends BaseController
                     $validatedData['card']['card_holder'] ?? '',
                     $validatedData['amount']
                 );
-                if (isset($paymentResponse->errorCode)) {
+                if (array_key_exists('errors', $paymentResponse)) {
                     $payment->status = 'failed';
                     $payment->save();
-
-                    return response([
-                        'errors' => [
-                            "Error $paymentResponse->errorCode" => ["$paymentResponse->errorName"]
-                        ]
-                    ], 500);
+                    return response($paymentResponse, 500);
                 }
+
+                $payment->code = $paymentResponse['id'];
 
                 break;
 
@@ -116,10 +113,10 @@ class PaymentController extends BaseController
                 $order = Order::findOrFail($validatedData['order_id']);
 
                 $payment->amount = $order->subtotal - Price::calculateDiscount(
-                    $order->subtotal,
-                    $coupon->discount->type,
-                    $coupon->discount->amount
-                );
+                        $order->subtotal,
+                        $coupon->discount->type,
+                        $coupon->discount->amount
+                    );
                 $payment->save();
                 $coupon->decrement('uses');
                 break;
@@ -188,7 +185,10 @@ class PaymentController extends BaseController
                     $payment->save();
                     return response([
                         'errors' => [
-                            'House Account' => ['House account has insufficient balance.<br>Balance available: $ ' . round($customer->house_account_limit, 2)]
+                            'House Account' => [
+                                'House account has insufficient balance.<br>Balance available: $ ' . round($customer->house_account_limit,
+                                    2)
+                            ]
                         ]
                     ], 403);
                 }
