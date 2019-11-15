@@ -54,12 +54,12 @@ class CustomerController extends BaseController
         if (array_key_exists('file', $validatedData) && $validatedData['no_tax']) {
             if ($validatedExtra['id']) {
                 $validatedData['no_tax_file'] = $request->file('file')->storeAs(
-                    'uploads/no_tax',
+                    'public/uploads/no_tax',
                     $validatedExtra['id'] . '.' . $request->file('file')->extension()
                 );
             } else {
                 $validatedData['no_tax_file'] = $request->file('file')->storeAs(
-                    'uploads/no_tax',
+                    'public/uploads/no_tax',
                     $timestamp . '.' . $request->file('file')->extension()
                 );
             }
@@ -70,10 +70,11 @@ class CustomerController extends BaseController
         $customer = $this->getCustomer($validatedExtra['id'] ?? null, $validatedData);
 
         if (!$validatedExtra['id'] && array_key_exists('file', $validatedData) && $validatedData['no_tax']) {
-            Storage::move('uploads/no_tax' . $timestamp, 'uploads/no_tax/' . $customer->id . '.' . $request->file('no_tax_file')->extension());
-            $customer->no_tax_file = 'uploads/no_tax' . $customer->id . '.' . $request->file('no_tax_file')->extension();
-            $customer->save();
+            Storage::move('public/uploads/no_tax/' . $timestamp, 'public/uploads/no_tax/' . $customer->id . '.' . $request->file('file')->extension());
         }
+
+        $customer->no_tax_file = '/storage/uploads/no_tax/' . $customer->id . '.' . $request->file('file')->extension();
+        $customer->save();
 
         if (!empty($validatedExtra['address'])) {
             $addressData = $request->validate([

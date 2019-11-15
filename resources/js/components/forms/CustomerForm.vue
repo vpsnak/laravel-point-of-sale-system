@@ -8,7 +8,7 @@
 				<v-switch v-model="formFields.house_account_status" label="Has house account"></v-switch>
 				<v-switch v-model="formFields.no_tax" label="Zero tax"></v-switch>
 			</v-row>
-			<v-row justify="space-around">
+			<v-row justify="space-around" align-center>
 				<v-col v-if="formFields.house_account_status">
 					<v-text-field v-model="formFields.house_account_number" label="House account number" required></v-text-field>
 					<v-text-field
@@ -18,14 +18,25 @@
 						required
 					></v-text-field>
 				</v-col>
-				<v-col v-if="formFields.no_tax">
+			</v-row>
+			<v-row v-if="formFields.no_tax" align="center">
+				<v-col :cols="6">
 					<v-file-input
 						v-model="formFields.file"
 						accept="image/png, image/jpeg, document/pdf"
 						show-size
-						outlined
-						label="Zero tax certification"
+						label="Upload new certification file"
+						clearable
 					></v-file-input>
+				</v-col>
+
+				<v-col v-if="formFields.no_tax_file" :cols="6">
+					<v-btn
+						text
+						v-if="formFields.no_tax_file"
+						:href="formFields.no_tax_file"
+						target="_blank"
+					>View uploaded file</v-btn>
 				</v-col>
 			</v-row>
 			<v-textarea rows="3" v-model="formFields.comment" label="Comments"></v-textarea>
