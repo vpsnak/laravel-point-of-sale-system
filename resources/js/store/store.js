@@ -512,10 +512,19 @@ export default new Vuex.Store({
 
         create(context, payload) {
             return new Promise((resolve, reject) => {
+                let options;
+                if (payload.data instanceof FormData) {
+                    options = {
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
+                    };
+                }
                 axios
                     .post(
                         this.state.baseUrl + payload.model + "/create",
-                        payload.data
+                        payload.data,
+                        options
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {

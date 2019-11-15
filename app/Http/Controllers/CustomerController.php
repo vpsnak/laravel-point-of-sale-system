@@ -6,6 +6,7 @@ use App\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends BaseController
 {
@@ -28,10 +29,10 @@ class CustomerController extends BaseController
                 'first_name' => 'required|string',
                 'last_name' => 'required|string',
                 'house_account_status' => 'nullable|bool',
-                'house_account_number' => 'nullable|string|unique:customers,house_account_number',
+                'house_account_number' => 'nullable|string',
                 'house_account_limit' => 'nullable|numeric',
                 'no_tax' => 'nullable|bool',
-                'no_tax_file' => 'nullable|string',
+                'file' => 'nullable|file|max:15000|mimes:jpeg,jpg,png,pdf',
                 'comment' => 'nullable|string',
             ]);
         } else {
@@ -40,17 +41,13 @@ class CustomerController extends BaseController
                 'first_name' => 'required|string',
                 'last_name' => 'required|string',
                 'house_account_status' => 'nullable|bool',
-                'house_account_number' => 'nullable|string',
+                'house_account_number' => 'nullable|string|unique:customers,house_account_number',
                 'house_account_limit' => 'nullable|numeric',
                 'no_tax' => 'nullable|bool',
-                'no_tax_file' => 'nullable|string',
+                'file' => 'nullable|required_if:no_tax,1|file|max:15000|mimes:jpeg,jpg,png,pdf',
                 'comment' => 'nullable|string',
             ]);
-        }
 
-        $customer = $this->getCustomer($validatedExtra['id'] ?? null, $validatedData);
-
-        if (!empty($validatedExtra['address'])) {
             $addressData = $request->validate([
                 'address.first_name' => 'required|string',
                 'address.last_name' => 'required|string',
@@ -66,12 +63,45 @@ class CustomerController extends BaseController
                 'address.billing' => 'nullable|bool',
                 'address.shipping' => 'nullable|bool',
             ]);
+        }
 
+        $timestamp = idate("U");
+        $fileExt = '';
+
+        if (array_key_exists('file', $validatedData) && $validatedData['no_tax']) {
+            $fileExt = '.' . $request->file('file')->extension();
+            if (!empty($validatedExtra['id'])) {
+                $validatedData['no_tax_file'] = $request->file('file')->storeAs(
+                    'public/uploads/no_tax',
+                    $validatedExtra['id'] . $fileExt
+                );
+            } else {
+                $validatedData['no_tax_file'] = $request->file('file')->storeAs(
+                    'public/uploads/no_tax',
+                    $timestamp . $fileExt
+                );
+            }
+
+            unset($validatedData['file']);
+        }
+
+        $customer = $this->getCustomer($validatedExtra['id'] ?? null, $validatedData);
+
+        if ($request->file('file') && $validatedData['no_tax']) {
+            if (empty($validatedExtra['id'])) {
+                Storage::move('public/uploads/no_tax/' . $timestamp . $fileExt, 'public/uploads/no_tax/' . $customer->id . $fileExt);
+            }
+
+            $customer->no_tax_file = '/storage/uploads/no_tax/' . $customer->id . $fileExt;
+
+            $customer->save();
+        }
+
+        if (empty($validatedExtra['id'])) {
             $customer->addresses()->create($addressData['address']);
         }
 
-        // @TODO fix update
-        return response($customer, 201);
+        return response($customer, empty($validatedExtra['id']) ? 201 : 200);
     }
 
     private function getCustomer($id, $data)

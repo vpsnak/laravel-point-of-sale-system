@@ -11,7 +11,6 @@
 			<v-text-field v-model="formFields.email" label="Email" required></v-text-field>
 			<v-row justify="space-around">
 				<v-switch v-model="formFields.house_account_status" label="Has house account"></v-switch>
-				<v-switch v-model="formFields.no_tax" label="No tax"></v-switch>
 			</v-row>
 			<v-row justify="space-around">
 				<v-col v-if="formFields.house_account_status">
@@ -22,9 +21,6 @@
 						label="House account limit"
 						required
 					></v-text-field>
-				</v-col>
-				<v-col v-if="formFields.no_tax">
-					<v-file-input v-model="formFields.no_tax_file" show-size outlined label="No Tax Certification"></v-file-input>
 				</v-col>
 			</v-row>
 			<v-textarea rows="3" v-model="formFields.comment" label="Comments"></v-textarea>
@@ -123,7 +119,6 @@ export default {
 				house_account_limit: null,
 				house_account_status: false,
 				no_tax: false,
-				no_tax_file: null,
 				comment: null,
 				address: {
 					first_name: null,
@@ -190,6 +185,7 @@ export default {
 				model: "customers",
 				data: { ...this.formFields }
 			};
+
 			this.create(payload)
 				.then(() => {
 					this.$emit("submit", {
@@ -207,12 +203,7 @@ export default {
 				});
 		},
 		clear() {
-			console.log(this.formFields.no_tax_file);
-
 			this.formFields = { ...this.defaultValues };
-		},
-		beforeDestroy() {
-			this.$off("submit");
 		},
 		...mapActions({
 			getAll: "getAll",
@@ -220,6 +211,9 @@ export default {
 			create: "create",
 			delete: "delete"
 		})
+	},
+	beforeDestroy() {
+		this.$off("submit");
 	}
 };
 </script>
