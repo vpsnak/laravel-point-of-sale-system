@@ -1,8 +1,8 @@
 <template>
 	<v-app id="app">
-		<sideMenu v-if="authorized" />
+		<sideMenu v-if="auth" />
 
-		<topMenu v-if="authorized" />
+		<topMenu v-if="auth" />
 
 		<notification />
 
@@ -13,22 +13,25 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 
 export default {
 	computed: {
-		authorized() {
-			window.axios.defaults.headers.common[
-				"Authorization"
-			] = this.$store.state.token;
-
-			return this.$store.getters.authorized;
-		}
+		auth() {
+			if (this.authorized && this.role) {
+				window.axios.defaults.headers.common[
+					"Authorization"
+				] = this.$store.state.token;
+				return true;
+			} else {
+				this.logout();
+				return false;
+			}
+		},
+		...mapGetters(["authorized", "role"])
 	},
 	methods: {
-		...mapActions({
-			getOne: "getOne"
-		})
+		...mapMutations(["logout"])
 	}
 };
 </script>

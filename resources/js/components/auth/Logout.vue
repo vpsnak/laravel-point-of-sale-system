@@ -5,9 +5,7 @@ import { mapActions } from "vuex";
 
 export default {
 	mounted() {
-		this.logout().finally(() => {
-			this.$router.push("/login");
-		});
+		this.logout();
 	},
 	methods: {
 		...mapActions(["logout"])
