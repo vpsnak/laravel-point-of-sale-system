@@ -1,39 +1,122 @@
 <template>
-	<v-form>
-		<v-row>
-			<v-col cols="4">
-				<v-text-field v-model="formFields.first_name" label="First name" :disabled="loading" required></v-text-field>
-				<v-text-field v-model="formFields.city" label="City" :disabled="loading" required></v-text-field>
-				<v-select
-					v-model="formFields.region_id"
-					:items="regions"
-					label="Regions"
-					required
-					item-text="default_name"
-					item-value="region_id"
-				></v-select>
-				<v-text-field v-model="formFields.company" label="Company" :disabled="loading" required></v-text-field>
-			</v-col>
-			<v-col cols="4">
-				<v-text-field v-model="formFields.last_name" label="Last name" :disabled="loading" required></v-text-field>
-				<v-text-field v-model="formFields.postcode" label="Postcode" :disabled="loading" required></v-text-field>
-				<v-select
-					v-model="formFields.country_id"
-					:items="countries"
-					label="Countries"
-					required
-					item-text="iso2_code"
-					item-value="iso2_code"
-				></v-select>
-				<v-text-field v-model="formFields.vat_id" label="Vat id" :disabled="loading" required></v-text-field>
-			</v-col>
-			<v-col cols="4">
-				<v-text-field v-model="formFields.street" label="Street" :disabled="loading" required></v-text-field>
-				<v-text-field v-model="formFields.street2" label="Second Street" :disabled="loading" required></v-text-field>
-				<v-text-field v-model="formFields.phone" label="Phone" :disabled="loading" required></v-text-field>
-			</v-col>
-		</v-row>
-	</v-form>
+	<ValidationObserver v-slot="{ invalid }" ref="obs">
+		<v-form>
+			<v-row>
+				<v-col cols="4">
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="First name">
+						<v-text-field
+							v-model="formFields.first_name"
+							label="First name"
+							:disabled="loading"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="City">
+						<v-text-field
+							v-model="formFields.city"
+							label="City"
+							:disabled="loading"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Region">
+						<v-select
+							v-model="formFields.region_id"
+							:items="regions"
+							label="Regions"
+							item-text="default_name"
+							item-value="region_id"
+							:error-messages="errors"
+							:success="valid"
+						></v-select>
+					</ValidationProvider>
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Company">
+						<v-text-field
+							v-model="formFields.company"
+							label="Company"
+							:disabled="loading"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
+				</v-col>
+				<v-col cols="4">
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Last Name">
+						<v-text-field
+							v-model="formFields.last_name"
+							label="Last name"
+							:disabled="loading"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
+
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Post Code">
+						<v-text-field
+							v-model="formFields.postcode"
+							label="Postcode"
+							:disabled="loading"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
+
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Country">
+						<v-select
+							v-model="formFields.country_id"
+							:items="countries"
+							label="Countries"
+							required
+							item-text="iso2_code"
+							item-value="iso2_code"
+							:error-messages="errors"
+							:success="valid"
+						></v-select>
+					</ValidationProvider>
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Country">
+						<v-text-field
+							v-model="formFields.vat_id"
+							label="Vat id"
+							:disabled="loading"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
+				</v-col>
+				<v-col cols="4">
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Street">
+						<v-text-field
+							v-model="formFields.street"
+							label="Street"
+							:disabled="loading"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Second Street">
+						<v-text-field
+							v-model="formFields.street2"
+							label="Second Street"
+							:disabled="loading"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Phone">
+						<v-text-field
+							v-model="formFields.phone"
+							label="Phone"
+							:disabled="loading"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
+				</v-col>
+			</v-row>
+		</v-form>
+	</ValidationObserver>
 </template>
 
 <script>
