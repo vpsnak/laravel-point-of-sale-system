@@ -133,7 +133,7 @@ export default {
 			} else {
 				this.$store.commit(
 					"cart/setCartPrice",
-					this.subTotalwDiscount + this.tax
+					this.subTotalwDiscount + this.tax + this.shippingCost
 				);
 				return this.subTotalwDiscount + this.tax + this.shippingCost;
 			}

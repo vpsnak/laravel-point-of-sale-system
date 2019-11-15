@@ -3,6 +3,7 @@ export default {
 
     state: {
         retail: true,
+        disableBtn: false,
 
         locations: [
             { id: 1, label: "Funeral Home" },
@@ -94,6 +95,9 @@ export default {
     },
 
     mutations: {
+        setDisableBtn(state, value) {
+            state.disableBtn = value;
+        },
         setShippingCost(state, value) {
             state.shipping.cost = value;
         },
@@ -158,7 +162,7 @@ export default {
             if (_.isObjectLike(customer)) {
                 state.customer = customer;
             } else {
-                state.customer = null
+                state.customer = null;
             }
         },
         completeStep(state) {
