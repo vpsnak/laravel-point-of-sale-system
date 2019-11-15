@@ -135,7 +135,7 @@ export default {
 					"cart/setCartPrice",
 					this.subTotalwDiscount + this.tax
 				);
-				return this.subTotalwDiscount + this.tax;
+				return this.subTotalwDiscount + this.tax + this.shippingCost;
 			}
 		}
 	},
