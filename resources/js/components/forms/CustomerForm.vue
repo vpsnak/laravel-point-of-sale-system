@@ -19,7 +19,7 @@
 					></v-text-field>
 				</v-col>
 				<v-col v-if="formFields.no_tax">
-					<v-text-field v-model="formFields.no_tax_file" label="No Tax Certification"></v-text-field>
+					<v-file-input v-model="formFields.no_tax_file" show-size outlined label="No Tax Certification"></v-file-input>
 				</v-col>
 			</v-row>
 			<v-textarea rows="3" v-model="formFields.comment" label="Comments"></v-textarea>
