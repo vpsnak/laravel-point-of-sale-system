@@ -9,7 +9,7 @@
 						<div class="subtitle-1">Street 2: {{addressData.street2}}</div>
 						<div class="subtitle-1">City: {{addressData.city}}</div>
 						<div class="subtitle-1">Country id: {{addressData.country_id}}</div>
-						<div class="subtitle-1">Region: {{addressData.region}}</div>
+						<div class="subtitle-1">Region: {{addressData.region_id.default_name}}</div>
 						<div class="subtitle-1">Post code: {{addressData.postcode}}</div>
 						<div class="subtitle-1">Phone: {{addressData.phone}}</div>
 						<div class="subtitle-1">Company: {{addressData.company}}</div>
