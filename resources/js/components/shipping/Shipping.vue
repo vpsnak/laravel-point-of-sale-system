@@ -34,15 +34,31 @@
                 offset-lg="3"
             >
                 <v-combobox
+                    :items="addresses"
+                    prepend-icon="mdi-receipt"
+                    label="Billing address"
+                    v-model="shipping.billing_address"
+                    :item-text="getAddressText"
+                    return-object
+                ></v-combobox>
+            </v-col>
+            <v-col
+                v-if="shipping.method === 'delivery'"
+                cols="12"
+                lg="6"
+                offset-lg="3"
+            >
+                <v-combobox
                     @input="getTimeSlots"
                     :items="addresses"
                     prepend-icon="mdi-map-marker"
-                    label="Address"
+                    label="Shipping address"
                     v-model="shipping.address"
                     :item-text="getAddressText"
                     return-object
                 ></v-combobox>
             </v-col>
+
             <v-col
                 v-if="shipping.method === 'delivery'"
                 cols="12"
@@ -279,8 +295,18 @@ export default {
                 this.$store.commit("cart/setShippingCost", value);
             }
         },
+
         addresses() {
             if (this.customer) {
+                const billing_address = _.filter(this.customer.addresses, [
+                    "billing",
+                    1
+                ]);
+
+                this.shipping.billing_address = billing_address.length
+                    ? billing_address[0]
+                    : undefined;
+
                 return this.customer.addresses;
             }
         },

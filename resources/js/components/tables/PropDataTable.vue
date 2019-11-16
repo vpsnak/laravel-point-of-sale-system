@@ -146,6 +146,7 @@
 			:title="dialog.title"
 			:titleCloseBtn="dialog.titleCloseBtn"
 			:icon="dialog.icon"
+			:fullscreen="dialog.fullscreen"
 			:width="dialog.width"
 			:component="dialog.component"
 			:content="dialog.content"
@@ -167,6 +168,7 @@ export default {
 			dialog: {
 				show: false,
 				width: 600,
+				fullscreen: false,
 				icon: "",
 				title: "",
 				titleCloseBtn: false,
@@ -266,6 +268,7 @@ export default {
 			this.dialog = {
 				show: false,
 				width: 600,
+				fullscreen: false,
 				title: "",
 				titleCloseBtn: false,
 				icon: "",
@@ -427,6 +430,7 @@ export default {
 		viewItemDialog(item) {
 			this.dialog = {
 				show: true,
+				fullscreen: this.tableViewComponent === 'customer' ? true : false,
 				width: 1000,
 				title: `View item #${item.id}`,
 				titleCloseBtn: true,

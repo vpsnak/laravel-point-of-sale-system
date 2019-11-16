@@ -82,6 +82,7 @@ export default {
         discount_amount: 0,
 
         shipping: {
+            billing_address: undefined,
             pickup_point: undefined,
             address: undefined,
             notes: "",
@@ -197,6 +198,7 @@ export default {
             });
 
             state.shipping = {
+                billing_address: undefined,
                 address: undefined,
                 method: "retail",
                 date: undefined,
@@ -209,6 +211,7 @@ export default {
         resetShipping(state) {
             let notes = state.shipping.notes;
             state.shipping = {
+                billing_address: undefined,
                 notes: notes,
                 address: undefined,
                 method: "retail",

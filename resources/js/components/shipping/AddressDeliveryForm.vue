@@ -161,7 +161,7 @@ import { mapActions } from "vuex";
 
 export default {
     props: {
-        model: Object || undefined
+        model: Object
     },
     data() {
         return {
