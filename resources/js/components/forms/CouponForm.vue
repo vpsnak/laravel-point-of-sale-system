@@ -45,7 +45,15 @@
 					:success="valid"
 				></v-select>
 			</ValidationProvider>
-			<ValidationProvider rules="required|max:10" v-slot="{ errors, valid }" name="Discount amount">
+			<ValidationProvider
+				:rules="{
+					required,
+					max:8,
+                    regex: /^[0-9]+(\.[0-9]{1,2})?$/g
+					}"
+				v-slot="{ errors, valid }"
+				name="Discount amount"
+			>
 				<v-text-field
 					v-model="formFields.discount.amount"
 					type="number"
