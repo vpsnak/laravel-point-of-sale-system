@@ -324,7 +324,6 @@ export default {
 		},
 		search(e, page) {
 			if (this.keyword.length > 2 || this.searchAction) {
-				console.log(page)
 				this.setLoading(true);
 				
 				if (!page) {
