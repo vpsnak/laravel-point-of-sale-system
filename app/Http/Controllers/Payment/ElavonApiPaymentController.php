@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\ElavonApiPayment;
 use DOMDocument;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
-use App\ElavonApiPayment;
 
 class ElavonApiPaymentController extends Controller
 {

@@ -78,8 +78,6 @@
 						<div class="subtitle-1">Phone: {{orderData.shipping_address.phone}}</div>
 						<div class="subtitle-1">Company: {{orderData.shipping_address.company}}</div>
 						<div class="subtitle-1">Vat ID: {{orderData.shipping_address.vat_id}}</div>
-						<div class="subtitle-1">Delivery date: {{orderData.shipping_address.delivery_date}}</div>
-						<div class="subtitle-1">Default Billing: {{orderData.shipping_address.billing ? 'Yes' : 'No'}}</div>
 						<div
 							class="subtitle-1"
 						>Default Shipping: {{orderData.shipping_address.shipping ? 'Yes' : 'No'}}</div>
