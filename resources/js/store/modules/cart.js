@@ -3,7 +3,8 @@ export default {
 
     state: {
         retail: true,
-        isValid: false,
+        isValid1: false,
+        isValid2: false,
 
         locations: [
             { id: 1, label: "Funeral Home" },
@@ -95,8 +96,11 @@ export default {
     },
 
     mutations: {
-        setIsValid(state, value) {
-            state.isValid = value;
+        setIsValid1(state, value) {
+            state.isValid1 = value;
+        },
+        setIsValid2(state, value) {
+            state.isValid2 = value;
         },
         setShippingCost(state, value) {
             state.shipping.cost = value;
