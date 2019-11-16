@@ -103,11 +103,15 @@
 							:success="valid"
 						></v-text-field>
 					</ValidationProvider>
-					<ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Phone">
+
+					<ValidationProvider
+						:rules="{required, min:8 , max:100, regex:/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g}"
+						v-slot="{ errors, valid }"
+						name="Phone"
+					>
 						<v-text-field
 							v-model="formFields.phone"
 							label="Phone"
-							type="number"
 							:min="0"
 							:disabled="loading"
 							:error-messages="errors"
