@@ -99,7 +99,7 @@
                     @input="getTimeSlots"
                     :items="addresses"
                     prepend-icon="mdi-map-marker"
-                    label="Shipping address"
+                    label="Delivery address"
                     v-model="shipping.address"
                     :item-text="getAddressText"
                     return-object
