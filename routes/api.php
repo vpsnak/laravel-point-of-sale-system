@@ -104,6 +104,7 @@ $allRoutes = [
                     'action' => 'changeUserPwd',
                     'middleware' => "scope:$admin"
                 ],
+                $routeSearch
             ],
             'delete' => [
                 $routeDelete
