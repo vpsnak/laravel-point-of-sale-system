@@ -69,11 +69,6 @@ export default {
 			};
 			this.create(payload)
 				.then(() => {
-					if (
-						this.formFields.id == this.$store.state.cashRegister.id
-					) {
-						this.$store.state.cashRegister = this.formFields;
-					}
 					this.$emit("submit", {
 						getRows: true,
 						model: "cash-registers",
@@ -82,9 +77,9 @@ export default {
 							type: "success"
 						}
 					});
-					this.clear();
 				})
 				.finally(() => {
+					this.clear();
 					this.loading = false;
 				});
 		},

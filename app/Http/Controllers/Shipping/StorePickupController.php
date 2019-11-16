@@ -32,7 +32,7 @@ class StorePickupController extends BaseController
 
     public function all()
     {
-        return response(StorePickup::all());
+        return response(StorePickup::paginate());
     }
 
     public function search(Request $request)

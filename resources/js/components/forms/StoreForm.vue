@@ -73,18 +73,13 @@ export default {
 	},
 	methods: {
 		submit() {
+			this.loading = true;
 			let payload = {
 				model: "stores",
 				data: { ...this.formFields }
 			};
 			this.create(payload)
 				.then(() => {
-					if (this.formFields.id) {
-						if (this.formFields.id == this.$store.state.store.id) {
-							this.$store.state.store = this.formFields;
-						}
-					}
-					this.clear();
 					this.$emit("submit", {
 						getRows: true,
 						model: "stores",
@@ -95,6 +90,7 @@ export default {
 					});
 				})
 				.finally(() => {
+					this.clear();
 					this.loading = false;
 				});
 		},
