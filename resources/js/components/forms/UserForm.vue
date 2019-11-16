@@ -1,5 +1,4 @@
 <template>
-<<<<<<< HEAD
     <ValidationObserver v-slot="{ invalid }" ref="obs">
         <v-form @submit.prevent="submit">
             <div class="text-center">
@@ -8,7 +7,7 @@
                 </v-chip>
             </div>
             <ValidationProvider
-                rules="required|min:3"
+                rules="required|max:191"
                 v-slot="{ errors, valid }"
                 name="Name"
             >
@@ -21,7 +20,7 @@
             </ValidationProvider>
 
             <ValidationProvider
-                rules="required|email"
+                rules="required|email|max:191"
                 v-slot="{ errors, valid }"
                 name="Email"
             >
@@ -33,7 +32,12 @@
                 ></v-text-field>
             </ValidationProvider>
             <ValidationProvider
-                rules="required|min:8|max:14"
+                :rules="{
+                    required,
+                    min: 8,
+                    max: 191,
+                    regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
+                }"
                 v-slot="{ errors, valid }"
                 name="Phone"
             >
@@ -45,7 +49,7 @@
                 ></v-text-field>
             </ValidationProvider>
             <ValidationProvider
-                rules="required"
+                rules="required|max:191"
                 v-slot="{ errors, valid }"
                 name="Username"
             >
@@ -58,7 +62,7 @@
             </ValidationProvider>
             <ValidationProvider
                 v-if="!model"
-                rules="required|min:8"
+                rules="required|min:8|max:191"
                 v-slot="{ errors, valid }"
                 name="Password"
             >
@@ -87,70 +91,6 @@
             <v-btn v-if="!model" @click="clear">clear</v-btn>
         </v-form>
     </ValidationObserver>
-=======
-	<ValidationObserver v-slot="{ invalid }" ref="obs">
-		<v-form @submit.prevent="submit">
-			<div class="text-center">
-				<v-chip color="indigo darken-4" label>
-					<v-icon left>fas fa-user-circle</v-icon>User Form
-				</v-chip>
-			</div>
-			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Name">
-				<v-text-field :error-messages="errors" :success="valid" v-model="formFields.name" label="Name"></v-text-field>
-			</ValidationProvider>
-
-			<ValidationProvider rules="required|email|max:191" v-slot="{ errors, valid }" name="Email">
-				<v-text-field
-					v-model="formFields.email"
-					:error-messages="errors"
-					:success="valid"
-					label="E-mail"
-				></v-text-field>
-			</ValidationProvider>
-			<ValidationProvider
-				:rules="{required, min:8 , max:191, regex:/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g}"
-				v-slot="{ errors, valid }"
-				name="Phone"
-			>
-				<v-text-field
-					v-model="formFields.phone"
-					:error-messages="errors"
-					:success="valid"
-					label="Phone"
-				></v-text-field>
-			</ValidationProvider>
-			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Username">
-				<v-text-field
-					v-model="formFields.username"
-					:error-messages="errors"
-					:success="valid"
-					label="Username"
-				></v-text-field>
-			</ValidationProvider>
-			<ValidationProvider
-				v-if="!model"
-				rules="required|min:8|max:191"
-				v-slot="{ errors, valid }"
-				name="Password"
-			>
-				<v-text-field
-					v-model="formFields.password"
-					:append-icon="showPassword ? 'visibility' : 'visibility_off'"
-					:type="showPassword ? 'text' : 'password'"
-					:error-messages="errors"
-					:success="valid"
-					name="input-10-1"
-					label="Password"
-					hint="At least 8 characters"
-					counter
-					@click:append="showPassword = !showPassword"
-				></v-text-field>
-			</ValidationProvider>
-			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="invalid || disableSubmit">submit</v-btn>
-			<v-btn v-if="!model" @click="clear">clear</v-btn>
-		</v-form>
-	</ValidationObserver>
->>>>>>> 7bc940cd970e61481ef5467fc26f03918e5cd637
 </template>
 
 <script>
