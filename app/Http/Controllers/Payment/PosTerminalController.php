@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\ElavonSdkPayment;
+use App\Payment;
 use GuzzleHttp\Client;
-use \App\Payment;
-use \App\ElavonSdkPayment;
-use \App\TransactionLog;
 
 class PosTerminalController extends Controller
 {

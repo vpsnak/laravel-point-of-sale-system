@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use GuzzleHttp\Client;
-use \App\Payment;
-use \App\ElavonSdkPayment;
+use App\ElavonSdkPayment;
 use DB;
+use GuzzleHttp\Client;
+use Illuminate\Http\Request;
 
 class ElavonSdkPaymentController extends Controller
 {
