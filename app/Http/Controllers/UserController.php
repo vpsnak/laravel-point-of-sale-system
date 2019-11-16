@@ -134,11 +134,11 @@ class UserController extends Controller
             'keyword' => 'required|string'
         ]);
 
-        return $this->searchResult(
-            ['username', 'name', 'email', 'phone'],
-            $validatedData['keyword'],
-            true
-        );
+
+        $columns = ['username', 'name', 'email', 'phone'];
+        $query = $this->model::query()->search($columns, $validatedData['keyword']);
+
+        return response($query->paginate(), 200);
     }
 
     public function create(Request $request)

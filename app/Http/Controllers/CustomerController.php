@@ -117,7 +117,8 @@ class CustomerController extends BaseController
                 DB::raw("concat(first_name, ' ', last_name)"),
                 DB::raw("concat(last_name, ' ', first_name)"),
             ],
-            $validatedData['keyword']
+            $validatedData['keyword'],
+            true
         );
     }
 }
