@@ -1,29 +1,36 @@
 <template>
-	<div>
+	<ValidationObserver v-slot="{ invalid }" ref="obs">
 		<v-form @submit="submit">
 			<div class="text-center">
 				<v-chip color="blue-grey" label>
 					<v-icon left>fas fa-warehouse</v-icon>Store Form
 				</v-chip>
 			</div>
-			<v-text-field v-model="formFields.name" :counter="30" label="Name" :disabled="loading" required></v-text-field>
-			<v-row justify="space-around">
-				<v-switch :disabled="loading" v-model="formFields.taxable" label="Taxable"></v-switch>
-				<v-switch :disabled="loading" v-model="formFields.is_default" label="Default"></v-switch>
-			</v-row>
-			<v-select
-				v-model="formFields.tax_id"
-				:items="taxes"
-				label="Taxes"
-				required
-				:disabled="loading"
-				item-text="name"
-				item-value="id"
-			></v-select>
-			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="loading">submit</v-btn>
-			<v-btn v-if="this.model === undefined" @click="clear">clear</v-btn>
+			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Name">
+				<v-text-field
+					v-model="formFields.name"
+					label="Name"
+					:disabled="loading"
+					:error-messages="errors"
+					:success="valid"
+				></v-text-field>
+			</ValidationProvider>
+			<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Taxes">
+				<v-select
+					v-model="formFields.tax_id"
+					:items="taxes"
+					label="Taxes"
+					:disabled="loading"
+					item-text="name"
+					item-value="id"
+					:error-messages="errors"
+					:success="valid"
+				></v-select>
+			</ValidationProvider>
+			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="invalid || loading">submit</v-btn>
+			<v-btn v-if="!model" @click="clear">clear</v-btn>
 		</v-form>
-	</div>
+	</ValidationObserver>
 </template>
 
 <script>
@@ -72,8 +79,10 @@ export default {
 			};
 			this.create(payload)
 				.then(() => {
-					if (this.formFields.id == this.$store.state.store.id) {
-						this.$store.state.store = this.formFields;
+					if (this.formFields.id) {
+						if (this.formFields.id == this.$store.state.store.id) {
+							this.$store.state.store = this.formFields;
+						}
 					}
 					this.clear();
 					this.$emit("submit", {
@@ -84,7 +93,6 @@ export default {
 							type: "success"
 						}
 					});
-					this.clear();
 				})
 				.finally(() => {
 					this.loading = false;
