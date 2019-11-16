@@ -30,7 +30,12 @@
 					:success="valid"
 				></v-select>
 			</ValidationProvider>
-			<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Name">
+			<ValidationProvider
+				v-if="!cashRegisterIsopen"
+				rules="required"
+				v-slot="{ errors, valid }"
+				name="Name"
+			>
 				<v-text-field
 					v-if="!cashRegisterIsopen"
 					:loading="loading"
