@@ -1,12 +1,12 @@
 <template>
 	<ValidationObserver v-slot="{ invalid }" ref="obs">
-		<v-form>
+		<v-form @submit.prevent="submit">
 			<div class="text-center">
 				<v-chip color="primary" label>
 					<v-icon left>fas fa-bars</v-icon>Category Form
 				</v-chip>
 			</div>
-			<ValidationProvider rules="required|min:3" v-slot="{ errors, valid }" name="Name">
+			<ValidationProvider rules="required|min:3|max:191" v-slot="{ errors, valid }" name="Name">
 				<v-text-field
 					:error-messages="errors"
 					:success="valid"
