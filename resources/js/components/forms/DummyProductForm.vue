@@ -18,7 +18,14 @@
 					:success="valid"
 				></v-textarea>
 			</ValidationProvider>
-			<ValidationProvider rules="required|max:10" v-slot="{ errors, valid }" name="Price Amount">
+			<ValidationProvider
+				:rules="{
+					required,
+					regex: /^[\d]{1,8}(\.[\d]{1,2})?$/g
+					}"
+				v-slot="{ errors, valid }"
+				name="Price Amount"
+			>
 				<v-text-field
 					type="number"
 					v-model="dummyProduct.price.amount"
