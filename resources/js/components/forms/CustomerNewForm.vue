@@ -1,104 +1,205 @@
 <template>
-	<div>
-		<v-form @submit="submit">
+	<ValidationObserver v-slot="{ invalid }" ref="obs">
+		<v-form @submit.prevent="submit">
 			<div class="text-center">
 				<v-chip color="primary" label>
 					<v-icon left>fas fa-user</v-icon>Customer Form
 				</v-chip>
 			</div>
-			<v-text-field v-model="firstName" label="First name" required></v-text-field>
-			<v-text-field v-model="lastName" label="Last name" required></v-text-field>
-			<v-text-field v-model="formFields.email" label="Email" required></v-text-field>
+			<ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="First name">
+				<v-text-field v-model="firstName" label="First name" :error-messages="errors" :success="valid"></v-text-field>
+			</ValidationProvider>
+			<ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Last Name">
+				<v-text-field v-model="lastName" label="Last name" :error-messages="errors" :success="valid"></v-text-field>
+			</ValidationProvider>
+			<ValidationProvider rules="required|email|max:191" v-slot="{ errors, valid }" name="Email">
+				<v-text-field
+					v-model="formFields.email"
+					label="Email"
+					:error-messages="errors"
+					:success="valid"
+				></v-text-field>
+			</ValidationProvider>
+
 			<v-row justify="space-around">
-				<v-switch v-model="formFields.house_account_status" label="Has house account"></v-switch>
+				<ValidationProvider vid="house_account_status">
+					<v-switch v-model="formFields.house_account_status" label="Has house account"></v-switch>
+				</ValidationProvider>
 			</v-row>
 			<v-row justify="space-around">
 				<v-col v-if="formFields.house_account_status">
-					<v-text-field v-model="formFields.house_account_number" label="House account number" required></v-text-field>
-					<v-text-field
-						type="number"
-						v-model="formFields.house_account_limit"
-						label="House account limit"
-						required
-					></v-text-field>
+					<ValidationProvider
+						rules="required_if:house_account_status|max:100"
+						v-slot="{ errors, valid }"
+						name="House account number"
+					>
+						<v-text-field
+							v-model="formFields.house_account_number"
+							label="House account number"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
+					<ValidationProvider
+						rules="required_if:house_account_status|max:16|numeric"
+						v-slot="{ errors, valid }"
+						name="House account limit"
+					>
+						<v-text-field
+							type="number"
+							v-model="formFields.house_account_limit"
+							label="House account limit"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
 				</v-col>
 			</v-row>
-			<v-textarea rows="3" v-model="formFields.comment" label="Comments"></v-textarea>
+			<ValidationProvider rules="max:65535" v-slot="{ errors, valid }" name="Comment">
+				<v-textarea
+					rows="3"
+					v-model="formFields.comment"
+					label="Comments"
+					:error-messages="errors"
+					:success="valid"
+				></v-textarea>
+			</ValidationProvider>
+
 			<v-checkbox v-model="syncName" label="Use customer's name as default address name"></v-checkbox>
 			<v-row>
 				<v-col cols="4">
-					<v-text-field
-						v-model="formFields.address.first_name"
-						label="Address First name"
-						:disabled="loading || syncName"
-						required
-					></v-text-field>
-					<v-text-field v-model="formFields.address.city" label="City" :disabled="loading" required></v-text-field>
-					<v-select
-						v-model="formFields.address.region"
-						:items="regions"
-						label="Regions"
-						required
-						item-text="default_name"
-						item-value="region_id"
-					></v-select>
-					<v-text-field
-						v-model="formFields.address.company"
-						label="Company"
-						:disabled="loading"
-						required
-					></v-text-field>
+					<ValidationProvider
+						rules="required|max:100"
+						v-slot="{ errors, valid }"
+						name="Address First Name"
+					>
+						<v-text-field
+							v-model="formFields.address.first_name"
+							label="Address First name"
+							:disabled="loading || syncName"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
+					<ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="City">
+						<v-text-field
+							v-model="formFields.address.city"
+							label="City"
+							:disabled="loading"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
+					<ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Region">
+						<v-select
+							v-model="formFields.address.region"
+							:items="regions"
+							label="Regions"
+							required
+							item-text="default_name"
+							item-value="region_id"
+							:error-messages="errors"
+							:success="valid"
+						></v-select>
+					</ValidationProvider>
+
+					<ValidationProvider rules="max:100" v-slot="{ errors, valid }" name="Company">
+						<v-text-field
+							v-model="formFields.address.company"
+							label="Company"
+							:disabled="loading"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
 				</v-col>
 
 				<v-col cols="4">
-					<v-text-field
-						v-model="formFields.address.last_name"
-						label="Address Last name"
-						:disabled="loading || syncName"
-						required
-					></v-text-field>
-					<v-text-field
-						v-model="formFields.address.postcode"
-						label="Postcode"
-						:disabled="loading"
-						required
-					></v-text-field>
-					<v-select
-						v-model="formFields.address.country_id"
-						:items="countries"
-						label="Countries"
-						required
-						item-text="iso2_code"
-						item-value="iso2_code"
-					></v-select>
-					<v-text-field v-model="formFields.address.vat_id" label="Vat id" :disabled="loading" required></v-text-field>
+					<ValidationProvider
+						rules="required|max:100"
+						v-slot="{ errors, valid }"
+						name="Address Last Name"
+					>
+						<v-text-field
+							v-model="formFields.address.last_name"
+							label="Address Last name"
+							:disabled="loading || syncName"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
+					<ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Postcode">
+						<v-text-field
+							v-model="formFields.address.postcode"
+							label="Postcode"
+							:disabled="loading"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
+					<ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Countries">
+						<v-select
+							v-model="formFields.address.country_id"
+							:items="countries"
+							label="Countries"
+							required
+							item-text="iso2_code"
+							item-value="iso2_code"
+							:error-messages="errors"
+							:success="valid"
+						></v-select>
+					</ValidationProvider>
+					<ValidationProvider rules="max:100" v-slot="{ errors, valid }" name="Vat id">
+						<v-text-field
+							v-model="formFields.address.vat_id"
+							label="Vat id"
+							:disabled="loading"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
 				</v-col>
 				<v-col cols="4">
-					<v-text-field v-model="formFields.address.street" label="Street" :disabled="loading" required></v-text-field>
-					<v-text-field
-						v-model="formFields.address.street2"
-						label="Second Street"
-						:disabled="loading"
-						required
-					></v-text-field>
-					<v-text-field
-						v-model="formFields.address.phone"
-						label="Phone"
-						type="number"
-						:min="0"
-						:disabled="loading"
-						required
-					></v-text-field>
+					<ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Street">
+						<v-text-field
+							v-model="formFields.address.street"
+							label="Street"
+							:disabled="loading"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
+
+					<ValidationProvider rules="max:100" v-slot="{ errors, valid }" name="Second Street">
+						<v-text-field
+							v-model="formFields.address.street2"
+							label="Second Street"
+							:disabled="loading"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
+					<ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Phone">
+						<v-text-field
+							v-model="formFields.address.phone"
+							label="Phone"
+							type="number"
+							:min="0"
+							:disabled="loading"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
 				</v-col>
 				<v-row justify="space-around">
 					<v-switch v-model="formFields.address.billing" label="Default billing"></v-switch>
 					<v-switch v-model="formFields.address.shipping" label="Default shipping"></v-switch>
 				</v-row>
 			</v-row>
-			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="loading">submit</v-btn>
+			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="invalid || loading ">submit</v-btn>
 			<v-btn @click="clear">clear</v-btn>
 		</v-form>
-	</div>
+	</ValidationObserver>
 </template> 
 <script>
 import { mapActions, mapState, mapGetters } from "vuex";
@@ -204,6 +305,20 @@ export default {
 		},
 		clear() {
 			this.formFields = { ...this.defaultValues };
+			this.formFields.address.first_name = null;
+			this.formFields.address.last_name = null;
+			this.formFields.address.street = null;
+			this.formFields.address.street2 = null;
+			this.formFields.address.city = null;
+			this.formFields.address.country_id = null;
+			this.formFields.address.region = null;
+			this.formFields.address.postcode = null;
+			this.formFields.address.phone = null;
+			this.formFields.address.company = null;
+			this.formFields.address.vat_id = null;
+			this.formFields.address.deliverydate = null;
+			this.formFields.address.shipping = false;
+			this.formFields.address.billing = false;
 		},
 		...mapActions({
 			getAll: "getAll",

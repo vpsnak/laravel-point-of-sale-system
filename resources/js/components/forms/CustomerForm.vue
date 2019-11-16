@@ -1,33 +1,86 @@
 <template>
 	<ValidationObserver v-slot="{ invalid }" ref="obs">
 		<v-form @submit.prevent="submit">
-			<v-text-field v-model="formFields.first_name" label="First name" required></v-text-field>
-			<v-text-field v-model="formFields.last_name" label="Last name" required></v-text-field>
-			<v-text-field v-model="formFields.email" label="Email" required></v-text-field>
+			<ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="First name">
+				<v-text-field
+					v-model="formFields.first_name"
+					label="First name"
+					:error-messages="errors"
+					:success="valid"
+				></v-text-field>
+			</ValidationProvider>
+			<ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Last Name">
+				<v-text-field
+					v-model="formFields.last_name"
+					label="Last name"
+					:error-messages="errors"
+					:success="valid"
+				></v-text-field>
+			</ValidationProvider>
+			<ValidationProvider rules="required|email|max:191" v-slot="{ errors, valid }" name="Email">
+				<v-text-field
+					v-model="formFields.email"
+					label="Email"
+					:error-messages="errors"
+					:success="valid"
+				></v-text-field>
+			</ValidationProvider>
+
 			<v-row justify="space-around">
-				<v-switch v-model="formFields.house_account_status" label="Has house account"></v-switch>
-				<v-switch v-model="formFields.no_tax" label="Zero tax"></v-switch>
+				<ValidationProvider vid="house_account_status">
+					<v-switch v-model="formFields.house_account_status" label="Has house account"></v-switch>
+				</ValidationProvider>
+				<ValidationProvider vid="no_tax">
+					<v-switch v-model="formFields.no_tax" label="Zero tax"></v-switch>
+				</ValidationProvider>
 			</v-row>
+
 			<v-row justify="space-around" align-center>
 				<v-col v-if="formFields.house_account_status">
-					<v-text-field v-model="formFields.house_account_number" label="House account number" required></v-text-field>
-					<v-text-field
-						type="number"
-						v-model="formFields.house_account_limit"
-						label="House account limit"
-						required
-					></v-text-field>
+					<ValidationProvider
+						rules="required_if:house_account_status|max:100"
+						v-slot="{ errors, valid }"
+						name="House account number"
+					>
+						<v-text-field
+							v-model="formFields.house_account_number"
+							label="House account number"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
+					<ValidationProvider
+						rules="required_if:house_account_status|max:16|numeric"
+						v-slot="{ errors, valid }"
+						name="House account limit"
+					>
+						<v-text-field
+							type="number"
+							v-model="formFields.house_account_limit"
+							label="House account limit"
+							:error-messages="errors"
+							:success="valid"
+						></v-text-field>
+					</ValidationProvider>
 				</v-col>
 			</v-row>
 			<v-row v-if="formFields.no_tax" align="center">
 				<v-col :cols="6">
-					<v-file-input
-						v-model="formFields.file"
-						accept="image/png, image/jpeg, document/pdf"
-						show-size
-						label="Upload new certification file"
-						clearable
-					></v-file-input>
+					<ValidationProvider
+						rules="ext:jpg,png,jpeg,pdf"
+						v-slot="{ errors, valid }"
+						name="Certification file"
+					>
+						<v-file-input
+							v-model="formFields.file"
+							accept="image/png, image/jpeg, application/pdf"
+							show-size
+							label="Upload new certification file"
+							clearable
+							:error-messages="errors"
+							:success="valid"
+						></v-file-input>
+					</ValidationProvider>
 				</v-col>
 
 				<v-col v-if="formFields.no_tax_file" :cols="6">
@@ -39,8 +92,16 @@
 					>View uploaded file</v-btn>
 				</v-col>
 			</v-row>
-			<v-textarea rows="3" v-model="formFields.comment" label="Comments"></v-textarea>
-			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="loading">submit</v-btn>
+			<ValidationProvider rules="max:65535" v-slot="{ errors, valid }" name="Comment">
+				<v-textarea
+					rows="3"
+					v-model="formFields.comment"
+					label="Comments"
+					:error-messages="errors"
+					:success="valid"
+				></v-textarea>
+			</ValidationProvider>
+			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="invalid || loading">submit</v-btn>
 		</v-form>
 	</ValidationObserver>
 </template> 
