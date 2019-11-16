@@ -103,15 +103,41 @@ class CreditCardController extends Controller
                 'errors' => [$response['errorName'] . ' - ' . $response['errorMessage']]
             ];
         }
+        if (array_key_exists('ssl_result_message', $response)) {
+            if ($response['ssl_result_message'] == 'APPROVAL') {
+                return [
+                    'success' => [$response['ssl_result_message']],
+                    'id' => $response['ssl_txn_id']
+                ];
+            }
+            return [
+                'errors' => [
+                    'Unknown Error',
+                    $response['ssl_result_message']
+                ],
+                'id' => $response['ssl_txn_id']
+            ];
+        }
         return [
-            'success' => [$response['ssl_result_message']],
-            'id' => $response['ssl_txn_id']
+            'errors' => ['Undocumented Error']
         ];
     }
 
     public function cardRefund($transaction_id)
     {
-        return $this->transactionAction('ccreturn', ['ssl_txn_id' => $transaction_id]);
+        $response = ElavonApiPaymentController::doTransaction('txnquery', ['ssl_txn_id' => $transaction_id]);
+        $parsedResponse = $this->prepareResponse($response);
+        if (array_key_exists('errors', $parsedResponse)) {
+            return ['errors' => ['Can not refund!']];
+        }
+        if (array_key_exists('ssl_is_voidable', $response)) {
+            if ($response['ssl_is_voidable'] == 'TRUE') {
+                return $this->transactionAction('ccvoid', ['ssl_txn_id' => $transaction_id]);
+            } else {
+                return $this->transactionAction('ccreturn', ['ssl_txn_id' => $transaction_id]);
+            }
+        }
+        return ['errors' => ['Can not refund!']];
     }
 
     public function transactionAction($type, $params)
@@ -129,6 +155,7 @@ class CreditCardController extends Controller
             case 'ccvoid':
             case 'cccomplete':
             case 'ccdelete':
+            case 'txnquery':
                 $response = ElavonApiPaymentController::doTransaction($type, $payload);
                 return $this->prepareResponse($response);
             default:
