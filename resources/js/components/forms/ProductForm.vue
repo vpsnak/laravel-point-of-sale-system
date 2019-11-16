@@ -33,7 +33,14 @@
 				></v-text-field>
 			</ValidationProvider>
 
-			<ValidationProvider rules="max:8|max_value:10" v-slot="{ errors, valid }" name="Final price">
+			<ValidationProvider
+				:rules="{
+					required : true,
+					regex: /^[\d]{1,8}(\.[\d]{1,2})?$/g
+					}"
+				v-slot="{ errors, valid }"
+				name="Final price"
+			>
 				<v-text-field
 					type="number"
 					v-model="formFields.final_price"

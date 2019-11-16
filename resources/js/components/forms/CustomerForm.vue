@@ -50,7 +50,11 @@
 						></v-text-field>
 					</ValidationProvider>
 					<ValidationProvider
-						rules="required_if:house_account_status|max:16|numeric"
+						v-if="formFields.house_account_status"
+						:rules="{
+					required : true,
+					regex: /^[\d]{1,7}(\.[\d]{1,4})?$/g
+					}"
 						v-slot="{ errors, valid }"
 						name="House account limit"
 					>

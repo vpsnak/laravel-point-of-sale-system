@@ -47,9 +47,8 @@
 			</ValidationProvider>
 			<ValidationProvider
 				:rules="{
-                    required,
-					max:8,
-                    regex: /^[0-9]+(\.[0-9]{1,2})?$/g
+                    required : true,
+					regex: /^[\d]{1,8}(\.[\d]{1,2})?$/g
 					}"
 				v-slot="{ errors, valid }"
 				name="Discount amount"
