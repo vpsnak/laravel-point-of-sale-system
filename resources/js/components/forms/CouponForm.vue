@@ -47,7 +47,7 @@
 			</ValidationProvider>
 			<ValidationProvider
 				:rules="{
-					required,
+                    required,
 					max:8,
                     regex: /^[0-9]+(\.[0-9]{1,2})?$/g
 					}"
