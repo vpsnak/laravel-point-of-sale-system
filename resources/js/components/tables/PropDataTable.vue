@@ -31,10 +31,7 @@
 					:page.sync="currentPage"
 					:server-items-length="totalItems"
 					@pagination="paginate"
-					:footer-props="{
-                        'disable-items-per-page': true,
-                        options: { itemsPerPage: 15, page: currentPage }
-                    }"
+					:footer-props="footerProps"
 				>
 					<template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
 						<slot :name="slot" v-bind="scope" />
@@ -204,6 +201,13 @@ export default {
 		this.setForm(this.tableForm);
 	},
 	computed: {
+		footerProps() {
+			return {
+						'disable-pagination': this.loading,
+                        'disable-items-per-page': true,
+                        options: { itemsPerPage: 15, page: this.currentPage }
+                    };
+		},
 		totalItems: {
 			get() {
 				return this.total_items;
