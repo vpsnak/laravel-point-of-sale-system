@@ -22,7 +22,7 @@
 					</span>
 				</v-col>
 				<v-col cols="6">
-					<v-btn type="submit" @click="close" :loading="loading" :disabled="invalid">Close Cash Register</v-btn>
+					<v-btn type="submit" :loading="loading" :disabled="invalid">Close Cash Register</v-btn>
 				</v-col>
 			</v-row>
 		</v-form>
@@ -47,7 +47,7 @@ export default {
 		}
 	},
 	methods: {
-		close() {
+		submit() {
 			this.loading = true;
 			let payload = {
 				data: {
