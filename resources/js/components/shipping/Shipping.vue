@@ -26,10 +26,10 @@
             </v-radio-group>
         </div>
 
-        <v-row v-if="shipping.method !== 'retail'">
+        <v-row v-if="shipping.method !== 'retail'" align="center">
             <v-col
                 v-if="shipping.method === 'delivery'"
-                cols="12"
+                cols="10"
                 lg="6"
                 offset-lg="3"
             >
@@ -42,9 +42,27 @@
                     return-object
                 ></v-combobox>
             </v-col>
+
+            <div v-if="shipping.method === 'delivery'">
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-btn icon v-on="on"
+                            ><v-icon>mdi-pencil</v-icon></v-btn
+                        >
+                    </template>
+                    <span>Edit selected address</span>
+                </v-tooltip>
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-btn icon v-on="on"><v-icon>mdi-plus</v-icon></v-btn>
+                    </template>
+                    <span>New billing address</span>
+                </v-tooltip>
+            </div>
+
             <v-col
                 v-if="shipping.method === 'delivery'"
-                cols="12"
+                cols="10"
                 lg="6"
                 offset-lg="3"
             >
@@ -59,6 +77,23 @@
                 ></v-combobox>
             </v-col>
 
+            <div v-if="shipping.method === 'delivery'">
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-btn icon v-on="on"
+                            ><v-icon>mdi-pencil</v-icon></v-btn
+                        >
+                    </template>
+                    <span>Edit selected address</span>
+                </v-tooltip>
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-btn icon v-on="on"><v-icon>mdi-plus</v-icon></v-btn>
+                    </template>
+                    <span>New delivery address</span>
+                </v-tooltip>
+            </div>
+
             <v-col
                 v-if="shipping.method === 'delivery'"
                 cols="12"
@@ -66,7 +101,9 @@
                 offset-lg="3"
             >
                 <addressDeliveryForm
+                    v-if="shipping.address"
                     :model="shipping.address"
+                    readonly
                 ></addressDeliveryForm>
             </v-col>
         </v-row>
