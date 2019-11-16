@@ -1409,16 +1409,16 @@
         },
         {
             "name": "maxakawizard/json-collection-parser",
-            "version": "1.6.0",
+            "version": "1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/MAXakaWIZARD/JsonCollectionParser.git",
-                "reference": "79cbc484ba8bc473cbf4995b7d43c4f2852f27f1"
+                "reference": "2ce4147e0284269f68cf6f62a021953c9a51e8e4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MAXakaWIZARD/JsonCollectionParser/zipball/79cbc484ba8bc473cbf4995b7d43c4f2852f27f1",
-                "reference": "79cbc484ba8bc473cbf4995b7d43c4f2852f27f1",
+                "url": "https://api.github.com/repos/MAXakaWIZARD/JsonCollectionParser/zipball/2ce4147e0284269f68cf6f62a021953c9a51e8e4",
+                "reference": "2ce4147e0284269f68cf6f62a021953c9a51e8e4",
                 "shasum": ""
             },
             "require": {
@@ -1455,7 +1455,7 @@
             "keywords": [
                 "json"
             ],
-            "time": "2019-10-12T19:33:29+00:00"
+            "time": "2019-11-15T16:14:36+00:00"
         },
         {
             "name": "monolog/monolog",

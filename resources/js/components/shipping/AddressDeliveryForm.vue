@@ -7,6 +7,7 @@
         @input="isValid()"
         @focus="isValid()"
         @blur="isValid()"
+        @submit.prevent="submit"
     >
         <div>
             <v-row>
@@ -18,6 +19,7 @@
                     >
                         <v-text-field
                             v-model="formFields.first_name"
+                            :readonly="$props.readonly"
                             label="First name"
                             :disabled="loading"
                             :error-messages="errors"
@@ -31,6 +33,7 @@
                     >
                         <v-text-field
                             v-model="formFields.city"
+                            :readonly="$props.readonly"
                             label="City"
                             :disabled="loading"
                             :error-messages="errors"
@@ -44,6 +47,7 @@
                     >
                         <v-select
                             v-model="formFields.region_id"
+                            :readonly="$props.readonly"
                             :items="regions"
                             label="Regions"
                             item-text="default_name"
@@ -55,6 +59,7 @@
 
                     <v-text-field
                         v-model="formFields.company"
+                        :readonly="$props.readonly"
                         label="Company"
                         :disabled="loading"
                     ></v-text-field>
@@ -67,6 +72,7 @@
                     >
                         <v-text-field
                             v-model="formFields.last_name"
+                            :readonly="$props.readonly"
                             label="Last name"
                             :disabled="loading"
                             :error-messages="errors"
@@ -80,6 +86,7 @@
                         name="Post Code"
                     >
                         <v-text-field
+                            :readonly="$props.readonly"
                             v-model="formFields.postcode"
                             label="Postcode"
                             :disabled="loading"
@@ -94,6 +101,7 @@
                         name="Country"
                     >
                         <v-select
+                            :readonly="$props.readonly"
                             v-model="formFields.country_id"
                             :items="countries"
                             label="Countries"
@@ -117,6 +125,7 @@
                         name="Street"
                     >
                         <v-text-field
+                            :readonly="$props.readonly"
                             v-model="formFields.street"
                             label="Street"
                             :disabled="loading"
@@ -130,6 +139,7 @@
                         name="Second Street"
                     >
                         <v-text-field
+                            :readonly="$props.readonly"
                             v-model="formFields.street2"
                             label="Second Street"
                             :disabled="loading"
@@ -143,6 +153,7 @@
                         name="Phone"
                     >
                         <v-text-field
+                            :readonly="$props.readonly"
                             v-model="formFields.phone"
                             label="Phone"
                             :disabled="loading"
@@ -151,6 +162,10 @@
                         ></v-text-field>
                     </ValidationProvider>
                 </v-col>
+            </v-row>
+            <v-row v-if="!$props.readonly">
+                <v-spacer></v-spacer>
+                <v-btn type="submit">Submit</v-btn>
             </v-row>
         </div>
     </ValidationObserver>
@@ -161,7 +176,9 @@ import { mapActions } from "vuex";
 
 export default {
     props: {
-        model: Object
+        model: Object,
+        readonly: Boolean,
+        isBilling: Boolean
     },
     data() {
         return {
@@ -203,6 +220,7 @@ export default {
         }
     },
     methods: {
+        submit() {},
         async isValid() {
             if (this.$refs.obs2) {
                 const value = await this.$refs.obs2.validate();
