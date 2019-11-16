@@ -12,7 +12,7 @@
 				single-line
 				v-model="keyword"
 				append-icon="mdi-close"
-				@click:append="keyword=null, paginate()"
+				@click:append="keyword=null, searchAction=null, paginate()"
 				@click:prepend="search"
 				@keyup.enter="search"
 			></v-text-field>
@@ -181,7 +181,8 @@ export default {
 			defaultObject: {},
 			viewId: null,
 			keyword: "",
-			selectedItem: {}
+			selectedItem: {},
+			search_action: false
 		};
 	},
 	props: [
@@ -201,6 +202,14 @@ export default {
 		this.setForm(this.tableForm);
 	},
 	computed: {
+		searchAction: {
+			get() {
+				return this.search_action;
+			},
+			set(value) {
+				this.search_action = value;
+			}
+		},
 		footerProps() {
 			return {
 						'disable-pagination': this.loading,
@@ -313,13 +322,22 @@ export default {
 				persistent: true
 			};
 		},
-		search() {
-			if (this.keyword.length > 2) {
+		search(e, page) {
+			if (this.keyword.length > 2 || this.searchAction) {
+				console.log(page)
 				this.setLoading(true);
+				
+				if (!page) {
+					this.searchAction = this.keyword
+				} else {
+					if (!this.keyword) {
+						this.keyword = this.searchAction
+					}
+				}
 
 				let payload = {
 					model: this.dataUrl,
-					page: 1,
+					page: page || 1,
 					keyword: this.keyword,
 					dataTable: true
 				};
@@ -339,23 +357,29 @@ export default {
 		},
 
 		paginate(e) {
-			this.setLoading(true);
+			if (this.searchAction) {
+				this.search(null, e.page)
+			} else {
+				this.searchAction = false;
 
-			this.getAll({
-				model: this.dataUrl,
-				page: e ? e.page : this.currentPage,
-				dataTable: true
-			})
-				.then(response => {
-					this.setRows(response.data);
+				this.setLoading(true);
 
-					if (response.total !== this.totalItems) {
-						this.totalItems = response.total;
-					}
+				this.getAll({
+					model: this.dataUrl,
+					page: e ? e.page : this.currentPage,
+					dataTable: true
 				})
-				.finally(() => {
-					this.setLoading(false);
-				});
+					.then(response => {
+						this.setRows(response.data);
+
+						if (response.total !== this.totalItems) {
+							this.totalItems = response.total;
+						}
+					})
+					.finally(() => {
+						this.setLoading(false);
+					});
+			}
 		},
 
 		cancelOrder() {
