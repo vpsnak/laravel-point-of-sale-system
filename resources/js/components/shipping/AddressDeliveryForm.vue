@@ -116,6 +116,7 @@
                         v-model="formFields.vat_id"
                         label="Vat id"
                         :disabled="loading"
+                        :readonly="$props.readonly"
                     ></v-text-field>
                 </v-col>
                 <v-col cols="4">
@@ -165,7 +166,12 @@
             </v-row>
             <v-row v-if="!$props.readonly">
                 <v-spacer></v-spacer>
-                <v-btn type="submit">Submit</v-btn>
+                <v-btn
+                    type="submit"
+                    :disabled="invalid || loading"
+                    :loading="loading"
+                    >Submit</v-btn
+                >
             </v-row>
         </div>
     </ValidationObserver>
@@ -220,11 +226,28 @@ export default {
         }
     },
     methods: {
-        submit() {},
+        submit() {
+            this.formFields.region = this.formFields.region_id;
+
+            let payload = {
+                model: "addresses",
+                data: this.formFields
+            };
+
+            this.create(payload).then(response => {
+                console.log(response);
+
+                // @TODO
+                // this.$emit("", response);
+            });
+        },
         async isValid() {
             if (this.$refs.obs2) {
-                const value = await this.$refs.obs2.validate();
-                this.$store.commit("cart/setIsValid2", value);
+                const valid = await this.$refs.obs2.validate();
+                this.$store.commit("cart/setIsValid2", valid);
+                return this.isValid;
+            } else {
+                return false;
             }
         },
         getAllRegions() {
@@ -246,12 +269,7 @@ export default {
                 this.countries = countries;
             });
         },
-        ...mapActions({
-            getAll: "getAll",
-            getOne: "getOne",
-            create: "create",
-            delete: "delete"
-        })
+        ...mapActions(["create", "getAll"])
     }
 };
 </script>

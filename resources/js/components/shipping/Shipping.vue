@@ -10,6 +10,21 @@
             @action="closedDialog"
         />
 
+        <interactiveDialog
+            v-if="dialog.show"
+            :show="dialog.show"
+            :title="dialog.title"
+            :titleCloseBtn="dialog.titleCloseBtn"
+            :icon="dialog.icon"
+            :fullscreen="dialog.fullscreen"
+            :width="dialog.width"
+            :component="dialog.component"
+            :content="dialog.content"
+            :model="dialog.model"
+            @action="dialogEvent"
+            :persistent="dialog.persistent"
+        ></interactiveDialog>
+
         <div class="d-flex justify-center">
             <v-radio-group v-model="shipping.method" row>
                 <v-radio label="Retail" value="retail"></v-radio>
@@ -46,7 +61,16 @@
             <div v-if="shipping.method === 'delivery'">
                 <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
-                        <v-btn icon v-on="on"
+                        <v-btn
+                            :disabled="!shipping.billing_address"
+                            icon
+                            v-on="on"
+                            @click="
+                                addressDialog(
+                                    'billing',
+                                    shipping.billing_address
+                                )
+                            "
                             ><v-icon>mdi-pencil</v-icon></v-btn
                         >
                     </template>
@@ -54,7 +78,12 @@
                 </v-tooltip>
                 <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
-                        <v-btn icon v-on="on"><v-icon>mdi-plus</v-icon></v-btn>
+                        <v-btn
+                            icon
+                            v-on="on"
+                            @click="addressDialog('billing', null)"
+                            ><v-icon>mdi-plus</v-icon></v-btn
+                        >
                     </template>
                     <span>New billing address</span>
                 </v-tooltip>
@@ -80,7 +109,11 @@
             <div v-if="shipping.method === 'delivery'">
                 <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
-                        <v-btn icon v-on="on"
+                        <v-btn
+                            :disabled="!shipping.address"
+                            icon
+                            v-on="on"
+                            @click="addressDialog('delivery', shipping.address)"
                             ><v-icon>mdi-pencil</v-icon></v-btn
                         >
                     </template>
@@ -88,7 +121,12 @@
                 </v-tooltip>
                 <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
-                        <v-btn icon v-on="on"><v-icon>mdi-plus</v-icon></v-btn>
+                        <v-btn
+                            icon
+                            v-on="on"
+                            @click="addressDialog('delivery', null)"
+                            ><v-icon>mdi-plus</v-icon></v-btn
+                        >
                     </template>
                     <span>New delivery address</span>
                 </v-tooltip>
@@ -289,7 +327,20 @@ export default {
             loading: false,
             time_slots: [],
             datePicker: false,
-            store_pickups: []
+            store_pickups: [],
+
+            dialog: {
+                show: false,
+                width: 600,
+                fullscreen: false,
+                title: "",
+                titleCloseBtn: false,
+                icon: "",
+                component: "",
+                content: "",
+                model: "",
+                persistent: false
+            }
         };
     },
 
@@ -363,6 +414,56 @@ export default {
     },
 
     methods: {
+        dialogEvent(event) {
+            if (_.isObjectLike(event)) {
+            } else {
+            }
+
+            this.resetDialog();
+        },
+        addressDialog(action, address) {
+            let icon;
+            let title;
+
+            if (action === "delivery") {
+                icon = "mdi-map-marker";
+                title = address
+                    ? "Edit delivery address"
+                    : "New delivery address";
+            } else {
+                icon = "mdi-receipt";
+                title = address
+                    ? "Edit billing address"
+                    : "New billing address";
+            }
+
+            this.dialog = {
+                show: true,
+                width: 600,
+                fullscreen: false,
+                title: title,
+                titleCloseBtn: false,
+                icon: icon,
+                component: "addressDeliveryForm",
+                content: "",
+                model: address || {},
+                persistent: true
+            };
+        },
+        resetDialog() {
+            this.dialog = {
+                show: false,
+                width: 600,
+                fullscreen: false,
+                title: "",
+                titleCloseBtn: false,
+                icon: "",
+                component: "",
+                content: "",
+                model: "",
+                persistent: false
+            };
+        },
         async isValid() {
             if (this.$refs.obs1) {
                 const value = await this.$refs.obs1.validate();
