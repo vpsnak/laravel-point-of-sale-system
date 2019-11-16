@@ -141,8 +141,6 @@ export default {
 	methods: {
 		makeFormData() {
 			let data = new FormData();
-			console.log(this.formFields.file.size);
-
 			data.append("id", this.model.id);
 			data.append("first_name", this.formFields.first_name);
 			data.append("last_name", this.formFields.last_name);
