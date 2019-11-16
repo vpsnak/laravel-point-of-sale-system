@@ -13,7 +13,15 @@
 				<v-text-field v-model="formFields.code" label="Code" :error-messages="errors" :success="valid"></v-text-field>
 			</ValidationProvider>
 			<v-switch v-model="formFields.enabled" label="Enabled"></v-switch>
-			<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Amount">
+			<ValidationProvider
+				:rules="{
+					required,
+					max:8,
+                    regex: /^[0-9]+(\.[0-9]{1,2})?$/g
+					}"
+				v-slot="{ errors, valid }"
+				name="Amount"
+			>
 				<v-text-field
 					v-model="formFields.amount"
 					type="number"
