@@ -64,7 +64,7 @@ export default {
 	data() {
 		return {
 			store: null,
-			user: null
+			user: ""
 		};
 	},
 	mounted() {

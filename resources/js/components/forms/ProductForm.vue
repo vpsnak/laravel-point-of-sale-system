@@ -35,7 +35,7 @@
 
 			<ValidationProvider
 				:rules="{
-					required,
+					required : true,
 					regex: /^[\d]{1,8}(\.[\d]{1,2})?$/g
 					}"
 				v-slot="{ errors, valid }"

@@ -105,7 +105,7 @@
 					</ValidationProvider>
 
 					<ValidationProvider
-						:rules="{required, min:8 , max:100, regex:/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g}"
+						:rules="{ required : true, min:8 , max:100, regex:/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g}"
 						v-slot="{ errors, valid }"
 						name="Phone"
 					>
