@@ -5,6 +5,7 @@ export default {
         retail: true,
         refundLoading: false,
         isValid: false,
+        isValidCheckout: true,
 
         locations: [
             { id: 1, label: "Funeral Home" },

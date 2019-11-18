@@ -94,7 +94,11 @@
                 color="blue-grey"
                 @click="sendPayment"
                 :loading="loading || orderLoading"
-                :disabled="loading || orderLoading"
+                :disabled="
+                    loading ||
+                        orderLoading ||
+                        !$store.state.cart.isValidCheckout
+                "
                 block
                 >{{ paymentBtnTxt }}</v-btn
             >

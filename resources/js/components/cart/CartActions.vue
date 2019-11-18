@@ -2,7 +2,11 @@
     <div>
         <v-divider />
 
-        <v-btn block class="my-2" @click.stop="checkout" :disabled="disabled"
+        <v-btn
+            block
+            class="my-2"
+            @click.stop="checkout"
+            :disabled="disabled || !$store.state.cart.isValidCheckout"
             >Checkout</v-btn
         >
 
