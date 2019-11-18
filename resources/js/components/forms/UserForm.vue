@@ -1,5 +1,5 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="obs">
+	<ValidationObserver v-slot="{ invalid }" ref="userObs">
 		<v-form @submit.prevent="submit">
 			<div class="text-center">
 				<v-chip color="indigo darken-4" label>
@@ -129,7 +129,7 @@ export default {
 				});
 		},
 		clear() {
-			this.$refs.obs.reset();
+			this.$refs.userObs.reset();
 			this.formFields = { ...this.defaultValues };
 		},
 		...mapActions({

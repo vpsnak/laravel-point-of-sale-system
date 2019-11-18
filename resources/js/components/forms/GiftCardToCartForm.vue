@@ -1,19 +1,50 @@
 <template>
-	<v-form>
-		<v-text-field v-model="giftCard.name" label="Name" required></v-text-field>
-		<v-textarea rows="3" v-model="giftCard.notes" label="Notes" required></v-textarea>
-		<v-text-field type="number" v-model="giftCard.price.amount" label="Price" required></v-text-field>
-		<v-text-field v-model="giftCard.code" label="Code" required></v-text-field>
-		<v-btn class="mr-4" @click="addProduct()">Add to cart</v-btn>
-		<v-btn @click="clear">clear</v-btn>
-	</v-form>
+	<ValidationObserver v-slot="{ invalid }" ref="giftCardToCartObs">
+		<v-form @submit.prevent="submit">
+			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Name">
+				<v-text-field v-model="giftCard.name" label="Name" :error-messages="errors" :success="valid"></v-text-field>
+			</ValidationProvider>
+			<ValidationProvider rules="max:191" v-slot="{ errors, valid }" name="Notes">
+				<v-textarea
+					rows="3"
+					v-model="giftCard.notes"
+					label="Notes"
+					:error-messages="errors"
+					:success="valid"
+				></v-textarea>
+			</ValidationProvider>
+			<ValidationProvider
+				:rules="{
+                    required : true,
+					regex: /^[\d]{1,8}(\.[\d]{1,2})?$/g
+					}"
+				v-slot="{ errors, valid }"
+				name="Price Amount"
+			>
+				<v-text-field
+					type="number"
+					v-model="giftCard.price.amount"
+					label="Price"
+					:error-messages="errors"
+					:success="valid"
+				></v-text-field>
+			</ValidationProvider>
+			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Code">
+				<v-text-field v-model="giftCard.code" label="Code" :error-messages="errors" :success="valid"></v-text-field>
+			</ValidationProvider>
+
+			<v-btn class="mr-4" type="submit" :disabled="invalid" @click="addProduct()">Add to cart</v-btn>
+			<v-btn @click="clear">clear</v-btn>
+		</v-form>
+	</ValidationObserver>
 </template>
 
 <script>
 import { mapActions } from "vuex";
 
 export default {
-	data() {``
+	data() {
+		``;
 		return {
 			giftCard: {
 				id: null,

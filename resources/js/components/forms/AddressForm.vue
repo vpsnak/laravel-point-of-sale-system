@@ -1,5 +1,5 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="obs">
+	<ValidationObserver v-slot="{ invalid }" ref="addressObs">
 		<v-form @submit.prevent="submit">
 			<v-row>
 				<v-col cols="4">

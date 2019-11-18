@@ -1,5 +1,5 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="obs">
+	<ValidationObserver v-slot="{ invalid }" ref="customerObs">
 		<v-form @submit.prevent="submit">
 			<ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="First name">
 				<v-text-field

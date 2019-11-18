@@ -1,5 +1,5 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="obs">
+	<ValidationObserver v-slot="{ invalid }" ref="openCashRegisterObs">
 		<v-form @submit.prevent="submit">
 			<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Name">
 				<v-select

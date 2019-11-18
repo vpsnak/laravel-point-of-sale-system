@@ -1,5 +1,5 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="obs">
+	<ValidationObserver v-slot="{ invalid }" ref="passwordObs">
 		<v-form @submit.prevent="submit">
 			<ValidationProvider
 				v-if="action === 'change_self' || action === 'verify'"

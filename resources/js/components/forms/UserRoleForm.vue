@@ -1,5 +1,5 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="obs">
+	<ValidationObserver v-slot="{ invalid }" ref="userRoleObs">
 		<v-form @submit.prevent="submit">
 			<ValidationProvider v-slot="{ errors, valid }" name="Role">
 				<v-select

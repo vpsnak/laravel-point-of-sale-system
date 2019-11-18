@@ -1,5 +1,5 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="obs">
+	<ValidationObserver v-slot="{ invalid }" ref="closeCashRegisterObs">
 		<v-form @submit.prevent="submit">
 			<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Closing Amount">
 				<v-text-field

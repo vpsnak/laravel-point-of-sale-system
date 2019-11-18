@@ -1,5 +1,5 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="obs">
+	<ValidationObserver v-slot="{ invalid }" ref="giftcardObs">
 		<v-form @submit.prevent="submit">
 			<div class="text-center">
 				<v-chip color="primary" label>
