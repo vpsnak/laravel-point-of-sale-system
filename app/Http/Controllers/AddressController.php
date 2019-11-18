@@ -45,9 +45,10 @@ class AddressController extends BaseController
         }
 
         if (!empty($validatedID)) {
-            $address = $this->model::updateData($validatedID, $validatedData);
+            $address = $this->model::updateData($validatedID['id'], $validatedData);
+            $address = Address::findOrFail($validatedID['id']);
 
-            return response([$address, 'info' => ["Address with id: $address->id successfully updated!"]], 200);
+            return response(['address' => $address, 'info' => ["Address with id: $address->id successfully updated!"]], 200);
         } else {
             $address = $this->model::store($validatedData);
 
