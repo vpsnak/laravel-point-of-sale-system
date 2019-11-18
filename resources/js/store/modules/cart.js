@@ -60,7 +60,7 @@ export default {
             {
                 id: 2,
                 name: "Payment",
-                icon: "payment",
+                icon: "mdi-cash-register",
                 component: "paymentStep",
                 completed: false
             },

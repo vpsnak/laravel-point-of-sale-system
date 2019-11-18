@@ -14,8 +14,11 @@
             :persistent="dialog.persistent"
         ></interactiveDialog>
 
-        <v-col cols="12">
-            <h3 class="mb-3">Payment history</h3>
+        <v-col :cols="12">
+            <h3 class="mb-2">Payment history</h3>
+        </v-col>
+
+        <v-col :cols="12">
             <v-data-table
                 :headers="headers"
                 :items="paymentHistory"

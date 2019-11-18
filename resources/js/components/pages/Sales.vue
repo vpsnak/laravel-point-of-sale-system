@@ -1,39 +1,38 @@
 <template>
-	<v-container fluid px-2 py-0>
-		<v-row>
-			<v-col cols="8">
-				<productList />
-			</v-col>
-			<v-col cols="4">
-				<cart
-					icon="shopping_cart"
-					title="Shopping cart"
-					:editable="true"
-					:actions="true"
-					:toggles="true"
-				/>
-			</v-col>
-		</v-row>
-		<interactiveDialog
-			v-if="visibility"
-			:show="visibility"
-			title="Select store and cash register"
-			:width="600"
-			component="storeRegForm"
-			:titleCloseBtn="true"
-		></interactiveDialog>
-	</v-container>
+    <div>
+        <v-container>
+            <v-row>
+                <v-col :lg="8" class="py-lg-0 px-lg-1">
+                    <productList />
+                </v-col>
+                <v-col :lg="4" class="pa-lg-0">
+                    <cart
+                        icon="shopping_cart"
+                        title="Shopping cart"
+                        :editable="true"
+                        :actions="true"
+                        :toggles="true"
+                    />
+                </v-col>
+            </v-row>
+        </v-container>
+        <interactiveDialog
+            v-if="visibility"
+            :show="visibility"
+            title="Select store and cash register"
+            :width="600"
+            component="storeRegForm"
+            :titleCloseBtn="true"
+        ></interactiveDialog>
+    </div>
 </template>
 
 <script>
 export default {
-	data() {
-		return {
-			visibility: false
-		};
-	},
-	mounted() {
-		// this.visibility = true;
-	}
+    data() {
+        return {
+            visibility: false
+        };
+    }
 };
 </script>

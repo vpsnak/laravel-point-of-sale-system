@@ -14,7 +14,7 @@
             :types="paymentTypes"
             :remaining="remaining"
             :loading="paymentActionsLoading"
-            title="Order payment"
+            title="Payment methods"
             paymentBtnTxt="Send payment"
             v-if="actions && (remaining > 0 || remaining === undefined)"
             @sendPayment="sendPayment"

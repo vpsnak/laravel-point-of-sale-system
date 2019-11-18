@@ -1,5 +1,5 @@
 <template>
-    <v-card class="pa-3 d-flex flex-column" style="max-height: 90vh;">
+    <v-card class="pa-3">
         <div class="d-flex">
             <div class="d-flex align-center justify-center">
                 <v-icon class="pr-2">{{ icon }}</v-icon>
@@ -18,14 +18,16 @@
                 :disabled="!editable"
             ></v-switch>
         </div>
-        <v-divider />
-        <v-container grid-list-md text-xs-center>
-            <customerSearch
-                :editable="editable"
-                :keywordLength="3"
-                class="my-3"
-            ></customerSearch>
-        </v-container>
+
+        <v-divider class="py-1" />
+
+        <customerSearch
+            :editable="editable"
+            :keywordLength="3"
+            class="pa-3"
+        ></customerSearch>
+
+        <v-divider class="py-1" />
 
         <cartProducts
             :products="items ? items : products"
