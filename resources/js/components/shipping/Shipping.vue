@@ -25,12 +25,13 @@
 			:persistent="dialog.persistent"
 		></interactiveDialog>
 
-		<div class="d-flex justify-center">
-			<v-radio-group v-model="shipping.method" row>
+		<div class="d-flex justify-center flex-column align-center">
+			<v-radio-group v-model="shipping.method" row hint="You need to select a custonmer">
 				<v-radio label="Retail" value="retail"></v-radio>
 				<v-radio label="In store pickup" value="pickup" :disabled="!customer"></v-radio>
 				<v-radio label="Delivery" value="delivery" :disabled="!customer"></v-radio>
 			</v-radio-group>
+			<v-alert outlined type="info" border="left" v-if="!customer">No customer selected</v-alert>
 		</div>
 		<ValidationObserver v-slot="{ invalid, valid }" tag="form">
 			<input type="hidden" :value="$store.state.cart.isValid = valid" />
@@ -351,11 +352,15 @@ export default {
 			if (action === "delivery") {
 				type = "shipping";
 				icon = "mdi-map-marker";
-				title = address ? "Edit delivery address" : "New delivery address";
+				title = address
+					? "Edit delivery address"
+					: "New delivery address";
 			} else {
 				type = "billing";
 				icon = "mdi-receipt";
-				title = address ? "Edit billing address" : "New billing address";
+				title = address
+					? "Edit billing address"
+					: "New billing address";
 			}
 
 			address ? (address.type = type) : null;

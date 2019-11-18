@@ -4,6 +4,7 @@ export default {
     state: {
         retail: true,
         refundLoading: false,
+        paymentLoading: false,
         isValid: false,
         isValidCheckout: true,
 

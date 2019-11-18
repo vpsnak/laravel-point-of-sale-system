@@ -88,6 +88,7 @@
 		<v-row justify="center" align="center" class="my-3" v-if="paymentType !== 'coupon'">
 			<v-col :lg="5">
 				<v-btn
+					dark
 					block
 					color="deep-orange"
 					@click="sendPayment"
@@ -271,15 +272,18 @@ export default {
 			this.limits();
 		},
 		sendPayment() {
-			this.orderLoading = true;
+            this.orderLoading = true;
+            this.$store.state.cart.paymentLoading = true;
+
 			if (this.$store.state.cart.order === undefined) {
 				this.submitOrder().then(response => {
 					this.pay();
-					this.orderLoading = false;
-				});
+				}).finally(() => {
+                    this.orderLoading = false;
+                });
 			} else {
 				this.pay();
-				this.orderLoading = false;
+                this.orderLoading = false;
 			}
 		},
 
