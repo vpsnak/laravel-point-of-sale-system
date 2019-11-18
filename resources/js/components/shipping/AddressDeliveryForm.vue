@@ -1,12 +1,8 @@
 <template>
 	<ValidationObserver
 		v-slot="{ invalid }"
-		ref="obs2"
+		ref="addressDeliveryObs"
 		tag="form"
-		@change="isValid()"
-		@input="isValid()"
-		@focus="isValid()"
-		@blur="isValid()"
 		@submit.prevent="submit"
 	>
 		<div>
@@ -211,15 +207,7 @@ export default {
 				this.$emit("submit", true);
 			});
 		},
-		async isValid() {
-			if (this.$refs.obs2) {
-				const valid = await this.$refs.obs2.validate();
-				this.$store.commit("cart/setIsValid2", valid);
-				return this.isValid;
-			} else {
-				return false;
-			}
-		},
+
 		getAllRegions() {
 			this.loading = true;
 			this.getAll({

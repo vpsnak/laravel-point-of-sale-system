@@ -32,98 +32,98 @@
 				<v-radio label="Delivery" value="delivery" :disabled="!customer"></v-radio>
 			</v-radio-group>
 		</div>
+		<ValidationObserver v-slot="{ invalid, valid }" tag="form">
+			<input type="hidden" :value="$store.state.cart.isValid = valid" />
+			<v-row v-if="shipping.method !== 'retail'" align="center">
+				<v-col v-if="shipping.method === 'delivery'" cols="10" lg="6" offset-lg="3">
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Billing address">
+						<v-combobox
+							:items="addresses"
+							prepend-icon="mdi-receipt"
+							label="Billing address"
+							v-model="shipping.billing_address"
+							:item-text="getAddressText"
+							:error-messages="errors"
+							:success="valid"
+							return-object
+						></v-combobox>
+					</ValidationProvider>
+				</v-col>
 
-		<v-row v-if="shipping.method !== 'retail'" align="center">
-			<v-col v-if="shipping.method === 'delivery'" cols="10" lg="6" offset-lg="3">
-				<v-combobox
-					:items="addresses"
-					prepend-icon="mdi-receipt"
-					label="Billing address"
-					v-model="shipping.billing_address"
-					:item-text="getAddressText"
-					return-object
-				></v-combobox>
-			</v-col>
-
-			<div v-if="shipping.method === 'delivery'">
-				<v-tooltip bottom>
-					<template v-slot:activator="{ on }">
-						<v-btn
-							:disabled="!shipping.billing_address"
-							icon
-							v-on="on"
-							@click="
+				<div v-if="shipping.method === 'delivery'">
+					<v-tooltip bottom>
+						<template v-slot:activator="{ on }">
+							<v-btn
+								:disabled="!shipping.billing_address"
+								icon
+								v-on="on"
+								@click="
                                 addressDialog(
                                     'billing',
                                     shipping.billing_address
                                 )
                             "
-						>
-							<v-icon>mdi-pencil</v-icon>
-						</v-btn>
-					</template>
-					<span>Edit selected address</span>
-				</v-tooltip>
-				<v-tooltip bottom>
-					<template v-slot:activator="{ on }">
-						<v-btn icon v-on="on" @click="addressDialog('billing', null)">
-							<v-icon>mdi-plus</v-icon>
-						</v-btn>
-					</template>
-					<span>New billing address</span>
-				</v-tooltip>
-			</div>
+							>
+								<v-icon>mdi-pencil</v-icon>
+							</v-btn>
+						</template>
+						<span>Edit selected address</span>
+					</v-tooltip>
+					<v-tooltip bottom>
+						<template v-slot:activator="{ on }">
+							<v-btn icon v-on="on" @click="addressDialog('billing', null)">
+								<v-icon>mdi-plus</v-icon>
+							</v-btn>
+						</template>
+						<span>New billing address</span>
+					</v-tooltip>
+				</div>
 
-			<v-col v-if="shipping.method === 'delivery'" cols="10" lg="6" offset-lg="3">
-				<v-combobox
-					@input="getTimeSlots"
-					:items="addresses"
-					prepend-icon="mdi-map-marker"
-					label="Delivery address"
-					v-model="shipping.address"
-					:item-text="getAddressText"
-					return-object
-				></v-combobox>
-			</v-col>
+				<v-col v-if="shipping.method === 'delivery'" cols="10" lg="6" offset-lg="3">
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Delivery address">
+						<v-combobox
+							@input="getTimeSlots"
+							:items="addresses"
+							prepend-icon="mdi-map-marker"
+							label="Delivery address"
+							v-model="shipping.address"
+							:item-text="getAddressText"
+							return-object
+							:error-messages="errors"
+							:success="valid"
+						></v-combobox>
+					</ValidationProvider>
+				</v-col>
 
-			<div v-if="shipping.method === 'delivery'">
-				<v-tooltip bottom>
-					<template v-slot:activator="{ on }">
-						<v-btn
-							:disabled="!shipping.address"
-							icon
-							v-on="on"
-							@click="addressDialog('delivery', shipping.address)"
-						>
-							<v-icon>mdi-pencil</v-icon>
-						</v-btn>
-					</template>
-					<span>Edit selected address</span>
-				</v-tooltip>
-				<v-tooltip bottom>
-					<template v-slot:activator="{ on }">
-						<v-btn icon v-on="on" @click="addressDialog('delivery', null)">
-							<v-icon>mdi-plus</v-icon>
-						</v-btn>
-					</template>
-					<span>New delivery address</span>
-				</v-tooltip>
-			</div>
+				<div v-if="shipping.method === 'delivery'">
+					<v-tooltip bottom>
+						<template v-slot:activator="{ on }">
+							<v-btn
+								:disabled="!shipping.address"
+								icon
+								v-on="on"
+								@click="addressDialog('delivery', shipping.address)"
+							>
+								<v-icon>mdi-pencil</v-icon>
+							</v-btn>
+						</template>
+						<span>Edit selected address</span>
+					</v-tooltip>
+					<v-tooltip bottom>
+						<template v-slot:activator="{ on }">
+							<v-btn icon v-on="on" @click="addressDialog('delivery', null)">
+								<v-icon>mdi-plus</v-icon>
+							</v-btn>
+						</template>
+						<span>New delivery address</span>
+					</v-tooltip>
+				</div>
 
-			<v-col v-if="shipping.method === 'delivery'" cols="12" lg="6" offset-lg="3">
-				<addressDeliveryForm v-if="shipping.address" :model="shipping.address" readonly></addressDeliveryForm>
-			</v-col>
-		</v-row>
+				<v-col v-if="shipping.method === 'delivery'" cols="12" lg="6" offset-lg="3">
+					<addressDeliveryForm v-if="shipping.address" :model="shipping.address" readonly></addressDeliveryForm>
+				</v-col>
+			</v-row>
 
-		<ValidationObserver
-			v-slot="{ invalid }"
-			tag="form"
-			ref="obs1"
-			@change="isValid()"
-			@input="isValid()"
-			@focus="isValid()"
-			@blur="isValid()"
-		>
 			<v-row v-if="shipping.method !== 'retail'">
 				<v-col cols="4" lg="2" offset-lg="3">
 					<v-menu v-model="datePicker" transition="scale-transition" offset-y min-width="290px">
@@ -369,7 +369,7 @@ export default {
 				icon: icon,
 				component: "addressDeliveryForm",
 				content: "",
-				model: address || {type},
+				model: address || { type },
 				persistent: true
 			};
 		},
@@ -386,12 +386,6 @@ export default {
 				model: "",
 				persistent: false
 			};
-		},
-		async isValid() {
-			if (this.$refs.obs1) {
-				const value = await this.$refs.obs1.validate();
-				this.$store.commit("cart/setIsValid1", value);
-			}
 		},
 		getStores() {
 			this.getAll({ model: "store-pickups" }).then(response => {
