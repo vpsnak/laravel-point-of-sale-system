@@ -20,7 +20,8 @@
 				class="mr-4"
 				type="submit"
 				@click.prevent="submit"
-				:disabled="invalid || disableSubmit"
+				:loading="loading"
+				:disabled="invalid || loading"
 			>submit</v-btn>
 			<v-btn v-if="!model" class="mr-4" @click="clear">clear</v-btn>
 		</v-form>
@@ -36,17 +37,13 @@ export default {
 	},
 	data() {
 		return {
+			loading: false,
 			defaultValues: {},
 			formFields: {
 				name: "",
 				in_product_listing: false
 			}
 		};
-	},
-	computed: {
-		disableSubmit() {
-			return this.formFields.name ? false : true;
-		}
 	},
 	mounted() {
 		this.defaultValues = { ...this.formFields };
@@ -58,21 +55,27 @@ export default {
 	},
 	methods: {
 		submit() {
+			this.loading = true;
+
 			let payload = {
 				model: "categories",
 				data: { ...this.formFields }
 			};
-			this.create(payload).then(() => {
-				this.$emit("submit", {
-					getRows: true,
-					model: "categories",
-					notification: {
-						msg: "Category added successfully",
-						type: "success"
-					}
+			this.create(payload)
+				.then(() => {
+					this.$emit("submit", {
+						getRows: true,
+						model: "categories",
+						notification: {
+							msg: "Category added successfully",
+							type: "success"
+						}
+					});
+					this.clear();
+				})
+				.finally(() => {
+					this.loading = false;
 				});
-				this.clear();
-			});
 		},
 		clear() {
 			this.$refs.categoryObs.reset();
