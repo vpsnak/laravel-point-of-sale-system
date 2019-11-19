@@ -1,18 +1,13 @@
 <template>
-	<div>
-		<div v-if="change" class="my-5 d-flex align-center justify-center">
-			<h3>
-				Change:
-				<span class="amber--text" v-text="'$ ' + change.toFixed(2)" />
-			</h3>
-		</div>
+	<div class="my-5 d-flex align-center justify-space-around flex-column">
+		<h3 v-if="change">
+			Change:
+			<span class="amber--text" v-text="'$ ' + change.toFixed(2)" />
+		</h3>
 
 		<orderReceipt />
 
-		<v-card-actions>
-			<div class="flex-grow-1"></div>
-			<v-btn color="primary" @click="close">Close</v-btn>
-		</v-card-actions>
+		<v-btn color="primary" @click="close">Close</v-btn>
 	</div>
 </template>
 

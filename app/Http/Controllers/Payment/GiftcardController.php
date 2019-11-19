@@ -25,7 +25,6 @@ class GiftcardController extends BaseController
         if (!empty($validatedID)) {
             return response($this->model::updateData($validatedID, $validatedData), 200);
         } else {
-            $validatedData['amount'] = 0;
             return response($this->model::store($validatedData), 201);
         }
     }
