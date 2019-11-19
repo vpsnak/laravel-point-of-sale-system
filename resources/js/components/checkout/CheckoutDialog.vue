@@ -5,6 +5,7 @@
 		transition="dialog-bottom-transition"
 		persistent
 		no-click-animation
+		@close:outer.stop
 	>
 		<interactiveDialog
 			v-if="closePrompt"
@@ -73,16 +74,12 @@ export default {
 	},
 	computed: {
 		closeBtnTxt() {
-			return this.order &&
-				this.$store.state.cart.currentCheckoutStep !== 3
+			return this.order && this.$store.state.cart.currentCheckoutStep !== 3
 				? "Cancel order"
 				: "Close";
 		},
 		showHoldBtn() {
-			if (
-				this.order &&
-				this.$store.state.cart.currentCheckoutStep !== 3
-			) {
+			if (this.order && this.$store.state.cart.currentCheckoutStep !== 3) {
 				return true;
 			} else {
 				return false;

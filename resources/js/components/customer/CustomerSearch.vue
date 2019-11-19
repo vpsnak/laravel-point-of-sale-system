@@ -25,7 +25,7 @@
 
 			<v-tooltip bottom v-if="cartCustomer">
 				<template v-slot:activator="{ on }">
-					<v-btn @click="customerForm(false)" v-on="on" icon :disabled="!editable">
+					<v-btn @click.stop="customerForm(false)" v-on="on" icon :disabled="!editable">
 						<v-icon>mdi-eye</v-icon>
 					</v-btn>
 				</template>
@@ -34,7 +34,7 @@
 
 			<v-tooltip bottom>
 				<template v-slot:activator="{ on }">
-					<v-btn @click="customerForm(true)" v-on="on" icon :disabled="!editable">
+					<v-btn @click.stop="customerForm(true)" v-on="on" icon :disabled="!editable">
 						<v-icon>mdi-plus</v-icon>
 					</v-btn>
 				</template>
@@ -43,7 +43,7 @@
 
 			<v-tooltip bottom v-if="cartCustomerComment">
 				<template v-slot:activator="{ on }">
-					<v-btn @click="viewCustomerComments" text icon color="red">
+					<v-btn @click.stop="viewCustomerComments" text icon color="red">
 						<v-icon>mdi-comment</v-icon>
 					</v-btn>
 				</template>

@@ -8,7 +8,7 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
-		model: Int32Array
+		model: Object
 	},
 	data() {
 		return {
