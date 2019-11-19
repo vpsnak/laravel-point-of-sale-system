@@ -56,9 +56,4 @@ class CashRegister extends BaseModel
     {
         return $this->hasMany(CashRegisterLogs::class);
     }
-
-    public function transactionLogs()
-    {
-        return $this->hasMany(TransactionLog::class);
-    }
 }

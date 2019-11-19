@@ -41,9 +41,4 @@ class Payment extends BaseModel
     {
         return $this->hasMany(ElavonSdkPayment::class);
     }
-
-    public function transactionLog()
-    {
-        return $this->hasMany(TransactionLog::class);
-    }
 }
