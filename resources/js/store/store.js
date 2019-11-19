@@ -217,7 +217,7 @@ export default new Vuex.Store({
                     .then(response => {
                         let notification = {
                             msg: response.data.info,
-                            type: "success"
+                            type: "info"
                         };
                         context.commit("setNotification", notification);
                         resolve(response.data);
@@ -568,6 +568,13 @@ export default new Vuex.Store({
                                 root: true
                             });
                         }
+
+                        let notification = {
+                            msg: response.data.info,
+                            type: "success"
+                        };
+                        context.commit("setNotification", notification);
+
                         resolve(response.data);
                     })
                     .catch(error => {

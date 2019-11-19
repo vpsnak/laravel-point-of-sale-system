@@ -47,7 +47,7 @@ class OrderController extends BaseController
                                 $giftCard->code = $code[1];
                             }
 
-                            $giftCard->amount = $giftCard->amount + $product->final_price;
+                            $giftCard->amount += $product->final_price;
                             $giftCard->save();
                         }
                     }
@@ -190,9 +190,35 @@ class OrderController extends BaseController
     public function delete($id)
     {
         $order = $this->model::getOne($id);
+
+        foreach ($order->items as $product) {
+            if (isset($product['sku'])) {
+                $code = explode('-', $product['sku']);
+                if (count($code) > 1 && $code[0] === 'giftCard') {
+                    $giftCard = Giftcard::whereCode($code[1])->first();
+
+                    if (!$giftCard) {
+                        return response(['errors' => ['Gift Card' => "Gift card with code: $code[1] not found"]]);
+                    }
+
+                    $giftCard->amount -= $product->final_price;
+
+                    if ($giftCard->amount >= 0) {
+                        $giftCard->save();
+                    } else {
+                        return response(['errors' =>  ['Order cancellation' => "Gift card with code: $giftCard->code has insufficient balance to cancel the order with id: $id<br>No changes where made"]], 422);
+                    }
+                }
+            }
+        }
+
         $order->status = 'canceled';
         $order->save();
-        return response($order, 200);
+
+        return response([
+            'info' => ['Order' => "Order with id: $order->id successfully canceled!"],
+            'data' => $order,
+        ], 200);
     }
 
     public function search(Request $request)
