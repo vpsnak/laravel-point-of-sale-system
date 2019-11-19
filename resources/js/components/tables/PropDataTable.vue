@@ -83,10 +83,7 @@
 						<v-tooltip bottom v-else-if="tableForm === 'giftCardForm'">
 							<template v-slot:activator="{ on }">
 								<v-btn
-									@click="
-                                        (rechargeGiftcardDialog = true),
-                                            (selectedItem = item)
-                                    "
+									@click="rechargeGiftcardDialog(item) "
 									:disabled="btnDisable"
 									class="my-1"
 									icon
@@ -214,10 +211,10 @@ export default {
 		},
 		footerProps() {
 			return {
-						'disable-pagination': this.loading,
-                        'disable-items-per-page': true,
-                        options: { itemsPerPage: 15, page: this.currentPage }
-                    };
+				"disable-pagination": this.loading,
+				"disable-items-per-page": true,
+				options: { itemsPerPage: 15, page: this.currentPage }
+			};
 		},
 		totalItems: {
 			get() {
@@ -296,6 +293,22 @@ export default {
 
 			this.action = "cancelOrder";
 		},
+		rechargeGiftcardDialog(item) {
+			this.dialog = {
+				show: true,
+				width: 600,
+				title: `Recharge the giftcard #${item.id}`,
+				titleCloseBtn: true,
+				icon: "mdi-wallet-giftcard",
+				component: "RechargeGiftCardToCart",
+				model: item,
+				persistent: true
+			};
+
+			this.selectedItem = item;
+
+			this.action = "cancelOrder";
+		},
 		cancelOrderDisabled(item) {
 			if (this.role == "admin" || item.created_by.id === this.user.id) {
 				return false;
@@ -328,12 +341,12 @@ export default {
 		search(e, page) {
 			if (this.keyword.length > 2 || this.searchAction) {
 				this.setLoading(true);
-				
+
 				if (!page) {
-					this.searchAction = this.keyword
+					this.searchAction = this.keyword;
 				} else {
 					if (!this.keyword) {
-						this.keyword = this.searchAction
+						this.keyword = this.searchAction;
 					}
 				}
 
@@ -360,7 +373,7 @@ export default {
 
 		paginate(e) {
 			if (this.searchAction) {
-				this.search(null, e.page)
+				this.search(null, e.page);
 			} else {
 				this.searchAction = false;
 
@@ -430,7 +443,8 @@ export default {
 		viewItemDialog(item) {
 			this.dialog = {
 				show: true,
-				fullscreen: this.tableViewComponent === 'customer' ? true : false,
+				fullscreen:
+					this.tableViewComponent === "customer" ? true : false,
 				width: 1000,
 				title: `View item #${item.id}`,
 				titleCloseBtn: true,
