@@ -9,16 +9,17 @@ use Illuminate\Http\Request;
 
 class ElavonSdkPaymentController extends Controller
 {
-    private $testCase;
-    private $paymentGatewayId;
-    private $chanId;
-    private $selected_transaction;
-    private $amount;
-    private $originalTransId;
-    private $taxFree;
-    private $keyed;
-    private $voiceReferral;
-    private $invoiceNumber;
+    public $testCase;
+    public $paymentGatewayId;
+    public $chanId;
+    public $selected_transaction;
+    public $amount;
+    public $originalTransId;
+    public $taxFree;
+    public $keyed;
+    public $voiceReferral;
+    public $invoiceNumber;
+    public $payment_id;
 
     public function getLogs($test_case = null)
     {
@@ -102,6 +103,8 @@ class ElavonSdkPaymentController extends Controller
     {
         $elavonSdkPayment = new ElavonSdkPayment();
 
+        $elavonSdkPayment->payment_id = $this->payment_id;
+
         $elavonSdkPayment->payment_gateway_id = $this->paymentGatewayId;
         $elavonSdkPayment->chan_id = $this->chanId;
 
@@ -147,6 +150,11 @@ class ElavonSdkPaymentController extends Controller
     private function getPosTerminalStatus($autoInit = true)
     {
         $cardReaderInfo = $this->getCardReaderInfo();
+        if (array_key_exists('errors', $cardReaderInfo)) {
+            return $cardReaderInfo;
+        } else if (array_key_exists('fatal_error', $cardReaderInfo)) {
+            return $cardReaderInfo;
+        }
 
         if ($cardReaderInfo['data']['cardReaderInfo'] === null) {
             $this->saveToSdkLog('POS Terminal is not initialized.', 'error');
@@ -215,7 +223,10 @@ class ElavonSdkPaymentController extends Controller
     public function posPayment($ignoreInitErrors = true)
     {
         $response = $this->getPosTerminalStatus();
-        if (array_key_exists('errors', $response) && !$ignoreInitErrors) {
+
+        if (array_key_exists('fatal_error', $response)) {
+            return (['errors' => $response['fatal_error']]);
+        } else if (array_key_exists('errors', $response) && !$ignoreInitErrors) {
             return $response;
         }
 
@@ -295,10 +306,14 @@ class ElavonSdkPaymentController extends Controller
                 'connect_timeout' => 30,
                 'body' => json_encode($payload)
             ]);
-        } catch (Exception $e) {
-            $this->saveToSdkLog($e->getResponse(), 'error');
-
-            return ['errors' => $e->getResponse()];
+        } catch (\Exception $e) {
+            if ($e->hasResponse()) {
+                $this->saveToSdkLog($e->getResponse(), 'error');
+                return ['errors' => $e->getResponse()];
+            } else {
+                $this->saveToSdkLog($e->getMessage(), 'error');
+                return ['fatal_error' => ['SDK connection' => 'Connection refused<br>Please verify the server running converge sdk is configured correctly']];
+            }
         }
 
         $response = $response->getBody()->getContents();
@@ -333,11 +348,9 @@ class ElavonSdkPaymentController extends Controller
 
     private function getCommandStatusOnCardReader($id)
     {
-        $requestId = idate("U");
-
         $payload = [
             "method" => "getCommandStatusOnCardReader",
-            "requestId" => $requestId,
+            "requestId" => idate("U"),
             "targetType" => "cardReader",
             "version" => "1.0",
             "parameters" => [
@@ -350,11 +363,9 @@ class ElavonSdkPaymentController extends Controller
 
     private function startCardReadersSearch()
     {
-        $requestId = idate("U");
-
         $payload = [
             "method" => "startCardReadersSearch",
-            "requestId" => $requestId,
+            "requestId" => idate("U"),
             "targetType" => "cardReader",
             "version" => "1.0",
             "parameters" => [
@@ -387,7 +398,7 @@ class ElavonSdkPaymentController extends Controller
         return $this->sendRequest($payload);
     }
 
-    private  function getCardReaderInfo()
+    private function getCardReaderInfo()
     {
         $requestId = idate("U");
 

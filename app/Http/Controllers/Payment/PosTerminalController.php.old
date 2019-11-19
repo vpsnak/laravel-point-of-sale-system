@@ -9,15 +9,13 @@ use GuzzleHttp\Client;
 class PosTerminalController extends Controller
 {
     private $payment;
-    private $testCase;
     private $transactionId;
     private $paymentGatewayId;
     private $chanId;
 
-    public function __construct(Payment $payment, $amount, $testCase = null)
+    public function __construct(Payment $payment, $amount)
     {
         $this->payment = $payment;
-        $this->testCase = $testCase;
     }
 
     private function saveToSdkLog($data, $status)
@@ -29,7 +27,6 @@ class PosTerminalController extends Controller
         $elavonSdkPayment->payment_gateway_id = $this->paymentGatewayId;
         $elavonSdkPayment->chan_id = $this->chanId;
 
-        $elavonSdkPayment->test_case = $this->testCase;
         $elavonSdkPayment->status = $status;
         $elavonSdkPayment->log = is_Array($data) ? json_encode($data) : strip_tags($data);
 

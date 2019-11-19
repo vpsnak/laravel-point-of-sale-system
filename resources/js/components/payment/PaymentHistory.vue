@@ -79,6 +79,10 @@ export default {
 			paymentID: null,
 			headers: [
 				{
+					text: "Payment ID",
+					value: "id"
+				},
+				{
 					text: "Operator",
 					value: "created_by.name"
 				},
@@ -100,7 +104,8 @@ export default {
 				},
 				{
 					text: "Actions",
-					value: "actions"
+					value: "actions",
+					sortable: false
 				}
 			]
 		};

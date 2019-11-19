@@ -127,8 +127,7 @@ export default {
 
 						this.$store.state.cart.order = response;
 
-						this.remaining =
-							this.order.total - this.order.total_paid;
+						this.remaining = this.order.total - this.order.total_paid;
 						this.$emit("amountPending", this.remaining);
 					})
 					.finally(() => {
@@ -185,8 +184,8 @@ export default {
 					payload.data["code"] = event.code;
 					break;
 				case "house-account":
-					payload.data["house_account_number"] =
-						event.house_account_number;
+					payload.data["house_account_number"] = event.house_account_number;
+					break;
 			}
 
 			this.create(payload)
