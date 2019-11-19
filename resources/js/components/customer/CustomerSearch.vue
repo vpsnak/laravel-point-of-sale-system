@@ -153,7 +153,7 @@ export default {
 					? "Add new customer"
 					: `View customer #${this.cartCustomer.id}`,
 				titleCloseBtn: true,
-				component: "customerNewForm",
+				component: create ? "customerNewForm" : "customerForm",
 				content: "",
 				model: create ? {} : this.cartCustomer,
 				persistent: create ? true : false
