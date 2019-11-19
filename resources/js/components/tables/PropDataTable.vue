@@ -152,7 +152,7 @@
 			:persistent="dialog.persistent"
 		></interactiveDialog>
 
-		<checkoutDialog :show="checkoutDialog" @close="resetCart" />
+		<checkoutDialog :show="checkoutDialog" @close="resetCart" giftcard />
 	</v-card>
 </template>
 
@@ -177,8 +177,6 @@ export default {
 			current_page: 1,
 			total_items: null,
 			action: "",
-			defaultObject: {},
-			viewId: null,
 			keyword: "",
 			selectedItem: {},
 			search_action: false

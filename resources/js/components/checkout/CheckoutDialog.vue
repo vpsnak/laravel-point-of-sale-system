@@ -72,6 +72,9 @@ export default {
 			closePrompt: false
 		};
 	},
+	props: {
+		giftcard: Boolean
+	},
 	computed: {
 		closeBtnTxt() {
 			return this.order && this.$store.state.cart.currentCheckoutStep !== 3
@@ -112,6 +115,10 @@ export default {
 			this.state = false;
 		},
 		close() {
+			if (this.$props.giftcard) {
+				this.$emit("close", true);
+			}
+
 			if (this.order && this.order.status === "complete") {
 				this.resetState();
 				this.state = false;
@@ -120,8 +127,6 @@ export default {
 			} else {
 				this.state = false;
 			}
-
-			this.$emit("close", true);
 		},
 		confirmation(event) {
 			if (event) {
