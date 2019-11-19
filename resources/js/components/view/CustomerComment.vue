@@ -1,8 +1,5 @@
 <template>
-	<div v-if="customerData">
-		<div class="title">{{customerData.first_name}} {{customerData.last_name}}</div>
-		<div class="subtitle-1 mt-2">{{customerData.comment}}</div>
-	</div>
+	<v-textarea :value="customerData.comment" v-if="customerData" readonly solo auto-grow outlined></v-textarea>
 	<div v-else>Loading...</div>
 </template>
 
@@ -11,7 +8,7 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
-		model: Int32Array | null
+		model: Int32Array
 	},
 	data() {
 		return {

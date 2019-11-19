@@ -1,11 +1,6 @@
 <template>
 	<ValidationObserver v-slot="{ invalid }" ref="customerNewObs">
 		<v-form @submit.prevent="submit">
-			<div class="text-center">
-				<v-chip color="primary" label>
-					<v-icon left>fas fa-user</v-icon>Customer Form
-				</v-chip>
-			</div>
 			<ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="First name">
 				<v-text-field v-model="firstName" label="First name" :error-messages="errors" :success="valid"></v-text-field>
 			</ValidationProvider>
