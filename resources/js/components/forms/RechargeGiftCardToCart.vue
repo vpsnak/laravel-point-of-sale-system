@@ -1,5 +1,5 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="giftCardToCartObs">
+	<ValidationObserver v-slot="{ invalid }" ref="rechargeGiftCardToCartObs">
 		<v-form @submit.prevent="submit">
 			<ValidationProvider
 				:rules="{
