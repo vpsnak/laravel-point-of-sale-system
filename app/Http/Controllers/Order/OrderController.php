@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Customer;
+use App\Giftcard;
 use App\Helper\Price;
 use App\Jobs\ProcessOrder;
 use App\Order;
@@ -28,11 +29,28 @@ class OrderController extends BaseController
                 'shipping_type' => 'string|nullable',
                 'shipping_cost' => 'numeric|nullable',
             ]);
-
             Order::updateData($validatedID, $validatedData);
-
             $order = Order::getOne($validatedID['id']);
             ProcessOrder::dispatchNow($order);
+
+            if ($validatedData['status'] === 'complete') {
+                foreach ($order->items as $product) {
+                    if (isset($product['sku'])) {
+                        $code = explode('-', $product['sku']);
+                        if (count($code) === 2 && $code[0] === 'giftCard') {
+                            $giftCard = Giftcard::whereCode($code[1])->first();
+
+                            if ($giftCard) {
+                                $giftCard->amount = $giftCard->amount + $product->final_price;
+                                $giftCard->save();
+                            } else {
+                                return response(['errors' => ['Unable to recharge giftcard']]);
+                            }
+                        }
+                    }
+                }
+            }
+
             return response($order, 200);
         }
 
