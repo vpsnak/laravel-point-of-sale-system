@@ -35,17 +35,20 @@ class OrderController extends BaseController
 
             if ($validatedData['status'] === 'complete') {
                 foreach ($order->items as $product) {
+
                     if (isset($product['sku'])) {
                         $code = explode('-', $product['sku']);
-                        if (count($code) === 2 && $code[0] === 'giftCard') {
+                        if (count($code) > 1 && $code[0] === 'giftCard') {
                             $giftCard = Giftcard::whereCode($code[1])->first();
 
-                            if ($giftCard) {
-                                $giftCard->amount = $giftCard->amount + $product->final_price;
-                                $giftCard->save();
-                            } else {
-                                return response(['errors' => ['Unable to recharge giftcard']]);
+                            if (!$giftCard) {
+                                $giftCard = new Giftcard;
+                                $giftCard->name = $product['name'];
+                                $giftCard->code = $code[1];
                             }
+
+                            $giftCard->amount = $giftCard->amount + $product->final_price;
+                            $giftCard->save();
                         }
                     }
                 }

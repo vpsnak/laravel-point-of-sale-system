@@ -305,9 +305,7 @@ export default {
 				persistent: true
 			};
 
-			this.selectedItem = item;
-
-			this.action = "cancelOrder";
+			this.action = "recharge";
 		},
 		cancelOrderDisabled(item) {
 			if (this.role == "admin" || item.created_by.id === this.user.id) {
@@ -443,8 +441,7 @@ export default {
 		viewItemDialog(item) {
 			this.dialog = {
 				show: true,
-				fullscreen:
-					this.tableViewComponent === "customer" ? true : false,
+				fullscreen: this.tableViewComponent === "customer" ? true : false,
 				width: 1000,
 				title: `View item #${item.id}`,
 				titleCloseBtn: true,
@@ -474,6 +471,8 @@ export default {
 					case "cancelOrder":
 						this.cancelOrder();
 						break;
+					case "recharge":
+						this.checkoutDialog = true;
 					default:
 						break;
 				}
