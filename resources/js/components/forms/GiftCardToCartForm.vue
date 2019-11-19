@@ -79,7 +79,7 @@ export default {
 			});
 			this.IdAndSkuGenerator();
 			this.giftCard.final_price = this.giftCard.price.amount;
-			this.giftCard.name = "Gift cart - " + this.giftCard.name;
+			this.giftCard.name = "Gift card - " + this.giftCard.name;
 			this.$store.commit("cart/addProduct", this.giftCard);
 			this.$emit("submit", {
 				notification: {
@@ -90,9 +90,7 @@ export default {
 		},
 		IdAndSkuGenerator() {
 			let random = function() {
-				return (((1 + Math.random()) * 0x10000) | 0)
-					.toString(16)
-					.substring(1);
+				return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
 			};
 			this.giftCard.id = "giftCard" + "-" + random();
 			this.giftCard.sku = "giftCard" + "-" + this.giftCard.code;

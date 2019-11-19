@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PlantshedPostCodes::class);
         $this->call(PlantshedAreasSeeder::class);
 
-        $this->call(CouponSeeder::class);
         $this->call(GiftcardSeeder::class);
+        $this->call(CouponSeeder::class);
     }
 }
