@@ -120,6 +120,8 @@ export default {
 			} else {
 				this.state = false;
 			}
+
+			this.$emit("close", true);
 		},
 		confirmation(event) {
 			if (event) {
@@ -138,6 +140,9 @@ export default {
 
 		...mapActions(["delete"]),
 		...mapMutations("cart", ["resetState"])
+	},
+	beforeDestroy() {
+		this.$off("close");
 	}
 };
 </script>

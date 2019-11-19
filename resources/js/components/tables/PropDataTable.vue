@@ -152,7 +152,7 @@
 			:persistent="dialog.persistent"
 		></interactiveDialog>
 
-		<checkoutDialog :show="checkoutDialog" />
+		<checkoutDialog :show="checkoutDialog" @close="resetCart" />
 	</v-card>
 </template>
 
@@ -261,6 +261,9 @@ export default {
 		}
 	},
 	methods: {
+		resetCart() {
+			this.$store.commit("cart/resetState");
+		},
 		resetDialog() {
 			this.dialog = {
 				show: false,
