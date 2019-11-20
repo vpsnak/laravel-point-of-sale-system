@@ -1,20 +1,39 @@
 <template>
-	<div>
-		<v-form>
+	<ValidationObserver v-slot="{ invalid }" ref="giftcardObs">
+		<v-form @submit.prevent="submit">
 			<div class="text-center">
 				<v-chip color="primary" label>
 					<v-icon left>fas fa-gifts</v-icon>Gift Card Form
 				</v-chip>
 			</div>
-			<v-text-field v-model="formFields.name" label="Name" required></v-text-field>
-			<v-text-field v-model="formFields.code" label="Code" required></v-text-field>
+			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Names">
+				<v-text-field v-model="formFields.name" label="Name" :error-messages="errors" :success="valid"></v-text-field>
+			</ValidationProvider>
+			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Code">
+				<v-text-field v-model="formFields.code" label="Code" :error-messages="errors" :success="valid"></v-text-field>
+			</ValidationProvider>
 			<v-switch v-model="formFields.enabled" label="Enabled"></v-switch>
-			<v-text-field v-model="formFields.amount" type="number" label="Amount" required></v-text-field>
+			<ValidationProvider
+				:rules="{
+                    required : true,
+					regex: /^[\d]{1,8}(\.[\d]{1,2})?$/g
+					}"
+				v-slot="{ errors, valid }"
+				name="Amount"
+			>
+				<v-text-field
+					v-model="formFields.amount"
+					type="number"
+					label="Amount"
+					:error-messages="errors"
+					:success="valid"
+				></v-text-field>
+			</ValidationProvider>
 
-			<v-btn class="mr-4" @click="submit">submit</v-btn>
-			<v-btn v-if="this.model === undefined" @click="clear">clear</v-btn>
+			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="invalid || loading">submit</v-btn>
+			<v-btn v-if="!model" @click="clear">clear</v-btn>
 		</v-form>
-	</div>
+	</ValidationObserver>
 </template>
 <script>
 import { mapActions } from "vuex";
@@ -25,6 +44,7 @@ export default {
 	},
 	data() {
 		return {
+			loading: false,
 			defaultValues: {},
 			formFields: {
 				name: null,
@@ -44,6 +64,7 @@ export default {
 	},
 	methods: {
 		submit() {
+			this.loading = true;
 			let payload = {
 				model: "gift-cards",
 				data: { ...this.formFields }

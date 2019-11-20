@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Coupon;
 use App\Customer;
+use App\Http\Controllers\ElavonSdkPaymentController;
 use App\Giftcard;
 use App\Helper\Price;
 use App\Order;
@@ -22,9 +23,6 @@ class PaymentController extends BaseController
             'amount' => 'nullable|required_unless:payment_type,coupon|numeric|min:0.01',
             'order_id' => 'required|exists:orders,id',
             'cash_register_id' => 'required|exists:cash_registers,id',
-
-            // test case for API/SDK
-            'test_case' => 'sometimes|string',
 
             // card validation
             'card.number' => 'nullable|required_if:payment_type,card|numeric',
@@ -113,10 +111,10 @@ class PaymentController extends BaseController
                 $order = Order::findOrFail($validatedData['order_id']);
 
                 $payment->amount = $order->subtotal - Price::calculateDiscount(
-                        $order->subtotal,
-                        $coupon->discount->type,
-                        $coupon->discount->amount
-                    );
+                    $order->subtotal,
+                    $coupon->discount->type,
+                    $coupon->discount->amount
+                );
                 $payment->save();
                 $coupon->decrement('uses');
                 break;
@@ -151,21 +149,21 @@ class PaymentController extends BaseController
                 break;
 
             case 'pos-terminal':
-                $posTerminalController = new PosTerminalController(
-                    $payment,
-                    array_key_exists('test_case', $validatedData) ? $validatedData['test_case'] : null
-                );
-                $paymentResponse = $posTerminalController->posPayment($validatedData['amount']);
+                $elavonSdkPayment = new ElavonSdkPaymentController();
+                $elavonSdkPayment->selected_transaction = 'SALE';
+                $elavonSdkPayment->amount = 100 * $validatedData['amount'];
+                $elavonSdkPayment->payment_id = $payment->id;
+
+                $paymentResponse = $elavonSdkPayment->posPayment();
 
                 if (array_key_exists('errors', $paymentResponse)) {
                     $payment->status = 'failed';
                     $payment->save();
-
                     return response([
                         'errors' => [
                             'POS Terminal' => [$paymentResponse['errors']]
                         ]
-                    ], 403);
+                    ], 422);
                 }
 
                 break;
@@ -186,8 +184,10 @@ class PaymentController extends BaseController
                     return response([
                         'errors' => [
                             'House Account' => [
-                                'House account has insufficient balance.<br>Balance available: $ ' . round($customer->house_account_limit,
-                                    2)
+                                'House account has insufficient balance.<br>Balance available: $ ' . round(
+                                    $customer->house_account_limit,
+                                    2
+                                )
                             ]
                         ]
                     ], 403);

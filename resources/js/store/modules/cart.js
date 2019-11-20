@@ -3,7 +3,10 @@ export default {
 
     state: {
         retail: true,
+        refundLoading: false,
+        paymentLoading: false,
         isValid: false,
+        isValidCheckout: true,
 
         locations: [
             { id: 1, label: "Funeral Home" },
@@ -58,7 +61,7 @@ export default {
             {
                 id: 2,
                 name: "Payment",
-                icon: "payment",
+                icon: "mdi-cash-register",
                 component: "paymentStep",
                 completed: false
             },
@@ -80,6 +83,7 @@ export default {
         discount_amount: 0,
 
         shipping: {
+            billing_address: undefined,
             pickup_point: undefined,
             address: undefined,
             notes: "",
@@ -95,9 +99,6 @@ export default {
     },
 
     mutations: {
-        setIsValid(state, value) {
-            state.isValid = value;
-        },
         setShippingCost(state, value) {
             state.shipping.cost = value;
         },
@@ -192,6 +193,7 @@ export default {
             });
 
             state.shipping = {
+                billing_address: undefined,
                 address: undefined,
                 method: "retail",
                 date: undefined,
@@ -204,6 +206,7 @@ export default {
         resetShipping(state) {
             let notes = state.shipping.notes;
             state.shipping = {
+                billing_address: undefined,
                 notes: notes,
                 address: undefined,
                 method: "retail",

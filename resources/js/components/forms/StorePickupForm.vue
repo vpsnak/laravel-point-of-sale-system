@@ -1,27 +1,64 @@
 <template>
-	<v-form @submit="submit">
-		<v-text-field v-model="formFields.name" label="Name" :disabled="loading" required></v-text-field>
-		<v-select
-			v-model="formFields.region_id"
-			:items="regions"
-			label="Regions"
-			required
-			item-text="default_name"
-			item-value="region_id"
-		></v-select>
-		<v-select
-			v-model="formFields.country_id"
-			:items="countries"
-			label="Countries"
-			required
-			item-text="iso2_code"
-			item-value="iso2_code"
-		></v-select>
-		<v-text-field v-model="formFields.street" label="Street" :disabled="loading" required></v-text-field>
-		<v-text-field v-model="formFields.street1" label="Second Street" :disabled="loading" required></v-text-field>
-		<v-btn class="mr-4" type="submit" :loading="loading" :disabled="loading">submit</v-btn>
-		<v-btn v-if="this.model === undefined" @click="clear">clear</v-btn>
-	</v-form>
+	<ValidationObserver v-slot="{ invalid }" ref="storePickupObs">
+		<v-form @submit.prevent="submit">
+			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Name">
+				<v-text-field
+					v-model="formFields.name"
+					label="Name"
+					:disabled="loading"
+					:error-messages="errors"
+					:success="valid"
+				></v-text-field>
+			</ValidationProvider>
+			<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Regions">
+				<v-select
+					v-model="formFields.region_id"
+					:items="regions"
+					label="Regions"
+					:disabled="loading"
+					:loading="loading"
+					:error-messages="errors"
+					:success="valid"
+					item-text="default_name"
+					item-value="region_id"
+				></v-select>
+			</ValidationProvider>
+			<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Countries">
+				<v-select
+					v-model="formFields.country_id"
+					:items="countries"
+					label="Countries"
+					:disabled="loading"
+					:loading="loading"
+					:error-messages="errors"
+					:success="valid"
+					item-text="iso2_code"
+					item-value="iso2_code"
+				></v-select>
+			</ValidationProvider>
+			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Street">
+				<v-text-field
+					v-model="formFields.street"
+					label="Street"
+					:disabled="loading"
+					:error-messages="errors"
+					:success="valid"
+				></v-text-field>
+			</ValidationProvider>
+			<ValidationProvider rules="max:191" v-slot="{ errors, valid }" name="Second Street">
+				<v-text-field
+					v-model="formFields.street1"
+					label="Second Street"
+					:disabled="loading"
+					:error-messages="errors"
+					:success="valid"
+				></v-text-field>
+			</ValidationProvider>
+
+			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="invalid || loading">submit</v-btn>
+			<v-btn v-if="!model" @click="clear">clear</v-btn>
+		</v-form>
+	</ValidationObserver>
 </template>
 
 <script>
@@ -47,16 +84,8 @@ export default {
 		};
 	},
 	mounted() {
-		this.getAll({
-			model: "regions"
-		}).then(regions => {
-			this.regions = regions;
-		});
-		this.getAll({
-			model: "countries"
-		}).then(countries => {
-			this.countries = countries;
-		});
+		this.getAllRegions();
+		this.getAllCountries();
 		this.defaultValues = { ...this.formFields };
 		if (this.$props.model) {
 			this.formFields = {
@@ -92,6 +121,25 @@ export default {
 		},
 		clear() {
 			this.formFields = { ...this.defaultValues };
+		},
+		getAllRegions() {
+			this.loading = true;
+			this.getAll({
+				model: "regions"
+			})
+				.then(regions => {
+					this.regions = regions;
+				})
+				.finally(() => {
+					this.loading = false;
+				});
+		},
+		getAllCountries() {
+			this.getAll({
+				model: "countries"
+			}).then(countries => {
+				this.countries = countries;
+			});
 		},
 
 		...mapActions({

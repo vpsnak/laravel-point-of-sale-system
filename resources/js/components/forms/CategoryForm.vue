@@ -1,12 +1,12 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="obs">
-		<v-form>
+	<ValidationObserver v-slot="{ invalid }" ref="categoryObs">
+		<v-form @submit.prevent="submit">
 			<div class="text-center">
 				<v-chip color="primary" label>
 					<v-icon left>fas fa-bars</v-icon>Category Form
 				</v-chip>
 			</div>
-			<ValidationProvider rules="required|min:3" v-slot="{ errors, valid }" name="Name">
+			<ValidationProvider rules="required|min:3|max:191" v-slot="{ errors, valid }" name="Name">
 				<v-text-field
 					:error-messages="errors"
 					:success="valid"
@@ -20,7 +20,8 @@
 				class="mr-4"
 				type="submit"
 				@click.prevent="submit"
-				:disabled="invalid || disableSubmit"
+				:loading="loading"
+				:disabled="invalid || loading"
 			>submit</v-btn>
 			<v-btn v-if="!model" class="mr-4" @click="clear">clear</v-btn>
 		</v-form>
@@ -36,17 +37,13 @@ export default {
 	},
 	data() {
 		return {
+			loading: false,
 			defaultValues: {},
 			formFields: {
 				name: "",
 				in_product_listing: false
 			}
 		};
-	},
-	computed: {
-		disableSubmit() {
-			return this.formFields.name ? false : true;
-		}
 	},
 	mounted() {
 		this.defaultValues = { ...this.formFields };
@@ -58,24 +55,30 @@ export default {
 	},
 	methods: {
 		submit() {
+			this.loading = true;
+
 			let payload = {
 				model: "categories",
 				data: { ...this.formFields }
 			};
-			this.create(payload).then(() => {
-				this.$emit("submit", {
-					getRows: true,
-					model: "categories",
-					notification: {
-						msg: "Category added successfully",
-						type: "success"
-					}
+			this.create(payload)
+				.then(() => {
+					this.$emit("submit", {
+						getRows: true,
+						model: "categories",
+						notification: {
+							msg: "Category added successfully",
+							type: "success"
+						}
+					});
+					this.clear();
+				})
+				.finally(() => {
+					this.loading = false;
 				});
-				this.clear();
-			});
 		},
 		clear() {
-			this.$refs.obs.reset();
+			this.$refs.categoryObs.reset();
 			this.formFields = { ...this.defaultValues };
 		},
 		...mapActions({

@@ -1,11 +1,17 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="obs">
-		<v-form>
+	<ValidationObserver
+		v-slot="{ invalid }"
+		ref="addressDeliveryObs"
+		tag="form"
+		@submit.prevent="submit"
+	>
+		<div>
 			<v-row>
 				<v-col cols="4">
 					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="First name">
 						<v-text-field
 							v-model="formFields.first_name"
+							:readonly="$props.readonly"
 							label="First name"
 							:disabled="loading"
 							:error-messages="errors"
@@ -15,6 +21,7 @@
 					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="City">
 						<v-text-field
 							v-model="formFields.city"
+							:readonly="$props.readonly"
 							label="City"
 							:disabled="loading"
 							:error-messages="errors"
@@ -24,6 +31,7 @@
 					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Region">
 						<v-select
 							v-model="formFields.region_id"
+							:readonly="$props.readonly"
 							:items="regions"
 							label="Regions"
 							item-text="default_name"
@@ -32,20 +40,19 @@
 							:success="valid"
 						></v-select>
 					</ValidationProvider>
-					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Company">
-						<v-text-field
-							v-model="formFields.company"
-							label="Company"
-							:disabled="loading"
-							:error-messages="errors"
-							:success="valid"
-						></v-text-field>
-					</ValidationProvider>
+
+					<v-text-field
+						v-model="formFields.company"
+						:readonly="$props.readonly"
+						label="Company"
+						:disabled="loading"
+					></v-text-field>
 				</v-col>
 				<v-col cols="4">
 					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Last Name">
 						<v-text-field
 							v-model="formFields.last_name"
+							:readonly="$props.readonly"
 							label="Last name"
 							:disabled="loading"
 							:error-messages="errors"
@@ -55,6 +62,7 @@
 
 					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Post Code">
 						<v-text-field
+							:readonly="$props.readonly"
 							v-model="formFields.postcode"
 							label="Postcode"
 							:disabled="loading"
@@ -65,6 +73,7 @@
 
 					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Country">
 						<v-select
+							:readonly="$props.readonly"
 							v-model="formFields.country_id"
 							:items="countries"
 							label="Countries"
@@ -75,19 +84,17 @@
 							:success="valid"
 						></v-select>
 					</ValidationProvider>
-					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Vat ID">
-						<v-text-field
-							v-model="formFields.vat_id"
-							label="Vat id"
-							:disabled="loading"
-							:error-messages="errors"
-							:success="valid"
-						></v-text-field>
-					</ValidationProvider>
+					<v-text-field
+						v-model="formFields.vat_id"
+						label="Vat id"
+						:disabled="loading"
+						:readonly="$props.readonly"
+					></v-text-field>
 				</v-col>
 				<v-col cols="4">
 					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Street">
 						<v-text-field
+							:readonly="$props.readonly"
 							v-model="formFields.street"
 							label="Street"
 							:disabled="loading"
@@ -95,8 +102,9 @@
 							:success="valid"
 						></v-text-field>
 					</ValidationProvider>
-					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Second Street">
+					<ValidationProvider v-slot="{ errors, valid }" name="Second Street">
 						<v-text-field
+							:readonly="$props.readonly"
 							v-model="formFields.street2"
 							label="Second Street"
 							:disabled="loading"
@@ -106,6 +114,7 @@
 					</ValidationProvider>
 					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Phone">
 						<v-text-field
+							:readonly="$props.readonly"
 							v-model="formFields.phone"
 							label="Phone"
 							:disabled="loading"
@@ -115,7 +124,11 @@
 					</ValidationProvider>
 				</v-col>
 			</v-row>
-		</v-form>
+			<v-row v-if="!$props.readonly">
+				<v-spacer></v-spacer>
+				<v-btn type="submit" :disabled="invalid || loading" :loading="loading">Submit</v-btn>
+			</v-row>
+		</div>
 	</ValidationObserver>
 </template>
 
@@ -124,7 +137,9 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
-		model: Object || undefined
+		model: Object,
+		readonly: Boolean,
+		isBilling: Boolean
 	},
 	data() {
 		return {
@@ -166,6 +181,33 @@ export default {
 		}
 	},
 	methods: {
+		submit() {
+			this.formFields.region = this.formFields.region_id;
+
+			let payload = {
+				model: "addresses",
+				data: this.formFields
+			};
+
+			payload.data.type = this.$props.model.type;
+			payload.data.customer_id = this.$store.state.cart.customer.id;
+
+			this.create(payload).then(response => {
+				this.$store.commit("setNotification", {
+					msg: response.info,
+					type: "success"
+				});
+
+				if (payload.data.type === "shipping") {
+					this.$store.state.cart.shipping.address = response["address"];
+				} else {
+					this.$store.state.cart.shipping.billing_address = response["address"];
+				}
+
+				this.$emit("submit", true);
+			});
+		},
+
 		getAllRegions() {
 			this.loading = true;
 			this.getAll({
@@ -185,12 +227,10 @@ export default {
 				this.countries = countries;
 			});
 		},
-		...mapActions({
-			getAll: "getAll",
-			getOne: "getOne",
-			create: "create",
-			delete: "delete"
-		})
+		...mapActions(["create", "getAll"])
+	},
+	beforeDestroy() {
+		this.$off("submit");
 	}
 };
 </script>

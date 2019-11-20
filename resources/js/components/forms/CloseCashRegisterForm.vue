@@ -1,27 +1,32 @@
 <template>
-	<div>
-		<v-text-field
-			:loading="loading"
-			v-model="closing_amount"
-			type="number"
-			label="Closing amount"
-			required
-		></v-text-field>
-		<v-row>
-			<v-col cols="6" v-if="cashRegister.earnings">
-				<span class="title">
-					Remaining:
-					<span
-						class="amber--text"
-						v-text="'$ ' + cashRegister.earnings.cash_total.toFixed(2)"
-					/>
-				</span>
-			</v-col>
-			<v-col cols="6">
-				<v-btn @click="close" :loading="loading">Close Cash Register</v-btn>
-			</v-col>
-		</v-row>
-	</div>
+	<ValidationObserver v-slot="{ invalid }" ref="closeCashRegisterObs">
+		<v-form @submit.prevent="submit">
+			<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Closing Amount">
+				<v-text-field
+					:loading="loading"
+					v-model="closing_amount"
+					type="number"
+					label="Closing amount"
+					:error-messages="errors"
+					:success="valid"
+				></v-text-field>
+			</ValidationProvider>
+			<v-row>
+				<v-col cols="6" v-if="cashRegister.earnings">
+					<span class="title">
+						Remaining:
+						<span
+							class="amber--text"
+							v-text="'$ ' + cashRegister.earnings.cash_total.toFixed(2)"
+						/>
+					</span>
+				</v-col>
+				<v-col cols="6">
+					<v-btn type="submit" :loading="loading" :disabled="invalid">Close Cash Register</v-btn>
+				</v-col>
+			</v-row>
+		</v-form>
+	</ValidationObserver>
 </template>
 <script>
 import { mapActions } from "vuex";
@@ -42,7 +47,7 @@ export default {
 		}
 	},
 	methods: {
-		close() {
+		submit() {
 			this.loading = true;
 			let payload = {
 				data: {

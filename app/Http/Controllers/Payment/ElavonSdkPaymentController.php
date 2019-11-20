@@ -2,31 +2,116 @@
 
 namespace App\Http\Controllers;
 
+use App\ElavonSdkPayment;
+use DB;
 use GuzzleHttp\Client;
-use \App\Payment;
-use \App\ElavonSdkPayment;
-use \App\TransactionLog;
+use Illuminate\Http\Request;
 
-class PosTerminalController extends Controller
+class ElavonSdkPaymentController extends Controller
 {
-    private $payment;
-    private $testCase;
-    private $transactionId;
-    private $paymentGatewayId;
-    private $chanId;
+    public $testCase;
+    public $paymentGatewayId;
+    public $chanId;
+    public $selected_transaction;
+    public $amount;
+    public $originalTransId;
+    public $taxFree;
+    public $keyed;
+    public $voiceReferral;
+    public $invoiceNumber;
+    public $payment_id;
+    public $CARDHOLDER_ADDRESS;
+    public $CARDHOLDER_ZIP;
 
-    public function __construct(Payment $payment, $amount, $testCase = null)
+    public function getLogs($test_case = null)
     {
-        $this->payment = $payment;
-        $this->testCase = $testCase;
+        if ($test_case) {
+            return response(ElavonSdkPayment::whereTestCase($test_case)->get());
+        } else {
+            return response(ElavonSdkPayment::all());
+        }
+    }
+
+    public function deleteAll()
+    {
+        DB::table('elavon_sdk_payments')->truncate();
+        return response('SDK Logs truncated');
+    }
+
+    public function lookup(Request $request)
+    {
+        $validatedData = $request->validate([
+            'creditCard' => 'nullable',
+            'last4CC' => 'nullable|numeric|digits:4',
+            'beginDate' => 'nullable',
+            'endDate' => 'nullable',
+            'transId' => 'nullable',
+            'utcDate' => 'nullable|required_with:transId',
+            'merchantTransactionReference' => 'nullable'
+        ]);
+
+        $response = $this->openPaymentGateway();
+
+        if (array_key_exists('errors', $response)) {
+            return $response;
+        }
+
+        return $this->searchPaymentTransaction($validatedData);
+    }
+
+    private function searchPaymentTransaction(array $parameters)
+    {
+        $payload = [
+            "method" => "searchPaymentTransaction",
+            "requestId" => "19183388",
+            "targetType" => "paymentGatewayConverge",
+            "version" => "1.0",
+            "parameters" => [
+                'paymentGatewayId' => $this->paymentGatewayId
+            ]
+        ];
+        $payload['parameters'] += $parameters;
+
+        return $this->sendRequest($payload);
+    }
+
+    public function index(Request $request)
+    {
+        $validatedData = $request->validate([
+            'test_case' => 'sometimes|string',
+            'selected_transaction' => 'required|string',
+            'amount' => 'nullable|numeric|min:0',
+            'originalTransId' => 'nullable|string',
+            'taxFree' => 'nullable|boolean',
+            'keyed' => 'nullable|boolean',
+            'voiceReferral' => 'nullable|boolean',
+            'invoiceNumber' => 'nullable|string',
+            'CARDHOLDER_ADDRESS' => 'nullable|string|max:30',
+            'CARDHOLDER_ZIP' => 'nullable|string|max:9'
+        ]);
+
+        $this->selected_transaction = $validatedData['selected_transaction'];
+
+        array_key_exists('amount', $validatedData) ? $this->amount = 100 * $validatedData['amount'] : null;
+        array_key_exists('originalTransId', $validatedData) ? $this->originalTransId = $validatedData['originalTransId'] : null;
+        array_key_exists('test_case', $validatedData) ? $this->testCase = $validatedData['test_case'] : null;
+        array_key_exists('keyed', $validatedData) ? $this->keyed = $validatedData['keyed'] : null;
+        array_key_exists('voiceReferral', $validatedData) && $this->voiceReferral == true ? $this->voiceReferral = '321zxc' : $this->voiceReferral = false;
+        array_key_exists('invoiceNumber', $validatedData) ? $this->invoiceNumber =  $validatedData['invoiceNumber'] : $this->invoiceNumber = null;
+        array_key_exists('taxFree', $validatedData) ? $this->taxFree = $validatedData['taxFree'] : $this->taxFree = false;
+        array_key_exists('keyed', $validatedData) ? $this->keyed = $validatedData['keyed'] : null;
+        array_key_exists('CARDHOLDER_ADDRESS', $validatedData) ? $this->CARDHOLDER_ADDRESS = $validatedData['CARDHOLDER_ADDRESS'] : null;
+        array_key_exists('CARDHOLDER_ZIP', $validatedData) ? $this->CARDHOLDER_ZIP = $validatedData['CARDHOLDER_ZIP'] : null;
+
+        return response($this->posPayment());
     }
 
     private function saveToSdkLog($data, $status)
     {
         $elavonSdkPayment = new ElavonSdkPayment();
 
-        $elavonSdkPayment->payment_id = $this->payment->id;
-        $elavonSdkPayment->cash_register_id = $this->payment->cash_register_id;
+        $elavonSdkPayment->payment_id = $this->payment_id;
+
         $elavonSdkPayment->payment_gateway_id = $this->paymentGatewayId;
         $elavonSdkPayment->chan_id = $this->chanId;
 
@@ -37,18 +122,11 @@ class PosTerminalController extends Controller
         $elavonSdkPayment->save();
     }
 
-    private function setPaymentStatus($status)
-    {
-        $this->payment->status = $status;
-        $this->payment->save();
-    }
-
     private function initPosTerminal()
     {
         $id = $this->startCardReaderConfiguration();
 
         if ($id['statusDetails'] === 'TARGET_UNAVAILABLE') {
-            $this->setPaymentStatus('failed');
             $msg = 'POS Terminal initialization failed.<br>Please restart Converge Service and try again.';
             $this->saveToSdkLog($msg, 'error');
 
@@ -57,10 +135,7 @@ class PosTerminalController extends Controller
 
         $id = $id['data']['cardReaderCommand']['id'];
 
-        $response = $this->startCardReadersSearch();
-        $this->saveToSdkLog($response, 'info');
-
-        $id = $response['requestId'];
+        $id = $this->startCardReadersSearch();
 
         do {
             sleep(1);
@@ -70,15 +145,23 @@ class PosTerminalController extends Controller
         $this->saveToSdkLog($response, 'success');
 
         if (!count($response['data']['cardReadersSearch']['cardReaders'])) {
-            $this->setPaymentStatus('failed');
-
-            return ['errors' => 'POS Terminal failed to initialize properly'];
+            $msg = 'POS Terminal failed to initialize properly<br>Please restart ConvergeConnect service and try again';
+            $this->saveToSdkLog($response, 'error');
+            $this->saveToSdkLog($msg, 'error');
+            return ['errors' => $msg];
+        } else {
+            return [];
         }
     }
 
     private function getPosTerminalStatus($autoInit = true)
     {
         $cardReaderInfo = $this->getCardReaderInfo();
+        if (array_key_exists('errors', $cardReaderInfo)) {
+            return $cardReaderInfo;
+        } else if (array_key_exists('fatal_error', $cardReaderInfo)) {
+            return $cardReaderInfo;
+        }
 
         if ($cardReaderInfo['data']['cardReaderInfo'] === null) {
             $this->saveToSdkLog('POS Terminal is not initialized.', 'error');
@@ -88,76 +171,79 @@ class PosTerminalController extends Controller
             } else {
                 return ['errors' => 'POS Terminal is not initialized'];
             }
+        } else {
+            $this->saveToSdkLog('POS Terminal is already initialized', 'info');
+            return [];
         }
     }
 
     private function getTransactionResponse($response)
     {
         if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'FAILED') {
-            $this->setPaymentStatus('failed');
             $this->saveToSdkLog($response, 'failed');
 
             switch ($response['data']['paymentGatewayCommand']['paymentTransactionData']['errors'][0]) {
                 case 'ECLCommerceError ECLCardReaderCanceled':
                     $msg = 'Transaction canceled';
-                    $this->setPaymentStatus(strip_tags($msg));
+                    $this->saveToSdkLog($msg, 'declined');
                     return ['errors' => $msg];
                 case 'ECLCommerceError ECLTransactionCardNeedsRemoval':
                     $msg = 'Remove the card and try again<br>Insert the card only when prompted by the POS Terminal';
-                    $this->setPaymentStatus(strip_tags($msg));
+                    $this->saveToSdkLog($msg, 'declined');
                     return ['errors' => $msg];
                 case 'ECLCommerceError ECLTransactionCardRemoved':
                     $msg = 'Card has been removed before the transaction completed';
-                    $this->setPaymentStatus(strip_tags($msg));
+                    $this->saveToSdkLog($msg, 'declined');
                     return ['errors' => $msg];
                 case 'ECLCommerceError ECLCardReaderCannotConnect':
                     $msg = 'POS Terminal disconnected<br>Please verify that POS Terminal is properly connected and try again';
-                    $this->setPaymentStatus(strip_tags($msg));
+                    $this->saveToSdkLog($msg, 'declined');
                     return ['errors' => $msg];
                 case 'ECLCommerceError ECLCardReaderCardDataInvalid':
                     $msg = 'Invalid card';
-                    $this->setPaymentStatus(strip_tags($msg));
+                    $this->saveToSdkLog($msg, 'declined');
                     return ['errors' => $msg];
                 case 'ECLCommerceError ECLTransactionCardReaderNoneAvailable':
                     $msg = 'POS Terminal is not available<br>Please verify the POS Terminal is properly connected and try again';
-                    $this->setPaymentStatus(strip_tags($msg));
+                    $this->saveToSdkLog($msg, 'declined');
                     return ['errors' => $msg];
                 default:
                     $msg = 'Warning: Unhandled error occured. Please check log file entry above';
-                    $this->setPaymentStatus(strip_tags($msg));
+                    $this->saveToSdkLog($msg, 'declined');
                     return ['errors' => $msg];
             }
         } else if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'DECLINED') {
-            $this->setPaymentStatus('declined');
             $this->saveToSdkLog($response, 'declined');
 
             return ['errors' => 'Card declined by issuer'];
         } else if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'APPROVED') {
-            $this->setPaymentStatus('approved');
             $this->saveToSdkLog($response, 'approved');
 
             return ['success' => $response['data']['paymentGatewayCommand']['eventQueue']];
         } else {
-            $this->setPaymentStatus('failed');
-            $this->saveToSdkLog($response, 'failed');
+            $this->saveToSdkLog($response, 'unhandled');
 
             return ['errors' => $response];
         }
     }
 
-    public function posPayment($amount)
+    public function posPayment($ignoreInitErrors = true)
     {
-        $this->setPaymentStatus('failed');
-        $this->getPosTerminalStatus();
-        $amount *= 100;
+        $response = $this->getPosTerminalStatus();
 
-        $errors = $this->openPaymentGateway();
-
-        if (array_key_exists('errors', $errors)) {
-            return $errors;
+        if (array_key_exists('fatal_error', $response)) {
+            return (['errors' => $response['fatal_error']]);
+        } else if (array_key_exists('errors', $response) && !$ignoreInitErrors) {
+            return $response;
         }
 
-        if (array_key_exists('errors', $this->startPaymentTransaction($amount))) {
+        $response = $this->openPaymentGateway();
+
+        if (array_key_exists('errors', $response)) {
+            return $response;
+        }
+
+        if (array_key_exists('errors', $this->startPaymentTransaction())) {
             $msg = 'Error at starting transaction. Please try again.';
             $this->saveToSdkLog($msg, 'error');
             return ['errors' => $msg];
@@ -168,18 +254,55 @@ class PosTerminalController extends Controller
         do {
             sleep(1);
             $response = $this->getPaymentTransactionStatus();
+
+            if (array_key_exists('requiredInformation', $response['data']['paymentGatewayCommand'])) {
+                if (is_array($response['data']['paymentGatewayCommand']['requiredInformation'])) {
+                    switch ($response['data']['paymentGatewayCommand']['requiredInformation'][0]) {
+                        case 'VoiceReferral':
+                        case 'CardPresent':
+                            $this->continuePaymentTransaction();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
         } while ($response['data']['paymentGatewayCommand']['completed'] === false);
-        $this->saveToSdkLog($response, 'success');
 
-        $response = $this->getTransactionResponse($response);
+        return $this->getTransactionResponse($response);
+    }
 
-        return $response;
+    private function continuePaymentTransaction()
+    {
+        $payload = [
+            'method' => 'continuePaymentTransaction',
+            'requestId' => idate("U"),
+            'targetType' => 'paymentGatewayConverge',
+            'version' => '1.0',
+            'parameters' => [
+                'paymentGatewayId' => $this->paymentGatewayId,
+                'chanId' => $this->chanId
+            ]
+        ];
+
+        if ($this->keyed != false) {
+            $payload['parameters']['CardPresent'] = false;
+        }
+
+        if ($this->voiceReferral != false) {
+            $payload['parameters']['VoiceReferral'] = $this->voiceReferral;
+        }
+
+        return $this->sendRequest($payload);
     }
 
     private function sendRequest($payload, $verbose = true)
     {
         $url = config('elavon.hostPC.ip') . ':' . config('elavon.hostPC.port') . '/rest/command';
         $client = new Client(['verify' => false]);
+        if ($verbose) {
+            $this->saveToSdkLog($payload, 'payload');
+        }
 
         try {
             $response = $client->post($url, [
@@ -190,11 +313,14 @@ class PosTerminalController extends Controller
                 'connect_timeout' => 30,
                 'body' => json_encode($payload)
             ]);
-        } catch (Exception $e) {
-            $this->setPaymentStatus($payload, 'failed');
-            $this->saveToSdkLog($e->getResponse(), 'error');
-
-            return ['errors' => $e->getResponse()];
+        } catch (\Exception $e) {
+            if ($e->hasResponse()) {
+                $this->saveToSdkLog($e->getResponse(), 'error');
+                return ['errors' => $e->getResponse()];
+            } else {
+                $this->saveToSdkLog($e->getMessage(), 'error');
+                return ['fatal_error' => ['SDK connection' => 'Connection refused<br>Please verify the server running converge sdk is configured correctly']];
+            }
         }
 
         $response = $response->getBody()->getContents();
@@ -207,11 +333,9 @@ class PosTerminalController extends Controller
 
     private function startCardReaderConfiguration()
     {
-        $requestId = idate("U");
-
         $payload = [
             'method' => 'startCardReaderConfiguration',
-            'requestId' => $requestId,
+            'requestId' => idate("U"),
             'targetType' => 'cardReader',
             'version' => '1.0',
             'parameters' => [
@@ -231,11 +355,9 @@ class PosTerminalController extends Controller
 
     private function getCommandStatusOnCardReader($id)
     {
-        $requestId = idate("U");
-
         $payload = [
             "method" => "getCommandStatusOnCardReader",
-            "requestId" => $requestId,
+            "requestId" => idate("U"),
             "targetType" => "cardReader",
             "version" => "1.0",
             "parameters" => [
@@ -248,11 +370,9 @@ class PosTerminalController extends Controller
 
     private function startCardReadersSearch()
     {
-        $requestId = idate("U");
-
         $payload = [
             "method" => "startCardReadersSearch",
-            "requestId" => $requestId,
+            "requestId" => idate("U"),
             "targetType" => "cardReader",
             "version" => "1.0",
             "parameters" => [
@@ -262,10 +382,13 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        return $this->sendRequest($payload);
+        $response = $this->sendRequest($payload);
+        $this->saveToSdkLog($response, 'info');
+
+        return $response['requestId'];
     }
 
-    private  function getCardReadersSearchStatus($id)
+    private function getCardReadersSearchStatus($id)
     {
         $requestId = idate("U");
 
@@ -279,10 +402,10 @@ class PosTerminalController extends Controller
             ]
         ];
 
-        return $this->sendRequest($payload, false);
+        return $this->sendRequest($payload);
     }
 
-    private  function getCardReaderInfo()
+    private function getCardReaderInfo()
     {
         $requestId = idate("U");
 
@@ -297,11 +420,9 @@ class PosTerminalController extends Controller
 
     private function openPaymentGateway()
     {
-        $requestId = idate("U");
-
         $payload = [
             "method" => "openPaymentGateway",
-            "requestId" => $requestId,
+            "requestId" => idate("U"),
             "targetType" => "paymentGatewayConverge",
             "version" => "1.0",
             "parameters" => [
@@ -322,7 +443,6 @@ class PosTerminalController extends Controller
         $paymentGateway = $this->sendRequest($payload);
 
         if ($paymentGateway['data']['paymentGatewayCommand']['openPaymentGatewayData']['result'] !== 'SUCCESS') {
-            $this->setPaymentStatus('failed');
             $this->saveToSdkLog('Payment gateway failed', 'error');
 
             return ['errors' => 'Payment gateway failed'];
@@ -333,28 +453,58 @@ class PosTerminalController extends Controller
         }
     }
 
-    private  function startPaymentTransaction($transactionAmount)
+    private function startPaymentTransaction()
     {
-        $requestId = idate("U");
-
         $payload = [
             "method" => "startPaymentTransaction",
-            "requestId" => $requestId,
+            "requestId" => idate("U"),
             "targetType" => "paymentGatewayConverge",
             "version" => "1.0",
             "parameters" => [
                 "paymentGatewayId" => $this->paymentGatewayId,
-                "transactionType" => "SALE",
-                "baseTransactionAmount" => [
-                    "value" => (int) $transactionAmount,
-                    "currencyCode" => "USD"
-                ],
+                "transactionType" => $this->selected_transaction,
                 "tenderType" => "CARD",
                 "cardType" => null,
-                "isTaxInclusive" => true,
                 "discountAmounts" => null
             ]
         ];
+
+        if ($this->invoiceNumber) {
+            $payload['parameters']['invoiceNumber'] = $this->invoiceNumber;
+        }
+
+        if ($this->keyed != false) {
+            $payload['parameters']['cardEntryTypes'] = ['MANUALLY_ENTERED'];
+
+            if ($this->CARDHOLDER_ADDRESS && $this->CARDHOLDER_ZIP) {
+                $payload['parameters']['avsFields'] = [
+                    'CARDHOLDER_ADDRESS' => $this->CARDHOLDER_ADDRESS,
+                    'CARDHOLDER_ZIP' => $this->CARDHOLDER_ZIP
+                ];
+            }
+        }
+
+        if ($this->voiceReferral != false) {
+            $payload['parameters']['forceTransaction'] = true;
+        }
+
+        if ($this->taxFree) {
+            $payload['parameters']['isTaxInclusive'] = false;
+            $payload['parameters']['taxAmounts'] = ["value" => 0, "currencyCode" => "USD"];
+        } else {
+            $payload['parameters']['isTaxInclusive'] = true;
+        }
+
+        if ($this->amount) {
+            $payload['parameters']['baseTransactionAmount'] = [
+                "value" => (int) round($this->amount, 0),
+                "currencyCode" => "USD"
+            ];
+        }
+
+        if ($this->originalTransId) {
+            $payload['parameters']['originalTransId'] =  $this->originalTransId;
+        }
 
         $response = $this->sendRequest($payload);
         $this->chanId = $response['data']['paymentGatewayCommand']['chanId'];
@@ -362,13 +512,11 @@ class PosTerminalController extends Controller
         return [];
     }
 
-    private  function getPaymentTransactionStatus()
+    private function getPaymentTransactionStatus()
     {
-        $requestId = idate("U");
-
         $payload = [
             "method" => "getPaymentTransactionStatus",
-            "requestId" => $requestId,
+            "requestId" => idate("U"),
             "targetType" => "paymentGatewayConverge",
             "version" => "1.0",
             "parameters" => [
@@ -382,73 +530,14 @@ class PosTerminalController extends Controller
 
     private function cancelPaymentTransaction()
     {
-        $requestId = idate("U");
-
         $payload = [
             "method" => "cancelPaymentTransaction",
-            "requestId" => $requestId,
+            "requestId" => idate("U"),
             "targetType" => "paymentGatewayConverge",
             "version" => "1.0",
             "parameters" => [
                 "paymentGatewayId" => $this->paymentGatewayId,
                 "chanId" => $this->chanId
-            ]
-        ];
-
-        return $this->sendRequest($payload);
-    }
-
-    private  function searchPaymentTransaction($parameters)
-    {
-        // params example
-        // $parameters = [
-        //     "first6CC" => null,
-        //     "creditCard" => null,
-        //     "utcDate" => null,
-        //     "paymentGatewayId" => $paymentGatewayId,
-        //     "transId" => null,
-        //     "endDate" => "20160307",
-        //     "last4CC" => "4243",
-        //     "beginDate" => "20160307",
-        //     "note" => ""
-        // ];
-
-        if (!count($parameters)) {
-            return ['errors' => 'No parameters specified'];
-        }
-
-        $requestId = idate("U");
-
-        $payload = [
-            "method" => "searchPaymentTransaction",
-            "requestId" => $requestId,
-            "targetType" => "paymentGatewayConverge",
-            "version" => "1.0",
-        ];
-
-        $payload[] = $parameters;
-
-        return $this->sendRequest($payload);
-    }
-
-    private  function linkedRefund(Payment $payment)
-    {
-        $requestId = idate("U");
-
-        $payload = [
-            "method" => "startPaymenTransaction",
-            "requestId" => $requestId,
-            "targetType" => "paymentGatewayConverge",
-            "version" => "1.0",
-            "parameters" => [
-                "paymentGatewayId" => "e9b2f3cd-ad49-482b-9982-d39d76a79a7f",
-                "originalTransId" => "070316A15-0A81D9AD-6700-4E07-A82D-DF17E41F91A6",
-                "transactionType" => "LINKED_REFUND",
-                "tenderType" => "CARD",
-                "baseTransactionAmount" => [
-                    "value" => 2500,
-                    "currencyCode" => "USD"
-                ],
             ]
         ];
 

@@ -5,6 +5,7 @@
 		transition="dialog-bottom-transition"
 		persistent
 		no-click-animation
+		@close:outer.stop
 	>
 		<interactiveDialog
 			v-if="closePrompt"
@@ -41,14 +42,12 @@
 			</v-toolbar>
 			<v-container fluid>
 				<v-row>
-					<v-col cols="9">
-						<v-card class="pa-2">
-							<v-card-text>
-								<checkoutStepper />
-							</v-card-text>
+					<v-col :lg="9" class="py-lg-0">
+						<v-card class="mx-auto">
+							<checkoutStepper />
 						</v-card>
 					</v-col>
-					<v-col cols="3">
+					<v-col :lg="3" class="py-lg-0">
 						<cart
 							:key="order ? order.id : 0"
 							icon="mdi-clipboard-list"
@@ -72,6 +71,9 @@ export default {
 		return {
 			closePrompt: false
 		};
+	},
+	props: {
+		giftcard: Boolean
 	},
 	computed: {
 		closeBtnTxt() {
@@ -113,6 +115,10 @@ export default {
 			this.state = false;
 		},
 		close() {
+			if (this.$props.giftcard) {
+				this.$emit("close", true);
+			}
+
 			if (this.order && this.order.status === "complete") {
 				this.resetState();
 				this.state = false;
@@ -139,6 +145,9 @@ export default {
 
 		...mapActions(["delete"]),
 		...mapMutations("cart", ["resetState"])
+	},
+	beforeDestroy() {
+		this.$off("close");
 	}
 };
 </script>

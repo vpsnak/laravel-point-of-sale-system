@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Address;
 use Illuminate\Http\Request;
+use App\Customer;
 
 class AddressController extends BaseController
 {
@@ -31,10 +32,32 @@ class AddressController extends BaseController
             'id' => 'nullable|exists:addresses,id'
         ]);
 
+        $customerID = $request->validate([
+            'customer_id' => 'nullable|exists:customers,id'
+        ]);
+
+        $type = $request->validate([
+            'type' => 'nullable|string'
+        ]);
+
+        if (!empty($type)) {
+            $validatedData[$type['type']] = 1;
+        }
+
         if (!empty($validatedID)) {
-            return response($this->model::updateData($validatedID, $validatedData), 200);
+            $address = $this->model::updateData($validatedID['id'], $validatedData);
+            $address = Address::findOrFail($validatedID['id']);
+
+            return response(['address' => $address, 'info' => ["Address with id: $address->id successfully updated!"]], 200);
         } else {
-            return response($this->model::store($validatedData), 201);
+            $address = $this->model::store($validatedData);
+
+            if (!empty($customerID)) {
+                $customer = Customer::findOrFail($customerID['customer_id']);
+                $customer->addresses()->attach($address->id);
+            }
+
+            return response(['address' => $address, 'info' => ["Address successfully created!"]], 201);
         }
     }
 }

@@ -16,7 +16,6 @@ class CreateElavonSdkPaymentsTable extends Migration
         Schema::create('elavon_sdk_payments', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('payment_id')->nullable(); // @TODO: remove nullable
-            $table->unsignedBigInteger('cash_register_id')->nullable(); // @TODO: remove nullable
 
             $table->string('test_case')->nullable();
             $table->string('transaction_id')->nullable();
@@ -27,7 +26,6 @@ class CreateElavonSdkPaymentsTable extends Migration
             $table->text('log');
 
             $table->foreign('payment_id')->references('id')->on('payments')->onDelete('cascade');
-            $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('cascade');
 
             $table->timestamps();
         });

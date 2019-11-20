@@ -14,7 +14,7 @@
 			:types="paymentTypes"
 			:remaining="remaining"
 			:loading="paymentActionsLoading"
-			title="Order payment"
+			title="Payment methods"
 			paymentBtnTxt="Send payment"
 			v-if="actions && (remaining > 0 || remaining === undefined)"
 			@sendPayment="sendPayment"
@@ -88,6 +88,14 @@ export default {
 			set(value) {
 				this.payment_history = value;
 			}
+		},
+		refundLoading: {
+			get() {
+				return this.$store.state.cart.refundLoading;
+			},
+			set(value) {
+				this.$store.state.cart.refundLoading = value;
+			}
 		}
 	},
 
@@ -113,14 +121,18 @@ export default {
 					model: "orders",
 					data: { id: this.$props.order_id }
 				};
-				this.getOne(payload).then(response => {
-					this.order = response;
+				this.getOne(payload)
+					.then(response => {
+						this.order = response;
 
-					this.$store.state.cart.order = response;
+						this.$store.state.cart.order = response;
 
-					this.remaining = this.order.total - this.order.total_paid;
-					this.$emit("amountPending", this.remaining);
-				});
+						this.remaining = this.order.total - this.order.total_paid;
+						this.$emit("amountPending", this.remaining);
+					})
+					.finally(() => {
+						this.refundLoading = false;
+					});
 			}
 		},
 		getPaymentHistory() {
@@ -173,6 +185,7 @@ export default {
 					break;
 				case "house-account":
 					payload.data["house_account_number"] = event.house_account_number;
+					break;
 			}
 
 			this.create(payload)
@@ -194,6 +207,7 @@ export default {
 				.finally(() => {
 					this.paymentAmount = null;
 					this.paymentActionsLoading = false;
+					this.$store.state.cart.paymentLoading = false;
 
 					this.init();
 				});

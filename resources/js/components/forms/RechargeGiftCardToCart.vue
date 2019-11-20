@@ -1,23 +1,10 @@
 <template>
 	<ValidationObserver
 		v-slot="{ invalid }"
-		ref="giftCardToCartObs"
+		ref="rechargeGiftCardToCartObs"
 		tag="form"
 		@submit.prevent="submit"
 	>
-		<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Name">
-			<v-text-field v-model="giftCard.name" label="Name" :error-messages="errors" :success="valid"></v-text-field>
-		</ValidationProvider>
-		<ValidationProvider rules="max:191" v-slot="{ errors }" name="Notes">
-			<v-textarea
-				:rows="3"
-				v-model="giftCard.notes"
-				label="Notes"
-				:error-messages="errors"
-				count
-				no-resize
-			></v-textarea>
-		</ValidationProvider>
 		<ValidationProvider
 			:rules="{
                     required : true,
@@ -35,16 +22,17 @@
 			></v-text-field>
 		</ValidationProvider>
 
-		<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Code">
-			<v-text-field v-model="giftCard.code" label="Code" :error-messages="errors" :success="valid"></v-text-field>
-		</ValidationProvider>
-
 		<v-btn class="mr-4" type="submit" :disabled="invalid">Add to cart</v-btn>
 	</ValidationObserver>
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 export default {
+	props: {
+		model: Object || undefined
+	},
 	data() {
 		return {
 			giftCard: {
@@ -65,21 +53,17 @@ export default {
 		submit() {
 			this.IdAndSkuGenerator();
 			this.giftCard.final_price = this.giftCard.price.amount;
-			this.giftCard.name = "Gift card - " + this.giftCard.name;
+			this.giftCard.name = "Gift cart - " + this.$props.model.name;
 			this.$store.commit("cart/addProduct", this.giftCard);
-			this.$emit("submit", {
-				notification: {
-					msg: this.giftCard.name + " added to cart!",
-					type: "success"
-				}
-			});
+
+			this.$emit("submit", true);
 		},
 		IdAndSkuGenerator() {
 			let random = function() {
 				return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
 			};
 			this.giftCard.id = "giftCard" + "-" + random();
-			this.giftCard.sku = "giftCard" + "-" + this.giftCard.code;
+			this.giftCard.sku = "giftCard" + "-" + this.$props.model.code;
 		}
 	},
 	beforeDestroy() {

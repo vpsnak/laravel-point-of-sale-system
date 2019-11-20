@@ -1,5 +1,5 @@
 <template>
-	<v-card class="pa-3 d-flex flex-column" style="max-height: 90vh;">
+	<v-card class="pa-3 d-flex flex-column">
 		<div class="d-flex justify-center align-center pt-5">
 			<v-icon class="pr-2">mdi-package-variant</v-icon>
 			<h4 class="title-2">Products</h4>
@@ -153,13 +153,13 @@
 			v-if="showViewDialog"
 			:show="showViewDialog"
 			title="View item"
-			:fullscreen="false"
 			:width="1000"
 			component="product"
 			:model="viewProduct"
 			@action="result"
 			action="newItem"
 			cancelBtnTxt="Close"
+			titleCloseBtn
 		></interactiveDialog>
 	</v-card>
 </template>

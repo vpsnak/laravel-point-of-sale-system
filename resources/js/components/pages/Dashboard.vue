@@ -11,13 +11,34 @@
 						true-value="API"
 						:label="'Selected method: ' + endpoint"
 					></v-switch>
-					<v-textarea outlined label="Σκονάκι" v-model="sdkSkonaki" readonly :loading="loading" v-if="endpoint === 'SDK'"></v-textarea>
+					<v-textarea
+						outlined
+						label="Σκονάκι"
+						v-model="sdkSkonaki"
+						readonly
+						:loading="loading"
+						v-if="endpoint === 'SDK'"
+					></v-textarea>
 					<v-row v-if="endpoint === 'API'">
 						<v-col :cols="6">
-							<v-textarea outlined label="Test cards" v-model="testCards" readonly :loading="loading" auto-grow></v-textarea>
+							<v-textarea
+								outlined
+								label="Test cards"
+								v-model="testCards"
+								readonly
+								:loading="loading"
+								auto-grow
+							></v-textarea>
 						</v-col>
 						<v-col :cols="6">
-							<v-textarea outlined label="CCV2/CVC2 RESPONSE CODE" v-model="apiSkonaki" readonly :loading="loading" auto-grow></v-textarea>
+							<v-textarea
+								outlined
+								label="CCV2/CVC2 RESPONSE CODE"
+								v-model="apiSkonaki"
+								readonly
+								:loading="loading"
+								auto-grow
+							></v-textarea>
 						</v-col>
 					</v-row>
 					<v-btn type="submit" :loading="loading" :disabled="loading" color="success">submit</v-btn>
@@ -87,17 +108,33 @@
 							v-if="sdk.selected_transaction === 'PRE_AUTH_COMPLETE' || sdk.selected_transaction === 'PRE_AUTH' || sdk.selected_transaction === 'SALE'"
 							:disabled="loading"
 							:loading="loading"
-							v-model="sdk.keyed"
-							:label="'Keyed'"
+							v-model="sdk.voiceReferral"
+							:label="'Voice Referral'"
 						></v-switch>
 						<v-switch
 							class="mx-2"
 							v-if="sdk.selected_transaction === 'PRE_AUTH_COMPLETE' || sdk.selected_transaction === 'PRE_AUTH' || sdk.selected_transaction === 'SALE'"
 							:disabled="loading"
 							:loading="loading"
-							v-model="sdk.voiceReferral"
-							:label="'Voice Referral'"
+							v-model="sdk.keyed"
+							:label="'Keyed'"
 						></v-switch>
+						<v-col :cols="3" v-if="sdk.keyed">
+							<v-text-field
+								:disabled="loading"
+								:loading="loading"
+								v-model="sdk.CARDHOLDER_ADDRESS"
+								label="AVS - Cardholder address"
+							></v-text-field>
+						</v-col>
+						<v-col :cols="3" v-if="sdk.keyed">
+							<v-text-field
+								:disabled="loading"
+								:loading="loading"
+								v-model="sdk.CARDHOLDER_ZIP"
+								label="AVS - Cardholder ZIP"
+							></v-text-field>
+						</v-col>
 						<v-col
 							:cols="3"
 							v-if="sdk.selected_transaction === 'PRE_AUTH_COMPLETE' || sdk.selected_transaction === 'PRE_AUTH_DELETE' || sdk.selected_transaction === 'VOID' || sdk.selected_transaction === 'LINKED_REFUND'"
@@ -206,12 +243,7 @@
 							></v-text-field>
 						</v-col>
 						<v-col :cols="2">
-							<v-text-field
-								:disabled="loading"
-								:loading="loading"
-								v-model="api.ssl_cvv2cvc2"
-								label="CVC"
-							></v-text-field>
+							<v-text-field :disabled="loading" :loading="loading" v-model="api.ssl_cvv2cvc2" label="CVC"></v-text-field>
 						</v-col>
 						<v-col :cols="2">
 							<v-text-field
@@ -256,12 +288,12 @@
 export default {
 	data() {
 		return {
-			apiSkonaki: 
-			'M	CVV2/CVC2 Match\nN	CVV2/CVC2 No match\nP	Not processed\nS	Issuer indicates that the CVV2/CVC2 data should be present on the card, but the merchant has indicated that the CVV2/CVC2 data is not resent on the card\nU	Issuer has not certified for CVV2/CVC2 or Issuer has not provided Visa with the CVV2/CVC2 encryption keys',
+			apiSkonaki:
+				"M	CVV2/CVC2 Match\nN	CVV2/CVC2 No match\nP	Not processed\nS	Issuer indicates that the CVV2/CVC2 data should be present on the card, but the merchant has indicated that the CVV2/CVC2 data is not resent on the card\nU	Issuer has not certified for CVV2/CVC2 or Issuer has not provided Visa with the CVV2/CVC2 encryption keys",
 			sdkSkonaki:
 				"SALE: sale\nPRE_AUTH: Auth Only\nPRE_AUTH_COMPLETE: Convert Auth Only to Sale\nPRE_AUTH_DELETE: Auth Only Reversal\nVOID: Void\nLINKED_REFUND: Linked Refund\nSTANDALONE_REFUND: Stand Alone Refund\n",
-			testCards: 
-				'Visa (Also works for 3D Secure)	4000000000000002\nVisa Corporate (Allows for the capture of additional Level 2 Data)	4159288888888882\nMasterCard	5121212121212124\nDiscover	6011000000000004\nDiners Club	36111111111111 (14 digit), 3811112222222222 (16 digit)\nAmerican Express	370000000000002\nJCB	3566664444444445\nElectronic Gift Card (EGC)	6032610007325520\nForeign Currency Cards	4032769999999992 (CAD), 5432675555555552 (EUR)',
+			testCards:
+				"Visa (Also works for 3D Secure)	4000000000000002\nVisa Corporate (Allows for the capture of additional Level 2 Data)	4159288888888882\nMasterCard	5121212121212124\nDiscover	6011000000000004\nDiners Club	36111111111111 (14 digit), 3811112222222222 (16 digit)\nAmerican Express	370000000000002\nJCB	3566664444444445\nElectronic Gift Card (EGC)	6032610007325520\nForeign Currency Cards	4032769999999992 (CAD), 5432675555555552 (EUR)",
 			loading: false,
 			endpoint: "SDK",
 			sdk: {
@@ -282,7 +314,9 @@ export default {
 					"Transaction Lookup"
 				],
 				amount: null,
-				selected_transaction: null
+				selected_transaction: null,
+				CARDHOLDER_ADDRESS: null,
+				CARDHOLDER_ZIP: null
 			},
 			sdkLookup: {
 				creditCard: null,
@@ -312,7 +346,12 @@ export default {
 			apiLogs: [],
 			showLog: false,
 			item: {},
-			apiCvcs: [{label: 'Bypassed', value: 0}, {label: 'Present', value: 1}, {label: 'Illegible', value: 2}, {label: 'Not Present', value: 9}],
+			apiCvcs: [
+				{ label: "Bypassed", value: 0 },
+				{ label: "Present", value: 1 },
+				{ label: "Illegible", value: 2 },
+				{ label: "Not Present", value: 9 }
+			],
 			api: {
 				ssl_card_number: null,
 				ssl_amount: null,

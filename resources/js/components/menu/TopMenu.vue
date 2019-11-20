@@ -1,6 +1,6 @@
 <template>
 	<v-app-bar app clipped-left>
-		<v-app-bar-nav-icon @click.stop="mini = !mini"></v-app-bar-nav-icon>
+		<v-app-bar-nav-icon @click.stop="toggle = !toggle"></v-app-bar-nav-icon>
 
 		<v-toolbar-title>Plantshed</v-toolbar-title>
 
@@ -23,7 +23,7 @@
 			title="Change Password"
 			:fullscreen="false"
 			:width="600"
-			:model="{action:'change_self'}"
+			:model="{ action: 'change_self' }"
 			component="PasswordForm"
 			cancelBtnTxt="Close"
 			@action="result"
@@ -58,22 +58,10 @@
 			<v-list dense>
 				<v-list-item-group>
 					<v-list-item inactive two-line @click.stop :ripple="false">
-						<v-list-item-avatar color="orange">
-							{{
-							user.name.charAt(0)
-							}}
-						</v-list-item-avatar>
+						<v-list-item-avatar color="orange">{{ user.name.charAt(0) }}</v-list-item-avatar>
 						<v-list-item-content>
-							<v-list-item-title>
-								{{
-								user.name
-								}}
-							</v-list-item-title>
-							<v-list-item-subtitle>
-								{{
-								user.email
-								}}
-							</v-list-item-subtitle>
+							<v-list-item-title>{{ user.name }}</v-list-item-title>
+							<v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
 						</v-list-item-content>
 					</v-list-item>
 					<v-divider />
@@ -154,12 +142,12 @@ export default {
 				this.$vuetify.theme.dark = value;
 			}
 		},
-		mini: {
+		toggle: {
 			get() {
-				return this.$store.state.topMenu.mini;
+				return this.$store.state.menu.toggle;
 			},
-			set() {
-				this.$store.commit("topMenu/toggleMini");
+			set(value) {
+				this.$store.commit("menu/toggleMenu", value);
 			}
 		}
 	}

@@ -1,9 +1,9 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="obs">
+	<ValidationObserver v-slot="{ invalid }" ref="passwordObs">
 		<v-form @submit.prevent="submit">
 			<ValidationProvider
 				v-if="action === 'change_self' || action === 'verify'"
-				rules="required|min:8"
+				rules="required|min:8|max:191"
 				v-slot="{ errors, valid }"
 				name="Password"
 			>
@@ -24,7 +24,7 @@
 			<ValidationProvider
 				v-if="action === 'change' || action === 'change_self'"
 				v-slot="{ errors, valid }"
-				rules="required|min:8"
+				rules="required|min:8|max:191"
 				name="New Password"
 				vid="confirmation"
 			>
@@ -46,7 +46,7 @@
 
 			<ValidationProvider
 				v-if="action === 'change' || action === 'change_self'"
-				rules="required|min:8|confirmed:confirmation"
+				rules="required|min:8|max:191|confirmed:confirmation"
 				v-slot="{ errors, valid }"
 				name="Password Confirmation"
 			>

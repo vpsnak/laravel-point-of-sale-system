@@ -134,34 +134,47 @@ class UserController extends Controller
             'keyword' => 'required|string'
         ]);
 
-        return $this->searchResult(
-            ['username', 'name', 'email', 'phone'],
-            $validatedData['keyword'],
-            true
-        );
+
+        $columns = ['username', 'name', 'email', 'phone'];
+        $query = $this->model::query()->search($columns, $validatedData['keyword']);
+
+        return response($query->paginate(), 200);
     }
 
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'id' => 'sometimes|exists:users,id',
+            'id' => 'nullable|exists:users,id',
             'name' => 'nullable|required_without:id|string',
-            'username' => 'nullable|required_without:id|string',
-            'email' => 'nullable|required_without:id|unique:users,email',
-            'phone' => 'nullable|required_without:id|unique:users,phone',
             'password' => 'nullable|required_without:id|string'
         ]);
 
-        $validatedData['password'] = Hash::make($validatedData['password']);
-
+        if (array_key_exists('id', $validatedData)) {
+            $validatedData[] = $request->validate([
+                'username' => 'nullable|required_without:id|string',
+                'email' => 'nullable|required_without:id|email',
+                'phone' => 'nullable|required_without:id|numeric',
+            ]);
+        } else {
+            $validatedData[] = $request->validate([
+                'username' => 'required|string',
+                'email' => 'email|required|unique:users,email',
+                'phone' => 'required|unique:users,phone',
+            ]);
+        }
+        if (array_key_exists('password', $validatedData)) {
+            $validatedData['password'] = Hash::make($validatedData['password']);
+        }
         if (!empty($validatedData['id'])) {
             $user = User::findOrFail($validatedData['id']);
-            $user = $validatedData;
-        } else {
-            $user = new User($validatedData);
-        }
-        $user->save();
+            $user->fill($validatedData);
+            $user->save();
 
-        return response(['info' => ['User ' . $user->name . ' created successfully!']]);
+            return response(['info' => ['User ' . $user->name . ' updated successfully!']], 200);
+        } else {
+            $user = User::store($validatedData);
+
+            return response(['info' => ['User ' . $user->name . ' created successfully!']], 201);
+        }
     }
 }

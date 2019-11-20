@@ -1,5 +1,5 @@
 <template>
-	<v-row>
+	<div>
 		<interactiveDialog
 			v-if="dialog.show"
 			:show="dialog.show"
@@ -13,37 +13,46 @@
 			@action="dialogEvent"
 			:persistent="dialog.persistent"
 		></interactiveDialog>
-
-		<v-col cols="12">
-			<h3 class="mb-3">Payment history</h3>
-			<v-data-table
-				:headers="headers"
-				:items="paymentHistory"
-				class="elevation-1"
-				disable-pagination
-				disable-filtering
-				hide-default-footer
-				:loading="loading"
-			>
-				<template v-slot:item.actions="{ item }">
-					<v-tooltip bottom>
-						<template v-slot:activator="{ on }">
-							<v-btn
-								@click="refundDialog(item)"
-								icon
-								v-on="on"
-								v-if="item.status === 'approved' && item.refunded !== 1"
-							>
-								<v-icon v-if="item.payment_type.type === 'cash'">mdi-cash-refund</v-icon>
-								<v-icon v-else>mdi-credit-card-refund</v-icon>
-							</v-btn>
-						</template>
-						<span>Refund</span>
-					</v-tooltip>
-				</template>
-			</v-data-table>
-		</v-col>
-	</v-row>
+		<v-row>
+			<v-col :cols="12">
+				<h3 class="mb-2">Payment history</h3>
+			</v-col>
+		</v-row>
+		<v-row>
+			<v-col :cols="12">
+				<v-data-table
+					:headers="headers"
+					:items="paymentHistory"
+					class="elevation-1"
+					disable-pagination
+					disable-filtering
+					hide-default-footer
+					:loading="loading || refundLoading"
+				>
+					<template v-slot:item.actions="{ item }">
+						<v-tooltip bottom>
+							<template v-slot:activator="{ on }">
+								<v-btn
+									@click="refundDialog(item)"
+									icon
+									v-on="on"
+									:loading="loading || refundLoading"
+									v-if="
+                                    item.status === 'approved' &&
+                                        item.refunded !== 1
+                                "
+								>
+									<v-icon v-if="item.payment_type.type === 'cash'">mdi-cash-refund</v-icon>
+									<v-icon v-else>mdi-credit-card-refund</v-icon>
+								</v-btn>
+							</template>
+							<span>Refund</span>
+						</v-tooltip>
+					</template>
+				</v-data-table>
+			</v-col>
+		</v-row>
+	</div>
 </template>
 
 <script>
@@ -70,6 +79,10 @@ export default {
 			paymentID: null,
 			headers: [
 				{
+					text: "Payment ID",
+					value: "id"
+				},
+				{
 					text: "Operator",
 					value: "created_by.name"
 				},
@@ -91,10 +104,21 @@ export default {
 				},
 				{
 					text: "Actions",
-					value: "actions"
+					value: "actions",
+					sortable: false
 				}
 			]
 		};
+	},
+	computed: {
+		refundLoading: {
+			get() {
+				return this.$store.state.cart.refundLoading;
+			},
+			set(value) {
+				this.$store.state.cart.refundLoading = value;
+			}
+		}
 	},
 	methods: {
 		dialogEvent(event) {
@@ -105,6 +129,7 @@ export default {
 			this.resetDialog();
 		},
 		refund() {
+			this.refundLoading = true;
 			let payload = {
 				model: "payments",
 				id: this.paymentID

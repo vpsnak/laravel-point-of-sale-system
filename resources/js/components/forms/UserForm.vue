@@ -1,16 +1,16 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="obs">
+	<ValidationObserver v-slot="{ invalid }" ref="userObs">
 		<v-form @submit.prevent="submit">
 			<div class="text-center">
 				<v-chip color="indigo darken-4" label>
 					<v-icon left>fas fa-user-circle</v-icon>User Form
 				</v-chip>
 			</div>
-			<ValidationProvider rules="required|min:3" v-slot="{ errors, valid }" name="Name">
+			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Name">
 				<v-text-field :error-messages="errors" :success="valid" v-model="formFields.name" label="Name"></v-text-field>
 			</ValidationProvider>
 
-			<ValidationProvider rules="required|email" v-slot="{ errors, valid }" name="Email">
+			<ValidationProvider rules="required|email|max:191" v-slot="{ errors, valid }" name="Email">
 				<v-text-field
 					v-model="formFields.email"
 					:error-messages="errors"
@@ -18,7 +18,16 @@
 					label="E-mail"
 				></v-text-field>
 			</ValidationProvider>
-			<ValidationProvider rules="required|min:8|max:14" v-slot="{ errors, valid }" name="Phone">
+			<ValidationProvider
+				:rules="{
+                    required : true,
+                    min: 8,
+                    max: 191,
+                    regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
+                }"
+				v-slot="{ errors, valid }"
+				name="Phone"
+			>
 				<v-text-field
 					v-model="formFields.phone"
 					:error-messages="errors"
@@ -26,7 +35,7 @@
 					label="Phone"
 				></v-text-field>
 			</ValidationProvider>
-			<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Username">
+			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Username">
 				<v-text-field
 					v-model="formFields.username"
 					:error-messages="errors"
@@ -36,13 +45,15 @@
 			</ValidationProvider>
 			<ValidationProvider
 				v-if="!model"
-				rules="required|min:8"
+				rules="required|min:8|max:191"
 				v-slot="{ errors, valid }"
 				name="Password"
 			>
 				<v-text-field
 					v-model="formFields.password"
-					:append-icon="showPassword ? 'visibility' : 'visibility_off'"
+					:append-icon="
+                        showPassword ? 'visibility' : 'visibility_off'
+                    "
 					:type="showPassword ? 'text' : 'password'"
 					:error-messages="errors"
 					:success="valid"
@@ -101,22 +112,24 @@ export default {
 				model: "users",
 				data: { ...this.formFields }
 			};
-			this.create(payload).then(() => {
-				this.clear();
-				this.$emit("submit", {
-					getRows: true,
-					model: "users",
-					notification: {
-						msg: "User added successfully",
-						type: "success"
-					}
-				}).finally(() => {
+			this.create(payload)
+				.then(() => {
+					this.clear();
+					this.$emit("submit", {
+						getRows: true,
+						model: "users",
+						notification: {
+							msg: "User added successfully",
+							type: "success"
+						}
+					});
+				})
+				.finally(() => {
 					this.loading = false;
 				});
-			});
 		},
 		clear() {
-			this.$refs.obs.reset();
+			this.$refs.userObs.reset();
 			this.formFields = { ...this.defaultValues };
 		},
 		...mapActions({

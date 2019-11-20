@@ -9,6 +9,8 @@ require("./includes");
 import router from "./plugins/router";
 import vuetify from "./plugins/vuetify"; // path to vuetify export
 import BarcodeScanner from "simple-barcode-scanner";
+import VueBarcode from 'vue-barcode';
+
 
 import {
     ValidationProvider,
@@ -20,6 +22,7 @@ window.Vue = require("vue");
 
 Vue.component("ValidationProvider", ValidationProvider);
 Vue.component("ValidationObserver", ValidationObserver);
+Vue.component("barcode", VueBarcode);
 
 const scanner = BarcodeScanner();
 
@@ -57,7 +60,6 @@ const app = new Vue({
     mounted() {
         scanner.on((code, event) => {
             event.preventDefault();
-
             this.$emit("barcodeScan", code);
         });
     }

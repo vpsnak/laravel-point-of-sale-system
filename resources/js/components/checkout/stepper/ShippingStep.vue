@@ -1,14 +1,20 @@
 <template>
 	<div>
 		<shipping @shipping="setShipping" />
-		<v-card-actions>
-			<span class="title" v-if="shipping.cost">Shipping cost: $ {{ shipping.cost }}</span>
-			<div class="flex-grow-1"></div>
-			<v-btn color="primary" :disabled="!isValid" @click="completeStep">
-				Next
-				<v-icon small right>mdi-chevron-right</v-icon>
-			</v-btn>
-		</v-card-actions>
+		<v-row justify="center" align="center" class="my-3">
+			<v-col :cols="3" align="start" v-if="shipping.cost">
+				<span class="title">
+					Shipping cost:
+					<span class="amber--text">$ {{ shipping.cost }}</span>
+				</span>
+			</v-col>
+			<v-col :cols="shipping.cost ? 3 : 6" justify="center" align="end">
+				<v-btn color="primary" :disabled="!isValid" @click="completeStep">
+					Next
+					<v-icon small right>mdi-chevron-right</v-icon>
+				</v-btn>
+			</v-col>
+		</v-row>
 	</div>
 </template>
 
@@ -16,25 +22,25 @@
 import { mapActions } from "vuex";
 
 export default {
-	data() {
-		return {
-			shipping: {
-				get() {
-					return this.$store.state.cart.shipping;
-				},
-				set(value) {
-					this.$store.state.cart.shipping = value;
-				}
-			}
-		};
-	},
 	props: {
 		currentStep: Object
 	},
 
 	computed: {
 		isValid() {
-			return this.$store.state.cart.isValid;
+			if (this.$store.state.cart.shipping.method === "retail") {
+				return true;
+			} else {
+				return this.$store.state.cart.isValid;
+			}
+		},
+		shipping: {
+			get() {
+				return this.$store.state.cart.shipping;
+			},
+			set(value) {
+				this.$store.state.cart.shipping = value;
+			}
 		}
 	},
 

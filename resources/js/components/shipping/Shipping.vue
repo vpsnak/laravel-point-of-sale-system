@@ -9,42 +9,131 @@
 			component="timeSlotForm"
 			@action="closedDialog"
 		/>
-		<ValidationObserver
-			v-slot="{ invalid }"
-			tag="form"
-			ref="obs"
-			@change="isValid()"
-			@input="isValid()"
-		>
-			<div class="d-flex justify-center">
-				<v-radio-group v-model="shipping.method" row>
-					<v-radio label="Retail" value="retail"></v-radio>
-					<v-radio label="In store pickup" value="pickup" :disabled="!customer"></v-radio>
-					<v-radio label="Delivery" value="delivery" :disabled="!customer"></v-radio>
-				</v-radio-group>
-			</div>
-			<v-row v-if="shipping.method !== 'retail'">
-				<v-col v-if="shipping.method === 'delivery'" cols="12" lg="6" offset-lg="3">
-					<v-combobox
-						@input="getTimeSlots"
-						:items="addresses"
-						prepend-icon="mdi-map-marker"
-						label="Address"
-						v-model="shipping.address"
-						:item-text="getAddressText"
-						return-object
-					></v-combobox>
+
+		<interactiveDialog
+			v-if="dialog.show"
+			:show="dialog.show"
+			:title="dialog.title"
+			:titleCloseBtn="dialog.titleCloseBtn"
+			:icon="dialog.icon"
+			:fullscreen="dialog.fullscreen"
+			:width="dialog.width"
+			:component="dialog.component"
+			:content="dialog.content"
+			:model="dialog.model"
+			@action="dialogEvent"
+			:persistent="dialog.persistent"
+		></interactiveDialog>
+
+		<div class="d-flex justify-center flex-column align-center">
+			<v-radio-group v-model="shipping.method" row dense class="ma-0 pt-2">
+				<v-radio label="Retail" value="retail"></v-radio>
+				<v-radio label="In store pickup" value="pickup" :disabled="!customer"></v-radio>
+				<v-radio label="Delivery" value="delivery" :disabled="!customer"></v-radio>
+			</v-radio-group>
+			<v-alert outlined type="info" border="left" v-if="!customer">No customer selected</v-alert>
+		</div>
+		<ValidationObserver v-slot="{ invalid, valid }" tag="form">
+			<input type="hidden" :value="$store.state.cart.isValid = valid" />
+			<v-row v-if="shipping.method !== 'retail'" align="center">
+				<v-col v-if="shipping.method === 'delivery'" :cols="10" :lg="6" :offset-lg="3" class="pa-2">
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Billing address">
+						<v-combobox
+							dense
+							:items="addresses"
+							prepend-icon="mdi-receipt"
+							label="Billing address"
+							v-model="shipping.billing_address"
+							:item-text="getAddressText"
+							:error-messages="errors"
+							:success="valid"
+							return-object
+						></v-combobox>
+					</ValidationProvider>
 				</v-col>
+
+				<div v-if="shipping.method === 'delivery'">
+					<v-tooltip bottom>
+						<template v-slot:activator="{ on }">
+							<v-btn
+								:disabled="!shipping.billing_address"
+								icon
+								v-on="on"
+								@click="
+                                addressDialog(
+                                    'billing',
+                                    shipping.billing_address
+                                )
+                            "
+							>
+								<v-icon>mdi-pencil</v-icon>
+							</v-btn>
+						</template>
+						<span>Edit selected address</span>
+					</v-tooltip>
+					<v-tooltip bottom>
+						<template v-slot:activator="{ on }">
+							<v-btn icon v-on="on" @click="addressDialog('billing', null)">
+								<v-icon>mdi-plus</v-icon>
+							</v-btn>
+						</template>
+						<span>New billing address</span>
+					</v-tooltip>
+				</div>
+
+				<v-col v-if="shipping.method === 'delivery'" :cols="10" :lg="6" :offset-lg="3" class="pa-2">
+					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Delivery address">
+						<v-combobox
+							dense
+							@input="getTimeSlots"
+							:items="addresses"
+							prepend-icon="mdi-map-marker"
+							label="Delivery address"
+							v-model="shipping.address"
+							:item-text="getAddressText"
+							return-object
+							:error-messages="errors"
+							:success="valid"
+						></v-combobox>
+					</ValidationProvider>
+				</v-col>
+
+				<div v-if="shipping.method === 'delivery'">
+					<v-tooltip bottom>
+						<template v-slot:activator="{ on }">
+							<v-btn
+								:disabled="!shipping.address"
+								icon
+								v-on="on"
+								@click="addressDialog('delivery', shipping.address)"
+							>
+								<v-icon>mdi-pencil</v-icon>
+							</v-btn>
+						</template>
+						<span>Edit selected address</span>
+					</v-tooltip>
+					<v-tooltip bottom>
+						<template v-slot:activator="{ on }">
+							<v-btn icon v-on="on" @click="addressDialog('delivery', null)">
+								<v-icon>mdi-plus</v-icon>
+							</v-btn>
+						</template>
+						<span>New delivery address</span>
+					</v-tooltip>
+				</div>
+
 				<v-col v-if="shipping.method === 'delivery'" cols="12" lg="6" offset-lg="3">
-					<addressDeliveryForm :model="shipping.address"></addressDeliveryForm>
+					<addressDeliveryForm v-if="shipping.address" :model="shipping.address" readonly></addressDeliveryForm>
 				</v-col>
 			</v-row>
+
 			<v-row v-if="shipping.method !== 'retail'">
-				<v-col cols="4" lg="2" offset-lg="3">
+				<v-col cols="4" lg="2" offset-lg="3" class="pa-1">
 					<v-menu v-model="datePicker" transition="scale-transition" offset-y min-width="290px">
 						<template v-slot:activator="{ on }">
 							<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Date">
 								<v-text-field
+									dense
 									v-model="shipping.date"
 									label="Date"
 									prepend-icon="event"
@@ -59,9 +148,10 @@
 						<v-date-picker v-model="shipping.date" @input="getTimeSlots" :min="new Date().toJSON()"></v-date-picker>
 					</v-menu>
 				</v-col>
-				<v-col cols="4" lg="3" v-if="shipping.method !== 'retail'">
+				<v-col cols="4" lg="3" v-if="shipping.method !== 'retail'" class="pa-1">
 					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="At">
 						<v-select
+							dense
 							:loading="loading"
 							label="At"
 							prepend-icon="mdi-clock"
@@ -76,9 +166,10 @@
 						></v-select>
 					</ValidationProvider>
 				</v-col>
-				<v-col cols="4" lg="1" v-if="shipping.method !== 'retail'">
+				<v-col cols="4" lg="1" v-if="shipping.method !== 'retail'" class="pa-1">
 					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Cost">
 						<v-text-field
+							dense
 							type="number"
 							label="Cost"
 							:error-messages="errors"
@@ -91,9 +182,10 @@
 				</v-col>
 			</v-row>
 			<v-row v-if="shipping.method !== 'retail'">
-				<v-col offset-lg="3" cols="6" lg="4" v-if="shipping.method === 'pickup'">
+				<v-col offset-lg="3" cols="6" lg="4" v-if="shipping.method === 'pickup'" class="pa-1">
 					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="From">
 						<v-select
+							dense
 							:error-messages="errors"
 							:success="valid"
 							:loading="loading"
@@ -106,9 +198,10 @@
 						></v-select>
 					</ValidationProvider>
 				</v-col>
-				<v-col cols="6" lg="2" :offset-lg="shipping.method === 'pickup' ? 0 : 3">
+				<v-col cols="6" lg="2" :offset-lg="shipping.method === 'pickup' ? 0 : 3" class="pa-1">
 					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Occasion">
 						<v-select
+							dense
 							:error-messages="errors"
 							:success="valid"
 							:loading="loading"
@@ -121,9 +214,10 @@
 						></v-select>
 					</ValidationProvider>
 				</v-col>
-				<v-col offset-lg="2" cols="6" lg="2" v-if="shipping.method === 'delivery'">
+				<v-col offset-lg="2" cols="6" lg="2" v-if="shipping.method === 'delivery'" class="pa-1">
 					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Location">
 						<v-select
+							dense
 							:error-messages="errors"
 							:success="valid"
 							:loading="loading"
@@ -138,8 +232,9 @@
 				</v-col>
 			</v-row>
 			<v-row>
-				<v-col cols="12" lg="6" offset-lg="3">
+				<v-col cols="12" lg="6" offset-lg="3" class="pa-2">
 					<v-textarea
+						dense
 						label="Notes"
 						prepend-icon="mdi-note-text"
 						v-model="shipping.notes"
@@ -164,7 +259,20 @@ export default {
 			loading: false,
 			time_slots: [],
 			datePicker: false,
-			store_pickups: []
+			store_pickups: [],
+
+			dialog: {
+				show: false,
+				width: 600,
+				fullscreen: false,
+				title: "",
+				titleCloseBtn: false,
+				icon: "",
+				component: "",
+				content: "",
+				model: "",
+				persistent: false
+			}
 		};
 	},
 
@@ -207,8 +315,18 @@ export default {
 				this.$store.commit("cart/setShippingCost", value);
 			}
 		},
+
 		addresses() {
 			if (this.customer) {
+				const billing_address = _.filter(this.customer.addresses, [
+					"billing",
+					1
+				]);
+
+				this.shipping.billing_address = billing_address.length
+					? billing_address[0]
+					: undefined;
+
 				return this.customer.addresses;
 			}
 		},
@@ -228,12 +346,56 @@ export default {
 	},
 
 	methods: {
-		async isValid() {
-			this.$store.commit("cart/setIsValid", false);
-
-			if (this.$refs.obs) {
-				this.$store.commit("cart/setIsValid", await this.$refs.obs.validate());
+		dialogEvent(event) {
+			if (_.isObjectLike(event)) {
+			} else {
 			}
+
+			this.resetDialog();
+		},
+		addressDialog(action, address) {
+			let icon;
+			let title;
+			let type;
+
+			if (action === "delivery") {
+				type = "shipping";
+				icon = "mdi-map-marker";
+				title = address ? "Edit delivery address" : "New delivery address";
+			} else {
+				type = "billing";
+				icon = "mdi-receipt";
+				title = address ? "Edit billing address" : "New billing address";
+			}
+
+			address ? (address.type = type) : null;
+
+			this.dialog = {
+				show: true,
+				width: 600,
+				fullscreen: false,
+				title: title,
+				titleCloseBtn: false,
+				icon: icon,
+				component: "addressDeliveryForm",
+				content: "",
+				model: address || { type },
+				persistent: true
+			};
+		},
+		resetDialog() {
+			this.dialog = {
+				show: false,
+				width: 600,
+				fullscreen: false,
+				title: "",
+				titleCloseBtn: false,
+				icon: "",
+				component: "",
+				content: "",
+				model: "",
+				persistent: false
+			};
 		},
 		getStores() {
 			this.getAll({ model: "store-pickups" }).then(response => {
@@ -244,7 +406,6 @@ export default {
 			if (event && event !== true) {
 				this.timeSlots.push(event);
 				this.shipping.timeSlotLabel = event.label;
-				this.shippingCost = event.cost;
 			}
 
 			this.addTimeSlotDialog = false;

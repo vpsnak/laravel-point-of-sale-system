@@ -1,5 +1,5 @@
 <template>
-	<v-card class="pa-3 d-flex flex-column" style="max-height: 90vh;">
+	<v-card class="pa-3">
 		<div class="d-flex">
 			<div class="d-flex align-center justify-center">
 				<v-icon class="pr-2">{{ icon }}</v-icon>
@@ -8,15 +8,40 @@
 
 			<v-spacer></v-spacer>
 
-			<div class="pt-5 pr-2">
-				<v-label>Delivery</v-label>
-			</div>
-			<v-switch class="my-0 pt-5" v-model="toggleRetail" label="Retail" :disabled="!editable"></v-switch>
+			<v-radio-group v-model="toggleRetail" row mandatory>
+				<v-radio
+					:value="true"
+					off-icon="fas fa-walking"
+					on-icon="fas fa-walking"
+					:ripple="false"
+					color="deep-orange"
+				>
+					<template v-slot:label>
+						<span v-if="toggleRetail" class="font-weight-bold deep-orange--text">Retail</span>
+						<span v-else class="font-weight-bold">Retail</span>
+					</template>
+				</v-radio>
+				<v-radio
+					color="teal"
+					label="Delivery"
+					:value="false"
+					off-icon="local_shipping"
+					on-icon="local_shipping"
+					:ripple="false"
+				>
+					<template v-slot:label>
+						<span v-if="!toggleRetail" class="font-weight-bold teal--text">Delivery</span>
+						<span v-else class="font-weight-bold">Delivery</span>
+					</template>
+				</v-radio>
+			</v-radio-group>
 		</div>
-		<v-divider />
-		<v-container grid-list-md text-xs-center>
-			<customerSearch :editable="editable" :keywordLength="3" class="my-3"></customerSearch>
-		</v-container>
+
+		<v-divider class="py-1" />
+
+		<customerSearch :editable="editable" :keywordLength="3" class="pa-3"></customerSearch>
+
+		<v-divider class="py-1" />
 
 		<cartProducts :products="items ? items : products" :editable="editable"></cartProducts>
 

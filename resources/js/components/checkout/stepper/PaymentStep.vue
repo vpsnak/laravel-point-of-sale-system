@@ -1,19 +1,20 @@
 <template>
 	<div>
 		<payment :order_id="orderId" history actions @amountPending="showCompleteBtn" />
-		<v-card-actions>
-			<v-btn color="grey" @click="prevStep()" v-if="orderId === 0">
-				<v-icon small left>mdi-chevron-left</v-icon>Back
-			</v-btn>
-			<div class="flex-grow-1"></div>
-			<v-btn
-				v-if="completed"
-				color="primary"
-				@click="completeStep"
-				:loading="loading"
-				:disabled="loading"
-			>Complete order</v-btn>
-		</v-card-actions>
+		<v-row justify="center" align="center" class="my-3">
+			<v-col :cols="5" justify="center" :align="orderId ? 'center' : 'start'">
+				<v-btn color="teal" @click="prevStep()" v-if="orderId === 0" dark :disabled="$store.state.cart.paymentLoading">
+					<v-icon small left>mdi-chevron-left</v-icon>Back
+				</v-btn>
+				<v-btn
+					v-if="completed && !$store.state.cart.refundLoading"
+					color="primary"
+					@click="completeStep"
+					:loading="loading"
+					:disabled="loading"
+				>Complete order</v-btn>
+			</v-col>
+		</v-row>
 	</div>
 </template>
 

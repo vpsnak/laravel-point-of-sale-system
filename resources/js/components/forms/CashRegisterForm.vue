@@ -1,25 +1,37 @@
 <template>
-	<div>
-		<v-form @submit="submit">
+	<ValidationObserver v-slot="{ invalid }" ref="cashRegisterObs">
+		<v-form @submit.prevent="submit">
 			<div class="text-center">
 				<v-chip color="primary" label>
 					<v-icon left>fas fa-cash-register</v-icon>Cash Register Form
 				</v-chip>
 			</div>
-			<v-text-field v-model="formFields.name" label="Name" :disabled="loading" required></v-text-field>
-			<v-select
-				v-model="formFields.store_id"
-				label="Stores"
-				:items="stores"
-				item-text="name"
-				item-value="id"
-				:disabled="loading"
-				required
-			></v-select>
-			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="loading">submit</v-btn>
-			<v-btn v-if="this.model === undefined" @click="clear">clear</v-btn>
+			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Name">
+				<v-text-field
+					v-model="formFields.name"
+					label="Name"
+					:disabled="loading"
+					:error-messages="errors"
+					:success="valid"
+				></v-text-field>
+			</ValidationProvider>
+			<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Stores">
+				<v-select
+					v-model="formFields.store_id"
+					label="Stores"
+					:items="stores"
+					item-text="name"
+					item-value="id"
+					:disabled="loading"
+					:error-messages="errors"
+					:success="valid"
+				></v-select>
+			</ValidationProvider>
+
+			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="invalid || loading">submit</v-btn>
+			<v-btn v-if="!model" @click="clear">clear</v-btn>
 		</v-form>
-	</div>
+	</ValidationObserver>
 </template>
 <script>
 import { mapActions } from "vuex";
@@ -57,11 +69,6 @@ export default {
 			};
 			this.create(payload)
 				.then(() => {
-					if (
-						this.formFields.id == this.$store.state.cashRegister.id
-					) {
-						this.$store.state.cashRegister = this.formFields;
-					}
 					this.$emit("submit", {
 						getRows: true,
 						model: "cash-registers",
@@ -70,9 +77,9 @@ export default {
 							type: "success"
 						}
 					});
-					this.clear();
 				})
 				.finally(() => {
+					this.clear();
 					this.loading = false;
 				});
 		},

@@ -5,7 +5,7 @@ import "es6-promise/auto";
 import Cookies from "js-cookie";
 import router from "../plugins/router";
 //modules
-import topMenu from "./menu/topMenu";
+import menu from "./modules/menu";
 import cart from "./modules/cart";
 import endpoints from "./modules/endpoints";
 import datatable from "./modules/datatable";
@@ -17,7 +17,7 @@ const namespaced = true;
 export default new Vuex.Store({
     namespaced,
     modules: {
-        topMenu,
+        menu,
         cart,
         datatable,
         endpoints
@@ -217,7 +217,7 @@ export default new Vuex.Store({
                     .then(response => {
                         let notification = {
                             msg: response.data.info,
-                            type: "success"
+                            type: "info"
                         };
                         context.commit("setNotification", notification);
                         resolve(response.data);
@@ -568,6 +568,13 @@ export default new Vuex.Store({
                                 root: true
                             });
                         }
+
+                        let notification = {
+                            msg: response.data.info,
+                            type: "success"
+                        };
+                        context.commit("setNotification", notification);
+
                         resolve(response.data);
                     })
                     .catch(error => {

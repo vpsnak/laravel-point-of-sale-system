@@ -12,7 +12,7 @@
 				single-line
 				v-model="keyword"
 				append-icon="mdi-close"
-				@click:append="keyword=null, paginate()"
+				@click:append="keyword=null, searchAction=null, paginate()"
 				@click:prepend="search"
 				@keyup.enter="search"
 			></v-text-field>
@@ -31,10 +31,7 @@
 					:page.sync="currentPage"
 					:server-items-length="totalItems"
 					@pagination="paginate"
-					:footer-props="{
-                        'disable-items-per-page': true,
-                        options: { itemsPerPage: 15, page: currentPage }
-                    }"
+					:footer-props="footerProps"
 				>
 					<template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
 						<slot :name="slot" v-bind="scope" />
@@ -86,10 +83,7 @@
 						<v-tooltip bottom v-else-if="tableForm === 'giftCardForm'">
 							<template v-slot:activator="{ on }">
 								<v-btn
-									@click="
-                                        (rechargeGiftcardDialog = true),
-                                            (selectedItem = item)
-                                    "
+									@click="rechargeGiftcardDialog(item) "
 									:disabled="btnDisable"
 									class="my-1"
 									icon
@@ -149,6 +143,7 @@
 			:title="dialog.title"
 			:titleCloseBtn="dialog.titleCloseBtn"
 			:icon="dialog.icon"
+			:fullscreen="dialog.fullscreen"
 			:width="dialog.width"
 			:component="dialog.component"
 			:content="dialog.content"
@@ -157,7 +152,7 @@
 			:persistent="dialog.persistent"
 		></interactiveDialog>
 
-		<checkoutDialog :show="checkoutDialog" />
+		<checkoutDialog :show="checkoutDialog" @close="resetCart" giftcard />
 	</v-card>
 </template>
 
@@ -170,6 +165,7 @@ export default {
 			dialog: {
 				show: false,
 				width: 600,
+				fullscreen: false,
 				icon: "",
 				title: "",
 				titleCloseBtn: false,
@@ -181,10 +177,9 @@ export default {
 			current_page: 1,
 			total_items: null,
 			action: "",
-			defaultObject: {},
-			viewId: null,
 			keyword: "",
-			selectedItem: {}
+			selectedItem: {},
+			search_action: false
 		};
 	},
 	props: [
@@ -204,6 +199,21 @@ export default {
 		this.setForm(this.tableForm);
 	},
 	computed: {
+		searchAction: {
+			get() {
+				return this.search_action;
+			},
+			set(value) {
+				this.search_action = value;
+			}
+		},
+		footerProps() {
+			return {
+				"disable-pagination": this.loading,
+				"disable-items-per-page": true,
+				options: { itemsPerPage: 15, page: this.currentPage }
+			};
+		},
 		totalItems: {
 			get() {
 				return this.total_items;
@@ -249,10 +259,14 @@ export default {
 		}
 	},
 	methods: {
+		resetCart() {
+			this.$store.commit("cart/resetState");
+		},
 		resetDialog() {
 			this.dialog = {
 				show: false,
 				width: 600,
+				fullscreen: false,
 				title: "",
 				titleCloseBtn: false,
 				icon: "",
@@ -279,6 +293,20 @@ export default {
 			this.selectedItem = item;
 
 			this.action = "cancelOrder";
+		},
+		rechargeGiftcardDialog(item) {
+			this.dialog = {
+				show: true,
+				width: 600,
+				title: `Recharge the giftcard #${item.id}`,
+				titleCloseBtn: true,
+				icon: "mdi-wallet-giftcard",
+				component: "RechargeGiftCardToCart",
+				model: item,
+				persistent: true
+			};
+
+			this.action = "recharge";
 		},
 		cancelOrderDisabled(item) {
 			if (this.role == "admin" || item.created_by.id === this.user.id) {
@@ -309,13 +337,21 @@ export default {
 				persistent: true
 			};
 		},
-		search() {
-			if (this.keyword.length > 2) {
+		search(e, page) {
+			if (this.keyword.length > 2 || this.searchAction) {
 				this.setLoading(true);
+
+				if (!page) {
+					this.searchAction = this.keyword;
+				} else {
+					if (!this.keyword) {
+						this.keyword = this.searchAction;
+					}
+				}
 
 				let payload = {
 					model: this.dataUrl,
-					page: 1,
+					page: page || 1,
 					keyword: this.keyword,
 					dataTable: true
 				};
@@ -335,23 +371,29 @@ export default {
 		},
 
 		paginate(e) {
-			this.setLoading(true);
+			if (this.searchAction) {
+				this.search(null, e.page);
+			} else {
+				this.searchAction = false;
 
-			this.getAll({
-				model: this.dataUrl,
-				page: e ? e.page : this.currentPage,
-				dataTable: true
-			})
-				.then(response => {
-					this.setRows(response.data);
+				this.setLoading(true);
 
-					if (response.total !== this.totalItems) {
-						this.totalItems = response.total;
-					}
+				this.getAll({
+					model: this.dataUrl,
+					page: e ? e.page : this.currentPage,
+					dataTable: true
 				})
-				.finally(() => {
-					this.setLoading(false);
-				});
+					.then(response => {
+						this.setRows(response.data);
+
+						if (response.total !== this.totalItems) {
+							this.totalItems = response.total;
+						}
+					})
+					.finally(() => {
+						this.setLoading(false);
+					});
+			}
 		},
 
 		cancelOrder() {
@@ -400,6 +442,7 @@ export default {
 		viewItemDialog(item) {
 			this.dialog = {
 				show: true,
+				fullscreen: this.tableViewComponent === "customer" ? true : false,
 				width: 1000,
 				title: `View item #${item.id}`,
 				titleCloseBtn: true,
@@ -429,6 +472,8 @@ export default {
 					case "cancelOrder":
 						this.cancelOrder();
 						break;
+					case "recharge":
+						this.checkoutDialog = true;
 					default:
 						break;
 				}

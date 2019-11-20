@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\SendMail;
 use App\Order;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class MailReceiptController extends Controller
 {

@@ -2,25 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\StorePickup;
+use App\Giftcard;
 use Illuminate\Http\Request;
 
-class StorePickupController extends BaseController
+class GiftcardController extends BaseController
 {
-    protected $model = StorePickup::class;
+    protected $model = Giftcard::class;
 
     public function create(Request $request)
     {
         $validatedData = $request->validate([
             'name' => 'required|string',
-            'street' => 'required|string',
-            'street1' => 'nullable|string',
-            'country_id' => 'required|exists:countries,country_id',
-            'region_id' => 'required|exists:regions,region_id',
+            'code' => 'required|string',
+            'enabled' => 'required|boolean',
+            'amount' => 'required|numeric',
         ]);
 
         $validatedID = $request->validate([
-            'id' => 'nullable|exists:store_pickups,id'
+            'id' => 'nullable|exists:giftcards,id'
         ]);
 
         if (!empty($validatedID)) {
@@ -30,11 +29,6 @@ class StorePickupController extends BaseController
         }
     }
 
-    public function all()
-    {
-        return response(StorePickup::all());
-    }
-
     public function search(Request $request)
     {
         $validatedData = $request->validate([
@@ -42,7 +36,7 @@ class StorePickupController extends BaseController
         ]);
 
         return $this->searchResult(
-            ['name', 'street', 'street1', 'country_id', 'region_id'],
+            ['name', 'code'],
             $validatedData['keyword'],
             true
         );
