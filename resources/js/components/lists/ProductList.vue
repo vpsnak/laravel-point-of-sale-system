@@ -153,13 +153,13 @@
 			v-if="showViewDialog"
 			:show="showViewDialog"
 			title="View item"
-			:fullscreen="false"
 			:width="1000"
 			component="product"
 			:model="viewProduct"
 			@action="result"
 			action="newItem"
 			cancelBtnTxt="Close"
+			titleCloseBtn
 		></interactiveDialog>
 	</v-card>
 </template>

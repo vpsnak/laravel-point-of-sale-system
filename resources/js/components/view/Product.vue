@@ -12,7 +12,6 @@
 						<div class="subtitle-1">Price: {{parseFloat(product.final_price).toFixed(2)}} $</div>
 						<div class="subtitle-1">Stock: {{productData.stock}}</div>
 						<div class="subtitle-1">Created at: {{productData.created_at}}</div>
-						<div class="subtitle-1">Description: {{productData.description}}</div>
 						<div class="subtitle-1" v-if="productData.barcode">
 							<barcode :value="productData.barcode" format="CODE39">The rendering fails.</barcode>
 						</div>
@@ -36,6 +35,16 @@
 				</v-card>
 			</v-col>
 		</v-row>
+		<v-container v-if="productData.description">
+			<v-row>
+				<v-col :cols="12">
+					<h3 class="subtitle-1">Description</h3>
+				</v-col>
+				<v-col :cols="12">
+					<div v-html="productData.description"></div>
+				</v-col>
+			</v-row>
+		</v-container>
 	</v-container>
 	<div v-else>Loading...</div>
 </template>
