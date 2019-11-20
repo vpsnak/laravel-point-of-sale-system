@@ -20,6 +20,8 @@ class ElavonSdkPaymentController extends Controller
     public $voiceReferral;
     public $invoiceNumber;
     public $payment_id;
+    public $CARDHOLDER_ADDRESS;
+    public $CARDHOLDER_ZIP;
 
     public function getLogs($test_case = null)
     {
@@ -83,7 +85,9 @@ class ElavonSdkPaymentController extends Controller
             'taxFree' => 'nullable|boolean',
             'keyed' => 'nullable|boolean',
             'voiceReferral' => 'nullable|boolean',
-            'invoiceNumber' => 'nullable|string'
+            'invoiceNumber' => 'nullable|string',
+            'CARDHOLDER_ADDRESS' => 'nullable|string|max:30',
+            'CARDHOLDER_ZIP' => 'nullable|string|max:9'
         ]);
 
         $this->selected_transaction = $validatedData['selected_transaction'];
@@ -95,6 +99,9 @@ class ElavonSdkPaymentController extends Controller
         array_key_exists('voiceReferral', $validatedData) && $this->voiceReferral == true ? $this->voiceReferral = '321zxc' : $this->voiceReferral = false;
         array_key_exists('invoiceNumber', $validatedData) ? $this->invoiceNumber =  $validatedData['invoiceNumber'] : $this->invoiceNumber = null;
         array_key_exists('taxFree', $validatedData) ? $this->taxFree = $validatedData['taxFree'] : $this->taxFree = false;
+        array_key_exists('keyed', $validatedData) ? $this->keyed = $validatedData['keyed'] : null;
+        array_key_exists('CARDHOLDER_ADDRESS', $validatedData) ? $this->CARDHOLDER_ADDRESS = $validatedData['CARDHOLDER_ADDRESS'] : null;
+        array_key_exists('CARDHOLDER_ZIP', $validatedData) ? $this->CARDHOLDER_ZIP = $validatedData['CARDHOLDER_ZIP'] : null;
 
         return response($this->posPayment());
     }
@@ -468,6 +475,13 @@ class ElavonSdkPaymentController extends Controller
 
         if ($this->keyed != false) {
             $payload['parameters']['cardEntryTypes'] = ['MANUALLY_ENTERED'];
+
+            if ($this->CARDHOLDER_ADDRESS && $this->CARDHOLDER_ZIP) {
+                $payload['parameters']['avsFields'] = [
+                    'CARDHOLDER_ADDRESS' => $this->CARDHOLDER_ADDRESS,
+                    'CARDHOLDER_ZIP' => $this->CARDHOLDER_ZIP
+                ];
+            }
         }
 
         if ($this->voiceReferral != false) {
