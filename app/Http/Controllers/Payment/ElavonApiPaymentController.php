@@ -82,8 +82,10 @@ class ElavonApiPaymentController extends Controller
         ];
 
         $payload = array_merge($defaults, $data);
+        Log::channel('stock')->debug('Payload: ' . json_encode($payload));
         $html = self::generateHtmlPayload($payload);
         $response = self::sendTransaction($html);
+        Log::channel('stock')->debug('Response: ' . json_encode((array)$response));
         return (array) $response;
     }
 

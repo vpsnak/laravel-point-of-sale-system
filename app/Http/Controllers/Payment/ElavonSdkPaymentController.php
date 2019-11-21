@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\ElavonSdkPayment;
 use DB;
+use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
@@ -209,7 +210,7 @@ class ElavonSdkPaymentController extends Controller
                     return ['errors' => $msg];
                 default:
                     $msg = 'Warning: Unhandled error occured. Please check log file entry above';
-                    $this->saveToSdkLog($msg, 'declined');
+                    $this->saveToSdkLog($response, 'declined');
                     return ['errors' => $msg];
             }
         } else if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'DECLINED') {
@@ -260,6 +261,7 @@ class ElavonSdkPaymentController extends Controller
                     switch ($response['data']['paymentGatewayCommand']['requiredInformation'][0]) {
                         case 'VoiceReferral':
                         case 'CardPresent':
+                            $this->saveToSdkLog($response, 'continue');
                             $this->continuePaymentTransaction();
                             break;
                         default:
@@ -313,7 +315,7 @@ class ElavonSdkPaymentController extends Controller
                 'connect_timeout' => 30,
                 'body' => json_encode($payload)
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             if ($e->hasResponse()) {
                 $this->saveToSdkLog($e->getResponse(), 'error');
                 return ['errors' => $e->getResponse()];

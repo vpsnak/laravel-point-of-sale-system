@@ -2,14 +2,32 @@
 
 namespace App\Http\Controllers;
 
+use App\ElavonApiPayment;
 use Illuminate\Http\Request;
 
 class CreditCardController extends Controller
 {
-    protected $cvc2_indicator;
+    protected $test_case;
+    public $txn_id;
+    public $ssl_card_number;
+    public $ssl_amount;
+    public $ssl_cvv2cvc2_indicator;
+    public $ssl_cvv2cvc2;
     protected $invoice_number;
     protected $address;
     protected $zipcode;
+
+    public function saveToApiLog($data, $status)
+    {
+        $elavonApiPayment = new ElavonApiPayment();
+
+        $elavonApiPayment->test_case = $this->test_case;
+        $elavonApiPayment->txn_id = $this->txn_id;
+        $elavonApiPayment->status = $status;
+        $elavonApiPayment->log = is_Array($data) ? json_encode($data) : strip_tags($data);
+
+        $elavonApiPayment->save();
+    }
 
     public function cardPayment($card_number, $exp_date, $cvc, $card_holder, $amount)
     {
@@ -37,6 +55,7 @@ class CreditCardController extends Controller
             case 'ccauthonly':
             case 'ccbalinquiry':
             case 'cccredit': // @TODO check if it works
+                $this->saveToApiLog($payload, 'payload');
                 $response = ElavonApiPaymentController::doTransaction($type, $payload);
                 return $this->prepareResponse($response);
                 break;
@@ -83,7 +102,7 @@ class CreditCardController extends Controller
             'ssl_exp_date' => $exp_date,
             'ssl_salestax_indicator' => 'Y', // @TODO tax exempt
             'ssl_amount' => $amount,
-            'ssl_cvv2cvc2_indicator' => $this->cvc2_indicator,
+            'ssl_cvv2cvc2_indicator' => $this->ssl_cvv2cvc2_indicator,
             'ssl_cvv2cvc2' => $cvc,
             'ssl_first_name' => $card_holder,
         ];
@@ -110,6 +129,7 @@ class CreditCardController extends Controller
                     'id' => $response['ssl_txn_id']
                 ];
             }
+            $this->txn_id = $response['ssl_txn_id'];
             return [
                 'errors' => [
                     'Unknown Error',
@@ -172,6 +192,52 @@ class CreditCardController extends Controller
      * 9 - Not Present
      *
      */
+    public function init(
+        $test_case,
+        $ssl_amount = null,
+        $card = null,
+        $ssl_cvv2cvc2_indicator = 1,
+        $invoice = false,
+        $address = false,
+        $zip = false
+    ) {
+        $this->test_case = $test_case;
+        $this->ssl_amount = $ssl_amount;
+
+        switch ($card) {
+            case 'visa':
+                $this->ssl_card_number = '4159288888888882';
+                $this->ssl_cvv2cvc2_indicator = $ssl_cvv2cvc2_indicator;
+                $this->ssl_cvv2cvc2 = '123';
+                break;
+            case 'mc':
+                $this->ssl_card_number = '5121212121212124';
+                $this->ssl_cvv2cvc2_indicator = $ssl_cvv2cvc2_indicator;
+                $this->ssl_cvv2cvc2 = '123';
+                break;
+            case 'disc':
+                $this->ssl_card_number = '6011000000000004';
+                $this->ssl_cvv2cvc2_indicator = $ssl_cvv2cvc2_indicator;
+                $this->ssl_cvv2cvc2 = '123';
+                break;
+            case 'amex':
+                $this->ssl_card_number = '370000000000002';
+                $this->ssl_cvv2cvc2_indicator = $ssl_cvv2cvc2_indicator;
+                $this->ssl_cvv2cvc2 = '1234';
+                break;
+        }
+
+        if ($invoice) {
+            $this->invoice_number = 'INV101';
+        }
+        if ($address) {
+            $this->address = '209 W 96th St';
+        }
+        if ($zip) {
+            $this->zipcode = '10025';
+        }
+    }
+
     public function index(Request $request)
     {
         $validatedData = $request->validate([
