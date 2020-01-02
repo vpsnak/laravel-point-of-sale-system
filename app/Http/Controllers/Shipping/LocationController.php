@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Location;
 use Illuminate\Http\Request;
 
-class LocationController extends Controller
+class LocationController extends BaseController
 {
     protected $model = Location::class;
 
@@ -28,7 +28,7 @@ class LocationController extends Controller
 
     public function all()
     {
-        return response($this->model::all());
+        return response($this->model::paginate());
     }
 
     public function search(Request $request)
@@ -38,7 +38,7 @@ class LocationController extends Controller
         ]);
 
         return $this->searchResult(
-            ['name', 'street', 'street1', 'country_id', 'region_id'],
+            ['name'],
             $validatedData['keyword'],
             true
         );
