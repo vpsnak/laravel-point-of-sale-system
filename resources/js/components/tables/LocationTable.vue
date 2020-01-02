@@ -27,14 +27,13 @@ export default {
                 },
                 {
                     text: "Actions",
-                    value: "action",
-                    sortable: false
+                    value: "action"
                 }
             ]
         };
     },
     mounted() {
-        this.setRows([]);
+        this.setRows();
     },
     methods: {
         ...mapMutations("datatable", {

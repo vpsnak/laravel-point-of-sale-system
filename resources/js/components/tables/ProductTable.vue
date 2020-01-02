@@ -27,7 +27,7 @@ export default {
                 // { text: "Price", value: "price.amount" },
                 { text: "Price", value: "final_price" },
                 { text: "Stock", value: "stock" },
-                { text: "Actions", value: "action", sortable: false }
+                { text: "Actions", value: "action" }
             ]
         };
     },

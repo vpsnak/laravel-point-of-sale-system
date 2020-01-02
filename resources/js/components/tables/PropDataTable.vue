@@ -22,6 +22,7 @@
 		<v-layout column>
 			<v-flex md10 style="overflow: auto">
 				<v-data-table
+                    disable-sort
 					dense
 					:disable-filtering="true"
 					:headers="$store.state.datatable.headers"
