@@ -7,14 +7,24 @@
             >
                 <v-expansion-panel-header class="pa-3" ripple @click.stop>
                     <div class="d-flex align-center justify-space-between">
+                        <div class="d-flex flex-column pr-2">
+                            <v-img
+                                :src="product.photo_url"
+                                :lazy-src="product.photo_url"
+                                aspect-ratio="1"
+                                class="grey lighten-2"
+                                max-width="50"
+                                max-height="50"
+                            ></v-img>
+                        </div>
+
                         <div class="d-flex flex-column">
-                            <span class="subtitle-2">{{ product.name }}</span>
+                            <span class="subtitle-2">{{ product.name }} </span>
                             <span class="body-2">
                                 $
                                 {{ parseFloat(price(product)).toFixed(2) }}
                             </span>
                         </div>
-
                         <v-spacer />
 
                         <v-tooltip bottom>
@@ -41,7 +51,10 @@
                             </template>
                             <span>View product</span>
                         </v-tooltip>
-                        <div class="d-flex justify-content-center align-center">
+                        <div
+                            :img="product.photo_url"
+                            class="d-flex justify-content-center align-center"
+                        >
                             <v-btn
                                 v-if="editable"
                                 small
