@@ -34,7 +34,7 @@ export default {
     mounted() {
         if (this.model)
             this.getOne({
-                model: "gift-cards",
+                model: "locations",
                 data: {
                     id: this.model.id
                 }
