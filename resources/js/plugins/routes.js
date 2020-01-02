@@ -18,6 +18,7 @@ import Addresses from "../components/pages/Addresses";
 import StorePickups from "../components/pages/StorePickups";
 import OpenCashRegister from "../components/pages/OpenCashRegister";
 import Reports from "../components/pages/Reports";
+import Locations from "../components/pages/Locations";
 
 export default [
     {
@@ -144,6 +145,12 @@ export default [
         name: "Addresses",
         path: "/addresses",
         component: Addresses,
+        meta: { requiresAuth: true }
+    },
+    {
+        name: "Locations",
+        path: "/locations",
+        component: Locations,
         meta: { requiresAuth: true }
     }
 ];
