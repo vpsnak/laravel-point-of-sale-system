@@ -424,8 +424,8 @@ $allRoutes = [
             ]
         ]
     ],
-    'occasions' => [
-        'controller' => 'OccasionController',
+    'locations' => [
+        'controller' => 'LocationController',
         'endpoints' => [
             'get' => [
                 $routeAll,

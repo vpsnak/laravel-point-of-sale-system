@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Occasion;
+use App\Location;
 use Illuminate\Http\Request;
 
 class OccasionController extends Controller
 {
-    protected $model = Occasion::class;
+    protected $model = Location::class;
 
     public function create(Request $request)
     {
@@ -16,7 +16,7 @@ class OccasionController extends Controller
         ]);
 
         $validatedID = $request->validate([
-            'id' => 'nullable|exists:occasions,id'
+            'id' => 'nullable|exists:locations,id'
         ]);
 
         if (!empty($validatedID)) {

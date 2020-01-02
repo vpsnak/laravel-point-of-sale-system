@@ -177,7 +177,7 @@
         </v-col>
       </v-row>
       <v-row v-if="shipping.method !== 'retail'">
-        <v-col offset-lg="3" cols="6" lg="4" v-if="shipping.method === 'pickup'" class="pa-1">
+        <v-col offset-lg="3" :cols="6" :lg="6" v-if="shipping.method === 'pickup'" class="pa-1">
           <ValidationProvider rules="required" v-slot="{ errors, valid }" name="From">
             <v-select
               dense
@@ -193,7 +193,7 @@
             ></v-select>
           </ValidationProvider>
         </v-col>
-        <v-col cols="6" lg="2" :offset-lg="shipping.method === 'pickup' ? 0 : 3" class="pa-1">
+        <v-col cols="6" lg="2" :offset-lg="3" class="pa-1" v-if="shipping.method === 'delivery'">
           <v-select
             dense
             :loading="loading"
