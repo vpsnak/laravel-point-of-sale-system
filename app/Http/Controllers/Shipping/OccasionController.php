@@ -16,7 +16,7 @@ class OccasionController extends Controller
         ]);
 
         $validatedID = $request->validate([
-            'id' => 'nullable|exists:store_pickups,id'
+            'id' => 'nullable|exists:occasions,id'
         ]);
 
         if (!empty($validatedID)) {

@@ -423,6 +423,22 @@ $allRoutes = [
                 $routeDelete
             ]
         ]
+    ],
+    'occasions' => [
+        'controller' => 'OccasionController',
+        'endpoints' => [
+            'get' => [
+                $routeAll,
+                $routeGet
+            ],
+            'post' => [
+                $routeCreate,
+                $routeSearch
+            ],
+            'delete' => [
+                $routeDelete
+            ]
+        ]
     ]
 ];
 
