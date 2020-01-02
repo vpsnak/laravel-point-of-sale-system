@@ -21,7 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        if ($this->app->environment() !== 'production') {
+            $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
+        }
     }
 
     /**
@@ -43,10 +45,12 @@ class AppServiceProvider extends ServiceProvider
                         function (Builder $query) use ($attribute, $searchTerm) {
                             [$relationName, $relationAttribute] = explode('.', $attribute);
 
-                            $query->orWhereHas($relationName,
+                            $query->orWhereHas(
+                                $relationName,
                                 function (Builder $query) use ($relationAttribute, $searchTerm) {
                                     $query->where($relationAttribute, 'LIKE', "%{$searchTerm}%");
-                                });
+                                }
+                            );
                         },
                         function (Builder $query) use ($attribute, $searchTerm) {
                             $query->orWhere($attribute, 'LIKE', "%{$searchTerm}%");
