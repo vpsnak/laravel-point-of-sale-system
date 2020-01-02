@@ -55,7 +55,7 @@
 							:value="category.id"
 						>
 							<v-btn
-								:color="active ? 'primary' : ''"
+								:color="active ? 'tertiary' : ''"
 								class="mx-1"
 								@click="toggle"
 								depressed
@@ -73,12 +73,12 @@
 						@click="addProduct(product)"
 						height="170px"
 					>
-						<v-card-title class="primary pa-0" @click.stop>
-							<h6 class="px-2">{{product.name}}</h6>
+						<v-card-title class="secondary pa-0" @click.stop dark>
+							<h6 class="px-2">{{ product.name }}</h6>
 							<div class="flex-grow-1"></div>
 							<v-menu bottom left>
 								<template v-slot:activator="{ on }">
-									<v-btn dark icon v-on="on">
+									<v-btn icon v-on="on">
 										<v-icon>mdi-dots-vertical</v-icon>
 									</v-btn>
 								</template>
@@ -116,14 +116,14 @@
 			</v-row>
 			<v-row v-else align="center" justify="center" style="height: 58vh; overflow-y: auto;">
 				<h2 v-if="!loader">No products found</h2>
-				<v-progress-circular v-else dark indeterminate color="white"></v-progress-circular>
+				<v-progress-circular v-else indeterminate color="tertiary"></v-progress-circular>
 			</v-row>
 		</v-card-text>
 		<v-pagination
 			v-model="currentPage"
 			@input="paginate"
 			:length="lastPage"
-			color="primary"
+			color="tertiary"
 			:disabled="loader"
 			@previous="currentPage -= 1"
 			@next="currentPage += 1"
