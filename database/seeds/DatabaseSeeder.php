@@ -29,8 +29,6 @@ class DatabaseSeeder extends Seeder
         // $this->call(OrderSeeder::class);
         // $this->call(PaymentSeeder::class);
 
-        $this->call(LocationSeeder::class);
-
         $this->call(PlantshedPostCodes::class);
         $this->call(PlantshedAreasSeeder::class);
 

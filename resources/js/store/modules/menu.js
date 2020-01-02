@@ -96,12 +96,6 @@ export default {
             },
             {
                 id: 16,
-                title: "Locations",
-                icon: "mdi-city",
-                to: "locations"
-            },
-            {
-                id: 17,
                 title: "Forms",
                 icon: "fas fa-cat",
                 to: "forms"
