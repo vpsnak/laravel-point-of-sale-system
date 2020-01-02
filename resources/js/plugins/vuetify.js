@@ -8,9 +8,6 @@ Vue.use(Vuetify);
 const options = {
     theme: {
         dark: true
-    },
-    icons: {
-        iconfont: "mdi"
     }
 };
 
