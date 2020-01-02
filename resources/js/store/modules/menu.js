@@ -97,7 +97,7 @@ export default {
             {
                 id: 16,
                 title: "Locations",
-                icon: "mdi-airplane-landing",
+                icon: "mdi-city",
                 to: "locations"
             },
             {

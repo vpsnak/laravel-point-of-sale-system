@@ -26,14 +26,6 @@ export default {
                     value: "name"
                 },
                 {
-                    text: "Created at",
-                    value: "created_at"
-                },
-                {
-                    text: "Updated at",
-                    value: "updated_at"
-                },
-                {
                     text: "Actions",
                     value: "action",
                     sortable: false

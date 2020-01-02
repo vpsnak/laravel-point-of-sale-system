@@ -3,7 +3,7 @@
         <v-form @submit="submit">
             <div class="text-center">
                 <v-chip color="blue-grey" label>
-                    <v-icon left>mdi-airplane-landing</v-icon>Location Form
+                    <v-icon left>mdi-city</v-icon>Location Form
                 </v-chip>
             </div>
             <ValidationProvider
@@ -49,7 +49,6 @@ export default {
         };
     },
     mounted() {
-        this.getAllTaxes();
         this.defaultValues = { ...this.formFields };
         if (this.$props.model) {
             this.formFields = {
