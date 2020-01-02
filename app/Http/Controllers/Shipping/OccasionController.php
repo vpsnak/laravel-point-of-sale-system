@@ -2,21 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\StorePickup;
+use App\Occasion;
 use Illuminate\Http\Request;
 
-class StorePickupController extends BaseController
+class OccasionController extends Controller
 {
-    protected $model = StorePickup::class;
+    protected $model = Occasion::class;
 
     public function create(Request $request)
     {
         $validatedData = $request->validate([
             'name' => 'required|string',
-            'street' => 'required|string',
-            'street1' => 'nullable|string',
-            'country_id' => 'required|exists:countries,country_id',
-            'region_id' => 'required|exists:regions,region_id',
         ]);
 
         $validatedID = $request->validate([
@@ -32,7 +28,7 @@ class StorePickupController extends BaseController
 
     public function all()
     {
-        return response($this->model::paginate());
+        return response($this->model::all());
     }
 
     public function search(Request $request)
