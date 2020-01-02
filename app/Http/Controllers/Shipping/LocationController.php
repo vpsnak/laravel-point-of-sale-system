@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Location;
 use Illuminate\Http\Request;
 
-class OccasionController extends Controller
+class LocationController extends Controller
 {
     protected $model = Location::class;
 
