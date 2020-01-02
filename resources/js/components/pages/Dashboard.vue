@@ -41,7 +41,7 @@
 							></v-textarea>
 						</v-col>
 					</v-row>
-					<v-btn type="submit" :loading="loading" :disabled="loading" color="success">submit</v-btn>
+					<v-btn type="submit" :loading="loading" :disabled="loading" color="primary">submit</v-btn>
 					<v-btn
 						@click="getSdkLogs"
 						v-if="endpoint === 'SDK'"
