@@ -1,10 +1,12 @@
 import Vue from "vue";
 import Vuetify from "vuetify";
 import "vuetify/dist/vuetify.min.css";
+import { preset } from "vue-cli-plugin-vuetify-preset-reply/preset";
 
 Vue.use(Vuetify);
 
-const opts = {
+const options = {
+    breakpoint: { scrollbarWidth: 12 },
     theme: {
         dark: true
     },
@@ -13,4 +15,4 @@ const opts = {
     }
 };
 
-export default new Vuetify(opts);
+export default new Vuetify({ preset, ...options });
