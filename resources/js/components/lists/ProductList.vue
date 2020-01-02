@@ -55,7 +55,7 @@
 							:value="category.id"
 						>
 							<v-btn
-								:color="active ? 'blue-grey' : ''"
+								:color="active ? 'primary' : ''"
 								class="mx-1"
 								@click="toggle"
 								depressed
@@ -73,7 +73,7 @@
 						@click="addProduct(product)"
 						height="170px"
 					>
-						<v-card-title class="blue-grey pa-0" @click.stop>
+						<v-card-title class="primary pa-0" @click.stop>
 							<h6 class="px-2">{{product.name}}</h6>
 							<div class="flex-grow-1"></div>
 							<v-menu bottom left>
@@ -104,7 +104,7 @@
 							</v-menu>
 						</v-card-title>
 						<v-card-actions>
-							<v-chip class="mt-2 ml-1">
+							<v-chip class="secondary mt-2 ml-1">
 								<span>Price: {{ parseFloat(product.final_price).toFixed(2) }} $</span>
 							</v-chip>
 							<v-chip v-if="product.final_price != product.price.amount" class="mt-2 ml-1">
@@ -123,7 +123,7 @@
 			v-model="currentPage"
 			@input="paginate"
 			:length="lastPage"
-			color="blue-grey"
+			color="primary"
 			:disabled="loader"
 			@previous="currentPage -= 1"
 			@next="currentPage += 1"
