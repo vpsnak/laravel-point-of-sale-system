@@ -65,7 +65,7 @@ class CashRegisterLogsController extends BaseController
         ]);
 
         $user = auth()->user();
-//        @TODO refactor
+        //        @TODO refactor
         if (empty($user)) {
             return response('Unauthorized!', 401);
         }
