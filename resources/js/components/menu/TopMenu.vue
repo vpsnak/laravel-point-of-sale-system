@@ -45,7 +45,7 @@
                     v-else
                     @click="CloseCashRegisterDialog = true"
                     class="ma-2"
-                    color="tertiary"
+                    color="secondary"
                 >
                     <v-avatar left>
                         <v-icon>mdi-store</v-icon>

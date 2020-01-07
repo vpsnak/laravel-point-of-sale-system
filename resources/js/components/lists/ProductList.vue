@@ -55,7 +55,7 @@
 							:value="category.id"
 						>
 							<v-btn
-								:color="active ? 'tertiary' : ''"
+								:color="active ? 'secondary' : ''"
 								class="mx-1"
 								@click="toggle"
 								depressed
@@ -116,14 +116,14 @@
 			</v-row>
 			<v-row v-else align="center" justify="center" style="height: 58vh; overflow-y: auto;">
 				<h2 v-if="!loader">No products found</h2>
-				<v-progress-circular v-else indeterminate color="tertiary"></v-progress-circular>
+				<v-progress-circular v-else indeterminate color="secondary"></v-progress-circular>
 			</v-row>
 		</v-card-text>
 		<v-pagination
 			v-model="currentPage"
 			@input="paginate"
 			:length="lastPage"
-			color="tertiary"
+			color="secondary"
 			:disabled="loader"
 			@previous="currentPage -= 1"
 			@next="currentPage += 1"
