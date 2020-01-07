@@ -50,7 +50,7 @@
 			<v-row>
 				<v-col cols="6" v-if="remainingAmount && cash_register_id && cashRegisterIsopen">
 					<span class="title">
-						Remaining:
+						Amount:
 						<span class="amber--text" v-text="'$ ' + remainingAmount.toFixed(2)" />
 					</span>
 				</v-col>

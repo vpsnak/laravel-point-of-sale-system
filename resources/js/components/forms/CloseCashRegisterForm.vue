@@ -14,11 +14,8 @@
 			<v-row>
 				<v-col cols="6" v-if="cashRegister.earnings">
 					<span class="title">
-						Remaining:
-						<span
-							class="amber--text"
-							v-text="'$ ' + cashRegister.earnings.cash_total.toFixed(2)"
-						/>
+						Amount:
+						<span class="amber--text" v-text="'$ ' + cashRegister.earnings.cash_total.toFixed(2)" />
 					</span>
 				</v-col>
 				<v-col cols="6">
