@@ -162,6 +162,13 @@ class CashRegisterReportController extends BaseController
         ];
     }
 
+    public function checkCurrent(CashRegister $cashRegister)
+    {
+        $report = self::generateReportByCashRegisterId($cashRegister->id);
+
+        return response($report);
+    }
+
     public function search(Request $request)
     {
         $validatedData = $request->validate([

@@ -11,14 +11,19 @@
 |
 */
 
-// roles
-Route::get('/roles', "RoleController@all")->middleware('scope:admin');
-Route::post('/roles/set', "RoleController@setRole")->middleware('scope:admin');
+
 
 $cashier = 'cashier';
 $store_manager = 'store_manager';
 $admin = 'admin';
 $allRoles = "$admin,$store_manager,$cashier";
+
+// roles
+Route::get('/roles', "RoleController@all")->middleware('scope:admin');
+Route::post('/roles/set', "RoleController@setRole")->middleware('scope:admin');
+
+// custom end points (cancer free!)
+Route::get('/cash-register-reports/check/{cashRegister}', "CashRegisterReportController@checkCurrent")->middleware("scope:{$allRoles}");
 
 $routeAll = [
     'url' => '/',
