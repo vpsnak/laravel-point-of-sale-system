@@ -172,6 +172,7 @@ export default new Vuex.Store({
                             msg: response.data.info,
                             type: "info"
                         };
+                        console.log(response.data.user);
 
                         context.commit("setUser", response.data.user);
                         context.commit("setToken", response.data.token);

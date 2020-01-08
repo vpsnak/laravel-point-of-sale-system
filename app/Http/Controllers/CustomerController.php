@@ -57,7 +57,7 @@ class CustomerController extends BaseController
                 'address.country_id' => 'required|exists:countries,country_id',
                 'address.region' => 'required|exists:regions,region_id',
                 'address.postcode' => 'required|string',
-                'address.phone' => 'required|numeric',
+                'address.phone' => 'required|string',
                 'address.company' => 'nullable|string',
                 'address.vat_id' => 'nullable|string',
                 'address.billing' => 'nullable|bool',

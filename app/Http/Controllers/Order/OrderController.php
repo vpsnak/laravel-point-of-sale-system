@@ -78,7 +78,7 @@ class OrderController extends BaseController
             'shipping.date' => 'required_if:shipping.method,pickup,delivery|date',
             'shipping.timeSlotLabel' => 'nullable|required_if:shipping.method,pickup,delivery|string',
             'shipping.location' => 'nullable|required_if:shipping.method,delivery|numeric',
-            'shipping.occasion' => 'nullable|required_if:shipping.method,pickup,delivery|numeric',
+            'shipping.occasion' => 'nullable|required_if:shipping.method,delivery|numeric',
 
             'shipping.address' => 'nullable|required_if:shipping.method,delivery',
             'shipping.address.id' => 'nullable|required_if:shipping.method,delivery|numeric|exists:addresses,id',
@@ -95,9 +95,7 @@ class OrderController extends BaseController
             'shipping.address.country_id' => 'required_if:shipping.method,delivery|exists:countries,country_id',
             'shipping.address.region' => 'required_if:shipping.method,delivery|exists:regions,region_id',
             'shipping.address.postcode' => 'required_if:shipping.method,delivery|string',
-            'shipping.address.phone' => 'required_if:shipping.method,delivery|numeric',
-            'shipping.address.company' => 'nullable|string',
-            'shipping.address.vat_id' => 'nullable|string',
+            'shipping.address.phone' => 'required_if:shipping.method,delivery|string',
         ]);
 
         $validatedData['shipping_type'] = $shippingData['shipping']['method'] ?? null;
