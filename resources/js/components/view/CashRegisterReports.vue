@@ -6,8 +6,8 @@
 					<v-card-title>{{ cashRegisterReportsData.report_name }}</v-card-title>
 					<v-card-text>
 						<div class="subtitle-1">Report type: {{ cashRegisterReportsData.report_type }}</div>
-						<div class="subtitle-1">Created by: {{ user.name }}</div>
-						<div class="subtitle-1">Cash register: {{ cash_register.name }}</div>
+						<div v-if="user" class="subtitle-1">Created by: {{ user.name }}</div>
+						<div v-if="cash_register" class="subtitle-1">Cash register: {{ cash_register.name }}</div>
 						<div
 							class="subtitle-1"
 						>Opening amount: {{parseFloat(cashRegisterReportsData.opening_amount).toFixed(2)}} $</div>
