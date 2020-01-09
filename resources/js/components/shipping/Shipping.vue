@@ -27,7 +27,7 @@
 
 		<div class="d-flex justify-center flex-column align-center">
 			<v-radio-group v-model="shipping.method" row dense class="ma-0 pt-2">
-				<v-radio label="Retail" value="retail"></v-radio>
+				<v-radio label="Cash & Carry" value="retail"></v-radio>
 				<v-radio label="In store pickup" value="pickup" :disabled="!customer"></v-radio>
 				<v-radio label="Delivery" value="delivery" :disabled="!customer"></v-radio>
 			</v-radio-group>
