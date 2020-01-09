@@ -122,7 +122,14 @@ class UserController extends Controller
 
     public function logout()
     {
-        auth()->user()->token()->delete();
+        $user = auth()->user();
+
+        if ($user->open_register) {
+            $user->open_register->user_id = null;
+            $user->open_register->save();
+        }
+
+        $user->token()->delete();
 
         return response(['info' => ['Logout' => 'Goodbye...']], 200);
     }
