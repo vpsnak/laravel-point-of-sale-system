@@ -47,6 +47,7 @@ class CashRegisterReportController extends BaseController
                 $report['cash_register_id'] = $id;
                 $report['report_type'] = 'z';
                 $report['report_name'] = 'Report ' . strtoupper($report['report_type']) . ' ' . now();
+
                 return CashRegisterReport::store($report);
             }
             return null;

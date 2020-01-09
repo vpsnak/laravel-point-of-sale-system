@@ -122,7 +122,7 @@ export default {
                 state.products[index].qty++;
             } else {
                 Vue.set(product, "qty", 1);
-                state.products.push(product);
+                state.products.push(_.cloneDeep(product));
             }
         },
         increaseProductQty(state, product) {
@@ -141,22 +141,6 @@ export default {
 
             if (index != -1 && state.products[index].qty > 1) {
                 state.products[index].qty--;
-            }
-        },
-        setDiscount(state, model) {
-            if (_.has(model, "products")) {
-                state.discount_type = model.discount_type;
-
-                state.discount_amount = parseFloat(model.discount_amount);
-            } else {
-                let index = _.findIndex(state.products, iterator => {
-                    return iterator.id === model.id;
-                });
-
-                state.products[index].discount_type = model.discount_type;
-                state.products[index].discount_amount = parseFloat(
-                    model.discount_amount
-                );
             }
         },
         setCustomer(state, customer) {

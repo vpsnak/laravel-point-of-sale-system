@@ -43,7 +43,7 @@
 
 		<v-divider class="py-1" />
 
-		<cartProducts :products="items ? items : products" :editable="editable"></cartProducts>
+		<cartProducts :editable="editable"></cartProducts>
 
 		<v-divider />
 
@@ -53,7 +53,7 @@
 					<v-label>Cart discount</v-label>
 				</v-col>
 				<v-col cols="8" class="px-2 py-0">
-					<cartDiscount :model="cart" :editable="editable"></cartDiscount>
+					<cartDiscount :product_index="-1" :editable="editable"></cartDiscount>
 				</v-col>
 			</v-row>
 
