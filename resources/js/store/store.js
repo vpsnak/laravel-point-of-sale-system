@@ -29,11 +29,8 @@ export default new Vuex.Store({
 
         token: Cookies.get("token") || null,
 
-        store: Cookies.get("store") ? JSON.parse(Cookies.get("store")) : null,
-
-        cashRegister: Cookies.get("cash_register")
-            ? JSON.parse(Cookies.get("cash_register"))
-            : null,
+        store: null,
+        cashRegister: null,
 
         // notification
         notification: {
@@ -93,23 +90,15 @@ export default new Vuex.Store({
         setCashRegister(state, cashRegister) {
             if (cashRegister) {
                 state.cashRegister = cashRegister;
-                Cookies.set("cash_register", cashRegister, {
-                    sameSite: "strict"
-                });
             } else {
                 state.cashRegister = null;
-                Cookies.remove("cash_register");
             }
         },
         setStore(state, store) {
             if (store) {
                 state.store = store;
-                Cookies.set("store", state.store, {
-                    sameSite: "strict"
-                });
             } else {
                 state.store = null;
-                Cookies.remove("store");
             }
         },
         setUser(state, user) {
@@ -118,20 +107,6 @@ export default new Vuex.Store({
                 Cookies.set("user", state.user, {
                     sameSite: "strict"
                 });
-
-                // retrieve automatically opened cash register
-                // if (state.user.open_register) {
-                //     state.cashRegister = state.user.open_register.cash_register;
-                //     state.store = state.user.open_register.cash_register.store;
-
-                //     Cookies.set("cash_register", state.cashRegister, {
-                //         sameSite: "strict"
-                //     });
-
-                //     Cookies.set("store", state.store, {
-                //         sameSite: "strict"
-                //     });
-                // }
             } else {
                 state.user = null;
                 Cookies.remove("user");
@@ -172,7 +147,6 @@ export default new Vuex.Store({
                             msg: response.data.info,
                             type: "info"
                         };
-                        console.log(response.data.user);
 
                         context.commit("setUser", response.data.user);
                         context.commit("setToken", response.data.token);
