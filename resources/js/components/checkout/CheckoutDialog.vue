@@ -52,8 +52,6 @@
 							:key="order ? order.id : 0"
 							icon="mdi-clipboard-list"
 							title="Order summary"
-							:items="items"
-							:order="order"
 							:editable="isEditable"
 						/>
 					</v-col>
@@ -101,12 +99,6 @@ export default {
 		},
 		order() {
 			return this.$store.state.cart.order;
-		},
-		items() {
-			if (this.order) {
-				return this.$store.state.cart.order.items;
-			}
-			return undefined;
 		}
 	},
 	methods: {

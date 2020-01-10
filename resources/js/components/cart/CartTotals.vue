@@ -131,10 +131,18 @@ export default {
 			if (this.$props.order) {
 				return this.$props.order.total;
 			} else {
-				this.$store.commit(
-					"cart/setCartPrice",
+				Vue.set(
+					this.$store.state.cart,
+					"cart_price",
 					this.subTotalwDiscount + this.tax + this.shippingCost
 				);
+
+				if (parseFloat(this.$store.state.cart.cart_price) > 0) {
+					this.$store.state.cart.isValidCheckout = true;
+				} else {
+					this.$store.state.cart.isValidCheckout = false;
+				}
+
 				return this.subTotalwDiscount + this.tax + this.shippingCost;
 			}
 		}

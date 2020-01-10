@@ -14,14 +14,12 @@
 
 		<v-col cols="6" class="pa-0 pl-2" v-if="discountType && discountType !== 'None'">
 			<ValidationObserver v-slot="{ valid, invalid }" ref="checkoutObs">
-				<input type="hidden" :value="($store.state.cart.isValidCheckout = valid)" />
 				<ValidationProvider
 					:rules="'between:0,' + max.toFixed(2)"
 					v-slot="{ invalid }"
 					name="Discount amount"
 				>
 					<v-text-field
-						@input="alert()"
 						v-model="discountAmount"
 						type="number"
 						label="Amount"
@@ -41,19 +39,31 @@ import { mapState } from "vuex";
 import { mapGetters } from "vuex";
 
 export default {
-	data() {
-		return {
-			discount_amount: 0
-		};
-	},
 	props: {
-		product_price: String,
+		product_price: Number,
 		product_index: Number,
 		editable: Boolean
 	},
+	watch: {
+		product_price() {
+			this.setDiscount();
+		}
+	},
 	methods: {
-		alert() {
-			console.log(this.max);
+		setDiscount(value = 0) {
+			if (this.$props.product_index === -1) {
+				Vue.set(
+					this.cart,
+					"discount_amount",
+					value || this.cart.discount_amount
+				);
+			} else {
+				Vue.set(
+					this.product,
+					"discount_amount",
+					value || this.product.discount_amount
+				);
+			}
 		}
 	},
 	computed: {
@@ -68,7 +78,6 @@ export default {
 		},
 		product: {
 			get() {
-				console.log(this.cart.products[this.$props.product_index]);
 				return this.cart.products[this.$props.product_index];
 			},
 			set(value) {
@@ -79,15 +88,16 @@ export default {
 			switch (this.discountType) {
 				case "Flat":
 					if (this.$props.product_index === -1) {
-						return (
+						let max =
 							parseFloat(this.cart.cart_price) +
-							parseFloat(this.cart.discount_amount)
-						);
+							parseFloat(this.cart.discount_amount);
+
+						return max - 0.01;
 					} else {
 						return parseFloat(this.$props.product_price);
 					}
 				case "Percentage":
-					return 100;
+					return 99;
 				default:
 					return 0;
 			}
@@ -102,26 +112,24 @@ export default {
 			},
 			set(value) {
 				if (this.$props.product_index === -1) {
-					this.cart.discount_type = value;
+					Vue.set(this.cart, "discount_type", value);
 				} else {
 					Vue.set(this.product, "discount_type", value);
 				}
+
+				this.setDiscount();
 			}
 		},
 		discountAmount: {
 			get() {
-				return this.discount_amount;
+				if (this.$props.product_index === -1) {
+					return this.cart.discount_amount;
+				} else {
+					return this.product.discount_amount;
+				}
 			},
 			set(value) {
-				this.discount_amount = value;
-
-				if (value <= this.max) {
-					if (this.$props.product_index === -1) {
-						this.cart.discount_amount = value;
-					} else {
-						Vue.set(this.product, "discount_amount", value);
-					}
-				}
+				this.setDiscount(value);
 			}
 		}
 	}
