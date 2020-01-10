@@ -495,6 +495,9 @@ export default new Vuex.Store({
                                 "setStore",
                                 response.data.cashRegister.cash_register.store
                             );
+                        } else {
+                            context.commit("setCashRegister", null);
+                            context.commit("setStore", null);
                         }
                         resolve(true);
                     })
