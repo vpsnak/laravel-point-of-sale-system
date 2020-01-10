@@ -475,16 +475,16 @@ export default new Vuex.Store({
                     .get(this.state.baseUrl + "cash-register-logs/retrieve")
                     .then(response => {
                         if (response.data) {
-                            let notification = {
-                                msg: response.data.info,
-                                type: "info"
-                            };
-
                             if (
                                 !context.state.cashRegister ||
                                 !context.state.store
                             ) {
-                                notification.msg = `Your open session with cash register: <b>${response.data.cashRegister.cash_register.name} </b> has been restored`;
+                                let notification = {
+                                    msg: `Your open session with cash register: <b>${response.data.cashRegister.cash_register.name} </b> has been restored`,
+                                    type: "info"
+                                };
+
+                                context.commit("setNotification", notification);
                             }
 
                             context.commit(
@@ -495,8 +495,6 @@ export default new Vuex.Store({
                                 "setStore",
                                 response.data.cashRegister.cash_register.store
                             );
-
-                            context.commit("setNotification", notification);
                         }
                         resolve(true);
                     })

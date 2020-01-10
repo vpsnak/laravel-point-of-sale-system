@@ -17,9 +17,14 @@ import { mapGetters, mapMutations } from "vuex";
 
 export default {
 	mounted() {
-		this.retrieveCashRegister();
+		this.retrieveCashRegister().then(() => {
+			console.log(this.$router.currentRoute);
+			if (this.$router.currentRoute.name === "openCashRegister") {
+				this.$router.push({ name: "dashboard" });
+			}
 
-		setInterval(() => this.retrieveCashRegister(), 30000);
+			setInterval(() => this.retrieveCashRegister(), 30000);
+		});
 	},
 	computed: {
 		auth() {
@@ -38,7 +43,7 @@ export default {
 	methods: {
 		...mapMutations(["logout"]),
 		retrieveCashRegister() {
-			this.$store.dispatch("retrieveCashRegister");
+			return this.$store.dispatch("retrieveCashRegister");
 		}
 	}
 };
