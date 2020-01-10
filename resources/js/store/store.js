@@ -419,7 +419,94 @@ export default new Vuex.Store({
                     });
             });
         },
+        logoutCashRegister(context) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(this.state.baseUrl + "cash-register-logs/logout")
+                    .then(response => {
+                        if (
+                            router.currentRoute.name === "sales" ||
+                            router.currentRoute.name === "orders"
+                        ) {
+                            router.push({
+                                name: "dashboard"
+                            });
+                        }
 
+                        let notification = {
+                            msg: response.data.info,
+                            type: "success"
+                        };
+
+                        context.commit("setCashRegister", null);
+                        context.commit("setStore", null);
+                        context.commit("setNotification", notification);
+
+                        resolve(true);
+                    })
+                    .catch(error => {
+                        if (error.response) {
+                            let notification = {
+                                msg: error.response.data.errors,
+                                type: "error"
+                            };
+                            context.commit("setNotification", notification);
+
+                            context.commit("setCashRegister", null);
+                            context.commit("setStore", null);
+                            context.commit("setNotification", notification);
+                        } else {
+                            let notification = {
+                                msg:
+                                    "Unexpected error occured. Check console for more info",
+                                type: "error"
+                            };
+                            console.log(error);
+                            context.commit("setNotification", notification);
+                        }
+
+                        reject(error);
+                    });
+            });
+        },
+        retrieveCashRegister(context) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(this.state.baseUrl + "cash-register-logs/retrieve")
+                    .then(response => {
+                        if (response.data) {
+                            let notification = {
+                                msg: response.data.info,
+                                type: "info"
+                            };
+
+                            if (
+                                !context.state.cashRegister ||
+                                !context.state.store
+                            ) {
+                                notification.msg = `Your open session with cash register: <b>${response.data.cashRegister.cash_register.name} </b> has been restored`;
+                            }
+
+                            context.commit(
+                                "setCashRegister",
+                                response.data.cashRegister.cash_register
+                            );
+                            context.commit(
+                                "setStore",
+                                response.data.cashRegister.cash_register.store
+                            );
+
+                            context.commit("setNotification", notification);
+                        }
+                        resolve(true);
+                    })
+                    .catch(error => {
+                        console.log(error);
+
+                        reject(error);
+                    });
+            });
+        },
         closeCashRegister(context, payload) {
             return new Promise((resolve, reject) => {
                 axios

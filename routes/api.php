@@ -11,8 +11,6 @@
 |
 */
 
-
-
 $cashier = 'cashier';
 $store_manager = 'store_manager';
 $admin = 'admin';
@@ -22,8 +20,11 @@ $allRoles = "$admin,$store_manager,$cashier";
 Route::get('/roles', "RoleController@all")->middleware('scope:admin');
 Route::post('/roles/set', "RoleController@setRole")->middleware('scope:admin');
 
-// custom end points (cancer free!)
+// custom end points
 Route::get('/cash-register-reports/check/{cashRegister}', "CashRegisterReportController@checkCurrent")->middleware("scope:{$allRoles}");
+
+Route::get('/cash-register-logs/logout', "CashRegisterLogsController@logout")->middleware("scope:{$allRoles}");
+Route::get('/cash-register-logs/retrieve', "CashRegisterLogsController@retrieve")->middleware("scope:{$allRoles}");
 
 $routeAll = [
     'url' => '/',

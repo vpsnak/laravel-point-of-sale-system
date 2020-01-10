@@ -44,7 +44,7 @@
 			v-if="!openedRegister"
 			text
 			@click="$router.push({ name: 'openCashRegister' })"
-		>Open cash register</v-chip>
+		>Select cash register</v-chip>
 		<v-menu v-if="openedRegister" left bottom offset-x transition="scale-transition">
 			<template v-slot:activator="{ on }">
 				<v-btn v-on="on" icon>
@@ -71,6 +71,14 @@
 						</v-list-item-avatar>
 						<v-list-item-content>
 							<v-list-item-title>Generate X Report</v-list-item-title>
+						</v-list-item-content>
+					</v-list-item>
+					<v-list-item @click="cashRegisterLogout()">
+						<v-list-item-avatar>
+							<v-icon color="secondary">mdi-logout</v-icon>
+						</v-list-item-avatar>
+						<v-list-item-content>
+							<v-list-item-title>Logout</v-list-item-title>
 						</v-list-item-content>
 					</v-list-item>
 					<v-list-item @click="CloseCashRegisterDialog = true">
@@ -168,6 +176,9 @@ export default {
 			this.CloseCashRegisterDialog = false;
 			this.CheckCashRegisterDialog = false;
 			this.changePasswordDialog = false;
+		},
+		cashRegisterLogout() {
+			this.$store.dispatch("logoutCashRegister");
 		}
 	},
 	computed: {

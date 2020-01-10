@@ -55,6 +55,31 @@ class CashRegisterLogsController extends BaseController
         return response($log, 200);
     }
 
+    public function logout()
+    {
+        $user = auth()->user();
+
+        if ($user->open_register) {
+            $user->open_register->user_id = null;
+            $user->open_register->save();
+
+            return response(['info' => ["Success!"]], 200);
+        } else {
+            return response(['errors' => ["{$user->name} wasn't assigned to any cash register"]], 422);
+        }
+    }
+
+    public function retrieve()
+    {
+        $user = auth()->user();
+
+        if ($user->open_register) {
+            return response(['cashRegister' => $this->model::getOne($user->open_register->id)], 200);
+        } else {
+            return response(0, 200);
+        }
+    }
+
     public function open(Request $request)
     {
         $validatedData = $request->validate([

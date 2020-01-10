@@ -16,6 +16,11 @@
 import { mapGetters, mapMutations } from "vuex";
 
 export default {
+	mounted() {
+		this.retrieveCashRegister();
+
+		setInterval(() => this.retrieveCashRegister(), 30000);
+	},
 	computed: {
 		auth() {
 			if (this.authorized && this.role) {
@@ -31,7 +36,10 @@ export default {
 		...mapGetters(["authorized", "role"])
 	},
 	methods: {
-		...mapMutations(["logout"])
+		...mapMutations(["logout"]),
+		retrieveCashRegister() {
+			this.$store.dispatch("retrieveCashRegister");
+		}
 	}
 };
 </script>
