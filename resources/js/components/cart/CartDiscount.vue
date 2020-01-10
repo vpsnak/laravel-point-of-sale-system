@@ -2,6 +2,7 @@
 	<div class="d-flex" :key="$props.product_index">
 		<v-col cols="6" class="pa-0 pr-2">
 			<v-select
+				@change="percentageLimit"
 				v-if="editable"
 				v-model="discountType"
 				:items="discountTypes"
@@ -20,10 +21,12 @@
 					name="Discount amount"
 				>
 					<v-text-field
+						@input="percentageLimit"
 						v-model="discountAmount"
 						type="number"
 						label="Amount"
 						:min="0"
+						:max="max.toFixed(2)"
 						:error-messages="invalid ? 'Invalid amount' : undefined"
 						:success="valid"
 						:disabled="!editable"
@@ -50,6 +53,13 @@ export default {
 		}
 	},
 	methods: {
+		percentageLimit() {
+			if (this.discountType === "Percentage") {
+				if (this.discountAmount > 99) {
+					this.discountAmount = "99";
+				}
+			}
+		},
 		setDiscount(value = 0) {
 			if (this.$props.product_index === -1) {
 				Vue.set(

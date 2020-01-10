@@ -18,7 +18,6 @@ import { mapGetters, mapMutations } from "vuex";
 export default {
 	mounted() {
 		this.retrieveCashRegister().then(() => {
-			console.log(this.$router.currentRoute);
 			if (this.$router.currentRoute.name === "openCashRegister") {
 				this.$router.push({ name: "dashboard" });
 			}
