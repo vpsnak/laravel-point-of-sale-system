@@ -41,6 +41,11 @@ import { mapState } from "vuex";
 import { mapGetters } from "vuex";
 
 export default {
+	data() {
+		return {
+			discount_amount: 0
+		};
+	},
 	props: {
 		product_price: String,
 		product_index: Number,
@@ -75,7 +80,8 @@ export default {
 				case "Flat":
 					if (this.$props.product_index === -1) {
 						return (
-							parseFloat(this.cart.cart_price) - parseFloat(this.discountAmount)
+							parseFloat(this.cart.cart_price) +
+							parseFloat(this.cart.discount_amount)
 						);
 					} else {
 						return parseFloat(this.$props.product_price);
@@ -104,17 +110,17 @@ export default {
 		},
 		discountAmount: {
 			get() {
-				if (this.$props.product_index === -1) {
-					return this.cart.discount_amount;
-				} else {
-					return this.product.discount_amount;
-				}
+				return this.discount_amount;
 			},
 			set(value) {
-				if (this.$props.product_index === -1) {
-					this.cart.discount_amount = value;
-				} else {
-					Vue.set(this.product, "discount_amount", value);
+				this.discount_amount = value;
+
+				if (value <= this.max) {
+					if (this.$props.product_index === -1) {
+						this.cart.discount_amount = value;
+					} else {
+						Vue.set(this.product, "discount_amount", value);
+					}
 				}
 			}
 		}
