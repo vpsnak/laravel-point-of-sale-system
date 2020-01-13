@@ -198,6 +198,14 @@ export default {
 		this.setBtnTitle(this.tableBtnTitle);
 		this.setBtnDisable(this.tableBtnDisable);
 		this.setForm(this.tableForm);
+		this.$root.$on("barcodeScan", sku => {
+			if (this.tableForm === "productForm") {
+				console.log("nos al");
+			}
+		});
+	},
+	beforeDestroy() {
+		this.$root.$off("barcodeScan");
 	},
 	computed: {
 		searchAction: {
