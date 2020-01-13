@@ -474,13 +474,13 @@ export default new Vuex.Store({
                 axios
                     .get(this.state.baseUrl + "cash-register-logs/retrieve")
                     .then(response => {
-                        if (response.data) {
+                        if (response.data !== 0) {
                             if (
                                 !context.state.cashRegister ||
                                 !context.state.store
                             ) {
                                 let notification = {
-                                    msg: `Your open session with cash register: <b>${response.data.cashRegister.cash_register.name} </b> has been restored`,
+                                    msg: `Your open session with cash register: <b>${response.data.cashRegister.cash_register.name}</b> has been restored`,
                                     type: "info"
                                 };
 
@@ -496,6 +496,25 @@ export default new Vuex.Store({
                                 response.data.cashRegister.cash_register.store
                             );
                         } else {
+                            if (
+                                context.state.store ||
+                                context.state.cashRegister
+                            ) {
+                                let notification = {
+                                    msg: `Your session with cash register: <b>${context.state.cashRegister.name}</b> has been terminated`,
+                                    type: "error"
+                                };
+                                context.commit("setNotification", notification);
+
+                                if (
+                                    router.currentRoute.name === "sales" ||
+                                    router.currentRoute.name === "orders"
+                                ) {
+                                    router.push({
+                                        name: "dashboard"
+                                    });
+                                }
+                            }
                             context.commit("setCashRegister", null);
                             context.commit("setStore", null);
                         }
