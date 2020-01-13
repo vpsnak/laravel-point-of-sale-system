@@ -4,8 +4,8 @@
 		:persistent="persistent"
 		:max-width="maxWidth"
 		:fullscreen="fullscreen"
-		@click:outside="closeEvent"
-		@keydown.esc="closeEvent"
+		@click:outside="closeEvent(false)"
+		@keydown.esc="closeEvent(false)"
 		@close:outer.stop
 		scrollable
 	>
@@ -14,7 +14,7 @@
 				<v-icon v-if="icon" class="pr-2">{{ icon }}</v-icon>
 				{{ title }}
 				<v-spacer v-if="titleCloseBtn"></v-spacer>
-				<v-btn v-if="titleCloseBtn" @click.stop="fire(false)" icon>
+				<v-btn v-if="titleCloseBtn" @click.stop="closeEvent(false)" icon>
 					<v-icon>mdi-close</v-icon>
 				</v-btn>
 			</v-card-title>
@@ -39,9 +39,14 @@
 			>
 				<div class="flex-grow-1"></div>
 
-				<v-btn v-if="action === 'confirmation' " @click="fire(false)" text color="error">{{ cancelBtn }}</v-btn>
+				<v-btn
+					v-if="action === 'confirmation' "
+					@click="closeEvent(false)"
+					text
+					color="error"
+				>{{ cancelBtn }}</v-btn>
 
-				<v-btn @click="fire(true)" text color="success">{{ confirmationBtn }}</v-btn>
+				<v-btn @click="closeEvent(true)" text color="success">{{ confirmationBtn }}</v-btn>
 			</v-card-actions>
 		</v-card>
 	</v-dialog>
@@ -107,7 +112,7 @@ export default {
 		...mapActions(["getAll"]),
 		submit(payload) {
 			if (!payload) {
-				this.fire(true);
+				this.closeEvent(true);
 			} else {
 				if (payload.notification) {
 					this.$store.commit("setNotification", {
@@ -117,19 +122,15 @@ export default {
 				}
 
 				if (payload.data) {
-					this.fire(payload.data);
+					this.closeEvent(payload.data);
 				} else {
-					this.fire(true);
+					this.closeEvent(true);
 				}
 			}
 		},
 
-		fire(payload) {
+		closeEvent(payload) {
 			this.$emit("action", payload);
-			this.visibility = false;
-		},
-		closeEvent() {
-			this.$emit("action", false);
 			this.visibility = false;
 		}
 	},
