@@ -22,7 +22,7 @@
 		<v-layout column>
 			<v-flex md10 style="overflow: auto">
 				<v-data-table
-                    disable-sort
+					disable-sort
 					dense
 					:disable-filtering="true"
 					:headers="$store.state.datatable.headers"
@@ -198,6 +198,14 @@ export default {
 		this.setBtnTitle(this.tableBtnTitle);
 		this.setBtnDisable(this.tableBtnDisable);
 		this.setForm(this.tableForm);
+		this.$root.$on("barcodeScan", sku => {
+			if (this.tableForm === "productForm") {
+				console.log("nos al");
+			}
+		});
+	},
+	beforeDestroy() {
+		this.$root.$off("barcodeScan");
 	},
 	computed: {
 		searchAction: {
