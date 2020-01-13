@@ -228,7 +228,7 @@ export default {
                 title: `Change Password`,
                 titleCloseBtn: true,
                 model: { action: "change_self" },
-                icon: "mdi-alpha-z-circle",
+                icon: "mdi-key",
                 component: "PasswordForm",
                 persistent: true
             };
