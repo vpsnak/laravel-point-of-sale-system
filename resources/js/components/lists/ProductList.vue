@@ -104,12 +104,17 @@
 							</v-menu>
 						</v-card-title>
 						<v-card-actions>
+							<div class="d-flex flex-column">
 							<v-chip class="secondary mt-2 ml-1">
 								<span>Price: {{ parseFloat(product.final_price).toFixed(2) }} $</span>
 							</v-chip>
 							<v-chip v-if="product.final_price != product.price.amount" class="mt-2 ml-1">
 								<span>Net Price: {{ parseFloat(product.final_price).toFixed(2) }} $</span>
 							</v-chip>
+							<v-chip v-if="product.stock <= 10" color="red" class="mt-2 ml-1">
+								<span>Stock: {{product.stock}} </span>
+							</v-chip>
+							</div>
 						</v-card-actions>
 					</v-card>
 				</v-col>
