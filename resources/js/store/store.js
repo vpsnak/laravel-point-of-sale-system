@@ -469,6 +469,19 @@ export default new Vuex.Store({
                     });
             });
         },
+        cashRegisterAmount(context) {
+            return new Promise((resolve, reject) => {
+                console.log(context.state.cashRegister);
+                axios
+                    .get(
+                        this.state.baseUrl +
+                            `cash-register-logs/${context.state.cashRegister.id}/amount`
+                    )
+                    .then(response => {
+                        resolve(response.data);
+                    });
+            });
+        },
         retrieveCashRegister(context) {
             return new Promise((resolve, reject) => {
                 axios

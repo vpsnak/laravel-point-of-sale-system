@@ -42,17 +42,23 @@ class CashRegisterLogsController extends BaseController
     {
         $validatedData = $request->validate([
             'cash_register_id' => 'required|exists:cash_registers,id',
-            'closing_amount' => 'required|numeric',
         ]);
 
+        $validatedData['closing_amount'] = auth()->user()->open_register->cash_register->earnings['cash_total'];
         $validatedData['closed_by'] = auth()->user()->id;
         $validatedData['status'] = 0;
         $validatedData['closing_time'] = Carbon::now();
 
-        $log = auth()->user()->open_register()->update($validatedData);
-        CashRegisterReportController::generateReportByCashRegisterId($validatedData['cash_register_id']);
+        auth()->user()->open_register()->update($validatedData);
+        $report = CashRegisterReportController::generateReportByCashRegisterId($validatedData['cash_register_id']);
 
-        return response($log, 200);
+        return response(
+            [
+                'report_id' => $report->id,
+                'info' => ['Cash register closed successfully!']
+            ],
+            200
+        );
     }
 
     public function logout()
@@ -78,6 +84,13 @@ class CashRegisterLogsController extends BaseController
         } else {
             return response(0, 200);
         }
+    }
+
+    public function amount(CashRegister $id)
+    {
+        return response(
+            $id->logs->where('status', 1)->first()->cash_register->earnings['cash_total']
+        );
     }
 
     public function open(Request $request)

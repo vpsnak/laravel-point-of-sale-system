@@ -25,6 +25,8 @@ Route::get('/cash-register-reports/check/{cashRegister}', "CashRegisterReportCon
 
 Route::get('/cash-register-logs/logout', "CashRegisterLogsController@logout")->middleware("scope:{$allRoles}");
 Route::get('/cash-register-logs/retrieve', "CashRegisterLogsController@retrieve")->middleware("scope:{$allRoles}");
+Route::get('/cash-register-logs/{id}/amount', "CashRegisterLogsController@amount")->middleware("scope:{$allRoles}");
+
 
 $routeAll = [
     'url' => '/',
