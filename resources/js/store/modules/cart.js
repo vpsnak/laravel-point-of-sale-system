@@ -92,7 +92,7 @@ export default {
             timeSlotLabel: null,
             cost: 0,
             location: null,
-            occasion: null
+            occasion: 9
         },
 
         order: undefined
@@ -184,7 +184,7 @@ export default {
                 timeSlotLabel: null,
                 cost: 0,
                 location: null,
-                occasion: null
+                occasion: 9
             };
         },
         resetShipping(state) {
@@ -198,7 +198,7 @@ export default {
                 timeSlotLabel: null,
                 cost: 0,
                 location: null,
-                occasion: null
+                occasion: 9
             };
 
             state.currentCheckoutStep = 1;

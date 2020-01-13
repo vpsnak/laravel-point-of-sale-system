@@ -85,7 +85,7 @@
 				></v-text-field>
 			</v-col>
 		</v-row>
-		<v-row justify="center" align="center" class="my-3" v-if="paymentType !== 'coupon'">
+		<v-row justify="center" align="center" class="my-3">
 			<v-col :lg="5">
 				<v-btn
 					dark

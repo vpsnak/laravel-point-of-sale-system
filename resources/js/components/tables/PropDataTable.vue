@@ -200,7 +200,8 @@ export default {
 		this.setForm(this.tableForm);
 		this.$root.$on("barcodeScan", sku => {
 			if (this.tableForm === "productForm") {
-				console.log("nos al");
+				this.keyword = sku;
+				this.search();
 			}
 		});
 	},
@@ -346,7 +347,7 @@ export default {
 				persistent: true
 			};
 		},
-		search(e, page) {
+		search(e, page = false) {
 			if (this.keyword.length > 2 || this.searchAction) {
 				this.setLoading(true);
 
