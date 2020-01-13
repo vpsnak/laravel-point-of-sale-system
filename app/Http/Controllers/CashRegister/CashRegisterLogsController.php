@@ -54,7 +54,7 @@ class CashRegisterLogsController extends BaseController
 
         return response(
             [
-                'report_id' => $report->id,
+                'report' => $report,
                 'info' => ['Cash register closed successfully!']
             ],
             200

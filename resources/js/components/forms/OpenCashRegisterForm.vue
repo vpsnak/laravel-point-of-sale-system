@@ -162,9 +162,7 @@ export default {
 				.then(response => {
 					this.$emit("submit", true);
 				})
-				.catch(error => {
-					console.log(error);
-				})
+				.catch()
 				.finally(() => {
 					this.loading = false;
 				});

@@ -266,10 +266,8 @@ export default {
 	},
 	methods: {
 		resetCart(e) {
-			console.log(e);
 			this.$store.commit("cart/resetState");
 
-			console.log("asd");
 			this.paginate();
 		},
 		resetDialog() {

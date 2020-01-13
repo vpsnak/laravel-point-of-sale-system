@@ -102,8 +102,6 @@ export default {
 	},
 	mounted() {
 		if (this.$props.model) {
-			console.log("nos");
-
 			this.getOne({
 				model: "cash-register-reports",
 				data: {

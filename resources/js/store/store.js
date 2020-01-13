@@ -471,7 +471,6 @@ export default new Vuex.Store({
         },
         cashRegisterAmount(context) {
             return new Promise((resolve, reject) => {
-                console.log(context.state.cashRegister);
                 axios
                     .get(
                         this.state.baseUrl +
@@ -534,8 +533,6 @@ export default new Vuex.Store({
                         resolve(true);
                     })
                     .catch(error => {
-                        console.log(error);
-
                         reject(error);
                     });
             });
@@ -566,7 +563,7 @@ export default new Vuex.Store({
                         context.commit("setStore", null);
                         context.commit("setNotification", notification);
 
-                        resolve(true);
+                        resolve(response.data);
                     })
                     .catch(error => {
                         if (error.response) {

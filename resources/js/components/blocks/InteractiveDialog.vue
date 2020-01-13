@@ -105,13 +105,6 @@ export default {
 
 	methods: {
 		...mapActions(["getAll"]),
-		closeOuter(e) {
-			if (this.$props.persistent) {
-				e.stop();
-				console.log("ellinas");
-			}
-			console.log(e);
-		},
 		submit(payload) {
 			if (!payload) {
 				this.fire(true);

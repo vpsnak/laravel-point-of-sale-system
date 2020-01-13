@@ -80,7 +80,7 @@ export default {
 					};
 					this.closeCashRegister(payload)
 						.then(response => {
-							this.$emit("submit", response.data);
+							this.$emit("submit", { data: { report: response } });
 						})
 						.finally(() => {
 							this.loading = false;
