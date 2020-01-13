@@ -20,7 +20,8 @@
 		<interactiveDialog
 			v-if="CheckCashRegisterDialog"
 			:show="CheckCashRegisterDialog"
-			title="Check cash register ( X )"
+			icon="mdi-alpha-x-circle"
+			:title="'Report: ' + cashRegister.name"
 			:fullscreen="false"
 			:width="1000"
 			component="cashRegisterReports"
@@ -70,7 +71,7 @@
 							<v-icon color="secondary">mdi-alpha-x-circle</v-icon>
 						</v-list-item-avatar>
 						<v-list-item-content>
-							<v-list-item-title>Generate X Report</v-list-item-title>
+							<v-list-item-title>Generate X report</v-list-item-title>
 						</v-list-item-content>
 					</v-list-item>
 					<v-list-item @click="cashRegisterLogout()">
@@ -81,12 +82,13 @@
 							<v-list-item-title>Logout</v-list-item-title>
 						</v-list-item-content>
 					</v-list-item>
+					<v-divider></v-divider>
 					<v-list-item @click="CloseCashRegisterDialog = true">
 						<v-list-item-avatar>
 							<v-icon color="red">mdi-alpha-z-circle</v-icon>
 						</v-list-item-avatar>
 						<v-list-item-content>
-							<v-list-item-title>Close cash register</v-list-item-title>
+							<v-list-item-title>Close and generate Z report</v-list-item-title>
 						</v-list-item-content>
 					</v-list-item>
 				</v-list-item-group>
