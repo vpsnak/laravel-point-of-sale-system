@@ -51,11 +51,11 @@ export default {
 
 	methods: {
 		close() {
-			console.log("nosALVA");
 			this.$store.commit("cart/resetState");
-			console.log(this.$store.state.cart);
 
 			this.$store.state.checkoutDialog = false;
+
+			this.$emit("close", true);
 		},
 		prevStep() {
 			this.$store.state.cart.currentCheckoutStep--;

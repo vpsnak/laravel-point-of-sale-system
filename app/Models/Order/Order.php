@@ -45,7 +45,7 @@ class Order extends BaseModel
         $total = $this->total_without_tax;
         $total = Price::calculateTax($total, $this->tax);
 
-        return number_format($total, 2);
+        return number_format($total, 2, '.', '');
     }
 
     public function getTotalWithoutTaxAttribute()

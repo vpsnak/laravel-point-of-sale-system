@@ -22,7 +22,7 @@
 		<v-layout column>
 			<v-flex md10 style="overflow: auto">
 				<v-data-table
-                    disable-sort
+					disable-sort
 					dense
 					:disable-filtering="true"
 					:headers="$store.state.datatable.headers"
@@ -153,7 +153,7 @@
 			:persistent="dialog.persistent"
 		></interactiveDialog>
 
-		<checkoutDialog :show="checkoutDialog" @close="resetCart" giftcard />
+		<checkoutDialog :show="checkoutDialog" @close="resetCart()" :giftcard="true" />
 	</v-card>
 </template>
 
@@ -236,10 +236,6 @@ export default {
 				return this.$store.state.checkoutDialog;
 			},
 			set(value) {
-				if (!value) {
-					this.paginate();
-				}
-
 				this.$store.state.checkoutDialog = value;
 			}
 		},
@@ -260,8 +256,12 @@ export default {
 		}
 	},
 	methods: {
-		resetCart() {
+		resetCart(e) {
+			console.log(e);
 			this.$store.commit("cart/resetState");
+
+			console.log("asd");
+			this.paginate();
 		},
 		resetDialog() {
 			this.dialog = {
