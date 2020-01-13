@@ -474,7 +474,6 @@ export default new Vuex.Store({
                 axios
                     .get(this.state.baseUrl + "cash-register-logs/retrieve")
                     .then(response => {
-                        console.log(response);
                         if (response.data !== 0) {
                             if (
                                 !context.state.cashRegister ||
