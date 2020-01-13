@@ -7,17 +7,6 @@
 		<div class="flex-grow-1"></div>
 
 		<interactiveDialog
-			v-if="CloseCashRegisterDialog"
-			:show="CloseCashRegisterDialog"
-			title="Close cash register"
-			:fullscreen="false"
-			:width="600"
-			component="closeCashRegisterForm"
-			cancelBtnTxt="Close"
-			@action="result"
-			:titleCloseBtn="true"
-		></interactiveDialog>
-		<interactiveDialog
 			v-if="CheckCashRegisterDialog"
 			:show="CheckCashRegisterDialog"
 			icon="mdi-alpha-x-circle"
@@ -41,6 +30,7 @@
 			@action="result"
 			:titleCloseBtn="true"
 		></interactiveDialog>
+
 		<v-chip
 			v-if="!openedRegister"
 			text
@@ -83,7 +73,7 @@
 						</v-list-item-content>
 					</v-list-item>
 					<v-divider></v-divider>
-					<v-list-item @click="CloseCashRegisterDialog = true">
+					<v-list-item @click="closeCashRegisterDialog">
 						<v-list-item-avatar>
 							<v-icon color="red">mdi-alpha-z-circle</v-icon>
 						</v-list-item-avatar>
@@ -103,22 +93,10 @@
 			<v-list dense>
 				<v-list-item-group>
 					<v-list-item inactive two-line @click.stop :ripple="false">
-						<v-list-item-avatar color="orange">
-							{{
-							user.name.charAt(0)
-							}}
-						</v-list-item-avatar>
+						<v-list-item-avatar color="orange">{{ user.name.charAt(0) }}</v-list-item-avatar>
 						<v-list-item-content>
-							<v-list-item-title>
-								{{
-								user.name
-								}}
-							</v-list-item-title>
-							<v-list-item-subtitle>
-								{{
-								user.email
-								}}
-							</v-list-item-subtitle>
+							<v-list-item-title>{{ user.name }}</v-list-item-title>
+							<v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
 						</v-list-item-content>
 					</v-list-item>
 					<v-divider />
@@ -153,6 +131,21 @@
 				</v-list-item-group>
 			</v-list>
 		</v-menu>
+
+		<interactiveDialog
+			v-if="dialog.show"
+			:show="dialog.show"
+			:title="dialog.title"
+			:titleCloseBtn="dialog.titleCloseBtn"
+			:icon="dialog.icon"
+			:fullscreen="dialog.fullscreen"
+			:width="dialog.width"
+			:component="dialog.component"
+			:content="dialog.content"
+			:model="dialog.model"
+			@action="dialogEvent"
+			:persistent="dialog.persistent"
+		></interactiveDialog>
 	</v-app-bar>
 </template>
 
@@ -166,7 +159,21 @@ export default {
 			OpenCashRegisterDialog: false,
 			CloseCashRegisterDialog: false,
 			CheckCashRegisterDialog: false,
-			changePasswordDialog: false
+			changePasswordDialog: false,
+
+			dialog: {
+				show: false,
+				width: 600,
+				fullscreen: false,
+				icon: "",
+				title: "",
+				titleCloseBtn: false,
+				component: "",
+				content: "",
+				model: "",
+				persistent: false
+			},
+			action: ""
 		};
 	},
 	methods: {
@@ -175,12 +182,54 @@ export default {
 		},
 		result(event) {
 			this.OpenCashRegisterDialog = false;
-			this.CloseCashRegisterDialog = false;
+
 			this.CheckCashRegisterDialog = false;
 			this.changePasswordDialog = false;
 		},
 		cashRegisterLogout() {
 			this.$store.dispatch("logoutCashRegister");
+		},
+		resetDialog() {
+			this.dialog = {
+				show: false,
+				width: 600,
+				fullscreen: false,
+				title: "",
+				titleCloseBtn: false,
+				icon: "",
+				component: "",
+				content: "",
+				model: "",
+				persistent: false
+			};
+
+			this.action = "";
+		},
+		dialogEvent(event) {
+			if (event) {
+				switch (this.action) {
+					case "closeCashRegister":
+						break;
+					default:
+						break;
+				}
+			}
+
+			this.resetDialog();
+		},
+
+		closeCashRegisterDialog() {
+			this.dialog = {
+				show: true,
+				width: 600,
+				title: `Close and generate Z report`,
+				titleCloseBtn: true,
+				icon: "mdi-alpha-z-circle",
+				component: "closeCashRegisterForm",
+				persistent: true
+			};
+
+			this.action = "closeCashRegister";
 		}
 	},
 	computed: {
