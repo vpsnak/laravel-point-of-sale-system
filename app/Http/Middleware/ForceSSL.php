@@ -16,7 +16,7 @@ class ForceSSL
     public function handle($request, Closure $next)
     {
         if (config('app.env') !== 'local' && !$request->secure()) {
-            return redirect()->secure($request->getRequestUri());
+            return redirect()->secure('/');
         }
 
         return $next($request);
