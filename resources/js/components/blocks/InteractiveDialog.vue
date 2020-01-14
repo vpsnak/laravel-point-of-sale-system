@@ -4,8 +4,6 @@
 		:persistent="persistent"
 		:max-width="maxWidth"
 		:fullscreen="fullscreen"
-		@click:outside="closeEvent(false)"
-		@keydown.esc="closeEvent(false)"
 		@close:outer.stop
 		scrollable
 	>

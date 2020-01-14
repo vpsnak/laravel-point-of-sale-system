@@ -129,14 +129,14 @@
 							<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Date">
 								<v-text-field
 									dense
-									v-model="shipping.date"
+									v-model="dateFormatted"
 									label="Date"
 									prepend-icon="event"
 									:error-messages="errors"
 									:success="valid"
 									v-on="on"
-									readonly
 									@input="getTimeSlots"
+									@blur="parseDate"
 								></v-text-field>
 							</ValidationProvider>
 						</template>
@@ -290,6 +290,15 @@ export default {
 				this.time_slots = value;
 			}
 		},
+		dateFormatted: {
+			get() {
+				if (this.$store.state.cart.shipping.date) {
+					return this.parseDate(this.$store.state.cart.shipping.date);
+				} else {
+					return null;
+				}
+			}
+		},
 		shipping: {
 			get() {
 				return this.$store.state.cart.shipping;
@@ -337,6 +346,15 @@ export default {
 	},
 
 	methods: {
+		parseDate(d) {
+			if (d.length) {
+				let [year, month, day] = d.split("-");
+				console.log(`${month}/${day}/${year}`);
+				return `${month}/${day}/${year}`;
+			} else {
+				return null;
+			}
+		},
 		dialogEvent(event) {
 			if (_.isObjectLike(event)) {
 			} else {
