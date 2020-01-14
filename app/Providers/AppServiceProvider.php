@@ -33,13 +33,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Schema::defaultStringLength(191);
-        Order::observe(OrderObserver::class);
-        Payment::observe(PaymentObserver::class);
-
-        if (config('env') !== 'local') {
+        if (config('app.env') !== 'local') {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
+
+        Order::observe(OrderObserver::class);
+        Payment::observe(PaymentObserver::class);
 
         Builder::macro('search', function ($attributes, string $searchTerm) {
             $this->where(function (Builder $query) use ($attributes, $searchTerm) {
