@@ -16,6 +16,7 @@
 		<ValidationProvider
 			:rules="{
                     required : true,
+					max_value:99999,
 					regex: /^[\d]{1,8}(\.[\d]{1,2})?$/g
 					}"
 			v-slot="{ errors, valid }"

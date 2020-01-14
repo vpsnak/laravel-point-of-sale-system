@@ -32,7 +32,7 @@
 			</ValidationProvider>
 			<ValidationProvider
 				v-if="!cashRegisterIsopen"
-				rules="required"
+				rules="required|max_value:99999"
 				v-slot="{ errors, valid }"
 				name="Name"
 			>

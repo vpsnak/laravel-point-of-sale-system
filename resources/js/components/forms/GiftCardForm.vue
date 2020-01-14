@@ -16,7 +16,8 @@
 			<ValidationProvider
 				:rules="{
                     required : true,
-					regex: /^[\d]{1,8}(\.[\d]{1,2})?$/g
+					regex: /^[\d]{1,8}(\.[\d]{1,2})?$/g,
+					max_value:99999,
 					}"
 				v-slot="{ errors, valid }"
 				name="Amount"
