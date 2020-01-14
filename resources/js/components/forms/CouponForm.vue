@@ -46,9 +46,30 @@
 				></v-select>
 			</ValidationProvider>
 			<ValidationProvider
+				v-if="formFields.discount.type == 'flat'"
 				:rules="{
                     required : true,
 					max_value:99999,
+					regex: /^[\d]{1,8}(\.[\d]{1,2})?$/g,
+					}"
+				v-slot="{ errors, valid }"
+				name="Discount amount"
+			>
+				<v-text-field
+					v-model="formFields.discount.amount"
+					type="number"
+					label="Discount amount"
+					:disabled="loading"
+					:error-messages="errors"
+					:success="valid"
+				></v-text-field>
+			</ValidationProvider>
+
+			<ValidationProvider
+				v-if="formFields.discount.type == 'percentage'"
+				:rules="{
+                    required : true,
+					max_value:99,
 					regex: /^[\d]{1,8}(\.[\d]{1,2})?$/g,
 					}"
 				v-slot="{ errors, valid }"
