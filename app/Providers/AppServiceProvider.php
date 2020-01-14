@@ -8,7 +8,6 @@ use App\Order;
 use App\Payment;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 
@@ -33,10 +32,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (config('app.env') !== 'local') {
-            \Illuminate\Support\Facades\URL::forceScheme('https');
-        }
-
         Order::observe(OrderObserver::class);
         Payment::observe(PaymentObserver::class);
 
