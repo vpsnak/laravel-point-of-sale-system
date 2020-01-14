@@ -12,7 +12,7 @@
 */
 
 if (config('app.env') !== 'local') {
-    Route::group(['scheme' => 'https'], function () {
+    Route::group(['middleware' => 'forceSSL'], function () {
         Route::get('/', function () {
             return view('app');
         });
