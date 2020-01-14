@@ -11,6 +11,14 @@
 |
 */
 
-Route::get('/', function () {
-    return view('app');
-});
+if (config('app.env') !== 'local') {
+    Route::group(['scheme' => 'https'], function () {
+        Route::get('/', function () {
+            return view('app');
+        });
+    });
+} else {
+    Route::get('/', function () {
+        return view('app');
+    });
+}
