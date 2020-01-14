@@ -290,13 +290,11 @@ export default {
 				this.time_slots = value;
 			}
 		},
-		dateFormatted: {
-			get() {
-				if (this.$store.state.cart.shipping.date) {
-					return this.parseDate(this.$store.state.cart.shipping.date);
-				} else {
-					return null;
-				}
+		dateFormatted() {
+			if (this.$store.state.cart.shipping.date) {
+				return this.parseDate(this.$store.state.cart.shipping.date);
+			} else {
+				return null;
 			}
 		},
 		shipping: {
@@ -349,7 +347,6 @@ export default {
 		parseDate(d) {
 			if (d.length) {
 				let [year, month, day] = d.split("-");
-				console.log(`${month}/${day}/${year}`);
 				return `${month}/${day}/${year}`;
 			} else {
 				return null;

@@ -74,7 +74,7 @@
 				<template v-slot:activator="{ on }">
 					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Names">
 						<v-text-field
-							v-model="formFields.from"
+							v-model="fromDate"
 							label="From:"
 							prepend-icon="event"
 							:error-messages="errors"
@@ -97,7 +97,7 @@
 				<template v-slot:activator="{ on }">
 					<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Names">
 						<v-text-field
-							v-model="formFields.to"
+							v-model="toDate"
 							label="To:"
 							prepend-icon="event"
 							readonly
@@ -150,7 +150,31 @@ export default {
 			};
 		}
 	},
+	computed: {
+		fromDate() {
+			if (this.formFields.from) {
+				return this.parseDate(this.formFields.from);
+			} else {
+				return null;
+			}
+		},
+		toDate() {
+			if (this.formFields.to) {
+				return this.parseDate(this.formFields.to);
+			} else {
+				return null;
+			}
+		}
+	},
 	methods: {
+		parseDate(d) {
+			if (d.length) {
+				let [year, month, day] = d.split("-");
+				return `${month}/${day}/${year}`;
+			} else {
+				return null;
+			}
+		},
 		submit() {
 			this.loading = true;
 			let payload = {
