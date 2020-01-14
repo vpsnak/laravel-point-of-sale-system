@@ -31,10 +31,7 @@ export default {
 		...mapGetters(["authorized", "role"])
 	},
 	methods: {
-		...mapMutations(["logout"]),
-		retrieveCashRegister() {
-			return this.$store.dispatch("retrieveCashRegister");
-		}
+		...mapMutations(["logout"])
 	}
 };
 </script>

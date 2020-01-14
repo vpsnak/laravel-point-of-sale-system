@@ -155,6 +155,9 @@ export default {
 		});
 	},
 	methods: {
+		retrieveCashRegister() {
+			return this.$store.dispatch("retrieveCashRegister");
+		},
 		invertTheme() {
 			this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
 		},
