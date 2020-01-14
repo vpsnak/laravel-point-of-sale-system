@@ -16,15 +16,6 @@
 import { mapGetters, mapMutations } from "vuex";
 
 export default {
-	mounted() {
-		this.retrieveCashRegister().then(() => {
-			if (this.$router.currentRoute.name === "openCashRegister") {
-				this.$router.push({ name: "dashboard" });
-			}
-
-			setInterval(() => this.retrieveCashRegister(), 30000);
-		});
-	},
 	computed: {
 		auth() {
 			if (this.authorized && this.role) {

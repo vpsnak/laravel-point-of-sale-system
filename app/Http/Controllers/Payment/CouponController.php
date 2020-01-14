@@ -30,11 +30,13 @@ class CouponController extends BaseController
         ]);
 
         if (!empty($validatedID)) {
+            $this->model->discount->discount_type = $discountData['discount.type'];
+            $this->model->discount->discount_amount = $discountData['discount.amount'];
             // @TODO fix update
             return response($this->model::updateData($validatedID, $validatedData), 200);
         } else {
 
-            $discount = Discount::store([ 
+            $discount = Discount::store([
                 'type' => $discountData['discount']['type'],
                 'amount' => $discountData['discount']['amount'],
             ]);
@@ -43,7 +45,7 @@ class CouponController extends BaseController
             return response($coupon, 201);
         }
     }
-    
+
     public function search(Request $request)
     {
         $validatedData = $request->validate([
@@ -51,7 +53,7 @@ class CouponController extends BaseController
         ]);
 
         return $this->searchResult(
-            ['name','code'],
+            ['name', 'code'],
             $validatedData['keyword'],
             true
         );

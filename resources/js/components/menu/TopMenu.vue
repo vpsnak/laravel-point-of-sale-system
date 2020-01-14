@@ -145,6 +145,15 @@ export default {
 			action: ""
 		};
 	},
+	mounted() {
+		this.retrieveCashRegister().then(() => {
+			if (this.$router.currentRoute.name === "openCashRegister") {
+				this.$router.push({ name: "dashboard" });
+			}
+
+			setInterval(() => this.retrieveCashRegister(), 30000);
+		});
+	},
 	methods: {
 		invertTheme() {
 			this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
