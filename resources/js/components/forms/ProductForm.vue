@@ -68,13 +68,17 @@
 						<v-card-title class="blue-grey pa-0" @click.stop>
 							<h6 class="px-2">{{store.name}}</h6>
 						</v-card-title>
-						<v-text-field
-							type="number"
-							label="Qty"
-							:value="formFields.stores[index].pivot.qty"
-							v-model="formFields.stores[index].pivot.qty"
-							required
-						></v-text-field>
+						<ValidationProvider rules="max:10" v-slot="{errors, valid}" name="Qty">
+							<v-text-field
+								type="number"
+								label="Qty"
+								:value="formFields.stores[index].pivot.qty"
+								:error-messages="errors"
+								:success="valid"
+								v-model="formFields.stores[index].pivot.qty"
+								required
+							></v-text-field>
+						</ValidationProvider>
 					</v-card>
 				</v-col>
 			</v-row>
