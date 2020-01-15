@@ -1,38 +1,41 @@
 <template>
-	<v-app id="app">
-		<sideMenu v-if="auth" />
+    <v-app id="app">
+        <sideMenu v-if="auth" />
 
-		<topMenu v-if="auth" />
+        <topMenu v-if="auth" />
 
-		<notification />
+        <notification />
 
-		<v-content>
-			<router-view></router-view>
-		</v-content>
-	</v-app>
+        <v-content>
+            <router-view></router-view>
+        </v-content>
+    </v-app>
 </template>
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
 
 export default {
-	computed: {
-		auth() {
-			if (this.authorized && this.role) {
-				window.axios.defaults.headers.common[
-					"Authorization"
-				] = this.$store.state.token;
-				return true;
-			} else {
-				this.logout();
-				return false;
-			}
-		},
-		...mapGetters(["authorized", "role"])
-	},
-	methods: {
-		...mapMutations(["logout"])
-	}
+    mounted() {
+        this.$store.dispatch("getAppEnv");
+    },
+    computed: {
+        auth() {
+            if (this.authorized && this.role) {
+                window.axios.defaults.headers.common[
+                    "Authorization"
+                ] = this.$store.state.token;
+                return true;
+            } else {
+                this.logout();
+                return false;
+            }
+        },
+        ...mapGetters(["authorized", "role"])
+    },
+    methods: {
+        ...mapMutations(["logout"])
+    }
 };
 </script>
 
@@ -40,21 +43,21 @@ export default {
 .fas,
 .fab,
 .fa {
-	font-size: 1.2em !important;
+    font-size: 1.2em !important;
 }
 
 a {
-	text-decoration: none;
+    text-decoration: none;
 }
 html {
-	overflow-y: hidden;
+    overflow-y: hidden;
 }
 
 input[type="number"] {
-	-moz-appearance: textfield;
+    -moz-appearance: textfield;
 }
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-	-webkit-appearance: none;
+    -webkit-appearance: none;
 }
 </style>
