@@ -366,12 +366,14 @@ export default {
 			}
 		},
 		dialogEvent(event) {
-			this.addresses.push(event);
+			if (event) {
+				this.addresses.push(event);
 
-			if (this.dialog.model.type === "shipping") {
-				this.shipping.address = event;
-			} else {
-				this.billingAddress = event;
+				if (this.dialog.model.type === "shipping") {
+					this.shipping.address = event;
+				} else {
+					this.billingAddress = event;
+				}
 			}
 
 			this.resetDialog();
