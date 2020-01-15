@@ -43,7 +43,7 @@
 							:items="addresses"
 							prepend-icon="mdi-receipt"
 							label="Billing address"
-							v-model="shipping.billing_address"
+							v-model="billingAddress"
 							:item-text="getAddressText"
 							:error-messages="errors"
 							:success="valid"
@@ -56,7 +56,7 @@
 					<v-tooltip bottom>
 						<template v-slot:activator="{ on }">
 							<v-btn
-								:disabled="!shipping.billing_address"
+								:disabled="!billingAddress"
 								icon
 								v-on="on"
 								@click="addressDialog('billing', shipping.billing_address)"
@@ -305,6 +305,14 @@ export default {
 				this.$store.state.cart.shipping = value;
 			}
 		},
+		billingAddress: {
+			get() {
+				return this.$store.state.cart.billing_address;
+			},
+			set(value) {
+				this.$store.state.cart.billing_address = value;
+			}
+		},
 		shippingCost: {
 			get() {
 				return this.$store.state.cart.shipping.cost;
@@ -314,18 +322,23 @@ export default {
 			}
 		},
 
-		addresses() {
-			if (this.customer) {
-				const billing_address = _.filter(this.customer.addresses, [
-					"billing",
-					1
-				]);
+		addresses: {
+			get() {
+				if (this.customer) {
+					const billing_address = _.filter(this.customer.addresses, [
+						"billing",
+						1
+					]);
 
-				this.shipping.billing_address = billing_address.length
-					? billing_address[0]
-					: undefined;
+					this.billingAddress = billing_address.length
+						? billing_address[0]
+						: undefined;
 
-				return this.customer.addresses;
+					return this.customer.addresses;
+				}
+			},
+			set(value) {
+				this.customer.addresses = value;
 			}
 		},
 		customer() {
@@ -353,8 +366,12 @@ export default {
 			}
 		},
 		dialogEvent(event) {
-			if (_.isObjectLike(event)) {
+			this.addresses.push(event);
+
+			if (this.dialog.model.type === "shipping") {
+				this.shipping.address = event;
 			} else {
+				this.billingAddress = event;
 			}
 
 			this.resetDialog();
@@ -381,7 +398,7 @@ export default {
 				width: 600,
 				fullscreen: false,
 				title: title,
-				titleCloseBtn: false,
+				titleCloseBtn: true,
 				icon: icon,
 				component: "addressDeliveryForm",
 				content: "",
