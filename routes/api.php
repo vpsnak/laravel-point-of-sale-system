@@ -16,6 +16,11 @@ $store_manager = 'store_manager';
 $admin = 'admin';
 $allRoles = "$admin,$store_manager,$cashier";
 
+// app env
+
+Route::get('/env', 'AppController@env');
+Route::get('/debug', 'AppController@debug');
+
 // roles
 Route::get('/roles', "RoleController@all")->middleware('scope:admin');
 Route::post('/roles/set', "RoleController@setRole")->middleware('scope:admin');

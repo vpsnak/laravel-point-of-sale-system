@@ -36,7 +36,7 @@
 			<ValidationProvider
 				:rules="{
 					required : true,
-					regex: /^[\d]{1,8}(\.[\d]{1,2})?$/g
+					regex: /^[\d]{1,8}(\.[\d]{1,4})?$/g
 					}"
 				v-slot="{ errors, valid }"
 				name="Final price"

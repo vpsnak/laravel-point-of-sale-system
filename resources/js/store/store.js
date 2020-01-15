@@ -23,6 +23,7 @@ export default new Vuex.Store({
         endpoints
     },
     state: {
+        env: "",
         baseUrl: "/api/",
 
         user: Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null,
@@ -105,7 +106,7 @@ export default new Vuex.Store({
             if (user) {
                 state.user = user;
                 Cookies.set("user", state.user, {
-                    secure: true,
+                    secure: state.env !== "local" ? true : false,
                     sameSite: "strict"
                 });
             } else {
@@ -117,7 +118,7 @@ export default new Vuex.Store({
             if (token) {
                 state.token = "Bearer " + token;
                 Cookies.set("token", state.token, {
-                    secure: true,
+                    secure: state.env !== "local" ? true : false,
                     sameSite: "strict"
                 });
             } else {
@@ -251,6 +252,14 @@ export default new Vuex.Store({
                         context.commit("setNotification", notification);
                         reject(error);
                     });
+            });
+        },
+        getAppEnv(context) {
+            return new Promise(resolve => {
+                axios.get(`${this.state.baseUrl}env`).then(response => {
+                    context.state.env = response.data;
+                    resolve(true);
+                });
             });
         },
         getAll(context, payload) {
