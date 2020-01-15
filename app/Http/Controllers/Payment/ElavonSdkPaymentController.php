@@ -421,27 +421,14 @@ class ElavonSdkPaymentController extends Controller
 
     private function openPaymentGateway()
     {
-        $a = auth()->user()->store->bankAccountSdk;
-        var_dump($a);
-        die;
+        $sdkAcc = auth()->user()->open_register->cash_register->store->bankAccountSdk();
+
         $payload = [
             "method" => "openPaymentGateway",
             "requestId" => idate("U"),
             "targetType" => "paymentGatewayConverge",
             "version" => "1.0",
-            "parameters" => [
-                "app" => config('elavon.gateway.app'),
-                "email" => config('elavon.gateway.email'),
-                "pin" => config('elavon.gateway.pin'),
-                "userId" => config('elavon.gateway.userId'),
-                "merchantId" => config('elavon.gateway.merchantId'),
-                "retrieveAccountInfo" => true,
-                "handleDigitalSignature" => true,
-                "paymentGatewayEnvironment" => config('elavon.gateway.paymentGatewayEnvironment'),
-                "vendorId" => config('elavon.gateway.vendorId'),
-                "vendorAppName" => config('elavon.gateway.vendorAppName'),
-                "vendorAppVersion" => config('elavon.gateway.vendorAppVersion')
-            ]
+            "parameters" => $sdkAcc->account
         ];
 
         $paymentGateway = $this->sendRequest($payload);

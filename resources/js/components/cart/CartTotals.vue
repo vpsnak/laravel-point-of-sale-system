@@ -152,9 +152,12 @@ export default {
 			if (type && amount) {
 				switch (_.lowerCase(type)) {
 					case "flat":
-						return parseFloat(price) - parseFloat(amount);
+						return parseFloat(price).toFixed(2) - parseFloat(amount).toFixed(2);
 					case "percentage":
-						return parseFloat(price) - (parseFloat(price) * amount) / 100;
+						return (
+							parseFloat(price) -
+							(parseFloat(price) * amount) / 100
+						).toFixed(2);
 					default:
 						return price;
 				}

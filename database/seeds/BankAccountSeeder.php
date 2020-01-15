@@ -19,44 +19,44 @@ class BankAccountSeeder extends Seeder
             'test_mode' => 'false'
         ]);
         $sdk = json_encode([
-            'gateway' => [
-                'app' => 'VMM',
-                'email' => 'support@webo2.gr',
-                'pin' => 'H3192LKKOIBN3GIZ9FGXX01MYWGIYEJ2UJ8PW4PCHXRSNBZVFMF1PWNG0HR003MI',
-                'userId' => 'convergeapi',
-                'merchantId' => '009710',
-                'paymentGatewayEnvironment' => 'DEMO',
-                'vendorId' => 'sc100028',
-                'vendorAppName' => 'Webo2',
-                'vendorAppVersion' => '2.1.4',
-            ]
+            'app' => 'VMM',
+            'email' => 'support@webo2.gr',
+            'pin' => 'H3192LKKOIBN3GIZ9FGXX01MYWGIYEJ2UJ8PW4PCHXRSNBZVFMF1PWNG0HR003MI',
+            'userId' => 'convergeapi',
+            'merchantId' => '009710',
+            'paymentGatewayEnvironment' => 'DEMO',
+            'vendorId' => 'sc100028',
+            'vendorAppName' => 'Webo2',
+            'vendorAppVersion' => '2.1.4',
+            "retrieveAccountInfo" => true,
+            "handleDigitalSignature" => true,
         ]);
 
         DB::table('bank_accounts')->insert([
             [
                 'store_id' => 1,
-                'type' => 'sdk',
+                'type' => 'api',
                 'account' => $api,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
                 'store_id' => 1,
-                'type' => 'api',
+                'type' => 'sdk',
                 'account' => $sdk,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
                 'store_id' => 2,
-                'type' => 'sdk',
+                'type' => 'api',
                 'account' => $api,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
                 'store_id' => 2,
-                'type' => 'api',
+                'type' => 'sdk',
                 'account' => $sdk,
                 'created_at' => now(),
                 'updated_at' => now()
