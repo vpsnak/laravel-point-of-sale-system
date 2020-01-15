@@ -81,11 +81,11 @@
 						</v-tooltip>
 
 						<!-- gift card actions -->
-						<v-tooltip bottom v-else-if="tableForm === 'giftCardForm'">
+						<v-tooltip bottom v-else-if="tableForm === 'giftCardForm'" >
 							<template v-slot:activator="{ on }">
 								<v-btn
 									@click="rechargeGiftcardDialog(item) "
-									:disabled="btnDisable"
+									:disabled="btnDisable || rechargeGiftCardDisable()"
 									class="my-1"
 									icon
 									v-on="on"
@@ -209,6 +209,9 @@ export default {
 		this.$root.$off("barcodeScan");
 	},
 	computed: {
+		cashRegister() {
+			return this.$store.state.cashRegister;
+		},
 		searchAction: {
 			get() {
 				return this.search_action;
@@ -265,6 +268,14 @@ export default {
 		}
 	},
 	methods: {
+		rechargeGiftCardDisable(){
+			if (this.cashRegister){
+				return false;
+			}
+			else {
+				return true;
+			}
+		},
 		resetCart(e) {
 			this.$store.commit("cart/resetState");
 
