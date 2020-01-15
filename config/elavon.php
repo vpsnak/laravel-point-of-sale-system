@@ -2,13 +2,13 @@
 
 return [
     'hostPC' => [
-        'ip' => 'https://192.168.1.90', // pavlos
+        'ip' => 'https://192.168.1.106', // pavlos
         // 'ip' => 'https://192.168.1.114', // vaggelis
         'port' => '9790',
     ],
 
     'posTerminal' => [
-        "host" => "192.168.1.127",
+        "host" => "192.168.1.116",
         "port" => 12000,
         "encr" => "TLS_12"
     ],

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\BankAccount;
 use App\ElavonSdkPayment;
 use DB;
 use GuzzleHttp\Client;
@@ -420,6 +421,9 @@ class ElavonSdkPaymentController extends Controller
 
     private function openPaymentGateway()
     {
+        $a = auth()->user()->store->bankAccountSdk;
+        var_dump($a);
+        die;
         $payload = [
             "method" => "openPaymentGateway",
             "requestId" => idate("U"),

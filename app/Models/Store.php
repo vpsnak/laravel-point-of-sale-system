@@ -30,4 +30,14 @@ class Store extends BaseModel
     {
         return $this->belongsTo(Tax::class);
     }
+
+    public function bankAccounts()
+    {
+        return $this->hasMany(BankAccount::class);
+    }
+
+    public function bankAccountSdk()
+    {
+        return $this->bankAccounts()->whereType('sdk')->first();
+    }
 }
