@@ -25,7 +25,8 @@ class CreateOrdersTable extends Migration
             $table->string('notes')->nullable();
             $table->string('shipping_type')->nullable();
             $table->decimal('shipping_cost')->default(0);
-            $table->string('shipping_address_id')->nullable();
+            $table->unsignedBigInteger('shipping_address_id')->nullable();
+            $table->unsignedBigInteger('billing_address_id')->nullable();
             $table->string('store_pickup_id')->nullable();
             $table->string('delivery_date')->nullable();
             $table->string('delivery_slot')->nullable();
@@ -34,6 +35,9 @@ class CreateOrdersTable extends Migration
             $table->unsignedBigInteger('store_id');
             $table->unsignedBigInteger('created_by');
             $table->timestamps();
+
+            $table->foreign('shipping_address_id')->references('id')->on('addresses');
+            $table->foreign('billing_address_id')->references('id')->on('addresses');
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('restrict');
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('restrict');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('restrict');
