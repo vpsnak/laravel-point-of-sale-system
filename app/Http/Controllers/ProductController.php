@@ -42,11 +42,17 @@ class ProductController extends BaseController
         }
 
         //        @TODO fix amount create or update
-        $product->price()->updateOrCreate(['amount' => $validatedExtra['final_price']]);
-        $product->price->save();
+        // $product->price()->updateOrCreate(['amount' => $validatedExtra['final_price']]);
+        // $product->price->save();
 
-        //        $product->price->amount = $validatedExtra['final_price'];
-        //        $product->price->save();
+        if (isset($validatedExtra['id'])) {
+            $product->price->amount = $validatedExtra['final_price'];
+        } else {
+            $product->price()->updateOrCreate(['amount' => $validatedExtra['final_price']]);
+        }
+
+
+        $product->price->save();
         return response($product, 200);
     }
 

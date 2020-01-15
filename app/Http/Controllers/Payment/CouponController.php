@@ -30,19 +30,26 @@ class CouponController extends BaseController
         ]);
 
         if (!empty($validatedID)) {
-            $this->model->discount->discount_type = $discountData['discount.type'];
-            $this->model->discount->discount_amount = $discountData['discount.amount'];
-            // @TODO fix update
-            return response($this->model::updateData($validatedID, $validatedData), 200);
-        } else {
+            $coupon = $this->model::findOrFail($validatedID['id']);
+            $coupon->update($validatedData);
 
+            $coupon->discount->type = $discountData['discount']['type'];
+            $coupon->discount->amount = $discountData['discount']['amount'];
+
+            $coupon->discount->save();
+            // @TODO fix update
+            return response(['info' => ['Coupon updated successfully!']], 200);
+        } else {
             $discount = Discount::store([
                 'type' => $discountData['discount']['type'],
                 'amount' => $discountData['discount']['amount'],
             ]);
             $coupon = $discount->coupon()->create($validatedData);
 
-            return response($coupon, 201);
+            return response([
+                'info' => ['Coupon created successfully!'],
+                $coupon
+            ], 201);
         }
     }
 
