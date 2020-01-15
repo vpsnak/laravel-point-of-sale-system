@@ -17,7 +17,6 @@ $admin = 'admin';
 $allRoles = "$admin,$store_manager,$cashier";
 
 // app env
-
 Route::get('/env', 'AppController@env');
 Route::get('/debug', 'AppController@debug');
 

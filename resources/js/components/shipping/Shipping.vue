@@ -5,9 +5,11 @@
 			action="update"
 			:show="addTimeSlotDialog"
 			title="Add time slot"
+			:titleCloseBtn="true"
 			icon="mdi-clock"
 			component="timeSlotForm"
 			@action="closedDialog"
+			persistent
 		/>
 
 		<interactiveDialog

@@ -94,7 +94,7 @@ export default {
             occasion: 9
         },
 
-        billing_address: undefined,
+        billing_address: {},
 
         order: undefined
     },
@@ -186,7 +186,7 @@ export default {
                 location: null,
                 occasion: 9
             };
-            state.billing_address = undefined;
+            state.billing_address = {};
         },
         resetShipping(state) {
             let notes = state.shipping.notes;
@@ -200,7 +200,7 @@ export default {
                 location: null,
                 occasion: 9
             };
-            state.billing_address = undefined;
+            state.billing_address = {};
 
             state.currentCheckoutStep = 1;
             state.checkoutSteps.forEach(checkoutStep => {
