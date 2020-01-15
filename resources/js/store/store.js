@@ -105,7 +105,6 @@ export default new Vuex.Store({
             if (user) {
                 state.user = user;
                 Cookies.set("user", state.user, {
-                    httpOnly: true,
                     secure: true,
                     sameSite: "strict"
                 });
@@ -118,7 +117,6 @@ export default new Vuex.Store({
             if (token) {
                 state.token = "Bearer " + token;
                 Cookies.set("token", state.token, {
-                    httpOnly: true,
                     secure: true,
                     sameSite: "strict"
                 });
