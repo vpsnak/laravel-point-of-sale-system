@@ -1,6 +1,6 @@
 <template>
-	<v-container v-if="customerData">
-		<v-row>
+	<v-container>
+		<v-row v-if="customerData">
 			<v-col cols="12">
 				<v-card>
 					<v-card-title>Billing Information</v-card-title>
@@ -27,8 +27,12 @@
 				</v-card>
 			</v-col>
 		</v-row>
+		<v-row v-else>
+			<v-col cols="12" align="center" justify="center">
+				<v-progress-circular indeterminate color="secondary"></v-progress-circular>
+			</v-col>
+		</v-row>
 	</v-container>
-	<div v-else>Loading...</div>
 </template>
 
 <script>

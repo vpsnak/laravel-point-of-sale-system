@@ -126,7 +126,13 @@
 			</v-col>
 		</v-row>
 	</v-container>
-	<div v-else>Loading...</div>
+	<v-container v-else>
+		<v-row>
+			<v-col cols="12" align="center" justify="center">
+				<v-progress-circular indeterminate color="secondary"></v-progress-circular>
+			</v-col>
+		</v-row>
+	</v-container>
 </template>
 
 <script>

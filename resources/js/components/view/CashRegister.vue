@@ -1,6 +1,6 @@
 <template>
-	<v-container v-if="cashRegisterData">
-		<v-row>
+	<v-container>
+		<v-row v-if="cashRegisterData">
 			<v-col cols="12" md="5">
 				<v-card>
 					<v-card-title>{{cashRegisterData.name}}</v-card-title>
@@ -72,8 +72,12 @@
 				</v-card-text>
 			</v-col>
 		</v-row>
+		<v-row v-else>
+			<v-col cols="12" align="center" justify="center">
+				<v-progress-circular indeterminate color="secondary"></v-progress-circular>
+			</v-col>
+		</v-row>
 	</v-container>
-	<div v-else>Loading...</div>
 </template>
 
 <script>
