@@ -1,6 +1,6 @@
 <template>
-	<v-container v-if="storePickupData">
-		<v-row>
+	<v-container>
+		<v-row v-if="storePickupData">
 			<v-col cols="12">
 				<v-card>
 					<v-card-title>{{storePickupData.name}}</v-card-title>
@@ -15,8 +15,12 @@
 				</v-card>
 			</v-col>
 		</v-row>
+		<v-row v-else>
+			<v-col cols="12" align="center" justify="center">
+				<v-progress-circular indeterminate color="secondary"></v-progress-circular>
+			</v-col>
+		</v-row>
 	</v-container>
-	<div v-else>Loading...</div>
 </template>
 
 <script>
