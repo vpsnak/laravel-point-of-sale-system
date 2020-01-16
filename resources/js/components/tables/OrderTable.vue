@@ -11,9 +11,9 @@
                         :tableBtnDisable="true"
                         tableViewComponent="order"
                     >
-                        <template v-slot:item.customer="{ item }">{{
-                            item.customer.email ? item.customer.email : "Guest"
-                        }}</template>
+                        <template v-slot:item.customer="{ item }">
+                            {{ item.customer ? item.customer.email : "Guest" }}
+                        </template>
                         <template v-slot:item.store_id="{ item }">{{
                             item.store_id.name
                         }}</template>
@@ -40,7 +40,7 @@ export default {
                 },
                 {
                     text: "Customer",
-                    value: "customer.email"
+                    value: "customer"
                 },
                 {
                     text: "Store",
