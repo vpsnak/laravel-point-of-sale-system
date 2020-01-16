@@ -426,8 +426,12 @@ export default {
 			});
 		},
 
-		checkout(item) {
-			this.$store.commit("cart/setOrder", item);
+		checkout(order) {
+            console.log(order)
+            this.$store.commit("cart/setOrder", order);
+
+            this.$store.state.cart.customer = order.customer;
+
 			this.$store.state.cart.checkoutSteps[0].completed = true;
 			this.$store.state.cart.currentCheckoutStep = 2;
 

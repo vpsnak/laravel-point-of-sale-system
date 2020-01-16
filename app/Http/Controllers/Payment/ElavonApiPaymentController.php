@@ -26,6 +26,17 @@ class ElavonApiPaymentController extends Controller
     private $ssl_cvv2cvc2_indicator;
     private $ssl_cvv2cvc2;
 
+    public function __construct()
+    {
+        $apiAcc = auth()->user()->open_register->cash_register->store->bankAccountApi();
+
+        $this->enviroment_url = 'https://api.demo.convergepay.com/VirtualMerchantDemo/processxml.do';
+        $this->merchant_id = '009710';
+        $this->user_id = 'convergeapi';
+        $this->pin = 'LWUY8K81466BXK4Y6I7FERJMOLDRM1XL37JPP4ATK3JORDUMAYDRICE9H7QVL6M8';
+        $this->test_mode = 'false';
+    }
+
     public function getLogs($test_case = null)
     {
         if ($test_case) {

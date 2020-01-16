@@ -159,11 +159,8 @@ class PaymentController extends BaseController
                 if (array_key_exists('errors', $paymentResponse)) {
                     $payment->status = 'failed';
                     $payment->save();
-                    return response([
-                        'errors' => [
-                            'POS Terminal' => [$paymentResponse['errors']]
-                        ]
-                    ], 422);
+
+                    return response($paymentResponse, 422);
                 }
 
                 break;
