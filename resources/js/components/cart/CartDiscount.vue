@@ -1,54 +1,51 @@
 <template>
-    <div class="d-flex" :key="$props.product_index">
-        <v-col cols="6" class="pa-0 pr-2">
-            <v-select
-                @change="percentageLimit"
-                v-if="editable"
-                v-model="discountType"
-                :items="discountTypes"
-                label="Discount"
-                item-text="label"
-                item-value="value"
-            ></v-select>
-            <v-text-field
-                v-else-if="!editable"
-                :value="discountType"
-                label="Discount"
-                disabled
-            ></v-text-field>
-        </v-col>
+    <ValidationObserver ref="checkoutObs">
+        <div class="d-flex" :key="$props.product_index">
+            <v-col cols="6" class="pa-0 pr-2">
+                <v-select
+                    @change="validate"
+                    v-if="editable"
+                    v-model="discountType"
+                    :items="discountTypes"
+                    label="Discount"
+                    item-text="label"
+                    item-value="value"
+                ></v-select>
+                <v-text-field
+                    v-else-if="!editable"
+                    :value="discountType"
+                    label="Discount"
+                    disabled
+                ></v-text-field>
+            </v-col>
 
-        <v-col
-            cols="6"
-            class="pa-0 pl-2"
-            v-if="discountType && discountType !== 'None'"
-        >
-            <ValidationObserver v-slot="{ valid, invalid }" ref="checkoutObs">
+            <v-col
+                cols="6"
+                class="pa-0 pl-2"
+                v-if="discountType && discountType !== 'None'"
+            >
                 <ValidationProvider
-                    :rules="{
-                        required: true,
-                        regex: /^[\d]{1,8}(\.[\d]{1,2})?$/g,
-                        min: 0,
-                        max: max.toFixed(2)
-                    }"
-                    v-slot="{ invalid }"
+                    v-slot="{ valid }"
+                    :rules="`between:${0},${max}`"
                     name="Discount amount"
                 >
                     <v-text-field
-                        @input="percentageLimit"
+                        @blur="limits"
+                        @change="validate"
+                        @keyup="validate"
                         v-model="discountAmount"
                         type="number"
                         label="Amount"
                         :min="0"
                         :max="max.toFixed(2)"
-                        :error-messages="invalid ? 'Invalid amount' : undefined"
+                        :error-messages="!valid ? 'Invalid amount' : undefined"
                         :success="valid"
                         :disabled="!editable"
                     ></v-text-field>
                 </ValidationProvider>
-            </ValidationObserver>
-        </v-col>
-    </div>
+            </v-col>
+        </div>
+    </ValidationObserver>
 </template>
 
 <script>
@@ -63,63 +60,102 @@ export default {
     },
     watch: {
         product_price() {
-            this.setDiscount();
+            this.validate();
         }
     },
     methods: {
-        percentageLimit() {
-            if (this.discountType === "Percentage") {
+        validate() {
+            this.setDiscount(this.discountAmount);
+            this.$store.commit("cart/isValidDiscount");
+        },
+        limits() {
+            if (
+                this.discountType === "Percentage" ||
+                this.discountType === "percentage"
+            ) {
                 if (this.discountAmount > 99) {
                     this.discountAmount = "99";
                 }
             }
+
+            if (this.discountAmount) {
+                let digits = this.discountAmount.split(".");
+
+                if (digits.length === 2 && digits[1].length > 2)
+                    this.discountAmount = parseFloat(
+                        this.discountAmount
+                    ).toFixed(2);
+            }
+
+            this.validate();
         },
-        setDiscount(value = 0) {
+        setDiscount(value) {
             if (this.$props.product_index === -1) {
-                Vue.set(
-                    this.cart,
-                    "discount_amount",
-                    value || this.cart.discount_amount
-                );
+                this.order.discount_amount = value;
+
+                this.$refs.checkoutObs.validate().then(result => {
+                    this.order.discount_error = !result;
+                    return;
+                });
             } else {
-                Vue.set(
-                    this.product,
-                    "discount_amount",
-                    value || this.product.discount_amount
-                );
+                Vue.set(this.product, "discount_amount", value);
+
+                this.$refs.checkoutObs.validate().then(result => {
+                    Vue.set(this.product, "discount_error", !result);
+                    return;
+                });
             }
         }
     },
     computed: {
         ...mapState("cart", ["discountTypes"]),
-        cart: {
+        order: {
             get() {
-                return this.$store.state.cart;
+                if (this.$store.state.cart.order) {
+                    return this.$store.state.cart.order;
+                } else {
+                    return this.$store.state.cart;
+                }
             },
             set(value) {
-                this.$store.state.cart = value;
+                if (this.$store.state.cart.order) {
+                    this.$store.state.cart.order = value;
+                } else {
+                    this.$store.state.cart = value;
+                }
             }
         },
         product: {
             get() {
-                return this.cart.products[this.$props.product_index];
+                if (this.order.items) {
+                    return this.order.items[this.$props.product_index];
+                } else {
+                    return this.order.products[this.$props.product_index];
+                }
             },
             set(value) {
-                this.cart.products[this.$props.product_index] = value;
+                if (this.order.items) {
+                    this.order.items[this.$props.product_index] = value;
+                } else {
+                    this.order.products[this.$props.product_index] = value;
+                }
             }
         },
         max() {
             switch (this.discountType) {
+                case "flat":
                 case "Flat":
                     if (this.$props.product_index === -1) {
-                        let max =
-                            parseFloat(this.cart.cart_price) +
-                            parseFloat(this.cart.discount_amount);
+                        let max = (
+                            parseFloat(this.order.cart_price) +
+                            parseFloat(this.order.discount_amount)
+                        ).toFixed(2);
 
-                        return max - 0.01;
+                        return parseFloat(max - 0.01);
                     } else {
                         return parseFloat(this.$props.product_price);
                     }
+                case "percentage":
                 case "Percentage":
                     return 99;
                 default:
@@ -129,25 +165,25 @@ export default {
         discountType: {
             get() {
                 if (this.$props.product_index === -1) {
-                    return this.cart.discount_type;
+                    return this.order.discount_type;
                 } else {
                     return this.product.discount_type;
                 }
             },
             set(value) {
                 if (this.$props.product_index === -1) {
-                    Vue.set(this.cart, "discount_type", value);
+                    this.order.discount_type = value;
                 } else {
                     Vue.set(this.product, "discount_type", value);
                 }
 
-                this.setDiscount();
+                this.setDiscount(this.discountAmount);
             }
         },
         discountAmount: {
             get() {
                 if (this.$props.product_index === -1) {
-                    return this.cart.discount_amount;
+                    return this.order.discount_amount;
                 } else {
                     return this.product.discount_amount;
                 }

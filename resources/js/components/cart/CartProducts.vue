@@ -122,9 +122,7 @@
                         <v-col cols="12">
                             <cartDiscount
                                 :product_index="index"
-                                :product_price="
-                                    product.final_price * product.qty
-                                "
+                                :product_price="price(product) * product.qty"
                                 :editable="editable"
                             ></cartDiscount>
                         </v-col>
@@ -180,6 +178,13 @@ export default {
                     return this.$store.state.cart.order.items;
                 } else {
                     return this.$store.state.cart.products;
+                }
+            },
+            set(value) {
+                if (this.$store.state.cart.order) {
+                    this.$store.state.cart.order.items = value;
+                } else {
+                    this.$store.state.cart.products = value;
                 }
             }
         }

@@ -76,7 +76,7 @@ export default {
         shippingCost() {
             if (this.order) {
                 return parseFloat(this.order.shipping_cost);
-            } else if (this.$store.state.cart.shipping.cost) {
+            } else if (this.cart.shipping.cost) {
                 return parseFloat(this.cart.shipping.cost);
             } else {
                 return 0;
@@ -84,8 +84,9 @@ export default {
         },
         subTotalwDiscount() {
             let subtotal = 0;
+
             if (this.order) {
-                this.order.items.forEach(item => {
+                this.products.forEach(item => {
                     subtotal += this.calcDiscount(
                         item.price * item.qty,
                         item.discount_type,
@@ -117,6 +118,7 @@ export default {
                         this.cart.discount_amount
                     );
             }
+
             return parseFloat(subtotal);
         },
         tax() {
@@ -150,23 +152,23 @@ export default {
                     subtotalNoDiscount += product.price.amount * product.qty;
                 });
             }
+            this.total = this.total;
 
             return subtotalNoDiscount - this.subTotalwDiscount;
         },
-        total() {
-            Vue.set(
-                this.cart,
-                "cart_price",
-                this.subTotalwDiscount + this.tax + this.shippingCost
-            );
+        total: {
+            get() {
+                return this.cart.cart_price;
+            },
+            set() {
+                Vue.set(
+                    this.cart,
+                    "cart_price",
+                    this.subTotalwDiscount + this.tax + this.shippingCost
+                );
 
-            if (parseFloat(this.cart.cart_price) > 0) {
-                this.cart.isValidCheckout = true;
-            } else {
-                this.cart.isValidCheckout = false;
+                this.$store.commit("cart/isValidDiscount");
             }
-
-            return this.subTotalwDiscount + this.tax + this.shippingCost;
         }
     },
     methods: {
@@ -181,13 +183,13 @@ export default {
                     case "percentage":
                         return (
                             parseFloat(price) -
-                            (parseFloat(price) * amount) / 100
-                        ).toFixed(2);
+                            (parseFloat(price) * parseFloat(amount)) / 100
+                        );
                     default:
-                        return price;
+                        return parseFloat(price);
                 }
             }
-            return price;
+            return parseFloat(price);
         }
     }
 };

@@ -153,7 +153,7 @@
 			:persistent="dialog.persistent"
 		></interactiveDialog>
 
-		<checkoutDialog :show="checkoutDialog" @close="resetCart()" :giftcard="true" />
+		<checkoutDialog @close="resetCart()" :giftcard="true" />
 	</v-card>
 </template>
 
@@ -245,10 +245,10 @@ export default {
 		},
 		checkoutDialog: {
 			get() {
-				return this.$store.state.checkoutDialog;
+				return this.$store.state.cart.checkoutDialog;
 			},
 			set(value) {
-				this.$store.state.checkoutDialog = value;
+				this.$store.state.cart.checkoutDialog = value;
 			}
 		},
 		...mapState("datatable", {

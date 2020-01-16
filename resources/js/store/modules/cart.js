@@ -2,11 +2,15 @@ export default {
     namespaced: true,
 
     state: {
+        checkoutDialog: false,
+
         retail: true,
         refundLoading: false,
         paymentLoading: false,
-        isValid: false,
-        isValidCheckout: true,
+        isValidCheckout: false,
+        discount_error: false,
+
+        discountErrors: [],
 
         locations: [
             { id: 1, label: "Funeral Home" },
@@ -100,6 +104,21 @@ export default {
     },
 
     mutations: {
+        isValidDiscount(state) {
+            let result = true;
+
+            if (state.discount_error) {
+                result = false;
+            }
+
+            state.products.forEach(product => {
+                if (product.discount_error) {
+                    result = false;
+                }
+            });
+
+            state.isValidCheckout = result;
+        },
         setShippingCost(state, value) {
             state.shipping.cost = value;
         },

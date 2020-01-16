@@ -40,4 +40,9 @@ class Store extends BaseModel
     {
         return $this->bankAccounts()->whereType('sdk')->first();
     }
+
+    public function bankAccountApi()
+    {
+        return $this->bankAccounts()->whereType('api')->first();
+    }
 }

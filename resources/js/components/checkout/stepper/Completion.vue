@@ -1,67 +1,67 @@
 <template>
-	<div class="my-5 d-flex align-center justify-space-around flex-column">
-		<h3 v-if="change">
-			Change:
-			<span class="amber--text" v-text="'$ ' + change.toFixed(2)" />
-		</h3>
+    <div class="my-5 d-flex align-center justify-space-around flex-column">
+        <h3 v-if="change">
+            Change:
+            <span class="amber--text" v-text="'$ ' + change.toFixed(2)" />
+        </h3>
 
-		<orderReceipt />
+        <orderReceipt />
 
-		<v-btn color="primary" @click="close">Close</v-btn>
-	</div>
+        <v-btn color="primary" @click="close">Close</v-btn>
+    </div>
 </template>
 
 <script>
 import { mapActions } from "vuex";
 export default {
-	props: {
-		currentStep: Object
-	},
+    props: {
+        currentStep: Object
+    },
 
-	computed: {
-		change() {
-			if (this.order && this.order.total - this.order.total_paid < 0) {
-				return Math.abs(this.order.total - this.order.total_paid);
-			} else {
-				return false;
-			}
-		},
-		order() {
-			return this.$store.state.cart.order;
-		},
-		orderId() {
-			return this.order ? this.order.id : 0;
-		},
-		customer() {
-			if (this.order) {
-				if (this.order.customer) {
-					return this.order.customer;
-				}
-			}
-			return undefined;
-		},
-		customerEmail() {
-			if (this.customer) {
-				return this.customer.email ? this.customer.email : undefined;
-			} else {
-				return undefined;
-			}
-		}
-	},
+    computed: {
+        change() {
+            if (this.order && this.order.total - this.order.total_paid < 0) {
+                return Math.abs(this.order.total - this.order.total_paid);
+            } else {
+                return false;
+            }
+        },
+        order() {
+            return this.$store.state.cart.order;
+        },
+        orderId() {
+            return this.order ? this.order.id : 0;
+        },
+        customer() {
+            if (this.order) {
+                if (this.order.customer) {
+                    return this.order.customer;
+                }
+            }
+            return undefined;
+        },
+        customerEmail() {
+            if (this.customer) {
+                return this.customer.email ? this.customer.email : undefined;
+            } else {
+                return undefined;
+            }
+        }
+    },
 
-	methods: {
-		close() {
-			this.$store.commit("cart/resetState");
+    methods: {
+        close() {
+            this.$store.commit("cart/resetState");
 
-			this.$store.state.checkoutDialog = false;
+            this.$store.state.cart.checkoutDialog = false;
 
-			this.$emit("close", true);
-		},
-		prevStep() {
-			this.$store.state.cart.currentCheckoutStep--;
-		},
+            this.$emit("close", true);
+        },
+        prevStep() {
+            this.$store.state.cart.currentCheckoutStep--;
+        },
 
-		...mapActions(["create"])
-	}
+        ...mapActions(["create"])
+    }
 };
 </script>

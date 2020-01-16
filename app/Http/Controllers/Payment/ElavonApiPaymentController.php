@@ -30,6 +30,9 @@ class ElavonApiPaymentController extends Controller
     {
         $apiAcc = auth()->user()->open_register->cash_register->store->bankAccountApi();
 
+        var_dump($apiAcc);
+        die;
+
         $this->enviroment_url = 'https://api.demo.convergepay.com/VirtualMerchantDemo/processxml.do';
         $this->merchant_id = '009710';
         $this->user_id = 'convergeapi';
