@@ -9,8 +9,7 @@
         tableViewComponent="product"
     >
         <template v-slot:item.final_price="{ item }"
-            >{{ parseFloat(item.final_price).toFixed(2) }} $</template
-        >
+            >{{ parseFloat(item.final_price).toFixed(2) }} $</template>
         <template v-slot:item.stock="{ item }">
             <v-avatar v-if="item.stock <= 10" color="red" size="36">{{
                 item.stock
