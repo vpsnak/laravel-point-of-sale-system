@@ -156,6 +156,7 @@ class PaymentController extends BaseController
 
                 $paymentResponse = $elavonSdkPayment->posPayment();
 
+
                 if (array_key_exists('errors', $paymentResponse)) {
                     $payment->status = 'failed';
                     $payment->save();
@@ -163,7 +164,10 @@ class PaymentController extends BaseController
                     return response($paymentResponse, 422);
                 }
 
+                $payment->code = $paymentResponse['transaction_id'];
+                $payment->save();
                 break;
+
             case 'house-account':
                 $customer = Customer::getFirst('house_account_number', $validatedData['house_account_number']);
                 if (empty($customer)) {
