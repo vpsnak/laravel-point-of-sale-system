@@ -220,7 +220,7 @@ class ElavonSdkPaymentController extends Controller
         } else if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'APPROVED') {
             $this->saveToSdkLog($response, 'approved');
 
-            return ['success' => $response['data']['paymentGatewayCommand']['eventQueue'], 'transaction_id' => $response['data']['paymentGatewayCommand']['id']];
+            return ['success' => $response['data']['paymentGatewayCommand']['eventQueue'], 'transaction_id' => $response['data']['paymentGatewayCommand']['paymentTransactionData']['id']];
         } else {
             $this->saveToSdkLog($response, 'unhandled');
 

@@ -44,6 +44,12 @@ class PaymentObserver
 
         if ($payment->status == 'approved' && $payment->refunded == 1) {
             switch ($payment->paymentType->type) {
+                case 'pos-terminal':
+                    $paymentResponse = (new CreditCardController)->cardRefund($payment->code, true);
+                    if (isset($paymentResponse['error'])) {
+                        return false;
+                    }
+                    return true;
                 case 'card':
                     $paymentResponse = (new CreditCardController)->cardRefund($payment->code);
                     if (isset($paymentResponse['error'])) {
