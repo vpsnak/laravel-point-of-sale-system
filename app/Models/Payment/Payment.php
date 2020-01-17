@@ -32,6 +32,11 @@ class Payment extends BaseModel
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    public function cash_register()
+    {
+        return $this->belongsTo(CashRegister::class);
+    }
+
     public function elavonApiPayments()
     {
         return $this->hasMany(ElavonApiPayment::class);

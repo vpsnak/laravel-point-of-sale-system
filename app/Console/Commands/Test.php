@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Http\Controllers\Magento\Script\GetCustomers;
 use App\Http\Controllers\OrderMASController;
+use App\Payment;
 use Illuminate\Console\Command;
 
 class Test extends Command
@@ -41,21 +42,21 @@ class Test extends Command
     {
         //4263970000005262
         // 161119ED4-08590ADA-4951-46C8-8DD1-17C0EB5C502F
-//        $o = Order::getOne(3);
-//        $res = (new MasOrderController())->submitToMas($o);
-//        $res = (new CreditCardController)->cardPayment(
-//            '4159288888888882',
-//            '1222',
-//            '123',
-//            'asdasdas',
-//            50
-//        );
-//        print_r($res);
+        //        $o = Order::getOne(3);
+        //        $res = (new MasOrderController())->submitToMas($o);
+        //        $res = (new CreditCardController)->cardPayment(
+        //            '4159288888888882',
+        //            '1222',
+        //            '123',
+        //            'asdasdas',
+        //            50
+        //        );
+        //        print_r($res);
 
         //161119ED4-34736AA0-F7C8-4E01-A5FF-317377C1D6CF
-//        $res = (new CreditCardController)->transactionAction( 'txnquery',['ssl_txn_id'=>'161119ED4-08590ADA-4951-46C8-8DD1-17C0EB5C502F']);
-//        $res = (new CreditCardController)->transactionAction('ccreturn', ['ssl_txn_id' => '161119ED4-08590ADA-4951-46C8-8DD1-17C0EB5C502F']);
-//        $res = (new CreditCardController)->cardRefund( '161119ED4-08590ADA-4951-46C8-8DD1-17C0EB5C502F');
-//        dd($res);
+        //        $res = (new CreditCardController)->transactionAction( 'txnquery',['ssl_txn_id'=>'161119ED4-08590ADA-4951-46C8-8DD1-17C0EB5C502F']);
+        //        $res = (new CreditCardController)->transactionAction('ccreturn', ['ssl_txn_id' => '161119ED4-08590ADA-4951-46C8-8DD1-17C0EB5C502F']);
+        //        $res = (new CreditCardController)->cardRefund( '161119ED4-08590ADA-4951-46C8-8DD1-17C0EB5C502F');
+        //        dd($res);
     }
 }
