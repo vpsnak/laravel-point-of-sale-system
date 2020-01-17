@@ -134,16 +134,16 @@ class CreditCardController extends Controller
 
         if ($isSdk) {
             $data = [
-                'ssl_merchant_id' => $store->bankAccountSdk['merchant_id'],
-                'ssl_user_id' => $store->bankAccountSdk['user_id'],
-                'ssl_pin' => $store->bankAccountSdk['pin'],
+                'ssl_merchant_id' => ($store->bankAccountSdk())['merchant_id'],
+                'ssl_user_id' => ($store->bankAccountSdk())['user_id'],
+                'ssl_pin' => ($store->bankAccountSdk())['pin'],
                 'ssl_txn_id' => $transaction_id
             ];
         } else {
             $data = [
-                'ssl_merchant_id' => $store->bankAccountApi['merchant_id'],
-                'ssl_user_id' => $store->bankAccountApi['user_id'],
-                'ssl_pin' => $store->bankAccountApi['pin'],
+                'ssl_merchant_id' => ($store->bankAccountApi())['merchant_id'],
+                'ssl_user_id' => ($store->bankAccountApi())['user_id'],
+                'ssl_pin' => ($store->bankAccountApi())['pin'],
                 'ssl_txn_id' => $transaction_id
             ];
         }
