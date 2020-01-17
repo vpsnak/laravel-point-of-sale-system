@@ -30,7 +30,7 @@
     "browser-sync-webpack-plugin": "^2.2.2",
     "laravel-mix": "^5.0.1",
     "lodash": "^4.17.15",
-    "sass": "^1.24.4",
+    "sass": "^1.24.5",
     "sass-loader": "^8.0.2",
     "vue": "^2.6.11",
     "vue-cli-plugin-vuetify": "^2.0.3",

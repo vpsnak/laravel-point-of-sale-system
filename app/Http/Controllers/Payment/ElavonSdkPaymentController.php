@@ -299,7 +299,10 @@ class ElavonSdkPaymentController extends Controller
 
     private function sendRequest($payload, $verbose = true)
     {
-        $url = config('elavon.hostPC.ip') . ':' . config('elavon.hostPC.port') . '/rest/command';
+        $ip = auth()->user()->open_register->cash_register->pos_terminal_ip;
+        $port = auth()->user()->open_register->cash_register->pos_terminal_port;
+
+        $url = $ip . ':' . $port . '/rest/command';
         $client = new Client(['verify' => false]);
         if ($verbose) {
             $this->saveToSdkLog($payload, 'payload');

@@ -472,7 +472,7 @@ Route::get('/product-listing/categories', "CategoryController@productListingCate
 Route::post('/shipping/timeslot', "TimeslotController@getTimeslots")->middleware("scope:$allRoles");
 
 // magento oauth authenticate
-Route::get('/magento/authorize', 'Auth\MagentoOAuthController@authorizeMagento')->middleware("scope:$admin");
+Route::get('/magento/authorize', 'Auth\MagentoOAuthController@authorizeMagento');
 
 // e-mail
 Route::post('/mail-receipt/{order}', 'MailReceiptController@send')->middleware("scope:$allRoles");

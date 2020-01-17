@@ -15,12 +15,14 @@ class CreateCashRegistersTable extends Migration
     {
         Schema::create('cash_registers', function (Blueprint $table) {
             $table->bigIncrements('id');
+
             $table->string('name');
             $table->unsignedBigInteger('store_id');
             $table->unsignedBigInteger('created_by');
             $table->string('barcode')->nullable();
-            $table->string('pos_terminal')->nullable();
-            $table->string('printer')->nullable();
+            $table->ipAddress('pos_terminal_ip');
+            $table->string('pos_terminal_port');
+
             $table->timestamps();
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
