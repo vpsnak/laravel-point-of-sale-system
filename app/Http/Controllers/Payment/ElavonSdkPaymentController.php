@@ -250,7 +250,7 @@ class ElavonSdkPaymentController extends Controller
             return ['errors' => $msg];
         }
 
-        set_time_limit(300);
+        set_time_limit(0);
 
         do {
             sleep(1);
@@ -303,7 +303,7 @@ class ElavonSdkPaymentController extends Controller
         $port = auth()->user()->open_register->cash_register->pos_terminal_port;
 
         $url = "https://" . $ip . ':' . $port . '/rest/command';
-        $client = new Client(['verify' => false]);
+        $client = new Client();
         if ($verbose) {
             $this->saveToSdkLog($payload, 'payload');
         }
