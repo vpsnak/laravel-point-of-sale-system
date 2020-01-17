@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Session\Store;
 
 class CreditCardController extends Controller
 {
@@ -123,12 +125,34 @@ class CreditCardController extends Controller
         ];
     }
 
-    public function cardRefund($transaction_id)
+    public function cardRefund($transaction_id, $isSdk = false)
     {
-        $response = ElavonApiPaymentController::doTransaction('txnquery', ['ssl_txn_id' => $transaction_id]);
+        if ($payment = Payment::where('code', $transaction_id)->first()) {
+
+            $store = $payment->cash_register->store;
+        }
+
+        if ($isSdk) {
+            $data = [
+                'ssl_merchant_id' => $store->bankAccountSdk['merchant_id'],
+                'ssl_user_id' => $store->bankAccountSdk['user_id'],
+                'ssl_pin' => $store->bankAccountSdk['pin'],
+                'ssl_txn_id' => $transaction_id
+            ];
+        } else {
+            $data = [
+                'ssl_merchant_id' => $store->bankAccountApi['merchant_id'],
+                'ssl_user_id' => $store->bankAccountApi['user_id'],
+                'ssl_pin' => $store->bankAccountApi['pin'],
+                'ssl_txn_id' => $transaction_id
+            ];
+        }
+
+
+        $response = ElavonApiPaymentController::doTransaction('txnquery', $data);
         $parsedResponse = $this->prepareResponse($response);
         if (array_key_exists('errors', $parsedResponse)) {
-            return ['errors' => ['Can not refund!']];
+            return ['errors' => ['Refund' => 'Can not refund!']];
         }
         if (array_key_exists('ssl_is_voidable', $response)) {
             if ($response['ssl_is_voidable'] == 'TRUE') {
@@ -137,7 +161,7 @@ class CreditCardController extends Controller
                 return $this->transactionAction('ccreturn', ['ssl_txn_id' => $transaction_id]);
             }
         }
-        return ['errors' => ['Can not refund!']];
+        return ['errors' => ['Refund' => 'Can not refund!']];
     }
 
     public function transactionAction($type, $params)

@@ -13,11 +13,6 @@ class ElavonApiPaymentController extends Controller
 {
     protected static $enviroment_url = 'https://api.demo.convergepay.com/VirtualMerchantDemo/processxml.do';
 
-    protected static $merchant_id = '009710';
-    protected static $user_id = 'convergeapi';
-    protected static $pin = 'LWUY8K81466BXK4Y6I7FERJMOLDRM1XL37JPP4ATK3JORDUMAYDRICE9H7QVL6M8';
-    protected static $test_mode = 'false';
-
     private $txn_id;
     private $test_case;
 
@@ -25,20 +20,6 @@ class ElavonApiPaymentController extends Controller
     private $ssl_amount;
     private $ssl_cvv2cvc2_indicator;
     private $ssl_cvv2cvc2;
-
-    public function __construct()
-    {
-        $apiAcc = auth()->user()->open_register->cash_register->store->bankAccountApi();
-
-        var_dump($apiAcc);
-        die;
-
-        $this->enviroment_url = 'https://api.demo.convergepay.com/VirtualMerchantDemo/processxml.do';
-        $this->merchant_id = '009710';
-        $this->user_id = 'convergeapi';
-        $this->pin = 'LWUY8K81466BXK4Y6I7FERJMOLDRM1XL37JPP4ATK3JORDUMAYDRICE9H7QVL6M8';
-        $this->test_mode = 'false';
-    }
 
     public function getLogs($test_case = null)
     {
@@ -86,11 +67,13 @@ class ElavonApiPaymentController extends Controller
 
     public static function doTransaction($type, array $data)
     {
+        $apiAcc = auth()->user()->open_register->cash_register->store->bankAccountApi()->account;
+
         $defaults = [
-            'ssl_merchant_id' => self::$merchant_id,
-            'ssl_user_id' => self::$user_id,
-            'ssl_pin' => self::$pin,
-            'ssl_test_mode' => self::$test_mode,
+            'ssl_merchant_id' => $apiAcc['merchant_id'],
+            'ssl_user_id' => $apiAcc['user_id'],
+            'ssl_pin' => $apiAcc['pin'],
+            'ssl_test_mode' => $apiAcc['test_mode'],
             'ssl_transaction_type' => $type,
             'ssl_show_form' => 'false' // @TODO check this attribute when and if neeed
         ];

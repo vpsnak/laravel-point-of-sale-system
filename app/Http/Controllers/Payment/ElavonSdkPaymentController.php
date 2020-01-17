@@ -299,6 +299,10 @@ class ElavonSdkPaymentController extends Controller
 
     private function sendRequest($payload, $verbose = true)
     {
+        if (!empty(auth()->user()->open_register)) {
+            return ['errors' => ['Cash Register' => ['Your session with cash register has exired']]];
+        }
+
         $ip = auth()->user()->open_register->cash_register->pos_terminal_ip;
         $port = auth()->user()->open_register->cash_register->pos_terminal_port;
 
