@@ -303,7 +303,7 @@ class ElavonSdkPaymentController extends Controller
         $port = auth()->user()->open_register->cash_register->pos_terminal_port;
 
         $url = "https://" . $ip . ':' . $port . '/rest/command';
-        $client = new Client();
+        $client = new Client(['verify' => false]);
         if ($verbose) {
             $this->saveToSdkLog($payload, 'payload');
         }
