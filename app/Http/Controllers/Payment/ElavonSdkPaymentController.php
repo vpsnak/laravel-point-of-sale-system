@@ -299,7 +299,7 @@ class ElavonSdkPaymentController extends Controller
 
     private function sendRequest($payload, $verbose = true)
     {
-        if (!empty(auth()->user()->open_register)) {
+        if (empty(auth()->user()->open_register)) {
             return ['errors' => ['Cash Register' => ['Your session with cash register has exired']]];
         }
 
@@ -439,6 +439,12 @@ class ElavonSdkPaymentController extends Controller
         ];
 
         $paymentGateway = $this->sendRequest($payload);
+
+        if (isset($paymentGateway['errors']) || isset($paymentGateway['fatal_error'])) {
+            $this->saveToSdkLog('Payment gateway failed', 'error');
+
+            return ['errors' => isset($paymentGateway['errors']) ? $paymentGateway['errors'] : $paymentGateway['fatal_error']];
+        }
 
         if ($paymentGateway['data']['paymentGatewayCommand']['openPaymentGatewayData']['result'] !== 'SUCCESS') {
             $this->saveToSdkLog('Payment gateway failed', 'error');
