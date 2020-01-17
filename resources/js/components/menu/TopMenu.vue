@@ -196,6 +196,23 @@ export default {
 						break;
 				}
 			}
+			this.resetDialog();
+		},
+		resetDialog() {
+			this.dialog = {
+				show: false,
+				width: 600,
+				fullscreen: false,
+				title: "",
+				titleCloseBtn: false,
+				icon: "",
+				component: "",
+				content: "",
+				model: "",
+				persistent: false
+			};
+
+			this.action = "";
 		},
 		closeCashRegisterDialog() {
 			this.action = "closeCashRegister";

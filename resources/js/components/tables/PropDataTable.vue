@@ -81,7 +81,7 @@
 						</v-tooltip>
 
 						<!-- gift card actions -->
-						<v-tooltip bottom v-else-if="tableForm === 'giftCardForm'" >
+						<v-tooltip bottom v-else-if="tableForm === 'giftCardForm'">
 							<template v-slot:activator="{ on }">
 								<v-btn
 									@click="rechargeGiftcardDialog(item) "
@@ -268,11 +268,10 @@ export default {
 		}
 	},
 	methods: {
-		rechargeGiftCardDisable(){
-			if (this.cashRegister){
+		rechargeGiftCardDisable() {
+			if (this.cashRegister) {
 				return false;
-			}
-			else {
+			} else {
 				return true;
 			}
 		},
@@ -427,10 +426,10 @@ export default {
 		},
 
 		checkout(order) {
-            console.log(order)
-            this.$store.commit("cart/setOrder", order);
+			console.log(order);
+			this.$store.commit("cart/setOrder", order);
 
-            this.$store.state.cart.customer = order.customer;
+			this.$store.state.cart.customer = order.customer;
 
 			this.$store.state.cart.checkoutSteps[0].completed = true;
 			this.$store.state.cart.currentCheckoutStep = 2;
