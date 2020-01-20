@@ -6,6 +6,7 @@ use App\Coupon;
 use App\Customer;
 use App\Giftcard;
 use App\Http\Controllers\CreditCardController;
+use App\Http\Controllers\ElavonSdkPaymentController;
 use App\Payment;
 
 class PaymentObserver
@@ -45,7 +46,12 @@ class PaymentObserver
         if ($payment->status == 'approved' && $payment->refunded == 1) {
             switch ($payment->paymentType->type) {
                 case 'pos-terminal':
-                    $paymentResponse = (new CreditCardController)->cardRefund($payment->code, true);
+                    $elavonSdkPaymentController = new ElavonSdkPaymentController;
+
+                    $elavonSdkPaymentController->selected_transaction = 'VOID';
+                    $elavonSdkPaymentController->originalTransId = $payment->code;
+                    $paymentResponse = $elavonSdkPaymentController->posPayment();
+
                     if (isset($paymentResponse['error'])) {
                         return false;
                     }
