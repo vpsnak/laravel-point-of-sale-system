@@ -126,7 +126,7 @@ class CreditCardController extends Controller
         ];
     }
 
-    public function cardRefund($transaction_id, $isSdk = false)
+    public function cardRefund($transaction_id)
     {
 
         if ($payment = Payment::where('code', $transaction_id)->first()) {
@@ -135,21 +135,12 @@ class CreditCardController extends Controller
             ['errors' => ['Refund' => 'Missing transaction ID.<br>Cannot refund!']];
         }
 
-        if ($isSdk) {
-            $data = [
-                "ssl_pin" => ($store->bankAccountSdk()->account)["pin"],
-                "ssl_user_id" => ($store->bankAccountSdk()->account)["userId"],
-                "ssl_merchant_id" => ($store->bankAccountSdk()->account)["merchantId"],
-                'ssl_txn_id' => $transaction_id
-            ];
-        } else {
-            $data = [
-                'ssl_merchant_id' => ($store->bankAccountApi()->account)['merchant_id'],
-                'ssl_user_id' => ($store->bankAccountApi()->account)['user_id'],
-                'ssl_pin' => ($store->bankAccountApi()->account)['pin'],
-                'ssl_txn_id' => $transaction_id
-            ];
-        }
+        $data = [
+            'ssl_merchant_id' => ($store->bankAccountApi()->account)['merchant_id'],
+            'ssl_user_id' => ($store->bankAccountApi()->account)['user_id'],
+            'ssl_pin' => ($store->bankAccountApi()->account)['pin'],
+            'ssl_txn_id' => $transaction_id
+        ];
 
         $response = ElavonApiPaymentController::doTransaction('txnquery', $data);
         $parsedResponse = $this->prepareResponse($response);
