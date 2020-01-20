@@ -79,7 +79,6 @@ class ElavonApiPaymentController extends Controller
         ];
 
         $payload = array_merge($defaults, $data);
-        var_dump($data);
         $html = self::generateHtmlPayload($payload);
         $response = self::sendTransaction($html);
         return (array) $response;
