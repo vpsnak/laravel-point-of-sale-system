@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\BankAccount;
 use App\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Session\Store;
@@ -136,20 +137,19 @@ class CreditCardController extends Controller
 
         if ($isSdk) {
             $data = [
-                'ssl_merchant_id' => ($store->bankAccountSdk())['merchantId'],
-                'ssl_user_id' => ($store->bankAccountSdk())['userId'],
-                'ssl_pin' => ($store->bankAccountSdk())['pin'],
+                "ssl_pin" => ($store->bankAccountSdk()->account)["pin"],
+                "ssl_user_id" => ($store->bankAccountSdk()->account)["userId"],
+                "ssl_merchant_id" => ($store->bankAccountSdk()->account)["merchantId"],
                 'ssl_txn_id' => $transaction_id
             ];
         } else {
             $data = [
-                'ssl_merchant_id' => ($store->bankAccountApi())['merchant_id'],
-                'ssl_user_id' => ($store->bankAccountApi())['user_id'],
-                'ssl_pin' => ($store->bankAccountApi())['pin'],
+                'ssl_merchant_id' => ($store->bankAccountApi()->account)['merchant_id'],
+                'ssl_user_id' => ($store->bankAccountApi()->account)['user_id'],
+                'ssl_pin' => ($store->bankAccountApi()->account)['pin'],
                 'ssl_txn_id' => $transaction_id
             ];
         }
-
 
         $response = ElavonApiPaymentController::doTransaction('txnquery', $data);
         $parsedResponse = $this->prepareResponse($response);
@@ -168,21 +168,13 @@ class CreditCardController extends Controller
 
     public function transactionAction($type, $params)
     {
-        $payload = [];
-        if (array_key_exists('ssl_txn_id', $params)) {
-            $payload['ssl_txn_id'] = $params['ssl_txn_id'];
-        }
-        if (array_key_exists('ssl_amount', $params)) {
-            $payload['ssl_amount'] = $params['ssl_amount'];
-        }
-
         switch ($type) {
             case 'ccreturn':
             case 'ccvoid':
             case 'cccomplete':
             case 'ccdelete':
             case 'txnquery':
-                $response = ElavonApiPaymentController::doTransaction($type, $payload);
+                $response = ElavonApiPaymentController::doTransaction($type, $params);
                 return $this->prepareResponse($response);
             default:
                 return ['errors' => ['Invalid API action']];
