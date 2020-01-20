@@ -127,15 +127,17 @@ class CreditCardController extends Controller
 
     public function cardRefund($transaction_id, $isSdk = false)
     {
-        if ($payment = Payment::where('code', $transaction_id)->first()) {
 
+        if ($payment = Payment::where('code', $transaction_id)->first()) {
             $store = $payment->cash_register->store;
+        } else {
+            ['errors' => ['Refund' => 'Missing transaction ID.<br>Cannot refund!']];
         }
 
         if ($isSdk) {
             $data = [
-                'ssl_merchant_id' => ($store->bankAccountSdk())['merchant_id'],
-                'ssl_user_id' => ($store->bankAccountSdk())['user_id'],
+                'ssl_merchant_id' => ($store->bankAccountSdk())['merchantId'],
+                'ssl_user_id' => ($store->bankAccountSdk())['userId'],
                 'ssl_pin' => ($store->bankAccountSdk())['pin'],
                 'ssl_txn_id' => $transaction_id
             ];
@@ -161,7 +163,7 @@ class CreditCardController extends Controller
                 return $this->transactionAction('ccreturn', ['ssl_txn_id' => $transaction_id]);
             }
         }
-        return ['errors' => ['Refund' => 'Can not refund!']];
+        return ['errors' => ['Refund' => 'Cannot refund!']];
     }
 
     public function transactionAction($type, $params)

@@ -165,7 +165,7 @@ class PaymentController extends BaseController
                 }
 
                 $payment->code = $paymentResponse['transaction_id'];
-                $payment->save();
+
                 break;
 
             case 'house-account':
