@@ -52,13 +52,19 @@ class PaymentObserver
                     $elavonSdkPaymentController->originalTransId = $payment->code;
                     $paymentResponse = $elavonSdkPaymentController->posPayment();
 
-                    if (isset($paymentResponse['error'])) {
-                        return false;
+                    if (isset($paymentResponse['errors'])) {
+                        $elavonSdkPaymentController->selected_transaction = 'LINKED_REFUND';
+                        $elavonSdkPaymentController->amount = $payment->amount;
+                        $paymentResponse = $elavonSdkPaymentController->posPayment();
+
+                        if (isset($paymentResponse['errors'])) {
+                            return false;
+                        }
                     }
                     return true;
                 case 'card':
                     $paymentResponse = (new CreditCardController)->cardRefund($payment->code);
-                    if (isset($paymentResponse['error'])) {
+                    if (isset($paymentResponse['errors'])) {
                         return false;
                     }
                     return true;

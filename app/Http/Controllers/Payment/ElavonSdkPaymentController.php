@@ -208,6 +208,14 @@ class ElavonSdkPaymentController extends Controller
                     $msg = 'POS Terminal is not available<br>Please verify the POS Terminal is properly connected and try again';
                     $this->saveToSdkLog($msg, 'declined');
                     return ['errors' => $msg];
+                case 'ECLCommerceError ECLTransactionInvalidTransactionRequest':
+                    $msg = 'This transaction is already settled';
+                    $this->saveToSdkLog($msg, 'failed');
+                    return ['errors' => $msg];
+                case 'ECLCommerceError ECLTransactionNotRefundable':
+                    $msg = 'This transaction isn\'t settled';
+                    $this->saveToSdkLog($msg, 'failed');
+                    return ['errors' => $msg];
                 default:
                     $msg = 'Warning: Unhandled error occured. Please check log file entry above';
                     $this->saveToSdkLog($msg, 'declined');
