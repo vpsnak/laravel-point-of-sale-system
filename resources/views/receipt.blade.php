@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 ​
+
 <head>
     <meta charset="UTF-8">
     {{-- <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -13,6 +14,7 @@
         width: 80mm;
         height: 297mm;
     }
+
     /* @font-face {
         font-family: 'Times New Roman';
         font-style: normal;
@@ -21,7 +23,8 @@
     } */
 </style>
 ​
-<body onload="window.print()">
+
+<body onload="window.print()" onafterprint="window.close()">
     <div class="receipt" style=" background-color: white; width:auto; height:auto; font-weight:normal; ">
         <span style="font-size:14px;"> CO-1 PLANTSHED NY FLOWERS </span>
         <p class="phone" style="text-align: center; font-size:13px;">(212)662-4400</p>
@@ -33,7 +36,7 @@
                 12345</th>
         </table>
         <div class="barcode" style="width:80%;">-------------------------------------------------</div>
-​
+        ​
         <table style="font-size:14px; display: inline-table; width:50%; float:left;">
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">shop:</th>
@@ -48,7 +51,7 @@
                 <td style="text-align:start;">VANESSA</td>
             </tr>
             <table style="font-size:14px; display: inline-table; width:50%; float:right;">
-​
+                ​
                 <tr>
                     <th scope="row" style="font-weight:normal; text-align: end;">Trans:</th>
                     <td style="text-align:start;">1566551</td>
@@ -69,20 +72,20 @@
                 <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
                     nos
                 </th>
-                 <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
+                <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
                     nos
                 </th>
-                 <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
+                <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
                     nos
                 </th>
-                 <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
+                <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
                     nos
                 </th>
             </tr>
-                <td style="text-align: start;">qty(2)</td>
-                <td style="text-align: start;">$1.00</td>
-                <td style="text-align: start;">$2.00</td>
-                <td style="text-align:end;">$2.00</td>
+            <td style="text-align: start;">qty(2)</td>
+            <td style="text-align: start;">$1.00</td>
+            <td style="text-align: start;">$2.00</td>
+            <td style="text-align:end;">$2.00</td>
             </tr>
             <tr>
                 <td scope="row" style="font-weight:normal; text-align:start; ">Notes
@@ -137,7 +140,7 @@
         </table>
         <table style="font-size:14px; width:100%;">
             <tr>
-​
+                ​
                 <th scope="row" style="font-weight:normal; text-align: start;">01/02/2019</th>
                 <th scope="row" style="font-weight:normal; text-align: start;">Payment Cash</th>
                 <td style="text-align: end;">$1.50-</td>
@@ -232,4 +235,5 @@
     </div>
 </body>
 ​
+
 </html>
