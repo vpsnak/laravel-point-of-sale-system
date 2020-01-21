@@ -8,14 +8,18 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 </head>
-{{-- <style>
-    @font-face {
+<style>
+    body {
+        width: 80mm;
+        height: 297mm;
+    }
+    /* @font-face {
         font-family: 'Times New Roman';
         font-style: normal;
         font-weight: normal;
         src: url(http://allfont.net/allfont.css?fonts=courier);
-    }
-</style> --}}
+    } */
+</style>
 ​
 <body>
     <div class="receipt" style=" background-color: white; width:auto; height:auto; font-weight:normal; ">

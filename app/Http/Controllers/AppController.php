@@ -20,4 +20,9 @@ class AppController extends Controller
     {
         return response(config('app.debug'));
     }
+
+    public function receipt()
+    {
+        return view('receipt');
+    }
 }
