@@ -17,8 +17,8 @@
                         <tr>
                             <td valign="top">
                                 <p>
-                                    <strong>Hello {{ $data['customer']['first_name'] }}
-                                        {{ $data['customer']['last_name'] }}</strong>,<br />
+                                    <strong>Hello {{ $data->customer->first_name }}
+                                        {{ $data->customer->last_name }}</strong>,<br />
                                     Thank you for your order from Plantshed. If you have any questions about your order
                                     please contact us at
                                     <a href="mailto:cs@plantshed.com" style="color:rgb(30,126,200)"
@@ -48,16 +48,16 @@
                                         <tr>
                                             <td valign="top"
                                                 style="padding:7px 9px 9px 9px; border:1px solid #bebcb7; border-top:0; background:#f8f7f5;">
-                                                @if($data['customer'])
-                                                <p>{{$data['customer']['first_name']}}{{$data['customer']['last_name']}}
+                                                @isset($data->customer)
+                                                <p>{{$data->customer->first_name}}{{$data->customer->last_name}}
                                                 </p>
-                                                <p>{{$data['customer']['phone']}}</p>
-                                                <p>E: {{$data['customer']['email']}}</p>
-                                                <p>T: <a href="tel:+{{$data['shipping_address']['phone']}}">{{$data['shipping_address']['phone']}}</a></p>
-                                                <p>{{$data['customer']['company_name']}}</p>
+                                                <p>{{$data->customer->phone}}</p>
+                                                <p>E: {{$data->customer->email}}</p>
+                                                {{-- <p>T: <a href="tel:+{{$data['shipping_address']['phone']}}">{{$data['shipping_address']['phone']}}</a></p> --}}
+                                                <p>{{$data->customer->company_name}}</p>
                                                 @else
                                                 <p>Guest</p>  
-                                                @endif
+                                                @endisset
                                             </td>
                                             <td>&nbsp;</td>
                                             <td valign="top"
