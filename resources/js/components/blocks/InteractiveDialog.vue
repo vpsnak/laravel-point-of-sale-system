@@ -120,9 +120,9 @@ export default {
 				}
 
 				if (payload.data) {
-					this.closeEvent(payload.data);
+					this.closeEvent(payload.data, true);
 				} else {
-					this.closeEvent(true);
+					this.closeEvent(true, true);
 				}
 			}
 		},

@@ -2,7 +2,6 @@
 	<div>
 		<interactiveDialog
 			v-if="addTimeSlotDialog"
-			action="update"
 			:show="addTimeSlotDialog"
 			title="Add time slot"
 			:titleCloseBtn="true"
