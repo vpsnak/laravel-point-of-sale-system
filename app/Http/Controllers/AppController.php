@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Order;
+use App\Helper\PhpHelper;
 use Illuminate\Http\Request;
 
 class AppController extends Controller
@@ -21,10 +23,8 @@ class AppController extends Controller
         return response(config('app.debug'));
     }
 
-    public function receipt()
+    public function receipt(Order $order)
     {
-        $receipt = null;
-
-        return view('receipt')->with('receipt', $receipt);
+        return view('receipt')->with('order', $order);
     }
 }

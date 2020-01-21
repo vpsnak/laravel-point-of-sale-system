@@ -20,7 +20,7 @@ class MailReceiptController extends Controller
             'email' => 'required|email'
         ]);
 
-        Mail::to($validatedData['email'])->send(new SendMail($order));
+        Mail::to($validatedData['email'])->send(new SendMail($order->with('customer')));
 
         if (!Mail::failures()) {
             return response(['info' => ['Email' => 'Receipt sent successfully!']]);
