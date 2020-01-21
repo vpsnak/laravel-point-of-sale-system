@@ -17,8 +17,13 @@
                         <tr>
                             <td valign="top">
                                 <p>
-                                    <strong>Hello {{ $data->customer->first_name }}
-                                        {{ $data->customer->last_name }}</strong>,<br />
+                                    <strong>Hello 
+                                        @if($data->customer)
+                                        {{ $data->customer->first_name }} {{ $data->customer->last_name }}
+                                        @else
+                                        Guest
+                                        @endif
+                                    </strong>,<br />
                                     Thank you for your order from Plantshed. If you have any questions about your order
                                     please contact us at
                                     <a href="mailto:cs@plantshed.com" style="color:rgb(30,126,200)"
@@ -48,16 +53,18 @@
                                         <tr>
                                             <td valign="top"
                                                 style="padding:7px 9px 9px 9px; border:1px solid #bebcb7; border-top:0; background:#f8f7f5;">
-                                                @isset($data->customer)
+                                                @if($data->customer)
                                                 <p>{{$data->customer->first_name}}{{$data->customer->last_name}}
                                                 </p>
                                                 <p>{{$data->customer->phone}}</p>
                                                 <p>E: {{$data->customer->email}}</p>
-                                                {{-- <p>T: <a href="tel:+{{$data['shipping_address']['phone']}}">{{$data['shipping_address']['phone']}}</a></p> --}}
+                                                @if($data['shipping_address'])
+                                                <p>T: <a href="tel:+{{$data['shipping_address']['phone']}}">{{$data['shipping_address']['phone']}}</a></p>
+                                                @endif
                                                 <p>{{$data->customer->company_name}}</p>
                                                 @else
                                                 <p>Guest</p>  
-                                                @endisset
+                                                @endif
                                             </td>
                                             <td>&nbsp;</td>
                                             <td valign="top"
@@ -134,9 +141,7 @@
                                         <tr>
                                             <td valign="top"
                                                 style="padding:7px 9px 9px 9px; border:1px solid #bebcb7; border-top:0; background:#f8f7f5;">
-                                                <p>Delivery date: {{$data['delivery_date']}}</p>
-                                                <p>Occasion: {{$data['occasion']}}</p>
-                                                <p>Location: {{$data['location']}}</p>
+                                                <p>Delivery date: {{$data['delivery_date']}}  {{$data['delivery_slot']}}</p>
                                             </td>
                                             <td>&nbsp;</td>
                                             <td valign="top"
@@ -215,11 +220,14 @@
                                                 <div>Tax</div>
                                             </td>
                                             <td align="right" style="padding:3px 9px">
-                                                @if(!$data['customer']['no_tax'])
-                                                $ {{ $data['total'] - $data['total_without_tax'] }} </td>
-                                                @else
+                                                @if($data->customer)
+                                                @if($data->customer->no_tax)
                                                 $ 0
                                                 @endif
+                                                @else
+                                                $ {{ $data['total'] - $data['total_without_tax'] }}
+                                                @endif
+                                            </td>
                                         </tr>
                                         {{-- <tr>
                                             <td colspan="3" align="right" style="padding:3px 9px">Discount type and
