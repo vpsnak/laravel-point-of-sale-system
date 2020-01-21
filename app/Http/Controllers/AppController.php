@@ -23,6 +23,8 @@ class AppController extends Controller
 
     public function receipt()
     {
-        return view('receipt');
+        $receipt = null;
+
+        return view('receipt')->with('receipt', $receipt);
     }
 }
