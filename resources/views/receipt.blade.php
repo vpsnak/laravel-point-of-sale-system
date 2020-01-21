@@ -21,7 +21,7 @@
     } */
 </style>
 ​
-<body>
+<body onload="window.print()">
     <div class="receipt" style=" background-color: white; width:auto; height:auto; font-weight:normal; ">
         <span style="font-size:14px;"> CO-1 PLANTSHED NY FLOWERS </span>
         <p class="phone" style="text-align: center; font-size:13px;">(212)662-4400</p>
@@ -67,10 +67,21 @@
         <table class="products" style="font-size:14px; display: inline-table; width: 100%;">
             <tr>
                 <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
-                    black roses
+                    nos
                 </th>
-                <td style="text-align: end;">qty(2)</td>
-                <td style="text-align: end;">$1.00</td>
+                 <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
+                    nos
+                </th>
+                 <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
+                    nos
+                </th>
+                 <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
+                    nos
+                </th>
+            </tr>
+                <td style="text-align: start;">qty(2)</td>
+                <td style="text-align: start;">$1.00</td>
+                <td style="text-align: start;">$2.00</td>
                 <td style="text-align:end;">$2.00</td>
             </tr>
             <tr>
