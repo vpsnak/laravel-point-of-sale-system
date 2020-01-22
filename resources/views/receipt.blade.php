@@ -35,7 +35,7 @@
             <th scope="row" style="text-transform:uppercase; font-weight:normal; float:right;">new york
                 12345</th>
         </table>
-        <div class="barcode" style="width:80%;">-------------------------------------------------</div>
+        <div class="barcode" style="width:100%;">--------------------------------------------------------</div>
         ​
         <table style="font-size:14px; display: inline-table; width:50%; float:left;">
             <tr>
@@ -66,26 +66,26 @@
                 </tr>
             </table>
         </table>
-        <div class="barcode" style="width:80%;">-------------------------------------------------</div>
-        <table class="products" style="font-size:14px; display: inline-table; width: 100%;">
+        <div class="barcode" style="width:100%;">--------------------------------------------------------</div>
+        <table class="products" style="font-size:12px; display: inline-table; width: 100%;">
             <tr>
                 <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
-                    nos
+                    Product Description
                 </th>
                 <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
-                    nos
+                    Units
                 </th>
                 <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
-                    nos
+                    Price
                 </th>
                 <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
-                    nos
+                    Extended
                 </th>
             </tr>
-            <td style="text-align: start;">qty(2)</td>
-            <td style="text-align: start;">$1.00</td>
-            <td style="text-align: start;">$2.00</td>
-            <td style="text-align:end;">$2.00</td>
+            <td style="text-align: start;">MINIATURE PHALAENOPSIS GLASS</td>
+            <td style="text-align: CENTER;">1</td>
+            <td style="text-align: start;">$42.00</td>
+            <td style="text-align:end;">$42.00</td>
             </tr>
             <tr>
                 <td scope="row" style="font-weight:normal; text-align:start; ">Notes
