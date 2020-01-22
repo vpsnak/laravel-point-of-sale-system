@@ -19,7 +19,7 @@ $report_name_splitted = explode(" ", $report_name);
 @endphp
 {{-- {{$report}} --}}
     <body>
-        <div style=" background-color: white; width:auto; height:auto; font-weight:normal; margin-bottom:20px;">
+        <div style=" background-color: white; width:auto; height:auto; font-weight:normal;">
         <h2 style="text-transform:uppercase; text-align: center;"><b>Report {{$report->report_type}}</b></h2>
             <p style="text-align: center; font-size:13px;">Plantshed</p>
         <table style="font-size:12px; display:inline-table; width:100%;">
@@ -166,21 +166,21 @@ $report_name_splitted = explode(" ", $report_name);
              Order Count
             </th>
             <td align="right" style="text-transform:uppercase;">
-             ${{$report->order_count}}
+             {{$report->order_count}}
             </tr>
             <tr>
             <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
              Order Product Count
             </th>
             <td align="right" style="text-transform:uppercase;">
-             ${{$report->order_product_count}}
+             {{$report->order_product_count}}
             </tr>
             <tr>
             <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
              Order Refund Count
             </th>
             <td align="right" style="text-transform:uppercase;">
-             ${{$report->order_refund_count}}
+             {{$report->order_refund_count}}
             </tr>
              <tr>
             <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
@@ -191,31 +191,38 @@ $report_name_splitted = explode(" ", $report_name);
             </tr>
               <tr>
             <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+             Order Complete Count
+            </th>
+            <td align="right" style="text-transform:uppercase;">
+             {{$report->order_complete_count}}
+            </tr>
+              <tr>
+            <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
              Order Complete Total
             </th>
             <td align="right" style="text-transform:uppercase;">
-             ${{$report->order_complete_count}}
+             ${{$report->order_complete_total}}
             </tr>
              <tr>
             <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
-             Order Retail Total
+             Order Retail Count
             </th>
             <td align="right" style="text-transform:uppercase;">
-             ${{$report->order_retail_count}}
+             {{$report->order_retail_count}}
             </tr>
             <tr>
             <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
              Order In Store Pick up count
             </th>
             <td align="right" style="text-transform:uppercase;">
-             ${{$report->order_in_store_count}}
+             {{$report->order_in_store_count}}
             </tr>
              <tr>
             <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
              Order Delivery count
             </th>
             <td align="right" style="text-transform:uppercase;">
-             ${{$report->order_in_store_count}}
+             {{$report->order_in_store_count}}
             </tr>
         </table>
         </div>
