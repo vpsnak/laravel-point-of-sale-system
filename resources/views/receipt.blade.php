@@ -94,8 +94,8 @@ $date_splitted = explode(" ", $date);
             <td style="text-align: start;">${{$item->price}}</td>
             <td style="text-align:end;">${{$item->price * $item->qty}}</td>
             </tr>
+            @if($item->discount_type)
             <tr>
-                @if($item->discount_type)
                 @if($item->discount_type === 'percentage')
                 <td scope="row" style="font-weight:normal; text-align:start; ">
                     Discount Pot: {{$item->discount_amount}}%
@@ -112,11 +112,18 @@ $date_splitted = explode(" ", $date);
                  <td scope="row" style="font-weight:normal; text-align:end; ">
                     ${{$item->price - $item->final_price}}-
                 </td>
-                @endif
             </tr>
+            @endif
+            @if($item->notes)
+            <tr>
+                <td style="font-weight:normal; text-align:start;">
+                    {{$item->notes}}
+                </td>
+            </tr>
+            @endif
             @endforeach
         </table>
-        <table style="font-size:14px; width:100%; ">
+        <table style="font-size:14px; width:100%;">
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Sales tax:</th>
                 <td style="text-align: end;"> ${{$order->total - $order->total_without_tax}}</td>
