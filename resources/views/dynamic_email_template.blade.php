@@ -70,13 +70,24 @@
                                             <td valign="top"
                                                 style="padding:7px 9px 9px 9px; border:1px solid #bebcb7; border-top:0; background:#f8f7f5;">
                                                 @foreach(json_decode($data['payments'] , true) as $payment)
+                                                @if($payment['status'] === 'refunded')
                                                 <h4>{{ $payment['payment_type']['name']}}</h4>
-                                                Type : {{$payment['payment_type']['type']}}
+                                                Type : Refunded {{$payment['payment_type']['type']}}
                                                 <br />
-                                                Amount: ${{$payment['amount']}}
+                                                Amount: ${{$payment['amount']}}+
                                                 @if($payment['code'])
                                                 <br />
                                                 Code: {{$payment['code']}}
+                                                @endif
+                                                @else
+                                                <h4>{{ $payment['payment_type']['name']}}</h4>
+                                                Type : {{$payment['payment_type']['type']}}
+                                                <br />
+                                                Amount: ${{$payment['amount']}}-
+                                                @if($payment['code'])
+                                                <br />
+                                                Code: {{$payment['code']}}
+                                                @endif
                                                 @endif
                                                 @endforeach
                                             </td>
