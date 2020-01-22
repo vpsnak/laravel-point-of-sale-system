@@ -27,15 +27,6 @@
 		></interactiveDialog>
 		<ValidationObserver v-slot="{valid}" ref="shippingValidation">
 			<v-form>
-				<div class="d-flex justify-center flex-column align-center">
-					<v-radio-group v-model="shipping.method" row dense class="ma-0 pt-2" @change="validate(valid)">
-						<v-radio label="Cash & Carry" value="retail"></v-radio>
-						<v-radio label="In store pickup" value="pickup" :disabled="!customer"></v-radio>
-						<v-radio label="Delivery" value="delivery" :disabled="!customer"></v-radio>
-					</v-radio-group>
-					<v-alert outlined type="info" border="left" v-if="!customer">No customer selected</v-alert>
-				</div>
-
 				<v-row v-if="shipping.method !== 'retail'" align="center">
 					<v-col v-if="shipping.method === 'delivery'" :cols="10" :lg="6" :offset-lg="3" class="pa-2">
 						<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Billing address">
