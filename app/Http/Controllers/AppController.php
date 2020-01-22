@@ -25,6 +25,11 @@ class AppController extends Controller
 
     public function receipt(Order $order)
     {
-        return view('receipt')->with('order', $order);
+        return view('receipt')->with([
+            'order' => $order,
+            'created_by' => $order->created_by()->first(),
+            'store' => $order->store_id()->first(),
+            'cash_register' => $order->created_by()->first()->open_register()->first()->cash_register()->first(),
+        ]);
     }
 }

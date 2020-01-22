@@ -22,11 +22,18 @@
         src: url(http://allfont.net/allfont.css?fonts=courier);
     } */
 </style>
-​
+@php
+$paid_by_credit_card = false;
+$total_credit_card_tot = null;
+$date = '';
+$date = $order->created_at;
+$date_splitted = explode(" ", $date);
+@endphp
 
-<body onload="window.print()" onafterprint="window.close()">
+{{-- <body onload="window.print()" onafterprint="window.close()"> --}}
+    <body>
     <div class="receipt" style=" background-color: white; width:auto; height:auto; font-weight:normal; ">
-        <span style="font-size:14px;"> CO-1 PLANTSHED NY FLOWERS </span>
+        <span style="font-size:14px;"> {{$cash_register->store->name}} </span>
         <p class="phone" style="text-align: center; font-size:13px;">(212)662-4400</p>
         <table style="font-size:12px; display:inline-table; width:100%;">
             <th scope="row" style="text-transform:uppercase; font-weight:normal; float:left;">street
@@ -36,33 +43,31 @@
                 12345</th>
         </table>
         <div class="barcode" style="width:100%;">--------------------------------------------------------</div>
-        ​
-        <table style="font-size:14px; display: inline-table; width:50%; float:left;">
+        <table style="font-size:14px; display: inline-table; width:60%; float:left;">
             <tr>
-                <th scope="row" style="font-weight:normal; text-align: end;">shop:</th>
-                <td style="text-align:start;">R1 posia</td>
+                <th scope="row" style="font-weight:normal; text-align: end;">Reg:</th>
+                <td style="text-align:start;">{{$cash_register->name}}</td>
             </tr>
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Clrk:</th>
-                <td style="text-align:start;">VANESSA</td>
+                <td style="text-align:start;">{{$created_by->name}}</td>
             </tr>
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Oper:</th>
-                <td style="text-align:start;">VANESSA</td>
+                <td style="text-align:start;">{{$created_by->name}}</td>
             </tr>
-            <table style="font-size:14px; display: inline-table; width:50%; float:right;">
-                ​
+            <table style="font-size:14px; display: inline-table; width:40%; float:right;">
                 <tr>
                     <th scope="row" style="font-weight:normal; text-align: end;">Trans:</th>
-                    <td style="text-align:start;">1566551</td>
+                    <td style="text-align:start;">{{$order->id}}</td>
                 </tr>
                 <tr>
                     <th scope="row" style="font-weight:normal; text-align: end;">Date:</th>
-                    <td style="text-align:start;">01/02/2019</td>
+                    <td style="text-align:start;">{{$date_splitted[0]}}</td>
                 </tr>
                 <tr>
                     <th scope="row" style="font-weight:normal; text-align: end;">Time:</th>
-                    <td style="text-align:start;">13-12-12</td>
+                    <td style="text-align:start;">{{$date_splitted[1]}}</td>
                 </tr>
             </table>
         </table>
@@ -82,130 +87,94 @@
                     Extended
                 </th>
             </tr>
-            <td style="text-align: start;">MINIATURE PHALAENOPSIS GLASS</td>
-            <td style="text-align: CENTER;">1</td>
-            <td style="text-align: start;">$42.00</td>
-            <td style="text-align:end;">$42.00</td>
+            @foreach($order->items as $item )
+            <tr>
+            <td style="text-align: start;">{{ $item->name }}</td>
+            <td style="text-align: center;">{{$item->qty}}</td>
+            <td style="text-align: start;">${{$item->price}}</td>
+            <td style="text-align:end;">${{$item->price * $item->qty}}</td>
             </tr>
             <tr>
-                <td scope="row" style="font-weight:normal; text-align:start; ">Notes
-                    keep it fresh toy bastards
+                @if($item->discount_type)
+                @if($item->discount_type === 'percentage')
+                <td scope="row" style="font-weight:normal; text-align:start; ">
+                    Discount Pot: {{$item->discount_amount}}%
                 </td>
-            </tr>
-            <tr>
-                <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
-                    red roses
-                </th>
-                <td style="text-align: end;">qty(2)</td>
-                <td style="text-align: end;">$1.00</td>
-                <td style="text-align:end;">$2.00</td>
-            </tr>
-            <tr>
-                <th scope="row" style="font-weight:normal; text-align:start; ">pro discount
-                </th>
-                <td></td>
-                <td></td>
-                <td style="text-align:start;">$.50-</td>
-            </tr>
-            <tr>
-                <td scope="row" style="font-weight:normal; text-align:start; ">Notes
-                    keep it fresh toy bastards
+                @else
+                <td scope="row" style="font-weight:normal; text-align:start; ">
+                    Discount Pot: {{$item->discount_amount}}-
                 </td>
+                @endif
+                 <td>
+                </td>
+                <td>
+                </td>
+                 <td scope="row" style="font-weight:normal; text-align:end; ">
+                    ${{$item->price - $item->final_price}}-
+                </td>
+                @endif
             </tr>
-            <tr>
-                <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
-                    trees with trees
-                </th>
-                <td style="text-align: end;">qty(2)</td>
-                <td style="text-align: end;">$1.00</td>
-                <td style="text-align:end;">$2.00</td>
-            </tr>
+            @endforeach
         </table>
         <table style="font-size:14px; width:100%; ">
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Sales tax:</th>
-                <td style="text-align: center;"> $.50</td>
+                <td style="text-align: end;"> ${{$order->total - $order->total_without_tax}}</td>
             </tr>
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Total Ant:</th>
-                <td style="text-align: end;">$1.50</td>
+                <td style="text-align: end;">${{$order->total}}</td>
             </tr>
         </table>
         <p style="text-align: center; font-size:14px;">*** Tandering detaile ***</p>
         <table style="font-size:14px; width:100%;">
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Order Total is:</th>
-                <td style="text-align: center;">$1.50</td>
+                <td style="text-align: center;">${{$order->total}}</td>
             </tr>
         </table>
+        @foreach(json_decode($order['payments'] , true) as $payment)
         <table style="font-size:14px; width:100%;">
             <tr>
-                ​
-                <th scope="row" style="font-weight:normal; text-align: start;">01/02/2019</th>
-                <th scope="row" style="font-weight:normal; text-align: start;">Payment Cash</th>
-                <td style="text-align: end;">$1.50-</td>
+                <th scope="row" style="font-weight:normal; text-align: start;">{{$date_splitted[0]}}</th>
+                @if($payment['status'] === 'refunded')
+                <th scope="row" style="font-weight:normal; text-align: start;">Refunded {{ $payment['payment_type']['name']}}</th>
+                <td style="text-align: end;">${{$payment['amount']}}+</td>
+                @else
+                <th scope="row" style="font-weight:normal; text-align: start;">{{ $payment['payment_type']['name']}}</th>
+                <td style="text-align: end;">${{$payment['amount']}}-</td>
+                @endif
             </tr>
         </table>
-        <table style="font-size:14px; width:100%;">
+        @php
+        if($payment['payment_type']['type'] === 'card'){
+            $paid_by_credit_card = true;
+            $total_credit_card_tot += $payment['amount'];
+        }
+        @endphp
+        @endforeach
+        <table style="font-size:14px; width:100%;"><br>
             <tr>
-                <th scope="row" style="font-weight:normal; text-align: start;">01/02/2019</th>
-                <th scope="row" style="font-weight:normal; text-align: start;">Gift Card</th>
-                <td style="text-align: end;">$1.50-</td>
-            </tr>
-        </table>
-        <table style="font-size:14px; width:100%;">
-            <tr>
-                <th scope="row" style="font-weight:normal; text-align: start;">01/02/2019</th>
-                <th scope="row" style="font-weight:normal; text-align: start;">Credit Card 0000</th>
-                <td style="text-align: end;">$1.50-</td>
-            </tr>
-        </table>
-        <table style="font-size:14px; width:100%;">
-            <tr>
-                <th scope="row" style="font-weight:normal; text-align: start;">01/02/2019</th>
-                <th scope="row" style="font-weight:normal; text-align: start;">Coupon 0000</th>
-                <td style="text-align: end;">$1.50-</td>
+                <th scope="row" style="font-weight:normal; text-align: center;">*** Balance Remaining ***</th>
+                <td style="text-align: end;">$0.00</td>
             </tr>
         </table>
         <table style="font-size:14px; width:100%;"><br>
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Total Amt Tendered:</th>
-                <td style="text-align: end;">$.00</td>
+            <td style="text-align: end;">${{$order->total_paid}}</td>
             </tr>
             <tr>
-                <th scope="row" style="font-weight:normal; text-align: end;">Customer Charge:</th>
-                <td style="text-align: end;">$.00</td>
+                <th scope="row" style="font-weight:normal; text-align: end;">Customer Change:</th>
+                <td style="text-align: end;">${{$order->change}}</td>
             </tr>
         </table>
-        <table style="font-size:14px; width:100%;"><br>
-            <tr>
-                <th scope="row" style="font-weight:normal; text-align: center;">*** Balance Remaining ***</th>
-                <td style="text-align: end;">$.00</td>
-            </tr>
-        </table>
-        <table style="font-size:14px; width:100%;"><br>
-            <tr>
-                <th scope="row" style="font-weight:normal; text-align: end;">Cardholder Name:</th>
-                <td style="text-align: start;">Niggatron</td>
-            </tr>
-            <tr>
-                <th scope="row" style="font-weight:normal; text-align: end;">Credit Cd No:</th>
-                <td style="text-align: start;">1234 vi</td>
-            </tr>
-            <tr>
-                <th scope="row" style="font-weight:normal; text-align: end;">Telephone No:</th>
-                <td style="text-align: start;">21052510235</td>
-            </tr>
-            <tr>
-                <th scope="row" style="font-weight:normal; text-align: end;">Credit Card Tot:</th>
-                <td style="text-align: center;">$1.50</td>
-            </tr>
-        </table>
-        <p style="text-align: center;">------ Credit Card Information ------</p>
+        <br>
+        @if($order->delivery_slot)
         <table style="font-size:14px; width:100%;">
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Delv on:</th>
-                <td style="text-align: start;">12/02/2019 Tue</td>
+            <td style="text-align: start;">{{$order->delivery_date}}</td>
             </tr>
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Delv to:</th>
@@ -228,7 +197,29 @@
                 <td style="text-align: start;">Athinara</td>
             </tr>
         </table>
-        <p style="text-align:end;">(CUstomer's Copy)</p>
+        @endif
+        @if($paid_by_credit_card)
+        <p style="text-align: center;">------ Credit Card Information ------</p>
+        <table style="font-size:14px; width:100%;">
+            <tr>
+                <th scope="row" style="font-weight:normal; text-align: end;">Cardholder Name:</th>
+                <td style="text-align: start;">Niggatron</td>
+            </tr>
+            <tr>
+                <th scope="row" style="font-weight:normal; text-align: end;">Credit Cd No:</th>
+                <td style="text-align: start;">1234 vi</td>
+            </tr>
+            <tr>
+                <th scope="row" style="font-weight:normal; text-align: end;">Telephone No:</th>
+                <td style="text-align: start;">21052510235</td>
+            </tr>
+            <tr>
+                <th scope="row" style="font-weight:normal; text-align: end;">Credit Card Tot:</th>
+                <td style="text-align: center;">{{$total_credit_card_tot}}</td>
+            </tr>
+        </table>
+        @endif
+        <p style="text-align:end;">(Customer's Copy)</p>
         <span>Signature:___________________</span>
         <p style="text-align: end;">(Merchant's Copy)</p>
         <p style="text-align: center;">PLEASE SEE POSTED POLICY REGARDING REFUNDS</p>
