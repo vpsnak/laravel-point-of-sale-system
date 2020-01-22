@@ -7,6 +7,7 @@ export default {
         retail: true,
         refundLoading: false,
         paymentLoading: false,
+        isValid: false,
         isValidCheckout: false,
         discount_error: false,
 
@@ -98,7 +99,7 @@ export default {
             occasion: 9
         },
 
-        billing_address: {},
+        billing_address: undefined,
 
         order: undefined
     },
@@ -205,7 +206,7 @@ export default {
                 location: null,
                 occasion: 9
             };
-            state.billing_address = {};
+            state.billing_address = undefined;
         },
         resetShipping(state) {
             let notes = state.shipping.notes;
@@ -219,7 +220,7 @@ export default {
                 location: null,
                 occasion: 9
             };
-            state.billing_address = {};
+            state.billing_address = undefined;
 
             state.currentCheckoutStep = 1;
             state.checkoutSteps.forEach(checkoutStep => {
@@ -283,7 +284,6 @@ export default {
                     model: "orders",
                     data: {
                         customer_id: state.customer ? state.customer.id : "",
-                        created_by: this.state.user.id,
                         store_id: this.state.store.id,
                         status: "pending",
                         discount_type: state.discount_type,

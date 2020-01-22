@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<shipping @shipping="setShipping" />
+		<shipping />
 		<v-row justify="center" align="center" class="my-3">
 			<v-col :cols="3" align="start" v-if="shipping.cost">
 				<span class="title">
@@ -28,11 +28,7 @@ export default {
 
 	computed: {
 		isValid() {
-			if (this.$store.state.cart.shipping.method === "retail") {
-				return true;
-			} else {
-				return this.$store.state.cart.isValid;
-			}
+			return this.$store.state.cart.isValid;
 		},
 		shipping: {
 			get() {
@@ -50,9 +46,6 @@ export default {
 		},
 		prevStep() {
 			this.$store.state.cart.currentCheckoutStep--;
-		},
-		setShipping(value) {
-			this.shipping = value;
 		}
 	}
 };
