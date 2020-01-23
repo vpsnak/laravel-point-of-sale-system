@@ -22,7 +22,7 @@ class AppController extends Controller
             'name' => config('app.name'),
             'env' => config('app.env'),
             'debug' => config('app.debug'),
-            'receiptImg' => Storage::exists('plantshed_receipt.png')
+            'receiptImg' => asset('plantshed_receipt.png', config('app.env') === 'local' ? false : true)
         ]);
     }
 
