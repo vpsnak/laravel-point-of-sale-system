@@ -36,7 +36,7 @@ $date_splitted = explode(" ", $date);
         <span style="font-size:14px;"> {{$store->name}} </span>
         <p class="phone" style="text-align: center; font-size:13px;">{{$store->phone}}</p>
         <table style="font-size:12px; display:inline-table; width:100%;">
-            <th scope="row" style="text-transform:uppercase; font-weight:normal; float:left;">{{$store->street}} {{$store->postcode}}
+            <th scope="row" style="text-transform:uppercase; font-weight:normal; float:left;">{{$store->street}}
             </th>
             <th scope="row" style="text-transform:uppercase; font-weight:normal; float:right;">{{ $store->city }}
                 {{$store->postcode}}</th>
