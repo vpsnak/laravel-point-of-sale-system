@@ -3,8 +3,15 @@
         <v-app-bar-nav-icon @click.stop="toggle = !toggle"></v-app-bar-nav-icon>
 
         <v-toolbar-title>{{ appName }}</v-toolbar-title>
+        <v-spacer v-if="appEnv !== 'production'"></v-spacer>
+        <v-toolbar-title class="mr-2" v-if="appEnv !== 'production'">
+            Environment: <i :class="envColor">{{ appEnv }}</i>
+        </v-toolbar-title>
+        <v-toolbar-title v-if="appDebug"
+            >Debug: <i :class="debugColor">ON</i></v-toolbar-title
+        >
 
-        <div class="flex-grow-1"></div>
+        <v-spacer></v-spacer>
 
         <v-chip
             v-if="!openedRegister"
@@ -301,6 +308,25 @@ export default {
         },
         appName() {
             return this.$store.state.appName;
+        },
+        appEnv() {
+            return this.$store.state.appEnv;
+        },
+        appDebug() {
+            return this.$store.state.appDebug;
+        },
+        envColor() {
+            switch (this.appEnv) {
+                case "local":
+                    return "red--text";
+                case "staging":
+                    return "yellow--text";
+                default:
+                    return "";
+            }
+        },
+        debugColor() {
+            return this.appDebug ? "red--text" : "green--text";
         },
         user() {
             return this.$store.state.user;
