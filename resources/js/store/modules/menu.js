@@ -99,6 +99,12 @@ export default {
                 title: "Forms",
                 icon: "fas fa-cat",
                 to: "forms"
+            },
+            {
+                id: 17,
+                title: "Companies",
+                icon: "mdi-domain",
+                to: "companies"
             }
         ],
         managerItems: [
@@ -143,6 +149,12 @@ export default {
                 title: "Reports",
                 icon: "mdi-file-document-box",
                 to: "reports"
+            },
+            {
+                id: 8,
+                title: "Companies",
+                icon: "mdi-domain",
+                to: "companies"
             }
         ],
         cashierItems: [
