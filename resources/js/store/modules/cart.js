@@ -60,6 +60,7 @@ export default {
                 id: 1,
                 name: "Cash & Carry Options",
                 icon: "mdi-cart-arrow-right",
+                color: "primary",
                 component: "shippingStep",
                 completed: true
             },
@@ -67,6 +68,7 @@ export default {
                 id: 2,
                 name: "Payment",
                 icon: "mdi-cash-register",
+                color: "",
                 component: "paymentStep",
                 completed: false
             },
@@ -74,6 +76,7 @@ export default {
                 id: 3,
                 name: "Order Completed",
                 icon: "check_circle",
+                color: "",
                 component: "completion",
                 completed: false
             }
@@ -199,6 +202,7 @@ export default {
 
             state.checkoutSteps[0].name = "Cash & Carry Options";
             state.checkoutSteps[0].icon = "mdi-cart-arrow-right";
+            state.checkoutSteps[0].color = "primary";
 
             state.shipping = {
                 address: undefined,
@@ -231,6 +235,7 @@ export default {
             });
             state.checkoutSteps[0].name = "Cash & Carry Options";
             state.checkoutSteps[0].icon = "mdi-cart-arrow-right";
+            state.checkoutSteps[0].color = "primary";
         }
     },
     actions: {

@@ -44,7 +44,7 @@
                 <span>View / Edit selected customer</span>
             </v-tooltip>
 
-            <v-tooltip bottom v-if="cartCustomerComment">
+            <v-tooltip bottom v-if="cartCustomerComment" color="red">
                 <template v-slot:activator="{ on }">
                     <v-btn
                         class="mx-1"
@@ -53,6 +53,7 @@
                         icon
                         color="red"
                         small
+                        v-on="on"
                     >
                         <v-icon small>mdi-comment</v-icon>
                     </v-btn>
@@ -138,7 +139,7 @@ export default {
             },
             set(value) {
                 if (value !== this.cartCustomer) {
-                    this.$store.commit("cart/resetShipping", value);
+                    this.$store.commit("cart/resetShipping");
                 }
                 this.$store.commit("cart/setCustomer", value);
             }
