@@ -6,6 +6,7 @@ use App\Order;
 use App\CashRegisterReport;
 use App\Helper\PhpHelper;
 use Illuminate\Http\Request;
+use Storage;
 
 class AppController extends Controller
 {
@@ -16,11 +17,12 @@ class AppController extends Controller
 
     public function config()
     {
+
         return response([
             'name' => config('app.name'),
             'env' => config('app.env'),
-            'debug' => config('app.debug')
-
+            'debug' => config('app.debug'),
+            'receiptImg' => asset('plantshed_receipt.png', config('app.env') === 'local' ? false : true)
         ]);
     }
 
