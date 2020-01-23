@@ -5,8 +5,11 @@ export default {
         checkoutDialog: false,
 
         retail: true,
+
         refundLoading: false,
         paymentLoading: false,
+        completeOrderLoading: false,
+
         isValid: false,
         isValidCheckout: false,
         discount_error: false,
@@ -214,6 +217,7 @@ export default {
                 occasion: 9
             };
             state.billing_address = undefined;
+            state.completeOrderLoading = false;
         },
         resetShipping(state) {
             let notes = state.shipping.notes;
