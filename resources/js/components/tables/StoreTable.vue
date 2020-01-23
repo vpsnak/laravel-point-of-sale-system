@@ -24,6 +24,22 @@ export default {
                     value: "name"
                 },
                 {
+                    text: "Phone",
+                    value: "phone"
+                },
+                {
+                    text: "Street",
+                    value: "street"
+                },
+                {
+                    text: "Postcode",
+                    value: "postcode"
+                },
+                {
+                    text: "City",
+                    value: "city"
+                },
+                {
                     text: "Tax Id",
                     value: "tax_id"
                 },

@@ -11,8 +11,13 @@ class Store extends BaseModel
 
     protected $fillable = [
         'name',
+        'phone',
+        'street',
+        'postcode',
+        'city',
         'taxable',
         'is_default',
+        'company_id',
         'tax_id',
         'created_by',
     ];

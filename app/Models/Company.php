@@ -2,16 +2,11 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Company extends Model
+class Company extends BaseModel
 {
     protected $fillable = [
         'name',
-        'phone',
-        'street',
-        'postal_code',
-        'city',
+        'tax_number',
         'logo',
     ];
 

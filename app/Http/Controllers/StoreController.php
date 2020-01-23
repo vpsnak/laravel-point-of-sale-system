@@ -16,6 +16,11 @@ class StoreController extends BaseController
         $validatedData = $request->validate([
             'name' => 'required|string',
             'tax_id' => 'required|exists:taxes,id',
+            'company_id' => 'required|exists:companies,id',
+            'phone' => 'required|string',
+            'street' => 'required|string',
+            'postcode' => 'required|string',
+            'city' => 'required|string',
         ]);
 
         $validatedData['created_by'] = auth()->user()->id;
@@ -42,7 +47,7 @@ class StoreController extends BaseController
 
         return response($this->model::with(['cash_registers'])->paginate(), 200);
     }
-    
+
     public function search(Request $request)
     {
         $validatedData = $request->validate([
@@ -50,7 +55,7 @@ class StoreController extends BaseController
         ]);
 
         return $this->searchResult(
-            ['name','tax_id'],
+            ['name', 'phone', 'street', 'postcode'],
             $validatedData['keyword'],
             true
         );
