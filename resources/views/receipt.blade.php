@@ -33,14 +33,13 @@ $date_splitted = explode(" ", $date);
 {{-- <body onload="window.print()" onafterprint="window.close()"> --}}
     <body>
     <div class="receipt" style=" background-color: white; width:auto; height:auto; font-weight:normal; ">
-        <span style="font-size:14px;"> {{$cash_register->store->name}} </span>
-        <p class="phone" style="text-align: center; font-size:13px;">(212)662-4400</p>
+        <span style="font-size:14px;"> {{$store->name}} </span>
+        <p class="phone" style="text-align: center; font-size:13px;">{{$store->phone}}</p>
         <table style="font-size:12px; display:inline-table; width:100%;">
-            <th scope="row" style="text-transform:uppercase; font-weight:normal; float:left;">street
-                98th-st
+            <th scope="row" style="text-transform:uppercase; font-weight:normal; float:left;">{{$store->street}} {{$store->postcode}}
             </th>
-            <th scope="row" style="text-transform:uppercase; font-weight:normal; float:right;">new york
-                12345</th>
+            <th scope="row" style="text-transform:uppercase; font-weight:normal; float:right;">{{ $store->city }}
+                {{$store->postcode}}</th>
         </table>
         <div class="barcode" style="width:100%;">--------------------------------------------------------</div>
         <table style="font-size:14px; display: inline-table; width:60%; float:left;">
@@ -177,7 +176,7 @@ $date_splitted = explode(" ", $date);
             </tr>
         </table>
         <br>
-        @if($order->delivery_slot)
+        @if($order->shipping_address)
         <table style="font-size:14px; width:100%;">
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Delv on:</th>
@@ -185,23 +184,23 @@ $date_splitted = explode(" ", $date);
             </tr>
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Delv to:</th>
-                <td style="text-align: start;">Niggatron</td>
+                <td style="text-align: start;">{{$order->shipping_address->first_name}} {{$order->shipping_address->last_name}}</td>
             </tr>
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">C/O:</th>
-                <td style="text-align: start;">White Trash</td>
+                <td style="text-align: start;">{{$order->customer->first_name}} {{$order->customer->last_name}}</td>
             </tr>
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Address:</th>
-                <td style="text-align: start;">Amarilidos 4</td>
+                <td style="text-align: start;">{{$order->shipping_address->street}}</td>
             </tr>
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Address:</th>
-                <td style="text-align: start;">Xalandri</td>
+                <td style="text-align: start;">{{$order->shipping_address->street2}}</td>
             </tr>
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">City, St:</th>
-                <td style="text-align: start;">Athinara</td>
+                <td style="text-align: start;">{{$order->shipping_address->city}}</td>
             </tr>
         </table>
         @endif
