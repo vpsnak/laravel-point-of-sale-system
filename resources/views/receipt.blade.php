@@ -25,6 +25,7 @@
 
     .black-header {
         background-color: black;
+        -webkit-print-color-adjust: exact;
         color: white;
         width: 100%;
     }

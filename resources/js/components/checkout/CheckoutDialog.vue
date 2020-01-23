@@ -22,7 +22,13 @@
             <v-toolbar>
                 <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
-                        <v-btn @click.stop="close" icon v-on="on" color="red">
+                        <v-btn
+                            :disabled="$store.state.cart.paymentLoading"
+                            @click.stop="close"
+                            icon
+                            v-on="on"
+                            color="red"
+                        >
                             <v-icon>mdi-close</v-icon>
                         </v-btn>
                     </template>
@@ -31,7 +37,13 @@
 
                 <v-tooltip bottom v-if="showHoldBtn">
                     <template v-slot:activator="{ on }">
-                        <v-btn @click="hold" icon v-on="on" color="yellow">
+                        <v-btn
+                            :disabled="$store.state.cart.paymentLoading"
+                            @click="hold"
+                            icon
+                            v-on="on"
+                            color="yellow"
+                        >
                             <v-icon>mdi-pause</v-icon>
                         </v-btn>
                     </template>
@@ -127,12 +139,12 @@ export default {
             }
         },
         confirmation(event) {
+            this.$store.state.cart.isValidCheckout = false;
             if (event) {
                 let payload = {
                     model: "orders",
                     id: this.order.id
                 };
-
                 this.delete(payload).then(response => {
                     this.resetState();
                     this.state = false;
