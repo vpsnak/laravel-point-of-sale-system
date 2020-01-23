@@ -9,15 +9,36 @@
 			<v-spacer></v-spacer>
 
 			<v-btn-toggle v-model="$store.state.cart.shipping.method" mandatory>
-				<v-btn icon value="retail">
-					<v-icon>mdi-cart-arrow-right</v-icon>
-				</v-btn>
-				<v-btn icon value="pickup" :disabled="!$store.state.cart.customer">
-					<v-icon>mdi-store-24-hour</v-icon>
-				</v-btn>
-				<v-btn icon value="delivery" :disabled="!$store.state.cart.customer">
-					<v-icon>fas fa-shipping-fast</v-icon>
-				</v-btn>
+				<v-tooltip bottom>
+					<template v-slot:activator="{ on }">
+						<v-btn color="primary" icon value="retail" v-on="on">
+							<v-icon>mdi-cart-arrow-right</v-icon>
+						</v-btn>
+					</template>
+					<span>Cash & Carry</span>
+				</v-tooltip>
+				<v-tooltip bottom>
+					<template v-slot:activator="{ on }">
+						<v-btn color="red" icon value="pickup" :disabled="!$store.state.cart.customer" v-on="on">
+							<v-icon>mdi-store-24-hour</v-icon>
+						</v-btn>
+					</template>
+					<span>In store pickup</span>
+				</v-tooltip>
+				<v-tooltip bottom>
+					<template v-slot:activator="{ on }">
+						<v-btn
+							color="warning"
+							icon
+							value="delivery"
+							:disabled="!$store.state.cart.customer"
+							v-on="on"
+						>
+							<v-icon>fas fa-shipping-fast</v-icon>
+						</v-btn>
+					</template>
+					<span>Delivery</span>
+				</v-tooltip>
 			</v-btn-toggle>
 		</div>
 
