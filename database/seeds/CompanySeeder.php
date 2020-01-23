@@ -15,7 +15,7 @@ class CompanySeeder extends Seeder
             [
                 'name' => 'CO1-PLANTSHED NY FLOWERS',
                 'phone' => '(212)662-4400',
-                'address' => '209 w 96th st',
+                'street' => '209 w 96th st',
                 'postal_code' => '10025',
                 'city' => 'NEW YORK NY',
                 'created_at' => now(),
@@ -24,7 +24,7 @@ class CompanySeeder extends Seeder
             [
                 'name' => 'PlantShed Cafe at 87th Street',
                 'phone' => '212-662-4400',
-                'address' => '87th Street',
+                'street' => '87th Street',
                 'postal_code' => '10026',
                 'city' => 'NEW YORK NY',
                 'created_at' => now(),
@@ -34,7 +34,7 @@ class CompanySeeder extends Seeder
                 'name' => 'PlantShed Cafe at Prince Street',
                 'phone' => '212-662-4400',
                 'address' => 'Prince Street',
-                'postal_code' => '10027',
+                'street' => '10027',
                 'city' => 'NEW YORK NY',
                 'created_at' => now(),
                 'updated_at' => now()
