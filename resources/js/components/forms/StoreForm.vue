@@ -1,11 +1,6 @@
 <template>
     <ValidationObserver v-slot="{ invalid }" ref="storeObs">
         <v-form @submit="submit">
-            <div class="text-center">
-                <v-chip color="blue-grey" label>
-                    <v-icon left>fas fa-warehouse</v-icon>Store Form
-                </v-chip>
-            </div>
             <ValidationProvider
                 rules="required|max:191"
                 v-slot="{ errors, valid }"
@@ -46,6 +41,7 @@
                 <v-text-field
                     v-model="formFields.street"
                     label="Street"
+                    :disabled="loading"
                     :error-messages="errors"
                     :success="valid"
                 ></v-text-field>
@@ -58,6 +54,7 @@
                 <v-text-field
                     v-model="formFields.postcode"
                     label="Postcode"
+                    :disabled="loading"
                     :error-messages="errors"
                     :success="valid"
                 ></v-text-field>
@@ -70,6 +67,7 @@
                 <v-text-field
                     v-model="formFields.city"
                     label="City"
+                    :disabled="loading"
                     :error-messages="errors"
                     :success="valid"
                 ></v-text-field>

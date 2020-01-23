@@ -1,11 +1,6 @@
 <template>
     <ValidationObserver v-slot="{ invalid }" ref="couponObs">
         <v-form @submit.prevent="submit">
-            <div class="text-center">
-                <v-chip color="primary" label>
-                    <v-icon left>fas fa-ticket-alt</v-icon>Coupon Form
-                </v-chip>
-            </div>
             <ValidationProvider
                 rules="required|max:191"
                 v-slot="{ errors, valid }"
