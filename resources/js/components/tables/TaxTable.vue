@@ -7,50 +7,43 @@
         tableForm="taxForm"
         tableViewComponent="tax"
     />
-</template>
+     </template>
 
-<script>
-import { mapMutations } from "vuex";
+    <script>
+        import { mapMutations } from "vuex";
 
-export default {
-    data() {
-        return {
-            headers: [
-                {
-                    text: "Id",
-                    value: "id"
-                },
-                {
-                    text: "Name",
-                    value: "name"
-                },
-                {
-                    text: "Percentage",
-                    value: "percentage"
-                },
-                {
-                    text: "Created at",
-                    value: "created_at"
-                },
-                {
-                    text: "Updated at",
-                    value: "updated_at"
-                },
-                {
-                    text: "Actions",
-                    value: "action"
-                }
-            ]
+        export default {
+            data() {
+                return {
+                    headers: [
+                        {
+                            text: "Id",
+                            value: "id"
+                        },
+                        {
+                            text: "Name",
+                            value: "name"
+                        },
+                        {
+                            text: "Percentage",
+                            value: "percentage"
+                        },
+                        {
+                            text: "Actions",
+                            value: "action"
+                        }
+                    ]
+                };
+            },
+            mounted() {
+                this.setRows([]);
+            },
+            methods: {
+                ...mapMutations("datatable", {
+                    setRows: "setRows",
+                    deleteRow: "deleteRow"
+                })
+            }
         };
-    },
-    mounted() {
-        this.setRows([]);
-    },
-    methods: {
-        ...mapMutations("datatable", {
-            setRows: "setRows",
-            deleteRow: "deleteRow"
-        })
-    }
-};
-</script>
+    </script>
+</template>

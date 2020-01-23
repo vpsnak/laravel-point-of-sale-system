@@ -40,8 +40,12 @@ export default {
                     value: "city"
                 },
                 {
-                    text: "Tax Id",
-                    value: "tax_id"
+                    text: "Tax",
+                    value: "tax.name"
+                },
+                {
+                    text: "Company",
+                    value: "company.name"
                 },
                 {
                     text: "Created by",

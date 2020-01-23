@@ -37,8 +37,8 @@ export default {
                     value: "country_id"
                 },
                 {
-                    text: "Region ID",
-                    value: "region_id"
+                    text: "Region",
+                    value: "region.default_name"
                 },
                 { text: "Actions", value: "action" }
             ]
