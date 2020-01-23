@@ -10,6 +10,8 @@ class Company extends Model
         'name',
         'phone',
         'address',
+        'postal_code',
+        'city',
         'logo',
     ];
 

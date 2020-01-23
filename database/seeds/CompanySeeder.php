@@ -13,23 +13,29 @@ class CompanySeeder extends Seeder
     {
         DB::table('companies')->insert([
             [
-                'name' => 'Company 1',
-                'phone' => '123456789',
-                'address' => 'asd 231',
+                'name' => 'CO1-PLANTSHED NY FLOWERS',
+                'phone' => '(212)662-4400',
+                'address' => '209 w 96th st',
+                'postal_code' => '10025',
+                'city' => 'NEW YORK NY',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
-                'name' => 'Company 2',
-                'phone' => '',
-                'address' => '',
+                'name' => 'PlantShed Cafe at 87th Street',
+                'phone' => '212-662-4400',
+                'address' => '87th Street',
+                'postal_code' => '10026',
+                'city' => 'NEW YORK NY',
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
-                'name' => 'Company 2',
-                'phone' => '',
-                'address' => '',
+                'name' => 'PlantShed Cafe at Prince Street',
+                'phone' => '212-662-4400',
+                'address' => 'Prince Street',
+                'postal_code' => '10027',
+                'city' => 'NEW YORK NY',
                 'created_at' => now(),
                 'updated_at' => now()
             ]
