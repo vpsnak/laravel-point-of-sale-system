@@ -15,10 +15,6 @@ class CompanyController extends BaseController
     {
         $validatedData = $request->validate([
             'name' => 'required|string',
-            'phone' => 'required|string',
-            'street' => 'required|string',
-            'postal_code' => 'required|string',
-            'city' => 'required|string',
         ]);
 
         $validatedData['created_by'] = auth()->user()->id;
@@ -53,7 +49,7 @@ class CompanyController extends BaseController
         ]);
 
         return $this->searchResult(
-            ['name', 'phone', 'street', 'postal_code'],
+            ['name'],
             $validatedData['keyword'],
             true
         );
