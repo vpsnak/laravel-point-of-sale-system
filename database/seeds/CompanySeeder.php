@@ -33,8 +33,8 @@ class CompanySeeder extends Seeder
             [
                 'name' => 'PlantShed Cafe at Prince Street',
                 'phone' => '212-662-4400',
-                'address' => 'Prince Street',
-                'street' => '10027',
+                'street' => 'Prince Street',
+                'postal_code' => '10027',
                 'city' => 'NEW YORK NY',
                 'created_at' => now(),
                 'updated_at' => now()
