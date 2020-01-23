@@ -28,8 +28,8 @@ export default {
 					value: "phone"
 				},
 				{
-					text: "Address",
-					value: "address"
+					text: "Street",
+					value: "street"
 				},
 				{
 					text: "Postal code",

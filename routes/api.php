@@ -435,6 +435,22 @@ $allRoutes = [
                 $routeDelete
             ]
         ]
+    ],
+    'companies' => [
+        'controller' => 'CompanyController',
+        'endpoints' => [
+            'get' => [
+                $routeAll,
+                $routeGet
+            ],
+            'post' => [
+                $routeCreate,
+                $routeSearch
+            ],
+            'delete' => [
+                $routeDelete
+            ]
+        ]
     ]
 ];
 
