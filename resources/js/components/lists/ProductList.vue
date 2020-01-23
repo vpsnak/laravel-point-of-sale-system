@@ -49,17 +49,17 @@
 				<v-col>
 					<v-slide-group show-arrows v-model="selectedCategory" @change="keyword = ''">
 						<v-slide-item
-							v-for="category in categoryList"
-							:key="category.id"
-							v-slot:default="{ active, toggle }"
-							:value="category.id"
+						v-for="category in categoryList"
+						:key="category.id"
+						v-slot:default="{ active, toggle }"
+						:value="category.id"
 						>
 							<v-btn
-								:color="active ? 'secondary' : ''"
-								class="mx-1"
-								@click="toggle"
-								depressed
-								rounded
+							:color="active ? 'secondary' : ''"
+							class="mx-1"
+							@click="toggle"
+							depressed
+							rounded
 							>{{ category.name }}</v-btn>
 						</v-slide-item>
 					</v-slide-group>

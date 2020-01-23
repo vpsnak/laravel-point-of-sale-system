@@ -30,33 +30,33 @@ export default {
             },
             {
                 id: 5,
+                title: "Addresses",
+                icon: "mdi-account-card-details",
+                to: "addresses"
+            },
+            {
+                id: 6,
                 title: "Products",
                 icon: "mdi-package-variant",
                 to: "products"
             },
             {
-                id: 6,
+                id: 7,
                 title: "Categories",
                 icon: "mdi-inbox-multiple",
                 to: "categories"
             },
             {
-                id: 7,
-                title: "Stores",
-                icon: "mdi-store",
-                to: "stores"
-            },
-            {
                 id: 8,
-                title: "Store pickups",
-                icon: "mdi-storefront",
-                to: "store-pickups"
+                title: "Gift Cards",
+                icon: "mdi-wallet-giftcard",
+                to: "gift-cards"
             },
             {
                 id: 9,
-                title: "Taxes",
-                icon: "mdi-sack-percent",
-                to: "taxes"
+                title: "Coupons",
+                icon: "mdi-ticket-percent",
+                to: "coupons"
             },
             {
                 id: 10,
@@ -66,45 +66,39 @@ export default {
             },
             {
                 id: 11,
+                title: "Stores",
+                icon: "mdi-store",
+                to: "stores"
+            },
+            {
+                id: 12,
+                title: "Store pickups",
+                icon: "mdi-storefront",
+                to: "store-pickups"
+            },
+            {
+                id: 13,
+                title: "Companies",
+                icon: "mdi-domain",
+                to: "companies"
+            },
+            {
+                id: 14,
+                title: "Taxes",
+                icon: "mdi-sack-percent",
+                to: "taxes"
+            },
+            {
+                id: 15,
                 title: "Reports",
                 icon: "mdi-file-document-box",
                 to: "reports"
             },
             {
-                id: 12,
-                title: "Gift Cards",
-                icon: "mdi-wallet-giftcard",
-                to: "gift-cards"
-            },
-            {
-                id: 13,
-                title: "Coupons",
-                icon: "mdi-ticket-percent",
-                to: "coupons"
-            },
-            {
-                id: 14,
+                id: 16,
                 title: "Users",
                 icon: "mdi-account-multiple",
                 to: "users"
-            },
-            {
-                id: 15,
-                title: "Addresses",
-                icon: "mdi-account-card-details",
-                to: "addresses"
-            },
-            {
-                id: 16,
-                title: "Forms",
-                icon: "fas fa-cat",
-                to: "forms"
-            },
-            {
-                id: 17,
-                title: "Companies",
-                icon: "mdi-domain",
-                to: "companies"
             }
         ],
         managerItems: [
@@ -149,12 +143,6 @@ export default {
                 title: "Reports",
                 icon: "mdi-file-document-box",
                 to: "reports"
-            },
-            {
-                id: 8,
-                title: "Companies",
-                icon: "mdi-domain",
-                to: "companies"
             }
         ],
         cashierItems: [
