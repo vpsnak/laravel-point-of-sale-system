@@ -10,6 +10,13 @@ use Storage;
 
 class AppController extends Controller
 {
+    private $secure = true;
+
+    public function __construct()
+    {
+        $this->secure = config('app.env') === 'local' ? false : true;
+    }
+
     public function index()
     {
         return view('app');
@@ -17,12 +24,11 @@ class AppController extends Controller
 
     public function config()
     {
-
         return response([
             'name' => config('app.name'),
             'env' => config('app.env'),
             'debug' => config('app.debug'),
-            'receiptImg' => asset('plantshed_receipt.png', config('app.env') === 'local' ? false : true)
+            'receiptImg' => Storage::disk('public')->url('img/plantshed_receipt.png')
         ]);
     }
 
