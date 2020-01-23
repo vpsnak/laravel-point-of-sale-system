@@ -1,7 +1,6 @@
 <template>
     <v-app-bar app clipped-left>
         <v-app-bar-nav-icon @click.stop="toggle = !toggle"></v-app-bar-nav-icon>
-
         <v-toolbar-title>{{ appName }}</v-toolbar-title>
         <v-spacer v-if="appEnv !== 'production'"></v-spacer>
         <v-toolbar-title class="mr-2" v-if="appEnv !== 'production'">
