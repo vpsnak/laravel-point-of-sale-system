@@ -4,123 +4,174 @@
 
 <head>
     <meta charset="UTF-8">
-    {{-- <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> --}}
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 </head>
 <style>
     body {
+        padding: 0;
+        margin: 0;
         width: 80mm;
         height: 297mm;
     }
 
-    /* @font-face {
-        font-family: 'Times New Roman';
-        font-style: normal;
+    .products-table thead {
+        margin-bottom: 3px;
+    }
+
+    .no-border {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .black-header {
+        background-color: black;
+        color: white;
+        width: 100%;
+    }
+
+    th {
         font-weight: normal;
-        src: url(http://allfont.net/allfont.css?fonts=courier);
-    } */
+    }
+
+    .logo img {
+        height: auto;
+        width: 100%;
+    }
+
+    .phone {
+        text-align: center;
+    }
+
+    .address {
+        text-transform: uppercase;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .small-header {
+        width: 13mm;
+        text-align: end;
+    }
+
+    .spaced-header {
+        width: 15mm;
+        text-align: end;
+    }
 </style>
 @php
 $paid_by_credit_card = false;
 $total_credit_card_tot = null;
-$date = '';
-$date = $order->created_at;
-$date_splitted = explode(" ", $date);
+$date_splitted = explode(" ", $order->created_at);
 @endphp
 
 {{-- <body onload="window.print()" onafterprint="window.close()"> --}}
-    <body>
-    <div class="receipt" style=" background-color: white; width:auto; height:auto; font-weight:normal; ">
-        <span style="font-size:14px;"> {{$store->name}} </span>
-        <p class="phone" style="text-align: center; font-size:13px;">{{$store->phone}}</p>
-        <table style="font-size:12px; display:inline-table; width:100%;">
-            <th scope="row" style="text-transform:uppercase; font-weight:normal; float:left;">{{$store->street}}
-            </th>
-            <th scope="row" style="text-transform:uppercase; font-weight:normal; float:right;">{{ $store->city }}
-                {{$store->postcode}}</th>
+
+<body>
+    <div class="receipt">
+        <div class="logo">
+            <img src="{{ asset('storage/img/plantshed_receipt.png') }}">
+        </div>
+
+        <div class="store">
+
+            <span style="font-size:14px;">
+                {{ $store->name }}
+            </span>
+
+            <p class="phone">
+                {{ $store->phone }}
+            </p>
+
+            <div class="address">
+                <p>
+                    {{ $store->street }}
+                </p>
+                <p>
+                    {{ $store->city }}
+                    {{ $store->postcode }}
+                </p>
+            </div>
+        </div>
+
+        <div>--------------------------------------------------------</div>
+
+        <table style="font-size:14px;">
+            <tbody>
+                <tr>
+                    <td class="small-header">Reg:</td>
+                    <td>{{ $cash_register->name }}</td>
+                    <td class="spaced-header">Trans:</td>
+                    <td>{{ $order->id }}</td>
+                </tr>
+                <tr>
+                    <td class="small-header">Clrk:</td>
+                    <td>{{ $created_by->name }}</td>
+                    <td class="spaced-header">Date:</td>
+                    <td>{{ $date_splitted[0] }}</td>
+                </tr>
+                <tr>
+                    <td class="small-header">Oper:</td>
+                    <td>{{ $created_by->name }}</td>
+                    <td class="spaced-header">Time:</td>
+                    <td>{{ $date_splitted[1] }}</td>
+                </tr>
+            </tbody>
         </table>
-        <div class="barcode" style="width:100%;">--------------------------------------------------------</div>
-        <table style="font-size:14px; display: inline-table; width:60%; float:left;">
-            <tr>
-                <th scope="row" style="font-weight:normal; text-align: end;">Reg:</th>
-                <td style="text-align:start;">{{$cash_register->name}}</td>
-            </tr>
-            <tr>
-                <th scope="row" style="font-weight:normal; text-align: end;">Clrk:</th>
-                <td style="text-align:start;">{{$created_by->name}}</td>
-            </tr>
-            <tr>
-                <th scope="row" style="font-weight:normal; text-align: end;">Oper:</th>
-                <td style="text-align:start;">{{$created_by->name}}</td>
-            </tr>
-            <table style="font-size:14px; display: inline-table; width:40%; float:right;">
+
+        <table class="no-border products-table">
+            <thead class="black-header">
                 <tr>
-                    <th scope="row" style="font-weight:normal; text-align: end;">Trans:</th>
-                    <td style="text-align:start;">{{$order->id}}</td>
+                    <th colspan="2">
+                        Product Description
+                    </th>
+                    <th>
+                        Units
+                    </th>
+                    <th>
+                        Price
+                    </th>
+                    <th>
+                        Extended
+                    </th>
                 </tr>
+            </thead>
+            <tbody>
+                @foreach($order->items as $item )
                 <tr>
-                    <th scope="row" style="font-weight:normal; text-align: end;">Date:</th>
-                    <td style="text-align:start;">{{$date_splitted[0]}}</td>
+                    <td colspan="2">{{ $item->name }}</td>
+                    <td style="text-align: center;">{{ $item->qty }}</td>
+                    <td style="text-align: start;">${{ $item->price }}</td>
+                    <td style="text-align:end;">${{ $item->price * $item->qty }}</td>
                 </tr>
+                @if($item->discount_type)
                 <tr>
-                    <th scope="row" style="font-weight:normal; text-align: end;">Time:</th>
-                    <td style="text-align:start;">{{$date_splitted[1]}}</td>
+                    @if($item->discount_type === 'percentage')
+                    <td scope="row" style="font-weight:normal; text-align:start; ">
+                        Discount Pot: {{$item->discount_amount}}%
+                    </td>
+                    @else
+                    <td scope="row" style="font-weight:normal; text-align:start; ">
+                        Discount Pot: {{$item->discount_amount}}-
+                    </td>
+                    @endif
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td scope="row" style="font-weight:normal; text-align:end; ">
+                        ${{$item->price - $item->final_price}}-
+                    </td>
                 </tr>
-            </table>
-        </table>
-        <div class="barcode" style="width:100%;">--------------------------------------------------------</div>
-        <table class="products" style="font-size:12px; display: inline-table; width: 100%;">
-            <tr>
-                <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
-                    Product Description
-                </th>
-                <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
-                    Units
-                </th>
-                <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
-                    Price
-                </th>
-                <th scope="row" style="font-weight:normal; text-transform:uppercase; text-align: start; ">
-                    Extended
-                </th>
-            </tr>
-            @foreach($order->items as $item )
-            <tr>
-            <td style="text-align: start;">{{ $item->name }}</td>
-            <td style="text-align: center;">{{$item->qty}}</td>
-            <td style="text-align: start;">${{$item->price}}</td>
-            <td style="text-align:end;">${{$item->price * $item->qty}}</td>
-            </tr>
-            @if($item->discount_type)
-            <tr>
-                @if($item->discount_type === 'percentage')
-                <td scope="row" style="font-weight:normal; text-align:start; ">
-                    Discount Pot: {{$item->discount_amount}}%
-                </td>
-                @else
-                <td scope="row" style="font-weight:normal; text-align:start; ">
-                    Discount Pot: {{$item->discount_amount}}-
-                </td>
                 @endif
-                 <td>
-                </td>
-                <td>
-                </td>
-                 <td scope="row" style="font-weight:normal; text-align:end; ">
-                    ${{$item->price - $item->final_price}}-
-                </td>
-            </tr>
-            @endif
-            @if($item->notes)
-            <tr>
-                <td style="font-weight:normal; text-align:start;">
-                    {{$item->notes}}
-                </td>
-            </tr>
-            @endif
-            @endforeach
+                @if($item->notes)
+                <tr>
+                    <td style="font-weight:normal; text-align:start;">
+                        {{$item->notes}}
+                    </td>
+                </tr>
+                @endif
+                @endforeach
+            </tbody>
         </table>
         <table style="font-size:14px; width:100%;">
             <tr>
@@ -132,7 +183,7 @@ $date_splitted = explode(" ", $date);
                 <td style="text-align: end;">${{$order->total}}</td>
             </tr>
         </table>
-        <p style="text-align: center; font-size:14px;">*** Tandering detaile ***</p>
+        <p style="text-align: center; font-size:14px;">*** Tendering detaile ***</p>
         <table style="font-size:14px; width:100%;">
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Order Total is:</th>
@@ -144,18 +195,20 @@ $date_splitted = explode(" ", $date);
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: start;">{{$date_splitted[0]}}</th>
                 @if($payment['status'] === 'refunded')
-                <th scope="row" style="font-weight:normal; text-align: start;">Refunded {{ $payment['payment_type']['name']}}</th>
+                <th scope="row" style="font-weight:normal; text-align: start;">Refunded
+                    {{ $payment['payment_type']['name']}}</th>
                 <td style="text-align: end;">${{$payment['amount']}}+</td>
                 @else
-                <th scope="row" style="font-weight:normal; text-align: start;">{{ $payment['payment_type']['name']}}</th>
+                <th scope="row" style="font-weight:normal; text-align: start;">{{ $payment['payment_type']['name']}}
+                </th>
                 <td style="text-align: end;">${{$payment['amount']}}-</td>
                 @endif
             </tr>
         </table>
         @php
         if($payment['payment_type']['type'] === 'card'){
-            $paid_by_credit_card = true;
-            $total_credit_card_tot += $payment['amount'];
+        $paid_by_credit_card = true;
+        $total_credit_card_tot += $payment['amount'];
         }
         @endphp
         @endforeach
@@ -168,7 +221,7 @@ $date_splitted = explode(" ", $date);
         <table style="font-size:14px; width:100%;"><br>
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Total Amt Tendered:</th>
-            <td style="text-align: end;">${{$order->total_paid}}</td>
+                <td style="text-align: end;">${{$order->total_paid}}</td>
             </tr>
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Customer Change:</th>
@@ -180,11 +233,12 @@ $date_splitted = explode(" ", $date);
         <table style="font-size:14px; width:100%;">
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Delv on:</th>
-            <td style="text-align: start;">{{$order->delivery_date}}</td>
+                <td style="text-align: start;">{{$order->delivery_date}}</td>
             </tr>
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Delv to:</th>
-                <td style="text-align: start;">{{$order->shipping_address->first_name}} {{$order->shipping_address->last_name}}</td>
+                <td style="text-align: start;">{{$order->shipping_address->first_name}}
+                    {{$order->shipping_address->last_name}}</td>
             </tr>
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">C/O:</th>
