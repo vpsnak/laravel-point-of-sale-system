@@ -14,14 +14,14 @@ class AppController extends Controller
         return view('app');
     }
 
-    public function env()
+    public function config()
     {
-        return response(config('app.env'));
-    }
+        return response([
+            'name' => config('app.name'),
+            'env' => config('app.env'),
+            'debug' => config('app.debug')
 
-    public function debug()
-    {
-        return response(config('app.debug'));
+        ]);
     }
 
     public function receipt(Order $order)

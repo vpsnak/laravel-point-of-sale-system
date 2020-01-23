@@ -17,7 +17,7 @@ import { mapGetters, mapMutations } from "vuex";
 
 export default {
     mounted() {
-        this.$store.dispatch("getAppEnv");
+        this.$store.dispatch("getAppConfig");
     },
     computed: {
         auth() {

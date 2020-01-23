@@ -24,7 +24,9 @@ export default new Vuex.Store({
     },
     state: {
         env: "",
+        appName: "",
         baseUrl: "/api/",
+        debug: false,
 
         user: Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null,
 
@@ -253,10 +255,12 @@ export default new Vuex.Store({
                     });
             });
         },
-        getAppEnv(context) {
+        getAppConfig(context) {
             return new Promise(resolve => {
-                axios.get(`${this.state.baseUrl}env`).then(response => {
-                    context.state.env = response.data;
+                axios.get(`${this.state.baseUrl}config`).then(response => {
+                    context.state.env = response.data.env;
+                    context.state.appName = response.data.name;
+                    context.state.debug = response.data.debug;
                     resolve(true);
                 });
             });
