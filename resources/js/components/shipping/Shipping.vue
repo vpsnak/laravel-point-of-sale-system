@@ -31,8 +31,7 @@
 					<v-col v-if="shipping.method === 'delivery'" :cols="10" :lg="6" :offset-lg="3" class="pa-2">
 						<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Billing address">
 							<v-combobox
-								@change="validate(valid)"
-								dense
+								@change="validate"
 								:items="addresses"
 								prepend-icon="mdi-receipt"
 								label="Billing address"
@@ -72,9 +71,8 @@
 					<v-col v-if="shipping.method === 'delivery'" :cols="10" :lg="6" :offset-lg="3" class="pa-2">
 						<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Delivery address">
 							<v-combobox
-								dense
 								@input="getTimeSlots"
-								@change="validate(valid)"
+								@change="validate"
 								:items="addresses"
 								prepend-icon="mdi-map-marker"
 								label="Delivery address"
@@ -122,7 +120,6 @@
 							<template v-slot:activator="{ on }">
 								<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Date">
 									<v-text-field
-										dense
 										v-model="dateFormatted"
 										label="Date"
 										prepend-icon="event"
@@ -130,7 +127,7 @@
 										:success="valid"
 										v-on="on"
 										@input="getTimeSlots"
-										@blur="parseDate, validate(valid)"
+										@blur="parseDate, validate"
 										readonly
 									></v-text-field>
 								</ValidationProvider>
@@ -141,7 +138,6 @@
 					<v-col cols="4" lg="3" v-if="shipping.method !== 'retail'" class="pa-1">
 						<ValidationProvider rules="required" v-slot="{ errors, valid }" name="At">
 							<v-select
-								dense
 								:loading="loading"
 								label="At"
 								prepend-icon="mdi-clock"
@@ -153,14 +149,13 @@
 								v-model="shipping.timeSlotLabel"
 								@input="setCost"
 								@click:append-outer="addTimeSlotDialog = true"
-								@change="validate(valid)"
+								@change="validate"
 							></v-select>
 						</ValidationProvider>
 					</v-col>
 					<v-col cols="4" lg="1" v-if="shipping.method !== 'retail'" class="pa-1">
 						<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Cost">
 							<v-text-field
-								dense
 								type="number"
 								label="Cost"
 								:error-messages="errors"
@@ -168,7 +163,7 @@
 								:min="0"
 								prepend-icon="mdi-currency-usd"
 								v-model="shippingCost"
-								@input="validate(valid)"
+								@input="validate"
 							></v-text-field>
 						</ValidationProvider>
 					</v-col>
@@ -177,7 +172,6 @@
 					<v-col offset-lg="3" :cols="6" :lg="6" v-if="shipping.method === 'pickup'" class="pa-1">
 						<ValidationProvider rules="required" v-slot="{ errors, valid }" name="From">
 							<v-select
-								dense
 								:error-messages="errors"
 								:success="valid"
 								:loading="loading"
@@ -187,13 +181,12 @@
 								v-model="shipping.pickup_point"
 								prepend-icon="mdi-store"
 								return-object
-								@change="validate(valid)"
+								@change="validate"
 							></v-select>
 						</ValidationProvider>
 					</v-col>
 					<v-col cols="6" lg="2" :offset-lg="3" class="pa-1" v-if="shipping.method === 'delivery'">
 						<v-select
-							dense
 							:loading="loading"
 							label="Occasion"
 							:items="occasions"
@@ -206,7 +199,6 @@
 					<v-col offset-lg="2" cols="6" lg="2" v-if="shipping.method === 'delivery'" class="pa-1">
 						<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Location">
 							<v-select
-								dense
 								:error-messages="errors"
 								:success="valid"
 								:loading="loading"
@@ -216,7 +208,7 @@
 								item-value="id"
 								v-model="shipping.location"
 								prepend-icon="mdi-city"
-								@change="validate(valid)"
+								@change="validate"
 							></v-select>
 						</ValidationProvider>
 					</v-col>
@@ -224,7 +216,6 @@
 				<v-row>
 					<v-col cols="12" lg="6" offset-lg="3" class="pa-2">
 						<v-textarea
-							dense
 							label="Notes"
 							prepend-icon="mdi-note-text"
 							v-model="shipping.notes"
@@ -265,9 +256,17 @@ export default {
 				persistent: false
 			}
 		};
-	},
+    },
+    watch: {
+        shippingMethod() {
+            this.validate();
+        }
+    },
 
 	computed: {
+        shippingMethod() {
+            return this.shipping.method;
+        },
 		storePickups: {
 			get() {
 				return this.store_pickups;

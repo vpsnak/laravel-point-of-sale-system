@@ -14,7 +14,7 @@
                 mandatory
                 group
             >
-                <v-tooltip bottom>
+                <v-tooltip bottom color="primary">
                     <template v-slot:activator="{ on }">
                         <v-btn
                             color="primary"
@@ -28,7 +28,7 @@
                     </template>
                     <span>Cash & Carry</span>
                 </v-tooltip>
-                <v-tooltip bottom>
+                <v-tooltip bottom color="red">
                     <template v-slot:activator="{ on }">
                         <v-btn
                             color="red"
@@ -46,7 +46,7 @@
                     </template>
                     <span>In store pickup</span>
                 </v-tooltip>
-                <v-tooltip bottom>
+                <v-tooltip bottom color="warning">
                     <template v-slot:activator="{ on }">
                         <v-btn
                             color="warning"
@@ -59,7 +59,7 @@
                             "
                             v-on="on"
                         >
-                            <v-icon>fas fa-shipping-fast</v-icon>
+                            <v-icon>mdi-truck-delivery</v-icon>
                         </v-btn>
                     </template>
                     <span>Delivery</span>
@@ -202,21 +202,20 @@ export default {
                     this.isRetail = true;
                     this.orderOptions.name = "Cash & Carry Options";
                     this.orderOptions.icon = "mdi-cart-arrow-right";
-
+                    this.orderOptions.color = "primary";
                     break;
                 case "pickup":
                     this.isRetail = false;
                     this.orderOptions.name = "In store pickup Options";
                     this.orderOptions.icon = "mdi-storefront";
-
+                    this.orderOptions.color = "red";
                     break;
                 case "delivery":
                     this.isRetail = false;
                     this.orderOptions.name = "Delivery Options";
-                    this.orderOptions.icon = "fas fa-shipping-fast";
-
+                    this.orderOptions.icon = "mdi-truck-delivery";
+                    this.orderOptions.color = "warning";
                     break;
-
                 default:
                     break;
             }

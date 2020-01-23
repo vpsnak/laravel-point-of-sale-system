@@ -44,7 +44,9 @@
                 <v-row>
                     <v-col :lg="9" class="py-lg-0">
                         <v-card class="mx-auto">
-                            <checkoutStepper />
+                            <v-card-text>
+                                <checkoutStepper />
+                            </v-card-text>
                         </v-card>
                     </v-col>
                     <v-col :lg="3" class="py-lg-0">

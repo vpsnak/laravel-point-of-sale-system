@@ -17,24 +17,22 @@
                 :key="checkoutStep.id"
                 :step="checkoutStep.id"
             >
-                <v-card class="mx-auto">
-                    <v-card-title class="justify-center" align="center">
-                        <v-row align="center" justify="center">
-                            <v-col align="center" justify="center">
-                                <v-icon>{{ checkoutStep.icon }}</v-icon>
-                                <h5 class="text-center">
-                                    {{ checkoutStep.name }}
-                                </h5>
-                            </v-col>
-                        </v-row>
-                    </v-card-title>
+                <v-row align="center" justify="center">
+                    <v-col align="center" justify="center">
+                        <v-icon large :color="checkoutStep.color">
+                            {{ checkoutStep.icon }}
+                        </v-icon>
+                        <h3>
+                            {{ checkoutStep.name }}
+                        </h3>
+                    </v-col>
+                </v-row>
 
-                    <component
-                        :is="checkoutStep.component"
-                        :key="currentCheckoutStep"
-                        style="overflow-y:auto;overflow-x:hidden;height:65vh"
-                    />
-                </v-card>
+                <component
+                    :is="checkoutStep.component"
+                    :key="currentCheckoutStep"
+                    style="overflow-y:auto;overflow-x:hidden;height:65vh"
+                />
             </v-stepper-content>
         </v-stepper-items>
     </v-stepper>
