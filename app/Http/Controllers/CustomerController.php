@@ -88,7 +88,7 @@ class CustomerController extends BaseController
             $customer->addresses()->create($addressData['address']);
         }
 
-        return response($customer, empty($validatedExtra['id']) ? 201 : 200);
+        return response(Customer::with('addresses')->find($customer->id), empty($validatedExtra['id']) ? 201 : 200);
     }
 
     private function getCustomer($id, $data)

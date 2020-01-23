@@ -58,8 +58,8 @@ export default {
         checkoutSteps: [
             {
                 id: 1,
-                name: "Delivery options",
-                icon: "local_shipping",
+                name: "Cash & Carry Options",
+                icon: "mdi-cart-arrow-right",
                 component: "shippingStep",
                 completed: true
             },
@@ -197,6 +197,9 @@ export default {
                 checkoutStep.completed = false;
             });
 
+            state.checkoutSteps[0].name = "Cash & Carry Options";
+            state.checkoutSteps[0].icon = "mdi-cart-arrow-right";
+
             state.shipping = {
                 address: undefined,
                 method: "retail",
@@ -226,6 +229,8 @@ export default {
             state.checkoutSteps.forEach(checkoutStep => {
                 checkoutStep.completed = false;
             });
+            state.checkoutSteps[0].name = "Cash & Carry Options";
+            state.checkoutSteps[0].icon = "mdi-cart-arrow-right";
         }
     },
     actions: {

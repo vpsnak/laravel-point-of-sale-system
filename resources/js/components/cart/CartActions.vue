@@ -3,6 +3,8 @@
         <v-divider />
 
         <v-btn
+            dark
+            :color="checkoutColor"
             block
             class="my-2"
             @click.stop="checkout"
@@ -112,6 +114,16 @@ export default {
     },
 
     computed: {
+        checkoutColor() {
+            switch (this.cart.shipping.method) {
+                case "retail":
+                    return "primary";
+                case "pickup":
+                    return "red";
+                case "delivery":
+                    return "warning";
+            }
+        },
         emptyCartConfirmationDialog: {
             get() {
                 return this.empty_cart_confirmation_dialog;

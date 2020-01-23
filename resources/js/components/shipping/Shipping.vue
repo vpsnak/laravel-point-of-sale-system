@@ -25,7 +25,7 @@
 			@action="dialogEvent"
 			:persistent="dialog.persistent"
 		></interactiveDialog>
-		<ValidationObserver v-slot="{valid}" ref="shippingValidation">
+		<ValidationObserver ref="shippingValidation">
 			<v-form>
 				<v-row v-if="shipping.method !== 'retail'" align="center">
 					<v-col v-if="shipping.method === 'delivery'" :cols="10" :lg="6" :offset-lg="3" class="pa-2">

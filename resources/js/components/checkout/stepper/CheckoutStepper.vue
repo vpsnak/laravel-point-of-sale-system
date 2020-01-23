@@ -28,13 +28,12 @@
                             </v-col>
                         </v-row>
                     </v-card-title>
-                    <v-card-text>
-                        <component
-                            :is="checkoutStep.component"
-                            :key="currentCheckoutStep"
-                            style="overflow-y:auto;overflow-x:hidden;height:65vh"
-                        />
-                    </v-card-text>
+
+                    <component
+                        :is="checkoutStep.component"
+                        :key="currentCheckoutStep"
+                        style="overflow-y:auto;overflow-x:hidden;height:65vh"
+                    />
                 </v-card>
             </v-stepper-content>
         </v-stepper-items>
