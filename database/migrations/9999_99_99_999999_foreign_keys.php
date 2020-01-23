@@ -33,7 +33,11 @@ class ForeignKeys extends Migration
         });
 
         Schema::table('bank_accounts', function (Blueprint $table) {
-            $table->foreign('store_id')->references('id')->on('stores');
+            $table->foreign('company_id')->references('id')->on('companies');
+        });
+
+        Schema::table('stores', function (Blueprint $table) {
+            $table->foreign('company_id')->references('id')->on('companies');
         });
     }
 
@@ -63,7 +67,11 @@ class ForeignKeys extends Migration
         });
 
         Schema::table('bank_accounts', function (Blueprint $table) {
-            $table->dropForeign(['store_id']);
+            $table->dropForeign(['company_id']);
+        });
+
+        Schema::table('stores', function (Blueprint $table) {
+            $table->dropForeign(['company_id']);
         });
     }
 }

@@ -17,6 +17,7 @@ class CreateStoresTable extends Migration
             $table->bigIncrements('id');
 
             $table->string('name');
+            $table->unsignedBigInteger('company_id');
             $table->unsignedBigInteger('tax_id')->default(0);
             $table->unsignedBigInteger('created_by');
 

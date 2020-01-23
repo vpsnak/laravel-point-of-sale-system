@@ -34,28 +34,28 @@ class BankAccountSeeder extends Seeder
 
         DB::table('bank_accounts')->insert([
             [
-                'store_id' => 1,
+                'company_id' => 1,
                 'type' => 'api',
                 'account' => $api,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
-                'store_id' => 1,
+                'company_id' => 1,
                 'type' => 'sdk',
                 'account' => $sdk,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
-                'store_id' => 2,
+                'company_id' => 2,
                 'type' => 'api',
                 'account' => $api,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
             [
-                'store_id' => 2,
+                'company_id' => 2,
                 'type' => 'sdk',
                 'account' => $sdk,
                 'created_at' => now(),

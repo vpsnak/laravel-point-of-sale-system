@@ -136,9 +136,9 @@ class CreditCardController extends Controller
         }
 
         $data = [
-            'ssl_merchant_id' => ($store->bankAccountApi()->account)['merchant_id'],
-            'ssl_user_id' => ($store->bankAccountApi()->account)['user_id'],
-            'ssl_pin' => ($store->bankAccountApi()->account)['pin'],
+            'ssl_merchant_id' => ($store->company->bankAccountApi()->account)['merchant_id'],
+            'ssl_user_id' => ($store->company->bankAccountApi()->account)['user_id'],
+            'ssl_pin' => ($store->company->bankAccountApi()->account)['pin'],
             'ssl_txn_id' => $transaction_id
         ];
 

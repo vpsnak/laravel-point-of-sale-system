@@ -14,13 +14,13 @@ class StoreSeeder extends Seeder
     {
         DB::table('stores')->insert([
             [
+                'company_id' => 1,
                 'name' => 'Plantshed Laravel',
                 'tax_id' => 1,
                 'created_by' => 1,
-            ]
-        ]);
-        DB::table('stores')->insert([
+            ],
             [
+                'company_id' => 2,
                 'name' => 'Plantshed Eshop',
                 'tax_id' => 1,
                 'created_by' => 1,

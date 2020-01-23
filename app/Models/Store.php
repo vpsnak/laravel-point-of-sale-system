@@ -5,6 +5,7 @@ namespace App;
 class Store extends BaseModel
 {
     protected $with = [
+        'company',
         'tax'
     ];
 
@@ -31,18 +32,8 @@ class Store extends BaseModel
         return $this->belongsTo(Tax::class);
     }
 
-    public function bankAccounts()
+    public function company()
     {
-        return $this->hasMany(BankAccount::class);
-    }
-
-    public function bankAccountSdk()
-    {
-        return $this->bankAccounts()->whereType('sdk')->first();
-    }
-
-    public function bankAccountApi()
-    {
-        return $this->bankAccounts()->whereType('api')->first();
+        return $this->belongsTo(Company::class);
     }
 }

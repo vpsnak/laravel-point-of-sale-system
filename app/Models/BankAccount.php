@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class BankAccount extends Model
 {
     protected $fillable = [
-        'store_id',
+        'company_id',
         'type',
         'account'
     ];
@@ -16,8 +16,8 @@ class BankAccount extends Model
         'account' => 'array'
     ];
 
-    public function store()
+    public function company()
     {
-        return $this->belongsTo(Store::class);
+        return $this->belongsTo(Company::class);
     }
 }

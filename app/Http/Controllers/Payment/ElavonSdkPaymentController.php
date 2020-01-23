@@ -436,7 +436,7 @@ class ElavonSdkPaymentController extends Controller
 
     private function openPaymentGateway()
     {
-        $sdkAcc = auth()->user()->open_register->cash_register->store->bankAccountSdk();
+        $sdkAcc = auth()->user()->open_register->cash_register->store->company->bankAccountSdk();
 
         $payload = [
             "method" => "openPaymentGateway",

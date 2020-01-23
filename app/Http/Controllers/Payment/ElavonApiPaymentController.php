@@ -67,7 +67,7 @@ class ElavonApiPaymentController extends Controller
 
     public static function doTransaction($type, array $data)
     {
-        $apiAcc = auth()->user()->open_register->cash_register->store->bankAccountApi()->account;
+        $apiAcc = auth()->user()->open_register->cash_register->store->company->bankAccountApi()->account;
 
         $defaults = [
             'ssl_merchant_id' => $apiAcc['merchant_id'],
