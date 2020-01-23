@@ -18,7 +18,7 @@
                             Street: {{ storeData.street }}
                         </div>
                         <div class="subtitle-1">
-                            Postal code: {{ storeData.postal_code }}
+                            Postcode: {{ storeData.postcode }}
                         </div>
                         <div class="subtitle-1">City: {{ storeData.city }}</div>
                         <div class="subtitle-1">

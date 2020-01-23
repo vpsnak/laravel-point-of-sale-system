@@ -6,6 +6,7 @@ class Company extends BaseModel
 {
     protected $fillable = [
         'name',
+        'tax_number',
         'logo',
     ];
 

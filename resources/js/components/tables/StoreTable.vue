@@ -32,8 +32,8 @@ export default {
                     value: "street"
                 },
                 {
-                    text: "Postal code",
-                    value: "postal_code"
+                    text: "Postcode",
+                    value: "postcode"
                 },
                 {
                     text: "City",

@@ -19,7 +19,7 @@ class StoreController extends BaseController
             'company_id' => 'required|exists:companies,id',
             'phone' => 'required|string',
             'street' => 'required|string',
-            'postal_code' => 'required|string',
+            'postcode' => 'required|string',
             'city' => 'required|string',
         ]);
 
@@ -55,7 +55,7 @@ class StoreController extends BaseController
         ]);
 
         return $this->searchResult(
-            ['name', 'phone', 'street', 'postal_code'],
+            ['name', 'phone', 'street', 'postcode'],
             $validatedData['keyword'],
             true
         );

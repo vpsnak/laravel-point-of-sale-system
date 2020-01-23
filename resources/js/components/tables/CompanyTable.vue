@@ -24,6 +24,10 @@ export default {
                     value: "name"
                 },
                 {
+                    text: "Tax number",
+                    value: "tax_number"
+                },
+                {
                     text: "Actions",
                     value: "action"
                 }

@@ -6,7 +6,7 @@
                     <v-card-title>{{ companyData.name }}</v-card-title>
                     <v-card-text>
                         <div class="subtitle-1">
-                            Name: {{ companyData.name }}
+                            Tax number: {{ companyData.tax_number }}
                         </div>
                     </v-card-text>
                 </v-card>

@@ -56,8 +56,8 @@
                 name="Postal code"
             >
                 <v-text-field
-                    v-model="formFields.postal_code"
-                    label="Postal code"
+                    v-model="formFields.postcode"
+                    label="Postcode"
                     :error-messages="errors"
                     :success="valid"
                 ></v-text-field>
@@ -136,7 +136,7 @@ export default {
                 name: null,
                 phone: null,
                 street: null,
-                postal_code: null,
+                postcode: null,
                 city: null,
                 tax_id: null,
                 company_id: null,

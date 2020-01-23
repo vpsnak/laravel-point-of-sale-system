@@ -15,9 +15,8 @@ class CompanyController extends BaseController
     {
         $validatedData = $request->validate([
             'name' => 'required|string',
+            'tax_number' => 'required|string',
         ]);
-
-        $validatedData['created_by'] = auth()->user()->id;
 
         $validatedID = $request->validate([
             'id' => 'nullable|exists:companies,id'
@@ -26,7 +25,7 @@ class CompanyController extends BaseController
         if (!empty($validatedID)) {
             return response($this->model::updateData($validatedID, $validatedData), 200);
         } else {
-            return response($this->model::company($validatedData), 201);
+            return response($this->model::store($validatedData), 201);
         }
     }
 

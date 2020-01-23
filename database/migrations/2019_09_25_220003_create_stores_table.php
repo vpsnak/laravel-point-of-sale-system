@@ -19,7 +19,7 @@ class CreateStoresTable extends Migration
             $table->string('name');
             $table->string('phone');
             $table->string('street');
-            $table->string('postal_code');
+            $table->string('postcode');
             $table->string('city');
             $table->unsignedBigInteger('company_id');
             $table->unsignedBigInteger('tax_id')->default(0);

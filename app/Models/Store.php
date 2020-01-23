@@ -13,10 +13,11 @@ class Store extends BaseModel
         'name',
         'phone',
         'street',
-        'postal_code',
+        'postcode',
         'city',
         'taxable',
         'is_default',
+        'company_id',
         'tax_id',
         'created_by',
     ];

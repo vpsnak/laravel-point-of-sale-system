@@ -17,6 +17,7 @@ class CreateCompaniesTable extends Migration
             $table->bigIncrements('id');
 
             $table->string('name');
+            $table->string('tax_number');
             $table->string('logo')->nullable();
 
             $table->timestamps();

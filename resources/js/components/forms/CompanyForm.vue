@@ -18,6 +18,18 @@
                     :success="valid"
                 ></v-text-field>
             </ValidationProvider>
+            <ValidationProvider
+                rules="required|max:191"
+                v-slot="{ errors, valid }"
+                name="Tax number"
+            >
+                <v-text-field
+                    v-model="formFields.tax_number"
+                    label="Tax number"
+                    :error-messages="errors"
+                    :success="valid"
+                ></v-text-field>
+            </ValidationProvider>
 
             <v-btn
                 class="mr-4"
@@ -43,6 +55,7 @@ export default {
             defaultValues: {},
             formFields: {
                 name: null,
+                tax_number: null,
                 logo: null
             }
         };
