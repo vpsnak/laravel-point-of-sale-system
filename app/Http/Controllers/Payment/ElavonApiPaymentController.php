@@ -14,33 +14,16 @@ class ElavonApiPaymentController extends Controller
     protected static $enviroment_url = 'https://api.demo.convergepay.com/VirtualMerchantDemo/processxml.do';
 
     private $txn_id;
-    private $test_case;
 
     private $ssl_card_number;
     private $ssl_amount;
     private $ssl_cvv2cvc2_indicator;
     private $ssl_cvv2cvc2;
 
-    public function getLogs($test_case = null)
-    {
-        if ($test_case) {
-            return response(ElavonApiPayment::whereTestCase($test_case)->get());
-        } else {
-            return response(ElavonApiPayment::all());
-        }
-    }
-
-    public function deleteAll()
-    {
-        DB::table('elavon_api_payments')->truncate();
-        return response('API Logs truncated');
-    }
-
     private function saveToApiLog($data, $status)
     {
         $elavonApiPayment = new ElavonApiPayment();
 
-        $elavonApiPayment->test_case = $this->test_case;
         $elavonApiPayment->txn_id = $this->txn_id;
         $elavonApiPayment->status = $status;
         $elavonApiPayment->log = is_Array($data) ? json_encode($data) : strip_tags($data);
@@ -102,6 +85,7 @@ class ElavonApiPaymentController extends Controller
     {
         $client = new Client();
         Log::debug('CreditCard Payment Payload:' . json_encode($html));
+
         $response = $client->post(self::$enviroment_url, [
             'headers' => [
                 'Content-Type' => 'application/x-www-form-urlencoded'

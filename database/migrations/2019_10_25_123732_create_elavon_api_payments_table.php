@@ -15,11 +15,10 @@ class CreateElavonApiPaymentsTable extends Migration
     {
         Schema::create('elavon_api_payments', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('payment_id')->nullable(); // @TODO: remove nullable
-
-            $table->string('test_case')->nullable();
+            $table->unsignedBigInteger('payment_id');
 
             $table->string('txn_id')->nullable();
+            $table->string('card_number')->nullable();
             $table->string('status');
             $table->text('log');
 
