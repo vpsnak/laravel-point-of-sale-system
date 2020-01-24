@@ -4,9 +4,8 @@
 			<v-col cols="12" sm="8" md="4">
 				<v-card class="elevation-12">
 					<v-form @submit.prevent="submit">
-						<v-toolbar flat>
-							<v-toolbar-title>Plantshed Sales Management - Login</v-toolbar-title>
-							<div class="flex-grow-1"></div>
+						<v-toolbar flat class="d-flex justify-center">
+							<v-toolbar-title>Plantshed Sales Management</v-toolbar-title>
 						</v-toolbar>
 						<v-card-text>
 							<v-text-field
@@ -19,8 +18,9 @@
 							<v-text-field v-model="password" label="Password" prepend-icon="lock" type="password"></v-text-field>
 						</v-card-text>
 						<v-card-actions>
-							<div class="flex-grow-1"></div>
-							<v-btn type="submit" :loading="loading">Login</v-btn>
+							<v-spacer />
+							<v-btn type="submit" :loading="loading" color="secondary">Login</v-btn>
+							<v-spacer />
 						</v-card-actions>
 					</v-form>
 				</v-card>
