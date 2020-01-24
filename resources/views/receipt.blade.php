@@ -59,11 +59,6 @@
         text-align: end;
     }
 </style>
-@php
-$paid_by_credit_card = false;
-$total_credit_card_tot = null;
-$date_splitted = explode(" ", $order->created_at);
-@endphp
 
 {{-- <body onload="window.print()" onafterprint="window.close()"> --}}
 
@@ -108,13 +103,13 @@ $date_splitted = explode(" ", $order->created_at);
                     <td class="small-header">Clrk:</td>
                     <td>{{ $created_by->name }}</td>
                     <td class="spaced-header">Date:</td>
-                    <td>{{ $date_splitted[0] }}</td>
+                    <td>{{ $order->created_at->format('m/d/Y') }}</td>
                 </tr>
                 <tr>
                     <td class="small-header">Oper:</td>
                     <td>{{ $created_by->name }}</td>
                     <td class="spaced-header">Time:</td>
-                    <td>{{ $date_splitted[1] }}</td>
+                    <td>{{ $order->created_at->format('h:m:s') }}</td>
                 </tr>
             </tbody>
         </table>
@@ -192,17 +187,18 @@ $date_splitted = explode(" ", $order->created_at);
             </tr>
         </table>
         @foreach(json_decode($order['payments'] , true) as $payment)
-        
+
         @php
         if($payment['payment_type']['type'] === 'card' || $payment['payment_type']['type'] === 'pos-terminal')
         {
-            $payment['payment_type']['name'] = 'Credit card';
+        $payment['payment_type']['name'] = 'Credit card';
         }
         @endphp
 
         <table style="font-size:14px; width:100%;">
             <tr>
-                <th scope="row" style="font-weight:normal; text-align: start;">{{$date_splitted[0]}}</th>
+                <th scope="row" style="font-weight:normal; text-align: start;">
+                    {{ Carbon\Carbon::parse($payment['created_at'])->format('m/d/Y') }}</th>
                 @if($payment['status'] === 'refunded')
                 <th scope="row" style="font-weight:normal; text-align: start;">Refunded
                     {{ $payment['payment_type']['name']}}</th>
@@ -213,19 +209,19 @@ $date_splitted = explode(" ", $order->created_at);
                 <td style="text-align: end;">${{$payment['amount']}}-</td>
                 @endif
                 @if($payment['payment_type']['type'] === 'card')
-                <tr>
-                     <th  style="font-weight:normal; text-align: end;">Cardholder Name:</th>
-                     <td style="text-align: end;">{{$payment['elavon_api_payments'][0]['card_holder']}}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row" style="font-weight:normal; text-align: end;">Credit Cd No:</th>
-                        <td style="text-align: end;">{{$payment['elavon_api_payments'][0]['card_number']}}</td>
-                    </tr>
-                    <tr>
-                        <th style="font-weight:normal; text-align: end;">Credit Card Tot:</th>
-                        <td style="text-align: end;">{{$payment['amount']}}</td>
-                    </tr>
-                @endif
+            <tr>
+                <th style="font-weight:normal; text-align: end;">Cardholder Name:</th>
+                <td style="text-align: end;">{{$payment['elavon_api_payments'][0]['card_holder']}}</td>
+            </tr>
+            <tr>
+                <th scope="row" style="font-weight:normal; text-align: end;">Credit Cd No:</th>
+                <td style="text-align: end;">{{$payment['elavon_api_payments'][0]['card_number']}}</td>
+            </tr>
+            <tr>
+                <th style="font-weight:normal; text-align: end;">Credit Card Tot:</th>
+                <td style="text-align: end;">{{$payment['amount']}}</td>
+            </tr>
+            @endif
         </table>
         {{-- @php
         if($payment['payment_type']['type'] === 'card'){
@@ -288,15 +284,15 @@ $date_splitted = explode(" ", $order->created_at);
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Cardholder Name:</th>
                 <td style="text-align: start;">{{$card_holder}}</td>
-            </tr>
-            <tr>
-                <th scope="row" style="font-weight:normal; text-align: end;">Credit Cd No:</th>
-                <td style="text-align: start;">{{$card_number}}</td>
-            </tr>
-            <tr>
-                <th scope="row" style="font-weight:normal; text-align: end;">Credit Card Tot:</th>
-                <td style="text-align: center;">{{$total_credit_card_tot}}</td>
-            </tr>
+        </tr>
+        <tr>
+            <th scope="row" style="font-weight:normal; text-align: end;">Credit Cd No:</th>
+            <td style="text-align: start;">{{$card_number}}</td>
+        </tr>
+        <tr>
+            <th scope="row" style="font-weight:normal; text-align: end;">Credit Card Tot:</th>
+            <td style="text-align: center;">{{$total_credit_card_tot}}</td>
+        </tr>
         </table>
         @endif --}}
         <p style="text-align:end;">(Customer's Copy)</p>
