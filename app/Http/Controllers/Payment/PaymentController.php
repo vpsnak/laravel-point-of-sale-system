@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Coupon;
 use App\Customer;
+use App\ElavonApiPayment;
 use App\Http\Controllers\ElavonSdkPaymentController;
 use App\Giftcard;
+use App\Helper\PhpHelper;
 use App\Helper\Price;
 use App\Order;
 use App\Payment;
@@ -27,6 +29,7 @@ class PaymentController extends BaseController
             // card validation
             'card.number' => 'nullable|required_if:payment_type,card|numeric',
             'card.cvc' => 'nullable|required_if:payment_type,card|digits_between:3,4',
+            'card.card_holder' => 'nullable|required_if:payment_type,card|string',
             'card.exp_date' => 'nullable|required_if:payment_type,card|after_or_equal:today',
 
             // coupon/giftcard validation
@@ -62,6 +65,17 @@ class PaymentController extends BaseController
                     $validatedData['card']['card_holder'] ?? '',
                     $validatedData['amount']
                 );
+
+                ElavonApiPayment::create([
+                    'txn_id' => $paymentResponse['response']['ssl_txn_id'] ?? '',
+                    'transaction' => $paymentResponse['response']['ssl_transaction_type'] ?? '',
+                    'card_number' => $paymentResponse['response']['ssl_card_number'] ?? '',
+                    'card_holder' => $validatedData['card']['card_holder'],
+                    'status' => $paymentResponse['response']['ssl_result_message'] ?? '',
+                    'log' => json_encode($paymentResponse['response']),
+                    'payment_id' => $payment->id,
+                ]);
+
                 if (array_key_exists('errors', $paymentResponse)) {
                     $payment->status = 'failed';
                     $payment->save();

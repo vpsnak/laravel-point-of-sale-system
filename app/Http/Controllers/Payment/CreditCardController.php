@@ -103,14 +103,16 @@ class CreditCardController extends Controller
     {
         if (array_key_exists('errorCode', $response)) {
             return [
-                'errors' => [$response['errorName'] . ' - ' . $response['errorMessage']]
+                'errors' => [$response['errorName'] . ' - ' . $response['errorMessage']],
+                'response' => $response
             ];
         }
         if (array_key_exists('ssl_result_message', $response)) {
             if ($response['ssl_result_message'] == 'APPROVAL') {
                 return [
                     'success' => [$response['ssl_result_message']],
-                    'id' => $response['ssl_txn_id']
+                    'id' => $response['ssl_txn_id'],
+                    'response' => $response
                 ];
             }
             return [
@@ -118,11 +120,13 @@ class CreditCardController extends Controller
                     'Unknown Error',
                     $response['ssl_result_message']
                 ],
-                'id' => $response['ssl_txn_id']
+                'id' => $response['ssl_txn_id'],
+                'response' => $response
             ];
         }
         return [
-            'errors' => ['Undocumented Error']
+            'errors' => ['Undocumented Error'],
+            'response' => $response
         ];
     }
 

@@ -18,8 +18,10 @@ class CreateElavonApiPaymentsTable extends Migration
             $table->unsignedBigInteger('payment_id');
 
             $table->string('txn_id')->nullable();
+            $table->string('transaction')->nullable();
             $table->string('card_number')->nullable();
-            $table->string('status');
+            $table->string('card_holder')->nullable();
+            $table->string('status')->nullable();
             $table->text('log');
 
             $table->foreign('payment_id')->references('id')->on('payments')->onDelete('cascade');
