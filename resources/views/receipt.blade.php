@@ -136,7 +136,7 @@ $date_splitted = explode(" ", $order->created_at);
                     </th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody style="font-size:14px;">
                 @foreach($order->items as $item )
                 <tr>
                     <td colspan="2">{{ $item->name }}</td>
@@ -192,6 +192,14 @@ $date_splitted = explode(" ", $order->created_at);
             </tr>
         </table>
         @foreach(json_decode($order['payments'] , true) as $payment)
+        
+        @php
+        if($payment['payment_type']['type'] === 'card' || $payment['payment_type']['type'] === 'pos-terminal')
+        {
+            $payment['payment_type']['name'] = 'Credit card';
+        }
+        @endphp
+
         <table style="font-size:14px; width:100%;">
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: start;">{{$date_splitted[0]}}</th>
@@ -204,14 +212,29 @@ $date_splitted = explode(" ", $order->created_at);
                 </th>
                 <td style="text-align: end;">${{$payment['amount']}}-</td>
                 @endif
-            </tr>
+                @if($payment['payment_type']['type'] === 'card')
+                <tr>
+                     <th  style="font-weight:normal; text-align: end;">Cardholder Name:</th>
+                     <td style="text-align: end;">{{$payment['elavon_api_payments'][0]['card_holder']}}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row" style="font-weight:normal; text-align: end;">Credit Cd No:</th>
+                        <td style="text-align: end;">{{$payment['elavon_api_payments'][0]['card_number']}}</td>
+                    </tr>
+                    <tr>
+                        <th style="font-weight:normal; text-align: end;">Credit Card Tot:</th>
+                        <td style="text-align: end;">{{$payment['amount']}}</td>
+                    </tr>
+                @endif
         </table>
-        @php
+        {{-- @php
         if($payment['payment_type']['type'] === 'card'){
         $paid_by_credit_card = true;
-        $total_credit_card_tot += $payment['amount'];
+        $total_credit_card_tot = $payment['amount'];
+        $card_number = $payment['elavon_api_payments'][0]['card_number'];
+        $card_holder = $payment['elavon_api_payments'][0]['card_holder'];
         }
-        @endphp
+        @endphp --}}
         @endforeach
         <table style="font-size:14px; width:100%;"><br>
             <tr>
@@ -259,27 +282,23 @@ $date_splitted = explode(" ", $order->created_at);
             </tr>
         </table>
         @endif
-        @if($paid_by_credit_card)
+        {{-- @if($paid_by_credit_card)
         <p style="text-align: center;">------ Credit Card Information ------</p>
         <table style="font-size:14px; width:100%;">
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Cardholder Name:</th>
-                <td style="text-align: start;">Niggatron</td>
+                <td style="text-align: start;">{{$card_holder}}</td>
             </tr>
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Credit Cd No:</th>
-                <td style="text-align: start;">1234 vi</td>
-            </tr>
-            <tr>
-                <th scope="row" style="font-weight:normal; text-align: end;">Telephone No:</th>
-                <td style="text-align: start;">21052510235</td>
+                <td style="text-align: start;">{{$card_number}}</td>
             </tr>
             <tr>
                 <th scope="row" style="font-weight:normal; text-align: end;">Credit Card Tot:</th>
                 <td style="text-align: center;">{{$total_credit_card_tot}}</td>
             </tr>
         </table>
-        @endif
+        @endif --}}
         <p style="text-align:end;">(Customer's Copy)</p>
         <span>Signature:___________________</span>
         <p style="text-align: end;">(Merchant's Copy)</p>
