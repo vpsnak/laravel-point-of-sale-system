@@ -39,7 +39,7 @@ class CustomerController extends BaseController
             if ($validatedData['no_tax'] && empty($validatedData['file'])) {
                 $customer = Customer::findOrFail($validatedExtra['id']);
                 if (empty($customer->no_tax_file)) {
-                    return response(['errors' => ['Certification file is required when zero tax is enabled']], 500);
+                    return response(['errors' => ['Zero Tax' => 'Certification file is required when zero tax is enabled']], 500);
                 }
             }
         } else {
