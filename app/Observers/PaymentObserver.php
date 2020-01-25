@@ -5,9 +5,12 @@ namespace App\Observers;
 use App\Coupon;
 use App\Customer;
 use App\Giftcard;
+use App\Helper\PhpHelper;
+use App\ElavonApiPayment;
 use App\Http\Controllers\CreditCardController;
 use App\Http\Controllers\ElavonSdkPaymentController;
 use App\Payment;
+use Log;
 
 class PaymentObserver
 {
@@ -64,6 +67,16 @@ class PaymentObserver
                     return true;
                 case 'card':
                     $paymentResponse = (new CreditCardController)->cardRefund($payment->code);
+
+                    ElavonApiPayment::create([
+                        'txn_id' => $paymentResponse['response']['ssl_txn_id'] ?? '',
+                        'transaction' => $paymentResponse['response']['ssl_transaction_type'] ?? '',
+                        'card_number' => $paymentResponse['response']['ssl_card_number'] ?? '',
+                        'status' => $paymentResponse['response']['ssl_result_message'] ?? '',
+                        'log' => json_encode($paymentResponse['response']),
+                        'payment_id' => $payment->id,
+                    ]);
+
                     if (isset($paymentResponse['errors'])) {
                         return false;
                     }

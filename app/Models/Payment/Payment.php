@@ -4,7 +4,7 @@ namespace App;
 
 class Payment extends BaseModel
 {
-    protected $with = ['paymentType', 'created_by'];
+    protected $with = ['paymentType', 'created_by', 'elavonApiPayments', 'elavonSdkPayments'];
 
     protected $fillable = [
         'payment_type',

@@ -17,6 +17,7 @@
 		<v-row justify="center" align="center" v-if="paymentType === 'card'" class="my-3">
 			<div class="pr-2">
 				<v-text-field
+					autocomplete="off"
 					label="Card number"
 					type="number"
 					prepend-inner-icon="mdi-credit-card"
@@ -25,6 +26,7 @@
 					:disabled="loading || orderLoading"
 				></v-text-field>
 				<v-text-field
+					autocomplete="off"
 					label="CVC/CVV"
 					type="number"
 					prepend-inner-icon="mdi-lock"
@@ -35,6 +37,7 @@
 			</div>
 			<div class="pl-2">
 				<v-text-field
+					autocomplete="off"
 					label="Card holder's name"
 					prepend-inner-icon="mdi-account-box"
 					v-model="card.card_holder"
@@ -42,6 +45,7 @@
 					:disabled="loading || orderLoading"
 				></v-text-field>
 				<v-text-field
+					autocomplete="off"
 					:disabled="loading || orderLoading"
 					label="Exp date"
 					v-model="card.exp_date"
