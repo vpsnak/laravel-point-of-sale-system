@@ -35,6 +35,13 @@ class CustomerController extends BaseController
                 'file' => 'nullable|file|max:15000|mimes:jpeg,jpg,png,pdf',
                 'comment' => 'nullable|string',
             ]);
+
+            if ($validatedData['no_tax'] && empty($validatedData['file'])) {
+                $customer = Customer::findOrFail($validatedExtra['id']);
+                if (empty($customer->no_tax_file)) {
+                    return response(['errors' => ['Certification file is required when zero tax is enabled']], 500);
+                }
+            }
         } else {
             $validatedData = $request->validate([
                 'email' => 'required|email|unique:customers,email',
@@ -80,7 +87,7 @@ class CustomerController extends BaseController
         $customer = $this->getCustomer($validatedExtra['id'] ?? null, $validatedData);
 
         if ($request->file('file') && $validatedData['no_tax']) {
-            $customer->no_tax_file = '/storage/uploads/no_tax/' . $customer->id . $fileExt;
+            $customer->no_tax_file = "/storage/uploads/no_tax/{$customer->id}{$fileExt}";
             $customer->save();
         }
 
