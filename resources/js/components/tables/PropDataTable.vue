@@ -115,7 +115,7 @@
 
 						<v-tooltip bottom v-if="tableForm != 'customerNewForm'">
 							<template v-slot:activator="{ on }">
-								<v-btn :disabled="btnDisable" @click="editItemDialog(item)" class="my-1" v-on="on" icon>
+								<v-btn :disabled="btnDisable" @click="editItemDialog(_.cloneDeep(item))" class="my-1" v-on="on" icon>
 									<v-icon small>edit</v-icon>
 								</v-btn>
 							</template>
@@ -158,6 +158,8 @@
 </template>
 
 <script>
+import _ from 'lodash';
+Object.defineProperty(Vue.prototype, '_', { value: _ });
 import { mapActions, mapMutations, mapState } from "vuex";
 
 export default {
