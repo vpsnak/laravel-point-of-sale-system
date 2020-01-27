@@ -4,7 +4,7 @@
 		<v-row justify="center" align="center" class="my-3">
 			<v-col :cols="3" align="start" v-if="shipping.cost">
 				<span class="title">
-					Shipping cost:
+					Delivery Fees:
 					<span class="amber--text">$ {{ shipping.cost }}</span>
 				</span>
 			</v-col>
