@@ -89,7 +89,7 @@
 					<v-card-title>Totals</v-card-title>
 					<v-card-text>
 						<div class="subtitle-1">Subtotal: {{orderData.subtotal}} $</div>
-						<div class="subtitle-1">Shipping Cost: {{orderData.shipping_cost}} $</div>
+						<div class="subtitle-1">Delivery Fees: {{orderData.shipping_cost}} $</div>
 						<div
 							class="subtitle-1"
 						>Tax ({{orderData.tax}}%) : {{(orderData.total - orderData.subtotal - orderData.shipping_cost)}} $</div>

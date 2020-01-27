@@ -15,7 +15,7 @@
         <v-divider />
 
         <div class="d-flex justify-space-between pa-2" v-if="shippingCost">
-            <span>Shipping cost</span>
+            <span>Delivery Fees</span>
             <span>$ {{ shippingCost.toFixed(2) }}</span>
         </div>
 
