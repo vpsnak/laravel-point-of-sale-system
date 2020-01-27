@@ -238,19 +238,21 @@
         }
         @endphp --}}
             @endforeach
-            <table style="font-size:14px;"><br>
+            <br>
+            <table style="font-size:14px;">
                 <tr>
-                    <th scope="row" style="font-weight:normal; text-align: center;">*** Balance Remaining ***</th>
+                    <td style="text-align: center;">*** Balance Remaining ***</th>
                     <td style="text-align: end;">$0.00</td>
                 </tr>
             </table>
-            <table style="font-size:14px;"><br>
+            <br>
+            <table style="font-size:14px;">
                 <tr>
-                    <th scope="row" style="font-weight:normal; text-align: end;">Total Amt Tendered:</th>
+                    <th style="text-align: end;">Total Amt Tendered:</th>
                     <td style="text-align: end;">${{$order->total_paid}}</td>
                 </tr>
                 <tr>
-                    <th scope="row" style="font-weight:normal; text-align: end;">Customer Change:</th>
+                    <th style="text-align: end;">Customer Change:</th>
                     <td style="text-align: end;">${{$order->change}}</td>
                 </tr>
             </table>
