@@ -17,7 +17,7 @@ class CashRegisterSeeder extends Seeder
                 'name' => 'Main Cash Register',
                 'store_id' => 1,
                 'created_by' => 1,
-                'barcode' => 'PS10002',
+                'barcode' => '389G1848LAAFHHALHP1905359716',
                 'pos_terminal_ip' => '10.8.0.2',
                 'pos_terminal_port' => '9790',
                 'created_at' => now()
@@ -26,7 +26,7 @@ class CashRegisterSeeder extends Seeder
                 'name' => 'Main Cash Register 2',
                 'store_id' => 1,
                 'created_by' => 1,
-                'barcode' => 'PS20174',
+                'barcode' => '389G1848LAAFHHALHP1929385706',
                 'pos_terminal_ip' => '192.168.1.91',
                 'pos_terminal_port' => '9790',
                 'created_at' => now()
