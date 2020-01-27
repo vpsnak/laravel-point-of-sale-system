@@ -11,6 +11,7 @@
         padding: 0;
         margin: 0;
         width: 80mm;
+        height: auto;
     }
 
     .products-table thead {
@@ -141,17 +142,17 @@
                     <tr>
                         <td colspan="2">{{ $item->name }}</td>
                         <td style="text-align: center;">{{ $item->qty }}</td>
-                        <td style="text-align: start;">${{ $item->price }}</td>
+                        <td>${{ $item->price }}</td>
                         <td style="text-align:end;">${{ $item->price * $item->qty }}</td>
                     </tr>
                     @if($item->discount_type)
                     <tr>
                         @if($item->discount_type === 'percentage')
-                        <td scope="row" style="font-weight:normal; text-align:start; ">
+                        <td style="text-align:start;">
                             Discount: {{ $item->discount_amount }}%
                         </td>
                         @else
-                        <td scope="row" style="font-weight:normal; text-align:start; ">
+                        <td>
                             Discount: {{ $item->discount_amount }}-
                         </td>
                         @endif
@@ -159,14 +160,14 @@
                         </td>
                         <td>
                         </td>
-                        <td scope="row" style="font-weight:normal; text-align:end; ">
+                        <td style="text-align:end; ">
                             ${{ $item->price - $item->final_price }}-
                         </td>
                     </tr>
                     @endif
                     @if($item->notes)
                     <tr>
-                        <td style="font-weight:normal; text-align:start;">
+                        <td>
                             {{ $item->notes }}
                         </td>
                     </tr>
@@ -174,57 +175,57 @@
                     @endforeach
                 </tbody>
             </table>
-            <table style="font-size:14px; width:100%;">
+            <table style="font-size:14px;">
                 <tr>
-                    <th scope="row" style="font-weight:normal; text-align: end;">Sales tax:</th>
-                    <td style="text-align: end;"> ${{$order->total - $order->total_without_tax}}</td>
+                    <td style="text-align: end;">Sales tax:</td>
+                    <td style="text-align: end;"> ${{ $order->total - $order->total_without_tax }}</td>
                 </tr>
                 <tr>
-                    <th scope="row" style="font-weight:normal; text-align: end;">Total Ant:</th>
-                    <td style="text-align: end;">${{$order->total}}</td>
+                    <td style="text-align: end;">Total Ant:</td>
+                    <td style="text-align: end;">${{ $order->total }}</td>
                 </tr>
             </table>
-            <p style="text-align: center; font-size:14px;">*** Tendering detaile ***</p>
-            <table style="font-size:14px; width:100%;">
+            <p style="text-align: center; font-size:14px;">*** Tendering details ***</p>
+            <table style="font-size:14px;">
                 <tr>
-                    <th scope="row" style="font-weight:normal; text-align: end;">Order Total is:</th>
-                    <td style="text-align: center;">${{$order->total}}</td>
+                    <td style="text-align: end;">Order Total is:</th>
+                    <td style="text-align: center;">${{ $order->total }}</td>
                 </tr>
             </table>
             @foreach(json_decode($order['payments'] , true) as $payment)
 
             @php
             if($payment['payment_type']['type'] === 'card' || $payment['payment_type']['type'] === 'pos-terminal')
-            {
-            $payment['payment_type']['name'] = 'Credit card';
-            }
+                $payment['payment_type']['name'] = 'Credit card';
             @endphp
 
-            <table style="font-size:14px; width:100%;">
+            <table style="font-size:14px;">
                 <tr>
-                    <th scope="row" style="font-weight:normal; text-align: start;">
-                        {{ Carbon\Carbon::parse($payment['created_at'])->format('m/d/Y') }}</th>
+                    <td>
+                        {{ Carbon\Carbon::parse($payment['created_at'])->format('m/d/Y') }}</td>
                     @if($payment['status'] === 'refunded')
-                    <th scope="row" style="font-weight:normal; text-align: start;">Refunded
-                        {{ $payment['payment_type']['name']}}</th>
+                    <td>
+                        Refunded
+                        {{ $payment['payment_type']['name']}}
+                    </td>
                     <td style="text-align: end;">${{$payment['amount']}}+</td>
                     @else
-                    <th scope="row" style="font-weight:normal; text-align: start;">{{ $payment['payment_type']['name']}}
-                    </th>
-                    <td style="text-align: end;">${{$payment['amount']}}-</td>
+                    <td>{{ $payment['payment_type']['name'] }}</td>
+                    <td style="text-align: end;">${{ $payment['amount'] }}-</td>
                     @endif
+                </tr>
                     @if($payment['payment_type']['type'] === 'card')
                 <tr>
-                    <th style="font-weight:normal; text-align: end;">Cardholder's Name:</th>
-                    <td style="text-align: end;">{{$payment['elavon_api_payments'][0]['card_holder']}}</td>
+                    <td style="text-align: end;">Cardholder's Name:</td>
+                    <td style="text-align: end;">{{ $payment['elavon_api_payments'][0]['card_holder'] }}</td>
                 </tr>
                 <tr>
-                    <th scope="row" style="font-weight:normal; text-align: end;">Credit Cd No:</th>
-                    <td style="text-align: end;">{{$payment['elavon_api_payments'][0]['card_number']}}</td>
+                    <td style="text-align: end;">Credit Cd No:</td>
+                    <td style="text-align: end;">{{ $payment['elavon_api_payments'][0]['card_number'] }}</td>
                 </tr>
                 <tr>
-                    <th style="font-weight:normal; text-align: end;">Credit Card Tot:</th>
-                    <td style="text-align: end;">{{$payment['amount']}}</td>
+                    <td style="text-align: end;">Credit Card Tot:</td>
+                    <td style="text-align: end;">{{ $payment['amount'] }}</td>
                 </tr>
                 @endif
             </table>
@@ -237,13 +238,13 @@
         }
         @endphp --}}
             @endforeach
-            <table style="font-size:14px; width:100%;"><br>
+            <table style="font-size:14px;"><br>
                 <tr>
                     <th scope="row" style="font-weight:normal; text-align: center;">*** Balance Remaining ***</th>
                     <td style="text-align: end;">$0.00</td>
                 </tr>
             </table>
-            <table style="font-size:14px; width:100%;"><br>
+            <table style="font-size:14px;"><br>
                 <tr>
                     <th scope="row" style="font-weight:normal; text-align: end;">Total Amt Tendered:</th>
                     <td style="text-align: end;">${{$order->total_paid}}</td>
@@ -255,31 +256,32 @@
             </table>
             <br>
             @if($order->shipping_address)
-            <table style="font-size:14px; width:100%;">
+            <table style="font-size:14px;">
                 <tr>
-                    <th scope="row" style="font-weight:normal; text-align: end;">Delv on:</th>
-                    <td style="text-align: start;">{{$order->delivery_date}}</td>
+                    <td style="text-align: end;">Delv on:</td>
+                    <td>{{ Carbon\Carbon::parse($order->delivery_date)->format('m/d/Y') }}</td>
                 </tr>
                 <tr>
-                    <th scope="row" style="font-weight:normal; text-align: end;">Delv to:</th>
-                    <td style="text-align: start;">{{$order->shipping_address->first_name}}
-                        {{$order->shipping_address->last_name}}</td>
+                    <td style="text-align: end;">Delv to:</td>
+                    <td>{{$order->shipping_address->first_name}}
+                        {{ $order->shipping_address->last_name }}
+                    </td>
                 </tr>
                 <tr>
-                    <th scope="row" style="font-weight:normal; text-align: end;">C/O:</th>
-                    <td style="text-align: start;">{{$order->customer->first_name}} {{$order->customer->last_name}}</td>
+                    <td style="text-align: end;">C/O:</td>
+                    <td>{{ $order->customer->first_name }} {{ $order->customer->last_name }}</td>
                 </tr>
                 <tr>
-                    <th scope="row" style="font-weight:normal; text-align: end;">Address:</th>
-                    <td style="text-align: start;">{{$order->shipping_address->street}}</td>
+                    <td style="text-align: end;">Address:</td>
+                    <td>{{ $order->shipping_address->street }}</td>
                 </tr>
                 <tr>
-                    <th scope="row" style="font-weight:normal; text-align: end;">Address:</th>
-                    <td style="text-align: start;">{{$order->shipping_address->street2}}</td>
+                    <td style="text-align: end;">Address:</td>
+                    <td>{{ $order->shipping_address->street2 }}</td>
                 </tr>
                 <tr>
-                    <th scope="row" style="font-weight:normal; text-align: end;">City, St:</th>
-                    <td style="text-align: start;">{{$order->shipping_address->city}}</td>
+                    <td style="text-align: end;">City, St:</td>
+                    <td>{{ $order->shipping_address->city }}</td>
                 </tr>
             </table>
             @endif
@@ -306,6 +308,4 @@
             <p style="text-align: center;">PLEASE SEE POSTED POLICY REGARDING REFUNDS</p>
         </div>
     </body>
-    ​
-
 </html>
