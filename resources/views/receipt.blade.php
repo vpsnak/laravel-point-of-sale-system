@@ -147,11 +147,11 @@
                     <tr>
                         @if($item->discount_type === 'percentage')
                         <td scope="row" style="font-weight:normal; text-align:start; ">
-                            Discount Pot: {{$item->discount_amount}}%
+                            Discount: {{ $item->discount_amount }}%
                         </td>
                         @else
                         <td scope="row" style="font-weight:normal; text-align:start; ">
-                            Discount Pot: {{$item->discount_amount}}-
+                            Discount: {{ $item->discount_amount }}-
                         </td>
                         @endif
                         <td>
@@ -159,14 +159,14 @@
                         <td>
                         </td>
                         <td scope="row" style="font-weight:normal; text-align:end; ">
-                            ${{$item->price - $item->final_price}}-
+                            ${{ $item->price - $item->final_price }}-
                         </td>
                     </tr>
                     @endif
                     @if($item->notes)
                     <tr>
                         <td style="font-weight:normal; text-align:start;">
-                            {{$item->notes}}
+                            {{ $item->notes }}
                         </td>
                     </tr>
                     @endif
@@ -214,7 +214,7 @@
                     @endif
                     @if($payment['payment_type']['type'] === 'card')
                 <tr>
-                    <th style="font-weight:normal; text-align: end;">Cardholder Name:</th>
+                    <th style="font-weight:normal; text-align: end;">Cardholder's Name:</th>
                     <td style="text-align: end;">{{$payment['elavon_api_payments'][0]['card_holder']}}</td>
                 </tr>
                 <tr>
