@@ -11,7 +11,6 @@
         padding: 0;
         margin: 0;
         width: 80mm;
-        height: 297mm;
     }
 
     .products-table thead {
@@ -33,10 +32,12 @@
     th {
         font-weight: normal;
     }
-
+    .logo {
+        text-align: center;
+    }
     .logo img {
         height: auto;
-        width: 85%;
+        width: 65%;
     }
 
     .phone {
