@@ -11,7 +11,10 @@
         <template v-slot:item.final_price="{ item }"
             >{{ parseFloat(item.final_price).toFixed(2) }} $</template>
         <template v-slot:item.stock="{ item }">
-            <v-avatar v-if="item.stock <= 10" color="red" size="36">{{
+            <v-avatar v-if="item.stock <= 10 && item.stock >= 0" color="orange" size="36">{{
+                item.stock
+            }}</v-avatar>
+             <v-avatar v-else-if="item.stock <= 0" color="red" size="36">{{
                 item.stock
             }}</v-avatar>
             <v-avatar v-else size="36">{{ item.stock }}</v-avatar>
