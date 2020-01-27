@@ -33,7 +33,7 @@
 							<v-icon>mdi-plus</v-icon>
 						</v-btn>
 					</template>
-					<span>Add dummy product</span>
+					<span>Add custom product</span>
 				</v-tooltip>
 				<v-tooltip bottom>
 					<template v-slot:activator="{ on }">
@@ -139,7 +139,7 @@
 			v-if="showDummyDialog"
 			:show="showDummyDialog"
 			component="dummyProductForm"
-			title="Add a dummy product"
+			title="Add a custom product"
 			@action="result"
 			cancelBtnTxt="Close"
 			titleCloseBtn
