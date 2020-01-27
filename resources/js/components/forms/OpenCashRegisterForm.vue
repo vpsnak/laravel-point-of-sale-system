@@ -76,7 +76,7 @@
                     <v-btn
                         type="submit"
                         :loading="loading"
-                        :disabled="disableOpenCashRegister() || invalid"
+                        :disabled="disableOpenCashRegister || invalid"
                         >Open Cash Register</v-btn
                     >
                 </v-col>

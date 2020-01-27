@@ -36,7 +36,7 @@
 
     .logo img {
         height: auto;
-        width: 100%;
+        width: 85%;
     }
 
     .phone {
