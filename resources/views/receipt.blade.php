@@ -176,12 +176,18 @@
                 </tbody>
             </table>
             <table style="font-size:14px;">
+                @if($order->shipping_cost > 0)
+                <tr>
+                    <td style="text-align: end;">Delivery fees:</td>
+                    <td style="text-align: end;"> ${{$order->shipping_cost }}</td>
+                </tr>
+                @endif 
                 <tr>
                     <td style="text-align: end;">Sales tax:</td>
                     <td style="text-align: end;"> ${{ $order->total - $order->total_without_tax }}</td>
                 </tr>
                 <tr>
-                    <td style="text-align: end;">Total Ant:</td>
+                    <td style="text-align: end;">Total Amt:</td>
                     <td style="text-align: end;">${{ $order->total }}</td>
                 </tr>
             </table>
