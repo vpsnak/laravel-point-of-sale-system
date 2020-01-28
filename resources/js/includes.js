@@ -1,7 +1,6 @@
 import "@mdi/font/css/materialdesignicons.css";
 import "@fortawesome/fontawesome-free/css/all.css";
 import "material-design-icons-iconfont/dist/material-design-icons.css";
-import store from "./store/store";
 import router from "./plugins/router";
 
 window._ = require("lodash");
@@ -16,14 +15,12 @@ window._ = require("lodash");
 window.axios = require("axios");
 window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 
-window.axios.interceptors.response.use(undefined, function (error) {
+window.axios.interceptors.response.use(undefined, function(error) {
     if (error.response.status === 401) {
-        store.commit("logout");
-        router.push({ name: "login" });
-        return Promise.reject(error);
-    } else {
-        return Promise.reject(error);
+        router.push({ name: "logout" });
     }
+
+    return Promise.reject(error);
 });
 
 /**

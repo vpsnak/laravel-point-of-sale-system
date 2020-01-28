@@ -53,12 +53,17 @@ class User extends Authenticatable
 
     public function open_register()
     {
-        $openLog = $this->hasOne(CashRegisterLogs::class);
-        if (empty($openLog)) {
-            return false;
-        }
-        return $openLog->whereStatus(1);
+        return $this->hasOne(CashRegisterLogs::class);
     }
+
+    // public function open_register()
+    // {
+    //     $openLog = $this->hasOne(CashRegisterLogs::class);
+    //     if (empty($openLog)) {
+    //         return false;
+    //     }
+    //     return $openLog->whereStatus(1);
+    // }
 
     public function findForPassport($username)
     {

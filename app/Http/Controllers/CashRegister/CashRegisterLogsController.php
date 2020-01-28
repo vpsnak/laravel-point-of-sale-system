@@ -24,8 +24,7 @@ class CashRegisterLogsController extends BaseController
             'note' => 'string',
         ]);
 
-        $validatedData['opened_by'] = auth()->user()->id;
-        $validatedData['user_id'] = auth()->user()->id;
+        $validatedData['user_id'] = $validatedData['opened_by'] = auth()->user()->id;
 
         $validatedID = $request->validate([
             'id' => 'nullable|exists:cash_register_logs,id'

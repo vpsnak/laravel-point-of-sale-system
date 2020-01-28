@@ -41,12 +41,12 @@ class UserController extends Controller
         if (!$user) {
             return response(['errors' => [
                 'Login' => 'Invalid credentials',
-            ]], 422);
+            ]], 500);
         } else {
             if (!Hash::check($validatedData['password'], $user->password)) {
                 return response(['errors' => [
                     'Login' => 'Invalid credentials',
-                ]], 422);
+                ]], 500);
             }
             $role = ($user->roles)[0]['name'];
             $response = $http->post(config('app.url') . '/oauth/token', [
@@ -101,7 +101,7 @@ class UserController extends Controller
         if (Hash::check($validatedData['current_password'], $user->password)) {
             return response(['info' => ['Verification' => 'Password verification succeeded!']]);
         } else {
-            return response(['errors' => ['Verification' => 'Password verification failed']], 403);
+            return response(['errors' => ['Verification' => 'Password verification failed']], 500);
         }
     }
 
