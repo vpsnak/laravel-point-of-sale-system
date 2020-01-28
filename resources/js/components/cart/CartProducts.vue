@@ -19,7 +19,7 @@
                             <span class="subtitle-2">{{ product.name }}</span>
                             <div class="d-flex align-center">
                                 <v-text-field
-                                    class="w-20"
+                                    class="width-20"
                                     type="number"
                                     :readonly="!editPrice(index)"
                                     :flat="!editPrice(index)"
