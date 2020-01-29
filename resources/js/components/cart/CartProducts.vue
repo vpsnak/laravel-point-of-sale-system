@@ -25,6 +25,7 @@
 
                             <div style="width:100%; max-width:150px;">
                                 <v-text-field
+                                    @click.stop
                                     prepend-icon="mdi-currency-usd"
                                     single-line
                                     @keyup.esc="revertPrice(index)"
@@ -62,11 +63,10 @@
                                             editPrice(index) ? true : false
                                         "
                                         @click.stop="toggleEdit(index)"
-                                        small
                                         icon
                                         v-on="on"
                                     >
-                                        <v-icon small>
+                                        <v-icon>
                                             mdi-pencil
                                         </v-icon>
                                     </v-btn>
@@ -76,6 +76,7 @@
                             <v-tooltip bottom>
                                 <template v-slot:activator="{ on }">
                                     <v-btn
+                                        class="px-2"
                                         v-if="
                                             editable &&
                                                 !(
@@ -87,29 +88,34 @@
                                                     )
                                                 )
                                         "
-                                        small
                                         icon
                                         @click.stop="viewProductDialog(product)"
                                         v-on="on"
                                     >
-                                        <v-icon small class="px-1"
-                                            >mdi-eye</v-icon
-                                        >
+                                        <v-icon>
+                                            mdi-eye
+                                        </v-icon>
                                     </v-btn>
                                 </template>
                                 <span>View item</span>
                             </v-tooltip>
-                            <v-btn
-                                v-if="editable"
-                                small
-                                icon
-                                @click.stop="decreaseQty(product)"
-                            >
-                                <v-icon small class="px-1">remove</v-icon>
-                            </v-btn>
-
+                            <v-tooltip bottom color="red">
+                                <template v-slot:activator="{ on }">
+                                    <v-btn
+                                        color="red"
+                                        v-on="on"
+                                        v-if="editable"
+                                        class="px-2"
+                                        icon
+                                        @click.stop="decreaseQty(product)"
+                                    >
+                                        <v-icon>remove</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Decrease qty</span>
+                            </v-tooltip>
                             <v-text-field
-                                class="px-1"
+                                class="px-2"
                                 style="max-width:45px;"
                                 :disabled="!editable"
                                 type="number"
@@ -121,28 +127,33 @@
                                 @keyup="limits(product)"
                             ></v-text-field>
 
-                            <v-btn
-                                icon
-                                small
-                                v-if="editable"
-                                @click.stop="increaseQty(product)"
-                            >
-                                <v-icon small class="px-1">add</v-icon>
-                            </v-btn>
+                            <v-tooltip bottom color="green">
+                                <template v-slot:activator="{ on }">
+                                    <v-btn
+                                        color="green"
+                                        v-on="on"
+                                        icon
+                                        class="px-2"
+                                        v-if="editable"
+                                        @click.stop="increaseQty(product)"
+                                    >
+                                        <v-icon>add</v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Increase qty</span>
+                            </v-tooltip>
 
                             <v-tooltip bottom color="red">
                                 <template v-slot:activator="{ on }">
                                     <v-btn
+                                        class="px-2"
                                         v-if="editable"
-                                        small
                                         icon
                                         @click.stop="removeItem(product)"
                                         color="red"
                                         v-on="on"
                                     >
-                                        <v-icon small class="px-1"
-                                            >delete</v-icon
-                                        >
+                                        <v-icon>delete</v-icon>
                                     </v-btn>
                                 </template>
                                 <span>Remove from cart</span>
@@ -252,6 +263,11 @@ export default {
         }
     },
     methods: {
+        cancelEvent(index, event) {
+            if (!this.editPrice(index)) {
+                event.preventDefault();
+            }
+        },
         getSelectedInput(index) {
             return this.$refs[`priceField${index}`][0];
         },
@@ -295,7 +311,11 @@ export default {
             }
         },
         editPrice(index) {
-            return this.products[index].editPrice;
+            if (_.has(this.products[index], "editPrice")) {
+                return this.products[index].editPrice;
+            } else {
+                return false;
+            }
         },
         toggleEdit(index) {
             if (!_.has(this.products[index], "originalPrice")) {
