@@ -24,7 +24,7 @@
 			name="Price Amount"
 		>
 			<v-text-field
-				disabled
+				:disabled="giftCardAmountDisabled"
 				type="number"
 				v-model="giftCard.price.amount"
 				label="Price"
@@ -53,7 +53,6 @@
 				no-resize
 			></v-textarea>
 		</ValidationProvider>
-
 		<v-btn class="mr-4" type="submit" :disabled="invalid">Add to cart</v-btn>
 	</ValidationObserver>
 </template>
@@ -62,6 +61,7 @@
 export default {
 	data() {
 		return {
+			giftCardAmountDisabled: true,
 			giftCard: {
 				id: null,
 				name: "",
@@ -93,6 +93,9 @@ export default {
 				if (response[0]) {
 					this.giftCard.name = response[0].name;
 					this.giftCard.code = response[0].code;
+					if (response[0].amount == 0) {
+						this.giftCardAmountDisabled = false;
+					}
 					this.giftCard.price.amount = response[0].amount;
 				}
 			});
