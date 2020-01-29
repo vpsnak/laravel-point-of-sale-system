@@ -3,7 +3,13 @@
 		<payment :order_id="orderId" history actions @amountPending="showCompleteBtn" />
 		<v-row justify="center" align="center" class="my-3">
 			<v-col :cols="5" justify="center" :align="orderId ? 'center' : 'start'">
-				<v-btn color="teal" @click="prevStep()" v-if="orderId === 0" dark :disabled="$store.state.cart.paymentLoading">
+				<v-btn
+					color="teal"
+					@click="prevStep()"
+					v-if="orderId === 0"
+					dark
+					:disabled="$store.state.cart.paymentLoading"
+				>
 					<v-icon small left>mdi-chevron-left</v-icon>Back
 				</v-btn>
 				<v-btn
@@ -26,12 +32,19 @@ export default {
 	},
 	data() {
 		return {
-			completed: false,
-			loading: false
+			completed: false
 		};
 	},
 	computed: {
 		...mapState("cart", ["order"]),
+		loading: {
+			get() {
+				return this.$store.state.cart.completeOrderLoading;
+			},
+			set(value) {
+				this.$store.state.cart.completeOrderLoading = value;
+			}
+		},
 		orderId() {
 			return this.order ? this.order.id : 0;
 		}

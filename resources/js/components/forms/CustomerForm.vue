@@ -143,7 +143,7 @@ import { mapActions, mapState, mapGetters } from "vuex";
 
 export default {
     props: {
-        model: Object || undefined
+        model: Object
     },
     data() {
         return {
@@ -209,8 +209,9 @@ export default {
             }
 
             this.create(payload)
-                .then(() => {
+                .then(response => {
                     this.$emit("submit", {
+                        data: { customer: response },
                         getRows: true,
                         model: "customers",
                         notification: {

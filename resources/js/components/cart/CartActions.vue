@@ -3,6 +3,8 @@
         <v-divider />
 
         <v-btn
+            dark
+            :color="checkoutColor"
             block
             class="my-2"
             @click.stop="checkout"
@@ -84,7 +86,7 @@
             persistent
         />
 
-        <checkoutDialog :show="checkoutDialog" />
+        <checkoutDialog />
         <cartRestoreDialog
             :show="cartRestoreDialog"
             :key="cartsOnHoldSize"
@@ -112,6 +114,16 @@ export default {
     },
 
     computed: {
+        checkoutColor() {
+            switch (this.cart.shipping.method) {
+                case "retail":
+                    return "primary";
+                case "pickup":
+                    return "red";
+                case "delivery":
+                    return "warning";
+            }
+        },
         emptyCartConfirmationDialog: {
             get() {
                 return this.empty_cart_confirmation_dialog;
@@ -135,10 +147,10 @@ export default {
         },
         checkoutDialog: {
             get() {
-                return this.$store.state.checkoutDialog;
+                return this.$store.state.cart.checkoutDialog;
             },
             set(value) {
-                this.$store.state.checkoutDialog = value;
+                this.$store.state.cart.checkoutDialog = value;
             }
         },
         cartRestoreDialog: {
@@ -154,6 +166,7 @@ export default {
     methods: {
         checkout() {
             this.$store.commit("cart/setOrder", undefined);
+
             this.checkoutDialog = true;
         },
         emptyConfirmation(event) {

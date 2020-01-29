@@ -53,7 +53,7 @@ export default {
 					text: "Total",
 					value: "total"
 				},
-				{ text: "Actions", value: "action", sortable: false }
+				{ text: "Actions", value: "action" }
 			]
 		};
 	},

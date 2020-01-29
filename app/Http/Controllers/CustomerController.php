@@ -35,6 +35,13 @@ class CustomerController extends BaseController
                 'file' => 'nullable|file|max:15000|mimes:jpeg,jpg,png,pdf',
                 'comment' => 'nullable|string',
             ]);
+
+            if ($validatedData['no_tax'] && empty($validatedData['file'])) {
+                $customer = Customer::findOrFail($validatedExtra['id']);
+                if (empty($customer->no_tax_file)) {
+                    return response(['errors' => ['Zero Tax' => 'Certification file is required when zero tax is enabled']], 500);
+                }
+            }
         } else {
             $validatedData = $request->validate([
                 'email' => 'required|email|unique:customers,email',
@@ -57,7 +64,7 @@ class CustomerController extends BaseController
                 'address.country_id' => 'required|exists:countries,country_id',
                 'address.region' => 'required|exists:regions,region_id',
                 'address.postcode' => 'required|string',
-                'address.phone' => 'required|numeric',
+                'address.phone' => 'required|string',
                 'address.company' => 'nullable|string',
                 'address.vat_id' => 'nullable|string',
                 'address.billing' => 'nullable|bool',
@@ -80,7 +87,7 @@ class CustomerController extends BaseController
         $customer = $this->getCustomer($validatedExtra['id'] ?? null, $validatedData);
 
         if ($request->file('file') && $validatedData['no_tax']) {
-            $customer->no_tax_file = '/storage/uploads/no_tax/' . $customer->id . $fileExt;
+            $customer->no_tax_file = "/storage/uploads/no_tax/{$customer->id}{$fileExt}";
             $customer->save();
         }
 
@@ -88,7 +95,7 @@ class CustomerController extends BaseController
             $customer->addresses()->create($addressData['address']);
         }
 
-        return response($customer, empty($validatedExtra['id']) ? 201 : 200);
+        return response(Customer::with('addresses')->find($customer->id), empty($validatedExtra['id']) ? 201 : 200);
     }
 
     private function getCustomer($id, $data)

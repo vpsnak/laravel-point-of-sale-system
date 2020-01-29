@@ -14,20 +14,17 @@ class CashRegisterLogsController extends BaseController
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            // 'user_id' => 'required|exists:users,id',
             'cash_register_id' => 'required|exists:cash_registers,id',
             'opening_amount' => 'required|numeric',
             'closing_amount' => 'numeric',
             'status' => 'required|boolean',
             'opening_time' => 'required|date',
             'closing_time' => 'date',
-            // 'opened_by' => 'required|exists:users,id',
             // 'closed_by' => 'exists:users,id',
             'note' => 'string',
         ]);
 
-        $validatedData['opened_by'] = auth()->user()->id;
-        $validatedData['user_id'] = auth()->user()->id;
+        $validatedData['user_id'] = $validatedData['opened_by'] = auth()->user()->id;
 
         $validatedID = $request->validate([
             'id' => 'nullable|exists:cash_register_logs,id'
@@ -44,17 +41,55 @@ class CashRegisterLogsController extends BaseController
     {
         $validatedData = $request->validate([
             'cash_register_id' => 'required|exists:cash_registers,id',
-            'closing_amount' => 'required|numeric',
         ]);
 
+        $validatedData['closing_amount'] = auth()->user()->open_register->cash_register->earnings['cash_total'];
         $validatedData['closed_by'] = auth()->user()->id;
         $validatedData['status'] = 0;
         $validatedData['closing_time'] = Carbon::now();
 
-        $log = auth()->user()->open_register()->update($validatedData);
-        CashRegisterReportController::generateReportByCashRegisterId($validatedData['cash_register_id']);
+        auth()->user()->open_register()->update($validatedData);
+        $report = CashRegisterReportController::generateReportByCashRegisterId($validatedData['cash_register_id']);
 
-        return response($log, 200);
+        return response(
+            [
+                'report' => $report,
+                'info' => ['Cash register closed successfully!']
+            ],
+            200
+        );
+    }
+
+    public function logout()
+    {
+        $user = auth()->user();
+
+        if ($user->open_register) {
+            $user->open_register->user_id = null;
+            $user->open_register->save();
+
+            return response(['info' => ["Success!"]], 200);
+        } else {
+            return response(['errors' => ["{$user->name} wasn't assigned to any cash register"]], 422);
+        }
+    }
+
+    public function retrieve()
+    {
+        $user = auth()->user();
+
+        if ($user->open_register) {
+            return response(['cashRegister' => $this->model::getOne($user->open_register->id)], 200);
+        } else {
+            return response(0, 200);
+        }
+    }
+
+    public function amount(CashRegister $id)
+    {
+        return response(
+            $id->logs->where('status', 1)->first()->cash_register->earnings['cash_total']
+        );
     }
 
     public function open(Request $request)
@@ -65,10 +100,7 @@ class CashRegisterLogsController extends BaseController
         ]);
 
         $user = auth()->user();
-//        @TODO refactor
-        if (empty($user)) {
-            return response('Unauthorized!', 401);
-        }
+        //        @TODO refactor
 
         $cash_register = CashRegister::getOne($validatedData['cash_register_id']);
         if ($cash_register->is_open) {
@@ -83,7 +115,7 @@ class CashRegisterLogsController extends BaseController
             $log = $this->model::store($validatedData);
 
             return response([
-                'info' => 'Cash register opened successfully',
+                'info' => ['Cash register opened successfully'],
                 'cashRegister' => $this->model::getOne($log->id)
             ], 201);
         }
@@ -91,21 +123,13 @@ class CashRegisterLogsController extends BaseController
 
     private function handleOpenRegister(CashRegisterLogs $cash_register_log)
     {
-        // an other user is online on the requested register
-        if (empty($cash_register_log->user_id)) {
-            return response([
-                'error' => 'An other user is using this register atm',
-                'cashRegister' => $cash_register_log
-            ], 400);
-        }
-
         $user = auth()->user();
         // user isn't assigned to a register
         if (empty($user->open_register)) {
             $cash_register_log->user_id = $user->id;
             $cash_register_log->save();
             return response([
-                'info' => 'User assigned to this cash register',
+                'info' => ['User assigned to this cash register'],
                 'cashRegister' => $cash_register_log
             ], 200);
         }
@@ -113,7 +137,7 @@ class CashRegisterLogsController extends BaseController
         // if user already have open register and its the same as this one return it
         if ($user->open_register->id == $cash_register_log->id) {
             return response([
-                'info' => 'User is already assigned to this cash register',
+                'info' => ['User is already assigned to this cash register'],
                 'cashRegister' => $user->open_register
             ], 200);
         }
@@ -130,7 +154,7 @@ class CashRegisterLogsController extends BaseController
         $cash_register_log->save();
 
         return response([
-            'info' => 'User cash register changed',
+            'info' => ['User cash register changed'],
             'cashRegister' => $cash_register_log
         ], 200);
     }

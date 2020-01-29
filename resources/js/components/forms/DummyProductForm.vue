@@ -1,36 +1,44 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="dummyProductObs" tag="form" @submit.prevent="submit">
-		<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Name">
-			<v-text-field v-model="dummyProduct.name" label="Name" :error-messages="errors" :success="valid"></v-text-field>
-		</ValidationProvider>
-		<ValidationProvider rules="max:191" v-slot="{ errors }" name="Notes">
-			<v-textarea
-				:rows="3"
-				v-model="dummyProduct.notes"
-				label="Notes"
-				:error-messages="errors"
-				count
-				no-resize
-			></v-textarea>
-		</ValidationProvider>
-		<ValidationProvider
-			:rules="{
+	<ValidationObserver v-slot="{ invalid }" ref="dummyProductObs">
+		<v-form @submit.prevent="submit">
+			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Name">
+				<v-text-field
+					v-model="dummyProduct.name"
+					label="Name"
+					:error-messages="errors"
+					:success="valid"
+				></v-text-field>
+			</ValidationProvider>
+			<ValidationProvider rules="max:191" v-slot="{ errors }" name="Notes">
+				<v-textarea
+					:rows="3"
+					v-model="dummyProduct.notes"
+					label="Notes"
+					:error-messages="errors"
+					count
+					no-resize
+				></v-textarea>
+			</ValidationProvider>
+			<ValidationProvider
+				:rules="{
                     required : true,
+					max_value:99999,
 					regex: /^[\d]{1,8}(\.[\d]{1,2})?$/g
 					}"
-			v-slot="{ errors, valid }"
-			name="Price Amount"
-		>
-			<v-text-field
-				type="number"
-				v-model="dummyProduct.price.amount"
-				label="Price"
-				:error-messages="errors"
-				:success="valid"
-			></v-text-field>
-		</ValidationProvider>
+				v-slot="{ errors, valid }"
+				name="Price Amount"
+			>
+				<v-text-field
+					type="number"
+					v-model="dummyProduct.price.amount"
+					label="Price"
+					:error-messages="errors"
+					:success="valid"
+				></v-text-field>
+			</ValidationProvider>
 
-		<v-btn class="mr-4" type="submit" :disabled="invalid">Add to cart</v-btn>
+			<v-btn class="mr-4" type="submit" :disabled="invalid">Add to cart</v-btn>
+		</v-form>
 	</ValidationObserver>
 </template>
 

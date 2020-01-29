@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\BankAccount;
 use App\ElavonSdkPayment;
 use DB;
 use GuzzleHttp\Client;
@@ -207,6 +208,14 @@ class ElavonSdkPaymentController extends Controller
                     $msg = 'POS Terminal is not available<br>Please verify the POS Terminal is properly connected and try again';
                     $this->saveToSdkLog($msg, 'declined');
                     return ['errors' => $msg];
+                case 'ECLCommerceError ECLTransactionInvalidTransactionRequest':
+                    $msg = 'This transaction is already settled';
+                    $this->saveToSdkLog($msg, 'failed');
+                    return ['errors' => $msg];
+                case 'ECLCommerceError ECLTransactionNotRefundable':
+                    $msg = 'This transaction isn\'t settled';
+                    $this->saveToSdkLog($msg, 'failed');
+                    return ['errors' => $msg];
                 default:
                     $msg = 'Warning: Unhandled error occured. Please check log file entry above';
                     $this->saveToSdkLog($msg, 'declined');
@@ -219,7 +228,7 @@ class ElavonSdkPaymentController extends Controller
         } else if ($response['data']['paymentGatewayCommand']['paymentTransactionData']['result'] === 'APPROVED') {
             $this->saveToSdkLog($response, 'approved');
 
-            return ['success' => $response['data']['paymentGatewayCommand']['eventQueue']];
+            return ['success' => $response['data']['paymentGatewayCommand']['eventQueue'], 'transaction_id' => $response['data']['paymentGatewayCommand']['paymentTransactionData']['id']];
         } else {
             $this->saveToSdkLog($response, 'unhandled');
 
@@ -249,7 +258,7 @@ class ElavonSdkPaymentController extends Controller
             return ['errors' => $msg];
         }
 
-        set_time_limit(300);
+        set_time_limit(0);
 
         do {
             sleep(1);
@@ -298,7 +307,14 @@ class ElavonSdkPaymentController extends Controller
 
     private function sendRequest($payload, $verbose = true)
     {
-        $url = config('elavon.hostPC.ip') . ':' . config('elavon.hostPC.port') . '/rest/command';
+        if (empty(auth()->user()->open_register)) {
+            return ['errors' => ['Cash Register' => ['Your session with cash register has exired']]];
+        }
+
+        $ip = auth()->user()->open_register->cash_register->pos_terminal_ip;
+        $port = auth()->user()->open_register->cash_register->pos_terminal_port;
+
+        $url = "https://" . $ip . ':' . $port . '/rest/command';
         $client = new Client(['verify' => false]);
         if ($verbose) {
             $this->saveToSdkLog($payload, 'payload');
@@ -420,27 +436,23 @@ class ElavonSdkPaymentController extends Controller
 
     private function openPaymentGateway()
     {
+        $sdkAcc = auth()->user()->open_register->cash_register->store->company->bankAccountSdk();
+
         $payload = [
             "method" => "openPaymentGateway",
             "requestId" => idate("U"),
             "targetType" => "paymentGatewayConverge",
             "version" => "1.0",
-            "parameters" => [
-                "app" => config('elavon.gateway.app'),
-                "email" => config('elavon.gateway.email'),
-                "pin" => config('elavon.gateway.pin'),
-                "userId" => config('elavon.gateway.userId'),
-                "merchantId" => config('elavon.gateway.merchantId'),
-                "retrieveAccountInfo" => true,
-                "handleDigitalSignature" => true,
-                "paymentGatewayEnvironment" => config('elavon.gateway.paymentGatewayEnvironment'),
-                "vendorId" => config('elavon.gateway.vendorId'),
-                "vendorAppName" => config('elavon.gateway.vendorAppName'),
-                "vendorAppVersion" => config('elavon.gateway.vendorAppVersion')
-            ]
+            "parameters" => $sdkAcc->account
         ];
 
         $paymentGateway = $this->sendRequest($payload);
+
+        if (isset($paymentGateway['errors']) || isset($paymentGateway['fatal_error'])) {
+            $this->saveToSdkLog('Payment gateway failed', 'error');
+
+            return ['errors' => isset($paymentGateway['errors']) ? $paymentGateway['errors'] : $paymentGateway['fatal_error']];
+        }
 
         if ($paymentGateway['data']['paymentGatewayCommand']['openPaymentGatewayData']['result'] !== 'SUCCESS') {
             $this->saveToSdkLog('Payment gateway failed', 'error');

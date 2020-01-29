@@ -2,11 +2,19 @@ export default {
     namespaced: true,
 
     state: {
+        checkoutDialog: false,
+
         retail: true,
+
         refundLoading: false,
         paymentLoading: false,
+        completeOrderLoading: false,
+
         isValid: false,
-        isValidCheckout: true,
+        isValidCheckout: false,
+        discount_error: false,
+
+        discountErrors: [],
 
         locations: [
             { id: 1, label: "Funeral Home" },
@@ -53,8 +61,9 @@ export default {
         checkoutSteps: [
             {
                 id: 1,
-                name: "Delivery options",
-                icon: "local_shipping",
+                name: "Cash & Carry Options",
+                icon: "mdi-cart-arrow-right",
+                color: "primary",
                 component: "shippingStep",
                 completed: true
             },
@@ -62,6 +71,7 @@ export default {
                 id: 2,
                 name: "Payment",
                 icon: "mdi-cash-register",
+                color: "",
                 component: "paymentStep",
                 completed: false
             },
@@ -69,6 +79,7 @@ export default {
                 id: 3,
                 name: "Order Completed",
                 icon: "check_circle",
+                color: "",
                 component: "completion",
                 completed: false
             }
@@ -83,7 +94,6 @@ export default {
         discount_amount: 0,
 
         shipping: {
-            billing_address: undefined,
             pickup_point: undefined,
             address: undefined,
             notes: "",
@@ -92,13 +102,30 @@ export default {
             timeSlotLabel: null,
             cost: 0,
             location: null,
-            occasion: null
+            occasion: 9
         },
+
+        billing_address: undefined,
 
         order: undefined
     },
 
     mutations: {
+        isValidDiscount(state) {
+            let result = true;
+
+            if (state.discount_error) {
+                result = false;
+            }
+
+            state.products.forEach(product => {
+                if (product.discount_error) {
+                    result = false;
+                }
+            });
+
+            state.isValidCheckout = result;
+        },
         setShippingCost(state, value) {
             state.shipping.cost = value;
         },
@@ -122,7 +149,7 @@ export default {
                 state.products[index].qty++;
             } else {
                 Vue.set(product, "qty", 1);
-                state.products.push(product);
+                state.products.push(_.cloneDeep(product));
             }
         },
         increaseProductQty(state, product) {
@@ -141,22 +168,6 @@ export default {
 
             if (index != -1 && state.products[index].qty > 1) {
                 state.products[index].qty--;
-            }
-        },
-        setDiscount(state, model) {
-            if (_.has(model, "products")) {
-                state.discount_type = model.discount_type;
-
-                state.discount_amount = parseFloat(model.discount_amount);
-            } else {
-                let index = _.findIndex(state.products, iterator => {
-                    return iterator.id === model.id;
-                });
-
-                state.products[index].discount_type = model.discount_type;
-                state.products[index].discount_amount = parseFloat(
-                    model.discount_amount
-                );
             }
         },
         setCustomer(state, customer) {
@@ -192,21 +203,25 @@ export default {
                 checkoutStep.completed = false;
             });
 
+            state.checkoutSteps[0].name = "Cash & Carry Options";
+            state.checkoutSteps[0].icon = "mdi-cart-arrow-right";
+            state.checkoutSteps[0].color = "primary";
+
             state.shipping = {
-                billing_address: undefined,
                 address: undefined,
                 method: "retail",
                 date: undefined,
                 timeSlotLabel: null,
                 cost: 0,
                 location: null,
-                occasion: null
+                occasion: 9
             };
+            state.billing_address = undefined;
+            state.completeOrderLoading = false;
         },
         resetShipping(state) {
             let notes = state.shipping.notes;
             state.shipping = {
-                billing_address: undefined,
                 notes: notes,
                 address: undefined,
                 method: "retail",
@@ -214,13 +229,17 @@ export default {
                 timeSlotLabel: null,
                 cost: 0,
                 location: null,
-                occasion: null
+                occasion: 9
             };
+            state.billing_address = undefined;
 
             state.currentCheckoutStep = 1;
             state.checkoutSteps.forEach(checkoutStep => {
                 checkoutStep.completed = false;
             });
+            state.checkoutSteps[0].name = "Cash & Carry Options";
+            state.checkoutSteps[0].icon = "mdi-cart-arrow-right";
+            state.checkoutSteps[0].color = "primary";
         }
     },
     actions: {
@@ -279,13 +298,13 @@ export default {
                     model: "orders",
                     data: {
                         customer_id: state.customer ? state.customer.id : "",
-                        created_by: this.state.user.id,
                         store_id: this.state.store.id,
                         status: "pending",
                         discount_type: state.discount_type,
                         discount_amount: state.discount_amount,
                         products: state.products,
-                        shipping: state.shipping
+                        shipping: state.shipping,
+                        billing_address: state.billing_address
                     }
                 };
 

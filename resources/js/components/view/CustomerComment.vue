@@ -1,6 +1,8 @@
 <template>
 	<v-textarea :value="customerData.comment" v-if="customerData" readonly solo auto-grow outlined></v-textarea>
-	<div v-else>Loading...</div>
+	<div v-else>
+		<v-progress-circular indeterminate color="secondary"></v-progress-circular>
+	</div>
 </template>
 
 <script>

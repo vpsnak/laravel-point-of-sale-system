@@ -5,13 +5,19 @@ namespace App;
 class Store extends BaseModel
 {
     protected $with = [
+        'company',
         'tax'
     ];
 
     protected $fillable = [
         'name',
+        'phone',
+        'street',
+        'postcode',
+        'city',
         'taxable',
         'is_default',
+        'company_id',
         'tax_id',
         'created_by',
     ];
@@ -29,5 +35,10 @@ class Store extends BaseModel
     public function tax()
     {
         return $this->belongsTo(Tax::class);
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
     }
 }

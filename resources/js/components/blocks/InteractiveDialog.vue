@@ -4,17 +4,15 @@
 		:persistent="persistent"
 		:max-width="maxWidth"
 		:fullscreen="fullscreen"
-		@click:outside="closeEvent"
-		@keydown.esc="closeEvent"
-		@close:outer.stop
 		scrollable
+		@click:outside.stop="closeEvent(false)"
 	>
 		<v-card>
 			<v-card-title>
 				<v-icon v-if="icon" class="pr-2">{{ icon }}</v-icon>
 				{{ title }}
 				<v-spacer v-if="titleCloseBtn"></v-spacer>
-				<v-btn v-if="titleCloseBtn" @click.stop="fire(false)" icon>
+				<v-btn v-if="titleCloseBtn" @click.stop="closeEvent(false, true)" icon>
 					<v-icon>mdi-close</v-icon>
 				</v-btn>
 			</v-card-title>
@@ -39,9 +37,14 @@
 			>
 				<div class="flex-grow-1"></div>
 
-				<v-btn v-if="action === 'confirmation' " @click="fire(false)" text color="error">{{ cancelBtn }}</v-btn>
+				<v-btn
+					v-if="action === 'confirmation'"
+					@click="closeEvent(false, true)"
+					text
+					color="error"
+				>{{ cancelBtn }}</v-btn>
 
-				<v-btn @click="fire(true)" text color="success">{{ confirmationBtn }}</v-btn>
+				<v-btn @click="closeEvent(true, true)" text color="success">{{ confirmationBtn }}</v-btn>
 			</v-card-actions>
 		</v-card>
 	</v-dialog>
@@ -105,16 +108,9 @@ export default {
 
 	methods: {
 		...mapActions(["getAll"]),
-		closeOuter(e) {
-			if (this.$props.persistent) {
-				e.stop();
-				console.log("ellinas");
-			}
-			console.log(e);
-		},
 		submit(payload) {
 			if (!payload) {
-				this.fire(true);
+				this.closeEvent(true);
 			} else {
 				if (payload.notification) {
 					this.$store.commit("setNotification", {
@@ -124,20 +120,18 @@ export default {
 				}
 
 				if (payload.data) {
-					this.fire(payload.data);
+					this.closeEvent(payload.data, true);
 				} else {
-					this.fire(true);
+					this.closeEvent(true, true);
 				}
 			}
 		},
 
-		fire(payload) {
-			this.$emit("action", payload);
-			this.visibility = false;
-		},
-		closeEvent() {
-			this.$emit("action", false);
-			this.visibility = false;
+		closeEvent(payload, close) {
+			if (!this.$props.persistent || close) {
+				this.$emit("action", payload);
+				this.visibility = false;
+			}
 		}
 	},
 

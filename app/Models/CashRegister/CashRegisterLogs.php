@@ -22,4 +22,9 @@ class CashRegisterLogs extends BaseModel
     {
         return $this->belongsTo(CashRegister::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

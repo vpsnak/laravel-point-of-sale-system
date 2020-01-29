@@ -76,7 +76,9 @@ export default {
 		}
 	},
 	methods: {
-		printReceipt() {},
+		printReceipt() {
+			window.open(`/receipt/${this.orderId}`, "_blank");
+		},
 		mailReceipt() {
 			this.loading = true;
 

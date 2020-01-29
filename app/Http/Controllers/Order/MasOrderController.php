@@ -24,7 +24,7 @@ class MasOrderController extends Controller
         $payload = [];
         $payload['SenderMdNumber'] = self::$mas_direct_id;
         $payload['FulfillerMDNumber'] = 'USNY000012';
-//        $payload['FulfillerMDNumber'] = 'USZZ000035';
+        // $payload['FulfillerMDNumber'] = 'USZZ000035';
         $payload['PriorityType'] = 1;
         $payload['MessageType'] = 0;
         $payload['MessageText'] = $order->id;
@@ -54,10 +54,10 @@ class MasOrderController extends Controller
                 'body' => json_encode($payload)
             ]);
 
-            $json = (string)$response->getBody()->getContents();
+            $json = (string) $response->getBody()->getContents();
             self::log('Response: ' . $json);
         } catch (Exception $e) {
-            $json = (string)$e->getResponse()->getBody();
+            $json = (string) $e->getResponse()->getBody();
             self::log('Error: ' . $json);
         }
 

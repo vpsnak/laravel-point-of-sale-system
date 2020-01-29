@@ -12,7 +12,6 @@ class ElavonSdkPayment extends Model
         'paymentGatewayId',
         'chanId',
         'log',
-        'payment_id',
     ];
 
     public function payment()

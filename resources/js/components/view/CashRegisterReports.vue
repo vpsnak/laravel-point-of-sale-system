@@ -1,13 +1,13 @@
 <template>
-	<v-container v-if="cashRegisterReportsData">
-		<v-row>
+	<v-container>
+		<v-row v-if="cashRegisterReportsData">
 			<v-col cols="12" md="5">
 				<v-card>
-					<v-card-title>{{cashRegisterReportsData.report_name}}</v-card-title>
+					<v-card-title>{{ cashRegisterReportsData.report_name }}</v-card-title>
 					<v-card-text>
 						<div class="subtitle-1">Report type: {{ cashRegisterReportsData.report_type }}</div>
-						<div class="subtitle-1">Created by: {{ user.name }}</div>
-						<div class="subtitle-1">Cash register: {{ cash_register.name }}</div>
+						<div v-if="user" class="subtitle-1">Created by: {{ user.name }}</div>
+						<div v-if="cash_register" class="subtitle-1">Cash register: {{ cash_register.name }}</div>
 						<div
 							class="subtitle-1"
 						>Opening amount: {{parseFloat(cashRegisterReportsData.opening_amount).toFixed(2)}} $</div>
@@ -82,8 +82,12 @@
 				</v-card>
 			</v-col>
 		</v-row>
+		<v-row v-else>
+			<v-col cols="12" align="center" justify="center">
+				<v-progress-circular indeterminate color="secondary"></v-progress-circular>
+			</v-col>
+		</v-row>
 	</v-container>
-	<div v-else>Loading...</div>
 </template>
 
 <script>
@@ -91,7 +95,7 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
-		model: Int32Array | null
+		model: Object
 	},
 	data() {
 		return {
@@ -101,11 +105,11 @@ export default {
 		};
 	},
 	mounted() {
-		if (this.model)
+		if (this.$props.model) {
 			this.getOne({
 				model: "cash-register-reports",
 				data: {
-					id: this.model.id
+					id: this.$props.model.id
 				}
 			}).then(result => {
 				this.cashRegisterReports = result;
@@ -126,6 +130,32 @@ export default {
 					this.cash_register = response;
 				});
 			});
+		} else {
+			this.getOne({
+				model: "cash-register-reports/check",
+				data: {
+					id: this.$store.state.cashRegister.id
+				}
+			}).then(result => {
+				this.cashRegisterReports = result;
+				this.getOne({
+					model: "users",
+					data: {
+						id: this.cashRegisterReportsData.created_by
+					}
+				}).then(response => {
+					this.user = response;
+				});
+				this.getOne({
+					model: "cash-registers",
+					data: {
+						id: this.cashRegisterReportsData.cash_register_id
+					}
+				}).then(response => {
+					this.cash_register = response;
+				});
+			});
+		}
 	},
 	computed: {
 		cashRegisterReportsData() {

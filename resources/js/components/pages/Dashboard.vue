@@ -41,7 +41,7 @@
 							></v-textarea>
 						</v-col>
 					</v-row>
-					<v-btn type="submit" :loading="loading" :disabled="loading" color="success">submit</v-btn>
+					<v-btn type="submit" :loading="loading" :disabled="loading" color="tertiary">submit</v-btn>
 					<v-btn
 						@click="getSdkLogs"
 						v-if="endpoint === 'SDK'"
@@ -269,6 +269,10 @@
 							<v-data-table :items="apiLogs" :headers="apiHeaders" @click:row="openLog" :loading="loading"></v-data-table>
 						</v-col>
 					</v-row>
+					<v-btn type="submit" :loading="loading" :disabled="loading" color="primary">submit</v-btn>
+					<v-btn type="submit" :loading="loading" :disabled="loading" color="secondary">submit</v-btn>
+					<v-btn type="submit" :loading="loading" :disabled="loading" color="tertiary">submit</v-btn>
+					<v-btn type="submit" :loading="loading" :disabled="loading" color="quaternary">submit</v-btn>
 				</v-card-text>
 			</v-card>
 		</v-form>
@@ -431,7 +435,7 @@ export default {
 									"\nMessage: " +
 									error.response.data.message
 							);
-							console.log(error.response);
+
 							this.loading = false;
 						})
 						.finally(() => {
@@ -448,7 +452,7 @@ export default {
 									"\nMessage: " +
 									error.response.data.message
 							);
-							console.log(error.response);
+
 							this.loading = false;
 						})
 						.finally(() => {
@@ -466,7 +470,7 @@ export default {
 								"\nMessage: " +
 								error.response.data.message
 						);
-						console.log(error.response);
+
 						this.loading = false;
 					})
 					.finally(() => {

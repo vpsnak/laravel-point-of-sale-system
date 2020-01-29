@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\BankAccount;
+use App\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Session\Store;
 
 class CreditCardController extends Controller
 {
@@ -100,14 +103,16 @@ class CreditCardController extends Controller
     {
         if (array_key_exists('errorCode', $response)) {
             return [
-                'errors' => [$response['errorName'] . ' - ' . $response['errorMessage']]
+                'errors' => [$response['errorName'] . ' - ' . $response['errorMessage']],
+                'response' => $response
             ];
         }
         if (array_key_exists('ssl_result_message', $response)) {
             if ($response['ssl_result_message'] == 'APPROVAL') {
                 return [
                     'success' => [$response['ssl_result_message']],
-                    'id' => $response['ssl_txn_id']
+                    'id' => $response['ssl_txn_id'],
+                    'response' => $response
                 ];
             }
             return [
@@ -115,20 +120,36 @@ class CreditCardController extends Controller
                     'Unknown Error',
                     $response['ssl_result_message']
                 ],
-                'id' => $response['ssl_txn_id']
+                'id' => $response['ssl_txn_id'],
+                'response' => $response
             ];
         }
         return [
-            'errors' => ['Undocumented Error']
+            'errors' => ['Undocumented Error'],
+            'response' => $response
         ];
     }
 
     public function cardRefund($transaction_id)
     {
-        $response = ElavonApiPaymentController::doTransaction('txnquery', ['ssl_txn_id' => $transaction_id]);
+
+        if ($payment = Payment::where('code', $transaction_id)->first()) {
+            $store = $payment->cash_register->store;
+        } else {
+            ['errors' => ['Refund' => 'Missing transaction ID.<br>Cannot refund!']];
+        }
+
+        $data = [
+            'ssl_merchant_id' => ($store->company->bankAccountApi()->account)['merchant_id'],
+            'ssl_user_id' => ($store->company->bankAccountApi()->account)['user_id'],
+            'ssl_pin' => ($store->company->bankAccountApi()->account)['pin'],
+            'ssl_txn_id' => $transaction_id
+        ];
+
+        $response = ElavonApiPaymentController::doTransaction('txnquery', $data);
         $parsedResponse = $this->prepareResponse($response);
         if (array_key_exists('errors', $parsedResponse)) {
-            return ['errors' => ['Can not refund!']];
+            return ['errors' => ['Refund' => 'Can not refund!']];
         }
         if (array_key_exists('ssl_is_voidable', $response)) {
             if ($response['ssl_is_voidable'] == 'TRUE') {
@@ -137,26 +158,18 @@ class CreditCardController extends Controller
                 return $this->transactionAction('ccreturn', ['ssl_txn_id' => $transaction_id]);
             }
         }
-        return ['errors' => ['Can not refund!']];
+        return ['errors' => ['Refund' => 'Cannot refund!']];
     }
 
     public function transactionAction($type, $params)
     {
-        $payload = [];
-        if (array_key_exists('ssl_txn_id', $params)) {
-            $payload['ssl_txn_id'] = $params['ssl_txn_id'];
-        }
-        if (array_key_exists('ssl_amount', $params)) {
-            $payload['ssl_amount'] = $params['ssl_amount'];
-        }
-
         switch ($type) {
             case 'ccreturn':
             case 'ccvoid':
             case 'cccomplete':
             case 'ccdelete':
             case 'txnquery':
-                $response = ElavonApiPaymentController::doTransaction($type, $payload);
+                $response = ElavonApiPaymentController::doTransaction($type, $params);
                 return $this->prepareResponse($response);
             default:
                 return ['errors' => ['Invalid API action']];

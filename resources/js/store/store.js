@@ -23,17 +23,18 @@ export default new Vuex.Store({
         endpoints
     },
     state: {
+        appName: "",
+        appEnv: "",
+        appDebug: false,
+
         baseUrl: "/api/",
 
         user: Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null,
 
         token: Cookies.get("token") || null,
 
-        store: Cookies.get("store") ? JSON.parse(Cookies.get("store")) : null,
-
-        cashRegister: Cookies.get("cash_register")
-            ? JSON.parse(Cookies.get("cash_register"))
-            : null,
+        store: null,
+        cashRegister: null,
 
         // notification
         notification: {
@@ -43,7 +44,6 @@ export default new Vuex.Store({
 
         // dialogs
         cartRestoreDialog: false,
-        checkoutDialog: false,
 
         productList: [],
         categoryList: [],
@@ -93,45 +93,24 @@ export default new Vuex.Store({
         setCashRegister(state, cashRegister) {
             if (cashRegister) {
                 state.cashRegister = cashRegister;
-                Cookies.set("cash_register", cashRegister, {
-                    sameSite: "strict"
-                });
             } else {
                 state.cashRegister = null;
-                Cookies.remove("cash_register");
             }
         },
         setStore(state, store) {
             if (store) {
                 state.store = store;
-                Cookies.set("store", state.store, {
-                    sameSite: "strict"
-                });
             } else {
                 state.store = null;
-                Cookies.remove("store");
             }
         },
         setUser(state, user) {
             if (user) {
                 state.user = user;
                 Cookies.set("user", state.user, {
+                    secure: state.appEnv !== "local" ? true : false,
                     sameSite: "strict"
                 });
-
-                // retrieve automatically opened cash register
-                // if (state.user.open_register) {
-                //     state.cashRegister = state.user.open_register.cash_register;
-                //     state.store = state.user.open_register.cash_register.store;
-
-                //     Cookies.set("cash_register", state.cashRegister, {
-                //         sameSite: "strict"
-                //     });
-
-                //     Cookies.set("store", state.store, {
-                //         sameSite: "strict"
-                //     });
-                // }
             } else {
                 state.user = null;
                 Cookies.remove("user");
@@ -141,6 +120,7 @@ export default new Vuex.Store({
             if (token) {
                 state.token = "Bearer " + token;
                 Cookies.set("token", state.token, {
+                    secure: state.appEnv !== "local" ? true : false,
                     sameSite: "strict"
                 });
             } else {
@@ -274,6 +254,17 @@ export default new Vuex.Store({
                         context.commit("setNotification", notification);
                         reject(error);
                     });
+            });
+        },
+        getAppConfig(context) {
+            return new Promise(resolve => {
+                axios.get(`${this.state.baseUrl}config`).then(response => {
+                    context.state.appEnv = response.data.env;
+                    context.state.appName = response.data.name;
+                    context.state.appDebug = response.data.debug;
+
+                    resolve(true);
+                });
             });
         },
         getAll(context, payload) {
@@ -444,7 +435,124 @@ export default new Vuex.Store({
                     });
             });
         },
+        logoutCashRegister(context) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(this.state.baseUrl + "cash-register-logs/logout")
+                    .then(response => {
+                        if (
+                            router.currentRoute.name === "sales" ||
+                            router.currentRoute.name === "orders"
+                        ) {
+                            router.push({
+                                name: "dashboard"
+                            });
+                        }
 
+                        let notification = {
+                            msg: response.data.info,
+                            type: "success"
+                        };
+
+                        context.commit("setCashRegister", null);
+                        context.commit("setStore", null);
+                        context.commit("setNotification", notification);
+
+                        resolve(true);
+                    })
+                    .catch(error => {
+                        if (error.response) {
+                            let notification = {
+                                msg: error.response.data.errors,
+                                type: "error"
+                            };
+                            context.commit("setNotification", notification);
+
+                            context.commit("setCashRegister", null);
+                            context.commit("setStore", null);
+                            context.commit("setNotification", notification);
+                        } else {
+                            let notification = {
+                                msg:
+                                    "Unexpected error occured. Check console for more info",
+                                type: "error"
+                            };
+                            console.log(error);
+                            context.commit("setNotification", notification);
+                        }
+
+                        reject(error);
+                    });
+            });
+        },
+        cashRegisterAmount(context) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(
+                        this.state.baseUrl +
+                            `cash-register-logs/${context.state.cashRegister.id}/amount`
+                    )
+                    .then(response => {
+                        resolve(response.data);
+                    });
+            });
+        },
+        retrieveCashRegister(context) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(this.state.baseUrl + "cash-register-logs/retrieve")
+                    .then(response => {
+                        if (response.data !== 0) {
+                            if (
+                                !context.state.cashRegister ||
+                                !context.state.store
+                            ) {
+                                let notification = {
+                                    msg: `Your open session with cash register: <b>${response.data.cashRegister.cash_register.name}</b> has been restored`,
+                                    type: "info"
+                                };
+
+                                context.commit("setNotification", notification);
+                            }
+
+                            context.commit(
+                                "setCashRegister",
+                                response.data.cashRegister.cash_register
+                            );
+                            context.commit(
+                                "setStore",
+                                response.data.cashRegister.cash_register.store
+                            );
+                        } else {
+                            if (
+                                context.state.store ||
+                                context.state.cashRegister
+                            ) {
+                                let notification = {
+                                    msg: `Your session with cash register: <b>${context.state.cashRegister.name}</b> has been terminated`,
+                                    type: "error"
+                                };
+                                context.commit("setNotification", notification);
+
+                                if (
+                                    router.currentRoute.name === "sales" ||
+                                    router.currentRoute.name === "orders"
+                                ) {
+                                    router.push({
+                                        name: "dashboard"
+                                    });
+                                }
+                            }
+                            context.commit("setCashRegister", null);
+                            context.commit("setStore", null);
+                        }
+                        resolve(true);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
         closeCashRegister(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -471,7 +579,7 @@ export default new Vuex.Store({
                         context.commit("setStore", null);
                         context.commit("setNotification", notification);
 
-                        resolve(true);
+                        resolve(response.data);
                     })
                     .catch(error => {
                         if (error.response) {

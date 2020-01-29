@@ -13,39 +13,17 @@ class ElavonApiPaymentController extends Controller
 {
     protected static $enviroment_url = 'https://api.demo.convergepay.com/VirtualMerchantDemo/processxml.do';
 
-    protected static $merchant_id = '009710';
-    protected static $user_id = 'convergeapi';
-    protected static $pin = 'LWUY8K81466BXK4Y6I7FERJMOLDRM1XL37JPP4ATK3JORDUMAYDRICE9H7QVL6M8';
-    protected static $test_mode = 'false';
-
     private $txn_id;
-    private $test_case;
 
     private $ssl_card_number;
     private $ssl_amount;
     private $ssl_cvv2cvc2_indicator;
     private $ssl_cvv2cvc2;
 
-    public function getLogs($test_case = null)
-    {
-        if ($test_case) {
-            return response(ElavonApiPayment::whereTestCase($test_case)->get());
-        } else {
-            return response(ElavonApiPayment::all());
-        }
-    }
-
-    public function deleteAll()
-    {
-        DB::table('elavon_api_payments')->truncate();
-        return response('API Logs truncated');
-    }
-
     private function saveToApiLog($data, $status)
     {
         $elavonApiPayment = new ElavonApiPayment();
 
-        $elavonApiPayment->test_case = $this->test_case;
         $elavonApiPayment->txn_id = $this->txn_id;
         $elavonApiPayment->status = $status;
         $elavonApiPayment->log = is_Array($data) ? json_encode($data) : strip_tags($data);
@@ -72,11 +50,13 @@ class ElavonApiPaymentController extends Controller
 
     public static function doTransaction($type, array $data)
     {
+        $apiAcc = auth()->user()->open_register->cash_register->store->company->bankAccountApi()->account;
+
         $defaults = [
-            'ssl_merchant_id' => self::$merchant_id,
-            'ssl_user_id' => self::$user_id,
-            'ssl_pin' => self::$pin,
-            'ssl_test_mode' => self::$test_mode,
+            'ssl_merchant_id' => $apiAcc['merchant_id'],
+            'ssl_user_id' => $apiAcc['user_id'],
+            'ssl_pin' => $apiAcc['pin'],
+            'ssl_test_mode' => $apiAcc['test_mode'],
             'ssl_transaction_type' => $type,
             'ssl_show_form' => 'false' // @TODO check this attribute when and if neeed
         ];
@@ -105,6 +85,7 @@ class ElavonApiPaymentController extends Controller
     {
         $client = new Client();
         Log::debug('CreditCard Payment Payload:' . json_encode($html));
+
         $response = $client->post(self::$enviroment_url, [
             'headers' => [
                 'Content-Type' => 'application/x-www-form-urlencoded'

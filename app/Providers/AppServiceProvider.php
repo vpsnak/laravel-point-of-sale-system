@@ -8,7 +8,6 @@ use App\Order;
 use App\Payment;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 
@@ -21,7 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        if ($this->app->environment() === 'local') {
+            $this->app->register(\Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
+        }
     }
 
     /**
@@ -31,7 +32,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Schema::defaultStringLength(191);
         Order::observe(OrderObserver::class);
         Payment::observe(PaymentObserver::class);
 
@@ -43,10 +43,12 @@ class AppServiceProvider extends ServiceProvider
                         function (Builder $query) use ($attribute, $searchTerm) {
                             [$relationName, $relationAttribute] = explode('.', $attribute);
 
-                            $query->orWhereHas($relationName,
+                            $query->orWhereHas(
+                                $relationName,
                                 function (Builder $query) use ($relationAttribute, $searchTerm) {
                                     $query->where($relationAttribute, 'LIKE', "%{$searchTerm}%");
-                                });
+                                }
+                            );
                         },
                         function (Builder $query) use ($attribute, $searchTerm) {
                             $query->orWhere($attribute, 'LIKE', "%{$searchTerm}%");

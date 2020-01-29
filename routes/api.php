@@ -11,14 +11,25 @@
 |
 */
 
-// roles
-Route::get('/roles', "RoleController@all")->middleware('scope:admin');
-Route::post('/roles/set', "RoleController@setRole")->middleware('scope:admin');
-
 $cashier = 'cashier';
 $store_manager = 'store_manager';
 $admin = 'admin';
 $allRoles = "$admin,$store_manager,$cashier";
+
+// app env
+Route::get('/config', 'AppController@config');
+
+// roles
+Route::get('/roles', "RoleController@all")->middleware('scope:admin');
+Route::post('/roles/set', "RoleController@setRole")->middleware('scope:admin');
+
+// custom end points
+Route::get('/cash-register-reports/check/{cashRegister}', "CashRegisterReportController@checkCurrent")->middleware("scope:{$allRoles}");
+
+Route::get('/cash-register-logs/logout', "CashRegisterLogsController@logout")->middleware("scope:{$allRoles}");
+Route::get('/cash-register-logs/retrieve', "CashRegisterLogsController@retrieve")->middleware("scope:{$allRoles}");
+Route::get('/cash-register-logs/{id}/amount', "CashRegisterLogsController@amount")->middleware("scope:{$allRoles}");
+
 
 $routeAll = [
     'url' => '/',
@@ -423,6 +434,22 @@ $allRoutes = [
                 $routeDelete
             ]
         ]
+    ],
+    'companies' => [
+        'controller' => 'CompanyController',
+        'endpoints' => [
+            'get' => [
+                $routeAll,
+                $routeGet
+            ],
+            'post' => [
+                $routeCreate,
+                $routeSearch
+            ],
+            'delete' => [
+                $routeDelete
+            ]
+        ]
     ]
 ];
 
@@ -460,7 +487,7 @@ Route::get('/product-listing/categories', "CategoryController@productListingCate
 Route::post('/shipping/timeslot', "TimeslotController@getTimeslots")->middleware("scope:$allRoles");
 
 // magento oauth authenticate
-Route::get('/magento/authorize', 'Auth\MagentoOAuthController@authorizeMagento')->middleware("scope:$admin");
+Route::get('/magento/authorize', 'Auth\MagentoOAuthController@authorizeMagento');
 
 // e-mail
 Route::post('/mail-receipt/{order}', 'MailReceiptController@send')->middleware("scope:$allRoles");

@@ -22,6 +22,7 @@
 		<v-layout column>
 			<v-flex md10 style="overflow: auto">
 				<v-data-table
+					disable-sort
 					dense
 					:disable-filtering="true"
 					:headers="$store.state.datatable.headers"
@@ -84,7 +85,7 @@
 							<template v-slot:activator="{ on }">
 								<v-btn
 									@click="rechargeGiftcardDialog(item) "
-									:disabled="btnDisable"
+									:disabled="btnDisable || rechargeGiftCardDisable()"
 									class="my-1"
 									icon
 									v-on="on"
@@ -114,7 +115,7 @@
 
 						<v-tooltip bottom v-if="tableForm != 'customerNewForm'">
 							<template v-slot:activator="{ on }">
-								<v-btn :disabled="btnDisable" @click="editItemDialog(item)" class="my-1" v-on="on" icon>
+								<v-btn :disabled="btnDisable" @click="editItemDialog(_.cloneDeep(item))" class="my-1" v-on="on" icon>
 									<v-icon small>edit</v-icon>
 								</v-btn>
 							</template>
@@ -152,11 +153,13 @@
 			:persistent="dialog.persistent"
 		></interactiveDialog>
 
-		<checkoutDialog :show="checkoutDialog" @close="resetCart" giftcard />
+		<checkoutDialog @close="resetCart()" :giftcard="true" />
 	</v-card>
 </template>
 
 <script>
+import _ from 'lodash';
+Object.defineProperty(Vue.prototype, '_', { value: _ });
 import { mapActions, mapMutations, mapState } from "vuex";
 
 export default {
@@ -197,8 +200,20 @@ export default {
 		this.setBtnTitle(this.tableBtnTitle);
 		this.setBtnDisable(this.tableBtnDisable);
 		this.setForm(this.tableForm);
+		this.$root.$on("barcodeScan", sku => {
+			if (this.tableForm === "productForm") {
+				this.keyword = sku;
+				this.search();
+			}
+		});
+	},
+	beforeDestroy() {
+		this.$root.$off("barcodeScan");
 	},
 	computed: {
+		cashRegister() {
+			return this.$store.state.cashRegister;
+		},
 		searchAction: {
 			get() {
 				return this.search_action;
@@ -232,14 +247,10 @@ export default {
 		},
 		checkoutDialog: {
 			get() {
-				return this.$store.state.checkoutDialog;
+				return this.$store.state.cart.checkoutDialog;
 			},
 			set(value) {
-				if (!value) {
-					this.paginate();
-				}
-
-				this.$store.state.checkoutDialog = value;
+				this.$store.state.cart.checkoutDialog = value;
 			}
 		},
 		...mapState("datatable", {
@@ -259,8 +270,17 @@ export default {
 		}
 	},
 	methods: {
-		resetCart() {
+		rechargeGiftCardDisable() {
+			if (this.cashRegister) {
+				return false;
+			} else {
+				return true;
+			}
+		},
+		resetCart(e) {
 			this.$store.commit("cart/resetState");
+
+			this.paginate();
 		},
 		resetDialog() {
 			this.dialog = {
@@ -337,7 +357,7 @@ export default {
 				persistent: true
 			};
 		},
-		search(e, page) {
+		search(e, page = false) {
 			if (this.keyword.length > 2 || this.searchAction) {
 				this.setLoading(true);
 
@@ -407,8 +427,12 @@ export default {
 			});
 		},
 
-		checkout(item) {
-			this.$store.commit("cart/setOrder", item);
+		checkout(order) {
+			console.log(order);
+			this.$store.commit("cart/setOrder", order);
+
+			this.$store.state.cart.customer = order.customer;
+
 			this.$store.state.cart.checkoutSteps[0].completed = true;
 			this.$store.state.cart.currentCheckoutStep = 2;
 

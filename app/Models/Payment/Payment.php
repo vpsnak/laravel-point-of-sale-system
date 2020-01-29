@@ -4,7 +4,7 @@ namespace App;
 
 class Payment extends BaseModel
 {
-    protected $with = ['paymentType', 'created_by'];
+    protected $with = ['paymentType', 'created_by', 'elavonApiPayments', 'elavonSdkPayments'];
 
     protected $fillable = [
         'payment_type',
@@ -30,6 +30,11 @@ class Payment extends BaseModel
     public function created_by()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function cash_register()
+    {
+        return $this->belongsTo(CashRegister::class);
     }
 
     public function elavonApiPayments()

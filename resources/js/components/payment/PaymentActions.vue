@@ -17,6 +17,7 @@
 		<v-row justify="center" align="center" v-if="paymentType === 'card'" class="my-3">
 			<div class="pr-2">
 				<v-text-field
+					autocomplete="off"
 					label="Card number"
 					type="number"
 					prepend-inner-icon="mdi-credit-card"
@@ -25,6 +26,7 @@
 					:disabled="loading || orderLoading"
 				></v-text-field>
 				<v-text-field
+					autocomplete="off"
 					label="CVC/CVV"
 					type="number"
 					prepend-inner-icon="mdi-lock"
@@ -35,6 +37,7 @@
 			</div>
 			<div class="pl-2">
 				<v-text-field
+					autocomplete="off"
 					label="Card holder's name"
 					prepend-inner-icon="mdi-account-box"
 					v-model="card.card_holder"
@@ -42,6 +45,7 @@
 					:disabled="loading || orderLoading"
 				></v-text-field>
 				<v-text-field
+					autocomplete="off"
 					:disabled="loading || orderLoading"
 					label="Exp date"
 					v-model="card.exp_date"
@@ -85,7 +89,7 @@
 				></v-text-field>
 			</v-col>
 		</v-row>
-		<v-row justify="center" align="center" class="my-3" v-if="paymentType !== 'coupon'">
+		<v-row justify="center" align="center" class="my-3">
 			<v-col :lg="5">
 				<v-btn
 					dark
@@ -162,16 +166,14 @@ export default {
 			}
 		},
 		houseAccountLimit() {
-			return parseFloat(
-				this.$store.state.cart.customer.house_account_limit
-			);
+			return parseFloat(this.$store.state.cart.customer.house_account_limit);
 		},
 		remainingAmount() {
 			if (parseFloat(this.$props.remaining) >= 0) {
-				this.amount = parseFloat(this.$props.remaining);
+				this.amount = parseFloat(this.$props.remaining).toFixed(2);
 				return parseFloat(this.$props.remaining);
 			} else {
-				this.amount = parseFloat(this.$store.state.cart.cart_price);
+				this.amount = parseFloat(this.$store.state.cart.cart_price).toFixed(2);
 				return parseFloat(this.$store.state.cart.cart_price);
 			}
 		},
@@ -239,21 +241,15 @@ export default {
 		limits() {
 			if (this.paymentType !== "cash") {
 				if (this.paymentType === "house-account") {
-					if (
-						this.houseAccountLimit >
-						parseFloat(this.remainingAmount)
-					) {
+					if (this.houseAccountLimit > parseFloat(this.remainingAmount)) {
 						this.amount = this.remainingAmount;
 					} else if (
-						parseFloat(this.amount) >
-						parseFloat(this.houseAccountLimit)
+						parseFloat(this.amount) > parseFloat(this.houseAccountLimit)
 					) {
 						this.amount = this.houseAccountLimit;
 					}
 				}
-				if (
-					parseFloat(this.amount) > parseFloat(this.remainingAmount)
-				) {
+				if (parseFloat(this.amount) > parseFloat(this.remainingAmount)) {
 					this.amount = this.remainingAmount.toFixed(2);
 				}
 			} else {
@@ -272,18 +268,20 @@ export default {
 			this.limits();
 		},
 		sendPayment() {
-            this.orderLoading = true;
-            this.$store.state.cart.paymentLoading = true;
+			this.orderLoading = true;
+			this.$store.state.cart.paymentLoading = true;
 
 			if (this.$store.state.cart.order === undefined) {
-				this.submitOrder().then(response => {
-					this.pay();
-				}).finally(() => {
-                    this.orderLoading = false;
-                });
+				this.submitOrder()
+					.then(response => {
+						this.pay();
+					})
+					.finally(() => {
+						this.orderLoading = false;
+					});
 			} else {
 				this.pay();
-                this.orderLoading = false;
+				this.orderLoading = false;
 			}
 		},
 

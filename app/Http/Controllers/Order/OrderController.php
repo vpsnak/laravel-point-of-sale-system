@@ -78,10 +78,13 @@ class OrderController extends BaseController
             'shipping.date' => 'required_if:shipping.method,pickup,delivery|date',
             'shipping.timeSlotLabel' => 'nullable|required_if:shipping.method,pickup,delivery|string',
             'shipping.location' => 'nullable|required_if:shipping.method,delivery|numeric',
-            'shipping.occasion' => 'nullable|required_if:shipping.method,pickup,delivery|numeric',
+            'shipping.occasion' => 'nullable|required_if:shipping.method,delivery|numeric',
 
             'shipping.address' => 'nullable|required_if:shipping.method,delivery',
             'shipping.address.id' => 'nullable|required_if:shipping.method,delivery|numeric|exists:addresses,id',
+
+            'billing_address' => 'nullable|required_if:shipping.method,delivery',
+            'billing_address.id' => 'nullable|required_if:shipping.method,delivery|numeric|exists:addresses,id',
 
             'shipping.pickup_point.id' => 'required_if:shipping.method,pickup|numeric',
         ]);
@@ -95,9 +98,19 @@ class OrderController extends BaseController
             'shipping.address.country_id' => 'required_if:shipping.method,delivery|exists:countries,country_id',
             'shipping.address.region' => 'required_if:shipping.method,delivery|exists:regions,region_id',
             'shipping.address.postcode' => 'required_if:shipping.method,delivery|string',
-            'shipping.address.phone' => 'required_if:shipping.method,delivery|numeric',
-            'shipping.address.company' => 'nullable|string',
-            'shipping.address.vat_id' => 'nullable|string',
+            'shipping.address.phone' => 'required_if:shipping.method,delivery|string',
+        ]);
+
+        $billingAddressData = $request->validate([
+            'billing_address.first_name' => 'required_if:shipping.method,delivery|string',
+            'billing_address.last_name' => 'required_if:shipping.method,delivery|string',
+            'billing_address.street' => 'required_if:shipping.method,delivery|string',
+            'billing_address.street2' => 'nullable|string',
+            'billing_address.city' => 'required_if:shipping.method,delivery|string',
+            'billing_address.country_id' => 'required_if:shipping.method,delivery|exists:countries,country_id',
+            'billing_address.region' => 'required_if:shipping.method,delivery|exists:regions,region_id',
+            'billing_address.postcode' => 'required_if:shipping.method,delivery|string',
+            'billing_address.phone' => 'required_if:shipping.method,delivery|string',
         ]);
 
         $validatedData['shipping_type'] = $shippingData['shipping']['method'] ?? null;
@@ -141,6 +154,12 @@ class OrderController extends BaseController
         if (!empty($shippingData['shipping']['address'])) {
             $shipping_address = OrderAddress::store($shippingAddressData['shipping']['address']);
             $order->shipping_address_id = $shipping_address->id;
+            $order->save();
+        }
+
+        if (!empty($shippingData['billing_address'])) {
+            $billing_address = OrderAddress::store($billingAddressData['billing_address']);
+            $order->billing_address_id = $billing_address->id;
             $order->save();
         }
 

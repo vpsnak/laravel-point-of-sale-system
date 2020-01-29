@@ -22,7 +22,7 @@
 			<v-toolbar>
 				<v-tooltip bottom>
 					<template v-slot:activator="{ on }">
-						<v-btn @click.stop="close" icon v-on="on" color="red">
+						<v-btn :disabled="disableControls" @click.stop="close" icon v-on="on" color="red">
 							<v-icon>mdi-close</v-icon>
 						</v-btn>
 					</template>
@@ -31,7 +31,7 @@
 
 				<v-tooltip bottom v-if="showHoldBtn">
 					<template v-slot:activator="{ on }">
-						<v-btn @click="hold" icon v-on="on" color="yellow">
+						<v-btn :disabled="disableControls" @click="hold" icon v-on="on" color="yellow">
 							<v-icon>mdi-pause</v-icon>
 						</v-btn>
 					</template>
@@ -44,7 +44,9 @@
 				<v-row>
 					<v-col :lg="9" class="py-lg-0">
 						<v-card class="mx-auto">
-							<checkoutStepper />
+							<v-card-text>
+								<checkoutStepper />
+							</v-card-text>
 						</v-card>
 					</v-col>
 					<v-col :lg="3" class="py-lg-0">
@@ -52,8 +54,6 @@
 							:key="order ? order.id : 0"
 							icon="mdi-clipboard-list"
 							title="Order summary"
-							:items="items"
-							:order="order"
 							:editable="isEditable"
 						/>
 					</v-col>
@@ -72,10 +72,21 @@ export default {
 			closePrompt: false
 		};
 	},
-	props: {
-		giftcard: Boolean
-	},
 	computed: {
+		cart() {
+			return this.$store.state.cart;
+		},
+		disableControls() {
+			if (
+				this.cart.paymentLoading ||
+				this.cart.refundLoading ||
+				this.cart.completeOrderLoading
+			) {
+				return true;
+			} else {
+				return false;
+			}
+		},
 		closeBtnTxt() {
 			return this.order && this.$store.state.cart.currentCheckoutStep !== 3
 				? "Cancel order"
@@ -93,20 +104,21 @@ export default {
 		},
 		state: {
 			get() {
-				return this.$store.state.checkoutDialog;
+				return this.$store.state.cart.checkoutDialog;
 			},
 			set(value) {
-				this.$store.state.checkoutDialog = value;
+				this.$store.state.cart.checkoutDialog = value;
 			}
 		},
 		order() {
 			return this.$store.state.cart.order;
-		},
-		items() {
-			if (this.order) {
-				return this.$store.state.cart.order.items;
+		}
+	},
+	watch: {
+		state(v) {
+			if (!v) {
+				this.$emit("close", true);
 			}
-			return undefined;
 		}
 	},
 	methods: {
@@ -115,10 +127,6 @@ export default {
 			this.state = false;
 		},
 		close() {
-			if (this.$props.giftcard) {
-				this.$emit("close", true);
-			}
-
 			if (this.order && this.order.status === "complete") {
 				this.resetState();
 				this.state = false;
@@ -130,11 +138,12 @@ export default {
 		},
 		confirmation(event) {
 			if (event) {
+				this.$store.state.cart.isValidCheckout = false;
+
 				let payload = {
 					model: "orders",
 					id: this.order.id
 				};
-
 				this.delete(payload).then(response => {
 					this.resetState();
 					this.state = false;

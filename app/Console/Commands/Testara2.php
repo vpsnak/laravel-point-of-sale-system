@@ -38,25 +38,11 @@ class Testara2 extends Command
      */
     public function handle()
     {
-        $card = [
-            'type' => 'visa',
-            'number' => '4000000000000002',
-            'exp_date' => '1219',
-            'cvc' => '123',
-            'name' => 'Test Name',
-        ];
-        $response = (new CreditCardController)->creditCardAction(
-            'ccsale',
-            $card['number'],
-            $card['exp_date'],
-            $card['cvc'],
-            $card['name'],
-            25
-        );
-        var_dump($response);
-        $response = (new CreditCardController)->transactionAction('ccvoid', [
-            'ssl_txn_id' => $response['id']
-        ]);
-        var_dump($response);
+        // $response = (new CreditCardController)->transactionAction('ccvoid', [
+        //     "ssl_merchant_id" => '009710',
+        //     "ssl_user_id" => 'convergeapi',
+        //     "ssl_pin" => 'H3192LKKOIBN3GIZ9FGXX01MYWGIYEJ2UJ8PW4PCHXRSNBZVFMF1PWNG0HR003MI',
+        //     'ssl_txn_id' => '200120ED4-2D1BEFB4-8B6F-4D86-92EE-B856560A82C8'
+        // ]);
     }
 }

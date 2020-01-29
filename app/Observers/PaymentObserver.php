@@ -5,8 +5,12 @@ namespace App\Observers;
 use App\Coupon;
 use App\Customer;
 use App\Giftcard;
+use App\Helper\PhpHelper;
+use App\ElavonApiPayment;
 use App\Http\Controllers\CreditCardController;
+use App\Http\Controllers\ElavonSdkPaymentController;
 use App\Payment;
+use Log;
 
 class PaymentObserver
 {
@@ -44,9 +48,36 @@ class PaymentObserver
 
         if ($payment->status == 'approved' && $payment->refunded == 1) {
             switch ($payment->paymentType->type) {
+                case 'pos-terminal':
+                    $elavonSdkPaymentController = new ElavonSdkPaymentController;
+
+                    $elavonSdkPaymentController->selected_transaction = 'VOID';
+                    $elavonSdkPaymentController->originalTransId = $payment->code;
+                    $paymentResponse = $elavonSdkPaymentController->posPayment();
+
+                    if (isset($paymentResponse['errors'])) {
+                        $elavonSdkPaymentController->selected_transaction = 'LINKED_REFUND';
+                        $elavonSdkPaymentController->amount = $payment->amount;
+                        $paymentResponse = $elavonSdkPaymentController->posPayment();
+
+                        if (isset($paymentResponse['errors'])) {
+                            return false;
+                        }
+                    }
+                    return true;
                 case 'card':
                     $paymentResponse = (new CreditCardController)->cardRefund($payment->code);
-                    if (isset($paymentResponse['error'])) {
+
+                    ElavonApiPayment::create([
+                        'txn_id' => $paymentResponse['response']['ssl_txn_id'] ?? '',
+                        'transaction' => $paymentResponse['response']['ssl_transaction_type'] ?? '',
+                        'card_number' => $paymentResponse['response']['ssl_card_number'] ?? '',
+                        'status' => $paymentResponse['response']['ssl_result_message'] ?? '',
+                        'log' => json_encode($paymentResponse['response']),
+                        'payment_id' => $payment->id,
+                    ]);
+
+                    if (isset($paymentResponse['errors'])) {
                         return false;
                     }
                     return true;

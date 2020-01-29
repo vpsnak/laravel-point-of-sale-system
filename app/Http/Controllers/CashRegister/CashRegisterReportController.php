@@ -47,6 +47,7 @@ class CashRegisterReportController extends BaseController
                 $report['cash_register_id'] = $id;
                 $report['report_type'] = 'z';
                 $report['report_name'] = 'Report ' . strtoupper($report['report_type']) . ' ' . now();
+
                 return CashRegisterReport::store($report);
             }
             return null;
@@ -160,6 +161,13 @@ class CashRegisterReportController extends BaseController
                 return 0;
             }),
         ];
+    }
+
+    public function checkCurrent(CashRegister $cashRegister)
+    {
+        $report = self::generateReportByCashRegisterId($cashRegister->id);
+
+        return response($report);
     }
 
     public function search(Request $request)

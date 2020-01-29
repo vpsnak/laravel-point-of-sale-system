@@ -1,26 +1,34 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="closeCashRegisterObs">
+	<ValidationObserver v-slot="{ invalid }">
 		<v-form @submit.prevent="submit">
-			<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Closing Amount">
+			<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Password">
 				<v-text-field
+					:append-icon="
+                        showPassword ? 'visibility' : 'visibility_off'
+                    "
+					:type="showPassword ? 'text' : 'password'"
 					:loading="loading"
-					v-model="closing_amount"
-					type="number"
-					label="Closing amount"
+					v-model="password"
+					label="Password"
 					:error-messages="errors"
 					:success="valid"
+					prepend-icon="mdi-key"
+					@click:append="showPassword = !showPassword"
 				></v-text-field>
 			</ValidationProvider>
 			<v-row>
-				<v-col cols="6" v-if="cashRegister.earnings">
-					<span class="title">
-						Remaining:
-						<span
-							class="amber--text"
-							v-text="'$ ' + cashRegister.earnings.cash_total.toFixed(2)"
-						/>
-					</span>
+				<v-col :cols="12" v-if="cashRegister.earnings">
+					<v-text-field
+						class="amber--text"
+						label="Cash amount"
+						:value="amount"
+						:loading="loading"
+						readonly
+						prepend-icon="mdi-currency-usd"
+					></v-text-field>
 				</v-col>
+			</v-row>
+			<v-row>
 				<v-col cols="6">
 					<v-btn type="submit" :loading="loading" :disabled="invalid">Close Cash Register</v-btn>
 				</v-col>
@@ -34,9 +42,17 @@ import { mapActions } from "vuex";
 export default {
 	data() {
 		return {
-			loading: false,
-			closing_amount: null
+			showPassword: false,
+			amount: "",
+			loading: true,
+			password: ""
 		};
+	},
+	mounted() {
+		this.$store.dispatch("cashRegisterAmount").then(response => {
+			this.amount = response.toFixed(2);
+			this.loading = false;
+		});
 	},
 	computed: {
 		store() {
@@ -50,21 +66,32 @@ export default {
 		submit() {
 			this.loading = true;
 			let payload = {
-				data: {
-					store_id: this.store.id,
-					cash_register_id: this.cashRegister.id,
-					closing_amount: this.closing_amount
-				}
+				current_password: this.password
 			};
-			this.closeCashRegister(payload)
+
+			this.verifySelf(payload)
 				.then(() => {
-					this.$emit("submit");
+					let payload = {
+						data: {
+							store_id: this.store.id,
+							cash_register_id: this.cashRegister.id,
+							password: this.password
+						}
+					};
+					this.closeCashRegister(payload)
+						.then(response => {
+							this.$emit("submit", { data: { response } });
+						})
+						.finally(() => {
+							this.loading = false;
+						});
 				})
-				.finally(() => {
+				.catch(() => {
+					this.password = "";
 					this.loading = false;
 				});
 		},
-		...mapActions(["closeCashRegister"])
+		...mapActions(["verifySelf", "closeCashRegister"])
 	},
 	beforeDestroy() {
 		this.$off("submit");

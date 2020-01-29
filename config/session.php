@@ -46,7 +46,7 @@ return [
     |
     */
 
-    'encrypt' => false,
+    'encrypt' => config('app.env') !== 'local' ? true : false,
 
     /*
     |--------------------------------------------------------------------------
@@ -166,7 +166,7 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE', false),
+    'secure' => config('app.env') !== 'local' ? true : false,
 
     /*
     |--------------------------------------------------------------------------

@@ -15,8 +15,10 @@ class DatabaseSeeder extends Seeder
         $this->call(RoleSeeder::class);
         $this->call(UserSeeder::class);
 
+        $this->call(CompanySeeder::class);
         $this->call(TaxSeeder::class);
         $this->call(StoreSeeder::class);
+        $this->call(BankAccountSeeder::class);
         $this->call(CashRegisterSeeder::class);
         $this->call(PaymentType::class);
         $this->call(StorePickupSeeder::class);
