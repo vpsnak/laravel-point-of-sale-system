@@ -17,7 +17,11 @@
 				@keyup.enter="search"
 			></v-text-field>
 			<v-divider class="mx-4" inset vertical></v-divider>
-			<v-btn :disabled="btnDisable" color="primary" @click="createItemDialog">{{ this.btnTitle }}</v-btn>
+			<v-btn
+				:disabled="btnDisable || loading"
+				color="primary"
+				@click="createItemDialog"
+			>{{ this.btnTitle }}</v-btn>
 		</v-card-title>
 		<v-layout column>
 			<v-flex md10 style="overflow: auto">
@@ -53,7 +57,7 @@
                             "
 						>
 							<template v-slot:activator="{ on }">
-								<v-btn @click="checkout(item)" class="my-1" icon v-on="on">
+								<v-btn :disabled="loading" @click="checkout(item)" class="my-1" icon v-on="on">
 									<v-icon small>mdi-currency-usd</v-icon>
 								</v-btn>
 							</template>
@@ -67,13 +71,7 @@
                             "
 						>
 							<template v-slot:activator="{ on }">
-								<v-btn
-									@click="cancelOrderDialog(item)"
-									class="my-1"
-									icon
-									v-on="on"
-									:disabled="cancelOrderDisabled(item)"
-								>
+								<v-btn :disabled="loading" @click="cancelOrderDialog(item)" class="my-1" icon v-on="on">
 									<v-icon small>mdi-cancel</v-icon>
 								</v-btn>
 							</template>
@@ -85,7 +83,7 @@
 							<template v-slot:activator="{ on }">
 								<v-btn
 									@click="rechargeGiftcardDialog(item) "
-									:disabled="btnDisable || rechargeGiftCardDisable()"
+									:disabled="btnDisable || rechargeGiftCardDisable() || loading"
 									class="my-1"
 									icon
 									v-on="on"
@@ -98,7 +96,7 @@
 						<!-- user roles actions -->
 						<v-tooltip bottom v-if="tableForm === 'userForm'">
 							<template v-slot:activator="{ on }">
-								<v-btn @click="roleDialog(item)" class="my-1" v-on="on" icon>
+								<v-btn :disabled="loading" @click="roleDialog(item)" class="my-1" v-on="on" icon>
 									<v-icon small>mdi-account-key</v-icon>
 								</v-btn>
 							</template>
@@ -106,7 +104,7 @@
 						</v-tooltip>
 						<v-tooltip bottom v-if="tableForm === 'userForm'">
 							<template v-slot:activator="{ on }">
-								<v-btn @click="changePasswordDialog(item)" class="my-1" v-on="on" icon>
+								<v-btn :disabled="loading" @click="changePasswordDialog(item)" class="my-1" v-on="on" icon>
 									<v-icon small>mdi-lock-reset</v-icon>
 								</v-btn>
 							</template>
@@ -115,7 +113,13 @@
 
 						<v-tooltip bottom v-if="tableForm != 'customerNewForm'">
 							<template v-slot:activator="{ on }">
-								<v-btn :disabled="btnDisable" @click="editItemDialog(_.cloneDeep(item))" class="my-1" v-on="on" icon>
+								<v-btn
+									:disabled="btnDisable || loading"
+									@click="editItemDialog(_.cloneDeep(item))"
+									class="my-1"
+									v-on="on"
+									icon
+								>
 									<v-icon small>edit</v-icon>
 								</v-btn>
 							</template>
@@ -123,7 +127,7 @@
 						</v-tooltip>
 						<v-tooltip bottom>
 							<template v-slot:activator="{ on }">
-								<v-btn @click.stop="viewItemDialog(item)" class="my-1" v-on="on" icon>
+								<v-btn :disabled="loading" @click.stop="viewItemDialog(item)" class="my-1" v-on="on" icon>
 									<v-icon small>watch</v-icon>
 								</v-btn>
 							</template>
@@ -158,8 +162,8 @@
 </template>
 
 <script>
-import _ from 'lodash';
-Object.defineProperty(Vue.prototype, '_', { value: _ });
+import _ from "lodash";
+Object.defineProperty(Vue.prototype, "_", { value: _ });
 import { mapActions, mapMutations, mapState } from "vuex";
 
 export default {
@@ -466,7 +470,8 @@ export default {
 		viewItemDialog(item) {
 			this.dialog = {
 				show: true,
-				fullscreen: this.tableViewComponent === "customer" ? true : false,
+				fullscreen:
+					this.tableViewComponent === "customer" ? true : false,
 				width: 1000,
 				title: `View item #${item.id}`,
 				titleCloseBtn: true,
