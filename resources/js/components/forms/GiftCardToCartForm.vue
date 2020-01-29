@@ -90,9 +90,11 @@ export default {
 				keyword: code
 			};
 			this.$store.dispatch("search", payload).then(response => {
-				this.giftCard.name = response[0].name;
-				this.giftCard.code = response[0].code;
-				this.giftCard.price.amount = response[0].amount;
+				if (response[0]) {
+					this.giftCard.name = response[0].name;
+					this.giftCard.code = response[0].code;
+					this.giftCard.price.amount = response[0].amount;
+				}
 			});
 		},
 		submit() {
