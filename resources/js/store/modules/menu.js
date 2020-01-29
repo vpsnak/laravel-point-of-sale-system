@@ -99,6 +99,12 @@ export default {
                 title: "Users",
                 icon: "mdi-account-multiple",
                 to: "users"
+            },
+            {
+                id: 17,
+                title: "Landing page",
+                icon: "mdi-progress-clock",
+                to: "landing-page"
             }
         ],
         managerItems: [

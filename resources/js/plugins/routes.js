@@ -19,6 +19,7 @@ import StorePickups from "../components/pages/StorePickups";
 import OpenCashRegister from "../components/pages/OpenCashRegister";
 import Reports from "../components/pages/Reports";
 import Companies from "../components/pages/Companies";
+import LandingPage from "../components/pages/LandingPage";
 
 export default [
     {
@@ -151,6 +152,12 @@ export default [
         name: "Companies",
         path: "/companies",
         component: Companies,
+        meta: { requiresAuth: true }
+    },
+    {
+        name: "LandingPage",
+        path: "/landing-page",
+        component: LandingPage,
         meta: { requiresAuth: true }
     }
 ];
