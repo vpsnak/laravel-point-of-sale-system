@@ -12,7 +12,7 @@
 				single-line
 				v-model="keyword"
 				append-icon="mdi-close"
-				@click:append="keyword=null, searchAction=null, paginate()"
+				@click:append="keyword=null, searchAction=null, paginate($event)"
 				@click:prepend="search"
 				@keyup.enter="search"
 			></v-text-field>
@@ -153,7 +153,7 @@
 			:persistent="dialog.persistent"
 		></interactiveDialog>
 
-		<checkoutDialog @close="resetCart()" :giftcard="true" />
+		<checkoutDialog @close="resetCart($event)" />
 	</v-card>
 </template>
 
@@ -277,8 +277,8 @@ export default {
 				return true;
 			}
 		},
-		resetCart(e) {
-			this.$store.commit("cart/resetState");
+		resetCart(event) {
+            this.$store.commit("cart/resetState");
 
 			this.paginate();
 		},
@@ -317,7 +317,7 @@ export default {
 		rechargeGiftcardDialog(item) {
 			this.dialog = {
 				show: true,
-				width: 600,
+				width: 400,
 				title: `Recharge the giftcard #${item.id}`,
 				titleCloseBtn: true,
 				icon: "mdi-wallet-giftcard",
@@ -390,9 +390,9 @@ export default {
 			}
 		},
 
-		paginate(e) {
+		paginate(event) {
 			if (this.searchAction) {
-				this.search(null, e.page);
+				this.search(null, event.page);
 			} else {
 				this.searchAction = false;
 
@@ -400,7 +400,7 @@ export default {
 
 				this.getAll({
 					model: this.dataUrl,
-					page: e ? e.page : this.currentPage,
+					page: event ? event.page : this.currentPage,
 					dataTable: true
 				})
 					.then(response => {
@@ -428,7 +428,6 @@ export default {
 		},
 
 		checkout(order) {
-			console.log(order);
 			this.$store.commit("cart/setOrder", order);
 
 			this.$store.state.cart.customer = order.customer;
@@ -494,14 +493,16 @@ export default {
 			if (event) {
 				switch (this.action) {
 					case "cancelOrder":
-						this.cancelOrder();
+                        this.cancelOrder();
+                        this.paginate();
 						break;
 					case "recharge":
-						this.checkoutDialog = true;
+                        this.checkoutDialog = true;
+                        break;
 					default:
+                        this.paginate();
 						break;
 				}
-				this.paginate();
 			}
 
 			this.resetDialog();

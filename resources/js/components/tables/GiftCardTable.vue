@@ -7,9 +7,9 @@
         tableForm="giftCardForm"
         tableViewComponent="giftCard"
     >
-        <template v-slot:item.enabled="{ item }">{{
-            item.enabled ? "Yes" : "No"
-        }}</template>
+        <template v-slot:item.enabled="{ item }">
+            {{ item.enabled ? "Yes" : "No" }}
+        </template>
     </prop-data-table>
 </template>
 

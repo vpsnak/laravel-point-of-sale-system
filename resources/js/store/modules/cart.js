@@ -86,7 +86,7 @@ export default {
         ],
         currentCheckoutStep: 2,
 
-        customer: undefined,
+        customer: null,
         products: [],
         cart_price: 0,
 
@@ -107,7 +107,7 @@ export default {
 
         billing_address: undefined,
 
-        order: undefined
+        order: {}
     },
 
     mutations: {
@@ -191,12 +191,14 @@ export default {
             state.cart_price = cartPrice;
         },
         resetState(state) {
-            state.currentCheckoutStep = 1;
-            state.customer = undefined;
-            state.products = [];
+            state.currentCheckoutStep = 2;
+            state.customer = null;
+
+            Vue.set(state, "products", []);
             state.discount_type = "";
             state.discount_amount = 0;
-            state.order = undefined;
+            state.order = {};
+
             state.total_price = 0;
 
             state.checkoutSteps.forEach(checkoutStep => {

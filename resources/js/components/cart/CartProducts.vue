@@ -25,8 +25,8 @@
 
                             <div style="width:100%; max-width:150px;">
                                 <v-text-field
+                                    prefix="$"
                                     @click.stop
-                                    prepend-icon="mdi-currency-usd"
                                     single-line
                                     @keyup.esc="revertPrice(index)"
                                     @keyup.enter="setPrice(index, null, true)"
@@ -43,7 +43,6 @@
                                         'Original price: $' +
                                             originalPrice(index)
                                     "
-                                    @click.stop
                                     dense
                                 >
                                 </v-text-field>
@@ -56,6 +55,12 @@
                             <v-tooltip bottom>
                                 <template v-slot:activator="{ on }">
                                     <v-btn
+                                        v-if="
+                                            editable &&
+                                                !product.sku.startsWith(
+                                                    'giftCard'
+                                                )
+                                        "
                                         :color="
                                             editPrice(index) ? 'yellow' : ''
                                         "
@@ -247,14 +252,14 @@ export default {
 
         products: {
             get() {
-                if (this.$store.state.cart.order) {
+                if (this.$store.state.cart.order.id) {
                     return this.$store.state.cart.order.items;
                 } else {
                     return this.$store.state.cart.products;
                 }
             },
             set(value) {
-                if (this.$store.state.cart.order) {
+                if (this.$store.state.cart.order.id) {
                     this.$store.state.cart.order.items = value;
                 } else {
                     this.$store.state.cart.products = value;

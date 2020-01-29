@@ -168,14 +168,14 @@ export default {
         },
         products: {
             get() {
-                if (this.order) {
+                if (this.order.id) {
                     return this.order.items;
                 } else {
                     return this.cart.products;
                 }
             },
             set(value) {
-                if (this.order) {
+                if (this.order.id) {
                     this.order.items = value;
                 } else {
                     this.cart.products = value;

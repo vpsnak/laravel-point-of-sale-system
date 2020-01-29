@@ -1,12 +1,13 @@
 <template>
     <ValidationObserver
         v-slot="{ invalid }"
-        ref="rechargeGiftCardToCartObs"
-        tag="form"
+        tag="v-form"
         @submit.prevent="submit"
     >
         <ValidationProvider
             :rules="{
+                min_value: '1',
+                max_value: '9999',
                 required: true,
                 regex: /^[\d]{1,8}(\.[\d]{1,2})?$/g
             }"
@@ -14,17 +15,19 @@
             name="Price Amount"
         >
             <v-text-field
+                :min="0"
+                :max="9999"
                 type="number"
-                v-model="giftCard.price.amount"
+                v-model="amount"
                 label="Price"
                 :error-messages="errors"
                 :success="valid"
             ></v-text-field>
         </ValidationProvider>
 
-        <v-btn class="mr-4" type="submit" :disabled="invalid"
-            >Add to cart</v-btn
-        >
+        <v-btn class="mr-4" type="submit" :disabled="invalid">
+            Add to cart
+        </v-btn>
     </ValidationObserver>
 </template>
 
@@ -33,41 +36,25 @@ import { mapActions } from "vuex";
 
 export default {
     props: {
-        model: Object || undefined
+        model: Object
     },
     data() {
         return {
-            giftCard: {
-                id: null,
-                name: "",
-                code: "",
-                sku: null,
-                notes: "",
-                price: {
-                    amount: null
-                },
-                final_price: null
-            }
+            amount: null
         };
     },
-
     methods: {
         submit() {
-            this.IdAndSkuGenerator();
-            this.giftCard.final_price = this.giftCard.price.amount;
-            this.giftCard.name = "Gift card - " + this.$props.model.name;
-            this.$store.commit("cart/addProduct", this.giftCard);
+            let giftCard = this.$props.model;
+
+            giftCard.qty = 1;
+            giftCard.final_price = this.amount;
+            giftCard.price = { amount: this.amount, discount: null };
+            giftCard.sku = `giftCard-${giftCard.code}`;
+
+            this.$store.state.cart.products.push(giftCard);
 
             this.$emit("submit", true);
-        },
-        IdAndSkuGenerator() {
-            let random = function() {
-                return (((1 + Math.random()) * 0x10000) | 0)
-                    .toString(16)
-                    .substring(1);
-            };
-            this.giftCard.id = "giftCard" + "-" + random();
-            this.giftCard.sku = "giftCard" + "-" + this.$props.model.code;
         }
     },
     beforeDestroy() {

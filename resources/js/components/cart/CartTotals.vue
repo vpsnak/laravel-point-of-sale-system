@@ -56,14 +56,14 @@ export default {
         },
         products: {
             get() {
-                if (this.order) {
+                if (this.order.id) {
                     return this.order.items;
                 } else {
                     return this.cart.products;
                 }
             },
             set(value) {
-                if (this.order) {
+                if (this.order.id) {
                     this.order.items = value;
                 } else {
                     this.cart.products = value;
@@ -74,7 +74,7 @@ export default {
             return this.cart.customer;
         },
         shippingCost() {
-            if (this.order) {
+            if (this.order.id) {
                 return parseFloat(this.order.shipping_cost);
             } else if (this.cart.shipping.cost) {
                 return parseFloat(this.cart.shipping.cost);
@@ -85,7 +85,7 @@ export default {
         subTotalwDiscount() {
             let subtotal = 0;
 
-            if (this.order) {
+            if (this.order.id) {
                 this.products.forEach(item => {
                     subtotal += this.calcDiscount(
                         item.price * item.qty,
@@ -128,7 +128,7 @@ export default {
                 }
             }
 
-            if (this.order) {
+            if (this.order.id) {
                 return parseFloat(
                     this.order.total - this.order.total_without_tax
                 );
@@ -143,7 +143,7 @@ export default {
         totalDiscount() {
             let subtotalNoDiscount = 0;
 
-            if (this.order) {
+            if (this.order.id) {
                 this.order.items.forEach(item => {
                     subtotalNoDiscount += item.price * item.qty;
                 });

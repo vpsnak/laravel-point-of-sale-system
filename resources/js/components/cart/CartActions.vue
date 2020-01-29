@@ -165,8 +165,6 @@ export default {
 
     methods: {
         checkout() {
-            this.$store.commit("cart/setOrder", undefined);
-
             this.checkoutDialog = true;
         },
         emptyConfirmation(event) {
