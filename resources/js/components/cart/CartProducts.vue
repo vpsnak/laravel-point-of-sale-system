@@ -1,15 +1,20 @@
 <template>
     <div class="d-flex flex-grow-1" style="height:38vh; overflow-y:auto">
         <v-expansion-panels class="d-block" accordion>
-            <v-expansion-panel v-for="(product, index) in products" :key="index">
-                <v-expansion-panel-header class="pa-3" ripple @click.stop>
-                    <div class="d-flex align-center justify-space-between">
+            <v-expansion-panel
+                v-for="(product, index) in products"
+                :key="index"
+            >
+                <v-expansion-panel-header class="pa-2" ripple @click.stop>
+                    <div class="d-flex justify-space-between">
                         <div class="d-flex flex-column pr-2">
                             <v-img
                                 :src="product.photo_url"
                                 :lazy-src="product.photo_url"
                                 aspect-ratio="1"
                                 class="grey lighten-2"
+                                width="100%"
+                                height="100%"
                                 max-width="50"
                                 max-height="50"
                             ></v-img>
@@ -17,73 +22,89 @@
 
                         <div class="d-flex flex-column">
                             <span class="subtitle-2">{{ product.name }}</span>
-                            <div class="d-flex align-center">
+
+                            <div style="width:100%; max-width:150px;">
                                 <v-text-field
-                                    class="width-20"
+                                    prepend-icon="mdi-currency-usd"
+                                    single-line
+                                    @keyup.esc="revertPrice(index)"
+                                    @keyup.enter="setPrice(index, null, true)"
+                                    :ref="'priceField' + index"
+                                    :min="0"
                                     type="number"
                                     :readonly="!editPrice(index)"
                                     :flat="!editPrice(index)"
-                                    :solo="!editPrice(index)"
                                     :outlined="editPrice(index)"
-                                    :color="!editPrice(index) ? 'yellow' : ''"
-                                    prepend-icon="mdi-currency-usd"
-                                    v-model="product.price.amount"
+                                    :solo="!editPrice(index)"
+                                    :color="editPrice(index) ? 'yellow' : ''"
+                                    :value="parsedPrice(product)"
+                                    :hint="
+                                        'Original price: $' +
+                                            originalPrice(index)
+                                    "
                                     @click.stop
                                     dense
                                 >
-                                    <template v-slot:append-outer>
-                                        <v-tooltip bottom>
-                                            <template v-slot:activator="{ on }">
-                                                <v-btn
-                                                    @click.stop="toggleEdit(index)"
-                                                    small
-                                                    icon
-                                                    v-on="on"
-                                                >
-                                                    <v-icon
-                                                        small
-                                                        :color="editPrice(index) ? 'yellow' : ''"
-                                                    >mdi-pencil</v-icon>
-                                                </v-btn>
-                                            </template>
-                                            <span>Edit price</span>
-                                        </v-tooltip>
-                                    </template>
                                 </v-text-field>
                             </div>
                         </div>
 
                         <v-spacer />
 
-                        <v-tooltip bottom>
-                            <template v-slot:activator="{ on }">
-                                <v-btn
-                                    v-if="
-                                        editable &&
-                                            !(
-                                                product.sku.startsWith(
-                                                    'dummy'
-                                                ) ||
-                                                product.sku.startsWith(
-                                                    'giftCard'
+                        <div class="d-flex justify-content-center align-center">
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn
+                                        :color="
+                                            editPrice(index) ? 'yellow' : ''
+                                        "
+                                        :input-value="
+                                            editPrice(index) ? true : false
+                                        "
+                                        @click.stop="toggleEdit(index)"
+                                        small
+                                        icon
+                                        v-on="on"
+                                    >
+                                        <v-icon small>
+                                            mdi-pencil
+                                        </v-icon>
+                                    </v-btn>
+                                </template>
+                                <span>Edit price</span>
+                            </v-tooltip>
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn
+                                        v-if="
+                                            editable &&
+                                                !(
+                                                    product.sku.startsWith(
+                                                        'dummy'
+                                                    ) ||
+                                                    product.sku.startsWith(
+                                                        'giftCard'
+                                                    )
                                                 )
-                                            )
-                                    "
-                                    small
-                                    icon
-                                    @click.stop="viewProductDialog(product)"
-                                    v-on="on"
-                                >
-                                    <v-icon small class="px-1">mdi-eye</v-icon>
-                                </v-btn>
-                            </template>
-                            <span>View cart item</span>
-                        </v-tooltip>
-                        <div
-                            :img="product.photo_url"
-                            class="d-flex justify-content-center align-center"
-                        >
-                            <v-btn v-if="editable" small icon @click.stop="decreaseQty(product)">
+                                        "
+                                        small
+                                        icon
+                                        @click.stop="viewProductDialog(product)"
+                                        v-on="on"
+                                    >
+                                        <v-icon small class="px-1"
+                                            >mdi-eye</v-icon
+                                        >
+                                    </v-btn>
+                                </template>
+                                <span>View item</span>
+                            </v-tooltip>
+                            <v-btn
+                                v-if="editable"
+                                small
+                                icon
+                                @click.stop="decreaseQty(product)"
+                            >
                                 <v-icon small class="px-1">remove</v-icon>
                             </v-btn>
 
@@ -100,11 +121,16 @@
                                 @keyup="limits(product)"
                             ></v-text-field>
 
-                            <v-btn icon small v-if="editable" @click.stop="increaseQty(product)">
+                            <v-btn
+                                icon
+                                small
+                                v-if="editable"
+                                @click.stop="increaseQty(product)"
+                            >
                                 <v-icon small class="px-1">add</v-icon>
                             </v-btn>
 
-                            <v-tooltip bottom>
+                            <v-tooltip bottom color="red">
                                 <template v-slot:activator="{ on }">
                                     <v-btn
                                         v-if="editable"
@@ -114,7 +140,9 @@
                                         color="red"
                                         v-on="on"
                                     >
-                                        <v-icon small class="px-1">delete</v-icon>
+                                        <v-icon small class="px-1"
+                                            >delete</v-icon
+                                        >
                                     </v-btn>
                                 </template>
                                 <span>Remove from cart</span>
@@ -127,7 +155,10 @@
                         <v-col cols="12">
                             <span class="subtitle">
                                 SKU:
-                                <span class="amber--text" v-text="product.sku" />
+                                <span
+                                    class="amber--text"
+                                    v-text="product.sku"
+                                />
                             </span>
                         </v-col>
                     </v-row>
@@ -135,7 +166,9 @@
                         <v-col cols="12">
                             <cartDiscount
                                 :product_index="index"
-                                :product_price="price(product) * product.qty"
+                                :product_price="
+                                    parsedPrice(product) * product.qty
+                                "
                                 :editable="editable"
                             ></cartDiscount>
                         </v-col>
@@ -219,15 +252,73 @@ export default {
         }
     },
     methods: {
+        getSelectedInput(index) {
+            return this.$refs[`priceField${index}`][0];
+        },
+        setPrice(index, price = null, toggleEdit = false) {
+            if (!this.getSelectedInput(index).lazyValue) {
+                console.log("nos");
+                this.getSelectedInput(index).lazyValue = this.originalPrice(
+                    index
+                );
+            }
+            if (price) {
+                this.products[index].price.amount = this.products[
+                    index
+                ].final_price = price;
+            } else {
+                this.products[index].price.amount = this.products[
+                    index
+                ].final_price = this.getSelectedInput(index).lazyValue;
+            }
+            if (toggleEdit) {
+                this.toggleEdit(index);
+            }
+        },
+        revertPrice(index) {
+            this.$nextTick(() => {
+                this.setPrice(index, this.originalPrice(index), true);
+
+                this.getSelectedInput(index).lazyValue = this.originalPrice(
+                    index
+                );
+
+                console.log(this.getSelectedInput(index));
+                this.getSelectedInput(index).blur();
+            });
+        },
+        originalPrice(index) {
+            if (_.has(this.products[index], "originalPrice")) {
+                return this.products[index].originalPrice;
+            } else {
+                return this.parsedPrice(this.products[index]);
+            }
+        },
         editPrice(index) {
             return this.products[index].editPrice;
         },
         toggleEdit(index) {
+            if (!_.has(this.products[index], "originalPrice")) {
+                Vue.set(
+                    this.products[index],
+                    "originalPrice",
+                    this.parsedPrice(this.products[index])
+                );
+            }
+
             Vue.set(
                 this.products[index],
                 "editPrice",
                 !this.products[index].editPrice
             );
+
+            if (this.editPrice(index)) {
+                this.$nextTick(() => {
+                    this.getSelectedInput(index).focus();
+                });
+            } else {
+                this.setPrice(index);
+            }
         },
         dialogEvent(event) {
             this.resetDialog();
@@ -262,8 +353,11 @@ export default {
                 persistent: true
             };
         },
-        price(product) {
-            return product.final_price || product.price;
+        parsedPrice(product) {
+            return (
+                parseFloat(product.final_price).toFixed(2) ||
+                parseFloat(product.price.toFixed(2))
+            );
         },
         limits(product) {
             if (product.qty < 1) {
