@@ -21,7 +21,7 @@ $code = $barcode->generate();
 ​
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <title>Product Barcode</title>
 </head>
 <style>
     body {
