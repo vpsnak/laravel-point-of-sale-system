@@ -117,6 +117,7 @@
 										<v-icon class="pr-2">fab fa-magento</v-icon>
 										<h5>View on Magento</h5>
 									</v-list-item>
+									<v-divider />
 									<v-list-item @click="printProductBarcode(product)">
 										<v-icon class="pr-2">mdi-barcode</v-icon>
 										<h5>Print barcode</h5>

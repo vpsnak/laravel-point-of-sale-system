@@ -15,6 +15,9 @@
 						<div class="subtitle-1" v-if="productData.barcode">
 							<barcode :value="productData.barcode" format="CODE39">The rendering fails.</barcode>
 						</div>
+						<div class="subtitle-1" v-else-if="productData.sku">
+							<barcode :value="productData.sku" format="CODE39">The rendering fails.</barcode>
+						</div>
 					</v-card-text>
 					<v-simple-table>
 						<template v-slot:default>
