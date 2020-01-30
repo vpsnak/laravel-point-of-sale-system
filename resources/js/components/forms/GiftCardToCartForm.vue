@@ -57,7 +57,11 @@
 			This gift card with {{giftCardEnabledAmount }} $ is enabled.
 			If you want to recharge it type the amount and add it to cart
 		</v-alert>
-		<v-btn class="mr-4" type="submit" :disabled="invalid">Add to cart</v-btn>
+		<v-row>
+			<v-col cols="12" align="center" justify="center">
+				<v-btn color="secondary" class="mr-4" type="submit" :disabled="invalid">Add to cart</v-btn>
+			</v-col>
+		</v-row>
 	</ValidationObserver>
 </template>
 

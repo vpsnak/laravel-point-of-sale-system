@@ -36,7 +36,11 @@
 					:success="valid"
 				></v-text-field>
 			</ValidationProvider>
-
+			<v-row>
+				<v-col cols="12" align="center" justify="center">
+					<v-btn color="secondary" class="mr-4" type="submit" :disabled="invalid">Add to cart</v-btn>
+				</v-col>
+			</v-row>
 			<v-btn class="mr-4" type="submit" :disabled="invalid">Add to cart</v-btn>
 		</v-form>
 	</ValidationObserver>
@@ -75,7 +79,9 @@ export default {
 		},
 		skuGenerator() {
 			let random = function() {
-				return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+				return (((1 + Math.random()) * 0x10000) | 0)
+					.toString(16)
+					.substring(1);
 			};
 			this.dummyProduct.id = "dummy" + "-" + random();
 			this.dummyProduct.sku = "dummy" + "-" + random();

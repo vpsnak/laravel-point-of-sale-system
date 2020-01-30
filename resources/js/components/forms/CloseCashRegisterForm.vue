@@ -30,7 +30,12 @@
 			</v-row>
 			<v-row>
 				<v-col cols="6">
-					<v-btn type="submit" :loading="loading" :disabled="invalid">Close Cash Register</v-btn>
+					<v-btn
+						color="secondary"
+						type="submit"
+						:loading="loading"
+						:disabled="invalid"
+					>Close Cash Register</v-btn>
 				</v-col>
 			</v-row>
 		</v-form>

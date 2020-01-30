@@ -68,12 +68,16 @@
                     "
 				></v-text-field>
 			</ValidationProvider>
-			<v-btn
-				class="mr-4 mt-2"
-				type="submit"
-				:loading="loading"
-				:disabled="invalid || disableSubmit"
-			>submit</v-btn>
+			<v-row>
+				<v-col cols="12" align="center" justify="center">
+					<v-btn
+						class="mr-4 mt-2"
+						type="submit"
+						:loading="loading"
+						:disabled="invalid || disableSubmit"
+					>submit</v-btn>
+				</v-col>
+			</v-row>
 		</v-form>
 	</ValidationObserver>
 </template>

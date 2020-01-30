@@ -131,8 +131,18 @@
 					<v-switch v-model="formFields.shipping" label="Default shipping"></v-switch>
 				</v-row>
 			</v-row>
-			<v-btn class="mr-4" type="submit" :loading="loading" :disabled="invalid || loading">submit</v-btn>
-			<v-btn v-if="!model" @click="clear">clear</v-btn>
+			<v-row>
+				<v-col cols="12" align="center" justify="center">
+					<v-btn
+						class="mr-4"
+						type="submit"
+						:loading="loading"
+						:disabled="invalid || loading"
+						color="secondary"
+					>submit</v-btn>
+					<v-btn v-if="!model" @click="clear" color="orange">clear</v-btn>
+				</v-col>
+			</v-row>
 		</v-form>
 	</ValidationObserver>
 </template>
