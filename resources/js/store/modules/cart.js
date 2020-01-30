@@ -194,7 +194,7 @@ export default {
             state.currentCheckoutStep = 2;
             state.customer = null;
 
-            Vue.set(state, "products", []);
+            state.products = [];
             state.discount_type = "";
             state.discount_amount = 0;
             state.order = {};

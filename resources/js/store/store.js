@@ -15,6 +15,7 @@ Vue.use(Vuex);
 const namespaced = true;
 
 export default new Vuex.Store({
+    strict: false,
     namespaced,
     modules: {
         menu,

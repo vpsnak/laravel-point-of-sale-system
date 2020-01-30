@@ -282,7 +282,7 @@ export default {
 			}
 		},
 		resetCart(event) {
-            this.$store.commit("cart/resetState");
+            // this.$store.commit("cart/resetState");
 
 			this.paginate();
 		},

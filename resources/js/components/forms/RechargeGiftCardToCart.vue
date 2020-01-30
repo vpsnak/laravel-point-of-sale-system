@@ -1,9 +1,5 @@
 <template>
-    <ValidationObserver
-        v-slot="{ invalid }"
-        tag="v-form"
-        @submit.prevent="submit"
-    >
+    <ValidationObserver v-slot="{ invalid }" tag="v-form" @submit.prevent="submit">
         <ValidationProvider
             :rules="{
                 min_value: '1',
@@ -25,9 +21,7 @@
             ></v-text-field>
         </ValidationProvider>
 
-        <v-btn class="mr-4" type="submit" :disabled="invalid">
-            Add to cart
-        </v-btn>
+        <v-btn class="mr-4" type="submit" :disabled="invalid">Add to cart</v-btn>
     </ValidationObserver>
 </template>
 
@@ -52,7 +46,7 @@ export default {
             giftCard.price = { amount: this.amount, discount: null };
             giftCard.sku = `giftCard-${giftCard.code}`;
 
-            this.$store.state.cart.products.push(giftCard);
+            this.$store.commit("cart/addProduct", giftCard);
 
             this.$emit("submit", true);
         }

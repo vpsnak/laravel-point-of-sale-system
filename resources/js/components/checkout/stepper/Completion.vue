@@ -51,9 +51,8 @@ export default {
 
     methods: {
         close() {
-            this.$store.commit("cart/resetState");
-
             this.$store.state.cart.checkoutDialog = false;
+            this.$store.commit("cart/resetState");
 
             this.$emit("close", true);
         },

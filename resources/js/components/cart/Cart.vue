@@ -8,12 +8,7 @@
 
             <v-spacer></v-spacer>
 
-            <v-btn-toggle
-                v-model="shippingMethod"
-                @change="setOrderOptions"
-                mandatory
-                group
-            >
+            <v-btn-toggle v-model="shippingMethod" @change="setOrderOptions" mandatory group>
                 <v-tooltip bottom color="primary">
                     <template v-slot:activator="{ on }">
                         <v-btn
@@ -21,7 +16,7 @@
                             icon
                             value="retail"
                             v-on="on"
-                            :disabled="order ? true : false"
+                            :disabled="order.id ? true : false"
                         >
                             <v-icon>mdi-cart-arrow-right</v-icon>
                         </v-btn>
@@ -69,11 +64,7 @@
 
         <v-divider class="py-1" />
 
-        <customerSearch
-            :editable="editable"
-            :keywordLength="3"
-            class="pa-3"
-        ></customerSearch>
+        <customerSearch :editable="editable" :keywordLength="3" class="pa-3"></customerSearch>
 
         <v-divider class="py-1" />
 
@@ -87,10 +78,7 @@
                     <v-label>Cart discount</v-label>
                 </v-col>
                 <v-col cols="8" class="px-2 py-0">
-                    <cartDiscount
-                        :product_index="-1"
-                        :editable="editable"
-                    ></cartDiscount>
+                    <cartDiscount :product_index="-1" :editable="editable"></cartDiscount>
                 </v-col>
             </v-row>
 

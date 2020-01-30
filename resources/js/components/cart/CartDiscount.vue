@@ -11,19 +11,10 @@
                     item-text="label"
                     item-value="value"
                 ></v-select>
-                <v-text-field
-                    v-else-if="!editable"
-                    :value="discountType"
-                    label="Discount"
-                    disabled
-                ></v-text-field>
+                <v-text-field v-else-if="!editable" :value="discountType" label="Discount" disabled></v-text-field>
             </v-col>
 
-            <v-col
-                cols="6"
-                class="pa-0 pl-2"
-                v-if="discountType && discountType !== 'None'"
-            >
+            <v-col cols="6" class="pa-0 pl-2" v-if="discountType && discountType !== 'None'">
                 <ValidationProvider
                     v-slot="{ valid }"
                     :rules="`between:${0},${max}`"
@@ -111,14 +102,14 @@ export default {
         ...mapState("cart", ["discountTypes"]),
         order: {
             get() {
-                if (this.$store.state.cart.order) {
+                if (this.$store.state.cart.order.id) {
                     return this.$store.state.cart.order;
                 } else {
                     return this.$store.state.cart;
                 }
             },
             set(value) {
-                if (this.$store.state.cart.order) {
+                if (this.$store.state.cart.order.id) {
                     this.$store.state.cart.order = value;
                 } else {
                     this.$store.state.cart = value;

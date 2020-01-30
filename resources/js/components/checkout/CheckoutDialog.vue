@@ -143,8 +143,8 @@ export default {
         },
         close() {
             if (this.order && this.order.status === "complete") {
-                this.state = false;
                 this.resetState();
+                this.state = false;
             } else if (this.order && this.order.status !== "complete") {
                 this.closePrompt = true;
             } else {
@@ -160,8 +160,8 @@ export default {
                     id: this.order.id
                 };
                 this.delete(payload).then(response => {
-                    this.state = false;
                     this.resetState();
+                    this.state = false;
                 });
             }
             this.closePrompt = false;
