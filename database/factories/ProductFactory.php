@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factory;
 
 $factory->define(App\Product::class, function (Faker $faker) {
     return [
-        'sku' => $faker->uuid,
+        'sku' => $faker->ean8,
 //        'name' => $faker->name,
 //        'photo_url' => $faker->imageUrl(640,480,'nature'),
         'name' => $faker->randomElement([
