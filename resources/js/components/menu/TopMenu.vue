@@ -4,11 +4,13 @@
         <v-toolbar-title>{{ appName }}</v-toolbar-title>
         <v-spacer v-if="appEnv !== 'production'"></v-spacer>
         <v-toolbar-title class="mr-2" v-if="appEnv !== 'production'">
-            Environment: <i :class="envColor">{{ appEnv }}</i>
+            Environment:
+            <i :class="envColor">{{ appEnv }}</i>
         </v-toolbar-title>
-        <v-toolbar-title v-if="appDebug"
-            >Debug: <i :class="debugColor">ON</i></v-toolbar-title
-        >
+        <v-toolbar-title v-if="appDebug">
+            Debug:
+            <i :class="debugColor">ON</i>
+        </v-toolbar-title>
 
         <v-spacer></v-spacer>
 
@@ -16,15 +18,8 @@
             v-if="!openedRegister"
             text
             @click="$router.push({ name: 'openCashRegister' })"
-            >Select cash register</v-chip
-        >
-        <v-menu
-            v-if="openedRegister"
-            left
-            bottom
-            offset-x
-            transition="scale-transition"
-        >
+        >Select cash register</v-chip>
+        <v-menu v-if="openedRegister" left bottom offset-x transition="scale-transition">
             <template v-slot:activator="{ on }">
                 <v-btn v-on="on" icon>
                     <v-avatar color="green" size="36">
@@ -39,25 +34,25 @@
                             <v-icon>mdi-cash-register</v-icon>
                         </v-list-item-avatar>
                         <v-list-item-content>
-                            <v-list-item-title>{{
+                            <v-list-item-title>
+                                {{
                                 store.name
-                            }}</v-list-item-title>
-                            <v-list-item-subtitle>{{
+                                }}
+                            </v-list-item-title>
+                            <v-list-item-subtitle>
+                                {{
                                 cashRegister.name
-                            }}</v-list-item-subtitle>
+                                }}
+                            </v-list-item-subtitle>
                         </v-list-item-content>
                     </v-list-item>
                     <v-divider />
                     <v-list-item @click="checkCashRegisterDialog">
                         <v-list-item-avatar>
-                            <v-icon color="secondary"
-                                >mdi-alpha-x-circle</v-icon
-                            >
+                            <v-icon color="secondary">mdi-alpha-x-circle</v-icon>
                         </v-list-item-avatar>
                         <v-list-item-content>
-                            <v-list-item-title
-                                >Generate X report</v-list-item-title
-                            >
+                            <v-list-item-title>Generate X report</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
                     <v-list-item @click="cashRegisterLogout()">
@@ -74,9 +69,7 @@
                             <v-icon color="red">mdi-alpha-z-circle</v-icon>
                         </v-list-item-avatar>
                         <v-list-item-content>
-                            <v-list-item-title
-                                >Close and generate Z report</v-list-item-title
-                            >
+                            <v-list-item-title>Close and generate Z report</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
                 </v-list-item-group>
@@ -91,16 +84,22 @@
             <v-list dense>
                 <v-list-item-group>
                     <v-list-item inactive two-line @click.stop :ripple="false">
-                        <v-list-item-avatar color="orange">{{
+                        <v-list-item-avatar color="orange">
+                            {{
                             user.name.charAt(0)
-                        }}</v-list-item-avatar>
+                            }}
+                        </v-list-item-avatar>
                         <v-list-item-content>
-                            <v-list-item-title>{{
+                            <v-list-item-title>
+                                {{
                                 user.name
-                            }}</v-list-item-title>
-                            <v-list-item-subtitle>{{
+                                }}
+                            </v-list-item-title>
+                            <v-list-item-subtitle>
+                                {{
                                 user.email
-                            }}</v-list-item-subtitle>
+                                }}
+                            </v-list-item-subtitle>
                         </v-list-item-content>
                     </v-list-item>
                     <v-divider />
@@ -117,9 +116,7 @@
                             <v-icon>mdi-key</v-icon>
                         </v-list-item-avatar>
                         <v-list-item-content>
-                            <v-list-item-title
-                                >Change password</v-list-item-title
-                            >
+                            <v-list-item-title>Change password</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
                     <v-divider />
@@ -131,10 +128,7 @@
                             <v-list-item-title>Dark mode</v-list-item-title>
                         </v-list-item-content>
                         <v-list-item-action>
-                            <v-switch
-                                v-model="darkMode"
-                                @click.stop="darkMode = !darkMode"
-                            ></v-switch>
+                            <v-switch v-model="darkMode" @click.stop="darkMode = !darkMode"></v-switch>
                         </v-list-item-action>
                     </v-list-item>
                 </v-list-item-group>
@@ -162,6 +156,9 @@
 import { mapState } from "vuex";
 
 export default {
+    beforeDestroy() {
+        clearInterval(this.retrieveCashRegisterEvent);
+    },
     data() {
         return {
             dialog: {
@@ -176,6 +173,7 @@ export default {
                 model: "",
                 persistent: false
             },
+            retrieveCashRegisterEvent: null,
             action: ""
         };
     },
@@ -185,7 +183,10 @@ export default {
                 this.$router.push({ name: "dashboard" });
             }
 
-            setInterval(() => this.retrieveCashRegister(), 30000);
+            this.retrieveCashRegisterEvent = setInterval(
+                () => this.retrieveCashRegister(),
+                30000
+            );
         });
     },
     methods: {

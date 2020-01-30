@@ -110,7 +110,7 @@ export default {
             },
             set(value) {
                 if (this.$store.state.cart.order.id) {
-                    this.$store.state.cart.order = value;
+                    this.$store.commit("cart/setOrder", value);
                 } else {
                     this.$store.state.cart = value;
                 }
