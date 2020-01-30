@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Order;
 use App\CashRegisterReport;
+use App\Product;
 use App\Helper\PhpHelper;
 use Illuminate\Http\Request;
 use Storage;
@@ -46,6 +47,13 @@ class AppController extends Controller
     {
         return view('report')->with([
             'report' => $report
+        ]);
+    }
+
+    public function productBarcode(Product $product)
+    {
+        return view('product_barcode')->with([
+            'product' => $product
         ]);
     }
 }

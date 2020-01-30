@@ -111,6 +111,22 @@
 							<span>Change {{ item.name }} password</span>
 						</v-tooltip>
 
+						<!--product actions -->
+						<v-tooltip bottom v-else-if="tableForm === 'productForm'">
+							<template v-slot:activator="{ on }">
+								<v-btn
+									@click="printProductBarcode(item) "
+									:disabled="btnDisable || loading"
+									class="my-1"
+									icon
+									v-on="on"
+								>
+									<v-icon small>mdi-barcode</v-icon>
+								</v-btn>
+							</template>
+							<span>Print Barcode</span>
+						</v-tooltip>
+
 						<v-tooltip bottom v-if="tableForm != 'customerNewForm'">
 							<template v-slot:activator="{ on }">
 								<v-btn
@@ -274,6 +290,9 @@ export default {
 		}
 	},
 	methods: {
+		printProductBarcode(item) {
+			window.open(`/product_barcode/${item.id}`, "_blank");
+		},
 		rechargeGiftCardDisable() {
 			if (this.cashRegister) {
 				return false;
@@ -282,7 +301,7 @@ export default {
 			}
 		},
 		resetCart(event) {
-            // this.$store.commit("cart/resetState");
+			// this.$store.commit("cart/resetState");
 
 			this.paginate();
 		},
@@ -498,14 +517,14 @@ export default {
 			if (event) {
 				switch (this.action) {
 					case "cancelOrder":
-                        this.cancelOrder();
-                        this.paginate();
+						this.cancelOrder();
+						this.paginate();
 						break;
 					case "recharge":
-                        this.checkoutDialog = true;
-                        break;
+						this.checkoutDialog = true;
+						break;
 					default:
-                        this.paginate();
+						this.paginate();
 						break;
 				}
 			}

@@ -67,7 +67,6 @@ export default {
 		return {
 			giftCardEnabledAmount: null,
 			giftCardEnabled: false,
-			giftCardAmountDisabled: true,
 			giftCard: {
 				id: null,
 				name: "",
@@ -100,9 +99,6 @@ export default {
 					this.giftCard.name = response[0].name;
 					this.giftCard.code = response[0].code;
 					this.giftCard.price.amount = response[0].amount;
-					if (response[0].amount == 0) {
-						this.giftCardAmountDisabled = false;
-					}
 					if (response[0].enabled) {
 						this.giftCardAmountDisabled = false;
 						this.giftCardEnabled = true;

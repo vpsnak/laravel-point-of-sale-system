@@ -117,6 +117,10 @@
 										<v-icon class="pr-2">fab fa-magento</v-icon>
 										<h5>View on Magento</h5>
 									</v-list-item>
+									<v-list-item @click="printProductBarcode(product)">
+										<v-icon class="pr-2">mdi-barcode</v-icon>
+										<h5>Print barcode</h5>
+									</v-list-item>
 								</v-list>
 							</v-menu>
 						</v-card-title>
@@ -292,6 +296,9 @@ export default {
 		}
 	},
 	methods: {
+		printProductBarcode(product) {
+			window.open(`/product_barcode/${product.id}`, "_blank");
+		},
 		enableScan() {
 			if (this.btnactive == false) {
 				this.btnactive = true;
