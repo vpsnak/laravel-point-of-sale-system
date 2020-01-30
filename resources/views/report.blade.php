@@ -3,13 +3,32 @@
 ​
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Report</title>
 </head>
 <style>
     body {
         width: 80mm;
         height: 297mm;
+    }
+    table{
+      font-size:12px; 
+    }
+    th {
+      font-weight: normal;
+      text-transform: uppercase;
+      text-align: left;
+      padding-top:2px;
+    }
+    td {
+      text-align: right;
+    }
+    .title{
+      text-transform:uppercase; 
+      text-align: center;
+    }
+    .subtitle{
+      text-align: center; 
+      font-size:13px;
     }
 </style>
 
@@ -19,211 +38,212 @@ $report_name_splitted = explode(" ", $report_name);
 @endphp
 {{-- {{$report}} --}}
     <body>
-        <div style=" background-color: white; width:auto; height:auto; font-weight:normal;">
-        <h2 style="text-transform:uppercase; text-align: center;"><b>Report {{$report->report_type}}</b></h2>
-            <p style="text-align: center; font-size:13px;">Plantshed</p>
-        <table style="font-size:12px; display:inline-table; width:100%;">
+        <h2 class="title"><b>Report {{$report->report_type}}</b></h2>
+            <p class="subtitle">Plantshed</p>
+        <table>
+          <tbody>
             <tr>
-            <th align="left" style="text-transform:uppercase; font-weight:normal;">
+            <th>
                 Report Date
             </th>
-            <td align="right" style="text-transform:uppercase; font-weight:normal;">
+            <td>
             {{$report_name_splitted[2]}}
             </td>
             </tr>
             <tr>
-            <th align="left" style="text-transform:uppercase; font-weight:normal;">
+            <th>
                 Report Time
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
             {{$report_name_splitted[3]}}
             </td>
             </tr>
             <tr>
-             <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+             <th>
                 Register #
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
             {{$report->cash_register_id}}
             </td>
             </tr>
             <tr>
-             <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+             <th>
                Opening Amount
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              ${{$report->opening_amount}}
             </td>
             </tr>
             @if($report->report_type === 'z')
              <tr>
-             <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+             <th>
                Closing Amount
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              ${{$report->closing_amount}}
             </td>
             </tr>
             @endif
             <tr>
-             <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+             <th>
                Subtotal
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              ${{$report->subtotal}}
             </td>
             </tr>
               <tr>
-             <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+             <th>
                Tax
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              ${{$report->tax}}
             </td>
             </tr>
              </tr>
               <tr>
-             <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+             <th>
                Total
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              ${{$report->total}}
             </td>
             </tr>
             <tr>
-             <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+             <th>
                Cash Total
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              ${{$report->cash_total}}
             </td>
             </tr>
             <tr>
-             <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+             <th>
                Gift Card Total
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              ${{$report->gift_card_total}}
             </td>
             </tr>
             <tr>
-             <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+             <th>
                Credit Card Total
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              ${{$report->credit_card_total}}
             </td>
             </tr>
              <tr>
-             <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+             <th>
                Pos Terminal Total
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              ${{$report->pos_terminal_total}}
             </td>
             </tr>
             </tr>
              <tr>
-             <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+             <th>
                Change Total
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              ${{$report->change_total}}
             </td>
             </tr>
             <tr>
-            <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+            <th>
              Cash Tax
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              ${{$report->cash_tax}}
             </td>
             </tr>
             <tr>
-            <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+            <th>
              Gift Card Tax
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              ${{$report->gift_card_tax}}
             </td>
             </tr>
              <tr>
-            <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+            <th>
              Credit Card Tax
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              ${{$report->credit_card_tax}}
             </tr>
              <tr>
-            <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+            <th>
              Pos Terminal Tax
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              ${{$report->pos_terminal_tax}}
             </tr>
              <tr>
-            <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+            <th>
              Order Count
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              {{$report->order_count}}
             </tr>
             <tr>
-            <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+            <th>
              Order Product Count
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              {{$report->order_product_count}}
             </tr>
             <tr>
-            <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+            <th>
              Order Refund Count
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              {{$report->order_refund_count}}
             </tr>
              <tr>
-            <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+            <th>
              Order Refund Total
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              ${{$report->order_refund_total}}
             </tr>
               <tr>
-            <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+            <th>
              Order Complete Count
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              {{$report->order_complete_count}}
             </tr>
               <tr>
-            <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+            <th>
              Order Complete Total
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              ${{$report->order_complete_total}}
             </tr>
              <tr>
-            <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+            <th>
              Order Retail Count
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              {{$report->order_retail_count}}
             </tr>
             <tr>
-            <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+            <th>
              Order In Store Pick up count
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              {{$report->order_in_store_count}}
             </tr>
              <tr>
-            <th align="left" style="text-transform:uppercase; font-weight:normal; padding-top:2px;">
+            <th>
              Order Delivery count
             </th>
-            <td align="right" style="text-transform:uppercase;">
+            <td>
              {{$report->order_in_store_count}}
             </tr>
+            <tbody>
         </table>
         </div>
     </body>
