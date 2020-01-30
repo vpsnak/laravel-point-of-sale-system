@@ -40,6 +40,7 @@ class OrderController extends BaseController
                         $code = explode('-', $product['sku']);
                         if (count($code) > 1 && $code[0] === 'giftCard') {
                             $giftCard = Giftcard::whereCode($code[1])->first();
+                            $giftCard->enabled = true;
 
                             if (!$giftCard) {
                                 $giftCard = new Giftcard;
