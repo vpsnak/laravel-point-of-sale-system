@@ -24,7 +24,6 @@
 			name="Price Amount"
 		>
 			<v-text-field
-				:disabled="giftCardAmountDisabled"
 				type="number"
 				v-model="giftCard.price.amount"
 				label="Price"
@@ -104,7 +103,6 @@ export default {
 					this.giftCard.code = response[0].code;
 					this.giftCard.price.amount = response[0].amount;
 					if (response[0].enabled) {
-						this.giftCardAmountDisabled = false;
 						this.giftCardEnabled = true;
 						this.giftCard.price.amount = 0;
 						this.giftCardEnabledAmount = response[0].amount;
