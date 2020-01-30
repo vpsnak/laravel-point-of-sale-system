@@ -222,6 +222,7 @@ export default {
             state.cart_price = cartPrice;
         },
         resetState(state) {
+            state.paymentLoading = false;
             state.currentCheckoutStep = 2;
             state.customer = null;
 
