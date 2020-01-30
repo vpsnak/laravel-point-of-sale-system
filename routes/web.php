@@ -16,3 +16,6 @@ Route::get('/', 'AppController@index');
 Route::get('/receipt/{order}', 'AppController@receipt');
 
 Route::get('/report/{report}', 'AppController@report');
+
+Route::get('/product_barcode/{product}', 'AppController@productBarcode');
+
