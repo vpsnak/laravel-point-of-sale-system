@@ -99,14 +99,14 @@ export default {
             }
         },
         closeBtnTxt() {
-            return this.order &&
+            return this.order.id &&
                 this.$store.state.cart.currentCheckoutStep !== 3
                 ? "Cancel order"
                 : "Close";
         },
         showHoldBtn() {
             if (
-                this.order &&
+                this.order.id &&
                 this.$store.state.cart.currentCheckoutStep !== 3
             ) {
                 return true;
@@ -142,10 +142,10 @@ export default {
             this.resetState();
         },
         close() {
-            if (this.order && this.order.status === "complete") {
+            if (this.order.id && this.order.status === "complete") {
                 this.resetState();
                 this.state = false;
-            } else if (this.order && this.order.status !== "complete") {
+            } else if (this.order.id && this.order.status !== "complete") {
                 this.closePrompt = true;
             } else {
                 this.state = false;

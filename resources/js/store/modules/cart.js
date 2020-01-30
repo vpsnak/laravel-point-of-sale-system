@@ -107,7 +107,38 @@ export default {
 
         billing_address: undefined,
 
-        order: {}
+        order: {
+            id: null,
+            customer_id: null,
+            status: null,
+            discount_type: null,
+            discount_amount: null,
+            tax: null,
+            subtotal: null,
+            change: null,
+            notes: null,
+            shipping_type: null,
+            shipping_cost: null,
+            shipping_address_id: null,
+            billing_address_id: null,
+            store_pickup_id: null,
+            delivery_date: null,
+            delivery_slot: null,
+            location: null,
+            occasion: null,
+            store_id: {},
+            created_by: {},
+            created_at: null,
+            updated_at: null,
+            total: null,
+            total_without_tax: null,
+            total_paid: null,
+            items: [],
+            payments: [],
+            customer: {},
+            shipping_address: null,
+            store_pickup: null
+        }
     },
 
     mutations: {
@@ -197,7 +228,38 @@ export default {
             state.products = [];
             state.discount_type = "";
             state.discount_amount = 0;
-            state.order = {};
+            state.order = {
+                id: null,
+                customer_id: null,
+                status: null,
+                discount_type: null,
+                discount_amount: null,
+                tax: null,
+                subtotal: null,
+                change: null,
+                notes: null,
+                shipping_type: null,
+                shipping_cost: null,
+                shipping_address_id: null,
+                billing_address_id: null,
+                store_pickup_id: null,
+                delivery_date: null,
+                delivery_slot: null,
+                location: null,
+                occasion: null,
+                store_id: {},
+                created_by: {},
+                created_at: null,
+                updated_at: null,
+                total: null,
+                total_without_tax: null,
+                total_paid: null,
+                items: [],
+                payments: [],
+                customer: {},
+                shipping_address: null,
+                store_pickup: null
+            };
 
             state.total_price = 0;
 

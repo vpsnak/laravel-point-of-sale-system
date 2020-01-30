@@ -1,10 +1,7 @@
 <template>
     <div class="d-flex flex-grow-1" style="height:38vh; overflow-y:auto">
         <v-expansion-panels class="d-block" accordion>
-            <v-expansion-panel
-                v-for="(product, index) in products"
-                :key="index"
-            >
+            <v-expansion-panel v-for="(product, index) in products" :key="index">
                 <v-expansion-panel-header class="pa-2" ripple @click.stop>
                     <div class="d-flex justify-space-between">
                         <div class="d-flex flex-column pr-2">
@@ -44,8 +41,7 @@
                                             originalPrice(index)
                                     "
                                     dense
-                                >
-                                </v-text-field>
+                                ></v-text-field>
                             </div>
                         </div>
 
@@ -71,9 +67,7 @@
                                         icon
                                         v-on="on"
                                     >
-                                        <v-icon>
-                                            mdi-pencil
-                                        </v-icon>
+                                        <v-icon>mdi-pencil</v-icon>
                                     </v-btn>
                                 </template>
                                 <span>Edit price</span>
@@ -97,9 +91,7 @@
                                         @click.stop="viewProductDialog(product)"
                                         v-on="on"
                                     >
-                                        <v-icon>
-                                            mdi-eye
-                                        </v-icon>
+                                        <v-icon>mdi-eye</v-icon>
                                     </v-btn>
                                 </template>
                                 <span>View item</span>
@@ -171,10 +163,7 @@
                         <v-col cols="12">
                             <span class="subtitle">
                                 SKU:
-                                <span
-                                    class="amber--text"
-                                    v-text="product.sku"
-                                />
+                                <span class="amber--text" v-text="product.sku" />
                             </span>
                         </v-col>
                     </v-row>
