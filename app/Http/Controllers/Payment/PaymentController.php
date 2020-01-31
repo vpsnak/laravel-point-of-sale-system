@@ -353,6 +353,7 @@ class PaymentController extends Controller
         $orderStatus['refund'] = $refund->refresh();
         $orderStatus['info'] = ['Refund' => 'Refund completed successfully!'];
         $orderStatus['refunded_payment_id'] = $payment->id;
+
         return response($orderStatus, 200);
     }
 }

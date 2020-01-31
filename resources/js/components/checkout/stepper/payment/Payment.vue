@@ -36,7 +36,6 @@ export default {
     mounted() {
         if (this.orderId) {
             if (parseFloat(this.$store.state.cart.order.change) > 0) {
-                console.log("asd");
                 this.remaining = -Math.abs(
                     parseFloat(this.$store.state.cart.order.change)
                 );

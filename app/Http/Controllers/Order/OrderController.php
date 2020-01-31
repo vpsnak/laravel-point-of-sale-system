@@ -272,7 +272,7 @@ class OrderController extends BaseController
         } else {
             // change is negative so fix payment amount and save the change to order
             if (!$refund) {
-                $payment->amount = number_format(abs($payment->amount) + $change, 2, '.', null);
+                $payment->amount = number_format(abs($payment->amount) + (float) $change, 2, '.', null);
                 $payment->save();
 
                 if ($order->status !== 'paid') {
@@ -294,8 +294,9 @@ class OrderController extends BaseController
             }
         }
 
-        $order->refresh();
+        $order = $order->refresh();
         return [
+            'remaining' => ($order->change === '0.00') ? number_format($order->total - $order->total_paid, 2, '.', null) : 0,
             'change' => $order->change,
             'order_status' => $order->status
         ];
