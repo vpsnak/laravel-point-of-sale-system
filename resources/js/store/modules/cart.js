@@ -3,9 +3,8 @@ export default {
 
     state: {
         checkoutDialog: false,
-
+        payment_history: [],
         retail: true,
-
         refundLoading: false,
         paymentLoading: false,
         completeOrderLoading: false,
@@ -142,6 +141,13 @@ export default {
     },
 
     mutations: {
+        setPaymentHistory(state, value) {
+            if (Array.isArray(value)) {
+                state.payment_history = value;
+            } else {
+                state.payment_history.push(value);
+            }
+        },
         isValidDiscount(state) {
             let result = true;
 
@@ -224,6 +230,7 @@ export default {
         resetState(state) {
             state.paymentLoading = false;
             state.customer = null;
+            state.payment_history = [];
 
             state.products = [];
             state.discount_type = "";

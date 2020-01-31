@@ -36,7 +36,7 @@ class UserController extends Controller
         $http = new Client;
         $user = User::orWhere('email', $validatedData['username'])
             ->orWhere('username', $validatedData['username'])
-            ->orWhere('phone', $validatedData['username'])->first();
+            ->orWhere('phone', $validatedData['username'])->without('open_register')->first();
 
         if (!$user) {
             return response(['errors' => [

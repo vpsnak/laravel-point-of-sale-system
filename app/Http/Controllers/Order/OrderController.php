@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Payment;
 use App\Customer;
 use App\Giftcard;
 use App\Helper\Price;
@@ -46,12 +47,11 @@ class OrderController extends BaseController
                                 $giftCard->name = $product['name'];
                                 $giftCard->code = $code[1];
                             }
-                            if(!$giftCard->enabled){
-                            $giftCard->enabled = true;
-                            $giftCard->amount = $product->final_price;
-                            }
-                            else {
-                            $giftCard->amount += $product->final_price;
+                            if (!$giftCard->enabled) {
+                                $giftCard->enabled = true;
+                                $giftCard->amount = $product->final_price;
+                            } else {
+                                $giftCard->amount += $product->final_price;
                             }
                             $giftCard->save();
                         }
@@ -256,5 +256,29 @@ class OrderController extends BaseController
             $validatedData['keyword'],
             true
         );
+    }
+
+    public static function updateOrderStatus(Payment $payment)
+    {
+        $order = $payment->order;
+        $change = $order->total - $order->total_paid;
+
+        if ($change > 0) {
+            if ($order->status != 'pending_payment') {
+                $order->change = 0;
+                $order->status = 'pending_payment';
+                $order->save();
+            }
+        } else {
+            // change is negative so fix payment amount and save the change to order
+            $payment->amount = number_format($payment->amount + $change, 2, '.', null);
+            $payment->save();
+
+            if ($order->status != 'paid') {
+                $order->change = abs($change);
+                $order->status = 'paid';
+                $order->save();
+            }
+        }
     }
 }

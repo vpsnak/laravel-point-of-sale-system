@@ -74,6 +74,11 @@ export default new Vuex.Store({
         }
     },
     mutations: {
+        initApp(state, data) {
+            state.appEnv = data.env;
+            state.appName = data.name;
+            state.appDebug = data.debug;
+        },
         logout(state) {
             state.user = null;
             state.token = null;
@@ -92,18 +97,10 @@ export default new Vuex.Store({
             }
         },
         setCashRegister(state, cashRegister) {
-            if (cashRegister) {
-                state.cashRegister = cashRegister;
-            } else {
-                state.cashRegister = null;
-            }
+            state.cashRegister = cashRegister;
         },
         setStore(state, store) {
-            if (store) {
-                state.store = store;
-            } else {
-                state.store = null;
-            }
+            state.store = store;
         },
         setUser(state, user) {
             if (user) {
@@ -260,10 +257,7 @@ export default new Vuex.Store({
         getAppConfig(context) {
             return new Promise(resolve => {
                 axios.get(`${this.state.baseUrl}config`).then(response => {
-                    context.state.appEnv = response.data.env;
-                    context.state.appName = response.data.name;
-                    context.state.appDebug = response.data.debug;
-
+                    context.commit("initApp", response.data);
                     resolve(true);
                 });
             });

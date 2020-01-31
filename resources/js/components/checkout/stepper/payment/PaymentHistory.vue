@@ -22,7 +22,7 @@
             <v-col :cols="12">
                 <v-data-table
                     :headers="headers"
-                    :items="payments"
+                    :items="paymentHistory"
                     class="elevation-1"
                     disable-pagination
                     disable-filtering
@@ -46,13 +46,8 @@
                                             item.refunded !== true
                                     "
                                 >
-                                    <v-icon
-                                        v-if="item.payment_type.type === 'cash'"
-                                        >mdi-cash-refund</v-icon
-                                    >
-                                    <v-icon v-else
-                                        >mdi-credit-card-refund</v-icon
-                                    >
+                                    <v-icon v-if="item.payment_type.type === 'cash'">mdi-cash-refund</v-icon>
+                                    <v-icon v-else>mdi-credit-card-refund</v-icon>
                                 </v-btn>
                             </template>
                             <span>Refund</span>
@@ -69,7 +64,6 @@ import { mapActions } from "vuex";
 
 export default {
     props: {
-        payments: Array,
         loading: Boolean
     },
     data() {
@@ -120,6 +114,17 @@ export default {
         };
     },
     computed: {
+        paymentHistory: {
+            get() {
+                return this.$store.state.cart.payment_history;
+            },
+            set(value) {
+                this.$store.commit("cart/setPaymentHistory", value);
+            }
+        },
+        orderId() {
+            return this.$store.state.cart.order.id;
+        },
         refundLoading: {
             get() {
                 return this.$store.state.cart.refundLoading;
@@ -128,6 +133,9 @@ export default {
                 this.$store.state.cart.refundLoading = value;
             }
         }
+    },
+    mounted() {
+        this.getPaymentHistory();
     },
     methods: {
         getPaymentHistory() {
@@ -199,7 +207,7 @@ export default {
             this.action = "";
         },
 
-        ...mapActions(["delete"]),
+        ...mapActions(["search", "delete"]),
 
         beforeDestroy() {
             this.$off("refund");
