@@ -70,7 +70,7 @@ class Order extends BaseModel
             if ($payment->status === 'approved') {
                 $total_paid += $payment->amount;
             } else if ($payment->status === 'refunded') {
-                $total_paid -= $payment->amount;
+                $total_paid -= abs($payment->amount);
             }
         };
         return $total_paid + $this->change;

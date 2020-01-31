@@ -258,27 +258,46 @@ class OrderController extends BaseController
         );
     }
 
-    public static function updateOrderStatus(Payment $payment)
+    public static function updateOrderStatus(Payment $payment, bool $refund = false)
     {
         $order = $payment->order;
-        $change = $order->total - $order->total_paid;
+        $change = number_format($order->total - $order->total_paid, 2, '.', null);
 
         if ($change > 0) {
-            if ($order->status != 'pending_payment') {
+            if ($order->status !== 'pending_payment') {
                 $order->change = 0;
                 $order->status = 'pending_payment';
                 $order->save();
             }
         } else {
             // change is negative so fix payment amount and save the change to order
-            $payment->amount = number_format($payment->amount + $change, 2, '.', null);
-            $payment->save();
+            if (!$refund) {
+                $payment->amount = number_format(abs($payment->amount) + $change, 2, '.', null);
+                $payment->save();
 
-            if ($order->status != 'paid') {
+                if ($order->status !== 'paid') {
+                    $order->change = abs($change);
+                    $order->status = 'paid';
+                    $order->save();
+                }
+            } else {
                 $order->change = abs($change);
-                $order->status = 'paid';
                 $order->save();
+
+                if ($order->status !== ('pending_payment' || 'pending')) {
+                    if ($order->total - $order->total_paid > 0) {
+                        $order->change = 0;
+                        $order->status = 'pending_payment';
+                        $order->save();
+                    }
+                }
             }
         }
+
+        $order->refresh();
+        return [
+            'change' => $order->change,
+            'order_status' => $order->status
+        ];
     }
 }

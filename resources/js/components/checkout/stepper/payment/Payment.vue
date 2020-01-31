@@ -1,6 +1,6 @@
 <template>
     <div>
-        <paymentHistory :loading="paymentHistoryLoading" @refund="refund" :key="orderId"></paymentHistory>
+        <paymentHistory :loading="paymentHistoryLoading" @refund="refund"></paymentHistory>
 
         <v-divider></v-divider>
 

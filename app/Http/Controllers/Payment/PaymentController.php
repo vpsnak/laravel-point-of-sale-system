@@ -227,9 +227,10 @@ class PaymentController extends Controller
         $payment->save();
         $payment->load(['created_by', 'paymentType', 'order']);
 
-        OrderController::updateOrderStatus($payment);
+        $orderStatus = OrderController::updateOrderStatus($payment);
+        $orderStatus['payment'] = $payment;
 
-        return response(['payment' => $payment], 201);
+        return response($orderStatus, 201);
     }
 
     public function search(Request $request)
@@ -308,6 +309,7 @@ class PaymentController extends Controller
     private function createRefund(Payment $payment, bool $succeed)
     {
         $refund = $payment->replicate();
+        $refund->amount = abs($refund->amount) * -1;
         $refund->status = $succeed ? 'refunded' : 'failed';
         $refund->created_by = auth()->user()->id;
         $refund->cash_register_id = auth()->user()->open_register->cash_register_id;
@@ -345,12 +347,12 @@ class PaymentController extends Controller
         }
 
         $refund = $this->createRefund($payment, $result);
-        $refund = $refund->load(['created_by', 'paymentType', 'order']);
+        $refund->load(['created_by', 'paymentType', 'order']);
 
-        return response([
-            'info' => ['Refund' => 'Refund completed successfully!'],
-            'refunded_payment_id' => $payment->id,
-            'refund' => $refund,
-        ], 200);
+        $orderStatus = OrderController::updateOrderStatus($refund, true);
+        $orderStatus['refund'] = $refund->refresh();
+        $orderStatus['info'] = ['Refund' => 'Refund completed successfully!'];
+        $orderStatus['refunded_payment_id'] = $payment->id;
+        return response($orderStatus, 200);
     }
 }
