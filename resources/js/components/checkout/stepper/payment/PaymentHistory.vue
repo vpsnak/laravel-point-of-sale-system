@@ -64,12 +64,10 @@ import { mapActions } from "vuex";
 
 export default {
     props: {
-        payments: Array,
         loading: Boolean
     },
     data() {
         return {
-            payment_history: [],
             paymentHistoryLoading: false,
             dialog: {
                 show: false,
@@ -118,22 +116,10 @@ export default {
     computed: {
         paymentHistory: {
             get() {
-                if (this.payment_history) {
-                    if (this.$props.payments) {
-                        const allHistory = this.payment_history.concat(
-                            this.$props.payments
-                        );
-
-                        return allHistory;
-                    } else {
-                        return this.payment_history;
-                    }
-                } else {
-                    this.$props.payments;
-                }
+                return this.$store.state.cart.payment_history;
             },
             set(value) {
-                this.payment_history = value;
+                this.$store.commit("cart/setPaymentHistory", value);
             }
         },
         orderId() {

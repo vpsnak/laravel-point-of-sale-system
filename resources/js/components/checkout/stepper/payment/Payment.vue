@@ -1,6 +1,6 @@
 <template>
     <div>
-        <paymentHistory :payments="payments" :loading="paymentHistoryLoading" @refund="refund"></paymentHistory>
+        <paymentHistory :loading="paymentHistoryLoading" @refund="refund" :key="orderId"></paymentHistory>
 
         <v-divider></v-divider>
 
@@ -19,7 +19,6 @@ import { mapActions, mapMutations } from "vuex";
 export default {
     data() {
         return {
-            payments: [],
             order_remaining: null,
             orderHistory: [],
             paymentTypes: [],
@@ -36,13 +35,15 @@ export default {
 
     mounted() {
         if (this.orderId) {
-            if (this.$store.state.cart.order.change) {
-                this.remaining =
-                    parseFloat(this.$store.state.cart.order.change) * -1;
+            if (parseFloat(this.$store.state.cart.order.change) > 0) {
+                console.log("asd");
+                this.remaining = -Math.abs(
+                    parseFloat(this.$store.state.cart.order.change)
+                );
             } else {
                 this.remaining =
                     parseFloat(this.$store.state.cart.order.total) -
-                    parseFloat(this.$store.state.cart.order.total_paid);
+                    this.$store.state.cart.order.total_paid;
             }
 
             this.$emit("payment", this.remaining);
@@ -50,6 +51,14 @@ export default {
     },
 
     computed: {
+        payments: {
+            get() {
+                return this.$store.state.cart.payment_history;
+            },
+            set(value) {
+                this.$store.commit("cart/setPaymentHistory", value);
+            }
+        },
         orderId() {
             return this.$store.state.cart.order.id;
         },
@@ -119,11 +128,11 @@ export default {
 
             this.create(payload)
                 .then(response => {
-                    this.payments.push(response.payment);
+                    this.payments = response.payment;
 
                     this.remaining =
                         parseFloat(response.payment.order.total) -
-                        parseFloat(response.payment.order.total_paid);
+                        response.payment.order.total_paid;
 
                     let notification = {
                         msg: "Payment received",
@@ -135,18 +144,19 @@ export default {
                         this.$store.state.cart.customer.house_account_limit -=
                             payload.data.amount;
                     }
+
+                    this.$emit("payment", this.remaining);
                 })
                 .catch(error => {
+                    console.log(error);
                     if (error.response.data.payment) {
-                        this.payments.push(error.response.data.payment);
+                        this.payments = error.response.data.payment;
                     }
                 })
                 .finally(() => {
                     this.paymentAmount = null;
                     this.paymentActionsLoading = false;
                     this.$store.state.cart.paymentLoading = false;
-
-                    this.$emit("payment", this.remaining);
                 });
         },
         refund(event) {
@@ -159,7 +169,7 @@ export default {
 
             this.remaining =
                 parseFloat(event.refund.order.total) -
-                parseFloat(event.refund.order.total_paid);
+                event.refund.order.total_paid;
 
             const notification = {
                 msg: event.msg,

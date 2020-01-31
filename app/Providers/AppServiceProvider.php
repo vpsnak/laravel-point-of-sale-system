@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\Observers\OrderObserver;
-use App\Observers\PaymentObserver;
 use App\Order;
 use App\Payment;
 use Illuminate\Database\Eloquent\Builder;
@@ -33,7 +32,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Order::observe(OrderObserver::class);
-        Payment::observe(PaymentObserver::class);
 
         Builder::macro('search', function ($attributes, string $searchTerm) {
             $this->where(function (Builder $query) use ($attributes, $searchTerm) {

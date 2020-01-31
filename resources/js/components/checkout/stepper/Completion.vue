@@ -20,7 +20,7 @@ export default {
 
     computed: {
         change() {
-            if (this.order && this.order.total - this.order.total_paid < 0) {
+            if (this.order.id && this.order.total - this.order.total_paid < 0) {
                 return Math.abs(this.order.total - this.order.total_paid);
             } else {
                 return false;
@@ -29,22 +29,19 @@ export default {
         order() {
             return this.$store.state.cart.order;
         },
-        orderId() {
-            return this.order ? this.order.id : 0;
-        },
         customer() {
-            if (this.order) {
+            if (this.order.id) {
                 if (this.order.customer) {
                     return this.order.customer;
                 }
             }
-            return undefined;
+            return {};
         },
         customerEmail() {
             if (this.customer) {
                 return this.customer.email ? this.customer.email : undefined;
             } else {
-                return undefined;
+                return null;
             }
         }
     },

@@ -6,6 +6,7 @@ use App\Coupon;
 use App\Customer;
 use App\ElavonApiPayment;
 use App\Http\Controllers\ElavonSdkPaymentController;
+use App\Http\Controllers\OrderController;
 use App\Giftcard;
 use App\Helper\PhpHelper;
 use App\Helper\Price;
@@ -225,6 +226,8 @@ class PaymentController extends Controller
         $payment->status = 'approved';
         $payment->save();
         $payment->load(['created_by', 'paymentType', 'order']);
+
+        OrderController::updateOrderStatus($payment);
 
         return response(['payment' => $payment], 201);
     }
