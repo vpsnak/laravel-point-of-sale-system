@@ -59,7 +59,7 @@
                 </v-col>
             </v-row>
             <ValidationProvider
-                rules="required_if:bulk_action|max:5"
+                rules="required_if:bulk_action|max:5|numeric"
                 v-slot="{ errors, valid }"
                 name="Qty"
             >
