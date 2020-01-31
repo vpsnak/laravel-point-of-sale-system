@@ -69,8 +69,7 @@ class Order extends BaseModel
         foreach ($this->payments as $payment) {
             if ($payment->status === 'approved') {
                 $total_paid += $payment->amount;
-            }
-            if ($payment->status === 'refunded') {
+            } else if ($payment->status === 'refunded') {
                 $total_paid -= $payment->amount;
             }
         };

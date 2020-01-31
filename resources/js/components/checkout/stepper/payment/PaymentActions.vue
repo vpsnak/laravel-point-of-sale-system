@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <div v-if="remainingAmount">
         <v-row justify="center" align="center" class="flex-column my-3">
-            <h3 class="py-3">{{ title }}</h3>
+            <h3 class="py-3">Payment methods</h3>
             <v-btn-toggle v-model="paymentType" mandatory @change="clearState">
                 <v-btn
                     v-for="(paymentType, index) in paymentTypes"
@@ -80,7 +80,7 @@
             v-if="paymentType !== 'coupon'"
         >
             <v-col :lg="5" class="d-flex justify-space-between align-center">
-                <span class="title" v-if="remainingAmount !== undefined">
+                <span class="title">
                     Remaining:
                     <span
                         class="amber--text"
@@ -115,7 +115,7 @@
                             orderLoading ||
                             !$store.state.cart.isValidCheckout
                     "
-                    >{{ paymentBtnTxt }}</v-btn
+                    >Send payment</v-btn
                 >
             </v-col>
         </v-row>
@@ -126,17 +126,18 @@
 import { mapActions } from "vuex";
 
 export default {
+    mounted() {
+        this.getPaymentTypes();
+    },
     props: {
-        title: String,
-        paymentBtnTxt: String,
-        types: Array,
         remaining: Number,
         loading: Boolean
     },
     data() {
         return {
+            payment_types: [],
             orderLoading: false,
-            paymentAmount: Number,
+            paymentAmount: null,
             paymentType: null,
             code: null,
 
@@ -150,13 +151,18 @@ export default {
     },
 
     computed: {
-        paymentTypes() {
-            if (this.houseAccount) {
-                return this.$props.types;
-            } else {
-                return _.filter(this.$props.types, function(o) {
-                    return o.type !== "house-account";
-                });
+        paymentTypes: {
+            get() {
+                if (this.houseAccount) {
+                    return this.payment_types;
+                } else {
+                    return _.filter(this.payment_types, function(o) {
+                        return o.type !== "house-account";
+                    });
+                }
+            },
+            set(value) {
+                this.payment_types = value;
             }
         },
         houseAccountNumber() {
@@ -206,6 +212,11 @@ export default {
     },
 
     methods: {
+        getPaymentTypes() {
+            this.getAll({ model: "payment-types" }).then(response => {
+                this.paymentTypes = response;
+            });
+        },
         pay() {
             let payload;
 
@@ -311,6 +322,7 @@ export default {
         },
 
         ...mapActions("cart", ["submitOrder"]),
+        ...mapActions(["getAll"]),
 
         getIcon() {
             return _.find(this.$props.types, ["type", this.paymentType]).icon;

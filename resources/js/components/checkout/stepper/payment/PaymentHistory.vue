@@ -22,12 +22,12 @@
             <v-col :cols="12">
                 <v-data-table
                     :headers="headers"
-                    :items="paymentHistory"
+                    :items="payments"
                     class="elevation-1"
                     disable-pagination
                     disable-filtering
                     hide-default-footer
-                    :loading="loading || refundLoading"
+                    :loading="loading || refundLoading || paymentHistoryLoading"
                 >
                     <template v-slot:item.actions="{ item }">
                         <v-tooltip bottom>
@@ -36,10 +36,14 @@
                                     @click="refundDialog(item)"
                                     icon
                                     v-on="on"
-                                    :loading="loading || refundLoading"
+                                    :loading="
+                                        loading ||
+                                            refundLoading ||
+                                            paymentHistoryLoading
+                                    "
                                     v-if="
                                         item.status === 'approved' &&
-                                            item.refunded !== 1
+                                            item.refunded !== true
                                     "
                                 >
                                     <v-icon
@@ -65,11 +69,12 @@ import { mapActions } from "vuex";
 
 export default {
     props: {
-        paymentHistory: Array,
+        payments: Array,
         loading: Boolean
     },
     data() {
         return {
+            paymentHistoryLoading: false,
             dialog: {
                 show: false,
                 width: 600,
@@ -125,6 +130,23 @@ export default {
         }
     },
     methods: {
+        getPaymentHistory() {
+            if (this.orderId) {
+                this.paymentHistoryLoading = true;
+
+                let payload = {
+                    model: "payments",
+                    keyword: this.orderId
+                };
+                this.search(payload)
+                    .then(response => {
+                        this.paymentHistory = response;
+                    })
+                    .finally(() => {
+                        this.paymentHistoryLoading = false;
+                    });
+            }
+        },
         dialogEvent(event) {
             if (event) {
                 this.refund();

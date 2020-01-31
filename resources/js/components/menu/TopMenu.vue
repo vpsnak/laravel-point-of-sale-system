@@ -18,8 +18,15 @@
             v-if="!openedRegister"
             text
             @click="$router.push({ name: 'openCashRegister' })"
-        >Select cash register</v-chip>
-        <v-menu v-if="openedRegister" left bottom offset-x transition="scale-transition">
+            >Select cash register</v-chip
+        >
+        <v-menu
+            v-if="openedRegister"
+            left
+            bottom
+            offset-x
+            transition="scale-transition"
+        >
             <template v-slot:activator="{ on }">
                 <v-btn v-on="on" icon>
                     <v-avatar color="green" size="36">
@@ -35,24 +42,24 @@
                         </v-list-item-avatar>
                         <v-list-item-content>
                             <v-list-item-title>
-                                {{
-                                store.name
-                                }}
+                                {{ store.name }}
                             </v-list-item-title>
                             <v-list-item-subtitle>
-                                {{
-                                cashRegister.name
-                                }}
+                                {{ cashRegister.name }}
                             </v-list-item-subtitle>
                         </v-list-item-content>
                     </v-list-item>
                     <v-divider />
                     <v-list-item @click="checkCashRegisterDialog">
                         <v-list-item-avatar>
-                            <v-icon color="secondary">mdi-alpha-x-circle</v-icon>
+                            <v-icon color="secondary"
+                                >mdi-alpha-x-circle</v-icon
+                            >
                         </v-list-item-avatar>
                         <v-list-item-content>
-                            <v-list-item-title>Generate X report</v-list-item-title>
+                            <v-list-item-title
+                                >Generate X report</v-list-item-title
+                            >
                         </v-list-item-content>
                     </v-list-item>
                     <v-list-item @click="cashRegisterLogout()">
@@ -69,7 +76,9 @@
                             <v-icon color="red">mdi-alpha-z-circle</v-icon>
                         </v-list-item-avatar>
                         <v-list-item-content>
-                            <v-list-item-title>Close and generate Z report</v-list-item-title>
+                            <v-list-item-title
+                                >Close and generate Z report</v-list-item-title
+                            >
                         </v-list-item-content>
                     </v-list-item>
                 </v-list-item-group>
@@ -85,20 +94,14 @@
                 <v-list-item-group>
                     <v-list-item inactive two-line @click.stop :ripple="false">
                         <v-list-item-avatar color="orange">
-                            {{
-                            user.name.charAt(0)
-                            }}
+                            {{ user.name.charAt(0) }}
                         </v-list-item-avatar>
                         <v-list-item-content>
                             <v-list-item-title>
-                                {{
-                                user.name
-                                }}
+                                {{ user.name }}
                             </v-list-item-title>
                             <v-list-item-subtitle>
-                                {{
-                                user.email
-                                }}
+                                {{ user.email }}
                             </v-list-item-subtitle>
                         </v-list-item-content>
                     </v-list-item>
@@ -116,7 +119,9 @@
                             <v-icon>mdi-key</v-icon>
                         </v-list-item-avatar>
                         <v-list-item-content>
-                            <v-list-item-title>Change password</v-list-item-title>
+                            <v-list-item-title
+                                >Change password</v-list-item-title
+                            >
                         </v-list-item-content>
                     </v-list-item>
                     <v-divider />
@@ -128,7 +133,10 @@
                             <v-list-item-title>Dark mode</v-list-item-title>
                         </v-list-item-content>
                         <v-list-item-action>
-                            <v-switch v-model="darkMode" @click.stop="darkMode = !darkMode"></v-switch>
+                            <v-switch
+                                v-model="darkMode"
+                                @click.stop="darkMode = !darkMode"
+                            ></v-switch>
                         </v-list-item-action>
                     </v-list-item>
                 </v-list-item-group>
@@ -275,7 +283,6 @@ export default {
             };
         },
         displayZDialog(event) {
-            console.log(event);
             this.dialog = {
                 show: false,
                 width: 1000,

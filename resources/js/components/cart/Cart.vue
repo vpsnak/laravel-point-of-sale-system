@@ -30,7 +30,7 @@
                             icon
                             value="pickup"
                             :disabled="
-                                !$store.state.cart.customer || order
+                                !$store.state.cart.customer || order.id
                                     ? true
                                     : false
                             "
@@ -48,7 +48,7 @@
                             icon
                             value="delivery"
                             :disabled="
-                                !$store.state.cart.customer || order
+                                !$store.state.cart.customer || order.id
                                     ? true
                                     : false
                             "

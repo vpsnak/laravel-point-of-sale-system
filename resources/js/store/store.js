@@ -424,11 +424,10 @@ export default new Vuex.Store({
                             context.commit("setNotification", notification);
                         } else {
                             let notification = {
-                                msg:
-                                    "Unexpected error occured. Check console for more info",
+                                msg: "Unexpected error occured",
                                 type: "error"
                             };
-                            console.log(error);
+
                             context.commit("setNotification", notification);
                         }
 
@@ -474,11 +473,10 @@ export default new Vuex.Store({
                             context.commit("setNotification", notification);
                         } else {
                             let notification = {
-                                msg:
-                                    "Unexpected error occured. Check console for more info",
+                                msg: "Unexpected error occured",
                                 type: "error"
                             };
-                            console.log(error);
+
                             context.commit("setNotification", notification);
                         }
 
@@ -591,11 +589,10 @@ export default new Vuex.Store({
                             context.commit("setNotification", notification);
                         } else {
                             let notification = {
-                                msg:
-                                    "Unexpected error occured. Check console for more info",
+                                msg: "Unexpected error occured",
                                 type: "error"
                             };
-                            console.log(error);
+
                             context.commit("setNotification", notification);
                         }
 

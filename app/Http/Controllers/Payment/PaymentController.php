@@ -24,7 +24,6 @@ class PaymentController extends Controller
             'payment_type' => 'required|exists:payment_types,type',
             'amount' => 'nullable|required_unless:payment_type,coupon|numeric|min:0.01',
             'order_id' => 'required|exists:orders,id',
-            'cash_register_id' => 'required|exists:cash_registers,id',
 
             // card validation
             'card.number' => 'nullable|required_if:payment_type,card|numeric',
@@ -39,6 +38,7 @@ class PaymentController extends Controller
         ]);
 
         $validatedData['created_by'] = auth()->user()->id;
+        $validatedData['cash_register_id'] = auth()->user()->open_register->cash_register->id;
 
         $newPayment = $validatedData;
         $newPayment['payment_type'] = PaymentType::getFirst('type', $validatedData['payment_type'])->id;
@@ -51,7 +51,10 @@ class PaymentController extends Controller
                 $payment->status = 'failed';
                 $payment->save();
 
-                return response(['errors' => ['Payment method' => 'This payment method does not exist']], 422);
+                return response([
+                    'errors' => ['Payment method' => 'This payment method does not exist'],
+                    'payment' => $payment
+                ], 422);
                 break;
             case 'cash':
                 // nothing to do here, move on
@@ -79,6 +82,8 @@ class PaymentController extends Controller
                 if (array_key_exists('errors', $paymentResponse)) {
                     $payment->status = 'failed';
                     $payment->save();
+
+                    $paymentResponse['payment'] = $payment->load(['created_by', 'paymentType']);
                     return response($paymentResponse, 500);
                 }
 
@@ -94,6 +99,7 @@ class PaymentController extends Controller
                     $payment->save();
 
                     return response([
+                        'payment' => $payment->load(['created_by', 'paymentType']),
                         'errors' => [
                             'Coupon' => ['Coupon does not exist']
                         ]
@@ -105,6 +111,7 @@ class PaymentController extends Controller
                     $payment->save();
 
                     return response([
+                        'payment' => $payment->load(['created_by', 'paymentType']),
                         'errors' => [
                             'Coupon' => ['This coupon has expired']
                         ]
@@ -115,6 +122,7 @@ class PaymentController extends Controller
                         $payment->save();
 
                         return response([
+                            'payment' => $payment->load(['created_by', 'paymentType']),
                             'errors' => [
                                 'Coupon' => ['Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))]
                             ]
@@ -141,6 +149,7 @@ class PaymentController extends Controller
                     $payment->save();
 
                     return response([
+                        'payment' => $payment->load(['created_by', 'paymentType']),
                         'errors' => [
                             'Gift card' => ['This gift card is inactive']
                         ]
@@ -151,6 +160,7 @@ class PaymentController extends Controller
                         $payment->save();
 
                         return response([
+                            'payment' => $payment->load(['created_by', 'paymentType']),
                             'errors' => [
                                 'Gift card' => ['This gift card has insufficient balance to complete the transaction']
                             ]
@@ -170,11 +180,11 @@ class PaymentController extends Controller
 
                 $paymentResponse = $elavonSdkPayment->posPayment();
 
-
                 if (array_key_exists('errors', $paymentResponse)) {
                     $payment->status = 'failed';
                     $payment->save();
 
+                    $paymentResponse['payment'] = $payment->load(['created_by', 'paymentType']);
                     return response($paymentResponse, 422);
                 }
 
@@ -214,14 +224,9 @@ class PaymentController extends Controller
 
         $payment->status = 'approved';
         $payment->save();
+        $payment->load(['created_by', 'paymentType', 'order']);
 
-        if (!empty($payment)) {
-            return response([
-                'total' => $payment->order->total,
-                'total_paid' => $payment->order->total_paid,
-                'payment' => $payment,
-            ], 201);
-        }
+        return response(['payment' => $payment], 201);
     }
 
     public function search(Request $request)
@@ -337,10 +342,12 @@ class PaymentController extends Controller
         }
 
         $refund = $this->createRefund($payment, $result);
+        $refund = $refund->load(['created_by', 'paymentType', 'order']);
 
         return response([
             'info' => ['Refund' => 'Refund completed successfully!'],
-            'data' => $refund
+            'refunded_payment_id' => $payment->id,
+            'refund' => $refund,
         ], 200);
     }
 }

@@ -1,22 +1,17 @@
 <template>
     <div>
         <paymentHistory
-            :paymentHistory="paymentHistory"
+            :payments="payments"
             :loading="paymentHistoryLoading"
-            v-if="history"
             @refund="refund"
         ></paymentHistory>
 
         <v-divider></v-divider>
 
         <paymentActions
-            :order_id="order_id"
-            :types="paymentTypes"
             :remaining="remaining"
             :loading="paymentActionsLoading"
-            title="Payment methods"
-            paymentBtnTxt="Send payment"
-            v-if="actions && (remaining > 0 || remaining === undefined)"
+            v-if="remaining >= 0"
             @sendPayment="sendPayment"
         ></paymentActions>
     </div>
@@ -26,17 +21,10 @@
 import { mapActions, mapMutations } from "vuex";
 
 export default {
-    props: {
-        order_id: Number,
-        history: Boolean,
-        actions: Boolean
-    },
     data() {
         return {
-            show_actions: undefined,
-            order: {},
-            order_remaining: undefined,
-            payment_history: [],
+            payments: [],
+            order_remaining: null,
             orderHistory: [],
             paymentTypes: [],
 
@@ -51,15 +39,12 @@ export default {
     },
 
     computed: {
+        orderId() {
+            return this.$store.state.cart.order.id;
+        },
         remaining: {
             get() {
-                if (parseFloat(this.order_remaining) >= 0) {
-                    return this.order_remaining;
-                } else if (parseFloat(this.order_remaining) < 0) {
-                    return this.order_remaining;
-                } else {
-                    return undefined;
-                }
+                return this.order_remaining;
             },
             set(value) {
                 this.order_remaining = value;
@@ -81,14 +66,6 @@ export default {
                 this.payment.amount = value;
             }
         },
-        paymentHistory: {
-            get() {
-                return this.payment_history;
-            },
-            set(value) {
-                this.payment_history = value;
-            }
-        },
         refundLoading: {
             get() {
                 return this.$store.state.cart.refundLoading;
@@ -99,67 +76,7 @@ export default {
         }
     },
 
-    mounted() {
-        this.init();
-    },
-
     methods: {
-        init() {
-            this.getOrder();
-
-            if (this.$props.history) {
-                this.getPaymentHistory();
-            }
-
-            if (this.$props.actions) {
-                this.getPaymentTypes();
-            }
-        },
-        getOrder() {
-            if (this.$props.order_id) {
-                let payload = {
-                    model: "orders",
-                    data: { id: this.$props.order_id }
-                };
-                this.getOne(payload)
-                    .then(response => {
-                        this.order = response;
-                        this.$store.commit("cart/setOrder", response);
-                        this.$store.state.cart.order = response;
-
-                        this.remaining =
-                            this.order.total - this.order.total_paid;
-                        this.$emit("amountPending", this.remaining);
-                    })
-                    .finally(() => {
-                        this.refundLoading = false;
-                    });
-            }
-        },
-        getPaymentHistory() {
-            if (this.$props.order_id > 0) {
-                this.paymentHistoryLoading = true;
-
-                let payload = {
-                    model: "payments",
-                    keyword: this.$props.order_id
-                };
-                this.search(payload)
-                    .then(response => {
-                        this.paymentHistory = response;
-                    })
-                    .finally(() => {
-                        this.paymentHistoryLoading = false;
-                    });
-            }
-        },
-
-        getPaymentTypes() {
-            this.getAll({ model: "payment-types" }).then(response => {
-                this.paymentTypes = response;
-            });
-        },
-
         sendPayment(event) {
             this.paymentActionsLoading = true;
 
@@ -168,8 +85,7 @@ export default {
                 data: {
                     payment_type: event.paymentType,
                     amount: event.paymentAmount || null,
-                    order_id: this.$props.order_id,
-                    cash_register_id: this.$store.state.cashRegister.id
+                    order_id: this.orderId
                 }
             };
 
@@ -192,8 +108,11 @@ export default {
 
             this.create(payload)
                 .then(response => {
-                    this.$store.state.cart.order.remaining = this.order_remaining =
-                        response.total - response.total_paid;
+                    this.payments.push(response.payment);
+
+                    this.remaining =
+                        parseFloat(response.payment.order.total) -
+                        parseFloat(response.payment.order.total_paid);
 
                     let notification = {
                         msg: "Payment received",
@@ -206,29 +125,48 @@ export default {
                             payload.data.amount;
                     }
                 })
+                .catch(error => {
+                    if (error.response.data.payment) {
+                        this.payments.push(error.response.data.payment);
+                    }
+                })
                 .finally(() => {
                     this.paymentAmount = null;
                     this.paymentActionsLoading = false;
                     this.$store.state.cart.paymentLoading = false;
 
-                    this.init();
+                    this.$emit("payment", this.remaining);
                 });
         },
         refund(event) {
-            let notification = {
+            const index = _.findIndex(this.payments, [
+                "id",
+                event.refunded_payment_id
+            ]);
+            this.payments[index].refunded = true;
+            this.payments.push(event.refund);
+
+            this.remaining =
+                parseFloat(event.refund.order.total) -
+                parseFloat(event.refund.order.total_paid);
+
+            const notification = {
                 msg: event.msg,
                 type: event.status
             };
-            this.setNotification(notification);
 
-            this.init();
+            this.$emit("payment", this.remaining);
+
+            this.$store.state.cart.refundLoading = false;
+            this.setNotification(notification);
         },
 
         ...mapActions(["search", "create", "getAll", "getOne"]),
         ...mapMutations(["setNotification"])
     },
+
     beforeDestroy() {
-        this.$off("amountPending");
+        this.$off("payment");
     }
 };
 </script>
