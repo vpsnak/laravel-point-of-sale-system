@@ -108,7 +108,7 @@ export default new Vuex.Store({
         setUser(state, user) {
             if (user) {
                 state.user = user;
-                Cookies.set("user", state.user, {
+                Cookies.set("user", user, {
                     secure: state.appEnv !== "local" ? true : false,
                     sameSite: "strict"
                 });
