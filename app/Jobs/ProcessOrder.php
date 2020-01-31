@@ -40,16 +40,15 @@ class ProcessOrder implements ShouldQueue
      */
     public function handle()
     {
+        Log::debug($this->order->id . ' ' . $this->order->status);
+
         if ($this->order->status == 'pending') {
             foreach ($this->order->items as $item) {
                 $this->handleStock($item, 'remove');
             }
-        }
-        Log::debug($this->order->id . ' ' . $this->order->status);
-        if ($this->order->status == 'complete') {
+        } else if ($this->order->status == 'complete') {
             MasOrderController::submitToMas($this->order);
-        }
-        if ($this->order->status == 'canceled') {
+        } else if ($this->order->status == 'canceled') {
             foreach ($this->order->items as $item) {
                 $this->handleStock($item, 'add');
             }

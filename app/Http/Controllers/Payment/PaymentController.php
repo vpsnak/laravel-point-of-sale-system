@@ -14,7 +14,7 @@ use App\Payment;
 use App\PaymentType;
 use Illuminate\Http\Request;
 
-class PaymentController extends BaseController
+class PaymentController extends Controller
 {
     protected $model = Payment::class;
 
@@ -227,30 +227,120 @@ class PaymentController extends BaseController
     public function search(Request $request)
     {
         $validatedData = $request->validate([
-            'keyword' => 'required|numeric'
+            'keyword' => 'required|exists:orders,id'
         ]);
 
-        return $this->searchResult(
-            ['order_id'],
-            $validatedData['keyword']
-        );
+        return response(Payment::where('order_id', $validatedData['keyword'])->get());
     }
 
-    public function delete($id)
+    private function posRefund(Payment $payment)
     {
-        if (!isset($this->model)) {
-            return response('Model not found', 404);
+        $elavonSdkPaymentController = new ElavonSdkPaymentController;
+
+        $elavonSdkPaymentController->selected_transaction = 'VOID';
+        $elavonSdkPaymentController->originalTransId = $payment->code;
+        $paymentResponse = $elavonSdkPaymentController->posPayment();
+
+        if (isset($paymentResponse['errors'])) {
+            $elavonSdkPaymentController->selected_transaction = 'LINKED_REFUND';
+            $elavonSdkPaymentController->amount = $payment->amount;
+            $paymentResponse = $elavonSdkPaymentController->posPayment();
+
+            if (isset($paymentResponse['errors'])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private function apiRefund($payment)
+    {
+        $paymentResponse = (new CreditCardController)->cardRefund($payment->code);
+
+        ElavonApiPayment::create([
+            'txn_id' => $paymentResponse['response']['ssl_txn_id'] ?? '',
+            'transaction' => $paymentResponse['response']['ssl_transaction_type'] ?? '',
+            'card_number' => $paymentResponse['response']['ssl_card_number'] ?? '',
+            'status' => $paymentResponse['response']['ssl_result_message'] ?? '',
+            'log' => json_encode($paymentResponse['response']),
+            'payment_id' => $payment->id,
+        ]);
+
+        if (isset($paymentResponse['errors'])) {
+            return false;
         }
 
-        $payment = Payment::findOrFail($id);
+        return true;
+    }
+
+    private function houseAccRefund(Payment $payment)
+    {
+        $customer = Customer::where('house_account_number', $payment->code)->firstOrFail();
+        $customer->increment('house_account_limit', $payment->amount);
+
+        return true;
+    }
+
+    private function giftcardRefund(Payment $payment)
+    {
+        $giftcard = Giftcard::whereCode($payment->code)->firstOrFail();
+        $giftcard->increment('amount', $payment->amount);
+
+        return true;
+    }
+
+    private function couponRefund(Payment $payment)
+    {
+        $coupon = Coupon::whereCode($payment->code)->firstOrFail();
+        $coupon->increment('uses');
+
+        return true;
+    }
+
+    private function createRefund(Payment $payment, bool $succeed)
+    {
         $refund = $payment->replicate();
-        $refund->status = 'refunded';
+        $refund->status = $succeed ? 'refunded' : 'failed';
         $refund->created_by = auth()->user()->id;
         $refund->cash_register_id = auth()->user()->open_register->cash_register_id;
         $refund->save();
-        $payment->refunded = 1;
+
+        $payment->refunded = $succeed;
         $payment->save();
 
-        return response(['info' => ['Refund' => 'Refund completed successfully!']], 200);
+        return $refund;
+    }
+
+    public function delete(Payment $payment)
+    {
+        switch ($payment->paymentType->type) {
+            case 'pos-terminal':
+                $result = $this->posRefund($payment);
+                break;
+            case 'card':
+                $result = $this->apiRefund($payment);
+                break;
+            case 'coupon':
+                $result = $this->couponRefund($payment);
+                break;
+            case 'giftcard':
+                $result = $this->giftcardRefund($payment);
+                break;
+            case 'house-account':
+                $result = $this->houseAccRefund($payment);
+                break;
+            case 'cash':
+                $result = true;
+                break;
+            default:
+                return response(['errors' => ['Refund' => 'This payment method cannot be refunded']], 500);
+        }
+
+        $refund = $this->createRefund($payment, $result);
+
+        return response([
+            'info' => ['Refund' => 'Refund completed successfully!'],
+            'data' => $refund
+        ], 200);
     }
 }

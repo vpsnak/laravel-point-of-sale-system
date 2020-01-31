@@ -16,6 +16,13 @@ $store_manager = 'store_manager';
 $admin = 'admin';
 $allRoles = "$admin,$store_manager,$cashier";
 
+// payments
+Route::get('/payments', 'PaymentController@all')->middleware('scope:admin,cashier');
+Route::get('/payments/{payment}', 'PaymentController@get')->middleware('scope:admin,cashier');
+Route::post('/payments/create', 'PaymentController@create')->middleware('scope:admin,cashier');
+Route::post('/payments/search', 'PaymentController@search')->middleware('scope:admin,cashier');
+Route::delete('/payments/{payment}', 'PaymentController@delete')->middleware('scope:admin,cashier');
+
 // app env
 Route::get('/config', 'AppController@config');
 
@@ -265,22 +272,7 @@ $allRoutes = [
             ]
         ]
     ],
-    'payments' => [
-        'controller' => 'PaymentController',
-        'endpoints' => [
-            'get' => [
-                $routeAll,
-                $routeGet
-            ],
-            'post' => [
-                $routeCreate,
-                $routeSearch
-            ],
-            'delete' => [
-                $routeDelete
-            ]
-        ]
-    ],
+
     'payment-types' => [
         'controller' => 'PaymentTypeController',
         'endpoints' => [
