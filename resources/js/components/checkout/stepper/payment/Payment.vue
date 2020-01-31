@@ -128,10 +128,9 @@ export default {
             this.create(payload)
                 .then(response => {
                     this.payments = response.payment;
+                    console.log(response);
 
-                    this.remaining =
-                        parseFloat(response.payment.order.total) -
-                        response.payment.order.total_paid;
+                    this.remaining = response.remaining;
 
                     let notification = {
                         msg: "Payment received",
@@ -144,7 +143,7 @@ export default {
                             payload.data.amount;
                     }
 
-                    this.$emit("payment", this.remaining);
+                    this.$emit("payment", response);
                 })
                 .catch(error => {
                     console.log(error);
@@ -166,16 +165,14 @@ export default {
             this.payments[index].refunded = true;
             this.payments.push(event.refund);
 
-            this.remaining =
-                parseFloat(event.refund.order.total) -
-                event.refund.order.total_paid;
+            this.remaining = event.remaining;
 
             const notification = {
                 msg: event.msg,
                 type: event.status
             };
 
-            this.$emit("payment", this.remaining);
+            this.$emit("payment", event);
 
             this.$store.state.cart.refundLoading = false;
             this.setNotification(notification);

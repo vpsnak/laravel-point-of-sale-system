@@ -53,8 +53,7 @@ export default {
     },
     methods: {
         payment(payload) {
-            console.log(payload);
-            if (payload <= 0) {
+            if (payload.remaining === 0) {
                 this.completed = true;
             } else {
                 this.completed = false;

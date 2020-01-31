@@ -1,6 +1,6 @@
 <template>
     <div class="my-5 d-flex align-center justify-space-around flex-column">
-        <h3 v-if="change">
+        <h3 v-if="change > 0">
             Change:
             <span class="amber--text" v-text="'$ ' + change.toFixed(2)" />
         </h3>
@@ -20,20 +20,14 @@ export default {
 
     computed: {
         change() {
-            if (this.order.id && this.order.total - this.order.total_paid < 0) {
-                return Math.abs(this.order.total - this.order.total_paid);
-            } else {
-                return false;
-            }
+            return Math.abs(this.order.total - this.order.total_paid);
         },
         order() {
             return this.$store.state.cart.order;
         },
         customer() {
-            if (this.order.id) {
-                if (this.order.customer) {
-                    return this.order.customer;
-                }
+            if (this.order.customer) {
+                return this.order.customer;
             }
             return {};
         },
