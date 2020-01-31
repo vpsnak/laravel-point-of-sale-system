@@ -1,10 +1,6 @@
 <template>
     <div>
-        <paymentHistory
-            :payments="payments"
-            :loading="paymentHistoryLoading"
-            @refund="refund"
-        ></paymentHistory>
+        <paymentHistory :payments="payments" :loading="paymentHistoryLoading" @refund="refund"></paymentHistory>
 
         <v-divider></v-divider>
 
@@ -36,6 +32,21 @@ export default {
                 amount: null
             }
         };
+    },
+
+    mounted() {
+        if (this.orderId) {
+            if (this.$store.state.cart.order.change) {
+                this.remaining =
+                    parseFloat(this.$store.state.cart.order.change) * -1;
+            } else {
+                this.remaining =
+                    parseFloat(this.$store.state.cart.order.total) -
+                    parseFloat(this.$store.state.cart.order.total_paid);
+            }
+
+            this.$emit("payment", this.remaining);
+        }
     },
 
     computed: {

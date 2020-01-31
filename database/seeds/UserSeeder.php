@@ -12,11 +12,6 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\User::class, 30)->make()->each(function ($user) {
-            $user->assignRole('cashier');
-            $user->save();
-        });
-
         DB::table('users')->insert([
             'name' => 'Pavlos Kafritsas',
             'username' => 'deyjandi',

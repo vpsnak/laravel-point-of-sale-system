@@ -22,7 +22,7 @@
             <v-col :cols="12">
                 <v-data-table
                     :headers="headers"
-                    :items="payments"
+                    :items="paymentHistory"
                     class="elevation-1"
                     disable-pagination
                     disable-filtering
@@ -46,13 +46,8 @@
                                             item.refunded !== true
                                     "
                                 >
-                                    <v-icon
-                                        v-if="item.payment_type.type === 'cash'"
-                                        >mdi-cash-refund</v-icon
-                                    >
-                                    <v-icon v-else
-                                        >mdi-credit-card-refund</v-icon
-                                    >
+                                    <v-icon v-if="item.payment_type.type === 'cash'">mdi-cash-refund</v-icon>
+                                    <v-icon v-else>mdi-credit-card-refund</v-icon>
                                 </v-btn>
                             </template>
                             <span>Refund</span>
@@ -74,6 +69,7 @@ export default {
     },
     data() {
         return {
+            payment_history: [],
             paymentHistoryLoading: false,
             dialog: {
                 show: false,
@@ -120,6 +116,29 @@ export default {
         };
     },
     computed: {
+        paymentHistory: {
+            get() {
+                if (this.payment_history) {
+                    if (this.$props.payments) {
+                        const allHistory = this.payment_history.concat(
+                            this.$props.payments
+                        );
+
+                        return allHistory;
+                    } else {
+                        return this.payment_history;
+                    }
+                } else {
+                    this.$props.payments;
+                }
+            },
+            set(value) {
+                this.payment_history = value;
+            }
+        },
+        orderId() {
+            return this.$store.state.cart.order.id;
+        },
         refundLoading: {
             get() {
                 return this.$store.state.cart.refundLoading;
@@ -128,6 +147,9 @@ export default {
                 this.$store.state.cart.refundLoading = value;
             }
         }
+    },
+    mounted() {
+        this.getPaymentHistory();
     },
     methods: {
         getPaymentHistory() {
@@ -199,7 +221,7 @@ export default {
             this.action = "";
         },
 
-        ...mapActions(["delete"]),
+        ...mapActions(["search", "delete"]),
 
         beforeDestroy() {
             this.$off("refund");
