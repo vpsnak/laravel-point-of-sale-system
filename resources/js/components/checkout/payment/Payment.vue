@@ -1,6 +1,9 @@
 <template>
     <div>
-        <paymentHistory :loading="paymentHistoryLoading" @refund="refund"></paymentHistory>
+        <paymentHistory
+            :loading="paymentHistoryLoading"
+            @refund="refund"
+        ></paymentHistory>
 
         <v-divider></v-divider>
 
@@ -128,8 +131,6 @@ export default {
             this.create(payload)
                 .then(response => {
                     this.payments = response.payment;
-                    console.log(response);
-
                     this.remaining = response.remaining;
 
                     let notification = {
@@ -146,7 +147,6 @@ export default {
                     this.$emit("payment", response);
                 })
                 .catch(error => {
-                    console.log(error);
                     if (error.response.data.payment) {
                         this.payments = error.response.data.payment;
                     }
