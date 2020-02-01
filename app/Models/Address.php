@@ -4,8 +4,8 @@ namespace App;
 
 class Address extends BaseModel
 {
-//    protected $with = ['areaCode', 'customers'];
-//    protected $with = ['customers'];
+    //    protected $with = ['areaCode', 'customers'];
+    //    protected $with = ['customers'];
 
     protected $appends = ['address_country', 'address_region'];
 
@@ -24,6 +24,11 @@ class Address extends BaseModel
         'vat_id',
         'billing',
         'shipping'
+    ];
+
+    protected $casts = [
+        'created_at' => "datetime:m/d/Y H:i:s",
+        'updated_at' => "datetime:m/d/Y H:i:s"
     ];
 
     protected $hidden = [

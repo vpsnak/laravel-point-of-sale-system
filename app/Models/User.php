@@ -38,16 +38,11 @@ class User extends Authenticatable
         'remember_token'
     ];
 
-    protected $casts = [];
-
-    public function __construct()
-    {
-        $this->casts = [
-            'email_verified_at' => 'datetime',
-            'created_at' => config('models.format.timestamp'),
-            'updated_at' => config('models.format.timestamp')
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'created_at' => "datetime:m/d/Y H:i:s",
+        'updated_at' => "datetime:m/d/Y H:i:s"
+    ];
 
     // public function getCreatedAtAttribute($value)
     // {

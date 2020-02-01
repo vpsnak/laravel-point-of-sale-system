@@ -33,4 +33,9 @@ class CashRegisterReport extends BaseModel
         'order_in_store_count',
         'order_delivery_count',
     ];
+
+    protected $casts = [
+        'created_at' => "datetime:m/d/Y H:i:s",
+        'updated_at' => "datetime:m/d/Y H:i:s"
+    ];
 }

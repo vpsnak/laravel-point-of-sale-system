@@ -21,6 +21,11 @@ class CashRegister extends BaseModel
         'printer',
     ];
 
+    protected $casts = [
+        'created_at' => "datetime:m/d/Y H:i:s",
+        'updated_at' => "datetime:m/d/Y H:i:s"
+    ];
+
     public function getEarningsAttribute()
     {
         if ($this->is_open) {

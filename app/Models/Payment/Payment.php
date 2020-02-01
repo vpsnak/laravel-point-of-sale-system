@@ -5,7 +5,9 @@ namespace App;
 class Payment extends BaseModel
 {
     protected $casts = [
-        'refunded' => 'boolean'
+        'refunded' => 'boolean',
+        'created_at' => "datetime:m/d/Y H:i:s",
+        'updated_at' => "datetime:m/d/Y H:i:s"
     ];
 
     protected $with = [

@@ -13,8 +13,11 @@ class BankAccount extends Model
     ];
 
     protected $casts = [
-        'account' => 'array'
+        'account' => 'array',
+        'created_at' => "datetime:m/d/Y H:i:s",
+        'updated_at' => "datetime:m/d/Y H:i:s"
     ];
+
 
     public function company()
     {

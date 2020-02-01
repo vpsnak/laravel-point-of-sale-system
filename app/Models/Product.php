@@ -25,11 +25,19 @@ class Product extends BaseModel
         'description',
     ];
 
+    protected $casts = [
+        'created_at' => "datetime:m/d/Y H:i:s",
+        'updated_at' => "datetime:m/d/Y H:i:s"
+    ];
+
     public function getFinalPriceAttribute()
     {
         if (!empty($this->price->discount)) {
-            return Price::calculateDiscount($this->price->amount, $this->price->discount->type,
-                $this->price->discount->amount);
+            return Price::calculateDiscount(
+                $this->price->amount,
+                $this->price->discount->type,
+                $this->price->discount->amount
+            );
         }
         return $this->price->amount;
     }

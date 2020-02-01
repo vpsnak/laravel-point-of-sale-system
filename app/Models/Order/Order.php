@@ -41,6 +41,11 @@ class Order extends BaseModel
         'store_pickup'
     ];
 
+    protected $casts = [
+        'created_at' => "datetime:m/d/Y H:i:s",
+        'updated_at' => "datetime:m/d/Y H:i:s"
+    ];
+
     public function getTotalAttribute()
     {
         $total = $this->total_without_tax;

@@ -18,6 +18,11 @@ class CashRegisterLogs extends BaseModel
         'note',
     ];
 
+    protected $casts = [
+        'created_at' => "datetime:m/d/Y H:i:s",
+        'updated_at' => "datetime:m/d/Y H:i:s"
+    ];
+
     public function cash_register()
     {
         return $this->belongsTo(CashRegister::class);

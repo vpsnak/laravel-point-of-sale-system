@@ -10,4 +10,9 @@ class Giftcard extends BaseModel
         'enabled',
         'amount',
     ];
+
+    protected $casts = [
+        'created_at' => "datetime:m/d/Y H:i:s",
+        'updated_at' => "datetime:m/d/Y H:i:s"
+    ];
 }

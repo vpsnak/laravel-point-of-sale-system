@@ -14,6 +14,11 @@ class ElavonSdkPayment extends Model
         'log',
     ];
 
+    protected $casts = [
+        'created_at' => "datetime:m/d/Y H:i:s",
+        'updated_at' => "datetime:m/d/Y H:i:s"
+    ];
+
     public function payment()
     {
         return $this->belongsTo(Payment::class);

@@ -15,6 +15,13 @@ class Coupon extends BaseModel
         'to',
     ];
 
+    protected $casts = [
+        'created_at' => 'datetime:m/d/Y H:i:s',
+        'updated_at' => 'datetime:m/d/Y H:i:s',
+        'from' => 'm/d/Y',
+        'to' => 'm/d/Y',
+    ];
+
     protected $dates = ['from', 'to'];
 
     public function discount()
