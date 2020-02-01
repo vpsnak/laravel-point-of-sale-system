@@ -11,10 +11,26 @@
 |
 */
 
-$cashier = 'cashier';
-$store_manager = 'store_manager';
-$admin = 'admin';
-$allRoles = "$admin,$store_manager,$cashier";
+// app env
+Route::get('/config', 'AppController@config');
+
+// roles
+Route::get('/roles', "RoleController@all")->middleware('scope:admin');
+Route::post('/roles/set', "RoleController@setRole")->middleware('scope:admin');
+
+//auth
+Route::get('/auth/logout', 'UserController@logout')->middleware('scope:admin,store_manager,cashier');
+Route::post('/auth/login', 'UserController@login')->middleware('guest');
+Route::post('/auth/verify', 'UserController@verifySelfPwd')->middleware('scope:admin,store_manager,cashier');
+Route::post('/auth/password', 'UserController@changeSelfPwd')->middleware('scope:admin,store_manager');
+
+// users
+Route::get('/users', 'UserController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/users/{id}', 'UserController@get')->middleware('scope:admin,store_manager,cashier');
+Route::post('/users/create', 'UserController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/users/search', 'UserController@search')->middleware('scope:admin,store_manager,cashier');
+Route::post('/users/password', 'UserController@changeUserPwd')->middleware('scope:admin');
+Route::delete('/users/{id}', 'UserController@delete')->middleware('scope:admin');
 
 // payments
 Route::get('/payments', 'PaymentController@all')->middleware('scope:admin,cashier');
@@ -23,481 +39,180 @@ Route::post('/payments/create', 'PaymentController@create')->middleware('scope:a
 Route::post('/payments/search', 'PaymentController@search')->middleware('scope:admin,cashier');
 Route::delete('/payments/{payment}', 'PaymentController@delete')->middleware('scope:admin,cashier');
 
-// app env
-Route::get('/config', 'AppController@config');
+// customers
+Route::get('/customers', 'CustomerController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/customers/{id}', 'CustomerController@get')->middleware('scope:admin,store_manager,cashier');
+Route::post('/customers/create', 'CustomerController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/customers/search', 'CustomerController@search')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/customers/{id}', 'CustomerController@delete')->middleware('scope:admin,store_manager,cashier');
 
-// roles
-Route::get('/roles', "RoleController@all")->middleware('scope:admin');
-Route::post('/roles/set', "RoleController@setRole")->middleware('scope:admin');
+// addresses
+Route::get('/addresses', 'AddressController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/addresses/{id}', 'AddressController@get')->middleware('scope:admin,store_manager,cashier');
+Route::post('/addresses/create', 'AddressController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/addresses/search', 'AddressController@search')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/addresses/{id}', 'AddressController@delete')->middleware('scope:admin,store_manager,cashier');
 
-// custom end points
-Route::get('/cash-register-reports/check/{cashRegister}', "CashRegisterReportController@checkCurrent")->middleware("scope:{$allRoles}");
+// orders
+Route::get('/orders', 'OrderController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/orders/{id}', 'OrderController@get')->middleware('scope:admin,store_manager,cashier');
+Route::post('/orders/create', 'OrderController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/orders/search', 'OrderController@search')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/orders/{id}', 'OrderController@delete')->middleware('scope:admin,store_manager,cashier');
 
-Route::get('/cash-register-logs/logout', "CashRegisterLogsController@logout")->middleware("scope:{$allRoles}");
-Route::get('/cash-register-logs/retrieve', "CashRegisterLogsController@retrieve")->middleware("scope:{$allRoles}");
-Route::get('/cash-register-logs/{id}/amount', "CashRegisterLogsController@amount")->middleware("scope:{$allRoles}");
+// stores
+Route::get('/stores', 'StoreController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/stores/{id}', 'StoreController@get')->middleware('scope:admin,store_manager,cashier');
+Route::post('/stores/create', 'StoreController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/stores/search', 'StoreController@search')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/stores/{id}', 'StoreController@delete')->middleware('scope:admin,store_manager,cashier');
 
+// taxes
+Route::get('/taxes', 'TaxController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/taxes/{id}', 'TaxController@get')->middleware('scope:admin,store_manager,cashier');
+Route::post('/taxes/create', 'TaxController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/taxes/search', 'TaxController@search')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/taxes/{id}', 'TaxController@delete')->middleware('scope:admin,store_manager,cashier');
 
-$routeAll = [
-    'url' => '/',
-    'action' => 'all',
-];
+// payment-types
+Route::get('/payment-types', 'PaymentTypeController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/payment-types/{id}', 'PaymentTypeController@get')->middleware('scope:admin,store_manager,cashier');
+Route::post('/payment-types/create', 'PaymentTypeController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/payment-types/search', 'PaymentTypeController@search')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/payment-types/{id}', 'PaymentTypeController@delete')->middleware('scope:admin,store_manager,cashier');
 
-$routeGet = [
-    'url' => '/{id}',
-    'action' => 'get',
-];
+// cash-registers
+Route::get('/cash-registers', 'CashRegisterController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/cash-registers/{id}', 'CashRegisterController@get')->middleware('scope:admin,store_manager,cashier');
+Route::post('/cash-registers/create', 'CashRegisterController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/cash-registers/search', 'CashRegisterController@search')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/cash-registers/{id}', 'CashRegisterController@delete')->middleware('scope:admin,store_manager,cashier');
 
-$routeCreate = [
-    'url' => '/create',
-    'action' => 'create',
-    'middleware' => "scope:$allRoles"
-];
-$routeSearch = [
-    'url' => '/search',
-    'action' => 'search',
-    'middleware' => "scope:$allRoles"
-];
-$routeDelete = [
-    'url' => '/{id}',
-    'action' => 'delete',
-    'middleware' => "scope:$admin"
-];
+// cash-register-reports
+Route::get('/cash-register-reports', 'CashRegisterReportController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/cash-register-reports/{id}', 'CashRegisterReportController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/cash-register-reports/check/{cashRegister}', "CashRegisterReportController@checkCurrent")->middleware('scope:admin,store_manager,cashier');
+Route::post('/cash-register-reports/create', 'CashRegisterReportController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/cash-register-reports/search', 'CashRegisterReportController@search')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/cash-register-reports/{id}', 'CashRegisterReportController@delete')->middleware('scope:admin,store_manager,cashier');
 
-$baseEndpoints = [
-    'get' => [
-        $routeAll,
-        $routeGet
-    ],
-    'post' => [
-        $routeCreate,
-        $routeSearch
-    ],
-    'delete' => [
-        $routeDelete
-    ]
-];
+// gift-cards
+Route::get('/gift-cards', 'GiftcardController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/gift-cards/{id}', 'GiftcardController@get')->middleware('scope:admin,store_manager,cashier');
+Route::post('/gift-cards/create', 'GiftcardController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/gift-cards/search', 'GiftcardController@search')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/gift-cards/{id}', 'GiftcardController@delete')->middleware('scope:admin,store_manager,cashier');
 
-$allRoutes = [
-    'auth' => [
-        'controller' => 'UserController',
-        'endpoints' => [
-            'get' => [
-                [
-                    'url' => '/logout',
-                    'action' => 'logout',
-                    'middleware' => "scope:$allRoles"
-                ]
-            ],
-            'post' => [
-                [
-                    'url' => '/login',
-                    'action' => 'login',
-                    'middleware' => "guest"
-                ],
-                [
-                    'url' => '/verify',
-                    'action' => 'verifySelfPwd',
-                    'middleware' => "scope:$allRoles"
-                ],
-                [
-                    'url' => '/password',
-                    'action' => 'changeSelfPwd',
-                    'middleware' => "scope:$admin,$store_manager"
-                ],
-            ]
-        ]
-    ],
-    'users' => [
-        'controller' => 'UserController',
-        'endpoints' => [
-            'get' => [
-                $routeAll,
-                $routeGet
-            ],
-            'post' => [
-                $routeCreate,
-                [
-                    'url' => '/password',
-                    'action' => 'changeUserPwd',
-                    'middleware' => "scope:$admin"
-                ],
-                $routeSearch
-            ],
-            'delete' => [
-                $routeDelete
-            ]
-        ]
-    ],
-    'customers' => [
-        'controller' => 'CustomerController',
-        'endpoints' => [
-            'get' => [
-                $routeAll,
-                $routeGet
-            ],
-            'post' => [
-                $routeCreate,
-                $routeSearch
-            ],
-            'delete' => [
-                $routeDelete
-            ]
-        ]
-    ],
-    'addresses' => [
-        'controller' => 'AddressController',
-        'endpoints' => [
-            'get' => [
-                $routeAll,
-                $routeGet
-            ],
-            'post' => [
-                $routeCreate,
-                $routeSearch
-            ],
-            'delete' => [
-                $routeDelete
-            ]
-        ]
-    ],
-    'products' => [
-        'controller' => 'ProductController',
-        'endpoints' => [
-            'get' => [
-                $routeAll,
-                $routeGet,
-                [
-                    'url' => '/barcode/{id}',
-                    'action' => 'getBarcode',
-                    'middleware' => "scope:$allRoles"
-                ]
-            ],
-            'post' => [
-                $routeCreate,
-                $routeSearch
-            ],
-            'delete' => [
-                $routeDelete
-            ]
-        ]
-    ],
-    'carts' => [
-        'controller' => 'CartController',
-        'endpoints' => [
-            'get' => [
-                $routeAll,
-                $routeGet,
-                [
-                    'url' => '/hold',
-                    'action' => 'getHold',
-                    'middleware' => "scope:$allRoles"
-                ]
-            ],
-            'post' => [
-                $routeCreate,
-                $routeSearch
-            ],
-            'delete' => [
-                $routeDelete
-            ]
-        ]
-    ],
-    'orders' => [
-        'controller' => 'OrderController',
-        'endpoints' => [
-            'get' => [
-                $routeAll,
-                $routeGet
-            ],
-            'post' => [
-                $routeCreate,
-                $routeSearch
-            ],
-            'delete' => [
-                $routeDelete
-            ]
-        ]
-    ],
-    'categories' => [
-        'controller' => 'CategoryController',
-        'endpoints' => [
-            'get' => [
-                $routeAll,
-                $routeGet,
-                [
-                    'url' => '/{category}/products',
-                    'action' => 'productsByCategory',
-                    'middleware' => "scope:$allRoles"
-                ]
-            ],
-            'post' => [
-                $routeCreate,
-                $routeSearch
-            ],
-            'delete' => [
-                $routeDelete
-            ]
-        ]
-    ],
-    'stores' => [
-        'controller' => 'StoreController',
-        'endpoints' => [
-            'get' => [
-                $routeAll,
-                $routeGet
-            ],
-            'post' => [
-                $routeCreate,
-                $routeSearch
-            ],
-            'delete' => [
-                $routeDelete
-            ]
-        ]
-    ],
-    'taxes' => [
-        'controller' => 'TaxController',
-        'endpoints' => [
-            'get' => [
-                $routeAll,
-                $routeGet
-            ],
-            'post' => [
-                $routeCreate,
-                $routeSearch
-            ],
-            'delete' => [
-                $routeDelete
-            ]
-        ]
-    ],
+// coupons
+Route::get('/coupons', 'CouponController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/coupons/{id}', 'CouponController@get')->middleware('scope:admin,store_manager,cashier');
+Route::post('/coupons/create', 'CouponController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/coupons/search', 'CouponController@search')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/coupons/{id}', 'CouponController@delete')->middleware('scope:admin,store_manager,cashier');
 
-    'payment-types' => [
-        'controller' => 'PaymentTypeController',
-        'endpoints' => [
-            'get' => [
-                $routeAll,
-                $routeGet
-            ],
-            'post' => [
-                $routeCreate,
-                $routeSearch
-            ],
-            'delete' => [
-                $routeDelete
-            ]
-        ]
-    ],
-    'cash-registers' => [
-        'controller' => 'CashRegisterController',
-        'endpoints' => [
-            'get' => [
-                $routeAll,
-                $routeGet
-            ],
-            'post' => [
-                $routeCreate,
-                $routeSearch
-            ],
-            'delete' => [
-                $routeDelete
-            ]
-        ]
-    ],
-    'cash-register-logs' => [
-        'controller' => 'CashRegisterLogsController',
-        'endpoints' => [
-            'get' => [
-                $routeAll,
-                $routeGet
-            ],
-            'post' => [
-                $routeCreate,
-                $routeSearch,
-                [
-                    'url' => '/open',
-                    'action' => 'open',
-                    'middleware' => "scope:$allRoles"
-                ],
-                [
-                    'url' => '/close',
-                    'action' => 'close',
-                    'middleware' => "scope:$allRoles"
-                ],
-            ],
-            'delete' => [
-                $routeDelete
-            ]
-        ]
-    ],
-    'cash-register-reports' => [
-        'controller' => 'CashRegisterReportController',
-        'endpoints' => [
-            'get' => [
-                $routeAll,
-                $routeGet
-            ],
-            'post' => [
-                $routeCreate,
-                $routeSearch
-            ],
-            'delete' => [
-                $routeDelete
-            ]
-        ]
-    ],
-    'gift-cards' => [
-        'controller' => 'GiftcardController',
-        'endpoints' => [
-            'get' => [
-                $routeAll,
-                $routeGet
-            ],
-            'post' => [
-                $routeCreate,
-                $routeSearch
-            ],
-            'delete' => [
-                $routeDelete
-            ]
-        ]
-    ],
-    'coupons' => [
-        'controller' => 'CouponController',
-        'endpoints' => [
-            'get' => [
-                $routeAll,
-                $routeGet
-            ],
-            'post' => [
-                $routeCreate,
-                $routeSearch
-            ],
-            'delete' => [
-                $routeDelete
-            ]
-        ]
-    ],
-    'regions' => [
-        'controller' => 'RegionController',
-        'endpoints' => [
-            'get' => [
-                $routeAll,
-                $routeGet
-            ],
-            'post' => [
-                $routeCreate,
-                $routeSearch
-            ],
-            'delete' => [
-                $routeDelete
-            ]
-        ]
-    ],
-    'countries' => [
-        'controller' => 'CountryController',
-        'endpoints' => [
-            'get' => [
-                $routeAll,
-                $routeGet
-            ],
-            'post' => [
-                $routeCreate,
-                $routeSearch
-            ],
-            'delete' => [
-                $routeDelete
-            ]
-        ]
-    ],
-    'store-pickups' => [
-        'controller' => 'StorePickupController',
-        'endpoints' => [
-            'get' => [
-                $routeAll,
-                $routeGet
-            ],
-            'post' => [
-                $routeCreate,
-                $routeSearch
-            ],
-            'delete' => [
-                $routeDelete
-            ]
-        ]
-    ],
-    'companies' => [
-        'controller' => 'CompanyController',
-        'endpoints' => [
-            'get' => [
-                $routeAll,
-                $routeGet
-            ],
-            'post' => [
-                $routeCreate,
-                $routeSearch
-            ],
-            'delete' => [
-                $routeDelete
-            ]
-        ]
-    ]
-];
+// regions
+Route::get('/regions', 'RegionController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/regions/{id}', 'RegionController@get')->middleware('scope:admin,store_manager,cashier');
+Route::post('/regions/create', 'RegionController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/regions/search', 'RegionController@search')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/regions/{id}', 'RegionController@delete')->middleware('scope:admin,store_manager,cashier');
 
-foreach ($allRoutes as $routeBase => $route) {
-    $controller = $route['controller'];
-    foreach ($route['endpoints'] as $method => $endpoints) {
-        foreach ($endpoints as $endpoint) {
-            $url = $endpoint['url'];
-            $action = $endpoint['action'];
-            switch ($method) {
-                case 'get':
-                    $createdRoute = $createdRoute = Route::get("/$routeBase$url", "$controller@$action");
-                    break;
-                case 'post':
-                    $createdRoute = Route::post("/$routeBase$url", "$controller@$action");
-                    break;
-                case 'put':
-                    $createdRoute = Route::put("/$routeBase$url", "$controller@$action");
-                    break;
-                case 'delete':
-                    $createdRoute = Route::delete("/$routeBase$url", "$controller@$action");
-                    break;
-            }
-            if (!empty($createdRoute) && !empty($endpoint['middleware'])) {
-                $createdRoute->middleware($endpoint['middleware']);
-            }
-        }
-    }
-}
+// countries
+Route::get('/countries', 'CountryController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/countries/{id}', 'CountryController@get')->middleware('scope:admin,store_manager,cashier');
+Route::post('/countries/create', 'CountryController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/countries/search', 'CountryController@search')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/countries/{id}', 'CountryController@delete')->middleware('scope:admin,store_manager,cashier');
+
+// store-pickups
+Route::get('/store-pickups', 'StorePickupController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/store-pickups/{id}', 'StorePickupController@get')->middleware('scope:admin,store_manager,cashier');
+Route::post('/store-pickups/create', 'StorePickupController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/store-pickups/search', 'StorePickupController@search')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/store-pickups/{id}', 'StorePickupController@delete')->middleware('scope:admin,store_manager,cashier');
+
+// companies
+Route::get('/companies', 'CompanyController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/companies/{id}', 'CompanyController@get')->middleware('scope:admin,store_manager,cashier');
+Route::post('/companies/create', 'CompanyController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/companies/search', 'CompanyController@search')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/companies/{id}', 'CompanyController@delete')->middleware('scope:admin,store_manager,cashier');
+
+//products
+Route::get('/products', 'ProductController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/products/{id}', 'ProductController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/products/barcode/{id}', 'ProductController@getBarcode')->middleware('scope:admin,store_manager,cashier');
+Route::post('/products/create', 'ProductController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/products/search', 'ProductController@search')->middleware('scope:admin,store_manager,cashier');
+Route::post('/products/password', 'ProductController@changeUserPwd')->middleware('scope:admin');
+Route::delete('/products/{id}', 'ProductController@delete')->middleware('scope:admin');
+
+//carts
+Route::get('/carts', 'CartController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/carts/{id}', 'CartController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/carts/hold', 'CartController@getHold')->middleware('scope:admin,store_manager,cashier');
+Route::post('/carts/create', 'CartController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/carts/search', 'CartController@search')->middleware('scope:admin,store_manager,cashier');
+Route::post('/carts/password', 'CartController@changeUserPwd')->middleware('scope:admin');
+Route::delete('/carts/{id}', 'CartController@delete')->middleware('scope:admin');
+
+//carts
+Route::get('/carts', 'CartController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/carts/{id}', 'CartController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/carts/hold', 'CartController@getHold')->middleware('scope:admin,store_manager,cashier');
+Route::post('/carts/create', 'CartController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/carts/search', 'CartController@search')->middleware('scope:admin,store_manager,cashier');
+Route::post('/carts/password', 'CartController@changeUserPwd')->middleware('scope:admin');
+Route::delete('/carts/{id}', 'CartController@delete')->middleware('scope:admin');
+
+//categories
+Route::get('/categories', 'CategoryController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/categories/{id}', 'CategoryController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/categories/{category}/products', 'CategoryController@productsByCategory')->middleware('scope:admin,store_manager,cashier');
+Route::post('/categories/create', 'CategoryController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/categories/search', 'CategoryController@search')->middleware('scope:admin,store_manager,cashier');
+Route::post('/categories/password', 'CategoryController@changeUserPwd')->middleware('scope:admin');
+Route::delete('/categories/{id}', 'CategoryController@delete')->middleware('scope:admin');
+
+//cash-register-logs
+Route::get('/cash-register-logs', 'CashRegisterLogsController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/cash-register-logs/{id}', 'CashRegisterLogsController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/cash-register-logs/logout', 'CashRegisterLogsController@logout')->middleware('scope:admin,store_manager,cashier');
+Route::get('/cash-register-logs/retrieve', 'CashRegisterLogsController@retrieve')->middleware('scope:admin,store_manager,cashier');
+Route::get('/cash-register-logs/{id}/amount', 'CashRegisterLogsController@amount')->middleware('scope:admin,store_manager,cashier');
+Route::post('/cash-register-logs/create', 'CashRegisterLogsController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/cash-register-logs/search', 'CashRegisterLogsController@search')->middleware('scope:admin,store_manager,cashier');
+Route::post('/cash-register-logs/open', 'CashRegisterLogsController@open')->middleware('scope:admin,store_manager,cashier');
+Route::post('/cash-register-logs/close', 'CashRegisterLogsController@cose')->middleware('scope:admin,store_manager,cashier');
+Route::post('/cash-register-logs/password', 'CashRegisterLogsController@changeUserPwd')->middleware('scope:admin');
+Route::delete('/cash-register-logs/{id}', 'CashRegisterLogsController@delete')->middleware('scope:admin');
 
 // categories to list in sales
-Route::get('/product-listing/categories', "CategoryController@productListingCategories")->middleware("scope:$allRoles");
+Route::get('/product-listing/categories', "CategoryController@productListingCategories")->middleware('scope:admin,store_manager,cashier');
 
 // delivery times slot
-Route::post('/shipping/timeslot', "TimeslotController@getTimeslots")->middleware("scope:$allRoles");
+Route::post('/shipping/timeslot', "TimeslotController@getTimeslots")->middleware('scope:admin,store_manager,cashier');
 
 // magento oauth authenticate
 Route::get('/magento/authorize', 'Auth\MagentoOAuthController@authorizeMagento');
 
 // e-mail
-Route::post('/mail-receipt/{order}', 'MailReceiptController@send')->middleware("scope:$allRoles");
+Route::post('/mail-receipt/{order}', 'MailReceiptController@send')->middleware('scope:admin,store_manager,cashier');
 
 // guest email list
-Route::get('/guest-email', 'GuestEmailListController@all')->middleware("scope:$allRoles");
-Route::post('/guest-email/create', 'GuestEmailListController@create')->middleware("scope:$allRoles");
+Route::get('/guest-email', 'GuestEmailListController@all')->middleware('scope:admin,store_manager,cashier');
+Route::post('/guest-email/create', 'GuestEmailListController@create')->middleware('scope:admin,store_manager,cashier');
 
 // elavon sdk certification
-Route::post('/elavon/sdk', 'ElavonSdkPaymentController@index')->middleware("scope:$allRoles");
-Route::post('/elavon/sdk/lookup', 'ElavonSdkPaymentController@lookup')->middleware("scope:$allRoles");
-Route::get('/elavon/sdk/logs', 'ElavonSdkPaymentController@getLogs')->middleware("scope:$allRoles");
-Route::get('/elavon/sdk/logs/{test_case}', 'ElavonSdkPaymentController@getLogs')->middleware("scope:$allRoles");
-Route::delete('/elavon/sdk/logs/delete', 'ElavonSdkPaymentController@deleteAll')->middleware("scope:$allRoles");
+Route::post('/elavon/sdk', 'ElavonSdkPaymentController@index')->middleware('scope:admin,store_manager,cashier');
+Route::post('/elavon/sdk/lookup', 'ElavonSdkPaymentController@lookup')->middleware('scope:admin,store_manager,cashier');
+Route::get('/elavon/sdk/logs', 'ElavonSdkPaymentController@getLogs')->middleware('scope:admin,store_manager,cashier');
+Route::get('/elavon/sdk/logs/{test_case}', 'ElavonSdkPaymentController@getLogs')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/elavon/sdk/logs/delete', 'ElavonSdkPaymentController@deleteAll')->middleware('scope:admin,store_manager,cashier');
 
 // elavon api certification
-Route::post('/elavon/api', 'ElavonApiPaymentController@index')->middleware("scope:$allRoles");
-Route::post('/elavon/api/lookup', 'ElavonApiPaymentController@lookup')->middleware("scope:$allRoles");
-Route::get('/elavon/api/logs', 'ElavonApiPaymentController@getLogs')->middleware("scope:$allRoles");
-Route::get('/elavon/api/logs/{test_case}', 'ElavonApiPaymentController@getLogs')->middleware("scope:$allRoles");
-Route::delete('/elavon/api/logs/delete', 'ElavonApiPaymentController@deleteAll')->middleware("scope:$allRoles");
+Route::post('/elavon/api', 'ElavonApiPaymentController@index')->middleware('scope:admin,store_manager,cashier');
+Route::post('/elavon/api/lookup', 'ElavonApiPaymentController@lookup')->middleware('scope:admin,store_manager,cashier');
+Route::get('/elavon/api/logs', 'ElavonApiPaymentController@getLogs')->middleware('scope:admin,store_manager,cashier');
+Route::get('/elavon/api/logs/{test_case}', 'ElavonApiPaymentController@getLogs')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/elavon/api/logs/delete', 'ElavonApiPaymentController@deleteAll')->middleware('scope:admin,store_manager,cashier');
