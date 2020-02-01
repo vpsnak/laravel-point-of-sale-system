@@ -30,6 +30,7 @@ Route::get('/users/{id}', 'UserController@get')->middleware('scope:admin,store_m
 Route::post('/users/create', 'UserController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/users/search', 'UserController@search')->middleware('scope:admin,store_manager,cashier');
 Route::post('/users/password', 'UserController@changeUserPwd')->middleware('scope:admin');
+Route::patch('/users/update/{user}', 'UserController@update')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/users/{id}', 'UserController@delete')->middleware('scope:admin');
 
 // payments
