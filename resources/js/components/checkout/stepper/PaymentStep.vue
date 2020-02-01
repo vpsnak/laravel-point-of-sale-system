@@ -2,7 +2,11 @@
     <div>
         <payment @payment="payment" />
         <v-row justify="center" align="center" class="my-3">
-            <v-col :cols="5" justify="center" :align="orderId ? 'center' : 'start'">
+            <v-col
+                :cols="5"
+                justify="center"
+                :align="orderId ? 'center' : 'start'"
+            >
                 <v-btn
                     color="teal"
                     @click="prevStep()"
@@ -20,7 +24,8 @@
                     @click="completeStep"
                     :loading="loading"
                     :disabled="loading"
-                >Complete order</v-btn>
+                    >Complete order</v-btn
+                >
             </v-col>
         </v-row>
     </div>
@@ -53,7 +58,7 @@ export default {
     },
     methods: {
         payment(payload) {
-            if (payload.remaining === 0) {
+            if (payload.order_status === "paid") {
                 this.completed = true;
             } else {
                 this.completed = false;
