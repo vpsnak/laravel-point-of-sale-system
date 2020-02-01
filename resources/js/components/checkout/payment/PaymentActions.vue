@@ -325,7 +325,7 @@ export default {
         ...mapActions(["getAll"]),
 
         getIcon() {
-            return _.find(this.$props.types, ["type", this.paymentType]).icon;
+            return _.find(this.paymentTypes, ["type", this.paymentType]).icon;
         }
     },
     beforeDestroy() {
