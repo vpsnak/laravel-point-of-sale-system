@@ -301,4 +301,14 @@ class OrderController extends BaseController
             'order_status' => $order->status
         ];
     }
+
+    public function cancelOrder(Order $order)
+    {
+        foreach ($order->payments as $payment) {
+            switch ($payment->type) {
+                case '':
+                    break;
+            }
+        }
+    }
 }

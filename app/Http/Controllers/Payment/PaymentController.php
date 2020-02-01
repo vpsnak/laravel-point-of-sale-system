@@ -321,7 +321,7 @@ class PaymentController extends Controller
         return $refund;
     }
 
-    public function delete(Payment $payment)
+    public function delete(Payment $payment, bool $setOrderStatus = true)
     {
         switch ($payment->paymentType->type) {
             case 'pos-terminal':
@@ -346,14 +346,16 @@ class PaymentController extends Controller
                 return response(['errors' => ['Refund' => 'This payment method cannot be refunded']], 500);
         }
 
-        $refund = $this->createRefund($payment, $result);
-        $refund->load(['created_by', 'paymentType', 'order']);
+        if ($setOrderStatus) {
+            $refund = $this->createRefund($payment, $result);
+            $refund->load(['created_by', 'paymentType', 'order']);
 
-        $orderStatus = OrderController::updateOrderStatus($refund, true);
-        $orderStatus['refund'] = $refund->refresh();
-        $orderStatus['info'] = ['Refund' => 'Refund completed successfully!'];
-        $orderStatus['refunded_payment_id'] = $payment->id;
+            $orderStatus = OrderController::updateOrderStatus($refund, true);
+            $orderStatus['refund'] = $refund->refresh();
+            $orderStatus['info'] = ['Refund' => 'Refund completed successfully!'];
+            $orderStatus['refunded_payment_id'] = $payment->id;
 
-        return response($orderStatus, 200);
+            return response($orderStatus, 200);
+        }
     }
 }
