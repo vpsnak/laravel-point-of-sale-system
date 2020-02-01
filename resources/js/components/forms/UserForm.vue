@@ -137,7 +137,7 @@ export default {
                 model: "users",
                 data: { ...this.formFields }
             };
-            console.log(payload.data);
+
             if (this.$props.model) {
                 axios
                     .patch(
