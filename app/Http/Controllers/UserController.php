@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -43,7 +42,7 @@ class UserController extends Controller
                 'Login' => 'Invalid credentials',
             ]], 500);
         } else {
-            if (!Hash::check($validatedData['password'], $user->password)) {
+            if (!$user->verifyPwd($validatedData['password'])) {
                 return response(['errors' => [
                     'Login' => 'Invalid credentials',
                 ]], 500);
@@ -80,8 +79,8 @@ class UserController extends Controller
 
         $user = auth()->user();
 
-        if (Hash::check($validatedData['current_password'], $user->password)) {
-            $user->password = Hash::make($validatedData['password']);
+        if ($user->verifyPwd($validatedData['current_password'])) {
+            $user->password = $validatedData['password'];
             $user->save();
 
             return response(['info' => ['Auth' => 'Password changed successfully!']]);
@@ -98,7 +97,7 @@ class UserController extends Controller
 
         $user = auth()->user();
 
-        if (Hash::check($validatedData['current_password'], $user->password)) {
+        if ($user->verifyPwd($validatedData['current_password'])) {
             return response(['info' => ['Verification' => 'Password verification succeeded!']]);
         } else {
             return response(['errors' => ['Verification' => 'Password verification failed']], 500);
@@ -114,7 +113,7 @@ class UserController extends Controller
         ]);
 
         $user = User::findOrFail($validatedData['user_id']);
-        $user->password = Hash::make($validatedData['password']);
+        $user->password = $validatedData['password'];
         $user->save();
 
         return response(['info' => ['Auth' => 'Password changed successfully!']]);
@@ -158,16 +157,9 @@ class UserController extends Controller
             'phone' => 'required|numeric',
         ]);
 
+        $user = User::create($validatedData);
 
-        if (!empty($validatedData['id'])) {
-            $user = User::findOrFail($validatedData['id']);
-            $user->fill($validatedData);
-            $user->save();
-        } else {
-            $user = User::create($validatedData);
-
-            return response(['info' => ['User ' . $user->name . ' created successfully!']], 201);
-        }
+        return response(['info' => ['User ' . $user->name . ' created successfully!']], 201);
     }
 
     public function update(User $model, Request $request)

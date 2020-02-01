@@ -17,7 +17,7 @@ class CreateTaxesTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->double('percentage')->default(0);
-            $table->tinyInteger('is_default')->default(0);
+            $table->boolean('is_default')->default(0);
             $table->timestamps();
         });
     }

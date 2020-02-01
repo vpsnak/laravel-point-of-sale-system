@@ -51,7 +51,7 @@
 									:disabled="!billingAddress"
 									icon
 									v-on="on"
-									@click="addressDialog('billing', shipping.billing_address)"
+									@click="addressDialog('billing', billingAddress)"
 								>
 									<v-icon>mdi-pencil</v-icon>
 								</v-btn>
@@ -323,7 +323,7 @@ export default {
 
 		addresses: {
 			get() {
-				if (this.customer && !this.billingAddress) {
+				if (this.customer.id && !this.billingAddress) {
 					const billing_address = _.filter(this.customer.addresses, [
 						"billing",
 						1
@@ -331,7 +331,17 @@ export default {
 
 					this.billingAddress = billing_address.length
 						? billing_address[0]
-						: undefined;
+						: null;
+                }
+                if (this.customer.id && !this.shippingAddress) {
+					const shipping_address = _.filter(this.customer.addresses, [
+						"shipping",
+						1
+					]);
+
+					this.shippingAddress = shipping_address.length
+						? shipping_address[0]
+						: null;
 				}
 
 				return this.customer.addresses;
@@ -341,12 +351,12 @@ export default {
 			}
 		},
 		customer() {
-			if (this.$store.state.cart.order) {
+			if (this.$store.state.cart.order.id) {
 				return this.$store.state.cart.order.customer;
 			} else if (this.$store.state.cart.customer) {
 				return this.$store.state.cart.customer;
 			} else {
-				return undefined;
+				return null;
 			}
 		}
 	},

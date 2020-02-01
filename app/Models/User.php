@@ -6,7 +6,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
@@ -44,19 +44,18 @@ class User extends Authenticatable
         'updated_at' => "datetime:m/d/Y H:i:s"
     ];
 
-    // public function getCreatedAtAttribute($value)
-    // {
-    //     return $value ? Carbon::parse($value)->format(config('models.format.timestamp')) : null;
-    // }
-
-    // public function getUpdatedAtAttribute($value)
-    // {
-    //     return $value ? Carbon::parse($value)->format(config('models.format.timestamp')) : null;
-    // }
-
     public function setPasswordAttribute($value)
     {
-        $this->attributes['password'] = \Hash::make($value);
+        $this->attributes['password'] = Hash::make($value);
+    }
+    /**
+     *
+     * @var string
+     * @return bool
+     */
+    public function verifyPwd(string $password)
+    {
+        return Hash::check($password, $this->password);
     }
 
     public function payments()
