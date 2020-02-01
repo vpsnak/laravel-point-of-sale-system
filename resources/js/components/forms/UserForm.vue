@@ -86,9 +86,9 @@
                         color="secondary"
                         >submit</v-btn
                     >
-                    <v-btn v-if="!model" @click="clear" color="orange"
-                        >clear</v-btn
-                    >
+                    <v-btn v-if="!model" @click="clear" color="orange">
+                        clear
+                    </v-btn>
                 </v-col>
             </v-row>
         </v-form>
