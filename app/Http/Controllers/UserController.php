@@ -170,19 +170,18 @@ class UserController extends Controller
         }
     }
 
-    public function update(Request $request, User $user)
+    public function update(User $model, Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'nullable|required_without:id|string',
-            'password' => 'nullable|required_without:id|string',
-            'username' => 'nullable|required_without:id|string',
-            'email' => 'nullable|required_without:id|email',
-            'phone' => 'nullable|required_without:id|numeric',
+            'name' => 'required|string',
+            'username' => 'required|string',
+            'email' => 'required|email',
+            'phone' => 'required|numeric',
         ]);
 
-        $user->fill($validatedData);
-        $user->save();
+        $model->update($validatedData);
+        $model->save();
 
-        return response(['info' => ['User ' . $user->name . ' updated successfully!']], 200);
+        return response(['info' => ['User ' . $model->name . ' updated successfully!']], 200);
     }
 }

@@ -296,10 +296,7 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 axios
                     .get(
-                        this.state.baseUrl +
-                            payload.model +
-                            "/" +
-                            payload.data.id
+                        `${this.state.baseUrl}${payload.model}/get/${payload.data.id}`
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {

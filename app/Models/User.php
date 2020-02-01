@@ -37,7 +37,9 @@ class User extends Authenticatable
         'password',
         'remember_token'
     ];
+
     protected $casts = [];
+
     public function __construct()
     {
         $this->casts = [
