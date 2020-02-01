@@ -242,7 +242,7 @@ class PaymentController extends Controller
         return response(Payment::where('order_id', $validatedData['keyword'])->get());
     }
 
-    private function posRefund(Payment $payment)
+    public function posRefund(Payment $payment)
     {
         $elavonSdkPaymentController = new ElavonSdkPaymentController;
 
@@ -262,7 +262,7 @@ class PaymentController extends Controller
         return true;
     }
 
-    private function apiRefund($payment)
+    public function apiRefund($payment)
     {
         $paymentResponse = (new CreditCardController)->cardRefund($payment->code);
 
@@ -282,7 +282,7 @@ class PaymentController extends Controller
         return true;
     }
 
-    private function houseAccRefund(Payment $payment)
+    public function houseAccRefund(Payment $payment)
     {
         $customer = Customer::where('house_account_number', $payment->code)->firstOrFail();
         $customer->increment('house_account_limit', $payment->amount);
@@ -290,7 +290,7 @@ class PaymentController extends Controller
         return true;
     }
 
-    private function giftcardRefund(Payment $payment)
+    public function giftcardRefund(Payment $payment)
     {
         $giftcard = Giftcard::whereCode($payment->code)->firstOrFail();
         $giftcard->increment('amount', $payment->amount);
@@ -298,7 +298,7 @@ class PaymentController extends Controller
         return true;
     }
 
-    private function couponRefund(Payment $payment)
+    public function couponRefund(Payment $payment)
     {
         $coupon = Coupon::whereCode($payment->code)->firstOrFail();
         $coupon->increment('uses');
