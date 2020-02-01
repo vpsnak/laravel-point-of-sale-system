@@ -48,6 +48,24 @@ class PaymentController extends Controller
         $payment = $this->model::store($newPayment);
 
         switch ($validatedData['payment_type']) {
+            case 'cash':
+                // nothing to do here, move on
+                break;
+            case 'pos-terminal':
+                return $this->posPay($validatedData, $payment);
+                break;
+            case 'card':
+                return $this->apiPay($validatedData, $payment);
+                break;
+            case 'coupon':
+                return $this->couponPay($validatedData, $payment);
+                break;
+            case 'giftcard':
+                return $this->giftcardPay($validatedData, $payment);
+                break;
+            case 'house-account':
+                return $this->houseAccPay($validatedData, $payment);
+                break;
             default:
                 $payment->status = 'failed';
                 $payment->save();
@@ -57,171 +75,120 @@ class PaymentController extends Controller
                     'payment' => $payment
                 ], 422);
                 break;
-            case 'cash':
-                // nothing to do here, move on
-                break;
-
-            case 'card':
-                $paymentResponse = (new CreditCardController)->cardPayment(
-                    $validatedData['card']['number'],
-                    $validatedData['card']['exp_date'],
-                    $validatedData['card']['cvc'],
-                    $validatedData['card']['card_holder'] ?? '',
-                    $validatedData['amount']
-                );
-
-                ElavonApiPayment::create([
-                    'txn_id' => $paymentResponse['response']['ssl_txn_id'] ?? '',
-                    'transaction' => $paymentResponse['response']['ssl_transaction_type'] ?? '',
-                    'card_number' => $paymentResponse['response']['ssl_card_number'] ?? '',
-                    'card_holder' => $validatedData['card']['card_holder'],
-                    'status' => $paymentResponse['response']['ssl_result_message'] ?? '',
-                    'log' => json_encode($paymentResponse['response']),
-                    'payment_id' => $payment->id,
-                ]);
-
-                if (array_key_exists('errors', $paymentResponse)) {
-                    $payment->status = 'failed';
-                    $payment->save();
-
-                    $paymentResponse['payment'] = $payment->load(['created_by', 'paymentType']);
-                    return response($paymentResponse, 500);
-                }
-
-                $payment->code = $paymentResponse['id'];
-
-                break;
-
-            case 'coupon':
-                $coupon = Coupon::getFirst('code', $validatedData['code']);
-
-                if (empty($coupon)) {
-                    $payment->status = 'failed';
-                    $payment->save();
-
-                    return response([
-                        'payment' => $payment->load(['created_by', 'paymentType']),
-                        'errors' => [
-                            'Coupon' => ['Coupon does not exist']
-                        ]
-                    ], 404);
-                }
-
-                if (date('Y-m-d H:i:s') > $coupon->to || $coupon->uses === 0) {
-                    $payment->status = 'failed';
-                    $payment->save();
-
-                    return response([
-                        'payment' => $payment->load(['created_by', 'paymentType']),
-                        'errors' => [
-                            'Coupon' => ['This coupon has expired']
-                        ]
-                    ], 403);
-                } else {
-                    if ($coupon->from > date('Y-m-d H:i:s')) {
-                        $payment->status = 'failed';
-                        $payment->save();
-
-                        return response([
-                            'payment' => $payment->load(['created_by', 'paymentType']),
-                            'errors' => [
-                                'Coupon' => ['Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))]
-                            ]
-                        ], 403);
-                    }
-                }
-
-                $order = Order::findOrFail($validatedData['order_id']);
-
-                $payment->amount = $order->subtotal - Price::calculateDiscount(
-                    $order->subtotal,
-                    $coupon->discount->type,
-                    $coupon->discount->amount
-                );
-                $payment->save();
-                $coupon->decrement('uses');
-                break;
-
-            case 'giftcard':
-                $giftcard = Giftcard::getFirst('code', $validatedData['code']);
-
-                if (!$giftcard->enabled) {
-                    $payment->status = 'failed';
-                    $payment->save();
-
-                    return response([
-                        'payment' => $payment->load(['created_by', 'paymentType']),
-                        'errors' => [
-                            'Gift card' => ['This gift card is inactive']
-                        ]
-                    ], 403);
-                } else {
-                    if ($giftcard->amount < $validatedData['amount']) {
-                        $payment->status = 'failed';
-                        $payment->save();
-
-                        return response([
-                            'payment' => $payment->load(['created_by', 'paymentType']),
-                            'errors' => [
-                                'Gift card' => ['This gift card has insufficient balance to complete the transaction']
-                            ]
-                        ], 403);
-                    } else {
-                        // subtract the payed amount from giftcard
-                        $giftcard->decrement('amount', $validatedData['amount']);
-                    }
-                }
-                break;
-
-            case 'pos-terminal':
-                $elavonSdkPayment = new ElavonSdkPaymentController();
-                $elavonSdkPayment->selected_transaction = 'SALE';
-                $elavonSdkPayment->amount = 100 * $validatedData['amount'];
-                $elavonSdkPayment->payment_id = $payment->id;
-
-                $paymentResponse = $elavonSdkPayment->posPayment();
-
-                if (array_key_exists('errors', $paymentResponse)) {
-                    $payment->status = 'failed';
-                    $payment->save();
-
-                    $paymentResponse['payment'] = $payment->load(['created_by', 'paymentType']);
-                    return response($paymentResponse, 422);
-                }
-
-                $payment->code = $paymentResponse['transaction_id'];
-
-                break;
-
-            case 'house-account':
-                $customer = Customer::getFirst('house_account_number', $validatedData['house_account_number']);
-                if (empty($customer)) {
-                    $payment->status = 'failed';
-                    $payment->save();
-                    return response([
-                        'errors' => [
-                            'House Account' => ['House account does not exist.']
-                        ]
-                    ], 403);
-                }
-                if ($validatedData['amount'] > $customer->house_account_limit) {
-                    $payment->status = 'failed';
-                    $payment->save();
-                    return response([
-                        'errors' => [
-                            'House Account' => [
-                                'House account has insufficient balance.<br>Balance available: $ ' . round(
-                                    $customer->house_account_limit,
-                                    2
-                                )
-                            ]
-                        ]
-                    ], 403);
-                }
-                $customer->decrement('house_account_limit', $validatedData['amount']);
-                $payment->code = $validatedData['house_account_number'];
-                break;
         }
+    }
+
+    public function search(Request $request)
+    {
+        $validatedData = $request->validate([
+            'keyword' => 'required|exists:orders,id'
+        ]);
+
+        return response(Payment::where('order_id', $validatedData['keyword'])->get());
+    }
+
+    private function posPay($validatedData, Payment $payment)
+    {
+        $elavonSdkPayment = new ElavonSdkPaymentController();
+        $elavonSdkPayment->selected_transaction = 'SALE';
+        $elavonSdkPayment->amount = 100 * $validatedData['amount'];
+        $elavonSdkPayment->payment_id = $payment->id;
+
+        $paymentResponse = $elavonSdkPayment->posPayment();
+
+        if (array_key_exists('errors', $paymentResponse)) {
+            $payment->status = 'failed';
+            $payment->save();
+
+            $paymentResponse['payment'] = $payment->load(['created_by', 'paymentType']);
+            return response($paymentResponse, 422);
+        }
+
+        $payment->code = $paymentResponse['transaction_id'];
+
+        return true;
+    }
+
+    private function apiPay($validatedData, Payment $payment)
+    {
+        $paymentResponse = (new CreditCardController)->cardPayment(
+            $validatedData['card']['number'],
+            $validatedData['card']['exp_date'],
+            $validatedData['card']['cvc'],
+            $validatedData['card']['card_holder'] ?? '',
+            $validatedData['amount']
+        );
+
+        ElavonApiPayment::create([
+            'txn_id' => $paymentResponse['response']['ssl_txn_id'] ?? '',
+            'transaction' => $paymentResponse['response']['ssl_transaction_type'] ?? '',
+            'card_number' => $paymentResponse['response']['ssl_card_number'] ?? '',
+            'card_holder' => $validatedData['card']['card_holder'],
+            'status' => $paymentResponse['response']['ssl_result_message'] ?? '',
+            'log' => json_encode($paymentResponse['response']),
+            'payment_id' => $payment->id,
+        ]);
+
+        if (array_key_exists('errors', $paymentResponse)) {
+            $payment->status = 'failed';
+            $payment->save();
+
+            $paymentResponse['payment'] = $payment->load(['created_by', 'paymentType']);
+            return response($paymentResponse, 500);
+        }
+
+        $payment->code = $paymentResponse['id'];
+    }
+
+    private function couponPay($validatedData, Payment $payment)
+    {
+        $coupon = Coupon::getFirst('code', $validatedData['code']);
+
+        if (empty($coupon)) {
+            $payment->status = 'failed';
+            $payment->save();
+
+            return response([
+                'payment' => $payment->load(['created_by', 'paymentType']),
+                'errors' => [
+                    'Coupon' => ['Coupon does not exist']
+                ]
+            ], 404);
+        }
+
+        if (date('Y-m-d H:i:s') > $coupon->to || $coupon->uses === 0) {
+            $payment->status = 'failed';
+            $payment->save();
+
+            return response([
+                'payment' => $payment->load(['created_by', 'paymentType']),
+                'errors' => [
+                    'Coupon' => ['This coupon has expired']
+                ]
+            ], 403);
+        } else {
+            if ($coupon->from > date('Y-m-d H:i:s')) {
+                $payment->status = 'failed';
+                $payment->save();
+
+                return response([
+                    'payment' => $payment->load(['created_by', 'paymentType']),
+                    'errors' => [
+                        'Coupon' => ['Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))]
+                    ]
+                ], 403);
+            }
+        }
+
+        $order = Order::findOrFail($validatedData['order_id']);
+
+        $payment->amount = $order->subtotal - Price::calculateDiscount(
+            $order->subtotal,
+            $coupon->discount->type,
+            $coupon->discount->amount
+        );
+        $payment->save();
+        $coupon->decrement('uses');
 
         $payment->status = 'approved';
         $payment->save();
@@ -233,13 +200,66 @@ class PaymentController extends Controller
         return response($orderStatus, 201);
     }
 
-    public function search(Request $request)
+    private function giftcardPay($validatedData, Payment $payment)
     {
-        $validatedData = $request->validate([
-            'keyword' => 'required|exists:orders,id'
-        ]);
+        $giftcard = Giftcard::getFirst('code', $validatedData['code']);
 
-        return response(Payment::where('order_id', $validatedData['keyword'])->get());
+        if (!$giftcard->enabled) {
+            $payment->status = 'failed';
+            $payment->save();
+
+            return response([
+                'payment' => $payment->load(['created_by', 'paymentType']),
+                'errors' => [
+                    'Gift card' => ['This gift card is inactive']
+                ]
+            ], 403);
+        } else {
+            if ($giftcard->amount < $validatedData['amount']) {
+                $payment->status = 'failed';
+                $payment->save();
+
+                return response([
+                    'payment' => $payment->load(['created_by', 'paymentType']),
+                    'errors' => [
+                        'Gift card' => ['This gift card has insufficient balance to complete the transaction']
+                    ]
+                ], 403);
+            } else {
+                // subtract the payed amount from giftcard
+                $giftcard->decrement('amount', $validatedData['amount']);
+            }
+        }
+    }
+
+    private function houseAccPay($validatedData, Payment $payment)
+    {
+        $customer = Customer::getFirst('house_account_number', $validatedData['house_account_number']);
+        if (empty($customer)) {
+            $payment->status = 'failed';
+            $payment->save();
+            return response([
+                'errors' => [
+                    'House Account' => ['House account does not exist.']
+                ]
+            ], 403);
+        }
+        if ($validatedData['amount'] > $customer->house_account_limit) {
+            $payment->status = 'failed';
+            $payment->save();
+            return response([
+                'errors' => [
+                    'House Account' => [
+                        'House account has insufficient balance.<br>Balance available: $ ' . round(
+                            $customer->house_account_limit,
+                            2
+                        )
+                    ]
+                ]
+            ], 403);
+        }
+        $customer->decrement('house_account_limit', $validatedData['amount']);
+        $payment->code = $validatedData['house_account_number'];
     }
 
     public function posRefund(Payment $payment)
