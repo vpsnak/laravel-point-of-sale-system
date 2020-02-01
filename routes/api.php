@@ -30,6 +30,7 @@ Route::get('/users/{id}', 'UserController@get')->middleware('scope:admin,store_m
 Route::post('/users/create', 'UserController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/users/search', 'UserController@search')->middleware('scope:admin,store_manager,cashier');
 Route::post('/users/password', 'UserController@changeUserPwd')->middleware('scope:admin');
+Route::patch('/users/update/{user}', 'UserController@update')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/users/{id}', 'UserController@delete')->middleware('scope:admin');
 
 // payments
@@ -144,7 +145,6 @@ Route::get('/products/{id}', 'ProductController@get')->middleware('scope:admin,s
 Route::get('/products/barcode/{id}', 'ProductController@getBarcode')->middleware('scope:admin,store_manager,cashier');
 Route::post('/products/create', 'ProductController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/products/search', 'ProductController@search')->middleware('scope:admin,store_manager,cashier');
-Route::post('/products/password', 'ProductController@changeUserPwd')->middleware('scope:admin');
 Route::delete('/products/{id}', 'ProductController@delete')->middleware('scope:admin');
 
 //carts
@@ -153,16 +153,6 @@ Route::get('/carts/{id}', 'CartController@get')->middleware('scope:admin,store_m
 Route::get('/carts/hold', 'CartController@getHold')->middleware('scope:admin,store_manager,cashier');
 Route::post('/carts/create', 'CartController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/carts/search', 'CartController@search')->middleware('scope:admin,store_manager,cashier');
-Route::post('/carts/password', 'CartController@changeUserPwd')->middleware('scope:admin');
-Route::delete('/carts/{id}', 'CartController@delete')->middleware('scope:admin');
-
-//carts
-Route::get('/carts', 'CartController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/carts/{id}', 'CartController@get')->middleware('scope:admin,store_manager,cashier');
-Route::get('/carts/hold', 'CartController@getHold')->middleware('scope:admin,store_manager,cashier');
-Route::post('/carts/create', 'CartController@create')->middleware('scope:admin,store_manager,cashier');
-Route::post('/carts/search', 'CartController@search')->middleware('scope:admin,store_manager,cashier');
-Route::post('/carts/password', 'CartController@changeUserPwd')->middleware('scope:admin');
 Route::delete('/carts/{id}', 'CartController@delete')->middleware('scope:admin');
 
 //categories
@@ -171,7 +161,6 @@ Route::get('/categories/{id}', 'CategoryController@get')->middleware('scope:admi
 Route::get('/categories/{category}/products', 'CategoryController@productsByCategory')->middleware('scope:admin,store_manager,cashier');
 Route::post('/categories/create', 'CategoryController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/categories/search', 'CategoryController@search')->middleware('scope:admin,store_manager,cashier');
-Route::post('/categories/password', 'CategoryController@changeUserPwd')->middleware('scope:admin');
 Route::delete('/categories/{id}', 'CategoryController@delete')->middleware('scope:admin');
 
 //cash-register-logs
@@ -184,7 +173,6 @@ Route::post('/cash-register-logs/create', 'CashRegisterLogsController@create')->
 Route::post('/cash-register-logs/search', 'CashRegisterLogsController@search')->middleware('scope:admin,store_manager,cashier');
 Route::post('/cash-register-logs/open', 'CashRegisterLogsController@open')->middleware('scope:admin,store_manager,cashier');
 Route::post('/cash-register-logs/close', 'CashRegisterLogsController@cose')->middleware('scope:admin,store_manager,cashier');
-Route::post('/cash-register-logs/password', 'CashRegisterLogsController@changeUserPwd')->middleware('scope:admin');
 Route::delete('/cash-register-logs/{id}', 'CashRegisterLogsController@delete')->middleware('scope:admin');
 
 // categories to list in sales
