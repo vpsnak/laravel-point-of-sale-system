@@ -20,7 +20,6 @@ class CashRegisterLogsController extends BaseController
             'status' => 'required|boolean',
             'opening_time' => 'required|date',
             'closing_time' => 'date',
-            // 'closed_by' => 'exists:users,id',
             'note' => 'string',
         ]);
 

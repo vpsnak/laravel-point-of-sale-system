@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Carbon;
 
 class User extends Authenticatable
 {
@@ -36,15 +37,30 @@ class User extends Authenticatable
         'password',
         'remember_token'
     ];
+    protected $casts = [];
+    public function __construct()
+    {
+        $this->casts = [
+            'email_verified_at' => 'datetime',
+            'created_at' => config('models.format.timestamp'),
+            'updated_at' => config('models.format.timestamp')
+        ];
+    }
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    // public function getCreatedAtAttribute($value)
+    // {
+    //     return $value ? Carbon::parse($value)->format(config('models.format.timestamp')) : null;
+    // }
+
+    // public function getUpdatedAtAttribute($value)
+    // {
+    //     return $value ? Carbon::parse($value)->format(config('models.format.timestamp')) : null;
+    // }
+
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = \Hash::make($value);
+    }
 
     public function payments()
     {

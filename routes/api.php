@@ -165,14 +165,13 @@ Route::delete('/categories/{id}', 'CategoryController@delete')->middleware('scop
 
 //cash-register-logs
 Route::get('/cash-register-logs', 'CashRegisterLogsController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/cash-register-logs/{id}', 'CashRegisterLogsController@get')->middleware('scope:admin,store_manager,cashier');
 Route::get('/cash-register-logs/logout', 'CashRegisterLogsController@logout')->middleware('scope:admin,store_manager,cashier');
 Route::get('/cash-register-logs/retrieve', 'CashRegisterLogsController@retrieve')->middleware('scope:admin,store_manager,cashier');
 Route::get('/cash-register-logs/{id}/amount', 'CashRegisterLogsController@amount')->middleware('scope:admin,store_manager,cashier');
 Route::post('/cash-register-logs/create', 'CashRegisterLogsController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/cash-register-logs/search', 'CashRegisterLogsController@search')->middleware('scope:admin,store_manager,cashier');
 Route::post('/cash-register-logs/open', 'CashRegisterLogsController@open')->middleware('scope:admin,store_manager,cashier');
-Route::post('/cash-register-logs/close', 'CashRegisterLogsController@cose')->middleware('scope:admin,store_manager,cashier');
+Route::post('/cash-register-logs/close', 'CashRegisterLogsController@close')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/cash-register-logs/{id}', 'CashRegisterLogsController@delete')->middleware('scope:admin');
 
 // categories to list in sales

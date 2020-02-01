@@ -46,25 +46,25 @@ class PaymentController extends Controller
         $newPayment['status'] = 'pending';
 
         $payment = $this->model::store($newPayment);
+        $response = [];
 
         switch ($validatedData['payment_type']) {
             case 'cash':
-                // nothing to do here, move on
                 break;
             case 'pos-terminal':
-                return $this->posPay($validatedData, $payment);
+                $response = $this->posPay($payment);
                 break;
             case 'card':
-                return $this->apiPay($validatedData, $payment);
+                $response = $this->apiPay($validatedData, $payment);
                 break;
             case 'coupon':
-                return $this->couponPay($validatedData, $payment);
+                $response = $this->couponPay($validatedData, $payment);
                 break;
             case 'giftcard':
-                return $this->giftcardPay($validatedData, $payment);
+                $response = $this->giftcardPay($validatedData, $payment);
                 break;
             case 'house-account':
-                return $this->houseAccPay($validatedData, $payment);
+                $response = $this->houseAccPay($validatedData, $payment);
                 break;
             default:
                 $payment->status = 'failed';
@@ -75,6 +75,26 @@ class PaymentController extends Controller
                     'payment' => $payment
                 ], 422);
                 break;
+        }
+
+        if (array_key_exists('transaction_id', $response)) {
+            $payment->code = $response['transaction_id'];
+            $payment->save();
+        }
+
+        if (array_key_exists('errors', $response)) {
+            $payment->status = 'failed';
+            $payment->save();
+
+            $response['payment'] = $payment->load(['created_by', 'paymentType']);
+            return response($response, 422);
+        } else {
+            $payment->status = 'approved';
+            $payment->save();
+            $payment->load(['created_by', 'paymentType', 'order']);
+            $orderStatus = OrderController::updateOrderStatus($payment);
+            $orderStatus['payment'] = $payment;
+            return response($orderStatus, 201);
         }
     }
 
@@ -87,26 +107,16 @@ class PaymentController extends Controller
         return response(Payment::where('order_id', $validatedData['keyword'])->get());
     }
 
-    private function posPay($validatedData, Payment $payment)
+    private function posPay(Payment $payment)
     {
         $elavonSdkPayment = new ElavonSdkPaymentController();
         $elavonSdkPayment->selected_transaction = 'SALE';
-        $elavonSdkPayment->amount = 100 * $validatedData['amount'];
+        $elavonSdkPayment->amount = 100 * $payment->amount;
         $elavonSdkPayment->payment_id = $payment->id;
 
         $paymentResponse = $elavonSdkPayment->posPayment();
 
-        if (array_key_exists('errors', $paymentResponse)) {
-            $payment->status = 'failed';
-            $payment->save();
-
-            $paymentResponse['payment'] = $payment->load(['created_by', 'paymentType']);
-            return response($paymentResponse, 422);
-        }
-
-        $payment->code = $paymentResponse['transaction_id'];
-
-        return true;
+        return $paymentResponse;
     }
 
     private function apiPay($validatedData, Payment $payment)
@@ -129,15 +139,7 @@ class PaymentController extends Controller
             'payment_id' => $payment->id,
         ]);
 
-        if (array_key_exists('errors', $paymentResponse)) {
-            $payment->status = 'failed';
-            $payment->save();
-
-            $paymentResponse['payment'] = $payment->load(['created_by', 'paymentType']);
-            return response($paymentResponse, 500);
-        }
-
-        $payment->code = $paymentResponse['id'];
+        return response($paymentResponse);
     }
 
     private function couponPay($validatedData, Payment $payment)

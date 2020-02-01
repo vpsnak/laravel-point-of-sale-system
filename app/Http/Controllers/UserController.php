@@ -151,37 +151,38 @@ class UserController extends Controller
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'id' => 'nullable|exists:users,id',
-            'name' => 'nullable|required_without:id|string',
-            'password' => 'nullable|required_without:id|string'
+            'name' => 'required|string',
+            'password' => 'required|string',
+            'username' => 'required|string',
+            'email' => 'required|email',
+            'phone' => 'required|numeric',
         ]);
 
-        if (array_key_exists('id', $validatedData)) {
-            $validatedData[] = $request->validate([
-                'username' => 'nullable|required_without:id|string',
-                'email' => 'nullable|required_without:id|email',
-                'phone' => 'nullable|required_without:id|numeric',
-            ]);
-        } else {
-            $validatedData[] = $request->validate([
-                'username' => 'required|string',
-                'email' => 'email|required|unique:users,email',
-                'phone' => 'required|unique:users,phone',
-            ]);
-        }
-        if (array_key_exists('password', $validatedData)) {
-            $validatedData['password'] = Hash::make($validatedData['password']);
-        }
+
         if (!empty($validatedData['id'])) {
             $user = User::findOrFail($validatedData['id']);
             $user->fill($validatedData);
             $user->save();
-
-            return response(['info' => ['User ' . $user->name . ' updated successfully!']], 200);
         } else {
-            $user = User::store($validatedData);
+            $user = User::create($validatedData);
 
             return response(['info' => ['User ' . $user->name . ' created successfully!']], 201);
         }
+    }
+
+    public function update(Request $request, User $user)
+    {
+        $validatedData = $request->validate([
+            'name' => 'nullable|required_without:id|string',
+            'password' => 'nullable|required_without:id|string',
+            'username' => 'nullable|required_without:id|string',
+            'email' => 'nullable|required_without:id|email',
+            'phone' => 'nullable|required_without:id|numeric',
+        ]);
+
+        $user->fill($validatedData);
+        $user->save();
+
+        return response(['info' => ['User ' . $user->name . ' updated successfully!']], 200);
     }
 }
