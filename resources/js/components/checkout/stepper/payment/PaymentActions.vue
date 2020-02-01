@@ -130,7 +130,7 @@ export default {
         this.getPaymentTypes();
     },
     props: {
-        remaining: Number,
+        remaining: String,
         loading: Boolean
     },
     data() {

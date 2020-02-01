@@ -267,7 +267,6 @@ class OrderController extends BaseController
             if ($order->status !== 'pending_payment') {
                 $order->change = 0;
                 $order->status = 'pending_payment';
-                $order->save();
             }
         } else {
             // change is negative so fix payment amount and save the change to order
@@ -278,7 +277,6 @@ class OrderController extends BaseController
                 if ($order->status !== 'paid') {
                     $order->change = abs($change);
                     $order->status = 'paid';
-                    $order->save();
                 }
             } else {
                 $order->change = abs($change);
@@ -288,15 +286,16 @@ class OrderController extends BaseController
                     if ($order->total - $order->total_paid > 0) {
                         $order->change = 0;
                         $order->status = 'pending_payment';
-                        $order->save();
                     }
                 }
             }
         }
 
+        $order->save();
+
         $order = $order->refresh();
         return [
-            'remaining' => ($order->change === '0.00') ? number_format($order->total - $order->total_paid, 2, '.', null) : 0,
+            'remaining' => ($order->change === '0.00') ? number_format($order->total - $order->total_paid, 2, '.', null) : '0.00',
             'change' => $order->change,
             'order_status' => $order->status
         ];
@@ -305,10 +304,12 @@ class OrderController extends BaseController
     public function cancelOrder(Order $order)
     {
         foreach ($order->payments as $payment) {
-            switch ($payment->type) {
-                case '':
-                    break;
-            }
+            PaymentController::delete($payment, false);
         }
+
+        $order->status = 'canceled';
+        $order->save();
+
+        return;
     }
 }

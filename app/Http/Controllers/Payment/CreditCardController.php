@@ -132,12 +132,8 @@ class CreditCardController extends Controller
 
     public function cardRefund($transaction_id)
     {
-
-        if ($payment = Payment::where('code', $transaction_id)->first()) {
-            $store = $payment->cash_register->store;
-        } else {
-            ['errors' => ['Refund' => 'Missing transaction ID.<br>Cannot refund!']];
-        }
+        $payment = Payment::where('code', $transaction_id)->firstOrFail();
+        $store = $payment->cash_register->store;
 
         $data = [
             'ssl_merchant_id' => ($store->company->bankAccountApi()->account)['merchant_id'],
