@@ -1,6 +1,6 @@
 <template>
     <div>
-        <payment @payment="payment" />
+        <payment @payment="payment" :key="orderId" />
         <v-row justify="center" align="center" class="my-3">
             <v-col
                 :cols="5"

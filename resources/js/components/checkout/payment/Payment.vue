@@ -10,7 +10,6 @@
         <paymentActions
             :remaining="remaining"
             :loading="paymentActionsLoading"
-            v-if="remaining >= 0"
             @sendPayment="sendPayment"
         ></paymentActions>
     </div>
@@ -22,6 +21,7 @@ import { mapActions, mapMutations } from "vuex";
 export default {
     data() {
         return {
+            order_status: null,
             order_remaining: null,
             orderHistory: [],
             paymentTypes: [],
@@ -34,22 +34,6 @@ export default {
                 amount: null
             }
         };
-    },
-
-    mounted() {
-        if (this.orderId) {
-            if (parseFloat(this.$store.state.cart.order.change) > 0) {
-                this.remaining = -Math.abs(
-                    parseFloat(this.$store.state.cart.order.change)
-                );
-            } else {
-                this.remaining =
-                    parseFloat(this.$store.state.cart.order.total) -
-                    this.$store.state.cart.order.total_paid;
-            }
-
-            this.$emit("payment", this.remaining);
-        }
     },
 
     computed: {
@@ -132,6 +116,7 @@ export default {
                 .then(response => {
                     this.payments = response.payment;
                     this.remaining = response.remaining;
+                    this.order_status = response.order_status;
 
                     let notification = {
                         msg: "Payment received",

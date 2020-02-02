@@ -34,7 +34,7 @@
                     <span>{{ closeBtnTxt }}</span>
                 </v-tooltip>
 
-                <v-tooltip bottom v-if="showHoldBtn">
+                <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
                         <v-btn
                             :disabled="disableControls"
@@ -103,16 +103,6 @@ export default {
                 this.$store.state.cart.currentCheckoutStep !== 3
                 ? "Cancel order"
                 : "Close";
-        },
-        showHoldBtn() {
-            if (
-                this.order.id &&
-                this.$store.state.cart.currentCheckoutStep !== 3
-            ) {
-                return true;
-            } else {
-                return false;
-            }
         },
         isEditable() {
             return this.order.id ? false : true;
