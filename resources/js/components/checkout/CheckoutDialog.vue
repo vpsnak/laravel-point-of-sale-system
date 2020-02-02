@@ -62,7 +62,7 @@
                     </v-col>
                     <v-col :lg="4" class="py-lg-0">
                         <cart
-                            :key="order ? order.id : 0"
+                            :key="order.id || 0"
                             icon="mdi-clipboard-list"
                             title="Order summary"
                             :editable="isEditable"

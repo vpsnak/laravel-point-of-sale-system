@@ -14,12 +14,7 @@
                 </v-btn>
             </v-btn-toggle>
         </v-row>
-        <v-row
-            justify="center"
-            align="center"
-            v-if="paymentType === 'card'"
-            class="my-3"
-        >
+        <v-row justify="center" align="center" v-if="paymentType === 'card'" class="my-3">
             <div class="pr-2">
                 <v-text-field
                     autocomplete="off"
@@ -73,19 +68,11 @@
                 style="max-width:300px;"
             ></v-text-field>
         </v-row>
-        <v-row
-            justify="center"
-            align="center"
-            class="my-3"
-            v-if="paymentType !== 'coupon'"
-        >
+        <v-row justify="center" align="center" class="my-3" v-if="paymentType !== 'coupon'">
             <v-col :lg="5" class="d-flex justify-space-between align-center">
                 <span class="title">
                     Remaining:
-                    <span
-                        class="amber--text"
-                        v-text="'$ ' + remainingAmount.toFixed(2)"
-                    />
+                    <span class="amber--text" v-text="'$ ' + remainingAmount.toFixed(2)" />
                 </span>
                 <v-text-field
                     :disabled="loading || orderLoading"
@@ -115,8 +102,7 @@
                             orderLoading ||
                             !$store.state.cart.isValidCheckout
                     "
-                    >Send payment</v-btn
-                >
+                >Send payment</v-btn>
             </v-col>
         </v-row>
     </div>
@@ -192,7 +178,7 @@ export default {
         },
         remainingAmount() {
             if (parseFloat(this.$props.remaining) >= 0) {
-                this.amount = parseFloat(this.$props.remaining).toFixed(2);
+                this.amount = this.$props.remaining;
                 return parseFloat(this.$props.remaining);
             } else {
                 this.amount = parseFloat(

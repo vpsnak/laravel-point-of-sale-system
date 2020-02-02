@@ -67,13 +67,10 @@ class PaymentController extends Controller
                 $response = $this->houseAccPay($validatedData, $payment);
                 break;
             default:
-                $payment->status = 'failed';
-                $payment->save();
-
-                return response([
+                $response = [
                     'errors' => ['Payment method' => 'This payment method does not exist'],
                     'payment' => $payment
-                ], 422);
+                ];
                 break;
         }
 
@@ -276,12 +273,9 @@ class PaymentController extends Controller
             $elavonSdkPaymentController->selected_transaction = 'LINKED_REFUND';
             $elavonSdkPaymentController->amount = $payment->amount;
             $paymentResponse = $elavonSdkPaymentController->posPayment();
-
-            if (isset($paymentResponse['errors'])) {
-                return false;
-            }
         }
-        return true;
+
+        return $paymentResponse;
     }
 
     public function apiRefund($payment)
@@ -297,11 +291,7 @@ class PaymentController extends Controller
             'payment_id' => $payment->id,
         ]);
 
-        if (isset($paymentResponse['errors'])) {
-            return false;
-        }
-
-        return true;
+        return $paymentResponse;
     }
 
     public function houseAccRefund(Payment $payment)
@@ -374,10 +364,19 @@ class PaymentController extends Controller
 
             $orderStatus = OrderController::updateOrderStatus($refund, true);
             $orderStatus['refund'] = $refund->refresh();
-            $orderStatus['info'] = ['Refund' => 'Refund completed successfully!'];
-            $orderStatus['refunded_payment_id'] = $payment->id;
+
+            if (is_array($result) && array_key_exists('errors', $result)) {
+                $orderStatus['errors'] = $result['errors'];
+            } else {
+                $orderStatus['refunded_payment_id'] = $payment->id;
+                $orderStatus['info'] = ['Refund' => 'Refund completed successfully!'];
+            }
 
             return response($orderStatus, 200);
+        } else {
+            if (is_array($result) && array_key_exists('errors', $result)) {
+                return $result;
+            }
         }
     }
 }

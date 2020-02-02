@@ -310,6 +310,6 @@ class OrderController extends BaseController
         $order->status = 'canceled';
         $order->save();
 
-        return;
+        return ['info' => ['Order' => 'Order successfully canceled']];
     }
 }
