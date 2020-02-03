@@ -29,7 +29,6 @@ class SendMail extends Mailable
      */
     public function build()
     {
-        // PhpHelper::debug($this->data, 1, 1, 1);
         return $this->from('npapaioannou@webo2.gr')->subject('WebO2')->view('dynamic_email_template')->with('data', $this->data);
     }
 }

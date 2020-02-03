@@ -25,19 +25,13 @@ class PaymentController extends Controller
             'payment_type' => 'required|exists:payment_types,type',
             'amount' => 'nullable|required_unless:payment_type,coupon|numeric|min:0.01',
             'order_id' => 'required|exists:orders,id',
-
-            // card validation
             'card.number' => 'nullable|required_if:payment_type,card|numeric',
             'card.cvc' => 'nullable|required_if:payment_type,card|digits_between:3,4',
             'card.card_holder' => 'nullable|required_if:payment_type,card|string',
             'card.exp_date' => 'nullable|required_if:payment_type,card|after_or_equal:today',
-
-            // coupon/giftcard validation
             'code' => 'required_if:payment_type,coupon|required_if:payment_type,giftcard',
-
             'house_account_number' => 'required_if:payment_type,house-account'
         ]);
-
         $validatedData['created_by'] = auth()->user()->id;
         $validatedData['cash_register_id'] = auth()->user()->open_register->cash_register->id;
 
@@ -74,25 +68,31 @@ class PaymentController extends Controller
                 break;
         }
 
-        if (array_key_exists('transaction_id', $response)) {
-            $payment->code = $response['transaction_id'];
-            $payment->save();
+        if (is_array($response)) {
+            if (array_key_exists('transaction_id', $response)) {
+                $payment->code = $response['transaction_id'];
+                $payment->save();
+            } else if (array_key_exists('id', $response)) {
+                $payment->code = $response['id'];
+                $payment->save();
+            }
+
+            if (array_key_exists('errors', $response)) {
+                $payment->status = 'failed';
+                $payment->save();
+                $response['payment'] = $payment->load(['created_by', 'paymentType']);
+
+                return response($response, 422);
+            }
         }
 
-        if (array_key_exists('errors', $response)) {
-            $payment->status = 'failed';
-            $payment->save();
+        $payment->status = 'approved';
+        $payment->save();
+        $payment->load(['created_by', 'paymentType', 'order']);
+        $orderStatus = OrderController::updateOrderStatus($payment);
+        $orderStatus['payment'] = $payment;
 
-            $response['payment'] = $payment->load(['created_by', 'paymentType']);
-            return response($response, 422);
-        } else {
-            $payment->status = 'approved';
-            $payment->save();
-            $payment->load(['created_by', 'paymentType', 'order']);
-            $orderStatus = OrderController::updateOrderStatus($payment);
-            $orderStatus['payment'] = $payment;
-            return response($orderStatus, 201);
-        }
+        return response($orderStatus, 201);
     }
 
     public function search(Request $request)
@@ -132,11 +132,11 @@ class PaymentController extends Controller
             'card_number' => $paymentResponse['response']['ssl_card_number'] ?? '',
             'card_holder' => $validatedData['card']['card_holder'],
             'status' => $paymentResponse['response']['ssl_result_message'] ?? '',
-            'log' => json_encode($paymentResponse['response']),
+            'log' => $paymentResponse['response'] ? json_encode($paymentResponse['response']) : '',
             'payment_id' => $payment->id,
         ]);
 
-        return response($paymentResponse);
+        return $paymentResponse;
     }
 
     private function couponPay($validatedData, Payment $payment)
@@ -147,56 +147,26 @@ class PaymentController extends Controller
             $payment->status = 'failed';
             $payment->save();
 
-            return response([
-                'payment' => $payment->load(['created_by', 'paymentType']),
-                'errors' => [
-                    'Coupon' => ['Coupon does not exist']
-                ]
-            ], 404);
+            return ['errors' => ['Coupon' => ['Coupon does not exist']]];
         }
 
         if (date('Y-m-d H:i:s') > $coupon->to || $coupon->uses === 0) {
-            $payment->status = 'failed';
-            $payment->save();
-
-            return response([
-                'payment' => $payment->load(['created_by', 'paymentType']),
-                'errors' => [
-                    'Coupon' => ['This coupon has expired']
-                ]
-            ], 403);
+            return ['errors' => ['Coupon' => ['This coupon has expired']]];
+        } else if ($coupon->from > date('Y-m-d H:i:s')) {
+            return ['errors' => ['Coupon' => ['Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))]]];
         } else {
-            if ($coupon->from > date('Y-m-d H:i:s')) {
-                $payment->status = 'failed';
-                $payment->save();
+            $order = Order::findOrFail($validatedData['order_id']);
 
-                return response([
-                    'payment' => $payment->load(['created_by', 'paymentType']),
-                    'errors' => [
-                        'Coupon' => ['Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))]
-                    ]
-                ], 403);
-            }
+            $payment->amount = $order->subtotal - Price::calculateDiscount(
+                $order->subtotal,
+                $coupon->discount->type,
+                $coupon->discount->amount
+            );
+            $payment->save();
+            $coupon->decrement('uses');
+
+            return true;
         }
-
-        $order = Order::findOrFail($validatedData['order_id']);
-
-        $payment->amount = $order->subtotal - Price::calculateDiscount(
-            $order->subtotal,
-            $coupon->discount->type,
-            $coupon->discount->amount
-        );
-        $payment->save();
-        $coupon->decrement('uses');
-
-        $payment->status = 'approved';
-        $payment->save();
-        $payment->load(['created_by', 'paymentType', 'order']);
-
-        $orderStatus = OrderController::updateOrderStatus($payment);
-        $orderStatus['payment'] = $payment;
-
-        return response($orderStatus, 201);
     }
 
     private function giftcardPay($validatedData, Payment $payment)
@@ -204,61 +174,33 @@ class PaymentController extends Controller
         $giftcard = Giftcard::getFirst('code', $validatedData['code']);
 
         if (!$giftcard->enabled) {
-            $payment->status = 'failed';
-            $payment->save();
-
-            return response([
-                'payment' => $payment->load(['created_by', 'paymentType']),
-                'errors' => [
-                    'Gift card' => ['This gift card is inactive']
-                ]
-            ], 403);
+            return ['errors' => ['Gift card' => ['This gift card is inactive']]];
+        } else if ($giftcard->amount < $validatedData['amount']) {
+            return ['errors' => ['Gift card' => ['This gift card has insufficient balance to complete the transaction']]];
         } else {
-            if ($giftcard->amount < $validatedData['amount']) {
-                $payment->status = 'failed';
-                $payment->save();
-
-                return response([
-                    'payment' => $payment->load(['created_by', 'paymentType']),
-                    'errors' => [
-                        'Gift card' => ['This gift card has insufficient balance to complete the transaction']
-                    ]
-                ], 403);
-            } else {
-                // subtract the payed amount from giftcard
-                $giftcard->decrement('amount', $validatedData['amount']);
-            }
+            // subtract the payed amount from giftcard
+            return  $giftcard->decrement('amount', $validatedData['amount']);
         }
     }
+
 
     private function houseAccPay($validatedData, Payment $payment)
     {
         $customer = Customer::getFirst('house_account_number', $validatedData['house_account_number']);
         if (empty($customer)) {
-            $payment->status = 'failed';
-            $payment->save();
-            return response([
-                'errors' => [
-                    'House Account' => ['House account does not exist.']
-                ]
-            ], 403);
-        }
-        if ($validatedData['amount'] > $customer->house_account_limit) {
-            $payment->status = 'failed';
-            $payment->save();
-            return response([
+            return ['errors' => ['House Account' => ['House account does not exist.']]];
+        } else if ($validatedData['amount'] > $customer->house_account_limit) {
+            return [
                 'errors' => [
                     'House Account' => [
-                        'House account has insufficient balance.<br>Balance available: $ ' . round(
-                            $customer->house_account_limit,
-                            2
-                        )
+                        'House account has insufficient balance.<br>Balance available: $ ' . round($customer->house_account_limit, 2)
                     ]
                 ]
-            ], 403);
+            ];
+        } else {
+            $customer->decrement('house_account_limit', $validatedData['amount']);
+            $payment->code = $validatedData['house_account_number'];
         }
-        $customer->decrement('house_account_limit', $validatedData['amount']);
-        $payment->code = $validatedData['house_account_number'];
     }
 
     public function posRefund(Payment $payment)
@@ -273,9 +215,9 @@ class PaymentController extends Controller
             $elavonSdkPaymentController->selected_transaction = 'LINKED_REFUND';
             $elavonSdkPaymentController->amount = $payment->amount;
             $paymentResponse = $elavonSdkPaymentController->posPayment();
+        } else {
+            return $paymentResponse;
         }
-
-        return $paymentResponse;
     }
 
     public function apiRefund($payment)
@@ -287,7 +229,10 @@ class PaymentController extends Controller
             'transaction' => $paymentResponse['response']['ssl_transaction_type'] ?? '',
             'card_number' => $paymentResponse['response']['ssl_card_number'] ?? '',
             'status' => $paymentResponse['response']['ssl_result_message'] ?? '',
-            'log' => json_encode($paymentResponse['response']),
+            'log' => array_key_exists(
+                'response',
+                $paymentResponse
+            ) ? json_encode($paymentResponse['response']) : '',
             'payment_id' => $payment->id,
         ]);
 
@@ -355,19 +300,23 @@ class PaymentController extends Controller
                 $result = true;
                 break;
             default:
-                return response(['errors' => ['Refund' => 'This payment method cannot be refunded']], 500);
+                return response(['errors' => ['Refund' => "Payment method: {$payment->paymentType->type} cannot be refunded"]], 500);
         }
 
         if ($setOrderStatus) {
-            $refund = $this->createRefund($payment, $result);
+            if (is_array($result) && array_key_exists('errors', $result)) {
+                $orderStatus['errors'] = $result['errors'];
+                $refund = $this->createRefund($payment, false);
+            } else {
+                $refund = $this->createRefund($payment, true);
+            }
+
             $refund->load(['created_by', 'paymentType', 'order']);
 
             $orderStatus = OrderController::updateOrderStatus($refund, true);
             $orderStatus['refund'] = $refund->refresh();
 
-            if (is_array($result) && array_key_exists('errors', $result)) {
-                $orderStatus['errors'] = $result['errors'];
-            } else {
+            if (is_array($result) && !array_key_exists('errors', $result)) {
                 $orderStatus['refunded_payment_id'] = $payment->id;
                 $orderStatus['info'] = ['Refund' => 'Refund completed successfully!'];
             }
@@ -376,6 +325,8 @@ class PaymentController extends Controller
         } else {
             if (is_array($result) && array_key_exists('errors', $result)) {
                 return $result;
+            } else {
+                return true;
             }
         }
     }

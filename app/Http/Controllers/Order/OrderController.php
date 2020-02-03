@@ -222,7 +222,7 @@ class OrderController extends BaseController
                     $giftCard = Giftcard::whereCode($code[1])->first();
 
                     if (!$giftCard) {
-                        return response(['errors' => ['Gift Card' => "Gift card with code: $code[1] not found"]]);
+                        return response(['errors' => ['Gift Card' => "Gift card with code: $code[1] not found"]], 422);
                     }
 
                     $giftCard->amount -= $product->final_price;

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\BankAccount;
 use App\Payment;
 use Illuminate\Http\Request;
-use Illuminate\Session\Store;
 
 class CreditCardController extends Controller
 {
@@ -42,10 +41,8 @@ class CreditCardController extends Controller
             case 'cccredit': // @TODO check if it works
                 $response = ElavonApiPaymentController::doTransaction($type, $payload);
                 return $this->prepareResponse($response);
-                break;
             default:
                 return ['errors' => ['Invalid API action']];
-                break;
         }
     }
 
@@ -103,7 +100,7 @@ class CreditCardController extends Controller
     {
         if (array_key_exists('errorCode', $response)) {
             return [
-                'errors' => [$response['errorName'] . ' - ' . $response['errorMessage']],
+                'errors' => [$response['errorName'] => $response['errorMessage']],
                 'response' => $response
             ];
         }
@@ -114,20 +111,19 @@ class CreditCardController extends Controller
                     'id' => $response['ssl_txn_id'],
                     'response' => $response
                 ];
+            } else {
+                return [
+                    'errors' => ['Unknown Error' => $response['ssl_result_message']],
+                    'id' => $response['ssl_txn_id'],
+                    'response' => $response
+                ];
             }
+        } else {
             return [
-                'errors' => [
-                    'Unknown Error',
-                    $response['ssl_result_message']
-                ],
-                'id' => $response['ssl_txn_id'],
+                'errors' => ['API Transaction' => 'Undocumented Error'],
                 'response' => $response
             ];
         }
-        return [
-            'errors' => ['Undocumented Error'],
-            'response' => $response
-        ];
     }
 
     public function cardRefund($transaction_id)
@@ -145,7 +141,7 @@ class CreditCardController extends Controller
         $response = ElavonApiPaymentController::doTransaction('txnquery', $data);
         $parsedResponse = $this->prepareResponse($response);
         if (array_key_exists('errors', $parsedResponse)) {
-            return ['errors' => ['Refund' => 'Can not refund!']];
+            return $parsedResponse;
         }
         if (array_key_exists('ssl_is_voidable', $response)) {
             if ($response['ssl_is_voidable'] == 'TRUE') {
@@ -168,7 +164,7 @@ class CreditCardController extends Controller
                 $response = ElavonApiPaymentController::doTransaction($type, $params);
                 return $this->prepareResponse($response);
             default:
-                return ['errors' => ['Invalid API action']];
+                return ['errors' => ['API Transaction' => 'Invalid API action']];
         }
     }
 
