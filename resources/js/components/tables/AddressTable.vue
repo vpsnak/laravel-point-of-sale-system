@@ -59,14 +59,6 @@ export default {
                 { text: "Actions", value: "action" }
             ]
         };
-    },
-    mounted() {
-        this.setRows([]);
-    },
-    methods: {
-        ...mapMutations("datatable", {
-            setRows: "setRows"
-        })
     }
 };
 </script>
