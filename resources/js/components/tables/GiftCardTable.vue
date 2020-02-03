@@ -46,14 +46,6 @@ export default {
                 }
             ]
         };
-    },
-    mounted() {
-        this.setRows([]);
-    },
-    methods: {
-        ...mapMutations("datatable", {
-            setRows: "setRows"
-        })
     }
 };
 </script>

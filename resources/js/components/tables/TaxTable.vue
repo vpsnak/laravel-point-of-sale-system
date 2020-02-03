@@ -7,43 +7,33 @@
         tableForm="taxForm"
         tableViewComponent="tax"
     />
-     </template>
-
-    <script>
-        import { mapMutations } from "vuex";
-
-        export default {
-            data() {
-                return {
-                    headers: [
-                        {
-                            text: "Id",
-                            value: "id"
-                        },
-                        {
-                            text: "Name",
-                            value: "name"
-                        },
-                        {
-                            text: "Percentage",
-                            value: "percentage"
-                        },
-                        {
-                            text: "Actions",
-                            value: "action"
-                        }
-                    ]
-                };
-            },
-            mounted() {
-                this.setRows([]);
-            },
-            methods: {
-                ...mapMutations("datatable", {
-                    setRows: "setRows",
-                    deleteRow: "deleteRow"
-                })
-            }
-        };
-    </script>
 </template>
+
+<script>
+import { mapMutations } from "vuex";
+
+export default {
+    data() {
+        return {
+            headers: [
+                {
+                    text: "Id",
+                    value: "id"
+                },
+                {
+                    text: "Name",
+                    value: "name"
+                },
+                {
+                    text: "Percentage",
+                    value: "percentage"
+                },
+                {
+                    text: "Actions",
+                    value: "action"
+                }
+            ]
+        };
+    }
+};
+</script>
