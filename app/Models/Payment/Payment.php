@@ -2,7 +2,9 @@
 
 namespace App;
 
-class Payment extends BaseModel
+use Illuminate\Database\Eloquent\Model;
+
+class Payment extends Model
 {
     protected $casts = [
         'refunded' => 'boolean',

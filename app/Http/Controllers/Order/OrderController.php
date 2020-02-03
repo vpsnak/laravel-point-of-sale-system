@@ -219,7 +219,7 @@ class OrderController extends Controller
         return $product;
     }
 
-    public function delete(Order $model)
+    public function cancelOrder(Order $model, bool $rollbackPayments = true)
     {
         foreach ($model->items as $product) {
             if (isset($product['sku'])) {
@@ -239,6 +239,14 @@ class OrderController extends Controller
                         return response(['errors' =>  ['Order cancellation' => "Gift card with code: $giftCard->code has insufficient balance to cancel the order with id: $id<br>No changes where made"]], 422);
                     }
                 }
+            }
+        }
+
+        if ($rollbackPayments) {
+            $results = $this->rollbackPayments($model);
+
+            if (!$results || (is_array($results) && array_key_exists('errors', $results))) {
+                return response(['errors' => $results['errors']]);
             }
         }
 
@@ -272,7 +280,7 @@ class OrderController extends Controller
     public static function updateOrderStatus(Payment $payment, bool $refund = false)
     {
         $order = $payment->order;
-        $change = number_format($order->total - $order->total_paid, 2, '.', null);
+        $change = number_format($order->total - $order->total_paid, 2, '.', '');
 
         if ($change > 0) {
             if ($order->status !== 'pending_payment') {
@@ -282,7 +290,7 @@ class OrderController extends Controller
         } else {
             // change is negative so fix payment amount and save the change to order
             if (!$refund) {
-                $payment->amount = number_format(abs($payment->amount) + (float) $change, 2, '.', null);
+                $payment->amount = number_format(abs($payment->amount) + (float) $change, 2, '.', '');
                 $payment->save();
 
                 if ($order->status !== 'paid') {
@@ -306,20 +314,19 @@ class OrderController extends Controller
 
         $order = $order->refresh();
         return [
-            'remaining' => ($order->change === '0.00') ? number_format($order->total - $order->total_paid, 2, '.', null) : '0.00',
+            'remaining' => ($order->change === '0.00') ? number_format($order->total - $order->total_paid, 2, '.', '') : '0.00',
             'change' => $order->change,
             'order_status' => $order->status
         ];
     }
 
-    public function cancelOrder(Order $order)
+    public function rollbackPayments(Order $order)
     {
+        $results = [];
         foreach ($order->payments as $payment) {
-            PaymentController::delete($payment, false);
+            $results[] = PaymentController::delete($payment, false);
         }
-
-        $order->status = 'canceled';
-        $order->save();
+        return response($results);
 
         return ['info' => ['Order' => 'Order successfully canceled']];
     }

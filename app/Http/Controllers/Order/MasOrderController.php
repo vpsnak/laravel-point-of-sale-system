@@ -165,7 +165,7 @@ class MasOrderController extends Controller
             ];
 
             if ($item->price > $item->final_price) {
-                $response[$item->id]['DiscountAmount'] = number_format($item->final_price, 2);
+                $response[$item->id]['DiscountAmount'] = number_format($item->final_price, 2, '.', '');
             }
         }
         return array_values($response);

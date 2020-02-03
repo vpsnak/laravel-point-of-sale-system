@@ -29,6 +29,12 @@
 					hide-default-footer
 					:loading="loading || refundLoading || paymentHistoryLoading"
 				>
+					<template v-slot:item.status="{ item }">
+						<v-chip pill :color="statusColor(item.status)">
+							<span>{{ parseStatus(item.status) }}</span>
+						</v-chip>
+					</template>
+
 					<template v-slot:item.actions="{ item }">
 						<v-tooltip bottom>
 							<template v-slot:activator="{ on }">
@@ -49,16 +55,6 @@
 							</template>
 							<span>Refund</span>
 						</v-tooltip>
-					</template>
-
-					<template v-slot:item.status="{ item }">
-						<v-chip label v-if="item.status === 'approved'" color="success">{{ item.status }}</v-chip>
-						<v-chip label v-else-if="item.status === 'refunded'" color="orange">{{ item.status }}</v-chip>
-						<v-chip v-else label color="red">
-							{{
-							item.status
-							}}
-						</v-chip>
 					</template>
 				</v-data-table>
 			</v-col>
@@ -91,31 +87,38 @@ export default {
 			headers: [
 				{
 					text: "Payment ID",
-					value: "id"
+					value: "id",
+					sortable: "false"
 				},
 				{
 					text: "Operator",
-					value: "created_by.name"
+					value: "created_by.name",
+					sortable: "false"
 				},
 				{
 					text: "Date",
-					value: "created_at"
+					value: "created_at",
+					sortable: "false"
 				},
 				{
 					text: "Type",
-					value: "payment_type.name"
+					value: "payment_type.name",
+					sortable: "false"
 				},
 				{
 					text: "Status",
-					value: "status"
+					value: "status",
+					sortable: "false"
 				},
 				{
 					text: "Amount (USD)",
-					value: "amount"
+					value: "amount",
+					sortable: "false"
 				},
 				{
 					text: "Actions",
-					value: "actions"
+					value: "actions",
+					sortable: "false"
 				}
 			]
 		};
@@ -145,6 +148,21 @@ export default {
 		this.getPaymentHistory();
 	},
 	methods: {
+		parseStatus(status) {
+			return _.upperFirst(status);
+		},
+		statusColor(status) {
+			switch (status) {
+				case "approved":
+					return "green";
+				case "failed":
+					return "red";
+				case "refunded":
+					return "orange";
+				default:
+					return null;
+			}
+		},
 		getPaymentHistory() {
 			if (this.orderId) {
 				this.paymentHistoryLoading = true;

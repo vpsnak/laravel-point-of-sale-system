@@ -59,7 +59,7 @@ Route::get('/orders', 'OrderController@all')->middleware('scope:admin,store_mana
 Route::get('/orders/get/{id}', 'OrderController@get')->middleware('scope:admin,store_manager,cashier');
 Route::post('/orders/create', 'OrderController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/orders/search', 'OrderController@search')->middleware('scope:admin,store_manager,cashier');
-Route::delete('/orders/{id}', 'OrderController@delete')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/orders/{id}', 'OrderController@cancelOrder')->middleware('scope:admin,store_manager,cashier');
 
 // stores
 Route::get('/stores', 'StoreController@all')->middleware('scope:admin,store_manager,cashier');
