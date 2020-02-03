@@ -46,12 +46,37 @@
                                             item.refunded !== true
                                     "
                                 >
-                                    <v-icon v-if="item.payment_type.type === 'cash'">mdi-cash-refund</v-icon>
-                                    <v-icon v-else>mdi-credit-card-refund</v-icon>
+                                    <v-icon
+                                        v-if="item.payment_type.type === 'cash'"
+                                        >mdi-cash-refund</v-icon
+                                    >
+                                    <v-icon v-else
+                                        >mdi-credit-card-refund</v-icon
+                                    >
                                 </v-btn>
                             </template>
                             <span>Refund</span>
                         </v-tooltip>
+                    </template>
+
+                    <template v-slot:item.status="{ item }">
+                        <v-chip
+                            label
+                            v-if="item.status === 'approved'"
+                            color="success"
+                        >
+                            {{ item.status }}
+                        </v-chip>
+                        <v-chip
+                            label
+                            v-else-if="item.status === 'refunded'"
+                            color="orange"
+                        >
+                            {{ item.status }}
+                        </v-chip>
+                        <v-chip v-else label color="red">{{
+                            item.status
+                        }}</v-chip>
                     </template>
                 </v-data-table>
             </v-col>
