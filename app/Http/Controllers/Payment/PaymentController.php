@@ -309,17 +309,14 @@ class PaymentController extends Controller
                 $refund = $this->createRefund($payment, false);
             } else {
                 $refund = $this->createRefund($payment, true);
+                $orderStatus['refunded_payment_id'] = $payment->id;
+                $orderStatus['info'] = ['Refund' => 'Refund completed successfully!'];
             }
 
             $refund->load(['created_by', 'paymentType', 'order']);
 
             $orderStatus = OrderController::updateOrderStatus($refund, true);
             $orderStatus['refund'] = $refund->refresh();
-
-            if (is_array($result) && !array_key_exists('errors', $result)) {
-                $orderStatus['refunded_payment_id'] = $payment->id;
-                $orderStatus['info'] = ['Refund' => 'Refund completed successfully!'];
-            }
 
             return response($orderStatus, 200);
         } else {
