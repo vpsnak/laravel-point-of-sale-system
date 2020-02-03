@@ -29,7 +29,7 @@
 					disable-sort
 					dense
 					:disable-filtering="true"
-					:headers="$store.state.datatable.headers"
+					:headers="$props.tableHeaders"
 					:items="rows"
 					:loading="loading"
 					:items-per-page="15"
@@ -215,17 +215,17 @@ export default {
 		"tableBtnDisable"
 	],
 	mounted() {
-		this.setHeaders(this.tableHeaders);
 		this.setTitle(this.tableTitle);
 		this.setBtnTitle(this.tableBtnTitle);
 		this.setBtnDisable(this.tableBtnDisable);
 		this.setForm(this.tableForm);
-		this.$root.$on("barcodeScan", sku => {
-			if (this.tableForm === "productForm") {
+
+		if (this.tableForm === "productForm") {
+			this.$root.$on("barcodeScan", sku => {
 				this.keyword = sku;
 				this.search();
-			}
-		});
+			});
+		}
 	},
 	beforeDestroy() {
 		this.$root.$off("barcodeScan");
@@ -488,8 +488,7 @@ export default {
 		viewItemDialog(item) {
 			this.dialog = {
 				show: true,
-				fullscreen:
-					this.tableViewComponent === "customer" ? true : false,
+				fullscreen: this.tableViewComponent === "customer" ? true : false,
 				width: 1000,
 				title: `View item #${item.id}`,
 				titleCloseBtn: true,

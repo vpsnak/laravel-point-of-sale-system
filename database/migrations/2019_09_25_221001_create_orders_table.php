@@ -19,7 +19,7 @@ class CreateOrdersTable extends Migration
             $table->enum('status', ['pending', 'pending_payment', 'paid', 'complete', 'canceled'])->nullable();
             $table->enum('discount_type', ['flat', 'percentage'])->nullable();
             $table->unsignedSmallInteger('discount_amount')->default(0)->nullable();
-            $table->decimal('tax', 4)->unsigned();
+            $table->decimal('tax')->unsigned();
             $table->decimal('subtotal');
             $table->decimal('change')->default(0);
             $table->string('notes')->nullable();

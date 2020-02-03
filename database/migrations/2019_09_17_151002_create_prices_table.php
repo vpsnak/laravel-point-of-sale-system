@@ -15,7 +15,7 @@ class CreatePricesTable extends Migration
     {
         Schema::create('prices', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->decimal('amount', 12, 4);
+            $table->decimal('amount', 12, 2);
             $table->unsignedBigInteger('discount_id')->nullable();
             $table->unsignedBigInteger('priceable_id');
             $table->string('priceable_type');

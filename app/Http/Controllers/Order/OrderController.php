@@ -14,9 +14,17 @@ use App\Store;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-class OrderController extends BaseController
+class OrderController extends Controller
 {
-    protected $model = Order::class;
+    public function all()
+    {
+        return Order::without([
+            'items',
+            'payments',
+            'shipping_address',
+            'store_pickup'
+        ])->paginate();
+    }
 
     public function create(Request $request)
     {
@@ -30,8 +38,9 @@ class OrderController extends BaseController
                 'shipping_type' => 'string|nullable',
                 'shipping_cost' => 'numeric|nullable',
             ]);
-            Order::updateData($validatedID, $validatedData);
-            $order = Order::getOne($validatedID['id']);
+            $order = Order::findOrFail($validatedID['id']);
+            $order->fill($validatedData);
+
             ProcessOrder::dispatchNow($order);
 
             if ($validatedData['status'] === 'complete') {
@@ -139,31 +148,31 @@ class OrderController extends BaseController
         ]);
 
         $has_tax = true;
-        $customer = Customer::getOne($validatedData['customer_id']);
+        $customer = Customer::find($validatedData['customer_id']);
         if (!empty($customer)) {
             $has_tax = $customer->no_tax ? false : true;
         }
 
         $validatedData = $this->setSubtotal($validatedData, $order_items['products']);
         if ($has_tax) {
-            $validatedData = $this->setTax($validatedData, $validatedData['store_id']);
+            $validatedData = $this->setTax($validatedData, Store::findOrFail($validatedData['store_id']));
         } else {
             $validatedData['tax'] = 0;
         }
 
-        $order = $this->model::store($validatedData);
+        $order = Order::create($validatedData);
         if (empty($order)) {
             return response($order, 500);
         }
 
         if (!empty($shippingData['shipping']['address'])) {
-            $shipping_address = OrderAddress::store($shippingAddressData['shipping']['address']);
+            $shipping_address = OrderAddress::create($shippingAddressData['shipping']['address']);
             $order->shipping_address_id = $shipping_address->id;
             $order->save();
         }
 
         if (!empty($shippingData['billing_address'])) {
-            $billing_address = OrderAddress::store($billingAddressData['billing_address']);
+            $billing_address = OrderAddress::create($billingAddressData['billing_address']);
             $order->billing_address_id = $billing_address->id;
             $order->save();
         }
@@ -171,9 +180,9 @@ class OrderController extends BaseController
         foreach ($order_items['products'] as $product) {
             $product['order_id'] = $order->id;
             $product = $this->setProductPrice($product);
-            OrderProduct::store($product);
+            OrderProduct::create($product);
         }
-        $order = Order::getOne($order->id);
+        $order = Order::findOrFail($order->id);
 
         ProcessOrder::dispatchNow($order);
 
@@ -197,9 +206,8 @@ class OrderController extends BaseController
         return $orderData;
     }
 
-    private function setTax($orderData, $store_id)
+    private function setTax($orderData, Store $store)
     {
-        $store = Store::getOne($store_id);
         $orderData['tax'] = $store->tax->percentage;
         return $orderData;
     }
@@ -211,11 +219,9 @@ class OrderController extends BaseController
         return $product;
     }
 
-    public function delete($id)
+    public function delete(Order $model)
     {
-        $order = $this->model::getOne($id);
-
-        foreach ($order->items as $product) {
+        foreach ($model->items as $product) {
             if (isset($product['sku'])) {
                 $code = explode('-', $product['sku']);
                 if (count($code) > 1 && $code[0] === 'giftCard') {
@@ -236,12 +242,12 @@ class OrderController extends BaseController
             }
         }
 
-        $order->status = 'canceled';
-        $order->save();
+        $model->status = 'canceled';
+        $model->save();
 
         return response([
-            'info' => ['Order' => "Order with id: $order->id successfully canceled!"],
-            'data' => $order,
+            'info' => ['Order' => "Order with id: $model->id successfully canceled!"],
+            'data' => $model,
         ], 200);
     }
 
@@ -251,11 +257,16 @@ class OrderController extends BaseController
             'keyword' => 'required|string'
         ]);
 
-        return $this->searchResult(
-            ['status', 'occasion', 'location'],
-            $validatedData['keyword'],
-            true
-        );
+        return Order::without([
+            'items',
+            'payments',
+            'shipping_address',
+            'store_pickup'
+        ])
+            ->orWhere('status',  'LIKE', "%{$validatedData['keyword']}%")
+            ->orWhere('occasion', 'LIKE', "%{$validatedData['keyword']}%")
+            ->orWhere('location', 'LIKE', "%{$validatedData['keyword']}%")
+            ->paginate();
     }
 
     public static function updateOrderStatus(Payment $payment, bool $refund = false)

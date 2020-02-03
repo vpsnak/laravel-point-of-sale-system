@@ -31,9 +31,6 @@ const actions = {
 
 // mutations
 const mutations = {
-    setHeaders(state, headers) {
-        state.headers = headers;
-    },
     setLoading(state, loading) {
         state.loading = loading;
     },

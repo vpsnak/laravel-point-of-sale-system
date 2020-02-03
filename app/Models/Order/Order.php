@@ -3,8 +3,9 @@
 namespace App;
 
 use App\Helper\Price;
+use Illuminate\Database\Eloquent\Model;
 
-class Order extends BaseModel
+class Order extends Model
 {
     protected $appends = ['total', 'total_without_tax', 'total_paid'];
 
@@ -35,7 +36,7 @@ class Order extends BaseModel
         'items',
         'payments',
         'customer',
-        'store_id',
+        'store',
         'created_by',
         'shipping_address',
         'store_pickup'
@@ -51,7 +52,7 @@ class Order extends BaseModel
         $total = $this->total_without_tax;
         $total = Price::calculateTax($total, $this->tax);
 
-        return number_format($total, 2, '.', '');
+        return round($total, 2);
     }
 
     public function getTotalWithoutTaxAttribute()
@@ -94,9 +95,9 @@ class Order extends BaseModel
         return $this->belongsTo(Customer::class);
     }
 
-    public function store_id()
+    public function store()
     {
-        return $this->belongsTo(Store::class, 'store_id');
+        return $this->belongsTo(Store::class);
     }
 
     public function shipping_address()

@@ -59,8 +59,8 @@ $code = $barcode->generate();
 <body onload="window.print()" onafterprint="window.close()">
 @endif
     <div class="barcode">
-        <span>{{ $product->name }}</span>    
-        <span class="product_price">${{ number_format($product->final_price, 2, '.', null) }}</span>
+        <span>{{ $product->name }}</span>
+        <span class="product_price">${{ round($product->final_price, 2) }}</span>
         <img src="data:image/png;base64,{{ $code }}">
     </div>
 </body>

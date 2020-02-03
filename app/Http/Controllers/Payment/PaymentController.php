@@ -17,8 +17,6 @@ use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    protected $model = Payment::class;
-
     public function create(Request $request)
     {
         $validatedData = $request->validate([
@@ -39,7 +37,7 @@ class PaymentController extends Controller
         $newPayment['payment_type'] = PaymentType::getFirst('type', $validatedData['payment_type'])->id;
         $newPayment['status'] = 'pending';
 
-        $payment = $this->model::store($newPayment);
+        $payment = Payment::create($newPayment);
         $response = [];
 
         switch ($validatedData['payment_type']) {
@@ -305,20 +303,25 @@ class PaymentController extends Controller
 
         if ($setOrderStatus) {
             if (is_array($result) && array_key_exists('errors', $result)) {
-                $orderStatus['errors'] = $result['errors'];
                 $refund = $this->createRefund($payment, false);
+                $refund->load(['created_by', 'paymentType', 'order']);
+
+                $orderStatus = OrderController::updateOrderStatus($refund, true);
+                $orderStatus['errors'] = $result['errors'];
+                $orderStatus['refund'] = $refund->refresh();
+
+                return response($orderStatus, 200);
             } else {
                 $refund = $this->createRefund($payment, true);
+                $refund->load(['created_by', 'paymentType', 'order']);
+
+                $orderStatus = OrderController::updateOrderStatus($refund, true);
                 $orderStatus['refunded_payment_id'] = $payment->id;
                 $orderStatus['info'] = ['Refund' => 'Refund completed successfully!'];
+                $orderStatus['refund'] = $refund->refresh();
+
+                return response($orderStatus, 200);
             }
-
-            $refund->load(['created_by', 'paymentType', 'order']);
-
-            $orderStatus = OrderController::updateOrderStatus($refund, true);
-            $orderStatus['refund'] = $refund->refresh();
-
-            return response($orderStatus, 200);
         } else {
             if (is_array($result) && array_key_exists('errors', $result)) {
                 return $result;

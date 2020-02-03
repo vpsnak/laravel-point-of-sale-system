@@ -18,7 +18,7 @@ class CreateGiftcardsTable extends Migration
             $table->string('name');
             $table->string('code');
             $table->boolean('enabled')->default(0);
-            $table->unsignedDecimal('amount')->default(0);
+            $table->decimal('amount', 10, 2)->default(0);
             $table->timestamps();
         });
     }
