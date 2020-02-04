@@ -346,6 +346,36 @@ export default {
                     });
             });
         },
+        printReceipt(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(this.state.baseUrl + "receipts/create", payload.data)
+                    .then(response => {
+                        let notification = {
+                            msg: response.data.info,
+                            type: "success"
+                        };
+                        context.commit("setNotification", notification);
+                        resolve(response.data);
+                    })
+                    .catch(error => {
+                        if (error.response) {
+                            let notification = {
+                                msg: error.response.data.errors,
+                                type: "error"
+                            };
+                            context.commit("setNotification", notification);
+                        } else {
+                            let notification = {
+                                msg: "Unexpected error occured",
+                                type: "error"
+                            };
+                            context.commit("setNotification", notification);
+                        }
+                        reject(error);
+                    });
+            });
+        },
         saveGuestEmail({ commit, rootState }, payload) {
             return new Promise((resolve, reject) => {
                 axios

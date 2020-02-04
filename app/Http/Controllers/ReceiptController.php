@@ -19,7 +19,8 @@ class ReceiptController extends Controller
         $validatedData = $request->validate([
             'order_id' => 'required|integer',
         ]);
-
+        $validatedData['print_count'] = 1;
+        $validatedData['email_count'] = 1;
         $validatedData['issued_by'] = auth()->user()->id;
         $validatedData['cash_register_id'] = auth()->user()->open_register->cash_register->id;
         $order = Order::findOrFail($validatedData['order_id']);
@@ -28,7 +29,12 @@ class ReceiptController extends Controller
         $validatedData['content'] = [$order, $user, $cash_register];
         $receipt = Receipt::create($validatedData);
 
-        return response(['info' => ['Receipt ' . $receipt->id . ' created successfully!']], 201);
+        return response(['info' => ['Receipt ' . $receipt->id . ' for order ' . $order->id . ' created successfully!']], 201);
+    }
+
+    public function print_receipt(Order $order)
+    {
+        return view('receipt')->with($order);
     }
 
     public function all()
