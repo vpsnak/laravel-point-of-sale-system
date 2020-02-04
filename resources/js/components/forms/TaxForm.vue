@@ -3,6 +3,7 @@
 		<v-form @submit.prevent="submit">
 			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Name">
 				<v-text-field
+					:readonly="readOnly"
 					label="Name"
 					v-model="formFields.name"
 					:disabled="loading"
@@ -16,6 +17,7 @@
 				name="Percentage"
 			>
 				<v-text-field
+					:readonly="readOnly"
 					label="Percentage"
 					v-model="formFields.percentage"
 					type="number"
@@ -25,7 +27,7 @@
 					:success="valid"
 				></v-text-field>
 			</ValidationProvider>
-			<v-row>
+			<v-row v-if="!readOnly">
 				<v-col cols="12" align="center" justify="center">
 					<v-btn
 						class="mr-4"
@@ -46,7 +48,8 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
-		model: Object || undefined
+		model: Object,
+		readOnly: Boolean
 	},
 	data() {
 		return {

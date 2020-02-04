@@ -1,39 +1,39 @@
 <template>
-    <prop-data-table
-        :tableHeaders="headers"
-        data-url="taxes"
-        tableTitle="Taxes"
-        tableBtnTitle="New Tax"
-        tableForm="taxForm"
-        tableViewComponent="tax"
-    />
+	<prop-data-table
+		:tableHeaders="headers"
+		data-url="taxes"
+		tableTitle="Taxes"
+		tableBtnTitle="New Tax"
+		tableForm="taxForm"
+		tableViewComponent="taxForm"
+	/>
 </template>
 
 <script>
 import { mapMutations } from "vuex";
 
 export default {
-    data() {
-        return {
-            headers: [
-                {
-                    text: "Id",
-                    value: "id"
-                },
-                {
-                    text: "Name",
-                    value: "name"
-                },
-                {
-                    text: "Percentage",
-                    value: "percentage"
-                },
-                {
-                    text: "Actions",
-                    value: "action"
-                }
-            ]
-        };
-    }
+	data() {
+		return {
+			headers: [
+				{
+					text: "Id",
+					value: "id"
+				},
+				{
+					text: "Name",
+					value: "name"
+				},
+				{
+					text: "Percentage",
+					value: "percentage"
+				},
+				{
+					text: "Actions",
+					value: "action"
+				}
+			]
+		};
+	}
 };
 </script>
