@@ -31,6 +31,8 @@ class UserSeeder extends Seeder
             'email' => 'npapaioannou@webo2.gr',
             'phone' => '1111111111',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
         $user = User::whereEmail('npapaioannou@webo2.gr')->first();
         $user->assignRole('admin');

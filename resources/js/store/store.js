@@ -9,6 +9,7 @@ import menu from "./modules/menu";
 import cart from "./modules/cart";
 import endpoints from "./modules/endpoints";
 import datatable from "./modules/datatable";
+import dialog from "./modules/dialog";
 
 Vue.use(Vuex);
 
@@ -21,7 +22,8 @@ export default new Vuex.Store({
         menu,
         cart,
         datatable,
-        endpoints
+        endpoints,
+        dialog
     },
     state: {
         appName: "",

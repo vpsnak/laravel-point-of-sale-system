@@ -1,102 +1,298 @@
 <template>
-    <div>
-        <v-container>
-            <v-row>
-                <v-col cols="12">
-                    <prop-data-table
-                        :tableHeaders="headers"
-                        data-url="orders"
-                        tableTitle="Orders"
-                        tableBtnTitle="New Order"
-                        :tableBtnDisable="true"
-                        tableViewComponent="order"
-                    >
-                        <template
-                            v-slot:item.customer="{ item }"
-                        >{{ item.customer ? item.customer.email : "Guest" }}</template>
-                        <template v-slot:item.total="{ item }">$ {{ item.total.toFixed(2) }}</template>
-                        <template
-                            v-slot:item.total_paid="{ item }"
-                        >$ {{ item.total_paid.toFixed(2) }}</template>
+	<div>
+		<prop-data-table
+			:tableHeaders="headers"
+			data-url="orders"
+			tableTitle="Orders"
+			tableBtnTitle="New Order"
+			:tableBtnDisable="true"
+			tableViewComponent="order"
+		>
+			<template v-slot:item.customer="{ item }">{{ item.customer ? item.customer.email : "Guest" }}</template>
+			<template v-slot:item.total="{ item }">$ {{ item.total.toFixed(2) }}</template>
+			<template v-slot:item.total_paid="{ item }">$ {{ item.total_paid.toFixed(2) }}</template>
 
-                        <template v-slot:item.status="{ item }">
-                            <span :class="statusColor(item.status)">
-                                <b>{{ parseStatusName(item.status) }}</b>
-                            </span>
-                        </template>
-                    </prop-data-table>
-                </v-col>
-            </v-row>
-        </v-container>
-    </div>
+			<template v-slot:item.status="{ item }">
+				<span :class="statusColor(item.status)">
+					<b>{{ parseStatusName(item.status) }}</b>
+				</span>
+			</template>
+
+			<template v-slot:item.actions="{ item }">
+				<v-tooltip bottom v-if="item.status !== ('complete' || 'canceled')">
+					<template v-slot:activator="{ on }">
+						<v-btn
+							:ref="item.id"
+							small
+							:disabled="disableActions"
+							@click.stop="checkout(item.id)"
+							class="my-2"
+							icon
+							v-on="on"
+						>
+							<v-icon small>mdi-currency-usd</v-icon>
+						</v-btn>
+					</template>
+					<span>Continue checkout</span>
+				</v-tooltip>
+
+				<v-tooltip bottom v-if="item.status !== 'canceled'">
+					<template v-slot:activator="{ on }">
+						<v-btn
+							small
+							:disabled="disableActions"
+							@click.stop="cancelOrderDialog(item)"
+							class="my-2"
+							icon
+							v-on="on"
+						>
+							<v-icon small>mdi-cancel</v-icon>
+						</v-btn>
+					</template>
+					<span>Cancel order</span>
+				</v-tooltip>
+
+				<v-tooltip bottom>
+					<template v-slot:activator="{ on }">
+						<v-btn
+							small
+							:disabled="disableActions"
+							@click.stop="editItemDialog(item)"
+							class="my-2"
+							v-on="on"
+							icon
+						>
+							<v-icon small>edit</v-icon>
+						</v-btn>
+					</template>
+					<span>Edit</span>
+				</v-tooltip>
+
+				<v-tooltip bottom>
+					<template v-slot:activator="{ on }">
+						<v-btn
+							small
+							:disabled="disableActions"
+							@click.stop="viewItemDialog(item)"
+							class="my-1"
+							v-on="on"
+							icon
+						>
+							<v-icon small>watch</v-icon>
+						</v-btn>
+					</template>
+					<span>View</span>
+				</v-tooltip>
+			</template>
+		</prop-data-table>
+
+		<interactiveDialog
+			v-if="dialog.show"
+			:show="dialog.show"
+			:title="dialog.title"
+			:titleCloseBtn="dialog.titleCloseBtn"
+			:icon="dialog.icon"
+			:fullscreen="dialog.fullscreen"
+			:width="dialog.width"
+			:component="dialog.component"
+			:content="dialog.content"
+			:model="dialog.model"
+			@action="dialogEvent"
+			:persistent="dialog.persistent"
+		></interactiveDialog>
+
+		<checkoutDialog v-if="checkoutDialog" />
+	</div>
 </template>
 
 <script>
-import { mapMutations } from "vuex";
+import { mapMutations, mapActions, mapState } from "vuex";
 
 export default {
-    data() {
-        return {
-            headers: [
-                {
-                    text: "#",
-                    value: "id"
-                },
-                {
-                    text: "Customer",
-                    value: "customer"
-                },
-                {
-                    text: "Store",
-                    value: "store.name"
-                },
-                {
-                    text: "Status",
-                    value: "status"
-                },
-                {
-                    text: "Total",
-                    value: "total"
-                },
-                {
-                    text: "Total paid",
-                    value: "total_paid"
-                },
-                {
-                    text: "Created by",
-                    value: "created_by.name"
-                },
-                {
-                    text: "Created at",
-                    value: "created_at"
-                },
-                {
-                    text: "Actions",
-                    value: "action"
-                }
-            ]
-        };
-    },
-    methods: {
-        parseStatusName(status) {
-            return _.upperFirst(status.replace("_", " "));
-        },
-        statusColor(status) {
-            switch (status) {
-                case "canceled":
-                    return "red--text";
-                case "pending":
-                    return "primary--text";
-                case "pending_payment":
-                    return "primary--text";
-                case "paid":
-                    return "cyan--text";
-                case "complete":
-                    return "green--text";
-                default:
-                    return "";
-            }
-        }
-    }
+	data() {
+		return {
+			form: "order",
+			headers: [
+				{
+					text: "#",
+					value: "id"
+				},
+				{
+					text: "Customer",
+					value: "customer"
+				},
+				{
+					text: "Store",
+					value: "store.name"
+				},
+				{
+					text: "Status",
+					value: "status"
+				},
+				{
+					text: "Total",
+					value: "total"
+				},
+				{
+					text: "Total paid",
+					value: "total_paid"
+				},
+				{
+					text: "Created by",
+					value: "created_by.name"
+				},
+				{
+					text: "Created at",
+					value: "created_at"
+				},
+				{
+					text: "Actions",
+					value: "actions"
+				}
+			]
+		};
+	},
+
+	computed: {
+		...mapState("dialog", ["interactive_dialog"]),
+		...mapState("datatable", ["loading"]),
+
+		dialog: {
+			get() {
+				return this.interactive_dialog;
+			},
+			set(value) {
+				this.setDialog(value);
+			}
+		},
+		checkoutDialog: {
+			get() {
+				return this.$store.state.cart.checkoutDialog;
+			},
+			set(value) {
+				this.$store.commit("cart/setCheckoutDialog", value);
+			}
+		},
+		disableActions: {
+			get() {
+				return this.loading;
+			},
+			set(value) {
+				this.setLoading(value);
+			}
+		}
+	},
+
+	methods: {
+		...mapMutations("dialog", ["setDialog", "resetDialog"]),
+		...mapMutations("datatable", ["setLoading"]),
+		...mapActions(["getOne", "delete"]),
+
+		parseStatusName(status) {
+			return _.upperFirst(status.replace("_", " "));
+		},
+		statusColor(status) {
+			switch (status) {
+				case "canceled":
+					return "red--text";
+				case "pending":
+					return "primary--text";
+				case "pending_payment":
+					return "primary--text";
+				case "paid":
+					return "cyan--text";
+				case "complete":
+					return "green--text";
+				default:
+					return "";
+			}
+		},
+		dialogEvent(event) {
+			if (event) {
+				this.cancelOrder();
+			}
+
+			this.resetDialog();
+		},
+		checkout(id) {
+			this.disableActions = true;
+			this.getOne({
+				model: "orders",
+				data: { id },
+				mutation: "cart/setCustomer"
+			})
+				.then(response => {
+					this.$store.commit("cart/resetState");
+					this.$store.state.cart.checkoutSteps[0].completed = true;
+					this.$store.state.cart.currentCheckoutStep = 2;
+					this.$store.commit("cart/setOrder", response);
+					this.checkoutDialog = true;
+				})
+				.catch(error => {
+					// unhandled error
+					console.log(error.response);
+				})
+				.finally(() => {
+					this.disableActions = false;
+				});
+		},
+		cancelOrderDialog(item) {
+			this.dialog = {
+				show: true,
+				width: 600,
+				title: `Verify your password to cancel order #${item.id}`,
+				titleCloseBtn: true,
+				icon: "mdi-lock-alert",
+				component: "passwordForm",
+				model: { action: "verify" },
+				persistent: true
+			};
+
+			this.selectedItem = item;
+		},
+		cancelOrder() {
+			let payload = {
+				model: "orders",
+				id: this.selectedItem.id
+			};
+			this.disableActions = true;
+
+			this.delete(payload)
+				.then(() => {})
+				.catch(error => {
+					// unhandled error
+					console.log(error.response);
+				})
+				.finally(() => {
+					this.disableActions = false;
+				});
+		},
+		editItemDialog(item) {
+			this.dialog = {
+				show: true,
+				fullscreen: false,
+				width: 600,
+				title: `Edit item #${item.id}`,
+				titleCloseBtn: true,
+				icon: "mdi-pencil",
+				component: this.form,
+				model: _.cloneDeep(item),
+				persistent: true
+			};
+		},
+		viewItemDialog(item) {
+			this.dialog = {
+				show: true,
+				fullscreen: false,
+				width: 1000,
+				title: `View item #${item.id}`,
+				titleCloseBtn: true,
+				icon: "mdi-watch",
+				component: this.form,
+				model: item,
+				persistent: false
+			};
+		}
+	}
 };
 </script>

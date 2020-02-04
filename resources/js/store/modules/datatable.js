@@ -2,11 +2,8 @@
 const state = {
     title: "DataTable",
     btnTitle: "New Item",
-    headers: [],
     rows: [],
-    loading: false,
-    form: "Form",
-    btnDisable: false
+    loading: false
 };
 
 // getters
@@ -33,18 +30,6 @@ const actions = {
 const mutations = {
     setLoading(state, loading) {
         state.loading = loading;
-    },
-    setTitle(state, title) {
-        state.title = title;
-    },
-    setBtnTitle(state, btnTitle) {
-        state.btnTitle = btnTitle;
-    },
-    setForm(state, form) {
-        state.form = form;
-    },
-    setBtnDisable(state, btnDisable) {
-        state.btnDisable = btnDisable;
     },
     setRows(state, rows) {
         state.rows = rows;
