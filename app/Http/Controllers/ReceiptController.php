@@ -18,14 +18,10 @@ class ReceiptController extends Controller
     {
         $validatedData = $request->validate([
             'order_id' => 'required|integer',
-            'cash_register_id' => 'required|integer',
         ]);
-        if ($validatedData['status'] === 'print') {
-            $validatedData['print_count'] = 1;
-        } elseif ($validatedData['status'] === 'email') {
-            $validatedData['email_count'] = 1;
-        }
+
         $validatedData['issued_by'] = auth()->user()->id;
+        $validatedData['cash_register_id'] = auth()->user()->open_register->cash_register->id;
         $order = Order::findOrFail($validatedData['order_id']);
         $user = User::findOrFail($validatedData['issued_by']);
         $cash_register = CashRegister::findOrFail($validatedData['cash_register_id']);
