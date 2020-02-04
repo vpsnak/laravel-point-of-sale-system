@@ -328,7 +328,7 @@ class OrderController extends Controller
             if ($payment->status === 'approved' && !$payment->refunded) {
                 $result = $paymentController->refundPayment($payment, false);
 
-                if (array_key_exists('errors', $result)) {
+                if (is_array($result) && array_key_exists('errors', $result)) {
                     if (!array_key_exists('errors', $results)) {
                         $results['errors'] = [];
                     }
