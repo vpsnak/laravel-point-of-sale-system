@@ -337,6 +337,6 @@ class OrderController extends Controller
             }
         }
 
-        return $results;
+        return $results ? $results : true;
     }
 }
