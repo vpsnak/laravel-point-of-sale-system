@@ -523,6 +523,7 @@ export default {
                 icon: "mdi-watch",
                 component: this.tableViewComponent,
                 model: item,
+                action: 'read',
                 persistent: true
             };
         },
