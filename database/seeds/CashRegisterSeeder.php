@@ -20,7 +20,8 @@ class CashRegisterSeeder extends Seeder
                 'barcode' => '389G1848LAAFHHALHP1905359716',
                 'pos_terminal_ip' => '10.8.0.2',
                 'pos_terminal_port' => '9790',
-                'created_at' => now()
+                'created_at' => now(),
+                'updated_at' => now()
             ],
             [
                 'name' => 'Main Cash Register 2',
@@ -29,7 +30,8 @@ class CashRegisterSeeder extends Seeder
                 'barcode' => '389G1848LAAFHHALHP1929385706',
                 'pos_terminal_ip' => '192.168.18.129',
                 'pos_terminal_port' => '9790',
-                'created_at' => now()
+                'created_at' => now(),
+                'updated_at' => now()
             ],
             [
                 'name' => 'Main Cash Register 3',
@@ -38,7 +40,8 @@ class CashRegisterSeeder extends Seeder
                 'barcode' => 'CASHIER-1',
                 'pos_terminal_ip' => '192.168.1.91',
                 'pos_terminal_port' => '9790',
-                'created_at' => now()
+                'created_at' => now(),
+                'updated_at' => now()
             ],
             [
                 'name' => 'Main Cash Register 666',
@@ -47,7 +50,8 @@ class CashRegisterSeeder extends Seeder
                 'barcode' => 'CASHIER-2',
                 'pos_terminal_ip' => '192.168.1.91',
                 'pos_terminal_port' => '9790',
-                'created_at' => now()
+                'created_at' => now(),
+                'updated_at' => now()
             ],
         ]);
     }

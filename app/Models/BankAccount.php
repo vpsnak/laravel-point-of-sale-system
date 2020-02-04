@@ -18,6 +18,15 @@ class BankAccount extends Model
         'updated_at' => "datetime:m/d/Y H:i:s"
     ];
 
+    public function setAccountAttribute($value)
+    {
+        $this->attributes['account'] = encrypt($value);
+    }
+
+    public function getAccountAttribute($value)
+    {
+        return decrypt($value);
+    }
 
     public function company()
     {

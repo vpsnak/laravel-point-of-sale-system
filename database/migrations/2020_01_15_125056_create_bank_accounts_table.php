@@ -18,7 +18,7 @@ class CreateBankAccountsTable extends Migration
 
             $table->unsignedBigInteger('company_id');
             $table->string('type');
-            $table->json('account');
+            $table->text('account');
 
             $table->timestamps();
         });
