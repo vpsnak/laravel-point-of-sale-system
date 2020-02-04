@@ -29,14 +29,12 @@
 <script>
 import { mapState, mapActions } from "vuex";
 export default {
-    props: {
-        currentStep: Object
-    },
     data() {
         return {
             completed: false
         };
     },
+    mounted() {},
     computed: {
         ...mapState("cart", ["order"]),
         loading: {

@@ -99,9 +99,9 @@ import { mapActions } from "vuex";
 export default {
     props: {
         title: String,
-        icon: String | null,
-        editable: Boolean | null,
-        actions: Boolean | null
+        icon: String,
+        editable: Boolean,
+        actions: Boolean
     },
     computed: {
         isRetail: {

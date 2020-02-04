@@ -330,7 +330,8 @@ class PaymentController extends Controller
             if (is_array($result) && array_key_exists('errors', $result)) {
                 return ['errors' => $result['errors']];
             } else {
-                return true;
+                $refund = $this->createRefund($payment, true);
+                return $refund;
             }
         }
     }

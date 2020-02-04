@@ -26,6 +26,11 @@ class OrderController extends Controller
         ])->paginate();
     }
 
+    public function get(Order $model)
+    {
+        return response($model);
+    }
+
     public function create(Request $request)
     {
         $validatedID = $request->validate([

@@ -56,7 +56,7 @@ Route::delete('/addresses/{id}', 'AddressController@delete')->middleware('scope:
 
 // orders
 Route::get('/orders', 'OrderController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/orders/get/{id}', 'OrderController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/orders/get/{model}', 'OrderController@get')->middleware('scope:admin,store_manager,cashier');
 Route::post('/orders/create', 'OrderController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/orders/search', 'OrderController@search')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/orders/{model}', 'OrderController@rollbackOrder')->middleware('scope:admin,store_manager,cashier');
@@ -176,8 +176,8 @@ Route::post('/cash-register-logs/close', 'CashRegisterLogsController@close')->mi
 Route::delete('/cash-register-logs/{id}', 'CashRegisterLogsController@delete')->middleware('scope:admin');
 
 //reciepts
-Route::get('/receipts/get/{id}', 'ReceiptController@get');
-Route::post('/receipts/create', 'ReceiptController@create');
+Route::get('/receipts/get/{model}', 'ReceiptController@get');
+Route::post('/receipts/create/{order}', 'ReceiptController@create');
 
 // categories to list in sales
 Route::get('/product-listing/categories', "CategoryController@productListingCategories")->middleware('scope:admin,store_manager,cashier');

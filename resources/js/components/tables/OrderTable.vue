@@ -11,40 +11,19 @@
                         :tableBtnDisable="true"
                         tableViewComponent="order"
                     >
-                        <template v-slot:item.customer="{ item }">{{
-                            item.customer ? item.customer.email : "Guest"
-                        }}</template>
-                        <template v-slot:item.created_by="{ item }">{{
-                            item.created_by.name
-                        }}</template>
+                        <template
+                            v-slot:item.customer="{ item }"
+                        >{{ item.customer ? item.customer.email : "Guest" }}</template>
+                        <template v-slot:item.total="{ item }">$ {{ item.total.toFixed(2) }}</template>
+                        <template
+                            v-slot:item.total_paid="{ item }"
+                        >$ {{ item.total_paid.toFixed(2) }}</template>
+
                         <template v-slot:item.status="{ item }">
                             <v-chip
-                                label
-                                v-if="item.status === 'approved'"
-                                color="success"
-                                >{{ item.status }}</v-chip
-                            >
-                            <v-chip
-                                label
-                                v-else-if="item.status === 'refunded'"
-                                color="orange"
-                                >{{ item.status }}</v-chip
-                            >
-                            <v-chip
-                                label
-                                v-else-if="item.status === 'pending'"
-                                color="teal darken-4"
-                                >{{ item.status }}</v-chip
-                            >
-                            <v-chip
-                                label
-                                v-else-if="item.status === 'pending_payment'"
-                                color="cyan darken-4"
-                                >{{ item.status }}</v-chip
-                            >
-                            <v-chip v-else label color="red">
-                                {{ item.status }}
-                            </v-chip>
+                                pill
+                                :color="statusColor(item.status)"
+                            >{{ parseStatusName(item.status) }}</v-chip>
                         </template>
                     </prop-data-table>
                 </v-col>
@@ -61,7 +40,7 @@ export default {
         return {
             headers: [
                 {
-                    text: "ID",
+                    text: "#",
                     value: "id"
                 },
                 {
@@ -77,16 +56,16 @@ export default {
                     value: "status"
                 },
                 {
+                    text: "Total",
+                    value: "total"
+                },
+                {
+                    text: "Total paid",
+                    value: "total_paid"
+                },
+                {
                     text: "Created by",
-                    value: "created_by"
-                },
-                {
-                    text: "tax",
-                    value: "tax"
-                },
-                {
-                    text: "Subtotal",
-                    value: "subtotal"
+                    value: "created_by.name"
                 },
                 {
                     text: "Created at",
@@ -98,6 +77,27 @@ export default {
                 }
             ]
         };
+    },
+    methods: {
+        parseStatusName(status) {
+            return _.upperFirst(status.replace("_", " "));
+        },
+        statusColor(status) {
+            switch (status) {
+                case "canceled":
+                    return "red";
+                case "pending":
+                    return "primary";
+                case "pending_payment":
+                    return "primary";
+                case "paid":
+                    return "cyan darken-4";
+                case "complete":
+                    return "green";
+                default:
+                    return "";
+            }
+        }
     }
 };
 </script>

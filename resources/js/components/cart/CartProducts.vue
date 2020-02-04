@@ -1,13 +1,10 @@
 <template>
     <div class="d-flex flex-grow-1" style="height:38vh; overflow-y:auto">
         <v-expansion-panels class="d-block" accordion>
-            <v-expansion-panel
-                v-for="(product, index) in products"
-                :key="index"
-            >
+            <v-expansion-panel v-for="(product, index) in products" :key="index">
                 <v-expansion-panel-header class="pa-2" ripple @click.stop>
                     <div class="d-flex justify-space-between">
-                        <div class="d-flex flex-column pr-2">
+                        <div class="d-flex flex-column pr-2" v-if="product.photo_url">
                             <v-img
                                 :src="product.photo_url"
                                 :lazy-src="product.photo_url"
@@ -166,10 +163,7 @@
                         <v-col cols="12">
                             <span class="subtitle">
                                 SKU:
-                                <span
-                                    class="amber--text"
-                                    v-text="product.sku"
-                                />
+                                <span class="amber--text" v-text="product.sku" />
                             </span>
                         </v-col>
                     </v-row>

@@ -1,172 +1,190 @@
 <template>
-	<div>
-		<paymentHistory @refund="refund"></paymentHistory>
+    <div>
+        <paymentHistory @refund="refund"></paymentHistory>
 
-		<v-divider></v-divider>
+        <v-divider></v-divider>
 
-		<paymentActions
-			:remaining="remaining"
-			:loading="paymentActionsLoading"
-			@sendPayment="sendPayment"
-		></paymentActions>
-	</div>
+        <paymentActions
+            :remaining="remaining"
+            :loading="paymentActionsLoading"
+            @sendPayment="sendPayment"
+        ></paymentActions>
+    </div>
 </template>
 
 <script>
-import { mapActions, mapMutations } from "vuex";
+import { mapActions, mapMutations, mapState } from "vuex";
 
 export default {
-	data() {
-		return {
-			order_status: null,
-			order_remaining: null,
-			orderHistory: [],
-			paymentTypes: [],
+    data() {
+        return {
+            order_status: null,
+            order_remaining: null,
+            paymentTypes: [],
 
-			paymentHistoryLoading: false,
-			paymentActionsLoading: false,
+            paymentHistoryLoading: false,
+            paymentActionsLoading: false,
 
-			payment: {
-				type: null,
-				amount: null
-			}
-		};
-	},
+            payment: {
+                type: null,
+                amount: null
+            }
+        };
+    },
 
-	computed: {
-		payments: {
-			get() {
-				return this.$store.state.cart.payment_history;
-			},
-			set(value) {
-				this.$store.commit("cart/setPaymentHistory", value);
-			}
-		},
-		orderId() {
-			return this.$store.state.cart.order.id;
-		},
-		remaining: {
-			get() {
-				return this.order_remaining;
-			},
-			set(value) {
-				this.order_remaining = value;
-			}
-		},
-		paymentType: {
-			get() {
-				return this.payment.type;
-			},
-			set(value) {
-				this.payment.type = value;
-			}
-		},
-		paymentAmount: {
-			get() {
-				return this.payment.amount;
-			},
-			set(value) {
-				this.payment.amount = value;
-			}
-		},
-		refundLoading: {
-			get() {
-				return this.$store.state.cart.refundLoading;
-			},
-			set(value) {
-				this.$store.state.cart.refundLoading = value;
-			}
-		}
-	},
+    mounted() {
+        if (this.orderId) {
+            this.order_status = this.order.status;
+            this.remaining = (this.order.total - this.order.total_paid).toFixed(
+                2
+            );
+            const payload = { order_status: this.order.status };
+            this.$emit("payment", payload);
+        }
+    },
 
-	methods: {
-		sendPayment(event) {
-			this.paymentActionsLoading = true;
+    computed: {
+        ...mapState("cart", ["order"]),
+        payments: {
+            get() {
+                return this.order.payments;
+            },
+            set(value) {
+                this.setPaymentHistory(value);
+            }
+        },
+        order() {
+            return this.$store.state.cart.order;
+        },
+        orderId() {
+            return this.order.id;
+        },
+        remaining: {
+            get() {
+                return this.order_remaining;
+            },
+            set(value) {
+                this.order_remaining = value;
+            }
+        },
+        paymentType: {
+            get() {
+                return this.payment.type;
+            },
+            set(value) {
+                this.payment.type = value;
+            }
+        },
+        paymentAmount: {
+            get() {
+                return this.payment.amount;
+            },
+            set(value) {
+                this.payment.amount = value;
+            }
+        },
+        refundLoading: {
+            get() {
+                return this.$store.state.cart.refundLoading;
+            },
+            set(value) {
+                this.$store.state.cart.refundLoading = value;
+            }
+        }
+    },
 
-			let payload = {
-				model: "payments",
-				data: {
-					payment_type: event.paymentType,
-					amount: event.paymentAmount || null,
-					order_id: this.orderId
-				}
-			};
+    methods: {
+        ...mapMutations("cart", ["setPaymentHistory"]),
+        sendPayment(event) {
+            this.paymentActionsLoading = true;
 
-			switch (event.paymentType) {
-				default:
-				case "cash":
-					break;
-				case "card":
-					payload.data["card"] = event.card;
-					break;
-				case "coupon":
-				case "giftcard":
-					payload.data["code"] = event.code;
-					break;
-				case "house-account":
-					payload.data["house_account_number"] = event.house_account_number;
-					break;
-			}
+            let payload = {
+                model: "payments",
+                data: {
+                    payment_type: event.paymentType,
+                    amount: event.paymentAmount || null,
+                    order_id: this.orderId
+                }
+            };
 
-			this.create(payload)
-				.then(response => {
-					this.payments = response.payment;
-					this.remaining = response.remaining;
-					this.order_status = response.order_status;
+            switch (event.paymentType) {
+                default:
+                case "cash":
+                    break;
+                case "card":
+                    payload.data["card"] = event.card;
+                    break;
+                case "coupon":
+                case "giftcard":
+                    payload.data["code"] = event.code;
+                    break;
+                case "house-account":
+                    payload.data["house_account_number"] =
+                        event.house_account_number;
+                    break;
+            }
 
-					let notification = {
-						msg: "Payment received",
-						type: "success"
-					};
-					this.setNotification(notification);
+            this.create(payload)
+                .then(response => {
+                    this.payments = response.payment;
+                    this.remaining = response.remaining;
+                    this.order_status = response.order_status;
 
-					if (payload.data.payment_type === "house-account") {
-						this.$store.state.cart.customer.house_account_limit -=
-							payload.data.amount;
-					}
+                    let notification = {
+                        msg: "Payment received",
+                        type: "success"
+                    };
+                    this.setNotification(notification);
 
-					this.$emit("payment", response);
-				})
-				.catch(error => {
-					if (error.response.data.payment) {
-						this.payments = error.response.data.payment;
-					}
-				})
-				.finally(() => {
-					this.paymentAmount = null;
-					this.paymentActionsLoading = false;
-					this.$store.state.cart.paymentLoading = false;
-				});
-		},
-		refund(event) {
-			if (event.refunded_payment_id) {
-				const index = _.findIndex(this.payments, [
-					"id",
-					event.refunded_payment_id
-				]);
-				this.payments[index].refunded = true;
-				this.payments.push(event.refund);
-			}
+                    if (payload.data.payment_type === "house-account") {
+                        this.$store.state.cart.customer.house_account_limit -=
+                            payload.data.amount;
+                    }
 
-			this.remaining = event.remaining;
+                    this.$emit("payment", response);
+                })
+                .catch(error => {
+                    if (error.response.data.payment) {
+                        if (_.has(error.response.data.payment)) {
+                            this.payments = error.response.data.payment;
+                        }
+                    }
+                })
+                .finally(() => {
+                    this.paymentAmount = null;
+                    this.paymentActionsLoading = false;
+                    this.$store.state.cart.paymentLoading = false;
+                });
+        },
+        refund(event) {
+            if (event.refunded_payment_id) {
+                const index = _.findIndex(this.payments, [
+                    "id",
+                    event.refunded_payment_id
+                ]);
+                this.payments[index].refunded = true;
+                this.payments.push(event.refund);
+            }
 
-			const notification = {
-				msg: event.msg,
-				type: event.status
-			};
+            this.remaining = event.remaining;
 
-			this.$emit("payment", event);
+            const notification = {
+                msg: event.msg,
+                type: event.status
+            };
 
-			this.$store.state.cart.refundLoading = false;
-			this.setNotification(notification);
-		},
+            this.$emit("payment", event);
 
-		...mapActions(["search", "create", "getAll", "getOne"]),
-		...mapMutations(["setNotification"])
-	},
+            this.$store.state.cart.refundLoading = false;
+            this.setNotification(notification);
+        },
 
-	beforeDestroy() {
-		this.$off("payment");
-	}
+        ...mapActions(["search", "create", "getAll", "getOne"]),
+        ...mapMutations(["setNotification"])
+    },
+
+    beforeDestroy() {
+        this.$off("payment");
+    }
 };
 </script>

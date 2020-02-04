@@ -9,8 +9,7 @@
             class="my-2"
             @click.stop="checkout"
             :disabled="disabled || !$store.state.cart.isValidCheckout"
-            >Checkout</v-btn
-        >
+        >Checkout</v-btn>
 
         <v-divider />
 
@@ -86,7 +85,7 @@
             persistent
         />
 
-        <checkoutDialog />
+        <checkoutDialog v-if="checkoutDialog" />
         <cartRestoreDialog
             :show="cartRestoreDialog"
             :key="cartsOnHoldSize"
@@ -150,7 +149,7 @@ export default {
                 return this.$store.state.cart.checkoutDialog;
             },
             set(value) {
-                this.$store.state.cart.checkoutDialog = value;
+                this.$store.commit("cart/setCheckoutDialog", value);
             }
         },
         cartRestoreDialog: {

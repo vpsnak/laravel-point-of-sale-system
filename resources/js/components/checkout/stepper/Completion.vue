@@ -14,10 +14,6 @@
 <script>
 import { mapActions } from "vuex";
 export default {
-    props: {
-        currentStep: Object
-    },
-
     computed: {
         change() {
             return Math.abs(this.order.total - this.order.total_paid);
@@ -42,7 +38,6 @@ export default {
 
     methods: {
         close() {
-            this.$store.state.cart.checkoutDialog = false;
             this.$store.commit("cart/resetState");
 
             this.$emit("close", true);
@@ -52,6 +47,9 @@ export default {
         },
 
         ...mapActions(["create"])
+    },
+    beforeDestroy() {
+        this.$off("close");
     }
 };
 </script>

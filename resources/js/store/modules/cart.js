@@ -3,7 +3,6 @@ export default {
 
     state: {
         checkoutDialog: false,
-        payment_history: [],
         retail: true,
         refundLoading: false,
         paymentLoading: false,
@@ -141,11 +140,14 @@ export default {
     },
 
     mutations: {
+        setCheckoutDialog(state, value) {
+            state.checkoutDialog = value;
+        },
         setPaymentHistory(state, value) {
             if (Array.isArray(value)) {
-                state.payment_history = value;
+                state.order.payments = value;
             } else {
-                state.payment_history.push(value);
+                state.order.payments.push(value);
             }
         },
         isValidDiscount(state) {
@@ -228,9 +230,9 @@ export default {
             state.cart_price = cartPrice;
         },
         resetState(state) {
+            state.checkoutDialog = false;
             state.paymentLoading = false;
             state.customer = null;
-            state.payment_history = [];
 
             state.products = [];
             state.discount_type = "";

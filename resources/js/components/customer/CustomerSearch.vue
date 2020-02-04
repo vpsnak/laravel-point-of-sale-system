@@ -134,13 +134,19 @@ export default {
         },
         cartCustomer: {
             get() {
-                return this.$store.state.cart.customer;
+                if (this.$store.state.cart.order.id) {
+                    return this.$store.state.cart.order.customer || {};
+                } else {
+                    return this.$store.state.cart.customer;
+                }
             },
             set(value) {
-                if (value !== this.cartCustomer) {
-                    this.$store.commit("cart/resetShipping");
+                if (!this.$store.state.cart.order.id) {
+                    if (value !== this.cartCustomer) {
+                        this.$store.commit("cart/resetShipping");
+                    }
+                    this.$store.commit("cart/setCustomer", value);
                 }
-                this.$store.commit("cart/setCustomer", value);
             }
         },
         cartCustomerComment() {
@@ -211,8 +217,8 @@ export default {
             }
         },
         getCustomerFullname(item) {
-            if (item) {
-                return item.first_name + " " + item.last_name;
+            if (_.has(item, "first_name") && _.has(item, "last_name")) {
+                return `${item.first_name} ${item.last_name}`;
             } else {
                 return "Guest";
             }
@@ -228,6 +234,10 @@ export default {
                 .dispatch("search", payload)
                 .then(result => {
                     this.results = result;
+                })
+                .catch(error => {
+                    // undocumented error
+                    console.log(error.response);
                 })
                 .finally(() => (this.loading = false));
         }
