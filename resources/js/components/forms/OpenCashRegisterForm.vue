@@ -25,7 +25,7 @@
                     label="Cash Register"
                     item-text="name"
                     item-value="id"
-                    @:input="enableOpeningAmount"
+                    @input="enableOpeningAmount"
                     :error-messages="errors"
                     :success="valid"
                 ></v-select>
