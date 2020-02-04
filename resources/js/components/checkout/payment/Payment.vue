@@ -5,6 +5,7 @@
         <v-divider></v-divider>
 
         <paymentActions
+            v-if="remaining > 0"
             :remaining="remaining"
             :loading="paymentActionsLoading"
             @sendPayment="sendPayment"
@@ -38,7 +39,21 @@ export default {
             this.remaining = (this.order.total - this.order.total_paid).toFixed(
                 2
             );
-            const payload = { order_status: this.order.status };
+
+            let payload = {};
+
+            if (this.remaining < 0) {
+                payload = {
+                    order_status: this.order.status,
+                    change: Math.abs(this.remaining)
+                };
+            } else {
+                payload = {
+                    order_status: this.order.status,
+                    change: false
+                };
+            }
+
             this.$emit("payment", payload);
         }
     },
@@ -137,7 +152,7 @@ export default {
                     this.setNotification(notification);
 
                     if (payload.data.payment_type === "house-account") {
-                        this.$store.state.cart.customer.house_account_limit -=
+                        this.$store.state.cart.order.customer.house_account_limit -=
                             payload.data.amount;
                     }
 

@@ -30,9 +30,9 @@
                     :loading="loading || refundLoading || paymentHistoryLoading"
                 >
                     <template v-slot:item.status="{ item }">
-                        <v-chip pill :color="statusColor(item.status)">
-                            <span>{{ parseStatus(item.status) }}</span>
-                        </v-chip>
+                        <span :class="statusColor(item.status)">
+                            <b>{{ parseStatus(item.status) }}</b>
+                        </span>
                     </template>
 
                     <template v-slot:item.actions="{ item }">
@@ -146,9 +146,6 @@ export default {
             }
         }
     },
-    mounted() {
-        // this.getPaymentHistory();
-    },
     methods: {
         parseStatus(status) {
             return _.upperFirst(status);
@@ -156,11 +153,11 @@ export default {
         statusColor(status) {
             switch (status) {
                 case "approved":
-                    return "green";
+                    return "green--text";
                 case "failed":
-                    return "red";
+                    return "red--text";
                 case "refunded":
-                    return "orange";
+                    return "orange--text";
                 default:
                     return null;
             }

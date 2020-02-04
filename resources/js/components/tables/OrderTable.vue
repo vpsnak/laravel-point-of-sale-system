@@ -20,10 +20,9 @@
                         >$ {{ item.total_paid.toFixed(2) }}</template>
 
                         <template v-slot:item.status="{ item }">
-                            <v-chip
-                                pill
-                                :color="statusColor(item.status)"
-                            >{{ parseStatusName(item.status) }}</v-chip>
+                            <span :class="statusColor(item.status)">
+                                <b>{{ parseStatusName(item.status) }}</b>
+                            </span>
                         </template>
                     </prop-data-table>
                 </v-col>
@@ -85,15 +84,15 @@ export default {
         statusColor(status) {
             switch (status) {
                 case "canceled":
-                    return "red";
+                    return "red--text";
                 case "pending":
-                    return "primary";
+                    return "primary--text";
                 case "pending_payment":
-                    return "primary";
+                    return "primary--text";
                 case "paid":
-                    return "cyan darken-4";
+                    return "cyan--text";
                 case "complete":
-                    return "green";
+                    return "green--text";
                 default:
                     return "";
             }

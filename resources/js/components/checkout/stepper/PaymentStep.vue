@@ -12,6 +12,12 @@
                 >
                     <v-icon small left>mdi-chevron-left</v-icon>Back
                 </v-btn>
+
+                <h3 v-if="change > 0" class="my-3">
+                    Change:
+                    <span class="amber--text" v-text="'$ ' + parseFloat(change).toFixed(2)" />
+                </h3>
+
                 <v-btn
                     v-if="
                         orderId && completed && !$store.state.cart.refundLoading
@@ -31,7 +37,8 @@ import { mapState, mapActions } from "vuex";
 export default {
     data() {
         return {
-            completed: false
+            completed: false,
+            change: null
         };
     },
     mounted() {},
@@ -56,6 +63,8 @@ export default {
             } else {
                 this.completed = false;
             }
+
+            this.change = payload.change;
         },
         completeStep() {
             this.loading = true;
