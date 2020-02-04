@@ -1,5 +1,5 @@
 <template>
-    <div v-if="remainingAmount">
+    <div v-if="remainingAmount > 0">
         <v-row justify="center" align="center" class="flex-column my-3">
             <h3 class="py-3">Payment methods</h3>
             <v-btn-toggle v-model="paymentType" mandatory @change="clearState">
@@ -109,7 +109,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 export default {
     mounted() {
@@ -137,6 +137,19 @@ export default {
     },
 
     computed: {
+        ...mapState("cart", ["order"]),
+
+        // enableActions() {
+        //     if (this.order.id) {
+        //         if (this.remainingAmount > 0) {
+        //             return true;
+        //         } else {
+        //             return false;
+        //         }
+        //     } else {
+        //         return true;
+        //     }
+        // },
         paymentTypes: {
             get() {
                 if (this.houseAccount) {
@@ -292,7 +305,7 @@ export default {
             this.orderLoading = true;
             this.$store.state.cart.paymentLoading = true;
 
-            if (!this.$store.state.cart.order.id) {
+            if (!this.order.id) {
                 this.submitOrder()
                     .then(() => {
                         this.$store.state.cart.products = [];

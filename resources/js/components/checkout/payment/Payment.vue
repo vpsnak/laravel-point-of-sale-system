@@ -5,7 +5,6 @@
         <v-divider></v-divider>
 
         <paymentActions
-            v-if="remaining > 0"
             :remaining="remaining"
             :loading="paymentActionsLoading"
             @sendPayment="sendPayment"
