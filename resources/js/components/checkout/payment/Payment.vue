@@ -139,12 +139,14 @@ export default {
 				});
 		},
 		refund(event) {
-			const index = _.findIndex(this.payments, [
-				"id",
-				event.refunded_payment_id
-			]);
-			this.payments[index].refunded = true;
-			this.payments.push(event.refund);
+			if (event.refunded_payment_id) {
+				const index = _.findIndex(this.payments, [
+					"id",
+					event.refunded_payment_id
+				]);
+				this.payments[index].refunded = true;
+				this.payments.push(event.refund);
+			}
 
 			this.remaining = event.remaining;
 

@@ -98,7 +98,7 @@ class UserController extends Controller
         $user = auth()->user();
 
         if ($user->verifyPwd($validatedData['current_password'])) {
-            return response(['info' => ['Verification' => 'Password verification succeeded!']]);
+            return response(1, 200);
         } else {
             return response(['errors' => ['Verification' => 'Password verification failed']], 500);
         }

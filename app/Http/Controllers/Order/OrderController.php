@@ -219,7 +219,7 @@ class OrderController extends Controller
         return $product;
     }
 
-    public function cancelOrder(Order $model, bool $rollbackPayments = true)
+    public function rollbackOrder(Order $model)
     {
         foreach ($model->items as $product) {
             if (isset($product['sku'])) {
@@ -242,13 +242,12 @@ class OrderController extends Controller
             }
         }
 
-        if ($rollbackPayments) {
-            $results = $this->rollbackPayments($model);
+        $results = $this->rollbackPayments($model);
 
-            if (!$results || (is_array($results) && array_key_exists('errors', $results))) {
-                return response(['errors' => $results['errors']]);
-            }
+        if (!$results || (is_array($results) && array_key_exists('errors', $results))) {
+            return response(['errors' => $results['errors']], 500);
         }
+
 
         $model->status = 'canceled';
         $model->save();
@@ -322,12 +321,22 @@ class OrderController extends Controller
 
     public function rollbackPayments(Order $order)
     {
+        $paymentController = new PaymentController();
         $results = [];
-        foreach ($order->payments as $payment) {
-            $results[] = PaymentController::delete($payment, false);
-        }
-        return response($results);
 
-        return ['info' => ['Order' => 'Order successfully canceled']];
+        foreach ($order->payments as $payment) {
+            if ($payment->status === 'approved' && !$payment->refunded) {
+                $result = $paymentController->refundPayment($payment, false);
+
+                if (array_key_exists('errors', $result)) {
+                    if (!array_key_exists('errors', $results)) {
+                        $results['errors'] = [];
+                    }
+                    array_push($results['errors'], $result['errors']);
+                }
+            }
+        }
+
+        return $results;
     }
 }

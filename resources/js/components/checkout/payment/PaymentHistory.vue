@@ -194,9 +194,17 @@ export default {
 				id: this.paymentID
 			};
 
-			this.delete(payload).then(response => {
-				this.$emit("refund", response);
-			});
+			this.delete(payload)
+				.then(response => {
+					this.$emit("refund", response);
+				})
+				.catch(error => {
+					if (error.response.data.refund) {
+						this.payments = error.response.data.refund;
+					}
+
+					this.$emit("refund", error.response.data);
+				});
 		},
 
 		refundDialog(item) {

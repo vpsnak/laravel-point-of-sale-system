@@ -192,13 +192,8 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 axios
                     .post(this.state.baseUrl + "auth/verify/", payload)
-                    .then(response => {
-                        let notification = {
-                            msg: response.data.info,
-                            type: "info"
-                        };
-                        context.commit("setNotification", notification);
-                        resolve(response.data);
+                    .then(() => {
+                        resolve(true);
                     })
                     .catch(error => {
                         let notification = {

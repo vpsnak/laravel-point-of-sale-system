@@ -38,7 +38,7 @@ Route::get('/payments', 'PaymentController@all')->middleware('scope:admin,cashie
 Route::get('/payments/get/{payment}', 'PaymentController@get')->middleware('scope:admin,cashier');
 Route::post('/payments/create', 'PaymentController@create')->middleware('scope:admin,cashier');
 Route::post('/payments/search', 'PaymentController@search')->middleware('scope:admin,cashier');
-Route::delete('/payments/{payment}', 'PaymentController@delete')->middleware('scope:admin,cashier');
+Route::delete('/payments/{payment}', 'PaymentController@refundPayment')->middleware('scope:admin,cashier');
 
 // customers
 Route::get('/customers', 'CustomerController@all')->middleware('scope:admin,store_manager,cashier');
@@ -59,7 +59,7 @@ Route::get('/orders', 'OrderController@all')->middleware('scope:admin,store_mana
 Route::get('/orders/get/{id}', 'OrderController@get')->middleware('scope:admin,store_manager,cashier');
 Route::post('/orders/create', 'OrderController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/orders/search', 'OrderController@search')->middleware('scope:admin,store_manager,cashier');
-Route::delete('/orders/{id}', 'OrderController@cancelOrder')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/orders/{model}', 'OrderController@rollbackOrder')->middleware('scope:admin,store_manager,cashier');
 
 // stores
 Route::get('/stores', 'StoreController@all')->middleware('scope:admin,store_manager,cashier');
