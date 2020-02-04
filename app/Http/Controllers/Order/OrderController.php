@@ -241,7 +241,7 @@ class OrderController extends Controller
                     if ($giftCard->amount >= 0) {
                         $giftCard->save();
                     } else {
-                        return response(['errors' =>  ['Order cancellation' => "Gift card with code: $giftCard->code has insufficient balance to cancel the order with id: $id<br>No changes where made"]], 422);
+                        return response(['errors' =>  ['Order cancellation' => "Gift card with code: {$giftCard->code} has insufficient balance to cancel the order with id: $model->id<br>No changes where made"]], 422);
                     }
                 }
             }
