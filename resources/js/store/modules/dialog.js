@@ -15,7 +15,8 @@ const state = {
         cancelBtnTxt: "Cancel",
         confirmationBtnTxt: "OK",
         content: "",
-        contentClass: ""
+        contentClass: "",
+        eventChannel: ""
     }
 };
 
@@ -32,6 +33,7 @@ const mutations = {
         state.interactive_dialog.readonly = false;
         state.interactive_dialog.model = _.cloneDeep(item);
         state.interactive_dialog.persistent = true;
+        state.interactive_dialog.eventChannel = "data-table";
     },
 
     viewItem(state, item) {
@@ -45,6 +47,7 @@ const mutations = {
         state.interactive_dialog.readonly = true;
         state.interactive_dialog.model = item;
         state.interactive_dialog.persistent = null;
+        state.interactive_dialog.eventChannel = "";
     },
 
     setDialog(state, value) {
@@ -80,6 +83,9 @@ const mutations = {
         value.contentClass
             ? (state.interactive_dialog.contentClass = value.contentClass)
             : "";
+        value.eventChannel
+            ? (state.interactive_dialog.eventChannel = value.eventChannel)
+            : "";
     },
     resetDialog(state) {
         state.interactive_dialog.show = false;
@@ -97,6 +103,7 @@ const mutations = {
         state.interactive_dialog.confirmationBtnTxt = "OK";
         state.interactive_dialog.content = "";
         state.interactive_dialog.contentClass = "";
+        state.interactive_dialog.eventChannel = "";
     }
 };
 
