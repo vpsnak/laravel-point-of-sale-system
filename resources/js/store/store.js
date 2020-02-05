@@ -88,9 +88,7 @@ export default new Vuex.Store({
             Cookies.remove("cash_register");
 
             if (router.currentRoute.name !== "login") {
-                router.push({
-                    name: "login"
-                });
+                router.push({ name: "login" });
             }
 
             state.config.app_load = 0;

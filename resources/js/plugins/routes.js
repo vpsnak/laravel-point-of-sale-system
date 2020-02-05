@@ -1,6 +1,9 @@
-import Dashboard from "../components/pages/Dashboard";
+// Auth
 import Login from "../components/auth/Login";
 import Logout from "../components/auth/Logout";
+
+import LandingPage from "../components/blocks/LandingPage.vue";
+import Dashboard from "../components/pages/Dashboard";
 import Sales from "../components/pages/Sales";
 import OpenCashRegister from "../components/pages/OpenCashRegister";
 
@@ -11,14 +14,12 @@ import Products from "../components/tables/ProductTable";
 import Categories from "../components/tables/CategoryTable";
 import Stores from "../components/tables/StoreTable";
 import Users from "../components/tables/UserTable";
-
 import Taxes from "../components/tables/TaxTable";
 import CashRegisters from "../components/tables/CashRegisterTable";
 import GiftCards from "../components/tables/GiftCardTable";
 import Coupons from "../components/tables/CouponTable";
 import Addresses from "../components/tables/AddressTable";
 import StorePickups from "../components/tables/StorePickupTable";
-
 import Reports from "../components/tables/CashRegisterReportsTable";
 import Companies from "../components/tables/CompanyTable";
 
@@ -26,12 +27,17 @@ export default [
     {
         path: "*",
         redirect: "/",
-        name: "*",
+        meta: { requiresAuth: true }
+    },
+    {
+        name: "landingPage",
+        path: "/",
+        component: LandingPage,
         meta: { requiresAuth: true }
     },
     {
         name: "dashboard",
-        path: "/",
+        path: "/dashboard",
         component: Dashboard,
         meta: { requiresAuth: true }
     },
@@ -45,7 +51,7 @@ export default [
         name: "logout",
         path: "/logout",
         component: Logout,
-        meta: { requiresAuth: false }
+        meta: { requiresAuth: true }
     },
     {
         name: "openCashRegister",
