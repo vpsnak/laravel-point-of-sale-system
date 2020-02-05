@@ -84,18 +84,18 @@ class ReceiptController extends Controller
 
     public function printReceipt(Order $order)
     {
-        $receipt = Receipt::where('order_id', $order->id)->first();
-        $receipt->print_count++;
-        $receipt->save();
-        return view('test_print_receipt')->with($receipt->content);
+        // $receipt = $order->receipt;
+        // $receipt->print_count++;
+        // $receipt->update();
+        // return view('test_print_receipt')->with($receipt->content);
     }
 
     public function emailReceipt(Order $order)
     {
-        $receipt = $order->receipt;
-        $receipt->email_count++;
-        $receipt->save();
-        return view('test_print_receipt')->with($receipt->content);
+        // $receipt = $order->receipt;
+        // $receipt->email_count++;
+        // $receipt->save();
+        // return view('test_print_receipt')->with($receipt->content);
     }
 
     public function all()
