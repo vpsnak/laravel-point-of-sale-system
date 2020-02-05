@@ -17,14 +17,14 @@
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
+    <link rel="icon" href="{{ config('app.env') !== 'local' ? secure_asset('favicon.png') : asset('favicon.png') }}" type="image/x-icon"/>
     <!-- Styles -->
     <link href="{{ config('app.env') !== 'local' ? secure_asset('css/app.css') : asset('css/app.css') }}"
         rel="stylesheet">
 </head>
 
 <body>
-    <div id="app">
-    </div>
+    <div id="app"></div>
 </body>
 
 </html>
