@@ -346,7 +346,7 @@ export default {
                     });
             });
         },
-        printReceipt(context, payload) {
+        createReceipt(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
                     .post(this.state.baseUrl + "receipts/create", payload.data)

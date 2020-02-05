@@ -1,18 +1,25 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="giftcardObs">
+	<ValidationObserver v-slot="{ invalid }">
 		<v-form @submit.prevent="submit">
 			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Names">
-				<v-text-field v-model="formFields.name" label="Name" :error-messages="errors" :success="valid"></v-text-field>
+				<v-text-field
+					:readonly="$props.readonly"
+					v-model="formFields.name"
+					label="Name"
+					:error-messages="errors"
+					:success="valid"
+				></v-text-field>
 			</ValidationProvider>
 			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Tax number">
 				<v-text-field
+					:readonly="$props.readonly"
 					v-model="formFields.tax_number"
 					label="Tax number"
 					:error-messages="errors"
 					:success="valid"
 				></v-text-field>
 			</ValidationProvider>
-			<v-row>
+			<v-row v-if="!$props.readonly">
 				<v-col cols="12" align="center" justify="center">
 					<v-btn
 						color="secondary"
@@ -32,7 +39,8 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
-		model: Object || undefined
+		model: Object,
+		readonly: Boolean
 	},
 	data() {
 		return {
@@ -54,6 +62,10 @@ export default {
 		}
 	},
 	methods: {
+		...mapActions({
+			create: "create"
+		}),
+
 		submit() {
 			this.loading = true;
 			let payload = {
@@ -78,13 +90,7 @@ export default {
 		},
 		clear() {
 			this.formFields = { ...this.defaultValues };
-		},
-		...mapActions({
-			getAll: "getAll",
-			getOne: "getOne",
-			create: "create",
-			delete: "delete"
-		})
+		}
 	},
 	beforeDestroy() {
 		this.$off("submit");

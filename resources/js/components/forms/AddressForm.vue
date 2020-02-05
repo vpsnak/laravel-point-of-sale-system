@@ -1,10 +1,11 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="addressObs">
+	<ValidationObserver v-slot="{ invalid }">
 		<v-form @submit.prevent="submit">
 			<v-row>
 				<v-col cols="4">
 					<ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="First Name">
 						<v-text-field
+							:readonly="$props.readonly"
 							v-model="formFields.first_name"
 							label="First name"
 							:disabled="loading"
@@ -14,6 +15,7 @@
 					</ValidationProvider>
 					<ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="City">
 						<v-text-field
+							:readonly="$props.readonly"
 							v-model="formFields.city"
 							label="City"
 							:disabled="loading"
@@ -23,6 +25,7 @@
 					</ValidationProvider>
 					<ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Region">
 						<v-select
+							:readonly="$props.readonly"
 							:loading="loading"
 							v-model="formFields.region_id"
 							:items="regions"
@@ -35,6 +38,7 @@
 					</ValidationProvider>
 					<ValidationProvider rules="max:100" v-slot="{ errors, valid }" name="Company">
 						<v-text-field
+							:readonly="$props.readonly"
 							v-model="formFields.company"
 							label="Company"
 							:disabled="loading"
@@ -46,6 +50,7 @@
 				<v-col cols="4">
 					<ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Last Name">
 						<v-text-field
+							:readonly="$props.readonly"
 							v-model="formFields.last_name"
 							label="Last name"
 							:disabled="loading"
@@ -55,6 +60,7 @@
 					</ValidationProvider>
 					<ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Postcode">
 						<v-text-field
+							:readonly="$props.readonly"
 							v-model="formFields.postcode"
 							label="Postcode"
 							:disabled="loading"
@@ -64,6 +70,7 @@
 					</ValidationProvider>
 					<ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Countries">
 						<v-select
+							:readonly="$props.readonly"
 							:loading="loading"
 							v-model="formFields.country_id"
 							:items="countries"
@@ -76,6 +83,7 @@
 					</ValidationProvider>
 					<ValidationProvider rules="max:100" v-slot="{ errors, valid }" name="Vat id">
 						<v-text-field
+							:readonly="$props.readonly"
 							v-model="formFields.vat_id"
 							label="Vat id"
 							:disabled="loading"
@@ -87,6 +95,7 @@
 				<v-col cols="4">
 					<ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Street">
 						<v-text-field
+							:readonly="$props.readonly"
 							v-model="formFields.street"
 							label="Street"
 							:disabled="loading"
@@ -96,6 +105,7 @@
 					</ValidationProvider>
 					<ValidationProvider rules="max:100" v-slot="{ errors, valid }" name="Second Street">
 						<v-text-field
+							:readonly="$props.readonly"
 							v-model="formFields.street2"
 							label="Second Street"
 							:disabled="loading"
@@ -110,6 +120,7 @@
 						name="Phone"
 					>
 						<v-text-field
+							:readonly="$props.readonly"
 							v-model="formFields.phone"
 							label="Phone"
 							:min="0"
@@ -127,11 +138,11 @@
 					></v-text-field>-->
 				</v-col>
 				<v-row justify="space-around">
-					<v-switch v-model="formFields.billing" label="Default billing"></v-switch>
-					<v-switch v-model="formFields.shipping" label="Default shipping"></v-switch>
+					<v-switch :readonly="$props.readonly" v-model="formFields.billing" label="Default billing"></v-switch>
+					<v-switch :readonly="$props.readonly" v-model="formFields.shipping" label="Default shipping"></v-switch>
 				</v-row>
 			</v-row>
-			<v-row>
+			<v-row v-if="!$props.readonly">
 				<v-col cols="12" align="center" justify="center">
 					<v-btn
 						class="mr-4"
@@ -152,7 +163,8 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
-		model: Object || undefined
+		model: Object,
+		readonly: Boolean
 	},
 	data() {
 		return {
@@ -192,6 +204,10 @@ export default {
 		this.$off("submit");
 	},
 	methods: {
+		...mapActions({
+			getAll: "getAll",
+			create: "create"
+		}),
 		submit() {
 			this.loading = true;
 			this.formFields.region = this.formFields.region_id;
@@ -238,14 +254,7 @@ export default {
 			}).then(countries => {
 				this.countries = countries;
 			});
-		},
-
-		...mapActions({
-			getAll: "getAll",
-			getOne: "getOne",
-			create: "create",
-			delete: "delete"
-		})
+		}
 	}
 };
 </script>

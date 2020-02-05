@@ -1,8 +1,9 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="couponObs">
+	<ValidationObserver v-slot="{ invalid }">
 		<v-form @submit.prevent="submit">
 			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Name">
 				<v-text-field
+					:readonly="$props.readonly"
 					v-model="formFields.name"
 					label="Name"
 					:disabled="loading"
@@ -12,6 +13,7 @@
 			</ValidationProvider>
 			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Code">
 				<v-text-field
+					:readonly="$props.readonly"
 					v-model="formFields.code"
 					label="Code"
 					:disabled="loading"
@@ -21,6 +23,7 @@
 			</ValidationProvider>
 			<ValidationProvider rules="required|numeric|max:11" v-slot="{ errors, valid }" name="Uses">
 				<v-text-field
+					:readonly="$props.readonly"
 					v-model="formFields.uses"
 					type="number"
 					label="Uses"
@@ -31,6 +34,7 @@
 			</ValidationProvider>
 			<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Discount type">
 				<v-select
+					:readonly="$props.readonly"
 					v-model="formFields.discount.type"
 					label="Discount type"
 					:items="discount_types"
@@ -51,6 +55,7 @@
 				name="Discount amount"
 			>
 				<v-text-field
+					:readonly="$props.readonly"
 					v-model="formFields.discount.amount"
 					type="number"
 					label="Discount amount"
@@ -71,6 +76,7 @@
 				name="Discount amount"
 			>
 				<v-text-field
+					:readonly="$props.readonly"
 					v-model="formFields.discount.amount"
 					type="number"
 					label="Discount amount"
@@ -81,6 +87,7 @@
 			</ValidationProvider>
 
 			<v-menu
+				:readonly="$props.readonly"
 				v-model="menu1"
 				:close-on-content-click="false"
 				:nudge-right="40"
@@ -101,9 +108,10 @@
 						></v-text-field>
 					</ValidationProvider>
 				</template>
-				<v-date-picker v-model="formFields.from" @input="menu1 = false"></v-date-picker>
+				<v-date-picker :readonly="$props.readonly" v-model="formFields.from" @input="menu1 = false"></v-date-picker>
 			</v-menu>
 			<v-menu
+				:readonly="$props.readonly"
 				v-model="menu2"
 				:close-on-content-click="false"
 				:nudge-right="40"
@@ -124,10 +132,10 @@
 						></v-text-field>
 					</ValidationProvider>
 				</template>
-				<v-date-picker v-model="formFields.to" @input="menu2 = false"></v-date-picker>
+				<v-date-picker :readonly="$props.readonly" v-model="formFields.to" @input="menu2 = false"></v-date-picker>
 			</v-menu>
 
-			<v-row>
+			<v-row v-if="!$props.readonly">
 				<v-col cols="12" align="center" justify="center">
 					<v-btn
 						color="secondary"
@@ -147,7 +155,8 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
-		model: Object || undefined
+		model: Object,
+		readonly: Boolean
 	},
 	data() {
 		return {
@@ -194,6 +203,10 @@ export default {
 		}
 	},
 	methods: {
+		...mapActions({
+			create: "create"
+		}),
+
 		parseDate(d) {
 			if (d.length) {
 				let [year, month, day] = d.split("-");
@@ -226,13 +239,7 @@ export default {
 		},
 		clear() {
 			this.formFields = { ...this.defaultValues };
-		},
-		...mapActions({
-			getAll: "getAll",
-			getOne: "getOne",
-			create: "create",
-			delete: "delete"
-		})
+		}
 	},
 	beforeDestroy() {
 		this.$off("submit");
