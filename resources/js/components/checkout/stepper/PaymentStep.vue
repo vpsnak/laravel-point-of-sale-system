@@ -83,16 +83,16 @@ export default {
 			};
 			this.create(payload).then(response => {
 				this.$store.dispatch("cart/completeStep").then(() => {
-					this.printReceipt(receipt_payload).then(() => {
-						this.loading = false;
-					});
+					// this.printReceipt(receipt_payload).then(() => {
+					this.loading = false;
+					// });
 				});
 			});
 		},
 		prevStep() {
 			this.$store.state.cart.currentCheckoutStep--;
 		},
-		...mapActions(["create", "printReceipt"])
+		...mapActions(["create"])
 	}
 };
 </script>

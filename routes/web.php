@@ -19,3 +19,4 @@ Route::get('/report/{report}', 'AppController@report');
 
 Route::get('/product_barcode/{product}', 'AppController@productBarcode');
 
+Route::get('/test_receipt/{model}', 'ReceiptController@create');
