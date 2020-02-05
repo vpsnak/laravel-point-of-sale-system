@@ -11,6 +11,7 @@ import cart from "./modules/cart";
 import endpoints from "./modules/endpoints";
 import datatable from "./modules/datatable";
 import dialog from "./modules/dialog";
+import icons from "./modules/icons";
 
 Vue.use(Vuex);
 
@@ -25,7 +26,8 @@ export default new Vuex.Store({
         cart,
         datatable,
         endpoints,
-        dialog
+        dialog,
+        icons
     },
     state: {
         baseUrl: "/api/",
@@ -687,36 +689,6 @@ export default new Vuex.Store({
                             type: "error"
                         };
                         context.commit("setNotification", notification);
-                        reject(error);
-                    });
-            });
-        },
-        createReceipt(context, payload) {
-            return new Promise((resolve, reject) => {
-                axios
-                    .post(this.state.baseUrl + "receipts/create", payload.data)
-                    .then(response => {
-                        let notification = {
-                            msg: response.data.info,
-                            type: "success"
-                        };
-                        context.commit("setNotification", notification);
-                        resolve(response.data);
-                    })
-                    .catch(error => {
-                        if (error.response) {
-                            let notification = {
-                                msg: error.response.data.errors,
-                                type: "error"
-                            };
-                            context.commit("setNotification", notification);
-                        } else {
-                            let notification = {
-                                msg: "Unexpected error occured",
-                                type: "error"
-                            };
-                            context.commit("setNotification", notification);
-                        }
                         reject(error);
                     });
             });
