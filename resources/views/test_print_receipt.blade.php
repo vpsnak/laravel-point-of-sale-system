@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <title>Receipt</title>
 </head>
 <style>
     body {
@@ -77,20 +77,20 @@
             <div class="store">
 
                 <span style="font-size:14px;">
-                    {{ $store->name }}
+                    {{ $store['name'] }}
                 </span>
 
                 <p class="phone">
-                    {{ $store->phone }}
+                    {{ $store['phone'] }}
                 </p>
 
                 <div class="address">
                     <p>
-                        {{ $store->street }}
+                        {{ $store['street'] }}
                     </p>
                     <p>
-                        {{ $store->city }}
-                        {{ $store->postcode }}
+                        {{ $store['city'] }}
+                        {{ $store['postcode'] }}
                     </p>
                 </div>
             </div>
@@ -101,21 +101,21 @@
                 <tbody>
                     <tr>
                         <td class="small-header">Reg:</td>
-                        <td>{{ $cash_register->name }}</td>
+                        <td>{{ $reg}}</td>
                         <td class="spaced-header">Trans:</td>
-                        <td>{{ $order->id }}</td>
+                        <td>{{ $trans }}</td>
                     </tr>
                     <tr>
                         <td class="small-header">Clrk:</td>
-                        <td>{{ $created_by->name }}</td>
+                        <td>{{ $clrk }}</td>
                         <td class="spaced-header">Date:</td>
-                        <td>{{ $order->created_at->format('m/d/Y') }}</td>
+                        <td>{{ $date }}</td>
                     </tr>
                     <tr>
                         <td class="small-header">Oper:</td>
-                        <td>{{ $created_by->name }}</td>
+                        <td>{{ $oper }}</td>
                         <td class="spaced-header">Time:</td>
-                        <td>{{ $order->created_at->format('h:m:s') }}</td>
+                        <td>{{ $time }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -138,7 +138,7 @@
                     </tr>
                 </thead>
                 <tbody style="font-size:14px;">
-                    @foreach($order->items as $item )
+                    @foreach($items as $item )
                     <tr>
                         <td colspan="2">{{ $item->name }}</td>
                         <td style="text-align: center;">{{ $item->qty }}</td>
@@ -176,35 +176,30 @@
                 </tbody>
             </table>
             <table style="font-size:14px;">
-                @if($order->shipping_cost > 0)
+                @if($delivery_fees > 0)
                 <tr>
                     <td style="text-align: end;">Delivery fees:</td>
-                    <td style="text-align: end;"> ${{$order->shipping_cost }}</td>
+                    <td style="text-align: end;"> ${{$delivery_fees }}</td>
                 </tr>
                 @endif
                 <tr>
                     <td style="text-align: end;">Sales tax:</td>
-                    <td style="text-align: end;"> ${{ $order->total - $order->total_without_tax }}</td>
+                    <td style="text-align: end;"> ${{ $sales_tax }}</td>
                 </tr>
                 <tr>
                     <td style="text-align: end;">Total Amt:</td>
-                    <td style="text-align: end;">${{ $order->total }}</td>
+                    <td style="text-align: end;">${{ $total_ant }}</td>
                 </tr>
             </table>
             <p style="text-align: center; font-size:14px;">*** Tendering details ***</p>
             <table style="font-size:14px;">
                 <tr>
                     <td style="text-align: end;">Order Total is:</th>
-                    <td style="text-align: center;">${{ $order->total }}</td>
+                    <td style="text-align: center;">${{ $total_ant }}</td>
                 </tr>
             </table>
-            @foreach(json_decode($order['payments'] , true) as $payment)
 
-            @php
-            if($payment['payment_type']['type'] === 'card' || $payment['payment_type']['type'] === 'pos-terminal')
-                $payment['payment_type']['name'] = 'Credit card';
-            @endphp
-
+            @foreach ($payments as $payment)
             <table style="font-size:14px;">
                 <tr>
                     <td>
@@ -235,85 +230,59 @@
                 </tr>
                 @endif
             </table>
-            {{-- @php
-        if($payment['payment_type']['type'] === 'card'){
-        $paid_by_credit_card = true;
-        $total_credit_card_tot = $payment['amount'];
-        $card_number = $payment['elavon_api_payments'][0]['card_number'];
-        $card_holder = $payment['elavon_api_payments'][0]['card_holder'];
-        }
-        @endphp --}}
             @endforeach
             <br>
             <table style="font-size:14px;">
                 <tr>
                     <td style="text-align: center;">*** Balance Remaining ***</th>
-                    <td style="text-align: end;">$0.00</td>
+                    <td style="text-align: end;">$ {{ $balance_remaining }}</td>
                 </tr>
             </table>
             <br>
             <table style="font-size:14px;">
                 <tr>
                     <th style="text-align: end;">Total Amt Tendered:</th>
-                    <td style="text-align: end;">${{$order->total_paid}}</td>
+                    <td style="text-align: end;">${{$total_amt_tendered}}</td>
                 </tr>
                 <tr>
                     <th style="text-align: end;">Customer Change:</th>
-                    <td style="text-align: end;">${{$order->change}}</td>
+                    <td style="text-align: end;">${{$customer_change}}</td>
                 </tr>
             </table>
             <br>
-            @if($order->shipping_address)
+            @if($shipping_address)
             <table style="font-size:14px;">
                 <tr>
                     <td style="text-align: end;">Delv on:</td>
-                    <td>{{ Carbon\Carbon::parse($order->delivery_date)->format('m/d/Y') }}</td>
+                    <td>{{ $dlvr_on }}</td>
                 </tr>
                 <tr>
                     <td style="text-align: end;">Delv to:</td>
-                    <td>{{$order->shipping_address->first_name}}
-                        {{ $order->shipping_address->last_name }}
+                    <td>{{ $dlvr_to}}
                     </td>
                 </tr>
                 <tr>
                     <td style="text-align: end;">C/O:</td>
-                    <td>{{ $order->customer->first_name }} {{ $order->customer->last_name }}</td>
+                    <td>{{ $c_o }}</td>
                 </tr>
                 <tr>
                     <td style="text-align: end;">Address:</td>
-                    <td>{{ $order->shipping_address->street }}</td>
+                    <td>{{ $address }}</td>
                 </tr>
                 <tr>
                     <td style="text-align: end;">Address:</td>
-                    <td>{{ $order->shipping_address->street2 }}</td>
+                    <td>{{ $address_2 }}</td>
                 </tr>
                 <tr>
                     <td style="text-align: end;">City, St:</td>
-                    <td>{{ $order->shipping_address->city }}</td>
+                    <td>{{ $city }}</td>
                 </tr>
             </table>
             @endif
-            {{-- @if($paid_by_credit_card)
-        <p style="text-align: center;">------ Credit Card Information ------</p>
-        <table style="font-size:14px; width:100%;">
-            <tr>
-                <th scope="row" style="font-weight:normal; text-align: end;">Cardholder Name:</th>
-                <td style="text-align: start;">{{$card_holder}}</td>
-            </tr>
-            <tr>
-                <th scope="row" style="font-weight:normal; text-align: end;">Credit Cd No:</th>
-                <td style="text-align: start;">{{$card_number}}</td>
-            </tr>
-            <tr>
-                <th scope="row" style="font-weight:normal; text-align: end;">Credit Card Tot:</th>
-                <td style="text-align: center;">{{$total_credit_card_tot}}</td>
-            </tr>
-            </table>
-            @endif --}}
             <p style="text-align:end;">(Customer's Copy)</p>
             <span>Signature:___________________</span>
             <p style="text-align: end;">(Merchant's Copy)</p>
             <p style="text-align: center;">PLEASE SEE POSTED POLICY REGARDING REFUNDS</p>
         </div>
-    </body>
-</html>
+        </body>
+    </html>
