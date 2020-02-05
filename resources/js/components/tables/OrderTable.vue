@@ -90,12 +90,33 @@
 </template>
 
 <script>
+import { EventBus } from "../../plugins/event-bus";
 import { mapMutations, mapActions, mapState } from "vuex";
 
 export default {
+	mounted() {
+		EventBus.$on("dialog", event => {
+			if (
+				event.component === "passwordForm" &&
+				event.payload &&
+				this.selectedItem
+			) {
+				this.disableActions = true;
+				this.cancelOrder().then(() => {
+					EventBus.$emit("data-table", { action: "paginate" });
+				});
+			}
+		});
+	},
+
+	beforeDestroy() {
+		EventBus.$off();
+	},
+
 	data() {
 		return {
 			form: "order",
+			selectedItem: null,
 			headers: [
 				{ text: "#", value: "id" },
 				{ text: "Customer", value: "customer" },
@@ -145,8 +166,8 @@ export default {
 		...mapMutations("datatable", ["setLoading"]),
 		...mapActions(["getOne", "delete"]),
 
-		parseStatusName(status) {
-			return _.upperFirst(status.replace("_", " "));
+		parseStatusName(value) {
+			return _.upperFirst(value.replace("_", " "));
 		},
 		statusColor(status) {
 			switch (status) {
@@ -164,12 +185,7 @@ export default {
 					return "";
 			}
 		},
-		// cancel order if event === true
-		dialogEvent(event) {
-			if (event) {
-				this.cancelOrder();
-			}
-		},
+
 		checkout(id) {
 			this.disableActions = true;
 			this.getOne({
@@ -201,27 +217,32 @@ export default {
 				icon: "mdi-lock-alert",
 				component: "passwordForm",
 				model: { action: "verify" },
-				persistent: true
+				persistent: true,
+				eventChannel: "dialog"
 			};
 
 			this.selectedItem = item;
 		},
 		cancelOrder() {
-			let payload = {
-				model: "orders",
-				id: this.selectedItem.id
-			};
-			this.disableActions = true;
+			return new Promise((resolve, reject) => {
+				let payload = {
+					model: "orders",
+					id: this.selectedItem.id
+				};
 
-			this.delete(payload)
-				.then(() => {})
-				.catch(error => {
-					// unhandled error
-					console.log(error.response);
-				})
-				.finally(() => {
-					this.disableActions = false;
-				});
+				this.delete(payload)
+					.then(() => {
+						resolve(true);
+					})
+					.catch(error => {
+						// unhandled error
+						console.log(error.response);
+						reject(error);
+					})
+					.finally(() => {
+						this.selectedItem = null;
+					});
+			});
 		}
 	}
 };

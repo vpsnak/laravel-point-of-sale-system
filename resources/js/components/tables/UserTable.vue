@@ -15,6 +15,10 @@
 			<a :href="'tel:' + item.phone">{{ item.phone }}</a>
 		</template>
 
+		<template v-slot:item.roles[0].name="{ item }">
+			<span>{{ parseRoleName(item.roles[0].name) }}</span>
+		</template>
+
 		<template v-slot:item.actions="{ item }">
 			<v-tooltip bottom>
 				<template v-slot:activator="{ on }">
@@ -122,6 +126,9 @@ export default {
 		...mapMutations("datatable", ["setLoading"]),
 		...mapMutations("dialog", ["setDialog", "editItem", "viewItem"]),
 
+		parseRoleName(value) {
+			return _.upperFirst(status.replace("_", " "));
+		},
 		roleDialog(item) {
 			this.dialog = {
 				show: true,
@@ -131,7 +138,8 @@ export default {
 				icon: "mdi-account-key",
 				component: "userRoleForm",
 				model: item,
-				persistent: true
+				persistent: true,
+				eventChannel: "data-table"
 			};
 		},
 

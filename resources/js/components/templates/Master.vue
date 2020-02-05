@@ -19,7 +19,6 @@
 
 <script>
 import { mapGetters, mapMutations, mapState } from "vuex";
-import { EventBus } from "../../plugins/event-bus";
 
 export default {
 	computed: {
@@ -52,16 +51,7 @@ export default {
 	},
 	methods: {
 		...mapMutations(["logout"]),
-		...mapMutations("dialog", ["setDialog", "resetDialog"]),
-
-		dialogEvent(event) {
-			console.log(event);
-			EventBus.$emit("dialog", event);
-			this.resetDialog();
-		}
-	},
-	beforeDestroy() {
-		EventBus.$off();
+		...mapMutations("dialog", ["setDialog"])
 	}
 };
 </script>

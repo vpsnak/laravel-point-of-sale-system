@@ -51,6 +51,7 @@
 </template>
 
 <script>
+import { EventBus } from "../../plugins/event-bus";
 import { mapActions, mapMutations, mapState } from "vuex";
 
 export default {
@@ -86,14 +87,26 @@ export default {
 
 		closeEvent(payload, close) {
 			if (!this.dialog.persistent || close) {
-				this.$emit("action", payload);
+				console.log({
+					module: "interactive_dialog",
+					event: event,
+					payload: payload
+				});
+
+				if (this.dialog.eventChannel) {
+					EventBus.$emit(this.dialog.eventChannel, {
+						component: this.dialog.component,
+						payload
+					});
+				}
+
 				this.resetDialog();
 			}
 		}
 	},
 
 	beforeDestroy() {
-		this.$off("action");
+		EventBus.$off();
 	}
 };
 </script>
