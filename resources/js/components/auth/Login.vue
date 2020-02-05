@@ -5,7 +5,9 @@
                 <v-card class="elevation-12">
                     <v-form @submit.prevent="submit">
                         <v-toolbar flat class="d-flex justify-center">
-                            <v-toolbar-title>Plantshed Sales Management</v-toolbar-title>
+                            <v-toolbar-title
+                                >Plantshed Sales Management</v-toolbar-title
+                            >
                         </v-toolbar>
                         <v-card-text>
                             <v-text-field
@@ -24,7 +26,12 @@
                         </v-card-text>
                         <v-card-actions>
                             <v-spacer />
-                            <v-btn type="submit" :loading="loading" color="secondary">Login</v-btn>
+                            <v-btn
+                                type="submit"
+                                :loading="loading"
+                                color="secondary"
+                                >Login</v-btn
+                            >
                             <v-spacer />
                         </v-card-actions>
                     </v-form>
@@ -55,7 +62,9 @@ export default {
             };
 
             this.login(payload)
-                .then(() => {})
+                .then(() => {
+                    this.$router.push({ name: "landingPage" });
+                })
                 .finally(() => {
                     this.loading = false;
                 });

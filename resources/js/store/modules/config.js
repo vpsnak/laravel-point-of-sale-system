@@ -6,7 +6,7 @@ const state = {
 };
 
 const mutations = {
-    initApp(state) {
+    resetLoad(state) {
         state.app_load = 0;
     },
     addLoadPercent(state, value) {
