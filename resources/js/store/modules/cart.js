@@ -346,10 +346,31 @@ export default {
                     });
             });
         },
+        saveGuestEmail({ commit, rootState }, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(rootState.baseUrl + "guest-email/create", payload)
+                    .then(response => {
+                        resolve(response);
+                    })
+                    .catch(error => {
+                        let notification = {
+                            msg: error.response.data.errors,
+                            type: "error"
+                        };
+                        commit("setNotification", notification, {
+                            root: true
+                        });
+                        reject(error);
+                    });
+            });
+        },
         createReceipt(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(this.state.baseUrl + "receipts/create", payload.data)
+                    .get(
+                        `${this.state.baseUrl}receipts/create/${payload.data.order_id}`
+                    )
                     .then(response => {
                         let notification = {
                             msg: response.data.info,
@@ -372,25 +393,6 @@ export default {
                             };
                             context.commit("setNotification", notification);
                         }
-                        reject(error);
-                    });
-            });
-        },
-        saveGuestEmail({ commit, rootState }, payload) {
-            return new Promise((resolve, reject) => {
-                axios
-                    .post(rootState.baseUrl + "guest-email/create", payload)
-                    .then(response => {
-                        resolve(response);
-                    })
-                    .catch(error => {
-                        let notification = {
-                            msg: error.response.data.errors,
-                            type: "error"
-                        };
-                        commit("setNotification", notification, {
-                            root: true
-                        });
                         reject(error);
                     });
             });

@@ -14,21 +14,14 @@ use Illuminate\Support\Facades\DB;
 
 class ReceiptController extends Controller
 {
-    protected $model = Receipt::class;
-
-    public function create(Request $request)
+    public function create(Order $model)
     {
-        $validatedData = $request->validate([
-            'order_id' => 'required'
-        ]);
-
-        $order = Order::findOrFail($validatedData['order_id']);
-        $store = $order->store;
-        $cash_register = $order->created_by()->first()->open_register()->first()->cash_register()->first();
-        $created_by = $order->created_by()->first();
+        $store = $model->store;
+        $cash_register = $model->created_by()->first()->open_register()->first()->cash_register()->first();
+        $created_by = $model->created_by()->first();
         $payments = [];
 
-        foreach (json_decode($order['payments'], true) as $payment) {
+        foreach (json_decode($model['payments'], true) as $payment) {
             if ($payment['payment_type']['type'] === 'card' || $payment['payment_type']['type'] === 'pos-terminal') {
                 $payment['payment_type']['name'] = 'Credit card';
             } elseif ($payment['status'] === 'refunded') {
@@ -39,39 +32,39 @@ class ReceiptController extends Controller
             }
         }
         $content = [
-            "customer" => $order->customer,
-            "customer_no_tax" => $order->customer ? $order->customer->no_tax : false,
-            "trans" => $order->id,
+            "customer" => $model->customer,
+            "customer_no_tax" => $model->customer ? $model->customer->no_tax : false,
+            "trans" => $model->id,
             "store" => ["name" => $store->name, "phone" => $store->phone, "street" => $store->street, "city" => $store->city, "postcode" => $store->postcode],
             "reg" => $cash_register->name,
             "clrk" => $created_by->name,
             "oper" => $created_by->name,
-            "date" => $order->created_at->format('m/d/Y'),
-            "time" => $order->created_at->format('h:m:s'),
-            "items" => $order->items,
-            "sales_tax" => $order->total - $order->total_without_tax,
-            "total_without_tax" => $order->total_without_tax,
-            "subtotal" => $order->subtotal,
-            "total_ant" => $order->total,
-            "delivery_fees" => $order->shipping_cost,
+            "date" => $model->created_at->format('m/d/Y'),
+            "time" => $model->created_at->format('h:m:s'),
+            "items" => $model->items,
+            "sales_tax" => $model->total - $model->total_without_tax,
+            "total_without_tax" => $model->total_without_tax,
+            "subtotal" => $model->subtotal,
+            "total_ant" => $model->total,
+            "delivery_fees" => $model->shipping_cost,
             'payments' => $payments,
-            'balance_remaining' => $order->total - $order->total_paid,
-            'total_amt_tendered' =>  $order->total_paid,
-            'customer_change' => $order->change,
-            'shipping_address' => $order->shipping_address,
-            'shipping_type' => $order->shipping_type,
-            'shipping_cost' => $order->shipping_cost,
-            'delivery_slot' => $order->delivery_slot,
-            'notes' => $order->notes,
-            'dlvr_on' => Carbon::parse($order->delivery_date)->format('m/d/Y l'),
-            'dlvr_to' => $order->shipping_address ? $order->shipping_address->first_name . " " . $order->shipping_address->last_name : null,
-            'c_o' => $order->shipping_address ? $order->customer->first_name . " " . $order->customer->last_name : null,
-            'address' =>  $order->shipping_address ? $order->shipping_address->street : null,
-            'address_2' => $order->shipping_address ? $order->shipping_address->street2 : null,
-            'city' =>  $order->shipping_address ? $order->shipping_address->city : null
+            'balance_remaining' => $model->total - $model->total_paid,
+            'total_amt_tendered' =>  $model->total_paid,
+            'customer_change' => $model->change,
+            'shipping_address' => $model->shipping_address,
+            'shipping_type' => $model->shipping_type,
+            'shipping_cost' => $model->shipping_cost,
+            'delivery_slot' => $model->delivery_slot,
+            'notes' => $model->notes,
+            'dlvr_on' => Carbon::parse($model->delivery_date)->format('m/d/Y l'),
+            'dlvr_to' => $model->shipping_address ? $model->shipping_address->first_name . " " . $model->shipping_address->last_name : null,
+            'c_o' => $model->shipping_address ? $model->customer->first_name . " " . $model->customer->last_name : null,
+            'address' =>  $model->shipping_address ? $model->shipping_address->street : null,
+            'address_2' => $model->shipping_address ? $model->shipping_address->street2 : null,
+            'city' =>  $model->shipping_address ? $model->shipping_address->city : null
         ];
 
-        $receipt['order_id'] = $order->id;
+        $receipt['order_id'] = $model->id;
         $receipt['print_count'] = 0;
         $receipt['email_count'] = 0;
         $receipt['issued_by'] = $created_by->id;
@@ -82,17 +75,17 @@ class ReceiptController extends Controller
         return response(['info' => ['Receipt ' . $receipt->id . ' created successfully!']], 201);
     }
 
-    public function printReceipt(Order $order)
+    public function printReceipt(Order $model)
     {
-        // $receipt = $order->receipt;
+        $receipts = $model->load('receipts');
         // $receipt->print_count++;
         // $receipt->update();
         // return view('test_print_receipt')->with($receipt->content);
     }
 
-    public function emailReceipt(Order $order)
+    public function emailReceipt(Order $model)
     {
-        // $receipt = $order->receipt;
+        $receipts = $model->load('receipts');
         // $receipt->email_count++;
         // $receipt->save();
         // return view('test_print_receipt')->with($receipt->content);
