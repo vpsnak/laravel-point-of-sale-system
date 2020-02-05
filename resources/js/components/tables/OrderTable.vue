@@ -74,7 +74,7 @@
 							small
 							:disabled="disableActions"
 							@click.stop="viewItemDialog(item)"
-							class="my-1"
+							class="my-2"
 							v-on="on"
 							icon
 						>
@@ -85,21 +85,6 @@
 				</v-tooltip>
 			</template>
 		</prop-data-table>
-
-		<interactiveDialog
-			v-if="dialog.show"
-			:show="dialog.show"
-			:title="dialog.title"
-			:titleCloseBtn="dialog.titleCloseBtn"
-			:icon="dialog.icon"
-			:fullscreen="dialog.fullscreen"
-			:width="dialog.width"
-			:component="dialog.component"
-			:content="dialog.content"
-			:model="dialog.model"
-			@action="dialogEvent"
-			:persistent="dialog.persistent"
-		></interactiveDialog>
 
 		<checkoutDialog v-if="checkoutDialog" />
 	</div>

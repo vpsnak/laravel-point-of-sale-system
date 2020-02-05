@@ -1,7 +1,7 @@
 <template>
 	<v-card>
 		<v-card-title>
-			<v-img v-if="$props.icon">{{ $props.icon }}</v-img>
+			<v-icon v-if="$props.icon">{{ $props.icon }}</v-icon>
 			{{ $props.title }}
 			<v-spacer></v-spacer>
 			<v-text-field
@@ -87,16 +87,6 @@ export default {
 		}
 	},
 	computed: {
-		...mapState("dialog", ["interactive_dialog"]),
-
-		dialog: {
-			get() {
-				return this.interactive_dialog;
-			},
-			set(value) {
-				this.setDialog(value);
-			}
-		},
 		searchAction: {
 			get() {
 				return this.search_action;
@@ -134,12 +124,6 @@ export default {
 		})
 	},
 	methods: {
-		...mapMutations("dialog", ["setDialog", "resetDialog"]),
-
-		dialogEvent(event) {
-			this.resetDialog();
-		},
-
 		search(e, page = false) {
 			if (this.keyword.length > 2 || this.searchAction) {
 				this.setLoading(true);

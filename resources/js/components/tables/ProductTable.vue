@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<prop-data-table
+			icon="mdi-package-variant"
 			:tableHeaders="headers"
 			data-url="products"
 			tableTitle="Products"
@@ -24,9 +25,9 @@
 					<template v-slot:activator="{ on }">
 						<v-btn
 							small
-							@click="printProductBarcode(item) "
-							:disabled="loading"
-							class="my-1"
+							@click.stop="printProductBarcode(item) "
+							:disabled="disableActions"
+							class="my-2"
 							icon
 							v-on="on"
 						>
@@ -69,21 +70,6 @@
 				</v-tooltip>
 			</template>
 		</prop-data-table>
-
-		<interactiveDialog
-			v-if="dialog.show"
-			:show="dialog.show"
-			:title="dialog.title"
-			:titleCloseBtn="dialog.titleCloseBtn"
-			:icon="dialog.icon"
-			:fullscreen="dialog.fullscreen"
-			:width="dialog.width"
-			:component="dialog.component"
-			:content="dialog.content"
-			:model="dialog.model"
-			@action="dialogEvent"
-			:persistent="dialog.persistent"
-		></interactiveDialog>
 	</div>
 </template>
 <script>
