@@ -1,7 +1,7 @@
 <template></template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapMutations } from "vuex";
 
 export default {
 	mounted() {

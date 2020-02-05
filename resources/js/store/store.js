@@ -5,6 +5,7 @@ import "es6-promise/auto";
 import Cookies from "js-cookie";
 import router from "../plugins/router";
 //modules
+import config from "./modules/config";
 import menu from "./modules/menu";
 import cart from "./modules/cart";
 import endpoints from "./modules/endpoints";
@@ -19,6 +20,7 @@ export default new Vuex.Store({
     strict: false,
     namespaced,
     modules: {
+        config,
         menu,
         cart,
         datatable,
@@ -26,10 +28,6 @@ export default new Vuex.Store({
         dialog
     },
     state: {
-        appName: "",
-        appDebug: false,
-        appLoad: 0,
-
         baseUrl: "/api/",
 
         user: Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null,
@@ -76,14 +74,6 @@ export default new Vuex.Store({
         }
     },
     mutations: {
-        initApp(state, data) {
-            state.appEnv = data.env;
-            state.appName = data.name;
-            state.appDebug = data.debug;
-        },
-        addLoadPercent(state, value) {
-            state.appLoad += value;
-        },
         logout(state) {
             state.user = null;
             state.token = null;
@@ -100,6 +90,8 @@ export default new Vuex.Store({
                     name: "login"
                 });
             }
+
+            state.config.app_load = 0;
         },
         setCashRegister(state, cashRegister) {
             state.cashRegister = cashRegister;
@@ -253,23 +245,6 @@ export default new Vuex.Store({
                         };
                         context.commit("setNotification", notification);
                         reject(error);
-                    });
-            });
-        },
-        getAppConfig(context) {
-            return new Promise((resolve, reject) => {
-                axios
-                    .get(`${this.state.baseUrl}config`)
-                    .then(response => {
-                        context.commit("initApp", response.data);
-                        resolve(true);
-                    })
-                    .catch(error => {
-                        if (_.has(error, "response.data")) {
-                            reject(error.response.data);
-                        } else {
-                            reject(error.response);
-                        }
                     });
             });
         },

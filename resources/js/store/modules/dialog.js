@@ -1,7 +1,7 @@
 const state = {
     interactive_dialog: {
         show: false,
-        width: 600,
+        width: 450,
         fullscreen: false,
         icon: "",
         title: "",
@@ -10,7 +10,12 @@ const state = {
         readonly: false,
         content: "",
         model: null,
-        persistent: false
+        persistent: null,
+        action: "",
+        cancelBtnTxt: "Cancel",
+        confirmationBtnTxt: "OK",
+        content: "",
+        contentClass: ""
     }
 };
 
@@ -39,7 +44,7 @@ const mutations = {
         state.interactive_dialog.component = item.form;
         state.interactive_dialog.readonly = true;
         state.interactive_dialog.model = item;
-        state.interactive_dialog.persistent = false;
+        state.interactive_dialog.persistent = null;
     },
 
     setDialog(state, value) {
@@ -64,10 +69,21 @@ const mutations = {
         value.persistent
             ? (state.interactive_dialog.persistent = value.persistent)
             : "";
+        value.cancelBtnTxt
+            ? (state.interactive_dialog.cancelBtnTxt = value.cancelBtnTxt)
+            : "";
+        value.confirmationBtnTxt
+            ? (state.interactive_dialog.confirmationBtnTxt =
+                  value.confirmationBtnTxt)
+            : "";
+        value.content ? (state.interactive_dialog.content = value.content) : "";
+        value.contentClass
+            ? (state.interactive_dialog.contentClass = value.contentClass)
+            : "";
     },
     resetDialog(state) {
         state.interactive_dialog.show = false;
-        state.interactive_dialog.width = 600;
+        state.interactive_dialog.width = 450;
         state.interactive_dialog.fullscreen = false;
         state.interactive_dialog.icon = "";
         state.interactive_dialog.title = "";
@@ -76,7 +92,11 @@ const mutations = {
         state.interactive_dialog.readonly = false;
         state.interactive_dialog.content = "";
         state.interactive_dialog.model = null;
-        state.interactive_dialog.persistent = false;
+        state.interactive_dialog.persistent = null;
+        state.interactive_dialog.cancelBtnTxt = "Cancel";
+        state.interactive_dialog.confirmationBtnTxt = "OK";
+        state.interactive_dialog.content = "";
+        state.interactive_dialog.contentClass = "";
     }
 };
 
