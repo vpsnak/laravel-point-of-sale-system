@@ -11,6 +11,7 @@ import cart from "./modules/cart";
 import endpoints from "./modules/endpoints";
 import datatable from "./modules/datatable";
 import dialog from "./modules/dialog";
+import icons from "./modules/icons";
 
 Vue.use(Vuex);
 
@@ -25,7 +26,8 @@ export default new Vuex.Store({
         cart,
         datatable,
         endpoints,
-        dialog
+        dialog,
+        icons
     },
     state: {
         baseUrl: "/api/",
