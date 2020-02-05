@@ -72,6 +72,7 @@ const mutations = {
         value.persistent
             ? (state.interactive_dialog.persistent = value.persistent)
             : "";
+        value.action ? (state.interactive_dialog.action = value.action) : "";
         value.cancelBtnTxt
             ? (state.interactive_dialog.cancelBtnTxt = value.cancelBtnTxt)
             : "";

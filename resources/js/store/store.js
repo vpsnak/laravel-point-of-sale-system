@@ -8,7 +8,6 @@ import router from "../plugins/router";
 import config from "./modules/config";
 import menu from "./modules/menu";
 import cart from "./modules/cart";
-import endpoints from "./modules/endpoints";
 import datatable from "./modules/datatable";
 import dialog from "./modules/dialog";
 import icons from "./modules/icons";
@@ -25,7 +24,6 @@ export default new Vuex.Store({
         menu,
         cart,
         datatable,
-        endpoints,
         dialog,
         icons
     },
@@ -53,8 +51,8 @@ export default new Vuex.Store({
         storeList: []
     },
     getters: {
-        authorized: state => {
-            if (state.token && state.user) {
+        auth: state => {
+            if (state.user && state.token) {
                 return true;
             } else {
                 return false;
@@ -104,7 +102,7 @@ export default new Vuex.Store({
                 state.user = user;
                 Cookies.set("user", user, {
                     secure:
-                        process.env.NODE_ENV !== "development" ? true : false,
+                        state.config.app_env !== "development" ? true : false,
                     sameSite: "strict"
                 });
             } else {
@@ -114,14 +112,20 @@ export default new Vuex.Store({
         },
         setToken(state, token) {
             if (token) {
-                state.token = "Bearer " + token;
+                state.token = `Bearer ${token}`;
+
+                window.axios.defaults.headers.common["Authorization"] =
+                    state.token;
+
                 Cookies.set("token", state.token, {
                     secure:
-                        process.env.NODE_ENV !== "development" ? true : false,
+                        state.config.app_env !== "development" ? true : false,
                     sameSite: "strict"
                 });
             } else {
                 state.token = null;
+                window.axios.defaults.headers.common["Authorization"] = null;
+
                 Cookies.remove("token");
             }
         },
@@ -143,15 +147,15 @@ export default new Vuex.Store({
         login(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(this.state.baseUrl + "auth/login", payload)
+                    .post(`${this.state.baseUrl}auth/login`, payload)
                     .then(response => {
                         let notification = {
                             msg: response.data.info,
                             type: "info"
                         };
 
-                        context.commit("setUser", response.data.user);
                         context.commit("setToken", response.data.token);
+                        context.commit("setUser", response.data.user);
                         context.commit("setNotification", notification);
 
                         resolve(response.data);

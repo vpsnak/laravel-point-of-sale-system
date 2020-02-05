@@ -6,20 +6,9 @@
         persistent
         no-click-animation
     >
-        <interactiveDialog
-            v-if="closePrompt"
-            :show="closePrompt"
-            action="confirmation"
-            title="Cancel order?"
-            content="Are you sure you want to <strong>cancel</strong> the current order?"
-            @action="confirmation"
-            actions
-            persistent
-        />
-
         <v-card>
             <v-toolbar>
-                <v-tooltip bottom>
+                <v-tooltip bottom color="red">
                     <template v-slot:activator="{ on }">
                         <v-btn
                             :disabled="disableControls"
@@ -28,13 +17,15 @@
                             v-on="on"
                             color="red"
                         >
-                            <v-icon>mdi-close</v-icon>
+                            <v-icon>
+                                {{ order.id ? mdi - cancel : mdi - close }}
+                            </v-icon>
                         </v-btn>
                     </template>
                     <span>{{ closeBtnTxt }}</span>
                 </v-tooltip>
 
-                <v-tooltip bottom v-if="order.id">
+                <v-tooltip bottom v-if="order.id" color="yellow">
                     <template v-slot:activator="{ on }">
                         <v-btn
                             :disabled="disableControls"
@@ -80,7 +71,16 @@ import { mapMutations, mapActions } from "vuex";
 export default {
     data() {
         return {
-            closePrompt: false
+            closePrompt: false,
+            confirmationDialog: {
+                show: "closePrompt",
+                action: "confirmation",
+                title: "Cancel order?",
+                content:
+                    "Are you sure you want to <strong>cancel</strong> the current order?",
+                actions: true,
+                persistent: true
+            }
         };
     },
     computed: {
@@ -127,6 +127,8 @@ export default {
         }
     },
     methods: {
+        ...mapMutations("dialog", ["setDialog"]),
+
         hold() {
             this.state = false;
             this.resetState();
@@ -136,7 +138,7 @@ export default {
                 this.resetState();
                 this.state = false;
             } else if (this.order.id && this.order.status !== "complete") {
-                this.closePrompt = true;
+                this.setDialog(this.confirmationDialog);
             } else {
                 this.state = false;
             }

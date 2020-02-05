@@ -14,7 +14,7 @@ router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
         // this route requires auth, check if logged in
         // if not, redirect to login page.
-        if (!store.state.token || !store.state.user) {
+        if (!store.getters.auth) {
             store.commit("logout");
         } else {
             next();
@@ -26,8 +26,7 @@ router.beforeEach((to, from, next) => {
     // guard login route if already logged in
     if (
         to.matched.some(record => record.name === "login") &&
-        store.state.token &&
-        store.state.user
+        store.getters.auth
     ) {
         next({ name: "dashboard" });
     }

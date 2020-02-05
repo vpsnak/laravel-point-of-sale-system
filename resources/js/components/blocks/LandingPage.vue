@@ -27,7 +27,7 @@
 import { mapState, mapMutations, mapActions } from "vuex";
 export default {
     mounted() {
-        if (this.loadPercent < 100) {
+        if (this.loadPercent !== 101) {
             this.init();
         } else {
             this.redirect();
@@ -42,6 +42,7 @@ export default {
     },
 
     computed: {
+        ...mapState(["token"]),
         ...mapState("config", ["app_load"]),
 
         loadPercent: {
@@ -69,17 +70,16 @@ export default {
             this.resetLoad();
             this.resetAppState();
 
-            this.retrieveCashRegister()
-                .then(() => {
-                    this.loadPercent = 50;
-                })
-                .catch(error => {
-                    this.color = "red";
-                    this.resetLoad();
-                    this.error_txt = "Unauthorized";
-
-                    this.logout();
-                });
+            this.setHeaders().then(() => {
+                this.retrieveCashRegister()
+                    .then(() => {
+                        this.loadPercent = 65;
+                    })
+                    .catch(error => {
+                        this.color = "red";
+                        this.error_txt = "Unhandled error";
+                    });
+            });
         },
         redirect() {
             if (this.$route.name !== "dashboard") {
@@ -89,13 +89,32 @@ export default {
         resetAppState() {
             this.resetState();
             this.resetDialog();
-            this.loadPercent = 50;
+            this.loadPercent = 10;
         },
         setError(error) {
             if (error) {
                 this.color = "danger";
                 this.error = error;
             }
+        },
+        setHeaders() {
+            return new Promise((resolve, reject) => {
+                if (this.token) {
+                    window.axios.defaults.headers.common[
+                        "Authorization"
+                    ] = this.token;
+
+                    this.loadPercent = 25;
+
+                    resolve(true);
+                } else {
+                    this.color = "red";
+                    this.error_txt = "Unauthorized";
+                    this.logout();
+
+                    reject(false);
+                }
+            });
         }
     }
 };

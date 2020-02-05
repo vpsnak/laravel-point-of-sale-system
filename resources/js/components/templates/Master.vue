@@ -2,11 +2,11 @@
     <v-app id="app">
         <notification />
 
-        <interactiveDialog v-if="auth"></interactiveDialog>
+        <interactiveDialog v-if="showComponents"></interactiveDialog>
 
-        <sideMenu v-if="app_load > 100 && auth" />
+        <sideMenu v-if="showComponents" />
 
-        <topMenu v-if="app_load > 100 && auth" />
+        <topMenu v-if="showComponents" />
 
         <v-content>
             <transition name="fade">
@@ -26,31 +26,20 @@ export default {
         }
     },
     computed: {
+        ...mapGetters(["auth", "role"]),
         ...mapState("dialog", ["interactive_dialog"]),
         ...mapState("config", ["app_load"]),
 
-        loadPercent() {
-            return this.app_load;
-        },
-        dialog: {
-            get() {
-                return this.interactive_dialog;
-            },
-            set(value) {
-                this.setDialog(value);
-            }
-        },
-        auth() {
-            if (this.authorized && this.role) {
-                window.axios.defaults.headers.common[
-                    "Authorization"
-                ] = this.$store.state.token;
+        showComponents() {
+            if (this.app_load > 100 && this.auth) {
                 return true;
             } else {
                 return false;
             }
         },
-        ...mapGetters(["authorized", "role"])
+        loadPercent() {
+            return this.app_load;
+        }
     },
     methods: {
         ...mapMutations(["logout"]),

@@ -24,17 +24,17 @@ class DatabaseSeeder extends Seeder
         $this->call(StorePickupSeeder::class);
 
         // $this->call(ShippingSeeder::class);
-        $this->call(CustomerSeeder::class);
-        $this->call(ProductSeeder::class);
-        $this->call(CategorySeeder::class);
 
-        // $this->call(OrderSeeder::class);
-        // $this->call(PaymentSeeder::class);
-
-        $this->call(PlantshedPostCodes::class);
-        $this->call(PlantshedAreasSeeder::class);
+        if (config('app.env') === 'local') {
+            $this->call(CustomerSeeder::class);
+            $this->call(ProductSeeder::class);
+            $this->call(CategorySeeder::class);
+        }
 
         $this->call(GiftcardSeeder::class);
         $this->call(CouponSeeder::class);
+
+        $this->call(PlantshedPostCodes::class);
+        $this->call(PlantshedAreasSeeder::class);
     }
 }
