@@ -56,7 +56,7 @@
 					<v-btn
 						small
 						:disabled="disableActions"
-						@click.stop="item.form=form, viewItem(item)"
+						@click.stop="item.form=form,viewItem(item)"
 						class="my-1"
 						v-on="on"
 						icon

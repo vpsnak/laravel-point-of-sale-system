@@ -21,13 +21,13 @@
 
 			<v-card-text>
 				<component
-					:is="component"
-					v-if="component"
-					:model="model"
-					:readOnly="readOnly"
+					v-if="$props.component"
+					:is="$props.component"
+					:model="$props.model"
+					:readonly="read"
 					@submit="submit"
 				></component>
-				<div v-else v-html="content" :class="contentClass || ''"></div>
+				<div v-else v-html="$props.content" :class="contentClass || ''"></div>
 			</v-card-text>
 
 			<!-- confirmation actions -->
@@ -62,6 +62,7 @@ export default {
 		title: String,
 		titleCloseBtn: Boolean,
 
+		readonly: Boolean,
 		content: String,
 		contentClass: String,
 		component: String,
@@ -101,13 +102,12 @@ export default {
 		confirmationBtn() {
 			return this.$props.confirmationBtnTxt || "OK";
 		},
-		readOnly() {
-			return this.$props.action === "read" ? true : false;
+		read() {
+			return this.$props.readonly ? true : false;
 		}
 	},
 
 	methods: {
-		...mapActions(["getAll"]),
 		submit(payload) {
 			if (!payload) {
 				this.closeEvent(true);

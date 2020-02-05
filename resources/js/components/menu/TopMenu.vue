@@ -203,9 +203,9 @@ export default {
 			if (event) {
 				switch (this.action) {
 					case "closeCashRegister":
-						this.resetDialog().then(() => {
-							this.displayZDialog(event.response.report);
-						});
+						this.resetDialog();
+						this.displayZDialog(event.response.report);
+
 						break;
 					default:
 						break;

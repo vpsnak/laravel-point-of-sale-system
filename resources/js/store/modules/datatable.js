@@ -1,7 +1,7 @@
 // initial state
 const state = {
-    title: "DataTable",
-    btnTitle: "New Item",
+    title: "",
+    btnTitle: "",
     rows: [],
     loading: false
 };

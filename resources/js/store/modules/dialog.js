@@ -7,6 +7,7 @@ const state = {
         title: "",
         titleCloseBtn: false,
         component: "",
+        readonly: false,
         content: "",
         model: null,
         persistent: false
@@ -23,6 +24,7 @@ const mutations = {
         state.interactive_dialog.titleCloseBtn = true;
         state.interactive_dialog.icon = "mdi-pencil";
         state.interactive_dialog.component = item.form;
+        state.interactive_dialog.readonly = false;
         state.interactive_dialog.model = _.cloneDeep(item);
         state.interactive_dialog.persistent = true;
     },
@@ -35,6 +37,7 @@ const mutations = {
         state.interactive_dialog.titleCloseBtn = true;
         state.interactive_dialog.icon = "mdi-eye";
         state.interactive_dialog.component = item.form;
+        state.interactive_dialog.readonly = true;
         state.interactive_dialog.model = item;
         state.interactive_dialog.persistent = false;
     },
@@ -53,6 +56,9 @@ const mutations = {
         value.component
             ? (state.interactive_dialog.component = value.component)
             : "";
+        value.readonly
+            ? (state.interactive_dialog.readonly = value.readonly)
+            : "";
         value.content ? (state.interactive_dialog.content = value.content) : "";
         value.model ? (state.interactive_dialog.model = value.model) : "";
         value.persistent
@@ -67,6 +73,7 @@ const mutations = {
         state.interactive_dialog.title = "";
         state.interactive_dialog.titleCloseBtn = false;
         state.interactive_dialog.component = "";
+        state.interactive_dialog.readonly = false;
         state.interactive_dialog.content = "";
         state.interactive_dialog.model = null;
         state.interactive_dialog.persistent = false;

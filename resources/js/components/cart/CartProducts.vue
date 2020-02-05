@@ -307,23 +307,7 @@ export default {
 				this.setPrice(index);
 			}
 		},
-		dialogEvent(event) {
-			this.resetDialog();
-		},
-		resetDialog() {
-			this.dialog = {
-				show: false,
-				width: 600,
-				fullscreen: false,
-				title: "",
-				titleCloseBtn: false,
-				icon: "",
-				component: "",
-				content: "",
-				model: "",
-				persistent: false
-			};
-		},
+
 		viewProductDialog(product) {
 			this.dialog = {
 				show: true,

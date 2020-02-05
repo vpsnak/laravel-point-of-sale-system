@@ -140,7 +140,7 @@ export default {
 		})
 	},
 	methods: {
-		...mapMutations("dialog", ["resetDialog", "setDialog"]),
+		...mapMutations("dialog", ["setDialog"]),
 
 		search(e, page = false) {
 			if (this.keyword.length > 2 || this.searchAction) {
