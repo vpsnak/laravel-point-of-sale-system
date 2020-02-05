@@ -23,7 +23,7 @@
 
         <v-content>
             <transition name="fade">
-                <router-view v-if="auth && appLoad === 100"></router-view>
+                <router-view v-if="(auth && appLoad === 100 ) || !auth"></router-view>
                 <landingPage v-else-if="appLoad !== 100" />
             </transition>
         </v-content>

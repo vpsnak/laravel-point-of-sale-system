@@ -56,12 +56,8 @@ export default {
         ...mapActions(["getAppConfig", "retrieveCashRegister"]),
 
         init() {
-            this.resetState();
-            this.resetDialog();
-            this.loadPercent = 10;
-
-            this.$router.push({ name: "dashboard" });
-            this.loadPercent = 10;
+            this.resetAppState();
+            this.redirectToDashboard();
 
             this.getAppConfig()
                 .then(() => {
@@ -77,6 +73,18 @@ export default {
                 .catch(error => {
                     this.setColor(true);
                 });
+        },
+        redirectToDashboard() {
+            if (this.$route.name !== "dashboard") {
+                this.$router.push({ name: "dashboard" });
+            }
+
+            this.loadPercent = 10;
+        },
+        resetAppState() {
+            this.resetState();
+            this.resetDialog();
+            this.loadPercent = 10;
         },
         setError(error) {
             if (error) {

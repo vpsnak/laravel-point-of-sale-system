@@ -27,7 +27,6 @@ export default new Vuex.Store({
     },
     state: {
         appName: "",
-        appEnv: "",
         appDebug: false,
         appLoad: 0,
 
@@ -112,7 +111,8 @@ export default new Vuex.Store({
             if (user) {
                 state.user = user;
                 Cookies.set("user", user, {
-                    secure: state.appEnv !== "local" ? true : false,
+                    secure:
+                        process.env.NODE_ENV !== "development" ? true : false,
                     sameSite: "strict"
                 });
             } else {
@@ -124,7 +124,8 @@ export default new Vuex.Store({
             if (token) {
                 state.token = "Bearer " + token;
                 Cookies.set("token", state.token, {
-                    secure: state.appEnv !== "local" ? true : false,
+                    secure:
+                        process.env.NODE_ENV !== "development" ? true : false,
                     sameSite: "strict"
                 });
             } else {
