@@ -11,26 +11,9 @@ use Storage;
 
 class AppController extends Controller
 {
-    private $secure = true;
-
-    public function __construct()
-    {
-        $this->secure = config('app.env') === 'local' ? false : true;
-    }
-
     public function index()
     {
         return view('app');
-    }
-
-    public function config()
-    {
-        return response([
-            'name' => config('app.name'),
-            'env' => config('app.env'),
-            'debug' => config('app.debug'),
-            'receiptImg' => Storage::disk('public')->url('img/plantshed_receipt.png')
-        ]);
     }
 
     public function receipt(Order $order)

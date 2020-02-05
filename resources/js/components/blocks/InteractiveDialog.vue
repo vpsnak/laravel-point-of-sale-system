@@ -1,18 +1,18 @@
 <template>
 	<v-dialog
-		v-model="visibility"
-		:persistent="persistent"
-		:max-width="maxWidth"
-		:fullscreen="fullscreen"
+		v-model="dialog.show"
+		:persistent="dialog.persistent"
+		:max-width="dialog.width"
+		:fullscreen="dialog.fullscreen"
 		scrollable
 		@click:outside.stop="closeEvent(false)"
 	>
 		<v-card>
 			<v-card-title>
-				<v-icon v-if="icon" class="pr-2">{{ icon }}</v-icon>
-				{{ title }}
-				<v-spacer v-if="titleCloseBtn"></v-spacer>
-				<v-btn v-if="titleCloseBtn" @click.stop="closeEvent(false, true)" icon>
+				<v-icon v-if="dialog.icon" class="pr-2">{{ dialog.icon }}</v-icon>
+				{{ dialog.title }}
+				<v-spacer v-if="dialog.titleCloseBtn"></v-spacer>
+				<v-btn v-if="dialog.titleCloseBtn" @click.stop="closeEvent(false, true)" icon>
 					<v-icon>mdi-close</v-icon>
 				</v-btn>
 			</v-card-title>
@@ -21,30 +21,30 @@
 
 			<v-card-text>
 				<component
-					v-if="$props.component"
-					:is="$props.component"
-					:model="$props.model"
-					:readonly="read"
+					v-if="dialog.component"
+					:is="dialog.component"
+					:readonly="dialog.readonly"
+					:model="dialog.model"
 					@submit="submit"
 				></component>
-				<div v-else v-html="$props.content" :class="contentClass || ''"></div>
+				<div v-else v-html="dialog.content" :class="dialog.contentClass || ''"></div>
 			</v-card-text>
 
 			<!-- confirmation actions -->
 			<v-card-actions
 				class="d-flex align-center mt-5"
-				v-if="action === 'confirmation' || action === 'info'"
+				v-if="dialog.action === 'confirmation' || dialog.action === 'info'"
 			>
 				<div class="flex-grow-1"></div>
 
 				<v-btn
-					v-if="action === 'confirmation'"
+					v-if="dialog.action === 'confirmation'"
 					@click="closeEvent(false, true)"
 					text
 					color="error"
-				>{{ cancelBtn }}</v-btn>
+				>{{ dialog.cancelBtn }}</v-btn>
 
-				<v-btn @click="closeEvent(true, true)" text color="success">{{ confirmationBtn }}</v-btn>
+				<v-btn @click="closeEvent(true, true)" text color="success">{{ dialog.confirmationBtn }}</v-btn>
 			</v-card-actions>
 		</v-card>
 	</v-dialog>
@@ -54,60 +54,17 @@
 import { mapActions, mapMutations, mapState } from "vuex";
 
 export default {
-	props: {
-		show: Boolean,
-		persistent: Boolean,
-		width: Number,
-		icon: String,
-		title: String,
-		titleCloseBtn: Boolean,
-
-		readonly: Boolean,
-		content: String,
-		contentClass: String,
-		component: String,
-		fullscreen: Boolean,
-		cancelBtnTxt: String,
-		confirmationBtnTxt: String,
-
-		model: Object,
-		action: String
-	},
-
-	data() {
-		return {
-			display: false
-		};
-	},
-
-	mounted() {
-		this.display = this.$props.show;
-	},
-
 	computed: {
-		visibility: {
-			get() {
-				return this.display;
-			},
-			set(value) {
-				this.display = value;
-			}
-		},
-		maxWidth() {
-			return this.$props.width || 450;
-		},
-		cancelBtn() {
-			return this.$props.cancelBtnTxt || "Cancel";
-		},
-		confirmationBtn() {
-			return this.$props.confirmationBtnTxt || "OK";
-		},
-		read() {
-			return this.$props.readonly ? true : false;
+		...mapState("dialog", ["interactive_dialog"]),
+
+		dialog() {
+			return this.interactive_dialog;
 		}
 	},
 
 	methods: {
+		...mapMutations("dialog", ["resetDialog"]),
+
 		submit(payload) {
 			if (!payload) {
 				this.closeEvent(true);
@@ -128,9 +85,9 @@ export default {
 		},
 
 		closeEvent(payload, close) {
-			if (!this.$props.persistent || close) {
+			if (!this.dialog.persistent || close) {
 				this.$emit("action", payload);
-				this.visibility = false;
+				this.resetDialog();
 			}
 		}
 	},
