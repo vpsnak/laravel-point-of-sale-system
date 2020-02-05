@@ -1,8 +1,9 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="cashRegisterObs">
+	<ValidationObserver v-slot="{ invalid }">
 		<v-form @submit.prevent="submit">
 			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Name">
 				<v-text-field
+					:readonly="$props.readonly"
 					v-model="formFields.name"
 					label="Name"
 					:disabled="loading"
@@ -12,6 +13,7 @@
 			</ValidationProvider>
 			<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Stores">
 				<v-select
+					:readonly="$props.readonly"
 					v-model="formFields.store_id"
 					label="Stores"
 					:items="stores"
@@ -22,7 +24,7 @@
 					:success="valid"
 				></v-select>
 			</ValidationProvider>
-			<v-row>
+			<v-row v-if="!$props.readonly">
 				<v-col cols="12" align="center" justify="center">
 					<v-btn
 						class="mr-4"
@@ -42,7 +44,8 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
-		model: Object || undefined
+		model: Object,
+		readonly: Boolean
 	},
 	data() {
 		return {
@@ -65,6 +68,10 @@ export default {
 		}
 	},
 	methods: {
+		...mapActions({
+			getAll: "getAll",
+			create: "create"
+		}),
 		submit() {
 			this.loading = true;
 			let payload = {
@@ -101,13 +108,7 @@ export default {
 				.finally(() => {
 					this.loading = false;
 				});
-		},
-		...mapActions({
-			getAll: "getAll",
-			getOne: "getOne",
-			create: "create",
-			delete: "delete"
-		})
+		}
 	},
 	beforeDestroy() {
 		this.$off("submit");

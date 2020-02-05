@@ -1,8 +1,9 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="categoryObs">
+	<ValidationObserver v-slot="{ invalid }">
 		<v-form @submit.prevent="submit">
 			<ValidationProvider rules="required|min:3|max:191" v-slot="{ errors, valid }" name="Name">
 				<v-text-field
+					:readonly="$props.readonly"
 					:error-messages="errors"
 					:success="valid"
 					v-model="formFields.name"
@@ -10,9 +11,13 @@
 					required
 				></v-text-field>
 			</ValidationProvider>
-			<v-switch v-model="formFields.in_product_listing" label="In Product listing"></v-switch>
+			<v-switch
+				:readonly="$props.readonly"
+				v-model="formFields.in_product_listing"
+				label="In Product listing"
+			></v-switch>
 
-			<v-row>
+			<v-row v-if="!$props.readonly">
 				<v-col cols="12" align="center" justify="center">
 					<v-btn
 						class="mr-4"
@@ -34,7 +39,8 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
-		model: Object || undefined
+		model: Object,
+		readonly: Boolean
 	},
 	data() {
 		return {
@@ -55,6 +61,9 @@ export default {
 		}
 	},
 	methods: {
+		...mapActions({
+			create: "create"
+		}),
 		submit() {
 			this.loading = true;
 
@@ -79,15 +88,8 @@ export default {
 				});
 		},
 		clear() {
-			this.$refs.categoryObs.reset();
 			this.formFields = { ...this.defaultValues };
-		},
-		...mapActions({
-			getAll: "getAll",
-			getOne: "getOne",
-			create: "create",
-			delete: "delete"
-		})
+		}
 	},
 	beforeDestroy() {
 		this.$off("submit");

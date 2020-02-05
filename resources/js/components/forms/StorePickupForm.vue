@@ -1,8 +1,9 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="storePickupObs">
+	<ValidationObserver v-slot="{ invalid }">
 		<v-form @submit.prevent="submit">
 			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Name">
 				<v-text-field
+					:readonly="$props.readonly"
 					v-model="formFields.name"
 					label="Name"
 					:disabled="loading"
@@ -12,6 +13,7 @@
 			</ValidationProvider>
 			<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Regions">
 				<v-select
+					:readonly="$props.readonly"
 					v-model="formFields.region_id"
 					:items="regions"
 					label="Regions"
@@ -25,6 +27,7 @@
 			</ValidationProvider>
 			<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Countries">
 				<v-select
+					:readonly="$props.readonly"
 					v-model="formFields.country_id"
 					:items="countries"
 					label="Countries"
@@ -38,6 +41,7 @@
 			</ValidationProvider>
 			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Street">
 				<v-text-field
+					:readonly="$props.readonly"
 					v-model="formFields.street"
 					label="Street"
 					:disabled="loading"
@@ -47,6 +51,7 @@
 			</ValidationProvider>
 			<ValidationProvider rules="max:191" v-slot="{ errors, valid }" name="Second Street">
 				<v-text-field
+					:readonly="$props.readonly"
 					v-model="formFields.street1"
 					label="Second Street"
 					:disabled="loading"
@@ -54,7 +59,7 @@
 					:success="valid"
 				></v-text-field>
 			</ValidationProvider>
-			<v-row>
+			<v-row v-if="!$props.readonly">
 				<v-col cols="12" align="center" justify="center">
 					<v-btn
 						class="mr-4"
@@ -75,7 +80,8 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
-		model: Object || undefined
+		model: Object,
+		readonly: Boolean
 	},
 	data() {
 		return {
@@ -106,6 +112,11 @@ export default {
 		this.$off("submit");
 	},
 	methods: {
+		...mapActions({
+			getAll: "getAll",
+			create: "create"
+		}),
+
 		submit() {
 			this.loading = true;
 			let payload = {
@@ -149,14 +160,7 @@ export default {
 			}).then(countries => {
 				this.countries = countries;
 			});
-		},
-
-		...mapActions({
-			getAll: "getAll",
-			getOne: "getOne",
-			create: "create",
-			delete: "delete"
-		})
+		}
 	}
 };
 </script>

@@ -1,8 +1,9 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="storeObs">
+	<ValidationObserver v-slot="{ invalid }">
 		<v-form @submit="submit">
 			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Name">
 				<v-text-field
+					:readonly="$props.readonly"
 					v-model="formFields.name"
 					label="Name"
 					:disabled="loading"
@@ -21,6 +22,7 @@
 				name="Phone"
 			>
 				<v-text-field
+					:readonly="$props.readonly"
 					v-model="formFields.phone"
 					label="Phone"
 					:min="0"
@@ -31,6 +33,7 @@
 			</ValidationProvider>
 			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Street">
 				<v-text-field
+					:readonly="$props.readonly"
 					v-model="formFields.street"
 					label="Street"
 					:disabled="loading"
@@ -40,6 +43,7 @@
 			</ValidationProvider>
 			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Postal code">
 				<v-text-field
+					:readonly="$props.readonly"
 					v-model="formFields.postcode"
 					label="Postcode"
 					:disabled="loading"
@@ -49,6 +53,7 @@
 			</ValidationProvider>
 			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="City">
 				<v-text-field
+					:readonly="$props.readonly"
 					v-model="formFields.city"
 					label="City"
 					:disabled="loading"
@@ -58,6 +63,7 @@
 			</ValidationProvider>
 			<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Companies">
 				<v-select
+					:readonly="$props.readonly"
 					v-model="formFields.company_id"
 					:items="companies"
 					label="Companies"
@@ -70,6 +76,7 @@
 			</ValidationProvider>
 			<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Taxes">
 				<v-select
+					:readonly="$props.readonly"
 					v-model="formFields.tax_id"
 					:items="taxes"
 					label="Taxes"
@@ -80,7 +87,7 @@
 					:success="valid"
 				></v-select>
 			</ValidationProvider>
-			<v-row>
+			<v-row v-if="!$props.readonly">
 				<v-col cols="12" align="center" justify="center">
 					<v-btn
 						class="mr-4"
@@ -101,7 +108,8 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
-		model: Object || undefined
+		model: Object,
+		readonly: Boolean
 	},
 	data() {
 		return {
@@ -142,6 +150,11 @@ export default {
 		}
 	},
 	methods: {
+		...mapActions({
+			getAll: "getAll",
+			create: "create"
+		}),
+
 		submit() {
 			this.loading = true;
 			let payload = {
@@ -190,13 +203,7 @@ export default {
 				.finally(() => {
 					this.loading = false;
 				});
-		},
-		...mapActions({
-			getAll: "getAll",
-			getOne: "getOne",
-			create: "create",
-			delete: "delete"
-		})
+		}
 	},
 	beforeDestroy() {
 		this.$off("submit");
