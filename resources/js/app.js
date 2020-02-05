@@ -9,8 +9,7 @@ require("./includes");
 import router from "./plugins/router";
 import vuetify from "./plugins/vuetify"; // path to vuetify export
 import BarcodeScanner from "simple-barcode-scanner";
-import VueBarcode from 'vue-barcode';
-
+import VueBarcode from "vue-barcode";
 
 import {
     ValidationProvider,

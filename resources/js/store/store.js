@@ -29,6 +29,7 @@ export default new Vuex.Store({
         appName: "",
         appEnv: "",
         appDebug: false,
+        appLoad: 0,
 
         baseUrl: "/api/",
 
@@ -80,6 +81,9 @@ export default new Vuex.Store({
             state.appEnv = data.env;
             state.appName = data.name;
             state.appDebug = data.debug;
+        },
+        addLoadPercent(state, value) {
+            state.appLoad += value;
         },
         logout(state) {
             state.user = null;
@@ -252,11 +256,20 @@ export default new Vuex.Store({
             });
         },
         getAppConfig(context) {
-            return new Promise(resolve => {
-                axios.get(`${this.state.baseUrl}config`).then(response => {
-                    context.commit("initApp", response.data);
-                    resolve(true);
-                });
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(`${this.state.baseUrl}config`)
+                    .then(response => {
+                        context.commit("initApp", response.data);
+                        resolve(true);
+                    })
+                    .catch(error => {
+                        if (_.has(error, "response.data")) {
+                            reject(error.response.data);
+                        } else {
+                            reject(error.response);
+                        }
+                    });
             });
         },
         getAll(context, payload) {

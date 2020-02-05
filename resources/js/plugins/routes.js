@@ -21,7 +21,6 @@ import StorePickups from "../components/tables/StorePickupTable";
 
 import Reports from "../components/tables/CashRegisterReportsTable";
 import Companies from "../components/tables/CompanyTable";
-import LandingPage from "../components/pages/LandingPage";
 
 export default [
     {
@@ -46,7 +45,7 @@ export default [
         name: "logout",
         path: "/logout",
         component: Logout,
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: false }
     },
     {
         name: "openCashRegister",
@@ -142,12 +141,6 @@ export default [
         name: "Companies",
         path: "/companies",
         component: Companies,
-        meta: { requiresAuth: true }
-    },
-    {
-        name: "LandingPage",
-        path: "/landing-page",
-        component: LandingPage,
         meta: { requiresAuth: true }
     }
 ];

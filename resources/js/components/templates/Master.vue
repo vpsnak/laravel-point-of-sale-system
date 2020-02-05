@@ -1,71 +1,81 @@
 <template>
-	<v-app id="app">
-		<sideMenu v-if="auth" />
+    <v-app id="app">
+        <notification />
 
-		<topMenu v-if="auth" />
+        <interactiveDialog
+            v-if="auth && dialog.show"
+            :show="dialog.show"
+            :title="dialog.title"
+            :titleCloseBtn="dialog.titleCloseBtn"
+            :icon="dialog.icon"
+            :fullscreen="dialog.fullscreen"
+            :width="dialog.width"
+            :component="dialog.component"
+            :content="dialog.content"
+            :model="dialog.model"
+            @action="dialogEvent"
+            :persistent="dialog.persistent"
+        ></interactiveDialog>
 
-		<notification />
+        <sideMenu v-if="appLoad === 100 && auth" />
 
-		<interactiveDialog
-			v-if="auth && dialog.show"
-			:show="dialog.show"
-			:title="dialog.title"
-			:titleCloseBtn="dialog.titleCloseBtn"
-			:icon="dialog.icon"
-			:fullscreen="dialog.fullscreen"
-			:width="dialog.width"
-			:component="dialog.component"
-			:content="dialog.content"
-			:model="dialog.model"
-			@action="dialogEvent"
-			:persistent="dialog.persistent"
-		></interactiveDialog>
+        <topMenu v-if="appLoad === 100 && auth" />
 
-		<v-content>
-			<router-view></router-view>
-		</v-content>
-	</v-app>
+        <v-content>
+            <transition name="fade">
+                <router-view v-if="auth && appLoad === 100"></router-view>
+                <landingPage v-else-if="appLoad !== 100" />
+            </transition>
+        </v-content>
+    </v-app>
 </template>
 
 <script>
 import { mapGetters, mapMutations, mapState } from "vuex";
+import { EventBus } from "../../plugins/event-bus";
 
 export default {
-	mounted() {
-		this.$store.dispatch("getAppConfig");
-	},
-	computed: {
-		...mapState("dialog", ["interactive_dialog"]),
+    computed: {
+        ...mapState("dialog", ["interactive_dialog"]),
+        ...mapState(["appLoad"]),
 
-		dialog: {
-			get() {
-				return this.interactive_dialog;
-			},
-			set(value) {
-				this.setDialog(value);
-			}
-		},
-		auth() {
-			if (this.authorized && this.role) {
-				window.axios.defaults.headers.common[
-					"Authorization"
-				] = this.$store.state.token;
-				return true;
-			} else {
-				this.logout();
-				return false;
-			}
-		},
-		...mapGetters(["authorized", "role"])
-	},
-	methods: {
-		...mapMutations(["logout"]),
-		...mapMutations("dialog", ["setDialog", "resetDialog"]),
+        loadPercent() {
+            return this.appLoad;
+        },
+        dialog: {
+            get() {
+                return this.interactive_dialog;
+            },
+            set(value) {
+                this.setDialog(value);
+            }
+        },
+        auth() {
+            if (this.authorized && this.role) {
+                window.axios.defaults.headers.common[
+                    "Authorization"
+                ] = this.$store.state.token;
+                return true;
+            } else {
+                this.logout();
+                return false;
+            }
+        },
+        ...mapGetters(["authorized", "role"])
+    },
+    methods: {
+        ...mapMutations(["logout"]),
+        ...mapMutations("dialog", ["setDialog", "resetDialog"]),
 
-		dialogEvent(event) {
-			this.resetDialog();
-		}
-	}
+        dialogEvent(event) {
+            console.log(event);
+            EventBus.$emit("dialog", event);
+            this.resetDialog();
+        }
+    },
+    beforeDestroy() {
+        EventBus.$off();
+    }
 };
 </script>
 
@@ -73,18 +83,18 @@ export default {
 .fas,
 .fab,
 .fa {
-	font-size: 1.2em !important;
+    font-size: 1.2em !important;
 }
 
 a {
-	text-decoration: none;
+    text-decoration: none;
 }
 
 input[type="number"] {
-	-moz-appearance: textfield;
+    -moz-appearance: textfield;
 }
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-	-webkit-appearance: none;
+    -webkit-appearance: none;
 }
 </style>
