@@ -24,7 +24,7 @@
 				</v-tooltip>
 				<v-tooltip bottom>
 					<template v-slot:activator="{ on }">
-						<v-btn @click="showDummyDialog = true" class="my-1" v-on="on" icon>
+						<v-btn @click="showDummyDialog = true" class="my-2" v-on="on" icon>
 							<v-icon>mdi-plus</v-icon>
 						</v-btn>
 					</template>
@@ -32,7 +32,7 @@
 				</v-tooltip>
 				<v-tooltip bottom>
 					<template v-slot:activator="{ on }">
-						<v-btn @click="showGiftCardDialog = true" class="my-1" v-on="on" icon>
+						<v-btn @click="showGiftCardDialog = true" class="my-2" v-on="on" icon>
 							<v-icon>mdi-credit-card-plus</v-icon>
 						</v-btn>
 					</template>
@@ -60,27 +60,7 @@
 					</v-slide-group>
 				</v-col>
 			</v-row>
-			<!-- <v-row align="center" justify="center">
-        <v-col>
-          <v-select
-            v-model="selectedCategory"
-            @change="keyword = ''"
-            :items="categoryList"
-            label="Magento categories"
-            multiple
-            item-text="name"
-            item-value="id"
-          >
-            <template>
-              <v-list-item disabled>
-                <v-list-item-avatar color="primary">
-                  <v-icon>mdi-package-variant</v-icon>
-                </v-list-item-avatar>
-              </v-list-item>
-            </template>
-          </v-select>
-        </v-col>
-			</v-row>-->
+
 			<v-row v-if="productList.length" style="height:61vh; overflow-y:auto;">
 				<v-col v-for="product in productList" :key="product.id" cols="12" md="6" lg="4">
 					<v-card

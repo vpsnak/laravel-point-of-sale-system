@@ -2,23 +2,25 @@ import Dashboard from "../components/pages/Dashboard";
 import Login from "../components/auth/Login";
 import Logout from "../components/auth/Logout";
 import Sales from "../components/pages/Sales";
-import Forms from "../components/pages/Forms";
-import Orders from "../components/pages/Orders";
-import Customers from "../components/pages/Customers";
-import Products from "../components/pages/Products";
-import Categories from "../components/pages/Categories";
-import Stores from "../components/pages/Stores";
-import Users from "../components/pages/Users";
-import ListData from "../components/pages/ListData";
-import Taxes from "../components/pages/Taxes";
-import CashRegisters from "../components/pages/CashRegisters";
-import GiftCards from "../components/pages/GiftCards";
-import Coupons from "../components/pages/Coupons";
-import Addresses from "../components/pages/Addresses";
-import StorePickups from "../components/pages/StorePickups";
 import OpenCashRegister from "../components/pages/OpenCashRegister";
-import Reports from "../components/pages/Reports";
-import Companies from "../components/pages/Companies";
+
+// data tables
+import Orders from "../components/tables/OrderTable";
+import Customers from "../components/tables/CustomerTable";
+import Products from "../components/tables/ProductTable";
+import Categories from "../components/tables/CategoryTable";
+import Stores from "../components/tables/StoreTable";
+import Users from "../components/tables/UserTable";
+
+import Taxes from "../components/tables/TaxTable";
+import CashRegisters from "../components/tables/CashRegisterTable";
+import GiftCards from "../components/tables/GiftCardTable";
+import Coupons from "../components/tables/CouponTable";
+import Addresses from "../components/tables/AddressTable";
+import StorePickups from "../components/tables/StorePickupTable";
+
+import Reports from "../components/tables/CashRegisterReportsTable";
+import Companies from "../components/tables/CompanyTable";
 import LandingPage from "../components/pages/LandingPage";
 
 export default [
@@ -98,18 +100,6 @@ export default [
         name: "StorePickups",
         path: "/store-pickups",
         component: StorePickups,
-        meta: { requiresAuth: true }
-    },
-    {
-        name: "Forms",
-        path: "/forms",
-        component: Forms,
-        meta: { requiresAuth: true }
-    },
-    {
-        name: "ListData",
-        path: "/list-data",
-        component: ListData,
         meta: { requiresAuth: true }
     },
     {

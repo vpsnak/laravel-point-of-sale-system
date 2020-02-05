@@ -1,12 +1,12 @@
 <template>
-	<prop-data-table
-		:tableHeaders="headers"
+	<data-table
+		icon="mdi-account-group"
+		title="Customers"
+		:headers="headers"
 		data-url="customers"
-		tableTitle="Customers"
-		tableBtnTitle="New Customer"
-		tableForm="customerNewForm"
-		:tableBtnDisable="false"
-		tableViewComponent="customer"
+		btnTxt="New Customer"
+		:newForm="form"
+		:disableNewBtn="false"
 	>
 		<template v-slot:item.email="{ item }">
 			<a :href="'mailto:' + item.email">{{ item.email }}</a>
@@ -28,7 +28,7 @@
 					<v-btn
 						small
 						:disabled="disableActions"
-						@click.stop="editItemDialog(item)"
+						@click.stop="item.form=form,editItem(item)"
 						class="my-2"
 						v-on="on"
 						icon
@@ -44,18 +44,18 @@
 					<v-btn
 						small
 						:disabled="disableActions"
-						@click.stop="viewItemDialog(item)"
+						@click.stop="item.form=form, viewItem(item)"
 						class="my-2"
 						v-on="on"
 						icon
 					>
-						<v-icon small>watch</v-icon>
+						<v-icon small>mdi-eye</v-icon>
 					</v-btn>
 				</template>
 				<span>View</span>
 			</v-tooltip>
 		</template>
-	</prop-data-table>
+	</data-table>
 </template>
 
 <script>
@@ -66,34 +66,13 @@ export default {
 		return {
 			form: "customerNewForm",
 			headers: [
-				{
-					text: "Id",
-					value: "id"
-				},
-				{
-					text: "First name",
-					value: "first_name"
-				},
-				{
-					text: "Last name",
-					value: "last_name"
-				},
-				{
-					text: "E-mail",
-					value: "email"
-				},
-				{
-					text: "No tax",
-					value: "no_tax"
-				},
-				{
-					text: "House Account",
-					value: "house_account_status"
-				},
-				{
-					text: "Actions",
-					value: "actions"
-				}
+				{ text: "#", value: "id" },
+				{ text: "First name", value: "first_name" },
+				{ text: "Last name", value: "last_name" },
+				{ text: "E-mail", value: "email" },
+				{ text: "No tax", value: "no_tax" },
+				{ text: "House Account", value: "house_account_status" },
+				{ text: "Actions", value: "actions" }
 			]
 		};
 	},
@@ -120,35 +99,8 @@ export default {
 		}
 	},
 	methods: {
-		...mapMutations("dialog", ["setDialog", "resetDialog"]),
-		...mapMutations("datatable", ["setLoading"]),
-
-		editItemDialog(item) {
-			this.dialog = {
-				show: true,
-				fullscreen: false,
-				width: 600,
-				title: `Edit item #${item.id}`,
-				titleCloseBtn: true,
-				icon: "mdi-pencil",
-				component: this.form,
-				model: _.cloneDeep(item),
-				persistent: true
-			};
-		},
-		viewItemDialog(item) {
-			this.dialog = {
-				show: true,
-				fullscreen: false,
-				width: 1000,
-				title: `View item #${item.id}`,
-				titleCloseBtn: true,
-				icon: "mdi-watch",
-				component: this.form,
-				model: item,
-				persistent: false
-			};
-		}
+		...mapMutations("dialog", ["editItem", "viewItem"]),
+		...mapMutations("datatable", ["setLoading"])
 	}
 };
 </script>

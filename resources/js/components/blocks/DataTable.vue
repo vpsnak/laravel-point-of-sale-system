@@ -1,53 +1,60 @@
 <template>
-	<v-card>
-		<v-card-title>
-			<v-icon v-if="$props.icon">{{ $props.icon }}</v-icon>
-			{{ $props.title }}
-			<v-spacer></v-spacer>
-			<v-text-field
-				:disabled="loading"
-				:search="search"
-				prepend-icon="search"
-				hide-details
-				label="Search"
-				single-line
-				v-model="keyword"
-				append-icon="mdi-close"
-				@click:append="keyword=null, searchAction=null, paginate($event)"
-				@click:prepend="search"
-				@keyup.enter="search"
-			></v-text-field>
-			<v-divider class="mx-4" inset vertical></v-divider>
-			<v-btn
-				:disabled="$props.tableBtnDisable || loading"
-				color="primary"
-				@click="createItemDialog"
-			>{{ $props.tableBtnTitle }}</v-btn>
-		</v-card-title>
+	<v-container fluid>
+		<v-card>
+			<v-card-title>
+				<v-icon v-if="$props.icon" class="mr-2">{{ $props.icon }}</v-icon>
+				{{ $props.title }}
+				<v-spacer></v-spacer>
+				<v-text-field
+					:disabled="loading"
+					:search="search"
+					prepend-icon="search"
+					hide-details
+					label="Search"
+					single-line
+					v-model="keyword"
+					append-icon="mdi-close"
+					@click:append="
+                    (keyword = null), (searchAction = null), paginate($event)
+                "
+					@click:prepend="search"
+					@keyup.enter="search"
+				></v-text-field>
+				<v-divider class="mx-4" v-if="$props.newForm && $props.btnTxt" inset vertical></v-divider>
+				<v-btn
+					v-if="$props.newForm && $props.btnTxt"
+					:disabled="$props.disableNewBtn || loading"
+					color="primary"
+					@click="createItemDialog"
+				>{{ $props.btnTxt }}</v-btn>
+			</v-card-title>
 
-		<v-data-table
-			disable-sort
-			dense
-			:disable-filtering="true"
-			:headers="$props.tableHeaders"
-			:items="rows"
-			:loading="loading"
-			:items-per-page="15"
-			:page.sync="currentPage"
-			:server-items-length="totalItems"
-			@pagination="paginate"
-			:footer-props="footerProps"
-		>
-			<template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
-				<slot :name="slot" v-bind="scope" />
-			</template>
+			<v-data-table
+				disable-sort
+				dense
+				:disable-filtering="true"
+				:headers="$props.headers"
+				:items="rows"
+				:loading="loading"
+				:items-per-page="15"
+				:page.sync="currentPage"
+				:server-items-length="totalItems"
+				@pagination="paginate"
+				:footer-props="footerProps"
+			>
+				<template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
+					<slot :name="slot" v-bind="scope" />
+				</template>
 
-			<v-alert :value="true" color="error" icon="warning" slot="no-results">
-				Your search for "{{ keyword }}" found no
-				results.
-			</v-alert>
-		</v-data-table>
-	</v-card>
+				<v-alert
+					:value="true"
+					color="error"
+					icon="warning"
+					slot="no-results"
+				>Your search for "{{ keyword }}" found no results.</v-alert>
+			</v-data-table>
+		</v-card>
+	</v-container>
 </template>
 
 <script>
@@ -65,13 +72,12 @@ export default {
 	},
 	props: {
 		icon: String,
-		tableTitle: String,
-		tableHeaders: Array,
+		title: String,
+		headers: Array,
 		dataUrl: String,
-		tableBtnTitle: String,
-		tableForm: String,
-		tableViewComponent: String,
-		tableBtnDisable: Boolean
+		btnTxt: String,
+		newForm: String,
+		disableNewBtn: Boolean
 	},
 	mounted() {
 		if (this.$props.tableForm === "productForm") {
@@ -87,6 +93,16 @@ export default {
 		}
 	},
 	computed: {
+		...mapState("dialog", ["interactive_dialog"]),
+
+		dialog: {
+			get() {
+				return this.interactive_dialog;
+			},
+			set(value) {
+				this.setDialog(value);
+			}
+		},
 		searchAction: {
 			get() {
 				return this.search_action;
@@ -124,6 +140,8 @@ export default {
 		})
 	},
 	methods: {
+		...mapMutations("dialog", ["resetDialog", "setDialog"]),
+
 		search(e, page = false) {
 			if (this.keyword.length > 2 || this.searchAction) {
 				this.setLoading(true);
@@ -191,9 +209,9 @@ export default {
 			this.dialog = {
 				show: true,
 				width: 600,
-				title: `${this.$props.tableBtnTitle}`,
+				title: this.$props.btnTxt,
 				titleCloseBtn: true,
-				component: this.$props.tableForm,
+				component: this.$props.newForm,
 				persistent: true
 			};
 		},

@@ -1,19 +1,19 @@
 <template>
 	<div>
-		<prop-data-table
-			:tableHeaders="headers"
+		<data-table
+			icon="mdi-wallet-giftcard"
+			title="Gift Cards"
+			:headers="headers"
 			data-url="gift-cards"
-			tableTitle="Gift Cards"
-			tableBtnTitle="New Gift Card"
-			tableForm="giftCardForm"
-			tableViewComponent="giftCard"
+			btnTxt="New Gift Card"
+			:newForm="form"
 		>
 			<template v-slot:item.enabled="{ item }">{{ item.enabled ? "Yes" : "No" }}</template>
 
 			<template v-slot:item.actions="{ item }">
 				<v-tooltip bottom>
 					<template v-slot:activator="{ on }">
-						<v-btn @click="rechargeGiftcardDialog(item) " :loading="loading" class="my-1" icon v-on="on">
+						<v-btn @click="rechargeGiftcardDialog(item)" :loading="loading" class="my-2" icon v-on="on">
 							<v-icon small>mdi-credit-card-plus</v-icon>
 						</v-btn>
 					</template>
@@ -25,8 +25,8 @@
 						<v-btn
 							small
 							:loading="loading"
-							@click.stop="editItemDialog(item)"
-							class="my-1"
+							@click.stop="item.form=form,editItem(item)"
+							class="my-2"
 							v-on="on"
 							icon
 						>
@@ -40,33 +40,18 @@
 						<v-btn
 							small
 							:loading="loading"
-							@click.stop="viewItemDialog(item)"
-							class="my-1"
+							@click.stop="item.form=form,viewItem(item)"
+							class="my-2"
 							v-on="on"
 							icon
 						>
-							<v-icon small>watch</v-icon>
+							<v-icon small>mdi-eye</v-icon>
 						</v-btn>
 					</template>
 					<span>View</span>
 				</v-tooltip>
 			</template>
-		</prop-data-table>
-
-		<interactiveDialog
-			v-if="dialog.show"
-			:show="dialog.show"
-			:title="dialog.title"
-			:titleCloseBtn="dialog.titleCloseBtn"
-			:icon="dialog.icon"
-			:fullscreen="dialog.fullscreen"
-			:width="dialog.width"
-			:component="dialog.component"
-			:content="dialog.content"
-			:model="dialog.model"
-			@action="dialogEvent"
-			:persistent="dialog.persistent"
-		></interactiveDialog>
+		</data-table>
 
 		<checkoutDialog v-if="checkoutDialog" />
 	</div>
@@ -80,31 +65,12 @@ export default {
 		return {
 			form: "giftCardForm",
 			headers: [
-				{
-					text: "#",
-					value: "id"
-				},
-				{
-					text: "Name",
-					value: "name"
-				},
-				{
-					text: "Code",
-					value: "code"
-				},
-				{
-					text: "Enabled",
-					value: "enabled"
-				},
-				{
-					text: "Amount",
-					value: "amount"
-				},
-				{
-					text: "Actions",
-					value: "actions",
-					shortable: false
-				}
+				{ text: "#", value: "id" },
+				{ text: "Name", value: "name" },
+				{ text: "Code", value: "code" },
+				{ text: "Enabled", value: "enabled" },
+				{ text: "Amount", value: "amount" },
+				{ text: "Actions", value: "actions" }
 			]
 		};
 	},
@@ -139,7 +105,7 @@ export default {
 	},
 	methods: {
 		...mapMutations("datatable", ["setLoading"]),
-		...mapMutations("dialog", ["setDialog", "resetDialog"]),
+		...mapMutations("dialog", ["setDialog", "viewItem", "editItem"]),
 
 		rechargeGiftcardDialog(item) {
 			this.dialog = {
@@ -157,33 +123,6 @@ export default {
 			if (event) {
 				this.checkoutDialog = true;
 			}
-
-			this.resetDialog();
-		},
-		editItemDialog(item) {
-			this.dialog = {
-				show: true,
-				width: 600,
-				title: `Edit item #${item.id}`,
-				titleCloseBtn: true,
-				icon: "mdi-pencil",
-				component: this.form,
-				model: _.cloneDeep(item),
-				persistent: true
-			};
-		},
-		viewItemDialog(item) {
-			this.dialog = {
-				show: true,
-				fullscreen: false,
-				width: 600,
-				title: `View item #${item.id}`,
-				titleCloseBtn: true,
-				icon: "mdi-watch",
-				component: this.form,
-				model: item,
-				persistent: true
-			};
 		}
 	}
 };

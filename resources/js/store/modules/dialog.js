@@ -15,6 +15,30 @@ const state = {
 
 // mutations
 const mutations = {
+    editItem(state, item) {
+        state.interactive_dialog.show = true;
+        state.interactive_dialog.fullscreen = false;
+        state.interactive_dialog.width = 600;
+        state.interactive_dialog.title = `Edit item #${item.id}`;
+        state.interactive_dialog.titleCloseBtn = true;
+        state.interactive_dialog.icon = "mdi-pencil";
+        state.interactive_dialog.component = item.form;
+        state.interactive_dialog.model = _.cloneDeep(item);
+        state.interactive_dialog.persistent = true;
+    },
+
+    viewItem(state, item) {
+        state.interactive_dialog.show = true;
+        state.interactive_dialog.fullscreen = false;
+        state.interactive_dialog.width = 600;
+        state.interactive_dialog.title = `View item #${item.id}`;
+        state.interactive_dialog.titleCloseBtn = true;
+        state.interactive_dialog.icon = "mdi-eye";
+        state.interactive_dialog.component = item.form;
+        state.interactive_dialog.model = item;
+        state.interactive_dialog.persistent = false;
+    },
+
     setDialog(state, value) {
         value.show ? (state.interactive_dialog.show = value.show) : "";
         value.width ? (state.interactive_dialog.width = value.width) : "";

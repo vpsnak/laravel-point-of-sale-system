@@ -1,12 +1,11 @@
 <template>
 	<div>
-		<prop-data-table
-			:tableHeaders="headers"
+		<data-table
+			icon="mdi-buffer"
+			title="Orders"
+			:headers="headers"
 			data-url="orders"
-			tableTitle="Orders"
-			tableBtnTitle="New Order"
-			:tableBtnDisable="true"
-			tableViewComponent="order"
+			:disableNewBtn="true"
 		>
 			<template v-slot:item.customer="{ item }">{{ item.customer ? item.customer.email : "Guest" }}</template>
 			<template v-slot:item.total="{ item }">$ {{ item.total.toFixed(2) }}</template>
@@ -57,7 +56,7 @@
 						<v-btn
 							small
 							:disabled="disableActions"
-							@click.stop="editItemDialog(item)"
+							@click.stop="item.form=form,editItem(item)"
 							class="my-2"
 							v-on="on"
 							icon
@@ -73,18 +72,18 @@
 						<v-btn
 							small
 							:disabled="disableActions"
-							@click.stop="viewItemDialog(item)"
+							@click.stop="item.form=form, viewItem(item)"
 							class="my-2"
 							v-on="on"
 							icon
 						>
-							<v-icon small>watch</v-icon>
+							<v-icon small>mdi-eye</v-icon>
 						</v-btn>
 					</template>
 					<span>View</span>
 				</v-tooltip>
 			</template>
-		</prop-data-table>
+		</data-table>
 
 		<checkoutDialog v-if="checkoutDialog" />
 	</div>
@@ -98,42 +97,15 @@ export default {
 		return {
 			form: "order",
 			headers: [
-				{
-					text: "#",
-					value: "id"
-				},
-				{
-					text: "Customer",
-					value: "customer"
-				},
-				{
-					text: "Store",
-					value: "store.name"
-				},
-				{
-					text: "Status",
-					value: "status"
-				},
-				{
-					text: "Total",
-					value: "total"
-				},
-				{
-					text: "Total paid",
-					value: "total_paid"
-				},
-				{
-					text: "Created by",
-					value: "created_by.name"
-				},
-				{
-					text: "Created at",
-					value: "created_at"
-				},
-				{
-					text: "Actions",
-					value: "actions"
-				}
+				{ text: "#", value: "id" },
+				{ text: "Customer", value: "customer" },
+				{ text: "Store", value: "store.name" },
+				{ text: "Status", value: "status" },
+				{ text: "Total", value: "total" },
+				{ text: "Total paid", value: "total_paid" },
+				{ text: "Created by", value: "created_by.name" },
+				{ text: "Created at", value: "created_at" },
+				{ text: "Actions", value: "actions" }
 			]
 		};
 	},
@@ -169,7 +141,7 @@ export default {
 	},
 
 	methods: {
-		...mapMutations("dialog", ["setDialog", "resetDialog"]),
+		...mapMutations("dialog", ["setDialog", "editItem", "viewItem"]),
 		...mapMutations("datatable", ["setLoading"]),
 		...mapActions(["getOne", "delete"]),
 
@@ -192,12 +164,11 @@ export default {
 					return "";
 			}
 		},
+		// cancel order if event === true
 		dialogEvent(event) {
 			if (event) {
 				this.cancelOrder();
 			}
-
-			this.resetDialog();
 		},
 		checkout(id) {
 			this.disableActions = true;
@@ -251,32 +222,6 @@ export default {
 				.finally(() => {
 					this.disableActions = false;
 				});
-		},
-		editItemDialog(item) {
-			this.dialog = {
-				show: true,
-				fullscreen: false,
-				width: 600,
-				title: `Edit item #${item.id}`,
-				titleCloseBtn: true,
-				icon: "mdi-pencil",
-				component: this.form,
-				model: _.cloneDeep(item),
-				persistent: true
-			};
-		},
-		viewItemDialog(item) {
-			this.dialog = {
-				show: true,
-				fullscreen: false,
-				width: 1000,
-				title: `View item #${item.id}`,
-				titleCloseBtn: true,
-				icon: "mdi-watch",
-				component: this.form,
-				model: item,
-				persistent: false
-			};
 		}
 	}
 };
