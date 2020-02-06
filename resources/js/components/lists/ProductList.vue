@@ -72,7 +72,7 @@
 							height="170px"
 						>
 							<v-card-title class="secondary pa-0" @click.stop>
-								<h6 class="px-2">{{ product.name }}</h6>
+								<h6 class="px-2">{{truncate(product.name)}}</h6>
 								<div class="flex-grow-1"></div>
 								<v-menu bottom left>
 									<template v-slot:activator="{ on }">
@@ -108,20 +108,24 @@
 							</v-card-title>
 							<v-card-actions>
 								<div class="d-flex flex-column">
-									<v-chip class="secondary mt-2 ml-1 elevation-12">
+                                    <v-chip small class="grey darken-1 mt-2 ml-1 elevation-12">
+										<span>SKU: {{ parseFloat(product.sku)}}</span>
+									</v-chip>
+									<v-chip small class="secondary mt-2 ml-1 elevation-12">
 										<span>Price: {{ parseFloat(product.final_price).toFixed(2) }} $</span>
 									</v-chip>
-									<v-chip v-if="product.final_price != product.price.amount" class="mt-2 ml-1 elevation-12">
+									<v-chip small v-if="product.final_price != product.price.amount" class="mt-2 ml-1 elevation-12">
 										<span>Net Price: {{ parseFloat(product.final_price).toFixed(2) }} $</span>
 									</v-chip>
 									<v-chip
+                                    small
 										v-if="product.stock <= 10 && product.stock > 0"
 										color="orange"
 										class="mt-2 ml-1 elevation-12"
 									>
 										<span>Stock: {{ product.stock }}</span>
 									</v-chip>
-									<v-chip v-else-if="product.stock <= 0" color="red" class="mt-2 ml-1 elevation-12">
+									<v-chip small v-else-if="product.stock <= 0" color="red" class="mt-2 ml-1 elevation-12">
 										<span>Stock: {{ product.stock }}</span>
 									</v-chip>
 								</div>
@@ -281,6 +285,9 @@ export default {
 		}
 	},
 	methods: {
+        truncate(string){
+        return _.truncate(string);
+        },
 		printProductBarcode(product) {
 			window.open(`/product_barcode/${product.id}`, "_blank");
 		},
