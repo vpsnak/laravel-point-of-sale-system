@@ -17,7 +17,7 @@ class CreateReceiptsTable extends Migration
             $table->bigIncrements('id');
 
             $table->unsignedBigInteger('issued_by');
-            $table->json('content');
+            $table->text('content');
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('cash_register_id');
             $table->integer('print_count');

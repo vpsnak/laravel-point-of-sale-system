@@ -10,6 +10,7 @@ class Order extends Model
     protected $appends = ['total', 'total_without_tax', 'total_paid'];
 
     protected $fillable = [
+        'magento_id',
         'customer_id',
         'store_id',
         'created_by',
