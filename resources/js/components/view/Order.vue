@@ -124,6 +124,74 @@
 					</v-card-text>
 				</v-card>
 			</v-col>
+			<v-col cols="12" v-if="orderData.customer">
+				<v-card>
+					<v-card-title>Customer</v-card-title>
+					<v-card-text>
+						<v-simple-table>
+							<template v-slot:default>
+								<thead>
+									<tr>
+										<th class="text-left">First name</th>
+										<th class="text-left">Last name</th>
+										<th class="text-left">Email</th>
+										<th class="text-left">House account</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>{{ orderData.customer.first_name }}</td>
+										<td>{{ orderData.customer.last_name }}</td>
+										<td>{{ orderData.customer.email }}</td>
+										<td>{{ orderData.customer.house_account_status ? 'Yes' : 'No' }}</td>
+									</tr>
+								</tbody>
+							</template>
+						</v-simple-table>
+					</v-card-text>
+				</v-card>
+			</v-col>
+			<v-col cols="12" v-if="orderData.customer">
+				<v-card>
+					<v-card-title>Customer Addresses</v-card-title>
+					<v-card-text>
+						<v-simple-table>
+							<template v-slot:default>
+								<thead>
+									<tr>
+										<th class="text-left">First name</th>
+										<th class="text-left">Last name</th>
+										<th class="text-left">Street</th>
+										<th class="text-left">Street 2</th>
+										<th class="text-left">City</th>
+										<th class="text-left">Country id</th>
+										<th class="text-left">Region</th>
+										<th class="text-left">Post code</th>
+										<th class="text-left">Phone</th>
+										<th class="text-left">Default Billing</th>
+										<th class="text-left">Default Shipping</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr :key="item.id" v-for="item in orderData.customer.addresses">
+										<td>{{ item.first_name }}</td>
+										<td>{{ item.last_name }}</td>
+										<td>{{ item.street }}</td>
+										<td>{{ item.street2 }}</td>
+										<td>{{ item.city }}</td>
+										<td>{{ item.country_id }}</td>
+										<td>{{ item.region_id.default_name }}</td>
+										<td>{{ item.postcode }}</td>
+										<td>{{ item.phone }}</td>
+										<td>{{ item.billing ? 'Yes' : 'No'}}</td>
+										<td>{{ item.shipping ? 'Yes' : 'No'}}</td>
+									</tr>
+								</tbody>
+							</template>
+						</v-simple-table>
+					</v-card-text>
+				</v-card>
+			</v-col>
 		</v-row>
 	</v-container>
 	<v-container v-else>
