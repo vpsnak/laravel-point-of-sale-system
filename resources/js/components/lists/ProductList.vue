@@ -95,7 +95,7 @@
 											<h5>Plant care</h5>
 										</v-list-item>
 										<v-list-item :href="product.url" target="_blank" link :disabled="!product.url">
-											<v-icon class="pr-2">fab fa-magento</v-icon>
+											<v-icon class="pr-2">mdi-alpha-m-circle-outline</v-icon>
 											<h5>View on Magento</h5>
 										</v-list-item>
 										<v-divider />
