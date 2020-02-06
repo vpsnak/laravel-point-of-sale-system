@@ -46,7 +46,7 @@ class ProcessOrder implements ShouldQueue
             foreach ($this->order->items as $item) {
                 $this->handleStock($item, 'remove');
             }
-        } else if ($this->order->status == 'complete') {
+        } else if ($this->order->status === 'paid') {
             MasOrderController::submitToMas($this->order);
         } else if ($this->order->status == 'canceled') {
             foreach ($this->order->items as $item) {

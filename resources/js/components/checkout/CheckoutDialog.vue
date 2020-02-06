@@ -18,7 +18,7 @@
                             color="red"
                         >
                             <v-icon>
-                                {{ order.id ? mdi - cancel : mdi - close }}
+                                {{ order.id ? "mdi-cancel" : "mdi-close" }}
                             </v-icon>
                         </v-btn>
                     </template>

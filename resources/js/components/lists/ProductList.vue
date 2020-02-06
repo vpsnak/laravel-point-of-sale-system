@@ -143,7 +143,7 @@
 			@next="currentPage += 1"
 		></v-pagination>
 
-		<interactiveDialog
+		<!-- <interactiveDialog
 			v-if="showDummyDialog"
 			:show="showDummyDialog"
 			component="dummyProductForm"
@@ -174,7 +174,7 @@
 			action="newItem"
 			cancelBtnTxt="Close"
 			titleCloseBtn
-		></interactiveDialog>
+		></interactiveDialog>-->
 	</v-card>
 </template>
 

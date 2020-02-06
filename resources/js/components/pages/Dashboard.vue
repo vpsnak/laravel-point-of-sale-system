@@ -276,15 +276,6 @@
 				</v-card-text>
 			</v-card>
 		</v-form>
-		<interactiveDialog
-			:width="600"
-			:title="'Log #' + item.id"
-			v-if="showLog"
-			actions
-			:show="showLog"
-			@action="showLog = false"
-			:content="'<pre><code style=\'max-width:100%\'>' + item.log + '</code></pre>'"
-		></interactiveDialog>
 	</v-container>
 </template>
 
