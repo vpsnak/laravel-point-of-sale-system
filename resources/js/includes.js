@@ -1,6 +1,7 @@
 import "@mdi/font/css/materialdesignicons.css";
 import "material-design-icons-iconfont/dist/material-design-icons.css";
 import store from "./store/store";
+import Cookies from "js-cookie";
 
 window._ = require("lodash");
 
@@ -13,6 +14,11 @@ window._ = require("lodash");
 // axios config
 window.axios = require("axios");
 window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+Cookies.get("token")
+    ? (window.axios.defaults.headers.common["Authorization"] = Cookies.get(
+          "token"
+      ))
+    : "";
 
 window.axios.interceptors.response.use(undefined, function(error) {
     if (error.response.status === 401) {

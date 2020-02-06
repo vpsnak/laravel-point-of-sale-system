@@ -114,9 +114,6 @@ export default new Vuex.Store({
             if (token) {
                 state.token = `Bearer ${token}`;
 
-                window.axios.defaults.headers.common["Authorization"] =
-                    state.token;
-
                 Cookies.set("token", state.token, {
                     secure:
                         state.config.app_env !== "development" ? true : false,
@@ -153,6 +150,10 @@ export default new Vuex.Store({
                             msg: response.data.info,
                             type: "info"
                         };
+
+                        window.axios.defaults.headers.common[
+                            "Authorization"
+                        ] = `Bearer ${response.data.token}`;
 
                         context.commit("setToken", response.data.token);
                         context.commit("setUser", response.data.user);

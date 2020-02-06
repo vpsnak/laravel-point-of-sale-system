@@ -33,7 +33,7 @@ class GiftcardSeeder extends Seeder
                 'amount' => 1337,
             ]
         ]);
-        foreach (range(90001, 92500) as $giftcard_code) {
+        foreach (range(90001, 90010) as $giftcard_code) {
             Giftcard::store([
                 'name' => 'Inactive Giftcard',
                 'code' => '@' . str_pad($giftcard_code, 10, '0', STR_PAD_LEFT),
