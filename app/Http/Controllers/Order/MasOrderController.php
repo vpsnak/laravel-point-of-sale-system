@@ -16,9 +16,9 @@ class MasOrderController extends Controller
     protected static $user = 'pshed';
     protected static $pass = '9JNH76k#';
     // mas test endpoint
-    protected static $new_order_endpoint = 'http://masapitest.cloudapp.net/MASDirect.Api.Service.svc/api/messagesj';
+    // protected static $new_order_endpoint = 'http://masapitest.cloudapp.net/MASDirect.Api.Service.svc/api/messagesj';
     // mas production endpoint
-    // protected static $new_order_endpoint = 'https://api.masdirectnetwork.com/api/messages';
+    protected static $new_order_endpoint = 'https://api.masdirectnetwork.com/api/messages';
 
     protected $model = MasOrder::class;
 

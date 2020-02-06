@@ -127,7 +127,7 @@ export default {
 		...mapMutations("dialog", ["setDialog", "editItem", "viewItem"]),
 
 		parseRoleName(value) {
-			return _.upperFirst(status.replace("_", " "));
+			return _.upperFirst(value.replace("_", " "));
 		},
 		roleDialog(item) {
 			this.dialog = {

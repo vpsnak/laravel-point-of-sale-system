@@ -39,7 +39,7 @@ const mutations = {
     viewItem(state, item) {
         state.interactive_dialog.show = true;
         state.interactive_dialog.fullscreen = false;
-        state.interactive_dialog.width = 600;
+        state.interactive_dialog.width = 1000;
         state.interactive_dialog.title = `View item #${item.id}`;
         state.interactive_dialog.titleCloseBtn = true;
         state.interactive_dialog.icon = "mdi-eye";
@@ -51,7 +51,7 @@ const mutations = {
     },
 
     setDialog(state, value) {
-        value.show ? (state.interactive_dialog.show = value.show) : "";
+        state.interactive_dialog.show = true;
         value.width ? (state.interactive_dialog.width = value.width) : "";
         value.fullscreen
             ? (state.interactive_dialog.fullscreen = value.fullscreen)

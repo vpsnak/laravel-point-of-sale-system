@@ -135,10 +135,7 @@ export default {
 
 			if (this.$props.model) {
 				axios
-					.patch(
-						`/api/users/update/${this.$props.model.id}`,
-						payload.data
-					)
+					.patch(`/api/users/update/${this.$props.model.id}`, payload.data)
 					.then(() => {
 						this.clear();
 						this.$emit("submit", {
@@ -172,7 +169,6 @@ export default {
 			}
 		},
 		clear() {
-			this.$refs.userObs.reset();
 			this.formFields = { ...this.defaultValues };
 		}
 	},

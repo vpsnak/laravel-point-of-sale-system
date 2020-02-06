@@ -480,7 +480,7 @@ export default new Vuex.Store({
         retrieveCashRegister(context) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(this.state.baseUrl + "cash-register-logs/retrieve")
+                    .get(`${this.state.baseUrl}cash-register-logs/retrieve`)
                     .then(response => {
                         if (response.data !== 0) {
                             if (

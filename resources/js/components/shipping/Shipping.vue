@@ -216,17 +216,21 @@ export default {
 		this.validate();
 
 		EventBus.$on("shipping-timeslot", event => {
-			this.timeSlots.push(event.payload);
-			this.shipping.timeSlotLabel = event.payload.label;
+			if (event.payload) {
+				this.timeSlots.push(event.payload);
+				this.shipping.timeSlotLabel = event.payload.label;
+			}
 		});
 
 		EventBus.$on("shipping-addresses", event => {
-			this.addresses.push(event.payload);
+			if (event.payload) {
+				this.addresses.push(event.payload);
 
-			if (this.dialog.model.type === "shipping") {
-				this.shipping.address = event;
-			} else {
-				this.billingAddress = event;
+				if (this.dialog.model.type === "shipping") {
+					this.shipping.address = event.payload;
+				} else {
+					this.billingAddress = event.payload;
+				}
 			}
 		});
 	},

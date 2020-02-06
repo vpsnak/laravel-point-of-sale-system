@@ -35,14 +35,15 @@
 					<span>Continue checkout</span>
 				</v-tooltip>
 
-				<v-tooltip bottom v-if="item.status !== 'canceled'">
+				<v-tooltip bottom v-if="item.status !== 'canceled'" color="red">
 					<template v-slot:activator="{ on }">
 						<v-btn
+							icon
 							small
+							color="red"
 							:disabled="disableActions"
 							@click.stop="cancelOrderDialog(item)"
 							class="my-2"
-							icon
 							v-on="on"
 						>
 							<v-icon small>mdi-cancel</v-icon>
