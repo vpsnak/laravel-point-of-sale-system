@@ -12,20 +12,13 @@ use Illuminate\Support\Facades\Log;
 class MasOrderController extends Controller
 {
     const LOG_PREFIX = 'MAS';
-    protected static $mas_direct_id = 'USZZ000035';
-    protected static $user = 'pshed';
-    protected static $pass = '9JNH76k#';
-    // mas test endpoint
-    // protected static $new_order_endpoint = 'http://masapitest.cloudapp.net/MASDirect.Api.Service.svc/api/messagesj';
-    // mas production endpoint
-    protected static $new_order_endpoint = 'https://api.masdirectnetwork.com/api/messages';
 
     protected $model = MasOrder::class;
 
     public static function submitToMas(Order $order)
     {
         $payload = [];
-        $payload['SenderMdNumber'] = self::$mas_direct_id;
+        $payload['SenderMdNumber'] = config('mas.credentials.direct_id');
         $payload['FulfillerMDNumber'] = 'USNY000012';
         // $payload['FulfillerMDNumber'] = 'USZZ000035';
         $payload['PriorityType'] = 1;
@@ -47,9 +40,14 @@ class MasOrderController extends Controller
         self::log('Payload: ' . json_encode($payload));
         try {
             $client = new Client();
-            $response = $client->post(self::$new_order_endpoint, [
+
+            config('mas.production_mode') ? $endpoint = config('mas.endpoints.production') : $endpoint = config('mas.endpoints.test');
+
+            $encCreds = base64_encode(config('mas.credentials.username') . ':' . config('mas.credentials.password') . ':' . config('mas.credentials.direct_id'));
+
+            $response = $client->post($endpoint, [
                 'headers' => [
-                    'Authorization' => 'Basic ' . base64_encode(self::$user . ':' . self::$pass . ':' . self::$mas_direct_id),
+                    'Authorization' => "Basic {$encCreds}",
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json'
                 ],

@@ -1,6 +1,7 @@
 const state = {
     app_env: process.env.NODE_ENV,
-    app_name: process.env.VUE_APP_NAME || "Plantshed Sales Management",
+    app_name: process.env.MIX_APP_NAME,
+    mas_production_mode: process.env.MIX_MAS_PRODUCTION_MODE,
 
     app_load: 0
 };

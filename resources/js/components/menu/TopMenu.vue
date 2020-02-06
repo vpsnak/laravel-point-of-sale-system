@@ -1,11 +1,22 @@
 <template>
 	<v-app-bar app clipped-left>
 		<v-app-bar-nav-icon @click.stop="toggle = !toggle"></v-app-bar-nav-icon>
-		<v-toolbar-title>{{ appName }}</v-toolbar-title>
+		<v-toolbar-title>{{ app_name }}</v-toolbar-title>
 
-		<v-spacer v-if="appEnv !== 'production'"></v-spacer>
-		<v-toolbar-title class="pr-2" v-if="appEnv !== 'production'">
-			<i class="orange--text">Development mode</i>
+		<v-spacer></v-spacer>
+
+		<v-toolbar-title class="pr-2">
+			Environment:
+			<i :class="txtColor(app_env)">{{ app_env }}</i>
+		</v-toolbar-title>
+
+		<v-spacer></v-spacer>
+
+		<v-toolbar-title class="pr-2">
+			MAS Mode:
+			<i
+				:class="txtColor(mas_production_mode ? 'production' : 'test')"
+			>{{ mas_production_mode ? 'production' : 'test' }}</i>
 		</v-toolbar-title>
 
 		<v-spacer></v-spacer>
@@ -110,21 +121,6 @@
 				</v-list-item-group>
 			</v-list>
 		</v-menu>
-
-		<interactiveDialog
-			v-if="dialog.show"
-			:show="dialog.show"
-			:title="dialog.title"
-			:titleCloseBtn="dialog.titleCloseBtn"
-			:icon="dialog.icon"
-			:fullscreen="dialog.fullscreen"
-			:width="dialog.width"
-			:component="dialog.component"
-			:content="dialog.content"
-			:model="dialog.model"
-			@action="dialogEvent"
-			:persistent="dialog.persistent"
-		></interactiveDialog>
 	</v-app-bar>
 </template>
 
@@ -132,25 +128,6 @@
 import { mapState } from "vuex";
 
 export default {
-	data() {
-		return {
-			dialog: {
-				show: false,
-				width: 600,
-				fullscreen: false,
-				icon: "",
-				title: "",
-				titleCloseBtn: false,
-				component: "",
-				content: "",
-				model: "",
-				persistent: false
-			},
-			retrieveCashRegisterEvent: null,
-			action: ""
-		};
-	},
-
 	methods: {
 		invertTheme() {
 			this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
@@ -158,45 +135,34 @@ export default {
 		cashRegisterLogout() {
 			this.$store.dispatch("logoutCashRegister");
 		},
-		resetDialog() {
-			return new Promise(resolve => {
-				this.dialog = {
-					show: false,
-					width: 600,
-					fullscreen: false,
-					title: "",
-					titleCloseBtn: false,
-					icon: "",
-					component: "",
-					content: "",
-					model: "",
-					persistent: false
-				};
 
-				this.action = "";
-
-				resolve(true);
-			});
-		},
 		dialogEvent(event) {
 			if (event) {
 				switch (this.action) {
 					case "closeCashRegister":
-						this.resetDialog();
 						this.displayZDialog(event.response.report);
 						break;
 					default:
 						break;
 				}
 			}
-			this.resetDialog();
 		},
-
+		txtColor(mode) {
+			switch (mode) {
+				case "local":
+				case "test":
+				case "development":
+					return "orange--text";
+				case "live":
+				case "production":
+					return "green--text";
+				case true:
+				default:
+					return "white--text";
+			}
+		},
 		closeCashRegisterDialog() {
-			this.action = "closeCashRegister";
-
 			this.dialog = {
-				show: true,
 				width: 600,
 				title: `Close and generate Z report`,
 				titleCloseBtn: true,
@@ -207,7 +173,6 @@ export default {
 		},
 		changePasswordDialog() {
 			this.dialog = {
-				show: true,
 				width: 600,
 				title: `Change Password`,
 				titleCloseBtn: true,
@@ -219,7 +184,6 @@ export default {
 		},
 		displayZDialog(event) {
 			this.dialog = {
-				show: false,
 				width: 1000,
 				title: event.report_name,
 				titleCloseBtn: true,
@@ -228,12 +192,9 @@ export default {
 				component: "cashRegisterReports",
 				persistent: true
 			};
-
-			this.dialog.show = true;
 		},
 		checkCashRegisterDialog() {
 			this.dialog = {
-				show: true,
 				width: 1000,
 				title: "Report: " + this.cashRegister.name,
 				titleCloseBtn: true,
@@ -245,25 +206,11 @@ export default {
 	},
 
 	computed: {
-		...mapState("config", ["app_env", "app_name", "app_debug"]),
+		...mapState("config", ["app_env", "app_name", "mas_production_mode"]),
+		...mapState(["user", "cashRegister", "store"]),
 
 		openedRegister() {
 			return this.$store.getters.openedRegister;
-		},
-		appEnv() {
-			return this.app_env;
-		},
-		appName() {
-			return this.app_name;
-		},
-		user() {
-			return this.$store.state.user;
-		},
-		cashRegister() {
-			return this.$store.state.cashRegister;
-		},
-		store() {
-			return this.$store.state.store;
 		},
 		darkMode: {
 			get() {
