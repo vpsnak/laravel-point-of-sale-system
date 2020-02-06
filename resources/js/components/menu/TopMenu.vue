@@ -236,8 +236,11 @@ export default {
         ...mapState(["user", "cashRegister", "store"]),
 
         masMode() {
-            console.log(this.mas_production_mode);
-            if (this.mas_production_mode === "true") {
+            if (
+                // windows hack
+                this.mas_production_mode === "true" ||
+                this.mas_production_mode === true
+            ) {
                 return "production";
             } else {
                 return "test";
