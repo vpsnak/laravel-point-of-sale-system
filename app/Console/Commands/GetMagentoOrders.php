@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Jobs\FetchMagentoOrder;
 use App\Magento\MagentoClient;
+use App\Order;
 use Illuminate\Console\Command;
 
 class GetMagentoOrders extends Command
@@ -41,15 +42,21 @@ class GetMagentoOrders extends Command
     {
         $client = new MagentoClient();
 
-        $page = 339;
+        $page = 1;
         $per_page = 100;
+        $last_order_id = 0;
+        $last_stored_order_id = Order::max('magento_id');
+        if (!empty($last_stored_order_id) && $last_stored_order_id > $last_order_id) {
+            $request_url = "orders?filter[1][attribute]=entity_id&filter[1][gt]=$last_order_id&limit=$per_page&page=$page";
+        }
         $ordersRetrieved = $per_page;
         $previous_orders = [];
         $current_orders = [];
         while ($ordersRetrieved == $per_page) {
             $previous_orders = $current_orders;
             $current_order = [];
-            $orders = $client->get("orders?limit=$per_page&page=$page", []);
+            $orders = $client->get("orders?limit=$per_page&page=$page",
+                []);
             $page++;
             if (empty($orders)) {
                 break;

@@ -31,14 +31,6 @@ class FetchMagentoOrder implements ShouldQueue
     }
 
     /**
-     * @param $message
-     */
-    private static function log($message)
-    {
-        Log::channel('connector')->info(self::LOG_PREFIX . ': ' . $message);
-    }
-
-    /**
      * @return bool
      */
     public function handle()
@@ -46,9 +38,6 @@ class FetchMagentoOrder implements ShouldQueue
         Order::unsetEventDispatcher();
         OrderAddress::unsetEventDispatcher();
         OrderProduct::unsetEventDispatcher();
-//        if ($this->order->status != 'complete') {
-//            dd($this->order);
-//        }
         if (Order::where('magento_id', $this->order->entity_id)->exists()) {
             Order::where('magento_id', $this->order->entity_id)->update([
                 'customer_id' => Customer::where('magento_id', $this->order->customer_id)->first()->id ?? null,
@@ -64,6 +53,8 @@ class FetchMagentoOrder implements ShouldQueue
         $shipping_id = 0;
         foreach ($this->order->addresses as $address) {
             if (empty($address->country_id)) {
+                self::log('order_failed:' . $this->order->entity_id);
+                self::log('address with no country_id');
                 return;
             }
             if ($address->address_type == 'shipping' || $address->address_type == 'billing') {
@@ -139,5 +130,13 @@ class FetchMagentoOrder implements ShouldQueue
             default:
                 dd($status);
         }
+    }
+
+    /**
+     * @param $message
+     */
+    private static function log($message)
+    {
+        Log::channel('connector')->info(self::LOG_PREFIX . ': ' . $message);
     }
 }
