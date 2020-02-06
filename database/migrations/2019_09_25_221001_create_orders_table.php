@@ -36,8 +36,6 @@ class CreateOrdersTable extends Migration
             $table->unsignedBigInteger('created_by');
             $table->timestamps();
 
-            $table->foreign('shipping_address_id')->references('id')->on('addresses');
-            $table->foreign('billing_address_id')->references('id')->on('addresses');
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('restrict');
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('restrict');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('restrict');
