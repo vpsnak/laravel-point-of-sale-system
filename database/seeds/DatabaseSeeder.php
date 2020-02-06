@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
         $this->call(OauthClientsSeeder::class);
         $this->call(RoleSeeder::class);
         $this->call(UserSeeder::class);
+        $this->call(MasAccountSeeder::class);
 
         $this->call(CompanySeeder::class);
         $this->call(TaxSeeder::class);

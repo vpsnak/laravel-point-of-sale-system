@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Carbon;
+use App\MasAccount;
 use App\MasOrder;
 use App\Order;
-use Carbon\Carbon;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
@@ -13,12 +14,12 @@ class MasOrderController extends Controller
 {
     const LOG_PREFIX = 'MAS';
 
-    protected $model = MasOrder::class;
-
     public static function submitToMas(Order $order)
     {
+        $masAccount = MasAccount::getActive();
+
         $payload = [];
-        $payload['SenderMdNumber'] = config('mas.credentials.direct_id');
+        $payload['SenderMdNumber'] = $masAccount->direct_id;
         $payload['FulfillerMDNumber'] = 'USNY000012';
         // $payload['FulfillerMDNumber'] = 'USZZ000035';
         $payload['PriorityType'] = 1;
@@ -32,8 +33,8 @@ class MasOrderController extends Controller
         if ($payments = self::parseOrderPayments($order->payments)) {
             $payload['Payments'] = $payments;
         }
-
-        $payload['MdseAmount'] = $order->total_without_tax;
+        $encCreds =
+            $payload['MdseAmount'] = $order->total_without_tax;
         $payload['TaxAmount'] = $order->total - $order->total_without_tax;
         $payload['TotalAmount'] = $order->total;
 
@@ -41,13 +42,9 @@ class MasOrderController extends Controller
         try {
             $client = new Client();
 
-            config('mas.production_mode') ? $endpoint = config('mas.endpoints.production') : $endpoint = config('mas.endpoints.test');
-
-            $encCreds = base64_encode(config('mas.credentials.username') . ':' . config('mas.credentials.password') . ':' . config('mas.credentials.direct_id'));
-
-            $response = $client->post($endpoint, [
+            $response = $client->post($masAccount->endpoint, [
                 'headers' => [
-                    'Authorization' => "Basic {$encCreds}",
+                    'Authorization' => $masAccount->getAuthHeader(),
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json'
                 ],
@@ -92,7 +89,7 @@ class MasOrderController extends Controller
     {
         $shipping_notes = '';
         if (!empty($order->notes)) {
-            $shipping_notes .= 'Notes: ' . $order->notes;
+            $shipping_notes .= "Notes: {$order->notes}";
         }
         $response = [
             'ExtensionData' => null,
@@ -176,7 +173,7 @@ class MasOrderController extends Controller
     {
         $response = [];
         foreach ($payments as $payment) {
-            if ($payment->status != 'approved' || $payment->refunded == 1) {
+            if ($payment->status !== 'approved' || $payment->refunded) {
                 continue;
             }
 

@@ -53,9 +53,3 @@ const getters = {
         return state[model];
     }
 };
-
-// actions
-const actions = {};
-
-// mutations
-const mutations = {};

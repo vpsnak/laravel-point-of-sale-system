@@ -13,8 +13,8 @@
         <v-spacer></v-spacer>
 
         <v-toolbar-title class="pr-2">
-            MAS Mode:
-            <i :class="txtColor(masMode)">{{ masMode }}</i>
+            MAS Env:
+            <i :class="txtColor(mas_env)" @click="clicks++">{{ mas_env }}</i>
         </v-toolbar-title>
 
         <v-spacer></v-spacer>
@@ -151,10 +151,41 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions, mapMutations } from "vuex";
+import { EventBus } from "../../plugins/event-bus";
 
 export default {
+    mounted() {
+        EventBus.$on("top-menu-");
+    },
+    beforeDestroy() {
+        EventBus.$off();
+    },
+
+    data() {
+        return {
+            clicks: 0
+        };
+    },
+    watch: {
+        clicks(value) {
+            if (value === 10) {
+                let payload;
+
+                if (this.mas_env === "production") {
+                    payload = "test";
+                } else {
+                    payload = "production";
+                }
+
+                this.setMasEnv(payload);
+            }
+        }
+    },
     methods: {
+        ...mapMutations("dialog", ["setDialog"]),
+        ...mapActions("config", ["setMasEnv"]),
+
         invertTheme() {
             this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
         },
@@ -163,15 +194,7 @@ export default {
         },
 
         dialogEvent(event) {
-            if (event) {
-                switch (this.action) {
-                    case "closeCashRegister":
-                        this.displayZDialog(event.response.report);
-                        break;
-                    default:
-                        break;
-                }
-            }
+            this.displayZDialog(event.response.report);
         },
         txtColor(mode) {
             switch (mode) {
@@ -182,23 +205,22 @@ export default {
                 case "live":
                 case "production":
                     return "green--text";
-                case true:
                 default:
                     return "white--text";
             }
         },
         closeCashRegisterDialog() {
-            this.dialog = {
+            this.setDialog({
                 width: 600,
                 title: `Close and generate Z report`,
                 titleCloseBtn: true,
                 icon: "mdi-alpha-z-circle",
                 component: "closeCashRegisterForm",
                 persistent: true
-            };
+            });
         },
         changePasswordDialog() {
-            this.dialog = {
+            this.setDialog({
                 width: 600,
                 title: `Change Password`,
                 titleCloseBtn: true,
@@ -206,10 +228,10 @@ export default {
                 icon: "mdi-key",
                 component: "PasswordForm",
                 persistent: true
-            };
+            });
         },
         displayZDialog(event) {
-            this.dialog = {
+            this.setDialog({
                 width: 1000,
                 title: event.report_name,
                 titleCloseBtn: true,
@@ -217,35 +239,24 @@ export default {
                 icon: "mdi-alpha-z-circle",
                 component: "cashRegisterReports",
                 persistent: true
-            };
+            });
         },
         checkCashRegisterDialog() {
-            this.dialog = {
+            this.setDialog({
                 width: 1000,
-                title: "Report: " + this.cashRegister.name,
+                title: `Report: ${this.cashRegister.name}`,
                 titleCloseBtn: true,
                 icon: "mdi-alpha-x-circle",
                 component: "cashRegisterReports",
                 persistent: true
-            };
+            });
         }
     },
 
     computed: {
-        ...mapState("config", ["app_env", "app_name", "mas_production_mode"]),
+        ...mapState("config", ["app_env", "app_name", "mas_env"]),
         ...mapState(["user", "cashRegister", "store"]),
 
-        masMode() {
-            if (
-                // windows hack
-                this.mas_production_mode === "true" ||
-                this.mas_production_mode === true
-            ) {
-                return "production";
-            } else {
-                return "test";
-            }
-        },
         openedRegister() {
             return this.$store.getters.openedRegister;
         },

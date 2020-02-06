@@ -11,8 +11,9 @@
 |
 */
 
-// app env
-Route::get('/config', 'AppController@config');
+// mas
+Route::get('/mas/env', 'MasAccountController@getEnv')->middleware('scope:admin,store_manager,cashier');
+Route::get('/mas/set/{mode}', 'MasAccountController@setEnv')->middleware('scope:admin');
 
 // roles
 Route::get('/roles', "RoleController@all")->middleware('scope:admin');
