@@ -2,29 +2,15 @@
     <v-app id="app">
         <notification />
 
-        <interactiveDialog
-            v-if="auth && dialog.show"
-            :show="dialog.show"
-            :title="dialog.title"
-            :titleCloseBtn="dialog.titleCloseBtn"
-            :icon="dialog.icon"
-            :fullscreen="dialog.fullscreen"
-            :width="dialog.width"
-            :component="dialog.component"
-            :content="dialog.content"
-            :model="dialog.model"
-            @action="dialogEvent"
-            :persistent="dialog.persistent"
-        ></interactiveDialog>
+        <interactiveDialog v-if="showComponents"></interactiveDialog>
 
-        <sideMenu v-if="appLoad === 100 && auth" />
+        <sideMenu v-if="showComponents" />
 
-        <topMenu v-if="appLoad === 100 && auth" />
+        <topMenu v-if="showComponents" />
 
         <v-content>
             <transition name="fade">
-                <router-view v-if="auth && appLoad === 100"></router-view>
-                <landingPage v-else-if="appLoad !== 100" />
+                <router-view></router-view>
             </transition>
         </v-content>
     </v-app>
@@ -32,49 +18,32 @@
 
 <script>
 import { mapGetters, mapMutations, mapState } from "vuex";
-import { EventBus } from "../../plugins/event-bus";
 
 export default {
+    mounted() {
+        if (this.auth && this.loadPercent <= 100) {
+            this.$router.push({ name: "landingPage" });
+        }
+    },
     computed: {
+        ...mapGetters(["auth", "role"]),
         ...mapState("dialog", ["interactive_dialog"]),
-        ...mapState(["appLoad"]),
+        ...mapState("config", ["app_load"]),
 
-        loadPercent() {
-            return this.appLoad;
-        },
-        dialog: {
-            get() {
-                return this.interactive_dialog;
-            },
-            set(value) {
-                this.setDialog(value);
-            }
-        },
-        auth() {
-            if (this.authorized && this.role) {
-                window.axios.defaults.headers.common[
-                    "Authorization"
-                ] = this.$store.state.token;
+        showComponents() {
+            if (this.app_load > 100 && this.auth) {
                 return true;
             } else {
-                this.logout();
                 return false;
             }
         },
-        ...mapGetters(["authorized", "role"])
+        loadPercent() {
+            return this.app_load;
+        }
     },
     methods: {
         ...mapMutations(["logout"]),
-        ...mapMutations("dialog", ["setDialog", "resetDialog"]),
-
-        dialogEvent(event) {
-            console.log(event);
-            EventBus.$emit("dialog", event);
-            this.resetDialog();
-        }
-    },
-    beforeDestroy() {
-        EventBus.$off();
+        ...mapMutations("dialog", ["setDialog"])
     }
 };
 </script>

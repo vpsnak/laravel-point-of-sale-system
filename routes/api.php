@@ -177,7 +177,7 @@ Route::delete('/cash-register-logs/{id}', 'CashRegisterLogsController@delete')->
 
 //receipts
 Route::get('/receipts/get/{model}', 'ReceiptController@get');
-Route::post('/receipts/create', 'ReceiptController@create');
+Route::get('/receipts/create/{model}', 'ReceiptController@create');
 
 // categories to list in sales
 Route::get('/product-listing/categories', "CategoryController@productListingCategories")->middleware('scope:admin,store_manager,cashier');

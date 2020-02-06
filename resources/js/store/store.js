@@ -5,11 +5,12 @@ import "es6-promise/auto";
 import Cookies from "js-cookie";
 import router from "../plugins/router";
 //modules
+import config from "./modules/config";
 import menu from "./modules/menu";
 import cart from "./modules/cart";
-import endpoints from "./modules/endpoints";
 import datatable from "./modules/datatable";
 import dialog from "./modules/dialog";
+import icons from "./modules/icons";
 
 Vue.use(Vuex);
 
@@ -19,18 +20,14 @@ export default new Vuex.Store({
     strict: false,
     namespaced,
     modules: {
+        config,
         menu,
         cart,
         datatable,
-        endpoints,
-        dialog
+        dialog,
+        icons
     },
     state: {
-        appName: "",
-        appEnv: "",
-        appDebug: false,
-        appLoad: 0,
-
         baseUrl: "/api/",
 
         user: Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null,
@@ -54,8 +51,8 @@ export default new Vuex.Store({
         storeList: []
     },
     getters: {
-        authorized: state => {
-            if (state.token && state.user) {
+        auth: state => {
+            if (state.user && state.token) {
                 return true;
             } else {
                 return false;
@@ -77,14 +74,6 @@ export default new Vuex.Store({
         }
     },
     mutations: {
-        initApp(state, data) {
-            state.appEnv = data.env;
-            state.appName = data.name;
-            state.appDebug = data.debug;
-        },
-        addLoadPercent(state, value) {
-            state.appLoad += value;
-        },
         logout(state) {
             state.user = null;
             state.token = null;
@@ -97,10 +86,10 @@ export default new Vuex.Store({
             Cookies.remove("cash_register");
 
             if (router.currentRoute.name !== "login") {
-                router.push({
-                    name: "login"
-                });
+                router.push({ name: "login" });
             }
+
+            state.config.app_load = 0;
         },
         setCashRegister(state, cashRegister) {
             state.cashRegister = cashRegister;
@@ -112,7 +101,8 @@ export default new Vuex.Store({
             if (user) {
                 state.user = user;
                 Cookies.set("user", user, {
-                    secure: state.appEnv !== "local" ? true : false,
+                    secure:
+                        state.config.app_env !== "development" ? true : false,
                     sameSite: "strict"
                 });
             } else {
@@ -122,13 +112,20 @@ export default new Vuex.Store({
         },
         setToken(state, token) {
             if (token) {
-                state.token = "Bearer " + token;
+                state.token = `Bearer ${token}`;
+
+                window.axios.defaults.headers.common["Authorization"] =
+                    state.token;
+
                 Cookies.set("token", state.token, {
-                    secure: state.appEnv !== "local" ? true : false,
+                    secure:
+                        state.config.app_env !== "development" ? true : false,
                     sameSite: "strict"
                 });
             } else {
                 state.token = null;
+                window.axios.defaults.headers.common["Authorization"] = null;
+
                 Cookies.remove("token");
             }
         },
@@ -150,15 +147,15 @@ export default new Vuex.Store({
         login(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(this.state.baseUrl + "auth/login", payload)
+                    .post(`${this.state.baseUrl}auth/login`, payload)
                     .then(response => {
                         let notification = {
                             msg: response.data.info,
                             type: "info"
                         };
 
-                        context.commit("setUser", response.data.user);
                         context.commit("setToken", response.data.token);
+                        context.commit("setUser", response.data.user);
                         context.commit("setNotification", notification);
 
                         resolve(response.data);
@@ -252,23 +249,6 @@ export default new Vuex.Store({
                         };
                         context.commit("setNotification", notification);
                         reject(error);
-                    });
-            });
-        },
-        getAppConfig(context) {
-            return new Promise((resolve, reject) => {
-                axios
-                    .get(`${this.state.baseUrl}config`)
-                    .then(response => {
-                        context.commit("initApp", response.data);
-                        resolve(true);
-                    })
-                    .catch(error => {
-                        if (_.has(error, "response.data")) {
-                            reject(error.response.data);
-                        } else {
-                            reject(error.response);
-                        }
                     });
             });
         },
@@ -500,7 +480,7 @@ export default new Vuex.Store({
         retrieveCashRegister(context) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(this.state.baseUrl + "cash-register-logs/retrieve")
+                    .get(`${this.state.baseUrl}cash-register-logs/retrieve`)
                     .then(response => {
                         if (response.data !== 0) {
                             if (

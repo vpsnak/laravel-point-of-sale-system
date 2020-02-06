@@ -1,30 +1,5 @@
 <template>
 	<div>
-		<interactiveDialog
-			v-if="addTimeSlotDialog"
-			:show="addTimeSlotDialog"
-			title="Add time slot"
-			:titleCloseBtn="true"
-			icon="mdi-clock"
-			component="timeSlotForm"
-			@action="closedDialog"
-			persistent
-		/>
-
-		<interactiveDialog
-			v-if="dialog.show"
-			:show="dialog.show"
-			:title="dialog.title"
-			:titleCloseBtn="dialog.titleCloseBtn"
-			:icon="dialog.icon"
-			:fullscreen="dialog.fullscreen"
-			:width="dialog.width"
-			:component="dialog.component"
-			:content="dialog.content"
-			:model="dialog.model"
-			@action="dialogEvent"
-			:persistent="dialog.persistent"
-		></interactiveDialog>
 		<ValidationObserver ref="shippingValidation">
 			<v-form>
 				<v-row v-if="shipping.method !== 'retail'" align="center">
@@ -148,7 +123,7 @@
 								item-text="label"
 								v-model="shipping.timeSlotLabel"
 								@input="setCost"
-								@click:append-outer="addTimeSlotDialog = true"
+								@click:append-outer="addTimeSlotDialog()"
 								@change="validate"
 							></v-select>
 						</ValidationProvider>
@@ -232,12 +207,40 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapMutations } from "vuex";
+import { EventBus } from "../../plugins/event-bus";
 
 export default {
+	mounted() {
+		this.getStores();
+		this.validate();
+
+		EventBus.$on("shipping-timeslot", event => {
+			if (event.payload) {
+				this.timeSlots.push(event.payload);
+				this.shipping.timeSlotLabel = event.payload.label;
+			}
+		});
+
+		EventBus.$on("shipping-addresses", event => {
+			if (event.payload) {
+				this.addresses.push(event.payload);
+
+				if (this.dialog.model.type === "shipping") {
+					this.shipping.address = event.payload;
+				} else {
+					this.billingAddress = event.payload;
+				}
+			}
+		});
+	},
+
+	beforeDestroy() {
+		EventBus.$off();
+	},
+
 	data() {
 		return {
-			addTimeSlotDialog: false,
 			loading: false,
 			time_slots: [],
 			datePicker: false,
@@ -256,17 +259,17 @@ export default {
 				persistent: false
 			}
 		};
-    },
-    watch: {
-        shippingMethod() {
-            this.validate();
-        }
-    },
+	},
+	watch: {
+		shippingMethod() {
+			this.validate();
+		}
+	},
 
 	computed: {
-        shippingMethod() {
-            return this.shipping.method;
-        },
+		shippingMethod() {
+			return this.shipping.method;
+		},
 		storePickups: {
 			get() {
 				return this.store_pickups;
@@ -332,8 +335,8 @@ export default {
 					this.billingAddress = billing_address.length
 						? billing_address[0]
 						: null;
-                }
-                if (this.customer.id && !this.shippingAddress) {
+				}
+				if (this.customer.id && !this.shippingAddress) {
 					const shipping_address = _.filter(this.customer.addresses, [
 						"shipping",
 						1
@@ -361,12 +364,21 @@ export default {
 		}
 	},
 
-	mounted() {
-		this.getStores();
-		this.validate();
-	},
-
 	methods: {
+		...mapActions(["postRequest", "getAll"]),
+		...mapMutations("dialog", ["setDialog"]),
+
+		addTimeSlotDialog() {
+			this.setDialog({
+				show: true,
+				title: "Add time slot",
+				titleCloseBtn: true,
+				icon: "mdi-clock",
+				component: "timeSlotForm",
+				persistent: true,
+				eventChannel: "shipping-timeslot"
+			});
+		},
 		validate() {
 			if (this.shipping.method === "retail") {
 				this.$store.state.cart.isValid = true;
@@ -386,19 +398,6 @@ export default {
 				return null;
 			}
 		},
-		dialogEvent(event) {
-			if (event) {
-				this.addresses.push(event);
-
-				if (this.dialog.model.type === "shipping") {
-					this.shipping.address = event;
-				} else {
-					this.billingAddress = event;
-				}
-			}
-
-			this.resetDialog();
-		},
 		addressDialog(action, address) {
 			let icon;
 			let title;
@@ -416,7 +415,7 @@ export default {
 
 			address ? (address.type = type) : null;
 
-			this.dialog = {
+			this.setDialog({
 				show: true,
 				width: 600,
 				fullscreen: false,
@@ -426,35 +425,15 @@ export default {
 				component: "addressDeliveryForm",
 				content: "",
 				model: address || { type },
-				persistent: true
-			};
+				persistent: true,
+				eventChannel: "shipping-addresses"
+			});
 		},
-		resetDialog() {
-			this.dialog = {
-				show: false,
-				width: 600,
-				fullscreen: false,
-				title: "",
-				titleCloseBtn: false,
-				icon: "",
-				component: "",
-				content: "",
-				model: "",
-				persistent: false
-			};
-		},
+
 		getStores() {
 			this.getAll({ model: "store-pickups" }).then(response => {
 				this.storePickups = response;
 			});
-		},
-		closedDialog(event) {
-			if (event && event !== true) {
-				this.timeSlots.push(event);
-				this.shipping.timeSlotLabel = event.label;
-			}
-
-			this.addTimeSlotDialog = false;
 		},
 		setCost(item) {
 			if (_.has(item, "cost")) {
@@ -502,8 +481,7 @@ export default {
 				", " +
 				item.address_country
 			);
-		},
-		...mapActions(["postRequest", "getAll"])
+		}
 	}
 };
 </script>

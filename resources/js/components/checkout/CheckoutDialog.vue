@@ -1,167 +1,154 @@
 <template>
-    <v-dialog
-        v-model="state"
-        fullscreen
-        transition="dialog-bottom-transition"
-        persistent
-        no-click-animation
-    >
-        <interactiveDialog
-            v-if="closePrompt"
-            :show="closePrompt"
-            action="confirmation"
-            title="Cancel order?"
-            content="Are you sure you want to <strong>cancel</strong> the current order?"
-            @action="confirmation"
-            actions
-            persistent
-        />
+	<v-dialog
+		v-model="state"
+		fullscreen
+		transition="dialog-bottom-transition"
+		persistent
+		no-click-animation
+	>
+		<v-card>
+			<v-toolbar>
+				<v-tooltip bottom color="red">
+					<template v-slot:activator="{ on }">
+						<v-btn :disabled="disableControls" @click.stop="close" icon v-on="on" color="red">
+							<v-icon>{{ order.id ? "mdi-cancel" : "mdi-close" }}</v-icon>
+						</v-btn>
+					</template>
+					<span>{{ closeBtnTxt }}</span>
+				</v-tooltip>
 
-        <v-card>
-            <v-toolbar>
-                <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                        <v-btn
-                            :disabled="disableControls"
-                            @click.stop="close"
-                            icon
-                            v-on="on"
-                            color="red"
-                        >
-                            <v-icon>mdi-close</v-icon>
-                        </v-btn>
-                    </template>
-                    <span>{{ closeBtnTxt }}</span>
-                </v-tooltip>
+				<v-tooltip bottom v-if="order.id" color="orange">
+					<template v-slot:activator="{ on }">
+						<v-btn :disabled="disableControls" @click="hold" icon v-on="on" color="orange">
+							<v-icon>mdi-pause</v-icon>
+						</v-btn>
+					</template>
+					<span>Hold</span>
+				</v-tooltip>
 
-                <v-tooltip bottom v-if="order.id">
-                    <template v-slot:activator="{ on }">
-                        <v-btn
-                            :disabled="disableControls"
-                            @click="hold"
-                            icon
-                            v-on="on"
-                            color="yellow"
-                        >
-                            <v-icon>mdi-pause</v-icon>
-                        </v-btn>
-                    </template>
-                    <span>Hold</span>
-                </v-tooltip>
-
-                <v-toolbar-title>Checkout</v-toolbar-title>
-            </v-toolbar>
-            <v-container fluid>
-                <v-row>
-                    <v-col :lg="8" class="py-lg-0">
-                        <v-card class="mx-auto">
-                            <v-card-text>
-                                <checkoutStepper />
-                            </v-card-text>
-                        </v-card>
-                    </v-col>
-                    <v-col :lg="4" class="py-lg-0">
-                        <cart
-                            :key="order.id || 0"
-                            icon="mdi-clipboard-list"
-                            title="Order summary"
-                            :editable="isEditable"
-                        />
-                    </v-col>
-                </v-row>
-            </v-container>
-        </v-card>
-    </v-dialog>
+				<v-toolbar-title>Checkout</v-toolbar-title>
+			</v-toolbar>
+			<v-container fluid>
+				<v-row>
+					<v-col :lg="8" class="py-lg-0">
+						<v-card class="mx-auto">
+							<v-card-text>
+								<checkoutStepper />
+							</v-card-text>
+						</v-card>
+					</v-col>
+					<v-col :lg="4" class="py-lg-0">
+						<cart
+							:key="order.id || 0"
+							icon="mdi-clipboard-list"
+							title="Order summary"
+							:editable="isEditable"
+						/>
+					</v-col>
+				</v-row>
+			</v-container>
+		</v-card>
+	</v-dialog>
 </template>
 
 <script>
 import { mapMutations, mapActions } from "vuex";
 
 export default {
-    data() {
-        return {
-            closePrompt: false
-        };
-    },
-    computed: {
-        cart() {
-            return this.$store.state.cart;
-        },
-        disableControls() {
-            if (
-                this.cart.paymentLoading ||
-                this.cart.refundLoading ||
-                this.cart.completeOrderLoading
-            ) {
-                return true;
-            } else {
-                return false;
-            }
-        },
-        closeBtnTxt() {
-            return this.order.id &&
-                this.$store.state.cart.currentCheckoutStep !== 3
-                ? "Cancel order"
-                : "Close";
-        },
-        isEditable() {
-            return this.order.id ? false : true;
-        },
-        state: {
-            get() {
-                return this.$store.state.cart.checkoutDialog;
-            },
-            set(value) {
-                this.$store.commit("cart/setCheckoutDialog", value);
-            }
-        },
-        order() {
-            return this.$store.state.cart.order;
-        }
-    },
-    watch: {
-        state(v) {
-            if (!v) {
-                this.$emit("close", true);
-            }
-        }
-    },
-    methods: {
-        hold() {
-            this.state = false;
-            this.resetState();
-        },
-        close() {
-            if (this.order.id && this.order.status === "complete") {
-                this.resetState();
-                this.state = false;
-            } else if (this.order.id && this.order.status !== "complete") {
-                this.closePrompt = true;
-            } else {
-                this.state = false;
-            }
-        },
-        confirmation(event) {
-            if (event) {
-                this.$store.state.cart.isValidCheckout = false;
+	data() {
+		return {
+			closePrompt: false,
+			confirmationDialog: {
+				show: "closePrompt",
+				action: "confirmation",
+				title: "Cancel order?",
+				content:
+					"Are you sure you want to <strong>cancel</strong> the current order?",
+				actions: true,
+				persistent: true
+			}
+		};
+	},
+	computed: {
+		cart() {
+			return this.$store.state.cart;
+		},
+		disableControls() {
+			if (
+				this.cart.paymentLoading ||
+				this.cart.refundLoading ||
+				this.cart.completeOrderLoading
+			) {
+				return true;
+			} else {
+				return false;
+			}
+		},
+		closeBtnTxt() {
+			return this.order.id && this.$store.state.cart.currentCheckoutStep !== 3
+				? "Cancel order"
+				: "Close";
+		},
+		isEditable() {
+			return this.order.id ? false : true;
+		},
+		state: {
+			get() {
+				return this.$store.state.cart.checkoutDialog;
+			},
+			set(value) {
+				this.$store.commit("cart/setCheckoutDialog", value);
+			}
+		},
+		order() {
+			return this.$store.state.cart.order;
+		}
+	},
+	watch: {
+		state(v) {
+			if (!v) {
+				this.$emit("close", true);
+			}
+		}
+	},
+	methods: {
+		...mapMutations("dialog", ["setDialog"]),
 
-                let payload = {
-                    model: "orders",
-                    id: this.order.id
-                };
-                this.delete(payload).then(response => {
-                    this.resetState();
-                    this.state = false;
-                });
-            }
-            this.closePrompt = false;
-        },
+		hold() {
+			this.state = false;
+			this.resetState();
+		},
+		close() {
+			if (this.order.id && this.order.status === "complete") {
+				this.resetState();
+				this.state = false;
+			} else if (this.order.id && this.order.status !== "complete") {
+				this.setDialog(this.confirmationDialog);
+			} else {
+				this.state = false;
+			}
+		},
+		confirmation(event) {
+			if (event) {
+				this.$store.state.cart.isValidCheckout = false;
 
-        ...mapActions(["delete"]),
-        ...mapMutations("cart", ["resetState"])
-    },
-    beforeDestroy() {
-        this.$off("close");
-    }
+				let payload = {
+					model: "orders",
+					id: this.order.id
+				};
+				this.delete(payload).then(response => {
+					this.resetState();
+					this.state = false;
+				});
+			}
+			this.closePrompt = false;
+		},
+
+		...mapActions(["delete"]),
+		...mapMutations("cart", ["resetState"])
+	},
+	beforeDestroy() {
+		this.$off("close");
+	}
 };
 </script>

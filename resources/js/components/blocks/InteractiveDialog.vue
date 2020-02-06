@@ -1,142 +1,127 @@
 <template>
-	<v-dialog
-		v-model="visibility"
-		:persistent="persistent"
-		:max-width="maxWidth"
-		:fullscreen="fullscreen"
-		scrollable
-		@click:outside.stop="closeEvent(false)"
-	>
-		<v-card>
-			<v-card-title>
-				<v-icon v-if="icon" class="pr-2">{{ icon }}</v-icon>
-				{{ title }}
-				<v-spacer v-if="titleCloseBtn"></v-spacer>
-				<v-btn v-if="titleCloseBtn" @click.stop="closeEvent(false, true)" icon>
-					<v-icon>mdi-close</v-icon>
-				</v-btn>
-			</v-card-title>
+    <v-dialog
+        v-model="dialog.show"
+        :persistent="dialog.persistent"
+        :max-width="dialog.width"
+        :fullscreen="dialog.fullscreen"
+        scrollable
+        @click:outside.stop="closeEvent(false)"
+    >
+        <v-card>
+            <v-card-title>
+                <v-icon v-if="dialog.icon" class="pr-2">{{
+                    dialog.icon
+                }}</v-icon>
+                {{ dialog.title }}
+                <v-spacer v-if="dialog.titleCloseBtn"></v-spacer>
+                <v-btn
+                    v-if="dialog.titleCloseBtn"
+                    @click.stop="closeEvent(false, true)"
+                    icon
+                >
+                    <v-icon>mdi-close</v-icon>
+                </v-btn>
+            </v-card-title>
 
-			<v-divider class="mb-3"></v-divider>
+            <v-divider class="mb-3"></v-divider>
 
-			<v-card-text>
-				<component
-					v-if="$props.component"
-					:is="$props.component"
-					:model="$props.model"
-					:readonly="read"
-					@submit="submit"
-				></component>
-				<div v-else v-html="$props.content" :class="contentClass || ''"></div>
-			</v-card-text>
+            <v-card-text>
+                <component
+                    v-if="dialog.component"
+                    :is="dialog.component"
+                    :readonly="dialog.readonly"
+                    :model="dialog.model"
+                    @submit="submit"
+                ></component>
+                <div
+                    v-else
+                    v-html="dialog.content"
+                    :class="dialog.contentClass || ''"
+                ></div>
+            </v-card-text>
 
-			<!-- confirmation actions -->
-			<v-card-actions
-				class="d-flex align-center mt-5"
-				v-if="action === 'confirmation' || action === 'info'"
-			>
-				<div class="flex-grow-1"></div>
+            <!-- confirmation actions -->
+            <v-card-actions
+                class="d-flex align-center mt-5"
+                v-if="
+                    dialog.action === 'confirmation' || dialog.action === 'info'
+                "
+            >
+                <div class="flex-grow-1"></div>
 
-				<v-btn
-					v-if="action === 'confirmation'"
-					@click="closeEvent(false, true)"
-					text
-					color="error"
-				>{{ cancelBtn }}</v-btn>
+                <v-btn
+                    v-if="dialog.action === 'confirmation'"
+                    @click="closeEvent(false, true)"
+                    text
+                    color="error"
+                    >{{ dialog.cancelBtnTxt }}</v-btn
+                >
 
-				<v-btn @click="closeEvent(true, true)" text color="success">{{ confirmationBtn }}</v-btn>
-			</v-card-actions>
-		</v-card>
-	</v-dialog>
+                <v-btn @click="closeEvent(true, true)" text color="success">{{
+                    dialog.confirmationBtnTxt
+                }}</v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>
 </template>
 
 <script>
+import { EventBus } from "../../plugins/event-bus";
 import { mapActions, mapMutations, mapState } from "vuex";
 
 export default {
-	props: {
-		show: Boolean,
-		persistent: Boolean,
-		width: Number,
-		icon: String,
-		title: String,
-		titleCloseBtn: Boolean,
+    computed: {
+        ...mapState("dialog", ["interactive_dialog"]),
 
-		readonly: Boolean,
-		content: String,
-		contentClass: String,
-		component: String,
-		fullscreen: Boolean,
-		cancelBtnTxt: String,
-		confirmationBtnTxt: String,
+        dialog() {
+            return this.interactive_dialog;
+        }
+    },
 
-		model: Object,
-		action: String
-	},
+    methods: {
+        ...mapMutations("dialog", ["resetDialog"]),
 
-	data() {
-		return {
-			display: false
-		};
-	},
+        submit(payload) {
+            if (!payload) {
+                this.closeEvent(true);
+            } else {
+                if (payload.notification) {
+                    this.$store.commit("setNotification", {
+                        msg: payload.notification.msg,
+                        type: payload.notification.type
+                    });
+                }
 
-	mounted() {
-		this.display = this.$props.show;
-	},
+                if (payload.data) {
+                    this.closeEvent(payload.data, true);
+                } else {
+                    this.closeEvent(true, true);
+                }
+            }
+        },
 
-	computed: {
-		visibility: {
-			get() {
-				return this.display;
-			},
-			set(value) {
-				this.display = value;
-			}
-		},
-		maxWidth() {
-			return this.$props.width || 450;
-		},
-		cancelBtn() {
-			return this.$props.cancelBtnTxt || "Cancel";
-		},
-		confirmationBtn() {
-			return this.$props.confirmationBtnTxt || "OK";
-		},
-		read() {
-			return this.$props.readonly ? true : false;
-		}
-	},
+        closeEvent(payload, close) {
+            if (!this.dialog.persistent || close) {
+                console.log({
+                    module: "interactive_dialog",
+                    event: event,
+                    payload: payload
+                });
 
-	methods: {
-		submit(payload) {
-			if (!payload) {
-				this.closeEvent(true);
-			} else {
-				if (payload.notification) {
-					this.$store.commit("setNotification", {
-						msg: payload.notification.msg,
-						type: payload.notification.type
-					});
-				}
+                if (this.dialog.eventChannel) {
+                    EventBus.$emit(this.dialog.eventChannel, {
+                        component: this.dialog.component,
+                        payload
+                    });
+                }
 
-				if (payload.data) {
-					this.closeEvent(payload.data, true);
-				} else {
-					this.closeEvent(true, true);
-				}
-			}
-		},
+                this.resetDialog();
+            }
+        }
+    },
 
-		closeEvent(payload, close) {
-			if (!this.$props.persistent || close) {
-				this.$emit("action", payload);
-				this.visibility = false;
-			}
-		}
-	},
-
-	beforeDestroy() {
-		this.$off("action");
-	}
+    beforeDestroy() {
+        EventBus.$off();
+    }
 };
 </script>

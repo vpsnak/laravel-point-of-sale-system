@@ -83,9 +83,11 @@ export default {
 			};
 			this.create(payload).then(response => {
 				this.$store.dispatch("cart/completeStep").then(() => {
-					// this.printReceipt(receipt_payload).then(() => {
-					this.loading = false;
-					// });
+					this.$store
+						.dispatch("cart/createReceipt", receipt_payload)
+						.then(response => {
+							this.loading = false;
+						});
 				});
 			});
 		},

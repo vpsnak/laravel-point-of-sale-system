@@ -1,41 +1,27 @@
 <template>
-    <v-dialog :value="show" width="500" @click:outside="close">
-        <interactiveDialog
-            v-if="cartReplacePrompt"
-            :show="cartReplacePrompt"
-            action="confirmation"
-            title="Cart is not empty"
-            content="<p>Restoring the cart <strong>will replace</strong> items and selected customer currently in cart list.<br>Do you want to continue?</p>"
-            @action="confirmation"
-            actions
-            persistent
-        />
+    <div>
+        <v-chip-group multiple column active-class="primary--text">
+            <v-chip
+                class="d-flex justify-center pa-2"
+                v-for="cartOnHold in cartsOnHold"
+                :key="cartOnHold.id"
+                close
+                @click="(selectedCart = cartOnHold), restoreCart()"
+                @click:close="(selectedCart = cartOnHold), removeCart()"
+            >
+                <span>
+                    {{ cartOnHold.name }}
+                    <v-icon left>mdi-cartOnHold</v-icon>
+                </span>
+            </v-chip>
+        </v-chip-group>
+        <v-divider></v-divider>
 
-        <v-card>
-            <v-card-title primary-title>Carts on Hold</v-card-title>
-            <v-chip-group multiple column active-class="primary--text">
-                <v-chip
-                    class="d-flex justify-center pa-2"
-                    v-for="cartOnHold in cartsOnHold"
-                    :key="cartOnHold.id"
-                    close
-                    @click="(selectedCart = cartOnHold), restoreCart()"
-                    @click:close="(selectedCart = cartOnHold), removeCart()"
-                >
-                    <span>
-                        {{ cartOnHold.name }}
-                        <v-icon left>mdi-cartOnHold</v-icon>
-                    </span>
-                </v-chip>
-            </v-chip-group>
-            <v-divider></v-divider>
-
-            <v-card-actions>
-                <div class="flex-grow-1"></div>
-                <v-btn color="primary" text @click="close">Close</v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
+        <v-card-actions>
+            <div class="flex-grow-1"></div>
+            <v-btn color="primary" text @click="close">Close</v-btn>
+        </v-card-actions>
+    </div>
 </template>
 
 <script>

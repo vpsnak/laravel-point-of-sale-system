@@ -1,19 +1,5 @@
 <template>
     <div>
-        <interactiveDialog
-            v-if="dialog.show"
-            :show="dialog.show"
-            :title="dialog.title"
-            :titleCloseBtn="dialog.titleCloseBtn"
-            :icon="dialog.icon"
-            :width="dialog.width"
-            :component="dialog.component"
-            :content="dialog.content"
-            :model="dialog.model"
-            @action="dialogEvent"
-            :persistent="dialog.persistent"
-        ></interactiveDialog>
-
         <v-col :cols="12">
             <h3 class="mb-2">Payment history</h3>
         </v-col>
@@ -42,13 +28,17 @@
                                 icon
                                 v-on="on"
                                 :loading="
-                                        loading ||
-                                            refundLoading ||
-                                            paymentHistoryLoading
-                                    "
-                                v-if="item.status === 'approved' && !item.refunded"
+                                    loading ||
+                                        refundLoading ||
+                                        paymentHistoryLoading
+                                "
+                                v-if="
+                                    item.status === 'approved' && !item.refunded
+                                "
                             >
-                                <v-icon v-if="item.payment_type.type === 'cash'">mdi-cash-refund</v-icon>
+                                <v-icon v-if="item.payment_type.type === 'cash'"
+                                    >mdi-cash-refund</v-icon
+                                >
                                 <v-icon v-else>mdi-credit-card-refund</v-icon>
                             </v-btn>
                         </template>
@@ -61,25 +51,40 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex";
+import { EventBus } from "../../../plugins/event-bus";
 
 export default {
+    mounted() {
+        EventBus.$on("payment-history-pwd-validation", event => {
+            if (event.payload) {
+                this.refund();
+            }
+        });
+    },
+
+    beforeDestroy() {
+        this.$off("refund");
+        EventBus.$off();
+    },
+
     props: {
         loading: Boolean
     },
+
     data() {
         return {
             paymentHistoryLoading: false,
-            dialog: {
-                show: false,
+            pwdValidationDialog: {
+                show: true,
                 width: 600,
-                icon: "",
                 title: "",
-                titleCloseBtn: false,
-                component: "",
-                content: "",
-                model: "",
-                persistent: false
+                titleCloseBtn: true,
+                icon: "mdi-lock-alert",
+                component: "passwordForm",
+                model: { action: "verify" },
+                persistent: true,
+                eventChannel: "payment-history-pwd-validation"
             },
             paymentID: null,
             headers: [
@@ -145,6 +150,8 @@ export default {
         }
     },
     methods: {
+        ...mapMutations("dialog", ["setDialog"]),
+
         parseStatus(status) {
             return _.upperFirst(status);
         },
@@ -177,13 +184,8 @@ export default {
                     });
             }
         },
-        dialogEvent(event) {
-            if (event) {
-                this.refund();
-            }
 
-            this.resetDialog();
-        },
+        // refund on true event
         refund() {
             this.refundLoading = true;
             let payload = {
@@ -205,43 +207,12 @@ export default {
         },
 
         refundDialog(item) {
-            this.dialog = {
-                show: true,
-                width: 600,
-                title: `Verify your password to refund payment #${item.id}`,
-                titleCloseBtn: true,
-                icon: "mdi-lock-alert",
-                component: "passwordForm",
-                model: { action: "verify" },
-                persistent: true
-            };
-
+            this.pwdValidationDialog.title = `Verify your password to refund payment #${item.id}`;
             this.paymentID = item.id;
 
-            this.action = "cancelOrder";
+            this.setDialog(this.pwdValidationDialog);
         },
-
-        resetDialog() {
-            this.dialog = {
-                show: false,
-                width: 600,
-                title: "",
-                titleCloseBtn: false,
-                icon: "",
-                component: "",
-                content: "",
-                model: "",
-                persistent: false
-            };
-
-            this.action = "";
-        },
-
-        ...mapActions(["search", "delete"]),
-
-        beforeDestroy() {
-            this.$off("refund");
-        }
+        ...mapActions(["search", "delete"])
     }
 };
 </script>

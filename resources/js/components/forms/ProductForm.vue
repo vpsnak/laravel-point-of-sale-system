@@ -1,17 +1,36 @@
 <template>
-	<ValidationObserver v-slot="{ invalid }" ref="productObs">
+	<ValidationObserver v-slot="{ invalid }">
 		<v-form @submit.prevent="submit">
 			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Name">
-				<v-text-field v-model="formFields.name" label="Name" :error-messages="errors" :success="valid"></v-text-field>
+				<v-text-field
+					:readonly="$props.readonly"
+					v-model="formFields.name"
+					label="Name"
+					:error-messages="errors"
+					:success="valid"
+				></v-text-field>
 			</ValidationProvider>
 			<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Sku">
-				<v-text-field v-model="formFields.sku" label="Sku" :error-messages="errors" :success="valid"></v-text-field>
+				<v-text-field
+					:readonly="$props.readonly"
+					v-model="formFields.sku"
+					label="Sku"
+					:error-messages="errors"
+					:success="valid"
+				></v-text-field>
 			</ValidationProvider>
 			<ValidationProvider rules="max:191" v-slot="{ errors, valid }" name="Url">
-				<v-text-field v-model="formFields.url" label="Url" :error-messages="errors" :success="valid"></v-text-field>
+				<v-text-field
+					:readonly="$props.readonly"
+					v-model="formFields.url"
+					label="Url"
+					:error-messages="errors"
+					:success="valid"
+				></v-text-field>
 			</ValidationProvider>
 			<ValidationProvider rules="max:191" v-slot="{ errors, valid }" name="Photo url">
 				<v-text-field
+					:readonly="$props.readonly"
 					v-model="formFields.photo_url"
 					label="Photo url"
 					:error-messages="errors"
@@ -21,6 +40,7 @@
 
 			<ValidationProvider rules="max:65535" v-slot="{ errors, valid }" name="Description">
 				<v-text-field
+					:readonly="$props.readonly"
 					v-model="formFields.description"
 					label="Description"
 					:error-messages="errors"
@@ -37,6 +57,7 @@
 				name="Final price"
 			>
 				<v-text-field
+					:readonly="$props.readonly"
 					type="number"
 					v-model="formFields.final_price"
 					label="Final price"
@@ -45,6 +66,7 @@
 				></v-text-field>
 			</ValidationProvider>
 			<v-select
+				:readonly="$props.readonly"
 				:loading="loading"
 				v-model="formFields.categories"
 				:items="categories"
@@ -65,6 +87,7 @@
 						</v-card-title>
 						<ValidationProvider rules="max:10" v-slot="{ errors, valid }" name="Qty">
 							<v-text-field
+								:readonly="$props.readonly"
 								type="number"
 								label="Qty"
 								:value="formFields.stores[index].pivot.qty"
@@ -77,7 +100,7 @@
 					</v-card>
 				</v-col>
 			</v-row>
-			<v-row>
+			<v-row v-if="!$props.readonly">
 				<v-col cols="12" align="center" justify="center">
 					<v-btn
 						class="mr-4"
@@ -97,7 +120,8 @@ import { mapActions } from "vuex";
 
 export default {
 	props: {
-		model: Object || undefined
+		model: Object,
+		readonly: Boolean
 	},
 	data() {
 		return {
@@ -204,9 +228,7 @@ export default {
 		},
 		...mapActions({
 			getAll: "getAll",
-			getOne: "getOne",
-			create: "create",
-			delete: "delete"
+			create: "create"
 		})
 	},
 	beforeDestroy() {

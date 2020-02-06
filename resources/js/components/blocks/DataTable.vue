@@ -2,7 +2,9 @@
     <v-container fluid>
         <v-card>
             <v-card-title>
-                <v-icon v-if="$props.icon" class="mr-2">{{ $props.icon }}</v-icon>
+                <v-icon v-if="$props.icon" class="mr-2">{{
+                    $props.icon
+                }}</v-icon>
                 {{ $props.title }}
                 <v-spacer></v-spacer>
                 <v-text-field
@@ -15,18 +17,26 @@
                     v-model="keyword"
                     append-icon="mdi-close"
                     @click:append="
-                    (keyword = null), (searchAction = null), paginate($event)
-                "
+                        (keyword = null),
+                            (searchAction = null),
+                            paginate($event)
+                    "
                     @click:prepend="search"
                     @keyup.enter="search"
                 ></v-text-field>
-                <v-divider class="mx-4" v-if="$props.newForm && $props.btnTxt" inset vertical></v-divider>
+                <v-divider
+                    class="mx-4"
+                    v-if="$props.newForm && $props.btnTxt"
+                    inset
+                    vertical
+                ></v-divider>
                 <v-btn
                     v-if="$props.newForm && $props.btnTxt"
                     :disabled="$props.disableNewBtn || loading"
                     color="primary"
                     @click="createItemDialog"
-                >{{ $props.btnTxt }}</v-btn>
+                    >{{ $props.btnTxt }}</v-btn
+                >
             </v-card-title>
 
             <v-data-table
@@ -42,7 +52,10 @@
                 @pagination="paginate"
                 :footer-props="footerProps"
             >
-                <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
+                <template
+                    v-for="(_, slot) of $scopedSlots"
+                    v-slot:[slot]="scope"
+                >
                     <slot :name="slot" v-bind="scope" />
                 </template>
 
@@ -51,7 +64,8 @@
                     color="error"
                     icon="warning"
                     slot="no-results"
-                >Your search for "{{ keyword }}" found no results.</v-alert>
+                    >Your search for "{{ keyword }}" found no results.</v-alert
+                >
             </v-data-table>
         </v-card>
     </v-container>
@@ -81,11 +95,21 @@ export default {
         disableNewBtn: Boolean
     },
     mounted() {
-        EventBus.$on("dialog", event => {
+        EventBus.$on("data-table", event => {
             console.log(event);
-            this.paginate();
-            if (event) {
-                this.paginate();
+
+            switch (event.action) {
+                case "paginate":
+                    this.paginate();
+                    break;
+                case "search":
+                    this.keyword = event.keyword || null;
+                    this.search();
+                default:
+                    if (_.isBoolean(event.payload) && event.payload) {
+                        this.paginate();
+                    }
+                    break;
             }
         });
 
@@ -207,10 +231,7 @@ export default {
                             this.totalItems = response.total;
                         }
                     })
-                    .catch(error => {
-                        // unhandled error
-                        console.log(error.response);
-                    })
+                    .catch(() => {})
                     .finally(() => {
                         this.setLoading(false);
                     });

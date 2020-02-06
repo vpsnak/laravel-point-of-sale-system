@@ -140,20 +140,20 @@
                 <tbody style="font-size:14px;">
                     @foreach($items as $item )
                     <tr>
-                        <td colspan="2">{{ $item->name }}</td>
-                        <td style="text-align: center;">{{ $item->qty }}</td>
-                        <td>${{ $item->price }}</td>
-                        <td style="text-align:end;">${{ $item->price * $item->qty }}</td>
+                        <td colspan="2">{{ $item['name'] }}</td>
+                        <td style="text-align: center;">{{ $item['qty'] }}</td>
+                        <td>${{ $item['price'] }}</td>
+                        <td style="text-align:end;">${{ $item['price'] * $item['qty'] }}</td>
                     </tr>
-                    @if($item->discount_type)
+                    @if($item['discount_type'])
                     <tr>
-                        @if($item->discount_type === 'percentage')
+                        @if($item['discount_type'] === 'percentage')
                         <td style="text-align:start;">
-                            Discount: {{ $item->discount_amount }}%
+                            Discount: {{ $item['discount_amount'] }}%
                         </td>
                         @else
                         <td>
-                            Discount: {{ $item->discount_amount }}-
+                            Discount: {{ $item['discount_amount'] }}-
                         </td>
                         @endif
                         <td>
@@ -161,14 +161,14 @@
                         <td>
                         </td>
                         <td style="text-align:end; ">
-                            ${{ $item->price - $item->final_price }}-
+                            ${{ $item['price'] - $item['final_price'] }}-
                         </td>
                     </tr>
                     @endif
-                    @if($item->notes)
+                    @if($item['notes'])
                     <tr>
                         <td>
-                            {{ $item->notes }}
+                            {{ $item['notes'] }}
                         </td>
                     </tr>
                     @endif

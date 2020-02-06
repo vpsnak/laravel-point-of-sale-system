@@ -64,7 +64,7 @@ import { mapState, mapMutations } from "vuex";
 export default {
 	data() {
 		return {
-			form: "customerNewForm",
+			form: "customer",
 			headers: [
 				{ text: "#", value: "id" },
 				{ text: "First name", value: "first_name" },

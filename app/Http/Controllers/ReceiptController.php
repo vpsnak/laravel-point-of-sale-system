@@ -9,12 +9,11 @@ use App\CashRegister;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 
 class ReceiptController extends Controller
 {
-    protected $model = Receipt::class;
-
     public function create(Order $model)
     {
         $store = $model->store;
@@ -64,7 +63,32 @@ class ReceiptController extends Controller
             'address_2' => $model->shipping_address ? $model->shipping_address->street2 : null,
             'city' =>  $model->shipping_address ? $model->shipping_address->city : null
         ];
-        return view('test_email_receipt')->with($content);
+
+        $receipt['order_id'] = $model->id;
+        $receipt['print_count'] = 0;
+        $receipt['email_count'] = 0;
+        $receipt['issued_by'] = $created_by->id;
+        $receipt['cash_register_id'] = $cash_register->id;
+        $receipt['content'] =  $content;
+
+        $receipt = Receipt::create($receipt);
+        return response(['info' => ['Receipt ' . $receipt->id . ' created successfully!']], 201);
+    }
+
+    public function printReceipt(Order $model)
+    {
+        $receipts = $model->load('receipts');
+        // $receipt->print_count++;
+        // $receipt->update();
+        // return view('test_print_receipt')->with($receipt->content);
+    }
+
+    public function emailReceipt(Order $model)
+    {
+        $receipts = $model->load('receipts');
+        // $receipt->email_count++;
+        // $receipt->save();
+        // return view('test_print_receipt')->with($receipt->content);
     }
 
     public function all()
