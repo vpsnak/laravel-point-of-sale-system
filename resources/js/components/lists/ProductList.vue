@@ -61,71 +61,85 @@
 				</v-col>
 			</v-row>
 
-			<v-row v-if="productList.length" style="height:61vh; overflow-y:auto;">
-				<v-col v-for="product in productList" :key="product.id" cols="12" md="6" lg="4">
-					<v-card
-						dark
-						v-model="current_product"
-						:img="product.photo_url"
-						@click="addProduct(product)"
-						height="170px"
-					>
-						<v-card-title class="secondary pa-0" @click.stop>
-							<h6 class="px-2">{{ product.name }}</h6>
-							<div class="flex-grow-1"></div>
-							<v-menu bottom left>
-								<template v-slot:activator="{ on }">
-									<v-btn icon v-on="on">
-										<v-icon>mdi-dots-vertical</v-icon>
-									</v-btn>
-								</template>
-								<v-list>
-									<v-list-item @click="viewItem(product)">
-										<v-icon class="pr-2">mdi-eye</v-icon>
-										<h5>View product</h5>
-									</v-list-item>
-									<v-list-item
-										:href="product.plantcare_pdf"
-										target="_blank"
-										link
-										:disabled="!product.plantcare_pdf"
+			<v-row v-if="productList.length">
+				<v-container style="max-height:61vh;" class="overflow-y-auto fill-height">
+					<v-col v-for="product in productList" :key="product.id" cols="12" md="6" lg="4">
+						<v-card
+							dark
+							v-model="current_product"
+							:img="product.photo_url"
+							@click="addProduct(product)"
+							height="170px"
+						>
+							<v-card-title class="secondary pa-0" @click.stop>
+								<h6 class="px-2">{{ product.name }}</h6>
+								<div class="flex-grow-1"></div>
+								<v-menu bottom left>
+									<template v-slot:activator="{ on }">
+										<v-btn icon v-on="on">
+											<v-icon>mdi-dots-vertical</v-icon>
+										</v-btn>
+									</template>
+									<v-list>
+										<v-list-item @click="viewItem(product)">
+											<v-icon class="pr-2">mdi-eye</v-icon>
+											<h5>View product</h5>
+										</v-list-item>
+										<v-list-item
+											:href="product.plantcare_pdf"
+											target="_blank"
+											link
+											:disabled="!product.plantcare_pdf"
+										>
+											<v-icon class="pr-2">mdi-flower-outline</v-icon>
+											<h5>Plant care</h5>
+										</v-list-item>
+										<v-list-item :href="product.url" target="_blank" link :disabled="!product.url">
+											<v-icon class="pr-2">fab fa-magento</v-icon>
+											<h5>View on Magento</h5>
+										</v-list-item>
+										<v-divider />
+										<v-list-item @click="printProductBarcode(product)">
+											<v-icon class="pr-2">mdi-barcode</v-icon>
+											<h5>Print barcode</h5>
+										</v-list-item>
+									</v-list>
+								</v-menu>
+							</v-card-title>
+							<v-card-actions>
+								<div class="d-flex flex-column">
+									<v-chip class="secondary mt-2 ml-1 elevation-12">
+										<span>Price: {{ parseFloat(product.final_price).toFixed(2) }} $</span>
+									</v-chip>
+									<v-chip v-if="product.final_price != product.price.amount" class="mt-2 ml-1 elevation-12">
+										<span>Net Price: {{ parseFloat(product.final_price).toFixed(2) }} $</span>
+									</v-chip>
+									<v-chip
+										v-if="product.stock <= 10 && product.stock > 0"
+										color="orange"
+										class="mt-2 ml-1 elevation-12"
 									>
-										<v-icon class="pr-2">mdi-flower-outline</v-icon>
-										<h5>Plant care</h5>
-									</v-list-item>
-									<v-list-item :href="product.url" target="_blank" link :disabled="!product.url">
-										<v-icon class="pr-2">fab fa-magento</v-icon>
-										<h5>View on Magento</h5>
-									</v-list-item>
-									<v-divider />
-									<v-list-item @click="printProductBarcode(product)">
-										<v-icon class="pr-2">mdi-barcode</v-icon>
-										<h5>Print barcode</h5>
-									</v-list-item>
-								</v-list>
-							</v-menu>
-						</v-card-title>
-						<v-card-actions>
-							<div class="d-flex flex-column">
-								<v-chip class="secondary mt-2 ml-1 elevation-12">
-									<span>Price: {{ parseFloat(product.final_price).toFixed(2) }} $</span>
-								</v-chip>
-								<v-chip v-if="product.final_price != product.price.amount" class="mt-2 ml-1 elevation-12">
-									<span>Net Price: {{ parseFloat(product.final_price).toFixed(2) }} $</span>
-								</v-chip>
-								<v-chip
-									v-if="product.stock <= 10 && product.stock > 0"
-									color="orange"
-									class="mt-2 ml-1 elevation-12"
-								>
-									<span>Stock: {{ product.stock }}</span>
-								</v-chip>
-								<v-chip v-else-if="product.stock <= 0" color="red" class="mt-2 ml-1 elevation-12">
-									<span>Stock: {{ product.stock }}</span>
-								</v-chip>
-							</div>
-						</v-card-actions>
-					</v-card>
+										<span>Stock: {{ product.stock }}</span>
+									</v-chip>
+									<v-chip v-else-if="product.stock <= 0" color="red" class="mt-2 ml-1 elevation-12">
+										<span>Stock: {{ product.stock }}</span>
+									</v-chip>
+								</div>
+							</v-card-actions>
+						</v-card>
+					</v-col>
+				</v-container>
+
+				<v-col cols="12">
+					<v-pagination
+						v-model="currentPage"
+						@input="paginate"
+						:length="lastPage"
+						color="secondary"
+						:disabled="loader"
+						@previous="currentPage -= 1"
+						@next="currentPage += 1"
+					></v-pagination>
 				</v-col>
 			</v-row>
 			<v-row v-else align="center" justify="center" style="height: 58vh; overflow-y: auto;">
@@ -133,15 +147,6 @@
 				<v-progress-circular v-else indeterminate color="secondary"></v-progress-circular>
 			</v-row>
 		</v-card-text>
-		<v-pagination
-			v-model="currentPage"
-			@input="paginate"
-			:length="lastPage"
-			color="secondary"
-			:disabled="loader"
-			@previous="currentPage -= 1"
-			@next="currentPage += 1"
-		></v-pagination>
 
 		<!-- <interactiveDialog
 			v-if="showDummyDialog"
@@ -179,7 +184,6 @@
 </template>
 
 <script>
-import { log } from "util";
 export default {
 	data() {
 		return {
