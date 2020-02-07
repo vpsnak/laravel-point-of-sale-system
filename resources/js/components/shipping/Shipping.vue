@@ -111,10 +111,10 @@
 						</v-menu>
 					</v-col>
 					<v-col cols="4" lg="3" v-if="shipping.method !== 'retail'" class="pa-1">
-						<ValidationProvider rules="required" v-slot="{ errors, valid }" name="At">
+						<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Time Slot">
 							<v-select
 								:loading="loading"
-								label="At"
+								label="Time Slot"
 								prepend-icon="mdi-clock"
 								append-outer-icon="mdi-plus"
 								:items="timeSlots"
@@ -129,10 +129,10 @@
 						</ValidationProvider>
 					</v-col>
 					<v-col cols="4" lg="1" v-if="shipping.method !== 'retail'" class="pa-1">
-						<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Cost">
+						<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Fees">
 							<v-text-field
 								type="number"
-								label="Cost"
+								label="Fees"
 								:error-messages="errors"
 								:success="valid"
 								:min="0"
@@ -145,12 +145,12 @@
 				</v-row>
 				<v-row v-if="shipping.method !== 'retail'">
 					<v-col offset-lg="3" :cols="6" :lg="6" v-if="shipping.method === 'pickup'" class="pa-1">
-						<ValidationProvider rules="required" v-slot="{ errors, valid }" name="From">
+						<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Location">
 							<v-select
 								:error-messages="errors"
 								:success="valid"
 								:loading="loading"
-								label="From"
+								label="Location"
 								:items="storePickups"
 								item-text="name"
 								v-model="shipping.pickup_point"

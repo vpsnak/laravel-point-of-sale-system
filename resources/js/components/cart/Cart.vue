@@ -8,7 +8,12 @@
 
             <v-spacer></v-spacer>
 
-            <v-btn-toggle v-model="shippingMethod" @change="setOrderOptions" mandatory group>
+            <v-btn-toggle
+                v-model="shippingMethod"
+                @change="setOrderOptions"
+                mandatory
+                group
+            >
                 <v-tooltip bottom color="primary">
                     <template v-slot:activator="{ on }">
                         <v-btn
@@ -64,7 +69,11 @@
 
         <v-divider class="py-1" />
 
-        <customerSearch :editable="editable" :keywordLength="3" class="pa-3"></customerSearch>
+        <customerSearch
+            :editable="editable"
+            :keywordLength="3"
+            class="pa-3"
+        ></customerSearch>
 
         <v-divider class="py-1" />
 
@@ -78,7 +87,10 @@
                     <v-label>Cart discount</v-label>
                 </v-col>
                 <v-col cols="8" class="px-2 py-0">
-                    <cartDiscount :product_index="-1" :editable="editable"></cartDiscount>
+                    <cartDiscount
+                        :product_index="-1"
+                        :editable="editable"
+                    ></cartDiscount>
                 </v-col>
             </v-row>
 
@@ -188,19 +200,19 @@ export default {
             switch (this.shippingMethod) {
                 case "retail":
                     this.isRetail = true;
-                    this.orderOptions.name = "Cash & Carry Options";
+                    this.orderOptions.name = "Cash & Carry";
                     this.orderOptions.icon = "mdi-cart-arrow-right";
                     this.orderOptions.color = "primary";
                     break;
                 case "pickup":
                     this.isRetail = false;
-                    this.orderOptions.name = "In store pickup Options";
+                    this.orderOptions.name = "In store pickup";
                     this.orderOptions.icon = "mdi-storefront";
                     this.orderOptions.color = "red";
                     break;
                 case "delivery":
                     this.isRetail = false;
-                    this.orderOptions.name = "Delivery Options";
+                    this.orderOptions.name = "Delivery";
                     this.orderOptions.icon = "mdi-truck-delivery";
                     this.orderOptions.color = "warning";
                     break;
