@@ -59,7 +59,7 @@ export default {
         checkoutSteps: [
             {
                 id: 1,
-                name: "Cash & Carry Options",
+                name: "Cash & Carry",
                 icon: "mdi-cart-arrow-right",
                 color: "primary",
                 component: "shippingStep",
@@ -272,7 +272,7 @@ export default {
 
             state.total_price = 0;
 
-            state.checkoutSteps[0].name = "Cash & Carry Options";
+            state.checkoutSteps[0].name = "Cash & Carry";
             state.checkoutSteps[0].icon = "mdi-cart-arrow-right";
             state.checkoutSteps[0].color = "primary";
             state.currentCheckoutStep = 2;
@@ -310,7 +310,7 @@ export default {
             state.checkoutSteps.forEach(checkoutStep => {
                 checkoutStep.completed = false;
             });
-            state.checkoutSteps[0].name = "Cash & Carry Options";
+            state.checkoutSteps[0].name = "Cash & Carry";
             state.checkoutSteps[0].icon = "mdi-cart-arrow-right";
             state.checkoutSteps[0].color = "primary";
         }
