@@ -23,9 +23,15 @@ class Customer extends BaseModel
     ];
 
     protected $with = ['addresses'];
+    protected $appends = ['full_name'];
 
     public function addresses()
     {
         return $this->belongsToMany(Address::class);
+    }
+
+    public function getFullNameAttribute()
+    {
+        return "{$this->first_name} {$this->last_name}";
     }
 }
