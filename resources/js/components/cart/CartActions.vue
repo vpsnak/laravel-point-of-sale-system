@@ -142,9 +142,9 @@ export default {
                 case "retail":
                     return "primary";
                 case "pickup":
-                    return "red";
-                case "delivery":
                     return "warning";
+                case "delivery":
+                    return "success";
             }
         },
         cart() {

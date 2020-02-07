@@ -28,10 +28,10 @@
                     </template>
                     <span>Cash & Carry</span>
                 </v-tooltip>
-                <v-tooltip bottom color="red">
+                <v-tooltip bottom color="warning">
                     <template v-slot:activator="{ on }">
                         <v-btn
-                            color="red"
+                            color="warning"
                             icon
                             value="pickup"
                             :disabled="
@@ -46,10 +46,10 @@
                     </template>
                     <span>In Store Pickup</span>
                 </v-tooltip>
-                <v-tooltip bottom color="warning">
+                <v-tooltip bottom color="success">
                     <template v-slot:activator="{ on }">
                         <v-btn
-                            color="warning"
+                            color="success"
                             icon
                             value="delivery"
                             :disabled="
@@ -208,13 +208,13 @@ export default {
                     this.isRetail = false;
                     this.orderOptions.name = "In Store Pickup";
                     this.orderOptions.icon = "mdi-storefront";
-                    this.orderOptions.color = "red";
+                    this.orderOptions.color = "warning";
                     break;
                 case "delivery":
                     this.isRetail = false;
                     this.orderOptions.name = "Delivery";
                     this.orderOptions.icon = "mdi-truck-delivery";
-                    this.orderOptions.color = "warning";
+                    this.orderOptions.color = "success";
                     break;
                 default:
                     break;
