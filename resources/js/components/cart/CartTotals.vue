@@ -1,15 +1,15 @@
 <template>
     <div class="d-flex flex-column">
-        <div class="d-flex justify-space-between pa-2">
-            <span>Sub total w/ discount</span>
-            <span>$ {{ subTotalwDiscount.toFixed(2) }}</span>
+        <div class="d-flex justify-space-between pa-2" v-if="totalDiscount">
+            <span>Total discount</span>
+            <span>$ {{ totalDiscount.toFixed(2) }}</span>
         </div>
 
         <v-divider v-if="totalDiscount" />
 
-        <div class="d-flex justify-space-between pa-2" v-if="totalDiscount">
-            <span>Total discount</span>
-            <span>$ {{ totalDiscount.toFixed(2) }}</span>
+        <div class="d-flex justify-space-between pa-2">
+            <span>Sub total w/ discount</span>
+            <span>$ {{ subTotalwDiscount.toFixed(2) }}</span>
         </div>
 
         <v-divider />

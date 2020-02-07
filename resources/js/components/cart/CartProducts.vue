@@ -3,7 +3,7 @@
 		<v-expansion-panels class="d-block" accordion>
 			<v-expansion-panel v-for="(product, index) in products" :key="index">
 				<v-expansion-panel-header class="pa-2" ripple @click.stop>
-					<div class="d-flex flex-column pr-2" v-if="product.photo_url">
+					<div class="d-flex flex-column" v-if="product.photo_url">
 						<v-img
 							:src="product.photo_url"
 							:lazy-src="product.photo_url"
@@ -19,10 +19,6 @@
 						<div class="d-flex flex-column">
 							<span class="pb-1">
 								{{ product.name }}
-								<span class="amber--text py-1">-</span>
-								<b>
-									<i class="primary--text">{{ product.sku }}</i>
-								</b>
 							</span>
 							<div style="width:100%; max-width:150px;">
 								<v-text-field
@@ -116,7 +112,6 @@
 								<span>Decrease qty</span>
 							</v-tooltip>
 							<v-text-field
-								class="mx-2"
 								style="max-width:45px;"
 								:disabled="!editable"
 								type="number"

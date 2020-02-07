@@ -109,7 +109,7 @@
 							<v-card-actions>
 								<div class="d-flex flex-column">
                                     <v-chip small class="grey darken-1 mt-2 ml-1 elevation-12">
-										<span>SKU: {{ parseFloat(product.sku)}}</span>
+										<span>SKU: {{ product.sku}}</span>
 									</v-chip>
 									<v-chip small class="secondary mt-2 ml-1 elevation-12">
 										<span>Price: {{ parseFloat(product.final_price).toFixed(2) }} $</span>
