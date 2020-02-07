@@ -170,7 +170,9 @@ class MasOrderController extends Controller
             ];
 
             if ($item->price > $item->final_price) {
-                $response[$item->id]['DiscountAmount'] = round($item->price - $item->final_price);
+                $response[$item->id]['DiscountAmount'] = round($item->price - $item->final_price, 2);
+            } else {
+                $response[$item->id]['DiscountAmount'] = 0;
             }
         }
         return array_values($response);
