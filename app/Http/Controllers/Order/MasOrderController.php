@@ -34,8 +34,8 @@ class MasOrderController extends Controller
             $payload['Payments'] = $payments;
         }
 
-        $payload['MdseAmount'] = $order->total_without_tax;
-        $payload['TaxAmount'] = $order->total - $order->total_without_tax;
+        $payload['MdseAmount'] = round($order->total_without_tax, 2);
+        $payload['TaxAmount'] = round($order->total - $order->total_without_tax, 2);
         $payload['TotalAmount'] = $order->total;
 
         self::log('Payload: ' . json_encode($payload));
@@ -80,10 +80,10 @@ class MasOrderController extends Controller
             return ['success' => $response->Messages->MessageNumber . ' - ' . $response->Messages->Message];
         } else if (!empty($response->ControlNumber)) {
             MasOrder::updateOrCreate(['order_id' => $order->id], [
-                'mas_id' => $response->Messages->ControlNumber,
+                'mas_id' => $response->ControlNumber,
                 'status' => 'success',
             ]);
-            return ['error' => $response->Messages->MessageNumber . ' - ' . $response->Messages->Message];
+            return ['success' => $response->MessageNumber . ' - ' . $response->Message];
         } else {
             MasOrder::updateOrCreate(['order_id' => $order->id], [
                 'status' => 'error on success',
