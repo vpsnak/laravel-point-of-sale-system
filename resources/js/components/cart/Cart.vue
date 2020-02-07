@@ -44,7 +44,7 @@
                             <v-icon>mdi-storefront</v-icon>
                         </v-btn>
                     </template>
-                    <span>In store pickup</span>
+                    <span>In Store Pickup</span>
                 </v-tooltip>
                 <v-tooltip bottom color="warning">
                     <template v-slot:activator="{ on }">
@@ -82,11 +82,11 @@
         <v-divider />
 
         <div class="d-flex flex-column">
-            <v-row class="d-flex justify-space-between align-center">
+            <v-row class="d-flex justify-start align-center">
                 <v-col cols="4" class="px-5 py-0">
                     <v-label>Cart discount</v-label>
                 </v-col>
-                <v-col cols="8" class="px-2 py-0">
+                <v-col cols="4" class="px-2 py-0">
                     <cartDiscount
                         :product_index="-1"
                         :editable="editable"
@@ -206,7 +206,7 @@ export default {
                     break;
                 case "pickup":
                     this.isRetail = false;
-                    this.orderOptions.name = "In store pickup";
+                    this.orderOptions.name = "In Store Pickup";
                     this.orderOptions.icon = "mdi-storefront";
                     this.orderOptions.color = "red";
                     break;

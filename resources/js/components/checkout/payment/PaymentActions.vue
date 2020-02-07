@@ -32,10 +32,9 @@
                 ></v-text-field>
                 <v-text-field
                     autocomplete="off"
-                    label="CVC/CVV"
-                    type="number"
-                    prepend-inner-icon="mdi-lock"
-                    v-model="card.cvc"
+                    label="Card holder's name"
+                    prepend-inner-icon="mdi-account-box"
+                    v-model="card.card_holder"
                     style="max-width:300px;"
                     :disabled="loading || orderLoading"
                 ></v-text-field>
@@ -43,19 +42,20 @@
             <div class="pl-2">
                 <v-text-field
                     autocomplete="off"
-                    label="Card holder's name"
-                    prepend-inner-icon="mdi-account-box"
-                    v-model="card.card_holder"
-                    style="max-width:300px;"
-                    :disabled="loading || orderLoading"
-                ></v-text-field>
-                <v-text-field
-                    autocomplete="off"
                     :disabled="loading || orderLoading"
                     label="Exp date"
                     v-model="card.exp_date"
                     style="max-width:300px;"
                     prepend-inner-icon="mdi-calendar"
+                ></v-text-field>
+                <v-text-field
+                    autocomplete="off"
+                    label="CVC/CVV"
+                    type="number"
+                    prepend-inner-icon="mdi-lock"
+                    v-model="card.cvc"
+                    style="max-width:300px;"
+                    :disabled="loading || orderLoading"
                 ></v-text-field>
             </div>
         </v-row>
@@ -80,13 +80,13 @@
             v-if="paymentType !== 'coupon'"
         >
             <v-col :lg="5" class="d-flex justify-space-between align-center">
-                <span class="title">
-                    Remaining:
-                    <span
-                        class="amber--text"
-                        v-text="'$ ' + remainingAmount.toFixed(2)"
-                    />
-                </span>
+                <v-text-field
+                    prepend-inner-icon="mdi-currency-usd"
+                    v-model="remainingAmount"
+                    readonly
+                    label="Remaining Amount"
+                    style="max-width:150px;"
+                ></v-text-field>
                 <v-text-field
                     :disabled="loading || orderLoading"
                     :min="0.01"
