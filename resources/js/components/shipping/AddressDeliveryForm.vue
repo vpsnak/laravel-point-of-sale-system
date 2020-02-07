@@ -7,7 +7,7 @@
     >
         <div>
             <v-row>
-                <v-col cols="4">
+                <v-col cols="6">
                     <ValidationProvider
                         rules="required"
                         v-slot="{ errors, valid }"
@@ -25,36 +25,20 @@
                     <ValidationProvider
                         rules="required"
                         v-slot="{ errors, valid }"
-                        name="City"
+                        name="Address"
                     >
                         <v-text-field
-                            v-model="formFields.city"
                             :readonly="$props.readonly"
-                            label="City"
+                            v-model="formFields.street"
+                            label="Address"
                             :disabled="loading"
                             :error-messages="errors"
                             :success="valid"
                         ></v-text-field>
                     </ValidationProvider>
-                    <ValidationProvider
-                        rules="required"
-                        v-slot="{ errors, valid }"
-                        name="Region"
-                    >
-                        <v-select
-                            v-model="formFields.region_id"
-                            :readonly="$props.readonly"
-                            :items="regions"
-                            label="Regions"
-                            item-text="default_name"
-                            item-value="region_id"
-                            :error-messages="errors"
-                            :success="valid"
-                        ></v-select>
-                    </ValidationProvider>
                 </v-col>
 
-                <v-col cols="4">
+                <v-col cols="6">
                     <ValidationProvider
                         rules="required"
                         v-slot="{ errors, valid }"
@@ -71,20 +55,70 @@
                     </ValidationProvider>
 
                     <ValidationProvider
-                        rules="required"
                         v-slot="{ errors, valid }"
-                        name="Post Code"
+                        name="Second Address"
                     >
                         <v-text-field
                             :readonly="$props.readonly"
-                            v-model="formFields.postcode"
-                            label="Postcode"
+                            v-model="formFields.street2"
+                            label="Second Address"
                             :disabled="loading"
                             :error-messages="errors"
                             :success="valid"
                         ></v-text-field>
                     </ValidationProvider>
-
+                </v-col>
+                <v-col cols="3">
+                    <ValidationProvider
+                        rules="required"
+                        v-slot="{ errors, valid }"
+                        name="City"
+                    >
+                        <v-text-field
+                            v-model="formFields.city"
+                            :readonly="$props.readonly"
+                            label="City"
+                            :disabled="loading"
+                            :error-messages="errors"
+                            :success="valid"
+                        ></v-text-field>
+                    </ValidationProvider>
+                </v-col>
+                <v-col cols="3">
+                    <ValidationProvider
+                        rules="required"
+                        v-slot="{ errors, valid }"
+                        name="Zip Code"
+                    >
+                        <v-text-field
+                            :readonly="$props.readonly"
+                            v-model="formFields.postcode"
+                            label="Zip Code"
+                            :disabled="loading"
+                            :error-messages="errors"
+                            :success="valid"
+                        ></v-text-field>
+                    </ValidationProvider>
+                </v-col>
+                <v-col cols="3">
+                    <ValidationProvider
+                        rules="required"
+                        v-slot="{ errors, valid }"
+                        name="State"
+                    >
+                        <v-select
+                            v-model="formFields.region_id"
+                            :readonly="$props.readonly"
+                            :items="regions"
+                            label="States"
+                            item-text="default_name"
+                            item-value="region_id"
+                            :error-messages="errors"
+                            :success="valid"
+                        ></v-select>
+                    </ValidationProvider>
+                </v-col>
+                <v-col cols="3">
                     <ValidationProvider
                         rules="required"
                         v-slot="{ errors, valid }"
@@ -103,34 +137,7 @@
                         ></v-select>
                     </ValidationProvider>
                 </v-col>
-                <v-col cols="4">
-                    <ValidationProvider
-                        rules="required"
-                        v-slot="{ errors, valid }"
-                        name="Street"
-                    >
-                        <v-text-field
-                            :readonly="$props.readonly"
-                            v-model="formFields.street"
-                            label="Street"
-                            :disabled="loading"
-                            :error-messages="errors"
-                            :success="valid"
-                        ></v-text-field>
-                    </ValidationProvider>
-                    <ValidationProvider
-                        v-slot="{ errors, valid }"
-                        name="Second Street"
-                    >
-                        <v-text-field
-                            :readonly="$props.readonly"
-                            v-model="formFields.street2"
-                            label="Second Street"
-                            :disabled="loading"
-                            :error-messages="errors"
-                            :success="valid"
-                        ></v-text-field>
-                    </ValidationProvider>
+                <v-col cols="12">
                     <ValidationProvider
                         rules="required"
                         v-slot="{ errors, valid }"

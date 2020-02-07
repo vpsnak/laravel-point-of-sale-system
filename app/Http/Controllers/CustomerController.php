@@ -34,6 +34,7 @@ class CustomerController extends BaseController
                 'no_tax' => 'nullable|bool',
                 'file' => 'nullable|file|max:15000|mimes:jpeg,jpg,png,pdf',
                 'comment' => 'nullable|string',
+                'phone' => 'nullable|string'
             ]);
 
             if ($validatedData['no_tax'] && empty($validatedData['file'])) {
@@ -53,6 +54,7 @@ class CustomerController extends BaseController
                 'no_tax' => 'nullable|bool',
                 'file' => 'nullable|required_if:no_tax,1|file|max:15000|mimes:jpeg,jpg,png,pdf',
                 'comment' => 'nullable|string',
+                'phone' => 'nullable|string'
             ]);
 
             $addressData = $request->validate([
@@ -69,6 +71,8 @@ class CustomerController extends BaseController
                 'address.vat_id' => 'nullable|string',
                 'address.billing' => 'nullable|bool',
                 'address.shipping' => 'nullable|bool',
+                'address.location' => 'nullable|string',
+                'address.location_name' => 'nullable|string'
             ]);
         }
 

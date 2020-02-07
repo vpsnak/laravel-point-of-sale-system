@@ -26,6 +26,8 @@ class AddressController extends BaseController
             'vat_id' => 'nullable|string',
             'billing' => 'nullable|bool',
             'shipping' => 'nullable|bool',
+            'location' => 'nullable|string',
+            'location_name' => 'nullable|string'
         ]);
 
         $validatedID = $request->validate([

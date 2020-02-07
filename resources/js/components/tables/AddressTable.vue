@@ -54,12 +54,12 @@ export default {
                 { text: "#", value: "id" },
                 { text: "First Name", value: "first_name" },
                 { text: "Last Name", value: "last_name" },
-                { text: "Street", value: "street" },
-                { text: "Street 2", value: "street2" },
+                { text: "Address", value: "street" },
+                { text: "Second address", value: "street2" },
                 { text: "City", value: "city" },
                 { text: "Country ID", value: "country_id" },
-                { text: "Region", value: "address_region.default_name" },
-                { text: "Postcode", value: "postcode" },
+                { text: "State", value: "address_region.default_name" },
+                { text: "Zip Code", value: "postcode" },
                 { text: "Phone", value: "phone" },
                 { text: "Actions", value: "actions" }
             ]

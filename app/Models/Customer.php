@@ -15,6 +15,7 @@ class Customer extends BaseModel
         'no_tax',
         'no_tax_file',
         'comment',
+        'phone'
     ];
 
     protected $casts = [

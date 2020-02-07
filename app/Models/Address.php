@@ -23,7 +23,9 @@ class Address extends BaseModel
         'company',
         'vat_id',
         'billing',
-        'shipping'
+        'shipping',
+        'location',
+        'location_name'
     ];
 
     protected $casts = [

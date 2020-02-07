@@ -38,6 +38,24 @@
                     :success="valid"
                 ></v-text-field>
             </ValidationProvider>
+            <ValidationProvider
+                :rules="{
+                    min: 8,
+                    max: 100,
+                    regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
+                }"
+                v-slot="{ errors, valid }"
+                name="Phone"
+            >
+                <v-text-field
+                    v-model="phone"
+                    label="Phone"
+                    :min="0"
+                    :disabled="loading"
+                    :error-messages="errors"
+                    :success="valid"
+                ></v-text-field>
+            </ValidationProvider>
 
             <v-row justify="space-around">
                 <ValidationProvider vid="house_account_status">
@@ -142,11 +160,11 @@
                     <ValidationProvider
                         rules="max:100"
                         v-slot="{ errors, valid }"
-                        name="Address 2"
+                        name="Second Address"
                     >
                         <v-text-field
                             v-model="formFields.address.street2"
-                            label="Address 2"
+                            label="Second Address"
                             :disabled="loading"
                             :error-messages="errors"
                             :success="valid"
@@ -219,20 +237,52 @@
                         ></v-select>
                     </ValidationProvider>
                 </v-col>
-                <!--<v-col cols="4">Location</v-col>
-                <v-col cols="4">Location name</v-col> -->
-                <v-col cols="12">
+                <v-col cols="4">
                     <ValidationProvider
                         rules="required|max:100"
+                        v-slot="{ errors, valid }"
+                        name="Location"
+                    >
+                        <v-select
+                            v-model="formFields.location"
+                            label="Locations"
+                            :items="locations"
+                            item-text="label"
+                            item-value="label"
+                            :disabled="loading"
+                            :error-messages="errors"
+                            :success="valid"
+                        ></v-select> </ValidationProvider
+                ></v-col>
+                <v-col cols="4">
+                    <ValidationProvider
+                        rules="required|max:100"
+                        v-slot="{ errors, valid }"
+                        name="Location name"
+                    >
+                        <v-text-field
+                            v-model="formFields.address.location_name"
+                            label="Location name"
+                            :disabled="loading"
+                            :error-messages="errors"
+                            :success="valid"
+                        ></v-text-field> </ValidationProvider
+                ></v-col>
+                <v-col cols="4">
+                    <ValidationProvider
+                        :rules="{
+                            min: 8,
+                            max: 100,
+                            regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
+                        }"
                         v-slot="{ errors, valid }"
                         name="Phone"
                     >
                         <v-text-field
                             v-model="formFields.address.phone"
                             label="Phone"
-                            type="number"
                             :min="0"
-                            :disabled="loading"
+                            :disabled="loading || syncName"
                             :error-messages="errors"
                             :success="valid"
                         ></v-text-field>
@@ -275,6 +325,7 @@ export default {
                 house_account_status: false,
                 no_tax: false,
                 comment: null,
+                phone: null,
                 address: {
                     first_name: null,
                     last_name: null,
@@ -285,9 +336,10 @@ export default {
                     region: null,
                     postcode: null,
                     phone: null,
-                    deliverydate: null,
                     shipping: true,
-                    billing: true
+                    billing: true,
+                    location: null,
+                    location_name: null
                 }
             }
         };
@@ -329,6 +381,21 @@ export default {
                     this.formFields.last_name = value;
                 }
             }
+        },
+        phone: {
+            get() {
+                return this.formFields.phone;
+            },
+            set(value) {
+                if (this.syncName) {
+                    this.formFields.address.phone = this.formFields.phone = value;
+                } else {
+                    this.formFields.phone = value;
+                }
+            }
+        },
+        locations() {
+            return this.$store.state.cart.locations;
         }
     },
     methods: {
@@ -367,7 +434,8 @@ export default {
             this.formFields.address.region = null;
             this.formFields.address.postcode = null;
             this.formFields.address.phone = null;
-            this.formFields.address.deliverydate = null;
+            this.formFields.address.location = null;
+            this.formFields.address.location_name = null;
         },
         ...mapActions({
             getAll: "getAll",
