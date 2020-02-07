@@ -50,12 +50,9 @@ import { EventBus } from "../../../plugins/event-bus";
 
 export default {
   mounted() {
-    console.log("asd");
-    EventBus.$on("payment-history-refund", event => {
-      console.log("asd");
+    EventBus.$on("customer-search", event => {
       console.log(event);
-
-      if (event.payload) {
+      if (event.payload && this.selected_payment) {
         this.refund();
       }
     });
@@ -73,10 +70,10 @@ export default {
   data() {
     return {
       paymentHistoryLoading: false,
-      paymentID: null,
+      selected_payment: null,
       headers: [
         {
-          text: "Payment ID",
+          text: "#",
           value: "id",
           sortable: false
         },
@@ -175,7 +172,7 @@ export default {
       this.refundLoading = true;
       let payload = {
         model: "payments",
-        id: this.paymentID
+        id: this.selected_payment.id
       };
 
       this.delete(payload)
@@ -192,20 +189,19 @@ export default {
     },
 
     refundDialog(item) {
-      const dialog = {
+      this.selected_payment = item;
+
+      this.setDialog({
+        show: true,
         width: 600,
-        title: `Verify your password to refund payment #${item.id}`,
+        title: `Verify your password to rollback payment #${item.id}`,
         titleCloseBtn: true,
         icon: "mdi-lock-alert",
         component: "passwordForm",
         model: { action: "verify" },
         persistent: true,
         eventChannel: "payment-history-refund"
-      };
-
-      this.paymentID = item.id;
-
-      this.setDialog(dialog);
+      });
     }
   }
 };
