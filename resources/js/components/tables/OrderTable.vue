@@ -103,12 +103,8 @@ import { mapMutations, mapActions, mapState } from "vuex";
 
 export default {
     mounted() {
-        EventBus.$on("dialog", event => {
-            if (
-                event.component === "passwordForm" &&
-                event.payload &&
-                this.selectedItem
-            ) {
+        EventBus.$on("order-table-cancel-order", event => {
+            if (event.payload && this.selectedItem) {
                 this.disableActions = true;
                 this.cancelOrder().then(() => {
                     EventBus.$emit("data-table", { action: "paginate" });
@@ -210,7 +206,7 @@ export default {
                 component: "passwordForm",
                 model: { action: "verify" },
                 persistent: true,
-                eventChannel: "dialog"
+                eventChannel: "order-table-cancel-order"
             });
 
             this.selectedItem = item;

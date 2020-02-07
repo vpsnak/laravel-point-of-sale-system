@@ -56,7 +56,10 @@ import { EventBus } from "../../../plugins/event-bus";
 
 export default {
     mounted() {
-        EventBus.$on("payment-history-pwd-validation", event => {
+        EventBus.$on("payment-history-refund", event => {
+            console.log("asd");
+            console.log(event);
+
             if (event.payload) {
                 this.refund();
             }
@@ -65,7 +68,7 @@ export default {
 
     beforeDestroy() {
         this.$off("refund");
-        EventBus.$off();
+        EventBus.$off("payment-history-refund");
     },
 
     props: {
@@ -75,17 +78,6 @@ export default {
     data() {
         return {
             paymentHistoryLoading: false,
-            pwdValidationDialog: {
-                show: true,
-                width: 600,
-                title: "",
-                titleCloseBtn: true,
-                icon: "mdi-lock-alert",
-                component: "passwordForm",
-                model: { action: "verify" },
-                persistent: true,
-                eventChannel: "payment-history-pwd-validation"
-            },
             paymentID: null,
             headers: [
                 {
@@ -120,8 +112,7 @@ export default {
                 },
                 {
                     text: "Actions",
-                    value: "actions",
-                    sortable: false
+                    value: "actions"
                 }
             ]
         };
@@ -150,6 +141,7 @@ export default {
         }
     },
     methods: {
+        ...mapActions(["search", "delete"]),
         ...mapMutations("dialog", ["setDialog"]),
 
         parseStatus(status) {
@@ -184,8 +176,6 @@ export default {
                     });
             }
         },
-
-        // refund on true event
         refund() {
             this.refundLoading = true;
             let payload = {
@@ -207,12 +197,21 @@ export default {
         },
 
         refundDialog(item) {
-            this.pwdValidationDialog.title = `Verify your password to refund payment #${item.id}`;
+            const dialog = {
+                width: 600,
+                title: `Verify your password to refund payment #${item.id}`,
+                titleCloseBtn: true,
+                icon: "mdi-lock-alert",
+                component: "passwordForm",
+                model: { action: "verify" },
+                persistent: true,
+                eventChannel: "payment-history-refund"
+            };
+
             this.paymentID = item.id;
 
-            this.setDialog(this.pwdValidationDialog);
-        },
-        ...mapActions(["search", "delete"])
+            this.setDialog(dialog);
+        }
     }
 };
 </script>

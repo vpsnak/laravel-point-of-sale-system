@@ -83,7 +83,7 @@ export default {
     },
 
     methods: {
-        ...mapMutations("dialog", ["setNotification"]),
+        ...mapMutations(["setNotification"]),
         ...mapMutations("dialog", ["resetDialog"]),
 
         submit(payload) {
@@ -106,18 +106,19 @@ export default {
         },
         closeEvent(payload, close) {
             if (!this.dialog.persistent || close) {
-                console.log({
-                    module: "interactive_dialog",
-                    event,
-                    payload: payload
-                });
-
                 if (this.dialog.eventChannel) {
                     EventBus.$emit(this.dialog.eventChannel, {
                         component: this.dialog.component,
                         payload
                     });
                 }
+
+                console.log({
+                    module: "interactive_dialog",
+                    event,
+                    payload: payload,
+                    event_channel: this.dialog.eventChannel
+                });
 
                 this.resetDialog();
             }

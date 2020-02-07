@@ -8,9 +8,9 @@
             btnTxt="New Gift Card"
             :newForm="form"
         >
-            <template v-slot:item.enabled="{ item }">{{
-                item.enabled ? "Yes" : "No"
-            }}</template>
+            <template v-slot:item.enabled="{ item }">
+                {{ item.enabled ? "Yes" : "No" }}
+            </template>
 
             <template v-slot:item.actions="{ item }">
                 <v-tooltip bottom>
@@ -69,10 +69,18 @@ import { EventBus } from "../../plugins/event-bus";
 
 export default {
     mounted() {
-        EventBus.$on(event => {
-            this.setCheckoutDialog(true);
+        EventBus.$on("gift-card-table", event => {
+            console.log(event);
+            if (event.payload) {
+                this.setCheckoutDialog(true);
+            }
         });
     },
+
+    beforeDestroy() {
+        this.$off();
+    },
+
     data() {
         return {
             form: "giftCardForm",
@@ -111,7 +119,8 @@ export default {
                 icon: "mdi-wallet-giftcard",
                 component: "RechargeGiftCardToCart",
                 model: item,
-                persistent: true
+                persistent: true,
+                eventChannel: "gift-card-table"
             });
         }
     }
