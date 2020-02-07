@@ -142,11 +142,11 @@
                     <ValidationProvider
                         rules="max:100"
                         v-slot="{ errors, valid }"
-                        name="Address 2"
+                        name="Second Address"
                     >
                         <v-text-field
                             v-model="formFields.address.street2"
-                            label="Address 2"
+                            label="Second Address"
                             :disabled="loading"
                             :error-messages="errors"
                             :success="valid"
