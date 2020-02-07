@@ -71,17 +71,24 @@ class MasOrderController extends Controller
             }
             return ['errors' => $errors];
         }
+
         if (!empty($response->Messages)) {
             MasOrder::updateOrCreate(['order_id' => $order->id], [
                 'mas_id' => $response->Messages->ControlNumber,
                 'status' => 'success',
             ]);
             return ['success' => $response->Messages->MessageNumber . ' - ' . $response->Messages->Message];
+        } else if (!empty($response->ControlNumber)) {
+            MasOrder::updateOrCreate(['order_id' => $order->id], [
+                'mas_id' => $response->Messages->ControlNumber,
+                'status' => 'success',
+            ]);
+            return ['error' => $response->Messages->MessageNumber . ' - ' . $response->Messages->Message];
         } else {
             MasOrder::updateOrCreate(['order_id' => $order->id], [
                 'status' => 'error on success',
             ]);
-            return ['error' => $response->Messages->MessageNumber . ' - ' . $response->Messages->Message];
+            return ['error' => $response . ' - ' . $response];
         }
     }
 
