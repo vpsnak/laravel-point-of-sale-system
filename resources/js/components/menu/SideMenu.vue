@@ -1,5 +1,5 @@
 <template>
-    <v-navigation-drawer clipped app dark v-model="toggle">
+    <v-navigation-drawer clipped app v-model="menuVisibility">
         <v-list dense>
             <v-list-item
                 v-for="menuItem in items"
@@ -15,23 +15,28 @@
             </v-list-item>
             <v-divider dark class="my-4"></v-divider>
             <v-subheader class="mt-5 grey--text text--darken-1"
-                >Designed and developed by WebO2</v-subheader
+                >"Designed" and "developed" by WebO2</v-subheader
             >
         </v-list>
     </v-navigation-drawer>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 
 export default {
     computed: {
-        toggle: {
+        ...mapState("menu", ["visibility"]),
+        ...mapState("menu", ["adminItems"]),
+        ...mapState("menu", ["managerItems"]),
+        ...mapState("menu", ["cashierItems"]),
+
+        menuVisibility: {
             get() {
-                return this.$store.state.menu.toggle;
+                return this.visibility;
             },
             set(value) {
-                this.$store.commit("menu/toggleMenu", value);
+                this.setVisibility(value);
             }
         },
         role() {
@@ -40,13 +45,16 @@ export default {
         items() {
             switch (this.role) {
                 case "admin":
-                    return this.$store.state.menu.adminItems;
+                    return this.adminItems;
                 case "store_manager":
-                    return this.$store.state.menu.managerItems;
+                    return this.managerItems;
                 case "cashier":
-                    return this.$store.state.menu.cashierItems;
+                    return this.cashierItems;
             }
         }
+    },
+    methods: {
+        ...mapMutations("menu", ["setVisibility"])
     }
 };
 </script>

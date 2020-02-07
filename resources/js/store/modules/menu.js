@@ -1,7 +1,7 @@
 export default {
     namespaced: true,
     state: {
-        toggle: true,
+        visibility: true,
 
         adminItems: [
             {
@@ -180,8 +180,8 @@ export default {
     },
 
     mutations: {
-        toggleMenu(state, value) {
-            state.toggle = value;
+        setVisibility(state, value) {
+            state.visibility = value;
         }
     }
 };

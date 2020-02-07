@@ -127,16 +127,6 @@ export default {
         }
     },
     computed: {
-        ...mapState("dialog", ["interactive_dialog"]),
-
-        dialog: {
-            get() {
-                return this.interactive_dialog;
-            },
-            set(value) {
-                this.setDialog(value);
-            }
-        },
         searchAction: {
             get() {
                 return this.search_action;
@@ -239,7 +229,7 @@ export default {
         },
 
         createItemDialog() {
-            this.dialog = {
+            this.setDialog = {
                 show: true,
                 width: 600,
                 title: this.$props.btnTxt,

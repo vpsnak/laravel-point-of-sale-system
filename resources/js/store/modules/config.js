@@ -1,7 +1,7 @@
 const state = {
     app_env: process.env.NODE_ENV,
     app_name: process.env.MIX_APP_NAME,
-    mas_env: process.env.MIX_MAS_PRODUCTION_MODE,
+    mas_env: "",
 
     app_load: 0
 };
@@ -49,7 +49,7 @@ const actions = {
                         "setNotification",
                         {
                             msg: response.data.info,
-                            type: "info"
+                            type: "success"
                         },
                         { root: true }
                     );

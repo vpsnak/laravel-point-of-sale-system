@@ -1,6 +1,8 @@
 <template>
     <v-app-bar app clipped-left>
-        <v-app-bar-nav-icon @click.stop="toggle = !toggle"></v-app-bar-nav-icon>
+        <v-app-bar-nav-icon
+            @click.stop="menuVisibility = !menuVisibility"
+        ></v-app-bar-nav-icon>
         <v-toolbar-title>{{ app_name }}</v-toolbar-title>
 
         <v-spacer></v-spacer>
@@ -23,8 +25,8 @@
             v-if="!openedRegister"
             text
             @click="$router.push({ name: 'openCashRegister' })"
-            >Select cash register</v-chip
-        >
+            >Select cash register
+        </v-chip>
         <v-menu
             v-if="openedRegister"
             left
@@ -81,9 +83,9 @@
                             <v-icon color="red">mdi-alpha-z-circle</v-icon>
                         </v-list-item-avatar>
                         <v-list-item-content>
-                            <v-list-item-title
-                                >Close and generate Z report</v-list-item-title
-                            >
+                            <v-list-item-title>
+                                Close and generate Z report
+                            </v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
                 </v-list-item-group>
@@ -98,16 +100,16 @@
             <v-list dense>
                 <v-list-item-group>
                     <v-list-item inactive two-line @click.stop :ripple="false">
-                        <v-list-item-avatar color="orange">{{
-                            user.name.charAt(0)
-                        }}</v-list-item-avatar>
+                        <v-list-item-avatar color="orange">
+                            {{ user.name.charAt(0) }}
+                        </v-list-item-avatar>
                         <v-list-item-content>
-                            <v-list-item-title>{{
-                                user.name
-                            }}</v-list-item-title>
-                            <v-list-item-subtitle>{{
-                                user.email
-                            }}</v-list-item-subtitle>
+                            <v-list-item-title>
+                                {{ user.name }}
+                            </v-list-item-title>
+                            <v-list-item-subtitle>
+                                {{ user.email }}
+                            </v-list-item-subtitle>
                         </v-list-item-content>
                     </v-list-item>
                     <v-divider />
@@ -124,9 +126,9 @@
                             <v-icon>mdi-key</v-icon>
                         </v-list-item-avatar>
                         <v-list-item-content>
-                            <v-list-item-title
-                                >Change password</v-list-item-title
-                            >
+                            <v-list-item-title>
+                                Change password
+                            </v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
                     <v-divider />
@@ -156,8 +158,13 @@ import { EventBus } from "../../plugins/event-bus";
 
 export default {
     mounted() {
-        EventBus.$on("top-menu-");
+        EventBus.$on("top-menu-generate-z", event => {
+            if (event && _.has(event, "payload.response.report")) {
+                this.displayZDialog(event.payload.response.report);
+            }
+        });
     },
+
     beforeDestroy() {
         EventBus.$off();
     },
@@ -167,9 +174,11 @@ export default {
             clicks: 0
         };
     },
+
     watch: {
         clicks(value) {
             if (value === 10) {
+                this.clicks = 0;
                 let payload;
 
                 if (this.mas_env === "production") {
@@ -182,19 +191,40 @@ export default {
             }
         }
     },
+
+    computed: {
+        ...mapState("menu", ["visibility"]),
+        ...mapState("config", ["app_env", "app_name", "mas_env"]),
+        ...mapState(["user", "cashRegister", "store"]),
+
+        openedRegister() {
+            return this.$store.getters.openedRegister;
+        },
+        darkMode: {
+            get() {
+                return this.$vuetify.theme.dark;
+            },
+            set(value) {
+                this.$vuetify.theme.dark = value;
+            }
+        },
+        menuVisibility: {
+            get() {
+                return this.visibility;
+            },
+            set(value) {
+                this.setVisibility(value);
+            }
+        }
+    },
+
     methods: {
         ...mapMutations("dialog", ["setDialog"]),
+        ...mapMutations("menu", ["setVisibility"]),
         ...mapActions("config", ["setMasEnv"]),
 
-        invertTheme() {
-            this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-        },
         cashRegisterLogout() {
             this.$store.dispatch("logoutCashRegister");
-        },
-
-        dialogEvent(event) {
-            this.displayZDialog(event.response.report);
         },
         txtColor(mode) {
             switch (mode) {
@@ -216,7 +246,8 @@ export default {
                 titleCloseBtn: true,
                 icon: "mdi-alpha-z-circle",
                 component: "closeCashRegisterForm",
-                persistent: true
+                persistent: true,
+                eventChannel: "top-menu-generate-z"
             });
         },
         changePasswordDialog() {
@@ -230,12 +261,12 @@ export default {
                 persistent: true
             });
         },
-        displayZDialog(event) {
+        displayZDialog(report) {
             this.setDialog({
                 width: 1000,
-                title: event.report_name,
+                title: report.report_name,
                 titleCloseBtn: true,
-                model: event,
+                model: report,
                 icon: "mdi-alpha-z-circle",
                 component: "cashRegisterReports",
                 persistent: true
@@ -250,31 +281,6 @@ export default {
                 component: "cashRegisterReports",
                 persistent: true
             });
-        }
-    },
-
-    computed: {
-        ...mapState("config", ["app_env", "app_name", "mas_env"]),
-        ...mapState(["user", "cashRegister", "store"]),
-
-        openedRegister() {
-            return this.$store.getters.openedRegister;
-        },
-        darkMode: {
-            get() {
-                return this.$vuetify.theme.dark;
-            },
-            set(value) {
-                this.$vuetify.theme.dark = value;
-            }
-        },
-        toggle: {
-            get() {
-                return this.$store.state.menu.toggle;
-            },
-            set(value) {
-                this.$store.commit("menu/toggleMenu", value);
-            }
         }
     }
 };

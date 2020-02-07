@@ -1,9 +1,9 @@
 <template>
     <v-snackbar
-        v-if="show"
-        v-model="show"
-        :color="type"
-        :type="type"
+        v-if="notification.msg"
+        v-model="notification.msg"
+        :color="notification.type"
+        :type="notification.type"
         top
         class="d-flex align-center"
     >
@@ -14,6 +14,8 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
     data() {
         return {
@@ -37,32 +39,22 @@ export default {
             ]
         };
     },
+
     computed: {
-        show: {
-            get() {
-                return this.$store.state.notification.msg ? true : false;
-            },
-            set() {
-                this.$store.state.notification.msg = "";
-                this.$store.state.notification.type = undefined;
-            }
-        },
-        message() {
-            return this.$store.state.notification.msg;
-        },
-        type() {
-            return this.$store.state.notification.type;
-        }
+        ...mapState(["notification"])
     },
+
     methods: {
         icon() {
-            return _.find(this.icons, { name: this.type }).icon;
+            return _.find(this.icons, { name: this.notification.type }).icon;
         },
         displayMessages() {
-            if (typeof this.message === "object") {
+            if (_.isObjectLike(this.notification.msg)) {
                 let msg = "";
 
-                for (const [key, value] of Object.entries(this.message)) {
+                for (const [key, value] of Object.entries(
+                    this.notification.msg
+                )) {
                     if (this.type === "error") {
                         msg +=
                             "<strong>" +
@@ -78,7 +70,7 @@ export default {
 
                 return msg;
             } else {
-                return _.capitalize(this.message);
+                return _.capitalize(this.notification.msg);
             }
         }
     }

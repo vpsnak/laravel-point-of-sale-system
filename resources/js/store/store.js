@@ -29,9 +29,7 @@ export default new Vuex.Store({
     },
     state: {
         base_url: process.env.MIX_BASE_URL,
-
         user: Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null,
-
         token: Cookies.get("token") || null,
 
         store: null,
@@ -40,14 +38,10 @@ export default new Vuex.Store({
         // notification
         notification: {
             msg: "",
-            type: undefined
+            type: ""
         },
 
-        // dialogs
-        cartRestoreDialog: false,
-
         productList: [],
-        categoryList: [],
         storeList: []
     },
     getters: {
@@ -74,6 +68,9 @@ export default new Vuex.Store({
         }
     },
     mutations: {
+        setProductList(state, value) {
+            state.productList = value;
+        },
         logout(state) {
             state.user = null;
             state.token = null;
@@ -88,8 +85,6 @@ export default new Vuex.Store({
             if (router.currentRoute.name !== "login") {
                 router.push({ name: "login" });
             }
-
-            state.config.app_load = 0;
         },
         setCashRegister(state, cashRegister) {
             state.cashRegister = cashRegister;
@@ -131,13 +126,6 @@ export default new Vuex.Store({
         },
         setProductList(state, products) {
             state.productList = products;
-        },
-        setCategoryList(state, categories) {
-            state.categoryList = categories;
-        },
-        closeAllDialogs(state) {
-            state.cartRestoreDialog = false;
-            state.checkoutDialog = false;
         }
     },
     actions: {
@@ -177,11 +165,11 @@ export default new Vuex.Store({
                 axios
                     .get(`${context.state.base_url}/auth/logout`)
                     .then(response => {
-                        let notification = {
+                        context.config.commit("resetLoad");
+                        context.commit("setNotification", {
                             msg: response.data.info,
                             type: "info"
-                        };
-                        context.commit("setNotification", notification);
+                        });
                         resolve(response.data);
                     })
                     .catch(error => {
@@ -200,11 +188,10 @@ export default new Vuex.Store({
                         resolve(true);
                     })
                     .catch(error => {
-                        let notification = {
+                        context.commit("setNotification", {
                             msg: error.response.data.errors,
                             type: "error"
-                        };
-                        context.commit("setNotification", notification);
+                        });
                         reject(error);
                     });
             });
@@ -214,19 +201,17 @@ export default new Vuex.Store({
                 axios
                     .post(`${context.state.base_url}/auth/password`, payload)
                     .then(response => {
-                        let notification = {
+                        context.commit("setNotification", {
                             msg: response.data.info,
                             type: "success"
-                        };
-                        context.commit("setNotification", notification);
+                        });
                         resolve(response.data);
                     })
                     .catch(error => {
-                        let notification = {
+                        context.commit("setNotification", {
                             msg: error.response.data.errors,
                             type: "error"
-                        };
-                        context.commit("setNotification", notification);
+                        });
                         reject(error);
                     });
             });
@@ -236,19 +221,17 @@ export default new Vuex.Store({
                 axios
                     .post(`${context.state.base_url}/users/password`, payload)
                     .then(response => {
-                        let notification = {
+                        context.commit("setNotification", {
                             msg: response.data.info,
                             type: "success"
-                        };
-                        context.commit("setNotification", notification);
+                        });
                         resolve(response.data);
                     })
                     .catch(error => {
-                        let notification = {
+                        context.commit("setNotification", {
                             msg: error.response.data.errors,
                             type: "error"
-                        };
-                        context.commit("setNotification", notification);
+                        });
                         reject(error);
                     });
             });
@@ -274,11 +257,10 @@ export default new Vuex.Store({
                         }
                     })
                     .catch(error => {
-                        let notification = {
+                        context.commit("setNotification", {
                             msg: error.response.data.errors,
                             type: "error"
-                        };
-                        context.commit("setNotification", notification);
+                        });
                         reject(error);
                     });
             });
@@ -298,11 +280,10 @@ export default new Vuex.Store({
                         resolve(response.data.data || response.data);
                     })
                     .catch(error => {
-                        let notification = {
+                        context.commit("setNotification", {
                             msg: error.response.data.errors,
                             type: "error"
-                        };
-                        context.commit("setNotification", notification);
+                        });
                         reject(error);
                     });
             });
@@ -325,11 +306,10 @@ export default new Vuex.Store({
                         resolve(response.data);
                     })
                     .catch(error => {
-                        let notification = {
+                        context.commit("setNotification", {
                             msg: error.response.data.errors,
                             type: "error"
-                        };
-                        context.commit("setNotification", notification);
+                        });
                         reject(error);
                     });
             });
@@ -357,11 +337,10 @@ export default new Vuex.Store({
                         }
                     })
                     .catch(error => {
-                        let notification = {
+                        context.commit("setNotification", {
                             msg: error.response.data.errors,
                             type: "error"
-                        };
-                        context.commit("setNotification", notification);
+                        });
                         reject(error);
                     });
             });
@@ -374,11 +353,6 @@ export default new Vuex.Store({
                         payload
                     )
                     .then(response => {
-                        let notification = {
-                            msg: response.data.info,
-                            type: "success"
-                        };
-
                         context.commit(
                             "setCashRegister",
                             response.data.cashRegister.cash_register
@@ -387,24 +361,24 @@ export default new Vuex.Store({
                             "setStore",
                             response.data.cashRegister.cash_register.store
                         );
-                        context.commit("setNotification", notification);
+                        context.commit("setNotification", {
+                            msg: response.data.info,
+                            type: "success"
+                        });
 
                         resolve(response.data);
                     })
                     .catch(error => {
                         if (error.response) {
-                            let notification = {
+                            context.commit("setNotification", {
                                 msg: error.response.data.errors,
                                 type: "error"
-                            };
-                            context.commit("setNotification", notification);
+                            });
                         } else {
-                            let notification = {
+                            context.commit("setNotification", {
                                 msg: "Unexpected error occured",
                                 type: "error"
-                            };
-
-                            context.commit("setNotification", notification);
+                            });
                         }
 
                         reject(error);
@@ -417,43 +391,35 @@ export default new Vuex.Store({
                     .get(`${context.state.base_url}/cash-register-logs/logout`)
                     .then(response => {
                         if (
-                            router.currentRoute.name === "sales" ||
-                            router.currentRoute.name === "orders"
+                            router.currentRoute.name === ("sales" || "orders")
                         ) {
-                            router.push({
-                                name: "dashboard"
-                            });
+                            router.push({ name: "dashboard" });
                         }
-
-                        let notification = {
-                            msg: response.data.info,
-                            type: "success"
-                        };
 
                         context.commit("setCashRegister", null);
                         context.commit("setStore", null);
-                        context.commit("setNotification", notification);
+                        context.commit("setNotification", {
+                            msg: response.data.info,
+                            type: "success"
+                        });
 
                         resolve(true);
                     })
                     .catch(error => {
                         if (error.response) {
-                            let notification = {
+                            context.commit("setNotification", {
                                 msg: error.response.data.errors,
                                 type: "error"
-                            };
-                            context.commit("setNotification", notification);
+                            });
 
                             context.commit("setCashRegister", null);
                             context.commit("setStore", null);
                             context.commit("setNotification", notification);
                         } else {
-                            let notification = {
+                            context.commit("setNotification", {
                                 msg: "Unexpected error occured",
                                 type: "error"
-                            };
-
-                            context.commit("setNotification", notification);
+                            });
                         }
 
                         reject(error);
@@ -543,36 +509,29 @@ export default new Vuex.Store({
                         if (
                             router.currentRoute.name === ("sales" || "orders")
                         ) {
-                            router.push({
-                                name: "dashboard"
-                            });
+                            router.push({ name: "dashboard" });
                         }
-
-                        let notification = {
-                            msg: response.data.info,
-                            type: "success"
-                        };
 
                         context.commit("setCashRegister", null);
                         context.commit("setStore", null);
-                        context.commit("setNotification", notification);
+                        context.commit("setNotification", {
+                            msg: response.data.info,
+                            type: "success"
+                        });
 
                         resolve(response.data);
                     })
                     .catch(error => {
                         if (error.response) {
-                            let notification = {
+                            context.commit("setNotification", {
                                 msg: error.response.data.errors,
                                 type: "error"
-                            };
-                            context.commit("setNotification", notification);
+                            });
                         } else {
-                            let notification = {
+                            context.commit("setNotification", {
                                 msg: "Unexpected error occured",
                                 type: "error"
-                            };
-
-                            context.commit("setNotification", notification);
+                            });
                         }
 
                         reject(error);
@@ -594,11 +553,10 @@ export default new Vuex.Store({
                         resolve(response.data);
                     })
                     .catch(error => {
-                        let notification = {
+                        context.commit("setNotification", {
                             msg: error.response.data.errors,
                             type: "error"
-                        };
-                        context.commit("setNotification", notification);
+                        });
 
                         reject(error);
                     });
@@ -631,11 +589,10 @@ export default new Vuex.Store({
                         resolve(response.data.data || response.data);
                     })
                     .catch(error => {
-                        let notification = {
+                        context.commit("setNotification", {
                             msg: error.response.data.errors,
                             type: "error"
-                        };
-                        context.commit("setNotification", notification);
+                        });
 
                         reject(error);
                     });

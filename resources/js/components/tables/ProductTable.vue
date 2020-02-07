@@ -88,17 +88,7 @@ export default {
         };
     },
     computed: {
-        ...mapState("dialog", ["interactive_dialog"]),
         ...mapState("datatable", ["loading"]),
-
-        dialog: {
-            get() {
-                return this.interactive_dialog;
-            },
-            set(value) {
-                this.setDialog(value);
-            }
-        },
 
         disableActions: {
             get() {

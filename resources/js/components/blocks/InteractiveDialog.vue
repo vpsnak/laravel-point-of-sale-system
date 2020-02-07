@@ -70,6 +70,10 @@ import { EventBus } from "../../plugins/event-bus";
 import { mapActions, mapMutations, mapState } from "vuex";
 
 export default {
+    beforeDestroy() {
+        EventBus.$off();
+    },
+
     computed: {
         ...mapState("dialog", ["interactive_dialog"]),
 
@@ -79,6 +83,7 @@ export default {
     },
 
     methods: {
+        ...mapMutations("dialog", ["setNotification"]),
         ...mapMutations("dialog", ["resetDialog"]),
 
         submit(payload) {
@@ -86,7 +91,7 @@ export default {
                 this.closeEvent(true);
             } else {
                 if (payload.notification) {
-                    this.$store.commit("setNotification", {
+                    this.setNotification({
                         msg: payload.notification.msg,
                         type: payload.notification.type
                     });
@@ -99,12 +104,11 @@ export default {
                 }
             }
         },
-
         closeEvent(payload, close) {
             if (!this.dialog.persistent || close) {
                 console.log({
                     module: "interactive_dialog",
-                    event: event,
+                    event,
                     payload: payload
                 });
 
@@ -118,10 +122,6 @@ export default {
                 this.resetDialog();
             }
         }
-    },
-
-    beforeDestroy() {
-        EventBus.$off();
     }
 };
 </script>

@@ -50,13 +50,7 @@ export default {
             return this.order ? this.order.id : 0;
         },
         customer() {
-            if (this.order) {
-                if (this.order.customer) {
-                    return this.order.customer;
-                }
-            }
-
-            return undefined;
+            return this.order.customer;
         },
         customerEmail: {
             get() {

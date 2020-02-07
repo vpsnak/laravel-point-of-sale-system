@@ -4,6 +4,8 @@
 
         <interactiveDialog v-if="showComponents"></interactiveDialog>
 
+        <checkoutDialog v-if="showComponents && checkoutDialog" />
+
         <sideMenu v-if="showComponents" />
 
         <topMenu v-if="showComponents" />
@@ -21,14 +23,14 @@ import { mapGetters, mapMutations, mapState } from "vuex";
 
 export default {
     mounted() {
-        if (this.auth && this.loadPercent <= 100) {
+        if (this.auth && this.app_load <= 100) {
             this.$router.push({ name: "landingPage" });
         }
     },
     computed: {
         ...mapGetters(["auth", "role"]),
-        ...mapState("dialog", ["interactive_dialog"]),
         ...mapState("config", ["app_load"]),
+        ...mapState("cart", ["checkoutDialog"]),
 
         showComponents() {
             if (this.app_load > 100 && this.auth) {
@@ -36,14 +38,10 @@ export default {
             } else {
                 return false;
             }
-        },
-        loadPercent() {
-            return this.app_load;
         }
     },
     methods: {
-        ...mapMutations(["logout"]),
-        ...mapMutations("dialog", ["setDialog"])
+        ...mapMutations(["logout"])
     }
 };
 </script>

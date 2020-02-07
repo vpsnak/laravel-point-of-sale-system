@@ -197,16 +197,7 @@ export default {
 	},
 	computed: {
 		...mapState("cart", ["discountTypes"]),
-		...mapState("dialog", ["interactive_dialog"]),
 
-		dialog: {
-			get() {
-				return this.interactive_dialog;
-			},
-			set(value) {
-				this.setDialog(value);
-			}
-		},
 		products: {
 			get() {
 				if (this.$store.state.cart.order.id) {
@@ -300,8 +291,7 @@ export default {
 		},
 
 		viewProductDialog(product) {
-			this.dialog = {
-				show: true,
+			this.setDialog = {
 				width: 1000,
 				title: "Cart item",
 				titleCloseBtn: true,
