@@ -1,11 +1,13 @@
 <template>
-  <div>
-    <v-col :cols="12">
-      <h3 class="mb-2">Payment history</h3>
-    </v-col>
-
-    <v-col :cols="12">
+  <v-card>
+    <v-card-title>
+      <span class="subheading">History</span>
+    </v-card-title>
+    <v-card-text>
       <v-data-table
+        no-data-text="No payments have been made"
+        dense
+        height="15vh"
         :headers="headers"
         :items="paymentHistory"
         class="elevation-1"
@@ -40,8 +42,8 @@
           </v-tooltip>
         </template>
       </v-data-table>
-    </v-col>
-  </div>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>
@@ -50,7 +52,7 @@ import { EventBus } from "../../../plugins/event-bus";
 
 export default {
   mounted() {
-    EventBus.$on("customer-search", event => {
+    EventBus.$on("payment-history-refund", event => {
       console.log(event);
       if (event.payload && this.selected_payment) {
         this.refund();

@@ -18,17 +18,13 @@
         :step="checkoutStep.id"
       >
         <v-col align="center" justify="center">
-          <v-icon large :color="checkoutStep.color">
+          <v-icon :color="checkoutStep.color">
             {{ checkoutStep.icon }}
           </v-icon>
-          <h3>{{ checkoutStep.name }}</h3>
+          <span class="title">{{ checkoutStep.name }}</span>
         </v-col>
 
-        <component
-          :is="checkoutStep.component"
-          style="overflow-y:auto;overflow-x:hidden;height:65vh;"
-        >
-        </component>
+        <component :is="checkoutStep.component"></component>
       </v-stepper-content>
     </v-stepper-items>
   </v-stepper>

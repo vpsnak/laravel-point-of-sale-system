@@ -369,14 +369,16 @@ export default {
             return new Promise((resolve, reject) => {
                 axios
                     .get(
-                        `${this.state.baseUrl}receipts/create/${payload.data.order_id}`
+                        `${this.state.base_url}/receipts/create/${payload.data.order_id}`
                     )
                     .then(response => {
                         let notification = {
                             msg: response.data.info,
                             type: "success"
                         };
-                        context.commit("setNotification", notification);
+                        context.commit("setNotification", notification, {
+                            root: true
+                        });
                         resolve(response.data);
                     })
                     .catch(error => {
@@ -385,13 +387,17 @@ export default {
                                 msg: error.response.data.errors,
                                 type: "error"
                             };
-                            context.commit("setNotification", notification);
+                            context.commit("setNotification", notification, {
+                                root: true
+                            });
                         } else {
                             let notification = {
                                 msg: "Unexpected error occured",
                                 type: "error"
                             };
-                            context.commit("setNotification", notification);
+                            context.commit("setNotification", notification, {
+                                root: true
+                            });
                         }
                         reject(error);
                     });
