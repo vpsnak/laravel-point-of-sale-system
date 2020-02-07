@@ -1,14 +1,14 @@
 <template>
   <div v-if="remainingAmount > 0">
     <v-container fluid>
-      <v-row dense>
+      <v-row dense justify="center" align="center">
         <v-col cols="12" justify="center" align="center">
           <h3 class="py-2">Methods</h3>
 
           <v-btn-toggle v-model="paymentType" mandatory @change="clearState">
             <v-btn
-              v-for="(paymentType, index) in paymentTypes"
-              :key="index"
+              v-for="paymentType in paymentTypes"
+              :key="paymentType.id"
               :value="paymentType.type"
               :disabled="loading || orderLoading"
             >
@@ -124,7 +124,7 @@
           <v-btn
             dark
             block
-            color="deep-orange"
+            color="green darken-3"
             @click="sendPayment"
             :loading="loading || orderLoading"
             :disabled="

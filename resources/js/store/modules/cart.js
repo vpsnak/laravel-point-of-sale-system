@@ -62,7 +62,7 @@ export default {
                 name: "Cash & Carry",
                 icon: "mdi-cart-arrow-right",
                 color: "primary",
-                component: "shippingStep",
+                component: "shipping",
                 completed: true
             },
             {
@@ -223,6 +223,11 @@ export default {
         nextCheckoutStep(state) {
             state.currentCheckoutStep++;
         },
+        previousStep(state) {
+            if (state.currentCheckoutStep > 1) {
+                state.currentCheckoutStep--;
+            }
+        },
         setOrder(state, order) {
             state.order = order;
         },
@@ -368,17 +373,8 @@ export default {
         createReceipt(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(
-                        `${this.state.base_url}/receipts/create/${payload.data.order_id}`
-                    )
+                    .get(`${this.state.base_url}/receipts/create/${payload}`)
                     .then(response => {
-                        let notification = {
-                            msg: response.data.info,
-                            type: "success"
-                        };
-                        context.commit("setNotification", notification, {
-                            root: true
-                        });
                         resolve(response.data);
                     })
                     .catch(error => {

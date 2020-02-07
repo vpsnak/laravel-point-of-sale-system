@@ -50,10 +50,10 @@
           </v-col>
           <v-col :lg="4">
             <cart
-              :key="order.id || 0"
+              :key="order.id"
               icon="mdi-clipboard-list"
               title="Order summary"
-              :editable="isEditable"
+              :editable="order.id ? false : true"
             ></cart>
           </v-col>
         </v-row>
@@ -81,18 +81,32 @@ export default {
       }
     };
   },
-
+  watch: {
+    orderLoading(value) {
+      console.log("order-loading: " + value);
+    },
+    loading(value) {
+      console.log("loading: " + value);
+    }
+  },
   computed: {
-    ...mapState("cart", ["checkoutDialog"]),
+    ...mapState("cart", [
+      "order",
+      "checkoutDialog",
+      "currentCheckoutStep",
+      "paymentLoading",
+      "refundLoading",
+      "completeOrderLoading"
+    ]),
 
     cart() {
       return this.$store.state.cart;
     },
     disableControls() {
       if (
-        this.cart.paymentLoading ||
-        this.cart.refundLoading ||
-        this.cart.completeOrderLoading
+        this.paymentLoading ||
+        this.refundLoading ||
+        this.completeOrderLoading
       ) {
         return true;
       } else {
@@ -100,13 +114,11 @@ export default {
       }
     },
     closeBtnTxt() {
-      return this.order.id && this.$store.state.cart.currentCheckoutStep !== 3
+      return this.order.id && this.currentCheckoutStep !== 3
         ? "Cancel order"
         : "Close";
     },
-    isEditable() {
-      return this.order.id ? false : true;
-    },
+
     state: {
       get() {
         return this.checkoutDialog;
@@ -114,9 +126,6 @@ export default {
       set(value) {
         this.setCheckoutDialog(value);
       }
-    },
-    order() {
-      return this.$store.state.cart.order;
     }
   },
 
@@ -156,7 +165,6 @@ export default {
         };
         this.delete(payload).then(response => {
           this.resetState();
-          this.state = false;
         });
       }
     }

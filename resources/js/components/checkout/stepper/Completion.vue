@@ -1,55 +1,28 @@
 <template>
-    <div class="my-5 d-flex align-center justify-space-around flex-column">
-        <h3 v-if="change > 0">
-            Change:
-            <span class="amber--text" v-text="'$ ' + change.toFixed(2)" />
-        </h3>
+  <div class="my-5 d-flex align-center justify-space-around flex-column">
+    <h3 v-if="change > 0">
+      Change:
+      <span class="amber--text" v-text="'$ ' + change" />
+    </h3>
 
-        <orderReceipt />
+    <orderReceipt />
 
-        <v-btn color="primary" @click="close">Close</v-btn>
-    </div>
+    <v-btn color="primary" @click="resetState()">Close</v-btn>
+  </div>
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex";
 export default {
-    computed: {
-        change() {
-            return Math.abs(this.order.total - this.order.total_paid);
-        },
-        order() {
-            return this.$store.state.cart.order;
-        },
-        customer() {
-            if (this.order.customer) {
-                return this.order.customer;
-            }
-            return {};
-        },
-        customerEmail() {
-            if (this.customer) {
-                return this.customer.email ? this.customer.email : undefined;
-            } else {
-                return null;
-            }
-        }
-    },
+  computed: {
+    ...mapState("cart", ["order"]),
 
-    methods: {
-        close() {
-            this.$store.commit("cart/resetState");
-
-            this.$emit("close", true);
-        },
-        prevStep() {
-            this.$store.state.cart.currentCheckoutStep--;
-        },
-
-        ...mapActions(["create"])
-    },
-    beforeDestroy() {
-        this.$off("close");
+    change() {
+      return Math.abs(this.order.total - this.order.total_paid);
     }
+  },
+  methods: {
+    ...mapMutations("cart", ["resetState"])
+  }
 };
 </script>

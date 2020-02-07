@@ -99,7 +99,7 @@ export default {
 
   props: {
     keywordLength: Number,
-    editable: Boolean | undefined
+    editable: Boolean
   },
 
   data() {
