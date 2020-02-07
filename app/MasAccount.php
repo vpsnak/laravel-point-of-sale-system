@@ -19,7 +19,17 @@ class MasAccount extends Model
 
     public function getAuthHeader()
     {
-        return 'Base ' . base64_encode($this->username . ':' . $this->password . ':' . $this->direct_id);
+        return 'Basic ' . base64_encode($this->username . ':' . $this->password . ':' . $this->direct_id);
+    }
+
+    public function setFulfillerMdNumberAttribute($value)
+    {
+        $this->attributes['fulfiller_md_number'] = encrypt($value);
+    }
+
+    public function getFulfillerMdNumberAttribute($value)
+    {
+        return decrypt($value);
     }
 
     public function setDirectIdAttribute($value)

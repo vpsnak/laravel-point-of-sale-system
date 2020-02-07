@@ -20,7 +20,7 @@ class MasOrderController extends Controller
 
         $payload = [];
         $payload['SenderMdNumber'] = $masAccount->direct_id;
-        $payload['FulfillerMDNumber'] = 'USNY000012';
+        $payload['FulfillerMDNumber'] = $masAccount->fulfiller_md_number;
         // $payload['FulfillerMDNumber'] = 'USZZ000035';
         $payload['PriorityType'] = 1;
         $payload['MessageType'] = 0;
@@ -33,8 +33,8 @@ class MasOrderController extends Controller
         if ($payments = self::parseOrderPayments($order->payments)) {
             $payload['Payments'] = $payments;
         }
-        $encCreds =
-            $payload['MdseAmount'] = $order->total_without_tax;
+
+        $payload['MdseAmount'] = $order->total_without_tax;
         $payload['TaxAmount'] = $order->total - $order->total_without_tax;
         $payload['TotalAmount'] = $order->total;
 

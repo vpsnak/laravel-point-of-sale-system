@@ -617,7 +617,7 @@ export default new Vuex.Store({
                 }
                 axios
                     .post(
-                        `${context.state.base_url}/payload.model/create`,
+                        `${context.state.base_url}/${payload.model}/create`,
                         payload.data,
                         options
                     )
