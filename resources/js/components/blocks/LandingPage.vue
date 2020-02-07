@@ -71,9 +71,15 @@ export default {
             this.resetLoad();
             this.resetAppState();
 
-            this.getMasEnv().then(() => {
-                this.loadPercent = 45;
-            });
+            this.getMasEnv()
+                .then(() => {
+                    this.loadPercent = 45;
+                })
+                .catch(error => {
+                    this.loadPercent = 0;
+                    this.color = "red";
+                    this.error_txt = "Error";
+                });
             this.retrieveCashRegister()
                 .then(() => {
                     this.loadPercent = 45;
@@ -82,11 +88,6 @@ export default {
                     this.loadPercent = 0;
                     this.color = "red";
                     this.error_txt = "Error";
-
-                    if (error.response.status === 401) {
-                        this.error_txt = "Unauthorized";
-                        this.logout();
-                    }
                 });
         },
         redirect() {
