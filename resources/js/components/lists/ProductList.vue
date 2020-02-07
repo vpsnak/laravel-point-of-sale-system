@@ -15,8 +15,9 @@
 				></v-text-field>
 				<v-tooltip bottom>
 					<template v-slot:activator="{ on }">
-						<v-btn outlined icon @click="enableScan" :color=" btnactive ? 'red' : ''" v-on="on">
-							<v-icon>mdi-barcode-scan</v-icon>
+						<v-btn class="mx-2" @click="enableScan" :color=" btnactive ? 'red' : ''" v-on="on">
+							<v-icon left>mdi-barcode-scan</v-icon>
+                            Barcode<br />Scan
 						</v-btn>
 					</template>
 					<span v-if="btnactive">Disable scan mode</span>
@@ -24,16 +25,18 @@
 				</v-tooltip>
 				<v-tooltip bottom>
 					<template v-slot:activator="{ on }">
-						<v-btn @click="showDummyDialog = true" class="my-2" v-on="on" icon>
-							<v-icon>mdi-plus</v-icon>
+						<v-btn class="mx-2 my-2" @click="showDummyDialog = true" v-on="on">
+							<v-icon left>mdi-flower</v-icon>
+                            Custom<br />Product
 						</v-btn>
 					</template>
 					<span>Add custom product</span>
 				</v-tooltip>
 				<v-tooltip bottom>
 					<template v-slot:activator="{ on }">
-						<v-btn @click="showGiftCardDialog = true" class="my-2" v-on="on" icon>
-							<v-icon>mdi-credit-card-plus</v-icon>
+						<v-btn class="mx-2 my-2"  @click="showGiftCardDialog = true" v-on="on">
+							<v-icon left>mdi-credit-card-plus</v-icon>
+                            Gift<br />Card
 						</v-btn>
 					</template>
 					<span>Add gift card</span>
