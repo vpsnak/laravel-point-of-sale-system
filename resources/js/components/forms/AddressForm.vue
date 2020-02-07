@@ -134,35 +134,35 @@
                 </v-col>
                 <v-col cols="4">
                     <ValidationProvider
-                        rules="max:100"
+                        rules="required|max:100"
                         v-slot="{ errors, valid }"
-                        name="Company"
+                        name="Location"
+                    >
+                        <v-select
+                            v-model="formFields.location"
+                            label="Locations"
+                            :items="locations"
+                            item-text="label"
+                            item-value="label"
+                            :disabled="loading"
+                            :error-messages="errors"
+                            :success="valid"
+                        ></v-select> </ValidationProvider
+                ></v-col>
+                <v-col cols="4">
+                    <ValidationProvider
+                        rules="required|max:100"
+                        v-slot="{ errors, valid }"
+                        name="Location name"
                     >
                         <v-text-field
-                            :readonly="$props.readonly"
-                            v-model="formFields.company"
-                            label="Company"
+                            v-model="formFields.location_name"
+                            label="Location name"
                             :disabled="loading"
                             :error-messages="errors"
                             :success="valid"
                         ></v-text-field> </ValidationProvider
                 ></v-col>
-                <v-col cols="4">
-                    <ValidationProvider
-                        rules="max:100"
-                        v-slot="{ errors, valid }"
-                        name="Vat id"
-                    >
-                        <v-text-field
-                            :readonly="$props.readonly"
-                            v-model="formFields.vat_id"
-                            label="Vat id"
-                            :disabled="loading"
-                            :error-messages="errors"
-                            :success="valid"
-                        ></v-text-field>
-                    </ValidationProvider>
-                </v-col>
                 <v-col cols="4">
                     <ValidationProvider
                         :rules="{
@@ -179,6 +179,37 @@
                             v-model="formFields.phone"
                             label="Phone"
                             :min="0"
+                            :disabled="loading"
+                            :error-messages="errors"
+                            :success="valid"
+                        ></v-text-field>
+                    </ValidationProvider>
+                </v-col>
+                <v-col cols="6">
+                    <ValidationProvider
+                        rules="max:100"
+                        v-slot="{ errors, valid }"
+                        name="Company"
+                    >
+                        <v-text-field
+                            :readonly="$props.readonly"
+                            v-model="formFields.company"
+                            label="Company"
+                            :disabled="loading"
+                            :error-messages="errors"
+                            :success="valid"
+                        ></v-text-field> </ValidationProvider
+                ></v-col>
+                <v-col cols="6">
+                    <ValidationProvider
+                        rules="max:100"
+                        v-slot="{ errors, valid }"
+                        name="Vat id"
+                    >
+                        <v-text-field
+                            :readonly="$props.readonly"
+                            v-model="formFields.vat_id"
+                            label="Vat id"
                             :disabled="loading"
                             :error-messages="errors"
                             :success="valid"
@@ -207,9 +238,6 @@
                         :disabled="invalid || loading"
                         color="secondary"
                         >submit</v-btn
-                    >
-                    <v-btn v-if="!model" @click="clear" color="orange"
-                        >clear</v-btn
                     >
                 </v-col>
             </v-row>
@@ -243,9 +271,10 @@ export default {
                 phone: null,
                 company: null,
                 vat_id: null,
-                deliverydate: null,
                 shipping: false,
-                billing: false
+                billing: false,
+                location: null,
+                location_name: null
             }
         };
     },
@@ -261,6 +290,11 @@ export default {
     },
     beforeDestroy() {
         this.$off("submit");
+    },
+    computed: {
+        locations() {
+            return this.$store.state.cart.locations;
+        }
     },
     methods: {
         ...mapActions({
