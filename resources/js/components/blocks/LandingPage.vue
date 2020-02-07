@@ -79,8 +79,11 @@ export default {
                     this.loadPercent = 45;
                 })
                 .catch(error => {
+                    this.loadPercent = 0;
+                    this.color = "red";
+                    this.error_txt = "Error";
+
                     if (error.response.status === 401) {
-                        this.color = "red";
                         this.error_txt = "Unauthorized";
                         this.logout();
                     }
