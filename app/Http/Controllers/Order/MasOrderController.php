@@ -92,6 +92,34 @@ class MasOrderController extends Controller
         }
     }
 
+    private static function parseOnlinePartner(Order $order)
+    {
+
+        // if ($customer = $order->customer && $billingAddress = $order->billing_address()) {
+        //     $address_region = [];
+
+        //     $onlinePartner = [
+        //         'SoldName' => "{$customer->name} {$customer->name}",
+        //         'SoldAddress' => $billingAddress->street,
+        //         'SoldAddress2' => $billingAddress->street2,
+        //         'SoldCity' => $billingAddress->city,
+        //         'SoldState' => $billingAddress->,
+        //         'SoldZip' => $billingAddress->postcode,
+        //         'SoldPhoneHome' => $billingAddress->phone,
+        //         'SoldPhoneWork' => $billingAddress->,
+        //         'SoldPhoneMobile' => $billingAddress->,
+        //         'SoldEmail' => $customer->email,
+        //         // 'SalesRep' => $customer->,
+        //         // 'ShippingVia' => $customer->,
+        //         // 'ShippingPriority' => $customer->,
+        //         // 'AuthCode' => $customer->,
+        //         // 'SoldAttention' => $customer->,
+        //         // 'CustomerId' => $customer->,
+        //     ];
+        //     return $onlinePartner;
+        // }
+    }
+
     private static function parseOrderRecipient(Order $order)
     {
         $shipping_notes = '';
@@ -112,8 +140,8 @@ class MasOrderController extends Controller
             'RecipientZip' => '10024',
             'RecipientPhone' => '+6974526666',
             'SpecialInstructions' => $order->delivery_slot,
-            'DeliveryDate' => Carbon::parse($order->delivery_date ?? $order->updated_at)->toDateString(),
-            'DeliveryEndDate' => Carbon::parse($order->delivery_date ?? $order->updated_at)->toDateString(),
+            'DeliveryDate' => $order->delivery_date ?? $order->updated_at,
+            'DeliveryEndDate' => $order->delivery_date ?? $order->updated_at,
             'CardMessage' => '',
             'OccasionType' => 9,
             'ResidenceType' => 11,
@@ -170,9 +198,9 @@ class MasOrderController extends Controller
             ];
 
             if ($item->price > $item->final_price) {
-                $response[$item->id]['DiscountAmount'] = round($item->price - $item->final_price, 2);
+                $response[$item->id]['DiscountAmount'] = number_format($item->price - $item->final_price, 2, '.', '');
             } else {
-                $response[$item->id]['DiscountAmount'] = 0;
+                $response[$item->id]['DiscountAmount'] = "0";
             }
         }
         return array_values($response);
@@ -189,23 +217,23 @@ class MasOrderController extends Controller
             switch ($payment->paymentType->type) {
                 case 'cash':
                     $response[$payment->id]['PaymentAmount'] = $payment->amount;
-                    $response[$payment->id]['PaymentType'] = 7;
+                    $response[$payment->id]['PaymentType'] = "7";
                     break;
                 case 'card':
                     $response[$payment->id]['PaymentAmount'] = $payment->amount;
-                    $response[$payment->id]['PaymentType'] = 1;
+                    $response[$payment->id]['PaymentType'] = "1";
                     break;
                 case 'pos-terminal':
                     $response[$payment->id]['PaymentAmount'] = $payment->amount;
-                    $response[$payment->id]['PaymentType'] = 1;
+                    $response[$payment->id]['PaymentType'] = "1";
                     break;
                 case 'house-account':
                     $response[$payment->id]['PaymentAmount'] = $payment->amount;
-                    $response[$payment->id]['PaymentType'] = 3;
+                    $response[$payment->id]['PaymentType'] = "3";
                     break;
                 case 'giftcard':
                     $response[$payment->id]['PaymentAmount'] = $payment->amount;
-                    $response[$payment->id]['PaymentType'] = 2;
+                    $response[$payment->id]['PaymentType'] = "2";
                     $response[$payment->id]['GiftCardNumber'] = $payment->code;
                     break;
             }

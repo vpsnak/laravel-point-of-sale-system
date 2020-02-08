@@ -11,6 +11,39 @@ use Storage;
 
 class AppController extends Controller
 {
+    public function test(Order $id)
+    {
+        $customer = $id->customer;
+        $billingAddress = $id->billing_address();
+        return [$billingAddress];
+
+        // if () {
+        //     $address_region = [];
+
+        //     return response([$customer, $billingAddress]);
+
+        // $onlinePartner = [
+        //     'SoldName' => "{$customer->name} {$customer->name}",
+        //     'SoldAddress' => $billingAddress->street,
+        //     'SoldAddress2' => $billingAddress->street2,
+        //     'SoldCity' => $billingAddress->city,
+        //     'SoldState' => $billingAddress->,
+        //     'SoldZip' => $billingAddress->postcode,
+        //     'SoldPhoneHome' => $billingAddress->phone,
+        //     'SoldPhoneWork' => $billingAddress->,
+        //     'SoldPhoneMobile' => $billingAddress->,
+        //     'SoldEmail' => $customer->email,
+        //     // 'SalesRep' => $customer->,
+        //     // 'ShippingVia' => $customer->,
+        //     // 'ShippingPriority' => $customer->,
+        //     // 'AuthCode' => $customer->,
+        //     // 'SoldAttention' => $customer->,
+        //     // 'CustomerId' => $customer->,
+        // ];
+        // return $onlinePartner;
+        // }
+    }
+
     public function index()
     {
         return view('app');

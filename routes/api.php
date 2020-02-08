@@ -11,8 +11,9 @@
 |
 */
 
-// mas
+Route::get('/test/{id}', 'AppController@test');
 
+// mas
 // Route::get('/mas/test', 'MasAccountController@test');
 Route::get('/mas/env', 'MasAccountController@getEnv')->middleware('scope:admin,store_manager,cashier');
 Route::get('/mas/set/{mode}', 'MasAccountController@setEnv')->middleware('scope:admin');
