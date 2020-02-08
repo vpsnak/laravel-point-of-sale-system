@@ -416,7 +416,7 @@ export default {
           dataTable: true
         };
 
-        this(payload)
+        this.search(payload)
           .then(response => {
             this.currentPage = response.current_page;
             this.lastPage = response.last_page;
