@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\MasOrderController;
 use App\Order;
 use App\CashRegisterReport;
 use App\Product;
 use App\Helper\PhpHelper;
 use Illuminate\Http\Request;
-use Storage;
 
 class AppController extends Controller
 {
     public function test(Order $id)
     {
-        $customer = $id->customer;
-        $billingAddress = $id->billing_address();
-        return [$billingAddress];
+        // $a = "{$id->billingAddress['first_name']} {$id->billingAddress['last_name']}";
+        $r = MasOrderController::submitToMas($id);
+        return response(['mas response' => $r, 'shipping_address' => $id->shipping_address, 'billing_address' => $id->billing_address]);
 
         // if () {
         //     $address_region = [];

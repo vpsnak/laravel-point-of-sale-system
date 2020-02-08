@@ -15,21 +15,21 @@ class DatabaseSeeder extends Seeder
         $this->call(RoleSeeder::class);
         $this->call(UserSeeder::class);
         $this->call(MasAccountSeeder::class);
+        $this->call(PaymentType::class);
+        $this->call(StorePickupSeeder::class);
 
         $this->call(CompanySeeder::class);
         $this->call(TaxSeeder::class);
         $this->call(StoreSeeder::class);
         $this->call(BankAccountSeeder::class);
         $this->call(CashRegisterSeeder::class);
-        $this->call(PaymentType::class);
-        $this->call(StorePickupSeeder::class);
 
         // $this->call(ShippingSeeder::class);
 
         if (config('app.env') === 'local') {
-            $this->call(CustomerSeeder::class);
-            $this->call(ProductSeeder::class);
-            $this->call(CategorySeeder::class);
+            // $this->call(CustomerSeeder::class);
+            // $this->call(ProductSeeder::class);
+            // $this->call(CategorySeeder::class);
         }
 
         $this->call(GiftcardSeeder::class);

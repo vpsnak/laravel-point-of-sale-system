@@ -81,7 +81,7 @@ class OrderController extends Controller
             'shipping_cost' => 'numeric|nullable',
             'notes' => 'string|nullable',
             'store_id' => 'required|exists:stores,id',
-            'occasion' => 'nullable|required_if:shipping.method,delivery|numeric',
+            'shipping.occasion' => 'nullable|required_if:shipping.method,delivery|numeric',
         ]);
 
         $validatedData['created_by'] = auth()->user()->id;
@@ -156,12 +156,13 @@ class OrderController extends Controller
 
         $order = new Order($validatedData);
 
-        if (!empty($billingAddressData)) {
-            $order->billing_address = $billingAddressData;
+        // dirty dirty dirty hacks
+        if (!empty($billingAddressData) && array_key_exists('billing_address', $billingAddressData)) {
+            $order->billing_address = $billingAddressData['billing_address'];
         }
 
-        if (!empty($shippingAddressData)) {
-            $order->shipping_address = $shippingAddressData;
+        if (!empty($shippingAddressData) && array_key_exists('shipping', $shippingAddressData)) {
+            $order->shipping_address = $shippingAddressData['shipping']['address'];
         }
 
         $products = [];
@@ -278,7 +279,6 @@ class OrderController extends Controller
         return Order::without([
             'items',
             'payments',
-            'shipping_address',
             'store_pickup'
         ])
             ->orWhere('status',  'LIKE', "%{$validatedData['keyword']}%")

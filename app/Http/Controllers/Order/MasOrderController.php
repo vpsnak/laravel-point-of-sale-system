@@ -19,24 +19,29 @@ class MasOrderController extends Controller
         $masAccount = MasAccount::getActive();
 
         $payload = [];
+        $payload['MessageType'] = '0';
+        // $payload['MessageText'] = "POS Order ID: {$order->id}";
+        $payload['MessageText'] = "POS " . now();
+
         $payload['SenderMdNumber'] = $masAccount->direct_id;
         $payload['FulfillerMDNumber'] = $masAccount->fulfiller_md_number;
         // $payload['FulfillerMDNumber'] = 'USZZ000035';
-        $payload['PriorityType'] = 1;
-        $payload['MessageType'] = 0;
-        $payload['MessageText'] = $order->id;
+        $payload['PriorityType'] = '1';
 
+
+
+        $payload['OnlinePartner'] = self::parseOnlinePartner($order);
+        $payload['OrderItems'] = self::parseOrderItems($order->items);
         $payload['RecipientDetail'] = self::parseOrderRecipient($order);
 
-        $payload['OrderItems'] = self::parseOrderItems($order->items);
 
         if ($payments = self::parseOrderPayments($order->payments)) {
             $payload['Payments'] = $payments;
         }
 
-        $payload['MdseAmount'] = round($order->total_without_tax, 2);
-        $payload['TaxAmount'] = round($order->total - $order->total_without_tax, 2);
-        $payload['TotalAmount'] = $order->total;
+        $payload['MdseAmount'] = number_format($order->total_without_tax, 2, '.', '');
+        $payload['TaxAmount'] = number_format($order->total - $order->total_without_tax, 2, '.', '');
+        $payload['TotalAmount'] = number_format($order->total, 2, '.', '');
 
         self::log('Payload: ' . json_encode($payload));
         try {
@@ -48,7 +53,7 @@ class MasOrderController extends Controller
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json'
                 ],
-                'connect_timeout' => 30,
+                'connect_timeout' => 15,
                 'body' => json_encode($payload)
             ]);
 
@@ -66,58 +71,64 @@ class MasOrderController extends Controller
                 'status' => 'error',
             ]);
             $errors = [];
-            foreach ($response->ErrorMessage as $error) {
-                $errors[] = $error->MessageNumber . ' - ' . $error->Message;
-            }
-            return ['errors' => $errors];
+
+            return ['errors' => $response->ErrorMessage, 'payload' => $payload];
         }
+
+        // if (isset($response->ErrorMessage)) {
+        //     MasOrder::updateOrCreate(['order_id' => $order->id], [
+        //         'status' => 'error',
+        //     ]);
+        //     $errors = [];
+        //     foreach ($response->ErrorMessage as $error) {
+        //         $errors[] = $error->MessageNumber . ' - ' . $error->Message;
+        //     }
+        //     return ['errors' => $errors];
+        // }
 
         if (!empty($response->Messages)) {
             MasOrder::updateOrCreate(['order_id' => $order->id], [
                 'mas_id' => $response->Messages->ControlNumber,
                 'status' => 'success',
             ]);
-            return ['success' => $response->Messages->MessageNumber . ' - ' . $response->Messages->Message];
+            return ['success' => $response->Messages, 'payload' => $payload];
         } else if (!empty($response->ControlNumber)) {
             MasOrder::updateOrCreate(['order_id' => $order->id], [
                 'mas_id' => $response->ControlNumber,
                 'status' => 'success',
             ]);
-            return ['success' => $response->MessageNumber . ' - ' . $response->Message];
+            return ['success' => $response, 'payload' => $payload];
         } else {
             MasOrder::updateOrCreate(['order_id' => $order->id], [
                 'status' => 'error on success',
             ]);
-            return ['error' => $response . ' - ' . $response];
+            return ['error' => $response . ' - ' . $response, 'payload' => $payload];
         }
     }
 
     private static function parseOnlinePartner(Order $order)
     {
-
-        // if ($customer = $order->customer && $billingAddress = $order->billing_address()) {
-        //     $address_region = [];
-
-        //     $onlinePartner = [
-        //         'SoldName' => "{$customer->name} {$customer->name}",
-        //         'SoldAddress' => $billingAddress->street,
-        //         'SoldAddress2' => $billingAddress->street2,
-        //         'SoldCity' => $billingAddress->city,
-        //         'SoldState' => $billingAddress->,
-        //         'SoldZip' => $billingAddress->postcode,
-        //         'SoldPhoneHome' => $billingAddress->phone,
-        //         'SoldPhoneWork' => $billingAddress->,
-        //         'SoldPhoneMobile' => $billingAddress->,
-        //         'SoldEmail' => $customer->email,
-        //         // 'SalesRep' => $customer->,
-        //         // 'ShippingVia' => $customer->,
-        //         // 'ShippingPriority' => $customer->,
-        //         // 'AuthCode' => $customer->,
-        //         // 'SoldAttention' => $customer->,
-        //         // 'CustomerId' => $customer->,
-        //     ];
-        //     return $onlinePartner;
-        // }
+        if ($order->customer && $order->billing_address) {
+            $onlinePartner = [
+                'SoldName' => "{$order->billing_address['first_name']} {$order->billing_address['last_name']}",
+                'SoldAddress' => $order->billing_address['street'],
+                'SoldAddress2' => $order->billing_address['street2'],
+                'SoldCity' => $order->billing_address['city'],
+                'SoldState' => $order->billing_address['state'] ?? 'NJ', // temporary hack
+                'SoldZip' => $order->billing_address['postcode'],
+                'SoldPhoneHome' => $order->billing_address['phone'],
+                'SoldPhoneWork' => $order->billing_address['phone'],
+                'SoldPhoneMobile' => $order->billing_address['phone'],
+                'SoldEmail' => $order->customer['email'],
+                'SalesRep' => '',
+                'ShippingVia' => '',
+                'ShippingPriority' => '1',
+                'AuthCode' => '',
+                'SoldAttention' => '',
+                'CustomerId' => $order->customer['id'],
+            ];
+            return $onlinePartner;
+        }
     }
 
     private static function parseOrderRecipient(Order $order)
@@ -151,6 +162,7 @@ class MasOrderController extends Controller
         if (empty($customer)) {
             return $response;
         }
+
         $shipping_address = $order->shipping_address;
         if (empty($shipping_address)) {
             return $response;
@@ -159,17 +171,17 @@ class MasOrderController extends Controller
             $shipping_notes .= 'Company: ' . $shipping_address->company;
         }
         // Delivery Time slots will be sent in SpecialInstructions , you can also put an abbreviated version in ShippingPriority (IE> 5P-9P for 5pm to 9pm)
-        $response['RecipientFirstName'] = $shipping_address->first_name;
-        $response['RecipientLastName'] = $shipping_address->last_name;
+        $response['RecipientFirstName'] = $shipping_address['first_name'];
+        $response['RecipientLastName'] = $shipping_address['last_name'];
         $response['RecipientAttention'] = $shipping_notes;
-        $response['RecipientEmail'] = $customer->email;
-        $response['RecipientAddress'] = $shipping_address->street;
-        $response['RecipientAddress2'] = $shipping_address->street2;
-        $response['RecipientCity'] = $shipping_address->city;
-        $response['RecipientState'] = $shipping_address->region_id->default_name;
-        $response['RecipientCountry'] = $shipping_address->country_id;
-        $response['RecipientZip'] = $shipping_address->postcode;
-        $response['RecipientPhone'] = $shipping_address->phone;
+        $response['RecipientEmail'] = $customer['email'];
+        $response['RecipientAddress'] = $shipping_address['street'];
+        $response['RecipientAddress2'] = $shipping_address['street2'];
+        $response['RecipientCity'] = $shipping_address['city'];
+        $response['RecipientState'] = $shipping_address['region'] ?? null;
+        $response['RecipientCountry'] = $shipping_address['country'] ?? $shipping_address['country_id'];
+        $response['RecipientZip'] = $shipping_address['postcode'];
+        $response['RecipientPhone'] = $shipping_address['phone'];
 
         if (!empty($order->occasion)) {
             $response['OccasionType'] = $order->occasion;
@@ -208,6 +220,7 @@ class MasOrderController extends Controller
 
     private static function parseOrderPayments($payments)
     {
+        $i = 0;
         $response = [];
         foreach ($payments as $payment) {
             if ($payment->status !== 'approved' || $payment->refunded) {
@@ -216,27 +229,83 @@ class MasOrderController extends Controller
 
             switch ($payment->paymentType->type) {
                 case 'cash':
-                    $response[$payment->id]['PaymentAmount'] = $payment->amount;
-                    $response[$payment->id]['PaymentType'] = "7";
+                    $response[$i]['PaymentAmount'] = $payment->amount;
+                    $response[$i]['PaymentType'] = "7";
+                    $response[$i]['BillingAccount'] = '';
+                    $response[$i]['BillingExpiration'] = '';
+                    $response[$i]['BillingCv2'] = '';
+                    $response[$i]['PNRefToken'] = '';
+                    $response[$i]['AuthCode'] = '';
+                    $response[$i]['BillingZip'] = '';
+                    $response[$i]['CheckNumber'] = '';
+                    $response[$i]['RoutingNumber'] = '';
+                    $response[$i]['CreditCardType'] = '';
+                    $response[$i]['GiftCardNumber'] = '';
+
                     break;
                 case 'card':
-                    $response[$payment->id]['PaymentAmount'] = $payment->amount;
-                    $response[$payment->id]['PaymentType'] = "1";
+                    $response[$i]['PaymentAmount'] = $payment->amount;
+                    $response[$i]['PaymentType'] = "1";
+                    $response[$i]['BillingAccount'] = '';
+                    $response[$i]['BillingExpiration'] = '';
+                    $response[$i]['BillingCv2'] = '';
+                    $response[$i]['PNRefToken'] = '';
+                    $response[$i]['AuthCode'] = '';
+                    $response[$i]['BillingZip'] = '';
+                    $response[$i]['CheckNumber'] = '';
+                    $response[$i]['RoutingNumber'] = '';
+                    $response[$i]['CreditCardType'] = '';
+                    $response[$i]['GiftCardNumber'] = '';
+
                     break;
                 case 'pos-terminal':
-                    $response[$payment->id]['PaymentAmount'] = $payment->amount;
-                    $response[$payment->id]['PaymentType'] = "1";
+                    $response[$i]['PaymentAmount'] = $payment->amount;
+                    $response[$i]['PaymentType'] = "1";
+                    $response[$i]['BillingAccount'] = '';
+                    $response[$i]['BillingExpiration'] = '';
+                    $response[$i]['BillingCv2'] = '';
+                    $response[$i]['PNRefToken'] = '';
+                    $response[$i]['AuthCode'] = '';
+                    $response[$i]['BillingZip'] = '';
+                    $response[$i]['CheckNumber'] = '';
+                    $response[$i]['RoutingNumber'] = '';
+                    $response[$i]['CreditCardType'] = '';
+                    $response[$i]['GiftCardNumber'] = '';
+
                     break;
                 case 'house-account':
-                    $response[$payment->id]['PaymentAmount'] = $payment->amount;
-                    $response[$payment->id]['PaymentType'] = "3";
+                    $response[$i]['PaymentAmount'] = $payment->amount;
+                    $response[$i]['BillingAccount'] = '';
+                    $response[$i]['BillingExpiration'] = '';
+                    $response[$i]['BillingCv2'] = '';
+                    $response[$i]['PaymentType'] = '';
+                    $response[$i]['PNRefToken'] = '';
+                    $response[$i]['AuthCode'] = '';
+                    $response[$i]['BillingZip'] = '';
+                    $response[$i]['CheckNumber'] = '';
+                    $response[$i]['RoutingNumber'] = '';
+                    $response[$i]['CreditCardType'] = '';
+                    $response[$i]['GiftCardNumber'] = '';
+
                     break;
                 case 'giftcard':
-                    $response[$payment->id]['PaymentAmount'] = $payment->amount;
-                    $response[$payment->id]['PaymentType'] = "2";
-                    $response[$payment->id]['GiftCardNumber'] = $payment->code;
+                    $response[$i]['PaymentAmount'] = $payment->amount;
+                    $response[$i]['PaymentType'] = "2";
+                    $response[$i]['GiftCardNumber'] = $payment->code;
+                    $response[$i]['BillingAccount'] = '';
+                    $response[$i]['BillingExpiration'] = '';
+                    $response[$i]['BillingCv2'] = '';
+                    $response[$i]['PNRefToken'] = '';
+                    $response[$i]['AuthCode'] = '';
+                    $response[$i]['BillingZip'] = '';
+                    $response[$i]['CheckNumber'] = '';
+                    $response[$i]['RoutingNumber'] = '';
+                    $response[$i]['CreditCardType'] = '';
+                    break;
+                default:
                     break;
             }
+            $i++;
         }
         return array_values($response);
     }
