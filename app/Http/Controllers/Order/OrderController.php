@@ -214,8 +214,6 @@ class OrderController extends Controller
         unset($product['magento_stock']);
         unset($product['plantcare_pdf']);
 
-        return $this->price;
-
         if (
             !array_key_exists('discount_type', $product) ||
             !array_key_exists('discount_amount', $product)
