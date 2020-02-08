@@ -11,9 +11,7 @@
     <topMenu v-if="showComponents" />
 
     <v-content>
-      <transition name="fade">
-        <router-view></router-view>
-      </transition>
+      <transition name="fade" mode="out-in"> <router-view /> </transition>
     </v-content>
   </v-app>
 </template>
@@ -30,6 +28,7 @@ export default {
   computed: {
     ...mapGetters(["auth", "role"]),
     ...mapState("config", ["app_load"]),
+    ...mapState("cart", ["checkoutDialog"]),
 
     showComponents() {
       if (this.app_load > 100 && this.auth) {

@@ -293,7 +293,7 @@ INSERT INTO `regions` (`region_id`, `country_id`, `code`, `default_name`) VALUES
 (274, 'FR', '92', 'Hauts-de-Seine'),
 (275, 'FR', '93', 'Seine-Saint-Denis'),
 (276, 'FR', '94', 'Val-de-Marne'),
-(277, 'FR', '95', 'Val-d\'Oise'),
+(277, 'FR', '95', 'Val-d''Oise'),
 (278, 'RO', 'AB', 'Alba'),
 (279, 'RO', 'AR', 'Arad'),
 (280, 'RO', 'AG', 'Argeş'),
