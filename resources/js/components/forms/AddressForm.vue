@@ -75,7 +75,7 @@
 						<v-select
 							:readonly="$props.readonly"
 							:loading="loading"
-							v-model="formFields.region_id"
+							v-model="formFields.region"
 							:items="regions"
 							label="States"
 							:error-messages="errors"
@@ -212,7 +212,7 @@ export default {
 				street2: null,
 				city: null,
 				country_id: null,
-				region_id: null,
+				region: null,
 				postcode: null,
 				phone: null,
 				company: null,
@@ -249,7 +249,6 @@ export default {
 		}),
 		submit() {
 			this.loading = true;
-			this.formFields.region = this.formFields.region_id;
 
 			let payload = {
 				model: "addresses",
