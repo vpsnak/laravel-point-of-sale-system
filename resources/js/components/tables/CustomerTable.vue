@@ -5,7 +5,7 @@
         :headers="headers"
         data-url="customers"
         btnTxt="New Customer"
-        :newForm="form"
+        newForm="customerNewForm"
         :disableNewBtn="false"
     >
         <template v-slot:item.email="{ item }">

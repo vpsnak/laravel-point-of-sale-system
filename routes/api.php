@@ -94,7 +94,7 @@ Route::post('/cash-registers/search', 'CashRegisterController@search')->middlewa
 Route::delete('/cash-registers/{id}', 'CashRegisterController@delete')->middleware('scope:admin,store_manager,cashier');
 
 // cash-register-reports
-Route::get('/cash-register-reports', 'CashRegisterReportController@all');
+Route::get('/cash-register-reports', 'CashRegisterReportController@all')->middleware('scope:admin,store_manager,cashier');;
 Route::get('/cash-register-reports/get/{id}', 'CashRegisterReportController@get')->middleware('scope:admin,store_manager,cashier');
 Route::get('/cash-register-reports/check/{cashRegister}', "CashRegisterReportController@checkCurrent")->middleware('scope:admin,store_manager,cashier');
 Route::post('/cash-register-reports/create', 'CashRegisterReportController@create')->middleware('scope:admin,store_manager,cashier');
@@ -180,8 +180,8 @@ Route::post('/cash-register-logs/close', 'CashRegisterLogsController@close')->mi
 Route::delete('/cash-register-logs/{id}', 'CashRegisterLogsController@delete')->middleware('scope:admin');
 
 //receipts
-Route::get('/receipts/get/{model}', 'ReceiptController@get');
-Route::get('/receipts/create/{model}', 'ReceiptController@create');
+Route::get('/receipts/get/{model}', 'ReceiptController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/receipts/create/{model}', 'ReceiptController@create')->middleware('scope:admin,store_manager,cashier');
 
 // categories to list in sales
 Route::get('/product-listing/categories', "CategoryController@productListingCategories")->middleware('scope:admin,store_manager,cashier');
