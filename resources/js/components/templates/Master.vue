@@ -4,7 +4,7 @@
 
     <interactiveDialog v-if="showComponents"></interactiveDialog>
 
-    <checkoutDialog v-if="showComponents" />
+    <checkoutDialog v-if="showComponents && checkoutDialog" />
 
     <sideMenu v-if="showComponents" />
 
