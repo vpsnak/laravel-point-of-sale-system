@@ -190,11 +190,11 @@ class MasOrderController extends Controller
         $response = [];
         foreach ($items as $item) {
             $response[$item['id']] = [
-                'ItemCode' => $item->sku,
-                'ItemName' => $item->name,
-                'ItemDescription' => $item->notes ?? '-',
-                'ItemCost' => $item->price,
-                'Quantity' => $item->qty
+                'ItemCode' => $item['sku'],
+                'ItemName' => $item['name'],
+                'ItemDescription' => $item['notes'] ?? '-',
+                'ItemCost' => $item['price'],
+                'Quantity' => $item['qty']
             ];
 
             if ($item['price'] > $item['final_price']) {

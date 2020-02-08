@@ -136,7 +136,7 @@ class CashRegisterReportController extends BaseController
             'pos_terminal_tax' => $pos_terminal_tax,
             'order_count' => $orders->count(),
             'order_product_count' => $orders->sum(function ($row) {
-                return $row->items->count();
+                return count($row->items);
             }),
             'order_refund_count' => $canceled_orders->count(),
             'order_refund_total' => $canceled_orders->sum('total'),
@@ -163,9 +163,9 @@ class CashRegisterReportController extends BaseController
         ];
     }
 
-    public function checkCurrent(CashRegister $cashRegister)
+    public function checkCurrent(CashRegister $model)
     {
-        $report = self::generateReportByCashRegisterId($cashRegister->id);
+        $report = self::generateReportByCashRegisterId($model->id);
 
         return response($report);
     }

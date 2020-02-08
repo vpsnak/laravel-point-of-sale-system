@@ -41,13 +41,13 @@ class ProcessOrder implements ShouldQueue
     {
         Log::debug($this->order->id . ' ' . $this->order->status);
 
-        if ($this->order->status == 'pending') {
+        if ($this->order->status === 'pending') {
             foreach ($this->order->items as $item) {
                 $this->handleStock($item, 'remove');
             }
         } else if ($this->order->status === 'paid') {
             MasOrderController::submitToMas($this->order);
-        } else if ($this->order->status == 'canceled') {
+        } else if ($this->order->status === 'canceled') {
             foreach ($this->order->items as $item) {
                 $this->handleStock($item, 'add');
             }
@@ -57,7 +57,7 @@ class ProcessOrder implements ShouldQueue
     public static function handleStock($item, $action)
     {
 
-        $product = Product::findOrFail($item['id']);
+        $product = Product::find($item['id']);
         if (empty($product)) {
             self::log('Empty Product');
             return;

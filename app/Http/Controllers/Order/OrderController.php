@@ -166,7 +166,7 @@ class OrderController extends Controller
 
         $products = [];
         foreach ($items['products'] as $product) {
-            array_push($products, $this->setProductPrice($product));
+            array_push($products, $this->parseProduct($product));
         }
 
         $order->items = $products;
@@ -200,18 +200,35 @@ class OrderController extends Controller
         return $orderData;
     }
 
-    private function setProductPrice($product)
+    private function parseProduct($product)
     {
         $product['price'] = $product['final_price'];
+
+        unset($product['stores']);
+        unset($product['stock_id']);
+        unset($product['categories']);
+        unset($product['created_at']);
+        unset($product['updated_at']);
+        unset($product['description']);
+        unset($product['laravel_stock']);
+        unset($product['magento_stock']);
+        unset($product['plantcare_pdf']);
+
+        return $this->price;
 
         if (
             !array_key_exists('discount_type', $product) ||
             !array_key_exists('discount_amount', $product)
         ) {
             $product['discount_type'] = $product['discount_amount'] = null;
+        } else if ($product['discount_type'] && $product['discount_amount']) {
+            $product['final_price'] = Price::calculateDiscount(
+                $product['price'],
+                $product['discount_type'],
+                $product['discount_amount']
+            );
         }
 
-        unset($product['final_price']);
         return $product;
     }
 

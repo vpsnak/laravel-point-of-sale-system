@@ -36,8 +36,6 @@ class FetchMagentoOrder implements ShouldQueue
     public function handle()
     {
         Order::unsetEventDispatcher();
-        OrderAddress::unsetEventDispatcher();
-        OrderProduct::unsetEventDispatcher();
         if (Order::where('magento_id', $this->order->entity_id)->exists()) {
             Order::where('magento_id', $this->order->entity_id)->update([
                 'customer_id' => Customer::where('magento_id', $this->order->customer_id)->first()->id ?? null,
