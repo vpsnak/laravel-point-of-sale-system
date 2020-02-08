@@ -11,6 +11,8 @@ class Order extends Model
 
     protected $fillable = [
         'magento_id',
+        "magento_shipping_address_id",
+        "magento_billing_address_id",
         'customer_id',
         'store_id',
         'created_by',
@@ -23,23 +25,20 @@ class Order extends Model
         'change',
         'shipping_type',
         'shipping_cost',
-        'shipping_address_id',
-        'billing_address_id',
+        'shipping_address',
+        'billing_address',
         'store_pickup_id',
         'delivery_date',
         'delivery_slot',
-        'location',
         'occasion',
         'notes',
     ];
 
     protected $with = [
-        'items',
         'payments',
         'customer',
         'store',
         'created_by',
-        'shipping_address',
         'store_pickup'
     ];
 
@@ -47,6 +46,48 @@ class Order extends Model
         'created_at' => "datetime:m/d/Y H:i:s",
         'updated_at' => "datetime:m/d/Y H:i:s"
     ];
+
+    public function getItemsAttribute($value)
+    {
+        return json_decode($value, true);
+    }
+
+    public function setItemsAttribute($value)
+    {
+        if (is_array($value)) {
+            $this->attributes['items'] = json_encode($value);
+        } else {
+            $this->attributes['items'] = $value;
+        }
+    }
+
+    public function getBillingAddressAttribute($value)
+    {
+        return json_decode($value, true);
+    }
+
+    public function setBillingAddressAttribute($value)
+    {
+        if (is_array($value)) {
+            $this->attributes['billing_address'] = json_encode($value);
+        } else {
+            $this->attributes['billing_address'] = $value;
+        }
+    }
+
+    public function getShippingAddressAttribute($value)
+    {
+        return json_decode($value, true);
+    }
+
+    public function setShippingAddressAttribute($value)
+    {
+        if (is_array($value)) {
+            $this->attributes['shipping_address'] = json_encode($value);
+        } else {
+            $this->attributes['shipping_address'] = $value;
+        }
+    }
 
     public function getTotalAttribute()
     {
@@ -60,8 +101,8 @@ class Order extends Model
     {
         $total = 0;
         foreach ($this->items as $item) {
-            $price = $item->price * $item->qty;
-            $total += Price::calculateDiscount($price, $item->discount_type, $item->discount_amount);
+            $price = $item['price'] * (int) $item['qty'];
+            $total += Price::calculateDiscount($price, $item['discount_type'], $item['discount_amount']);
         };
 
         $total = Price::calculateDiscount($total, $this->discount_type, $this->discount_amount);
@@ -81,11 +122,6 @@ class Order extends Model
         return $total_paid + $this->change;
     }
 
-    public function items()
-    {
-        return $this->hasMany(OrderProduct::class);
-    }
-
     public function payments()
     {
         return $this->hasMany(Payment::class);
@@ -99,16 +135,6 @@ class Order extends Model
     public function store()
     {
         return $this->belongsTo(Store::class);
-    }
-
-    public function shipping_address()
-    {
-        return $this->hasOne(OrderAddress::class, 'id', 'shipping_address_id');
-    }
-
-    public function billing_address()
-    {
-        return $this->hasOne(OrderAddress::class, 'id', 'billing_address_id');
     }
 
     public function store_pickup()

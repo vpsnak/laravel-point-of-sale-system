@@ -15,6 +15,8 @@ class Price
             case 'flat':
                 $price = $price - $amount;
                 break;
+            default:
+                break;
         }
         return $price;
     }

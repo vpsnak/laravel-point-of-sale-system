@@ -8,8 +8,6 @@ use App\Giftcard;
 use App\Helper\Price;
 use App\Jobs\ProcessOrder;
 use App\Order;
-use App\OrderAddress;
-use App\OrderProduct;
 use App\Store;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -19,9 +17,7 @@ class OrderController extends Controller
     public function all()
     {
         return Order::without([
-            'items',
             'payments',
-            'shipping_address',
             'store_pickup'
         ])->paginate();
     }
@@ -85,6 +81,7 @@ class OrderController extends Controller
             'shipping_cost' => 'numeric|nullable',
             'notes' => 'string|nullable',
             'store_id' => 'required|exists:stores,id',
+            'occasion' => 'nullable|required_if:shipping.method,delivery|numeric',
         ]);
 
         $validatedData['created_by'] = auth()->user()->id;
@@ -97,13 +94,6 @@ class OrderController extends Controller
             'shipping.date' => 'required_if:shipping.method,pickup,delivery|date',
             'shipping.timeSlotLabel' => 'nullable|required_if:shipping.method,pickup,delivery|string',
             'shipping.location' => 'nullable|required_if:shipping.method,delivery|numeric',
-            'shipping.occasion' => 'nullable|required_if:shipping.method,delivery|numeric',
-
-            'shipping.address' => 'nullable|required_if:shipping.method,delivery',
-            'shipping.address.id' => 'nullable|required_if:shipping.method,delivery|numeric|exists:addresses,id',
-
-            'billing_address' => 'nullable|required_if:shipping.method,delivery',
-            'billing_address.id' => 'nullable|required_if:shipping.method,delivery|numeric|exists:addresses,id',
 
             'shipping.pickup_point.id' => 'required_if:shipping.method,pickup|numeric',
         ]);
@@ -137,11 +127,10 @@ class OrderController extends Controller
         $validatedData['shipping_cost'] = $shippingData['shipping']['cost'] ?? null;
         $validatedData['delivery_date'] = $shippingData['shipping']['date'] ?? Carbon::today();
         $validatedData['delivery_slot'] = $shippingData['shipping']['timeSlotLabel'] ?? null;
-        $validatedData['location'] = $shippingData['shipping']['location'] ?? null;
         $validatedData['occasion'] = $shippingData['shipping']['occasion'] ?? null;
         $validatedData['notes'] = $shippingData['shipping']['notes'] ?? null;
 
-        $order_items = $request->validate([
+        $items = $request->validate([
             'products' => 'required|array',
             'products.*.name' => 'required|string',
             'products.*.sku' => 'required|string',
@@ -158,36 +147,30 @@ class OrderController extends Controller
             $has_tax = $customer->no_tax ? false : true;
         }
 
-        $validatedData = $this->setSubtotal($validatedData, $order_items['products']);
+        $validatedData = $this->setSubtotal($validatedData, $items['products']);
         if ($has_tax) {
             $validatedData = $this->setTax($validatedData, Store::findOrFail($validatedData['store_id']));
         } else {
             $validatedData['tax'] = 0;
         }
 
-        $order = Order::create($validatedData);
-        if (empty($order)) {
-            return response($order, 500);
+        $order = new Order($validatedData);
+
+        if (!empty($billingAddressData)) {
+            $order->billing_address = $billingAddressData;
         }
 
-        if (!empty($shippingData['shipping']['address'])) {
-            $shipping_address = OrderAddress::create($shippingAddressData['shipping']['address']);
-            $order->shipping_address_id = $shipping_address->id;
-            $order->save();
+        if (!empty($shippingAddressData)) {
+            $order->shipping_address = $shippingAddressData;
         }
 
-        if (!empty($shippingData['billing_address'])) {
-            $billing_address = OrderAddress::create($billingAddressData['billing_address']);
-            $order->billing_address_id = $billing_address->id;
-            $order->save();
+        $products = [];
+        foreach ($items['products'] as $product) {
+            array_push($products, $this->setProductPrice($product));
         }
 
-        foreach ($order_items['products'] as $product) {
-            $product['order_id'] = $order->id;
-            $product = $this->setProductPrice($product);
-            OrderProduct::create($product);
-        }
-        $order = Order::findOrFail($order->id);
+        $order->items = $products;
+        $order->save();
 
         ProcessOrder::dispatchNow($order);
 
@@ -220,6 +203,14 @@ class OrderController extends Controller
     private function setProductPrice($product)
     {
         $product['price'] = $product['final_price'];
+
+        if (
+            !array_key_exists('discount_type', $product) ||
+            !array_key_exists('discount_amount', $product)
+        ) {
+            $product['discount_type'] = $product['discount_amount'] = null;
+        }
+
         unset($product['final_price']);
         return $product;
     }

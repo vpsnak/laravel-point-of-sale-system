@@ -88,8 +88,8 @@ class FetchMagentoOrder implements ShouldQueue
             'tax' => $this->order->tax_rate ?? 0,
             'subtotal' => $this->order->subtotal,
             'change' => 0,
-            'shipping_address_id' => $shipping_id,
-            'billing_address_id' => $billing_id,
+            'magento_shipping_address_id' => $shipping_id,
+            'magento_billing_address_id' => $billing_id,
             'shipping_type' => 'eshop',
             'shipping_cost' => $this->order->shipping_amount,
         ]);

@@ -5,7 +5,6 @@ namespace App\Jobs;
 use App\Http\Controllers\Magento\Script\ProductSync;
 use App\Http\Controllers\MasOrderController;
 use App\Order;
-use App\OrderProduct;
 use App\Product;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -55,23 +54,24 @@ class ProcessOrder implements ShouldQueue
         }
     }
 
-    public static function handleStock(OrderProduct $item, $action)
+    public static function handleStock($item, $action)
     {
-        $product = $item->product;
+
+        $product = Product::findOrFail($item['id']);
         if (empty($product)) {
             self::log('Empty Product');
             return;
         }
         switch ($action) {
             case 'remove':
-                $qty = $product->laravel_stock - $item->qty;
+                $qty = $product->laravel_stock - $item['qty'];
                 self::log('Removing Stock ' . $product->sku . ' Qty: ' . $qty . ' from: ' . $product->laravel_stock);
                 $product->stores()->syncWithoutDetaching(
                     [Product::LARAVEL_STORE_ID, ['qty' => $qty]]
                 );
                 break;
             case 'add':
-                $qty = $product->laravel_stock + $item->qty;
+                $qty = $product->laravel_stock + $item['qty'];
                 self::log('Adding Stock ' . $product->sku . ' Qty: ' . $qty . ' from: ' . $product->laravel_stock);
                 $product->stores()->syncWithoutDetaching(
                     [Product::LARAVEL_STORE_ID, ['qty' => $qty]]

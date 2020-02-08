@@ -15,8 +15,9 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->bigIncrements('id');
+
             $table->unsignedBigInteger('customer_id')->nullable();
-            $table->enum('status', ['pending', 'pending_payment', 'paid', 'complete', 'canceled'])->nullable();
+            $table->string('status')->nullable();
             $table->enum('discount_type', ['flat', 'percentage'])->nullable();
             $table->unsignedSmallInteger('discount_amount')->default(0)->nullable();
             $table->decimal('tax')->unsigned();
@@ -25,13 +26,17 @@ class CreateOrdersTable extends Migration
             $table->string('notes')->nullable();
             $table->string('shipping_type')->nullable();
             $table->decimal('shipping_cost')->default(0);
-            $table->unsignedBigInteger('shipping_address_id')->nullable();
-            $table->unsignedBigInteger('billing_address_id')->nullable();
             $table->string('store_pickup_id')->nullable();
             $table->string('delivery_date')->nullable();
             $table->string('delivery_slot')->nullable();
-            $table->string('location')->nullable();
             $table->string('occasion')->nullable();
+
+            $table->json('items');
+            $table->json('billing_address')->nullable();
+            $table->json('shipping_address')->nullable();
+
+            $table->unsignedBigInteger('magento_shipping_address_id')->nullable();
+            $table->unsignedBigInteger('magento_billing_address_id')->nullable();
             $table->unsignedBigInteger('store_id');
             $table->unsignedBigInteger('created_by');
             $table->timestamps();

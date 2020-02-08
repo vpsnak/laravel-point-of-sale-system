@@ -4,7 +4,7 @@
       <v-row dense justify="center" align="center">
         <v-col cols="12" justify="center" align="center">
           <h3 class="py-2">Methods</h3>
-
+          ​
           <v-btn-toggle v-model="paymentType" mandatory @change="clearState">
             <v-btn
               v-for="paymentType in paymentTypes"
@@ -64,7 +64,7 @@
             prepend-inner-icon="mdi-calendar"
           ></v-text-field>
         </v-col>
-
+        ​
         <v-col :lg="3" :md="6">
           <v-text-field
             dense
@@ -117,7 +117,7 @@
         </v-col>
       </v-row>
     </v-container>
-
+    ​
     <v-container fluid>
       <v-row justify="center" align="center" class="my-3" dense>
         <v-col lg="4" md="6">
@@ -138,7 +138,7 @@
     </v-container>
   </div>
 </template>
-
+​
 <script>
 import { mapActions, mapState } from "vuex";
 

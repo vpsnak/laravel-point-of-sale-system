@@ -189,7 +189,7 @@ class MasOrderController extends Controller
     {
         $response = [];
         foreach ($items as $item) {
-            $response[$item->id] = [
+            $response[$item['id']] = [
                 'ItemCode' => $item->sku,
                 'ItemName' => $item->name,
                 'ItemDescription' => $item->notes ?? '-',
@@ -197,10 +197,10 @@ class MasOrderController extends Controller
                 'Quantity' => $item->qty
             ];
 
-            if ($item->price > $item->final_price) {
-                $response[$item->id]['DiscountAmount'] = number_format($item->price - $item->final_price, 2, '.', '');
+            if ($item['price'] > $item['final_price']) {
+                $response[$item['id']]['DiscountAmount'] = number_format($item['price'] - $item['final_price'], 2, '.', '');
             } else {
-                $response[$item->id]['DiscountAmount'] = "0";
+                $response[$item['id']]['DiscountAmount'] = "0";
             }
         }
         return array_values($response);
