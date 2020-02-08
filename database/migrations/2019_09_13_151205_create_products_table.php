@@ -24,7 +24,6 @@ class CreateProductsTable extends Migration
             $table->string('url')->nullable();
             $table->string('plantcare_pdf')->nullable();
             $table->text('description')->nullable();
-            $table->softDeletes();
             $table->timestamps();
             // stock_id price_id foreign
         });

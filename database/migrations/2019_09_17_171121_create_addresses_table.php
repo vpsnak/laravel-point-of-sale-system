@@ -29,6 +29,8 @@ class CreateAddressesTable extends Migration
             $table->string('vat_id', 100)->nullable();
             $table->boolean('billing')->default(0);
             $table->boolean('shipping')->default(0);
+            $table->string('location')->nullable();
+            $table->string('location_name')->nullable();
             $table->timestamps();
         });
     }

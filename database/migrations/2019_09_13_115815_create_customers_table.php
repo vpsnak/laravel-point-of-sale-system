@@ -25,6 +25,7 @@ class CreateCustomersTable extends Migration
             $table->boolean('no_tax')->default(0);
             $table->string('no_tax_file')->nullable();
             $table->text('comment')->nullable();
+            $table->text('phone')->nullable();
             $table->timestamps();
         });
     }

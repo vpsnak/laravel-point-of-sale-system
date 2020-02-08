@@ -93,7 +93,7 @@ Route::post('/cash-registers/search', 'CashRegisterController@search')->middlewa
 Route::delete('/cash-registers/{id}', 'CashRegisterController@delete')->middleware('scope:admin,store_manager,cashier');
 
 // cash-register-reports
-Route::get('/cash-register-reports', 'CashRegisterReportController@all');
+Route::get('/cash-register-reports', 'CashRegisterReportController@all')->middleware('scope:admin,store_manager,cashier');;
 Route::get('/cash-register-reports/get/{id}', 'CashRegisterReportController@get')->middleware('scope:admin,store_manager,cashier');
 Route::get('/cash-register-reports/check/{cashRegister}', "CashRegisterReportController@checkCurrent")->middleware('scope:admin,store_manager,cashier');
 Route::post('/cash-register-reports/create', 'CashRegisterReportController@create')->middleware('scope:admin,store_manager,cashier');
