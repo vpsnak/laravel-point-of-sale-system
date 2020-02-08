@@ -101,7 +101,7 @@ const state = {
         { text: "Actions", value: "actions" }
     ],
     storeTable: [
-        { text: "Id", value: "id" },
+        { text: "#", value: "id" },
         { text: "Name", value: "name" },
         { text: "Phone", value: "phone" },
         { text: "Street", value: "street" },
@@ -131,7 +131,7 @@ const state = {
     paymentHistory: [
         {
             text: "Payment ID",
-            value: "id",
+            value: "#",
             sortable: false
         },
         {
@@ -161,14 +161,13 @@ const state = {
         },
         {
             text: "Actions",
-            value: "actions",
-            sortable: false
+            value: "actions"
         }
     ]
 };
 
 const getters = {
-    getHeaders(table) {
+    getHeaders: (state, table) => {
         return state[table];
     }
 };

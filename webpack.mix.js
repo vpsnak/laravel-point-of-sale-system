@@ -1,5 +1,4 @@
 const mix = require("laravel-mix");
-const webpack = require("./webpack.config");
 
 // /*
 //  |--------------------------------------------------------------------------
@@ -13,6 +12,6 @@ const webpack = require("./webpack.config");
 //  */
 
 mix.js("resources/js/app.js", "public/js")
-    .sass("resources/sass/app.scss", "public/css")
     .disableSuccessNotifications()
-    .webpackConfig(Object.assign(webpack));
+    .sass("resources/sass/app.scss", "public/css")
+    .sourceMaps();
