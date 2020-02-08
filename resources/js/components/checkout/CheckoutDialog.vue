@@ -81,14 +81,7 @@ export default {
       }
     };
   },
-  watch: {
-    orderLoading(value) {
-      console.log("order-loading: " + value);
-    },
-    loading(value) {
-      console.log("loading: " + value);
-    }
-  },
+
   computed: {
     ...mapState("cart", [
       "order",
@@ -98,7 +91,6 @@ export default {
       "refundLoading",
       "completeOrderLoading"
     ]),
-
     cart() {
       return this.$store.state.cart;
     },
@@ -118,7 +110,6 @@ export default {
         ? "Cancel order"
         : "Close";
     },
-
     state: {
       get() {
         return this.checkoutDialog;

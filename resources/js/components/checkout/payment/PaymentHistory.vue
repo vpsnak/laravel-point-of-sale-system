@@ -194,7 +194,6 @@ export default {
       this.selected_payment = item;
 
       this.setDialog({
-        show: true,
         width: 600,
         title: `Verify your password to rollback payment #${item.id}`,
         titleCloseBtn: true,

@@ -207,7 +207,6 @@
 
 <script>
 import { mapMutations, mapState, mapActions } from "vuex";
-import { EventBus } from "../../plugins/event-bus";
 
 export default {
   data() {

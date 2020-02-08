@@ -1,67 +1,60 @@
 <template>
-    <v-app id="app">
-        <notification />
+  <v-app id="app">
+    <notification />
 
-        <interactiveDialog v-if="showComponents"></interactiveDialog>
+    <interactiveDialog v-if="showComponents"></interactiveDialog>
 
-        <checkoutDialog v-if="showComponents && checkoutDialog" />
+    <checkoutDialog v-if="showComponents" />
 
-        <sideMenu v-if="showComponents" />
+    <sideMenu v-if="showComponents" />
 
-        <topMenu v-if="showComponents" />
+    <topMenu v-if="showComponents" />
 
-        <v-content>
-            <transition name="fade">
-                <router-view></router-view>
-            </transition>
-        </v-content>
-    </v-app>
+    <v-content>
+      <transition name="fade">
+        <router-view></router-view>
+      </transition>
+    </v-content>
+  </v-app>
 </template>
 
 <script>
 import { mapGetters, mapMutations, mapState } from "vuex";
 
 export default {
-    mounted() {
-        if (this.auth && this.app_load <= 100) {
-            this.$router.push({ name: "landingPage" });
-        }
-    },
-    computed: {
-        ...mapGetters(["auth", "role"]),
-        ...mapState("config", ["app_load"]),
-        ...mapState("cart", ["checkoutDialog"]),
-
-        showComponents() {
-            if (this.app_load > 100 && this.auth) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    },
-    methods: {
-        ...mapMutations(["logout"])
+  mounted() {
+    if (this.auth && this.app_load <= 100) {
+      this.$router.push({ name: "landingPage" });
     }
+  },
+  computed: {
+    ...mapGetters(["auth", "role"]),
+    ...mapState("config", ["app_load"]),
+
+    showComponents() {
+      if (this.app_load > 100 && this.auth) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  },
+  methods: {
+    ...mapMutations(["logout"])
+  }
 };
 </script>
 
 <style>
-.fas,
-.fab,
-.fa {
-    font-size: 1.2em !important;
-}
-
 a {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 input[type="number"] {
-    -moz-appearance: textfield;
+  -moz-appearance: textfield;
 }
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
+  -webkit-appearance: none;
 }
 </style>
