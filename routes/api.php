@@ -179,8 +179,8 @@ Route::post('/cash-register-logs/close', 'CashRegisterLogsController@close')->mi
 Route::delete('/cash-register-logs/{id}', 'CashRegisterLogsController@delete')->middleware('scope:admin');
 
 //receipts
-Route::get('/receipts/get/{model}', 'ReceiptController@get');
-Route::get('/receipts/create/{model}', 'ReceiptController@create');
+Route::get('/receipts/get/{model}', 'ReceiptController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/receipts/create/{model}', 'ReceiptController@create')->middleware('scope:admin,store_manager,cashier');
 
 // categories to list in sales
 Route::get('/product-listing/categories', "CategoryController@productListingCategories")->middleware('scope:admin,store_manager,cashier');
