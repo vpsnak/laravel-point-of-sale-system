@@ -69,15 +69,17 @@ export default {
   beforeDestroy() {
     this.$off("close");
   },
+
   data() {
     return {
       confirmationDialog: {
-        show: "closePrompt",
         action: "confirmation",
         title: "Cancel order?",
         content: "Are you sure you want to <b>cancel</b> the current order?",
         actions: true,
-        persistent: true
+        persistent: true,
+        cancelBtnTxt: "No",
+        confirmationBtnTxt: "Yes"
       }
     };
   },
@@ -148,7 +150,7 @@ export default {
     },
     confirmation(event) {
       if (event) {
-        this.$store.state.cart.isValidCheckout = false;
+        this.cart.isValidCheckout = false;
 
         let payload = {
           model: "orders",

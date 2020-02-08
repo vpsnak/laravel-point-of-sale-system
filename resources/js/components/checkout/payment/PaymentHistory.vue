@@ -9,7 +9,7 @@
         dense
         height="15vh"
         :headers="headers"
-        :items="paymentHistory"
+        :items="order.payments"
         class="elevation-1"
         disable-pagination
         disable-filtering
@@ -114,17 +114,6 @@ export default {
   computed: {
     ...mapState("cart", ["order"]),
 
-    paymentHistory: {
-      get() {
-        return this.order.payments;
-      },
-      set(value) {
-        this.$store.commit("cart/setPaymentHistory", value);
-      }
-    },
-    orderId() {
-      return this.order.id;
-    },
     refundLoading: {
       get() {
         return this.$store.state.cart.refundLoading;
@@ -137,6 +126,7 @@ export default {
   methods: {
     ...mapActions(["search", "delete"]),
     ...mapMutations("dialog", ["setDialog"]),
+    ...mapActions("cart", ["setPaymentHistory"]),
 
     parseStatus(status) {
       return _.upperFirst(status);
@@ -154,16 +144,16 @@ export default {
       }
     },
     getPaymentHistory() {
-      if (this.orderId) {
+      if (this.order.id) {
         this.paymentHistoryLoading = true;
 
         let payload = {
           model: "payments",
-          keyword: this.orderId
+          keyword: this.order.id
         };
         this.search(payload)
           .then(response => {
-            this.paymentHistory = response;
+            this.setPaymentHistory(response);
           })
           .finally(() => {
             this.paymentHistoryLoading = false;
@@ -183,7 +173,7 @@ export default {
         })
         .catch(error => {
           if (error.response.data.refund) {
-            this.payments = error.response.data.refund;
+            this.order.payments = error.response.data.refund;
           }
 
           this.$emit("refund", error.response.data);

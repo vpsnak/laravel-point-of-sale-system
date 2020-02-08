@@ -31,7 +31,7 @@ export default {
   },
 
   mounted() {
-    if (this.orderId) {
+    if (this.order.id) {
       this.order_status = this.order.status;
       this.remaining = (this.order.total - this.order.total_paid).toFixed(2);
 
@@ -62,12 +62,6 @@ export default {
       set(value) {
         this.setPaymentHistory(value);
       }
-    },
-    order() {
-      return this.$store.state.cart.order;
-    },
-    orderId() {
-      return this.order.id;
     },
     remaining: {
       get() {
@@ -113,7 +107,7 @@ export default {
         data: {
           payment_type: event.paymentType,
           amount: event.paymentAmount || null,
-          order_id: this.orderId
+          order_id: this.order.id
         }
       };
 

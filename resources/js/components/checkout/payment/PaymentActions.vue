@@ -1,5 +1,5 @@
 <template>
-  <div v-if="remainingAmount > 0">
+  <div v-show="remainingAmount > 0">
     <v-container fluid>
       <v-row dense justify="center" align="center">
         <v-col cols="12" justify="center" align="center">
