@@ -78,9 +78,10 @@ class CashRegisterLogsController extends BaseController
         $user = auth()->user();
 
         if ($user->open_register) {
-            return response(['cashRegister' => $this->model::getOne($user->open_register->id)], 200);
-        } else {
-            return response(0, 200);
+            return response([
+                'cashRegister' => $user->open_register,
+                'info' => ["Your open session with cash register: <b>{$user->open_register->cash_register->name}</b> has been restored"]
+            ], 200);
         }
     }
 

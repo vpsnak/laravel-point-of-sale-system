@@ -9,7 +9,7 @@ class MasAccount extends Model
     public $timestamps = false;
 
     protected $casts = [
-        'active' => "boolean"
+        'active' => 'boolean'
     ];
 
     public static function getActive()

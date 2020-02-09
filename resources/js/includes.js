@@ -1,9 +1,10 @@
 import "@mdi/font/css/materialdesignicons.css";
 import "material-design-icons-iconfont/dist/material-design-icons.css";
+// import "velocity-animate";
 import "./plugins/laravel-echo";
 import store from "./store/store";
 import Cookies from "js-cookie";
-
+window.Velocity = require("velocity-animate");
 window._ = require("lodash");
 
 /**
@@ -26,7 +27,7 @@ window.axios.interceptors.response.use(undefined, function(error) {
         store.commit("logout");
     }
 
-    return Promise.reject(error);
+    return Promise.reject(false);
 });
 
 /**

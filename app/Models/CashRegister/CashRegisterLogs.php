@@ -2,8 +2,19 @@
 
 namespace App;
 
+use App\Events\CashRegisterLogin;
+
 class CashRegisterLogs extends BaseModel
 {
+    /**
+     * The event map for the model.
+     *
+     * @var array
+     */
+    protected $dispatchesEvents = [
+        'saving' => CashRegisterLogin::class,
+    ];
+
     protected $with = ['cash_register'];
     protected $fillable = [
         'user_id',

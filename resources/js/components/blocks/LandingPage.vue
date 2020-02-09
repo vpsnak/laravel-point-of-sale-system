@@ -20,6 +20,28 @@
                 </v-progress-circular>
             </v-col>
         </v-row>
+        <v-row v-if="verbose && init_info.length">
+            <v-col cols="12">
+                <transition-group
+                    name="staggered-fade"
+                    tag="table"
+                    v-bind:css="false"
+                    @before-enter="beforeEnter"
+                    @enter="enter"
+                >
+                    <tr
+                        v-for="(item, index) in init_info"
+                        :key="item.action"
+                        :data-index="index"
+                    >
+                        <td>{{ item.action }}</td>
+                        <td :class="item.status + '--text'">
+                            {{ item.message }}
+                        </td>
+                    </tr>
+                </transition-group>
+            </v-col>
+        </v-row>
     </v-container>
 </template>
 
@@ -43,7 +65,7 @@ export default {
 
     computed: {
         ...mapState(["token"]),
-        ...mapState("config", ["app_load"]),
+        ...mapState("config", ["app_load", "verbose", "init_info"]),
 
         loadPercent: {
             get() {
@@ -64,30 +86,34 @@ export default {
         ...mapMutations("config", ["addLoadPercent", "resetLoad"]),
         ...mapMutations("cart", ["resetState"]),
         ...mapMutations("dialog", ["resetDialog"]),
-        ...mapActions(["retrieveCashRegister"]),
-        ...mapActions("config", ["getMasEnv"]),
+        ...mapActions("config", ["retrieveCashRegister"]),
+        ...mapActions("config", ["getMasEnv", "initPrivateChannels"]),
 
         init() {
             this.resetLoad();
             this.resetAppState();
 
-            this.getMasEnv()
+            this.initPrivateChannels()
                 .then(() => {
-                    this.loadPercent = 45;
+                    this.loadPercent = 30;
                 })
                 .catch(error => {
-                    this.loadPercent = 0;
-                    this.color = "red";
-                    this.error_txt = "Error";
+                    this.setError(error);
+                });
+
+            this.getMasEnv()
+                .then(() => {
+                    this.loadPercent = 30;
+                })
+                .catch(error => {
+                    this.setError(error);
                 });
             this.retrieveCashRegister()
                 .then(() => {
-                    this.loadPercent = 45;
+                    this.loadPercent = 30;
                 })
                 .catch(error => {
-                    this.loadPercent = 0;
-                    this.color = "red";
-                    this.error_txt = "Error";
+                    this.setError(error);
                 });
         },
         redirect() {
@@ -99,6 +125,34 @@ export default {
             this.resetState();
             this.resetDialog();
             this.loadPercent = 10;
+        },
+        setError(error) {
+            this.loadPercent = 0;
+            this.color = "red";
+            this.error_txt = "Error";
+            console.log(error);
+        },
+
+        // animations
+        beforeEnter: function(el) {
+            el.style.opacity = 0;
+            el.style.height = 0;
+        },
+        enter: function(el, done) {
+            var delay = el.dataset.index * 150;
+            setTimeout(function() {
+                Velocity(
+                    el,
+                    { opacity: 1, height: "1.6em" },
+                    { complete: done }
+                );
+            }, delay);
+        },
+        leave: function(el, done) {
+            var delay = el.dataset.index * 150;
+            setTimeout(function() {
+                Velocity(el, { opacity: 0, height: 0 }, { complete: done });
+            }, delay);
         }
     }
 };

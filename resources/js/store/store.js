@@ -14,11 +14,8 @@ import icons from "./modules/icons";
 
 Vue.use(Vuex);
 
-const namespaced = true;
-
 export default new Vuex.Store({
     strict: false,
-    namespaced,
     modules: {
         config,
         menu,
@@ -28,7 +25,6 @@ export default new Vuex.Store({
         icons
     },
     state: {
-        base_url: process.env.MIX_BASE_URL,
         user: Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null,
         token: Cookies.get("token") || null,
 
@@ -132,7 +128,10 @@ export default new Vuex.Store({
         login(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(`${context.state.base_url}/auth/login`, payload)
+                    .post(
+                        `${context.state.config.base_url}/auth/login`,
+                        payload
+                    )
                     .then(response => {
                         let notification = {
                             msg: response.data.info,
@@ -163,9 +162,9 @@ export default new Vuex.Store({
         logout(context) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(`${context.state.base_url}/auth/logout`)
+                    .get(`${context.state.config.base_url}/auth/logout`)
                     .then(response => {
-                        context.config.commit("resetLoad");
+                        context.commit("config/resetLoad");
                         context.commit("setNotification", {
                             msg: response.data.info,
                             type: "info"
@@ -183,7 +182,10 @@ export default new Vuex.Store({
         verifySelf(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(`${context.state.base_url}/auth/verify`, payload)
+                    .post(
+                        `${context.state.config.base_url}/auth/verify`,
+                        payload
+                    )
                     .then(() => {
                         resolve(true);
                     })
@@ -199,7 +201,10 @@ export default new Vuex.Store({
         changeSelfPwd(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(`${context.state.base_url}/auth/password`, payload)
+                    .post(
+                        `${context.state.config.base_url}/auth/password`,
+                        payload
+                    )
                     .then(response => {
                         context.commit("setNotification", {
                             msg: response.data.info,
@@ -219,7 +224,10 @@ export default new Vuex.Store({
         changeUserPwd(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(`${context.state.base_url}/users/password`, payload)
+                    .post(
+                        `${context.state.config.base_url}/users/password`,
+                        payload
+                    )
                     .then(response => {
                         context.commit("setNotification", {
                             msg: response.data.info,
@@ -241,7 +249,9 @@ export default new Vuex.Store({
                 let page = payload.page ? "?page=" + payload.page : "";
 
                 axios
-                    .get(`${context.state.base_url}/${payload.model}${page}`)
+                    .get(
+                        `${context.state.config.base_url}/${payload.model}${page}`
+                    )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
                             context.commit(
@@ -269,7 +279,7 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 axios
                     .get(
-                        `${context.state.base_url}/${payload.model}/get/${payload.data.id}`
+                        `${context.state.config.base_url}/${payload.model}/get/${payload.data.id}`
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -294,7 +304,7 @@ export default new Vuex.Store({
 
                 axios
                     .get(
-                        `${context.state.base_url}/${payload.model}/${payload.data.id}/${payload.data.model}${page}`
+                        `${context.state.config.base_url}/${payload.model}/${payload.data.id}/${payload.data.model}${page}`
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -320,7 +330,7 @@ export default new Vuex.Store({
 
                 axios
                     .post(
-                        `${context.state.base_url}/${payload.model}/search${page}`,
+                        `${context.state.config.base_url}/${payload.model}/search${page}`,
                         payload
                     )
                     .then(response => {
@@ -349,7 +359,7 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 axios
                     .post(
-                        `${context.state.base_url}/cash-register-logs/open`,
+                        `${context.state.config.base_url}/cash-register-logs/open`,
                         payload
                     )
                     .then(response => {
@@ -388,7 +398,9 @@ export default new Vuex.Store({
         logoutCashRegister(context) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(`${context.state.base_url}/cash-register-logs/logout`)
+                    .get(
+                        `${context.state.config.base_url}/cash-register-logs/logout`
+                    )
                     .then(response => {
                         if (
                             router.currentRoute.name === ("sales" || "orders")
@@ -430,7 +442,7 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 axios
                     .get(
-                        `${context.state.base_url}/cash-register-logs/${context.state.cashRegister.id}/amount`
+                        `${context.state.config.base_url}/cash-register-logs/${context.state.cashRegister.id}/amount`
                     )
                     .catch(error => {
                         reject(error.response);
@@ -440,69 +452,12 @@ export default new Vuex.Store({
                     });
             });
         },
-        retrieveCashRegister(context) {
-            return new Promise((resolve, reject) => {
-                axios
-                    .get(
-                        `${context.state.base_url}/cash-register-logs/retrieve`
-                    )
-                    .then(response => {
-                        if (response.data !== 0) {
-                            if (
-                                !context.state.cashRegister ||
-                                !context.state.store
-                            ) {
-                                let notification = {
-                                    msg: `Your open session with cash register: <b>${response.data.cashRegister.cash_register.name}</b> has been restored`,
-                                    type: "info"
-                                };
 
-                                context.commit("setNotification", notification);
-                            }
-
-                            context.commit(
-                                "setCashRegister",
-                                response.data.cashRegister.cash_register
-                            );
-                            context.commit(
-                                "setStore",
-                                response.data.cashRegister.cash_register.store
-                            );
-                        } else {
-                            if (
-                                context.state.store ||
-                                context.state.cashRegister
-                            ) {
-                                let notification = {
-                                    msg: `Your session with cash register: <b>${context.state.cashRegister.name}</b> has been terminated`,
-                                    type: "error"
-                                };
-                                context.commit("setNotification", notification);
-
-                                if (
-                                    router.currentRoute.name === "sales" ||
-                                    router.currentRoute.name === "orders"
-                                ) {
-                                    router.push({
-                                        name: "dashboard"
-                                    });
-                                }
-                            }
-                            context.commit("setCashRegister", null);
-                            context.commit("setStore", null);
-                        }
-                        resolve(true);
-                    })
-                    .catch(error => {
-                        reject(error);
-                    });
-            });
-        },
         closeCashRegister(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
                     .post(
-                        `${context.state.base_url}/cash-register-logs/close`,
+                        `${context.state.config.base_url}/cash-register-logs/close`,
                         payload.data
                     )
                     .then(response => {
@@ -542,7 +497,10 @@ export default new Vuex.Store({
         setRole(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(`${context.state.base_url}/roles/set`, payload.data)
+                    .post(
+                        `${context.state.config.base_url}/roles/set`,
+                        payload.data
+                    )
                     .then(response => {
                         let notification = {
                             msg: response.data.info,
@@ -575,7 +533,7 @@ export default new Vuex.Store({
                 }
                 axios
                     .post(
-                        `${context.state.base_url}/${payload.model}/create`,
+                        `${context.state.config.base_url}/${payload.model}/create`,
                         payload.data,
                         options
                     )
@@ -602,7 +560,7 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 axios
                     .delete(
-                        `${context.state.base_url}/${payload.model}/${payload.id}`
+                        `${context.state.config.base_url}/${payload.model}/${payload.id}`
                     )
                     .then(response => {
                         if (_.has(payload, "mutation")) {
@@ -629,7 +587,7 @@ export default new Vuex.Store({
             return new Promise((resolve, reject) => {
                 axios
                     .post(
-                        `${context.state.base_url}/${payload.url}`,
+                        `${context.state.config.base_url}/${payload.url}`,
                         payload.data
                     )
                     .then(response => {
@@ -653,7 +611,7 @@ export default new Vuex.Store({
         deleteRequest(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .delete(`${context.state.base_url}/${payload.url}`)
+                    .delete(`${context.state.config.base_url}/${payload.url}`)
                     .then(response => {
                         if (_.has(payload, "mutation")) {
                             context.commit(
