@@ -3,7 +3,9 @@
 		<v-row v-if="customerData">
 			<v-col cols="12">
 				<v-card>
-					<v-card-title>Personal Information</v-card-title>
+					<v-toolbar dense color="blue-grey darken-4" dark>
+						<v-toolbar-title>Personal Information</v-toolbar-title>
+					</v-toolbar>
 					<v-card-text>
 						<customerForm :model="customerData" @submit="submit"></customerForm>
 					</v-card-text>
@@ -11,7 +13,7 @@
 			</v-col>
 			<v-col cols="12" v-if="customerData.addresses.length > 0">
 				<v-card>
-					<v-toolbar dense color="blue-grey darken-4">
+					<v-toolbar dense color="blue-grey darken-4" dark>
 						<v-toolbar-title>Address Book</v-toolbar-title>
 					</v-toolbar>
 					<v-tabs>
