@@ -16,10 +16,11 @@ class OrderController extends Controller
 {
     public function all()
     {
-        return Order::without([
+        return response(Order::without([
+            'items',
             'payments',
             'store_pickup'
-        ])->paginate();
+        ])->paginate());
     }
 
     public function get(Order $model)
