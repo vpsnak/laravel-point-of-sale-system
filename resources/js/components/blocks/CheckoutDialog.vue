@@ -50,7 +50,6 @@
           </v-col>
           <v-col :lg="4">
             <cart
-              :key="order.id"
               icon="mdi-clipboard-list"
               title="Order summary"
               :editable="order.id ? false : true"

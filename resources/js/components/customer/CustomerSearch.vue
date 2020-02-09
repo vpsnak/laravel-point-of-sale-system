@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <v-row align="center" justify="center">
+  <v-container fluid>
+    <v-row align="center" justify="center" dense>
       <v-combobox
         :no-filter="true"
         v-if="editable"
@@ -78,14 +78,17 @@
         <span>Add a customer</span>
       </v-tooltip>
     </v-row>
-  </div>
+  </v-container>
 </template>
 <script>
-import { mapMutations } from "vuex";
+import { mapState, mapMutations } from "vuex";
 import { EventBus } from "../../plugins/event-bus";
 
 export default {
   mounted() {
+    if (this.order.id) {
+      this.cartCustomer = this.order.customer;
+    }
     EventBus.$on("customer-search", event => {
       if (event.payload.customer) {
         this.cartCustomer = event.payload.customer;
@@ -111,7 +114,10 @@ export default {
       customers: []
     };
   },
+
   computed: {
+    ...mapState("cart", ["order", "customer"]),
+
     results: {
       get() {
         return this.customers;
@@ -122,19 +128,15 @@ export default {
     },
     cartCustomer: {
       get() {
-        if (this.$store.state.cart.order.id) {
-          return this.$store.state.cart.order.customer || {};
-        } else {
-          return this.$store.state.cart.customer;
-        }
+        return this.customer;
       },
       set(value) {
-        if (!this.$store.state.cart.order.id) {
+        if (!this.order.id) {
           if (value !== this.cartCustomer) {
-            this.$store.commit("cart/resetShipping");
+            this.resetShipping();
           }
-          this.$store.commit("cart/setCustomer", value);
         }
+        this.setCustomer(value);
       }
     },
     cartCustomerComment() {
@@ -145,8 +147,10 @@ export default {
       }
     }
   },
+
   methods: {
     ...mapMutations("dialog", ["setDialog"]),
+    ...mapMutations("cart", ["setCustomer", "resetShipping"]),
 
     customerForm(create) {
       this.setDialog({
@@ -191,7 +195,7 @@ export default {
       this.loading = true;
       const payload = {
         model: "customers",
-        keyword: keyword
+        keyword
       };
 
       this.$store
@@ -206,16 +210,15 @@ export default {
         .finally(() => (this.loading = false));
     }
   },
+
   watch: {
     search(keyword) {
-      if (keyword) {
-        if (keyword.length >= this.$props.keywordLength) {
-          if (this.loading) {
-            return;
-          } else {
-            this.searchCustomer(keyword);
-            return;
-          }
+      if (keyword && keyword.length >= this.$props.keywordLength) {
+        if (this.loading) {
+          return;
+        } else {
+          this.searchCustomer(keyword);
+          return;
         }
       }
     }
