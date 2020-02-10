@@ -16,10 +16,10 @@ class CreateMenuItemsTable extends Migration
         Schema::create('menu_items', function (Blueprint $table) {
             $table->bigIncrements('id');
 
+            $table->string('name');
+            $table->string('icon');
+            $table->json('action');
             $table->string('location');
-            $table->json('content');
-            $table->string('role');
-
             $table->timestamps();
         });
     }

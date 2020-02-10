@@ -7,13 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class MenuItem extends Model
 {
     protected $fillable = [
-        'location',
-        'content',
-        'role',
+        'name',
+        'icon',
+        'action',
+        'location'
     ];
 
     protected $casts = [
-        'content' => 'array',
+        'content' => 'action',
         'created_at' => "datetime:m/d/Y H:i:s",
         'updated_at' => "datetime:m/d/Y H:i:s"
     ];
