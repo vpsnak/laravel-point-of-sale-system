@@ -86,20 +86,30 @@ export default {
         ...mapMutations("config", ["addLoadPercent", "resetLoad"]),
         ...mapMutations("cart", ["resetState"]),
         ...mapMutations("dialog", ["resetDialog"]),
-        ...mapActions("config", ["retrieveCashRegister"]),
-        ...mapActions("config", ["getMasEnv", "initPrivateChannels"]),
+        ...mapActions("config", [
+            "getMasEnv",
+            "initWebSockets",
+            "initPrivateChannels",
+            "retrieveCashRegister"
+        ]),
 
         init() {
             this.resetLoad();
             this.resetAppState();
 
-            this.initPrivateChannels()
-                .then(() => {
-                    this.loadPercent = 30;
-                })
-                .catch(error => {
-                    this.setError(error);
-                });
+            this.initWebSockets().then(response => {
+                window.Echo = response;
+                this.loadPercent = 15;
+
+                this.initPrivateChannels(window.Echo)
+                    .then(echo => {
+                        window.Echo = echo;
+                        this.loadPercent = 15;
+                    })
+                    .catch(error => {
+                        this.setError(error);
+                    });
+            });
 
             this.getMasEnv()
                 .then(() => {

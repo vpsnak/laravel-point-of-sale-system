@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\User;
 use App\CashRegisterLogs;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -11,22 +12,22 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class CashRegisterLogin
+class CashRegisterLogin implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $cashRegisterLogs;
-    public $original_user_id;
-    public $new_user_id;
+    public $loggedUser;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(CashRegisterLogs $cashRegisterLogs)
+    public function __construct(CashRegisterLogs $cashRegisterLogs, User $loggedUser)
     {
         $this->cashRegisterLogs = $cashRegisterLogs;
+        $this->loggedUser = $loggedUser;
     }
 
     /**
@@ -36,9 +37,37 @@ class CashRegisterLogin
      */
     public function broadcastOn()
     {
+        return new PrivateChannel('user.' . $this->cashRegisterLogs->user_id);
+    }
+
+    /**
+     * Get the data to broadcast.
+     *
+     * @return array
+     */
+    public function broadcastWith()
+    {
+        $cashReg = $this->cashRegisterLogs->cash_register()->first();
+        $mutations = [
+            [
+                'name' => 'setStore',
+                'data' => null,
+                'root' => ['root' => true],
+            ], [
+                'name' => 'setCashRegister',
+                'data' => null,
+                'root' => ['root' => true],
+            ]
+        ];
+
+
         return [
-            new PrivateChannel('user.' . $this->original_user_id),
-            new PrivateChannel('user.' . $this->new_user_id),
+            'mutations' => $mutations,
+            'notification' => [
+                'msg' => "<b>{$this->loggedUser->name}</b> logged into the cash register
+                    <br>Your session with cash register <b>{$cashReg->name}</b> terminated",
+                'type' => 'warning'
+            ]
         ];
     }
 }

@@ -19,9 +19,9 @@ class EventServiceProvider extends ServiceProvider
         //     SendEmailVerificationNotification::class,
         // ],
 
-        'App\Events\CashRegisterLogin' => [
-            'App\Listeners\SendKickNotification',
-        ],
+        // 'App\Events\CashRegisterLogin' => [
+        //     'App\Listeners\CashRegisterSession',
+        // ],
 
         'Laravel\Passport\Events\AccessTokenCreated' => [
             'App\Listeners\RevokeOldTokens',

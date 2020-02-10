@@ -67,7 +67,7 @@ const actions = {
                         ? context.commit("setInitInfo", {
                               action: "getMasEnv",
                               status: "error",
-                              message: error.response.data
+                              message: "FAILED"
                           })
                         : "";
                     reject(error.response);
@@ -95,7 +95,54 @@ const actions = {
                 });
         });
     },
-    initPrivateChannels(context) {
+    initWebSockets(context) {
+        context.state.verbose
+            ? context.commit("setInitInfo", {
+                  action: "initWebSockets",
+                  status: "info",
+                  message: "LOADING"
+              })
+            : "";
+
+        return new Promise((resolve, reject) => {
+            try {
+                let Echo = require("laravel-echo");
+                Echo = new Echo.default({
+                    broadcaster: "pusher",
+                    key: process.env.MIX_PUSHER_APP_KEY,
+                    cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+                    encrypted: true,
+                    auth: {
+                        headers: {
+                            Authorization: context.rootState.token
+                        }
+                    }
+                });
+
+                context.state.verbose
+                    ? context.commit("setInitInfo", {
+                          action: "initWebSockets",
+                          status: "success",
+                          message: "OK"
+                      })
+                    : "";
+
+                resolve(Echo);
+            } catch (error) {
+                console.log(error);
+                context.state.verbose
+                    ? context.commit("setInitInfo", {
+                          action: "initWebSockets",
+                          status: "error",
+                          message: "FAILED"
+                      })
+                    : "";
+
+                reject(error);
+            }
+        });
+    },
+    initPrivateChannels(context, echo) {
         context.state.verbose
             ? context.commit("setInitInfo", {
                   action: "initPrivateChannels",
@@ -105,10 +152,26 @@ const actions = {
             : "";
         return new Promise((resolve, reject) => {
             try {
-                Echo.private(`user.${context.rootState.user.id}`).listen(
-                    "SendKickNotification",
+                echo.private(`user.${context.rootState.user.id}`).listen(
+                    "CashRegisterLogin",
                     e => {
                         console.log(e);
+
+                        if (_.has(e, "mutations")) {
+                            e.mutations.forEach(mutation => {
+                                context.commit(
+                                    mutation.name,
+                                    mutation.data,
+                                    mutation.root
+                                );
+                            });
+                        }
+
+                        if (_.has(e, "notification")) {
+                            context.commit("setNotification", e.notification, {
+                                root: true
+                            });
+                        }
                     }
                 );
 
@@ -120,13 +183,13 @@ const actions = {
                       })
                     : "";
 
-                resolve(true);
+                resolve(echo);
             } catch (error) {
                 context.state.verbose
                     ? context.commit("setInitInfo", {
                           action: "initPrivateChannels",
                           status: "error",
-                          message: error.response.data
+                          message: "FAILED"
                       })
                     : "";
 
