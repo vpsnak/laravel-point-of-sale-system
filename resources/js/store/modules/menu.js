@@ -10,11 +10,9 @@ const mutations = {
         state.visibility = value;
     },
     setSideMenu(state, value) {
-        console.log("alva");
         state.side_menu = value;
     },
     setTopMenu(state, value) {
-        console.log("nos");
         state.top_menu = value;
     }
 };
