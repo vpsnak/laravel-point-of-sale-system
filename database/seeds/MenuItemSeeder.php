@@ -170,6 +170,25 @@ class MenuItemSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
+        $sign_out = new MenuItem([
+            'title' => 'Sign out',
+            'action' => ['link' => '/logout'],
+            'icon' =>  'mdi-logout-variant',
+            'location' => 'top_menu',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $change_password = new MenuItem([
+            'title' => 'Change password',
+            'action' => ['method' => 'changePasswordDialog'],
+            'icon' =>  'mdi-key',
+            'location' => 'top_menu',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        //side menu
         $dashboard->save();
         $sales->save();
         $orders->save();
@@ -187,6 +206,11 @@ class MenuItemSeeder extends Seeder
         $reports->save();
         $users->save();
 
+        //top menu
+        $sign_out->save();
+        $change_password->save();
+
+        //side menu
         $dashboard->roles()->sync($all);
         $sales->roles()->sync($all);
         $orders->roles()->sync($all);
@@ -206,5 +230,9 @@ class MenuItemSeeder extends Seeder
         $reports->roles()->sync([$admin, $store_manager]);
 
         $users->roles()->sync($admin);
+
+        //top menu
+        $sign_out->roles()->sync($all);
+        $change_password->roles()->sync($all);
     }
 }
