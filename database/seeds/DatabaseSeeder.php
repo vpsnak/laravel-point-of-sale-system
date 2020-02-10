@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
         $this->call(RoleSeeder::class);
         $this->call(UserSeeder::class);
         $this->call(MasAccountSeeder::class);
-        $this->call(MenuItemsSeeder::class);
+        $this->call(MenuItemSeeder::class);
         $this->call(PaymentType::class);
         $this->call(StorePickupSeeder::class);
 

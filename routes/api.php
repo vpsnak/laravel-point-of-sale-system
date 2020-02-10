@@ -18,6 +18,9 @@ Route::get('/test/{id}', 'AppController@test');
 Route::get('/mas/env', 'MasAccountController@getEnv')->middleware('scope:admin,store_manager,cashier');
 Route::get('/mas/set/{mode}', 'MasAccountController@setEnv')->middleware('scope:admin');
 
+// menu
+Route::get('/menu', 'MenuItemController@all');
+
 // roles
 Route::get('/roles', "RoleController@all")->middleware('scope:admin');
 Route::post('/roles/set', "RoleController@setRole")->middleware('scope:admin');

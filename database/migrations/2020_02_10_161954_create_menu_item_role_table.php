@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMenuRolesTable extends Migration
+class CreateMenuItemRoleTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,15 @@ class CreateMenuRolesTable extends Migration
      */
     public function up()
     {
-        Schema::create('menu_roles', function (Blueprint $table) {
+        Schema::create('menu_item_role', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            $table->unsignedBigInteger('menu_id');
+            $table->unsignedBigInteger('menu_item_id');
             $table->unsignedBigInteger('role_id');
 
 
-            $table->foreign('menu_id')->references('id')->on('menu_items')->onDelete('restrict');
-            $table->foreign('role_id')->references('id')->on('roles')->onDelete('restrict');
-
-            $table->timestamps();
+            $table->foreign('menu_item_id')->references('id')->on('menu_items');
+            $table->foreign('role_id')->references('id')->on('roles');
         });
     }
 

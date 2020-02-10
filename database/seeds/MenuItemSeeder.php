@@ -1,9 +1,10 @@
 <?php
 
+use App\MenuItem;
 use Illuminate\Database\Seeder;
 
 
-class MenuItemsSeeder extends Seeder
+class MenuItemSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -13,148 +14,197 @@ class MenuItemsSeeder extends Seeder
 
     public function run()
     {
-        DB::table('menu_items')->insert([
+        /*
+         * Roles map
+         * admin            id: 1
+         * cashier          id: 2
+         * store_manager    id: 3
+        */
+        $admin = 1;
+        $cashier = 2;
+        $store_manager = 3;
+
+        $all = [$admin, $cashier, $store_manager];
+
+        $dashboard = new MenuItem([
             'name' => 'Dashboard',
-            'action' => '{ "href": "/"}',
+            'action' => ['link' => '/'],
             'icon' =>  'dashboard',
             'location' => 'sidemenu',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        DB::table('menu_items')->insert([
+        $sales = new MenuItem([
             'name' => 'Sales',
-            'action' => '{ "href": "sales"}',
+            'action' => ['link' => 'sales'],
             'icon' =>  'mdi-cart',
             'location' => 'sidemenu',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        DB::table('menu_items')->insert([
+        $orders = new MenuItem([
             'name' => 'Orders',
-            'action' => '{ "href": "orders"}',
+            'action' => ['link' => 'orders'],
             'icon' =>  'mdi-buffer',
             'location' => 'sidemenu',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        DB::table('menu_items')->insert([
+        $customers = new MenuItem([
             'name' => 'Customers',
-            'action' => '{ "href": "customers"}',
+            'action' => ['link' => 'customers'],
             'icon' =>  'mdi-account-group',
             'location' => 'sidemenu',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        DB::table('menu_items')->insert([
+        $addresses = new MenuItem([
             'name' => 'Addresses',
-            'action' => '{ "href": "addresses"}',
+            'action' => ['link' => 'addresses'],
             'icon' =>  'mdi-account-card-details',
             'location' => 'sidemenu',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        DB::table('menu_items')->insert([
+        $products = new MenuItem([
             'name' => 'Products',
-            'action' => '{ "href": "products"}',
+            'action' => ['link' => 'products'],
             'icon' =>  'mdi-package-variant',
             'location' => 'sidemenu',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        DB::table('menu_items')->insert([
+        $categories = new MenuItem([
             'name' => 'Categories',
-            'action' => '{ "href": "categories"}',
+            'action' => ['link' => 'categories'],
             'icon' =>  'mdi-inbox-multiple',
             'location' => 'sidemenu',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        DB::table('menu_items')->insert([
+        $giftCards = new MenuItem([
             'name' => 'Gift Cards',
-            'action' => '{ "href": "gift-cards"}',
+            'action' => ['link' => 'gift-cards'],
             'icon' =>  'mdi-wallet-giftcard',
             'location' => 'sidemenu',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        DB::table('menu_items')->insert([
+        $coupons = new MenuItem([
             'name' => 'Coupons',
-            'action' => '{ "href": "coupons"}',
+            'action' => ['link' => 'coupons'],
             'icon' =>  'mdi-ticket-percent',
             'location' => 'sidemenu',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        DB::table('menu_items')->insert([
+        $cashRegisters = new MenuItem([
             'name' => 'Cash registers',
-            'action' => '{ "href": "cash-registers"}',
+            'action' => ['link' => 'cash-registers'],
             'icon' =>  'mdi-cash-register',
             'location' => 'sidemenu',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        DB::table('menu_items')->insert([
+        $stores = new MenuItem([
             'name' => 'Stores',
-            'action' => '{ "href": "stores"}',
+            'action' => ['link' => 'stores'],
             'icon' =>  'mdi-store',
             'location' => 'sidemenu',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        DB::table('menu_items')->insert([
+        $storePickups = new MenuItem([
             'name' => 'Store pickups',
-            'action' => '{ "href": "store-pickups"}',
+            'action' => ['link' => 'store-pickups'],
             'icon' =>  'mdi-storefront',
             'location' => 'sidemenu',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        DB::table('menu_items')->insert([
+        $companies = new MenuItem([
             'name' => 'Companies',
-            'action' => '{ "href": "companies"}',
+            'action' => ['link' => 'companies'],
             'icon' =>  'mdi-domain',
             'location' => 'sidemenu',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        DB::table('menu_items')->insert([
+        $taxes = new MenuItem([
             'name' => 'Taxes',
-            'action' => '{ "href": "taxes"}',
+            'action' => ['link' => 'taxes'],
             'icon' =>  'mdi-sack-percent',
             'location' => 'sidemenu',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        DB::table('menu_items')->insert([
+        $reports = new MenuItem([
             'name' => 'Reports',
-            'action' => '{ "href": "reports"}',
+            'action' => ['link' => 'reports'],
             'icon' =>  'mdi-file-document-box',
             'location' => 'sidemenu',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        DB::table('menu_items')->insert([
+        $users = new MenuItem([
             'name' => 'Users',
-            'action' => '{ "href": "users"}',
+            'action' => ['link' => 'users'],
             'icon' =>  'mdi-account-multiple',
             'location' => 'sidemenu',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
+        $dashboard->save();
+        $sales->save();
+        $orders->save();
+        $customers->save();
+        $addresses->save();
+        $products->save();
+        $categories->save();
+        $giftCards->save();
+        $coupons->save();
+        $cashRegisters->save();
+        $stores->save();
+        $storePickups->save();
+        $companies->save();
+        $taxes->save();
+        $reports->save();
+        $users->save();
+
+        $dashboard->roles()->sync($all);
+        $sales->roles()->sync($all);
+        $orders->roles()->sync($all);
+        $customers->roles()->sync($all);
+        $addresses->roles()->sync($all);
+        $products->roles()->sync($all);
+        $categories->roles()->sync($all);
+
+        $giftCards->roles()->sync($admin);
+        $coupons->roles()->sync($admin);
+        $cashRegisters->roles()->sync($admin);
+        $stores->roles()->sync($admin);
+        $storePickups->roles()->sync($admin);
+        $companies->roles()->sync($admin);
+        $taxes->roles()->sync($admin);
+
+        $reports->roles()->sync([$admin, $store_manager]);
+
+        $users->roles()->sync($admin);
     }
 }
