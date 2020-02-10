@@ -1,0 +1,56 @@
+<template>
+  <v-tabs vertical>
+    <v-tab>
+      <v-icon left>mdi-cash-multiple</v-icon>
+      Payments & Refunds
+    </v-tab>
+    <v-tab>
+      <v-icon left>mdi-lock</v-icon>
+      Items
+    </v-tab>
+    <v-tab>
+      <v-icon left>mdi-access-point</v-icon>
+      Delivery Options
+    </v-tab>
+
+    <v-tab-item>
+      <v-card flat>
+        <v-card-text>
+          <p>
+            Sed aliquam ultrices mauris. Donec posuere vulputate arcu. Morbi ac
+            felis. Etiam feugiat lorem non metus. Sed a libero.
+          </p>
+        </v-card-text>
+      </v-card>
+    </v-tab-item>
+    <v-tab-item>
+      <v-card flat>
+        <v-card-text>
+          <p>
+            Morbi nec metus. Suspendisse faucibus, nunc et pellentesque egestas,
+            lacus ante convallis tellus, vitae iaculis lacus elit id tortor. Sed
+            mollis, eros et ultrices tempus, mauris ipsum aliquam libero, non
+            adipiscing dolor urna a orci. Curabitur ligula sapien, tincidunt
+            non, euismod vitae, posuere imperdiet, leo. Nunc sed turpis.
+          </p>
+        </v-card-text>
+      </v-card>
+    </v-tab-item>
+    <v-tab-item>
+      <v-card flat>
+        <v-card-text>
+          <p>
+            Fusce a quam. Phasellus nec sem in justo pellentesque facilisis. Nam
+            eget dui. Proin viverra, ligula sit amet ultrices semper, ligula
+            arcu tristique sapien, a accumsan nisi mauris ac eros. In dui magna,
+            posuere eget, vestibulum et, tempor auctor, justo.
+          </p>
+        </v-card-text>
+      </v-card>
+    </v-tab-item>
+  </v-tabs>
+</template>
+
+<script>
+export default {};
+</script>

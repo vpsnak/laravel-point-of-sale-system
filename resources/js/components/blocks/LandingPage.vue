@@ -88,6 +88,7 @@ export default {
     ...mapMutations("dialog", ["resetDialog"]),
     ...mapActions("config", [
       "getMasEnv",
+      "getMenuItems",
       "initWebSockets",
       "initPrivateChannels",
       "retrieveCashRegister"
@@ -96,6 +97,14 @@ export default {
     init() {
       this.resetLoad();
       this.resetAppState();
+
+      this.getMenuItems()
+        .then(() => {
+          this.loadPercent = 15;
+        })
+        .catch(error => {
+          this.setError(error);
+        });
       this.initWebSockets()
         .then(() => {
           this.loadPercent = 15;
@@ -117,7 +126,7 @@ export default {
         });
       this.getMasEnv()
         .then(() => {
-          this.loadPercent = 30;
+          this.loadPercent = 15;
         })
         .catch(error => {
           this.setError(error);

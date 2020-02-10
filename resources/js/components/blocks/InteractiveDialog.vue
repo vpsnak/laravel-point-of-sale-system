@@ -9,16 +9,27 @@
   >
     <v-card>
       <v-card-title>
-        <v-icon v-if="dialog.icon" class="pr-2">{{ dialog.icon }}</v-icon>
+        <v-icon v-if="dialog.icon" class="pr-2">
+          {{ dialog.icon }}
+        </v-icon>
+
         {{ dialog.title }}
-        <v-spacer v-if="dialog.titleCloseBtn"></v-spacer>
-        <v-btn
-          v-if="dialog.titleCloseBtn"
-          @click.stop="closeEvent(false, true)"
-          icon
-        >
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
+
+        <v-spacer v-if="dialog.titleCloseBtn" />
+
+        <v-tooltip v-if="dialog.titleCloseBtn" bottom color="red">
+          <template v-slot:activator="{ on }">
+            <v-btn
+              @click.stop="closeEvent(false, true)"
+              color="red"
+              icon
+              v-on="on"
+            >
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </template>
+          <span>Close</span>
+        </v-tooltip>
       </v-card-title>
 
       <v-divider class="mb-3"></v-divider>

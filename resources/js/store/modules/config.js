@@ -5,6 +5,7 @@ const state = {
     app_env: process.env.NODE_ENV,
     app_name: process.env.MIX_APP_NAME,
     mas_env: "",
+    menu_items: "",
 
     app_load: 0,
 
@@ -18,6 +19,7 @@ const mutations = {
             ? state.init_info.push(value)
             : (state.init_info[index] = value);
     },
+
     setMasEnv(state, value) {
         state.mas_env = value;
     },
@@ -30,6 +32,53 @@ const mutations = {
 };
 
 const actions = {
+    getMenuItems(context) {
+        context.state.verbose
+            ? context.commit("setInitInfo", {
+                  action: "getMenuItems",
+                  status: "info",
+                  message: "LOADING"
+              })
+            : "";
+
+        return new Promise((resolve, reject) => {
+            axios
+                .get(`${context.state.base_url}/menu-items`)
+                .then(response => {
+                    context.commit("menu/setTopMenu", response.data.top_menu, {
+                        root: true
+                    });
+
+                    context.commit(
+                        "menu/setSideMenu",
+                        response.data.side_menu,
+                        {
+                            root: true
+                        }
+                    );
+
+                    context.state.verbose
+                        ? context.commit("setInitInfo", {
+                              action: "getMenuItems",
+                              status: "success",
+                              message: "OK"
+                          })
+                        : "";
+
+                    resolve(true);
+                })
+                .catch(error => {
+                    context.state.verbose
+                        ? context.commit("setInitInfo", {
+                              action: "getMenuItems",
+                              status: "error",
+                              message: "FAILED"
+                          })
+                        : "";
+                    reject(error.response);
+                });
+        });
+    },
     getMasEnv(context) {
         context.state.verbose
             ? context.commit("setInitInfo", {

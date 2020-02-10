@@ -24,7 +24,27 @@
       </template>
 
       <template v-slot:item.actions="{ item }">
-        <v-tooltip bottom v-if="item.status !== ('complete' || 'canceled')">
+        <v-tooltip bottom v-if="['paid', 'complete'].indexOf(item.status) >= 0">
+          <template v-slot:activator="{ on }">
+            <v-btn
+              :ref="item.id"
+              small
+              :disabled="disableActions"
+              @click.stop="receipt(item.id)"
+              class="my-2"
+              icon
+              v-on="on"
+            >
+              <v-icon small>mdi-receipt</v-icon>
+            </v-btn>
+          </template>
+          <span>Receipt</span>
+        </v-tooltip>
+
+        <v-tooltip
+          bottom
+          v-if="['pending', 'pending_payment'].indexOf(item.status) >= 0"
+        >
           <template v-slot:activator="{ on }">
             <v-btn
               :ref="item.id"
@@ -63,7 +83,7 @@
             <v-btn
               small
               :disabled="disableActions"
-              @click.stop="(item.form = form), editItem(item)"
+              @click.stop="editOrder(item)"
               class="my-2"
               v-on="on"
               icon
@@ -79,7 +99,7 @@
             <v-btn
               small
               :disabled="disableActions"
-              @click.stop="(item.form = form), viewItem(item)"
+              @click.stop="(item.form = viewForm), viewItem(item)"
               class="my-2"
               v-on="on"
               icon
@@ -116,7 +136,8 @@ export default {
 
   data() {
     return {
-      form: "order",
+      viewForm: "order",
+
       selectedItem: null,
       headers: [
         { text: "#", value: "id" },
@@ -170,6 +191,20 @@ export default {
           return "";
       }
     },
+    editOrder(order) {
+      const editDialog = {
+        width: 800,
+        icon: "edit",
+        titleCloseBtn: true,
+        title: `Edit Order #${order.id}`,
+        component: "orderEditForm",
+        persistent: true,
+        eventChannel: "data-table"
+      };
+
+      this.setDialog(editDialog);
+    },
+    receipt(id) {},
 
     checkout(id) {
       this.disableActions = true;

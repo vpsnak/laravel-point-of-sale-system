@@ -7,17 +7,8 @@ use App\Role;
 
 class MenuItem extends Model
 {
-    public function setActionAttribute($value)
-    {
-        if (is_array($value)) {
-            $this->attributes['action'] = json_encode($value);
-        } else {
-            $this->attributes['action'] = $value;
-        }
-    }
-
     protected $fillable = [
-        'name',
+        'title',
         'icon',
         'action',
         'location'
@@ -28,6 +19,15 @@ class MenuItem extends Model
         'created_at' => "datetime:m/d/Y H:i:s",
         'updated_at' => "datetime:m/d/Y H:i:s"
     ];
+
+    public function setActionAttribute($value)
+    {
+        if (is_array($value)) {
+            $this->attributes['action'] = json_encode($value);
+        } else {
+            $this->attributes['action'] = $value;
+        }
+    }
 
     public function roles()
     {

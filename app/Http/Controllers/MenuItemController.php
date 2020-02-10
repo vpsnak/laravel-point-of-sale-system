@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\MenuItem;
+use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 
 
@@ -15,8 +16,13 @@ class MenuItemController extends Controller
     public function all()
     {
         $role = auth()->user()->roles()->first();
-        // $role = $role->load('menuItems');
-        return response($role->menuItems()->get(), 200);
+        $side_menu = $role->menuItems()->whereLocation('side_menu')->get();
+        $top_menu = $role->menuItems()->whereLocation('top_menu')->get();
+
+        return response([
+            "side_menu" => $side_menu,
+            "top_menu" => $top_menu
+        ]);
     }
     /**
      * Display a listing of the resource.

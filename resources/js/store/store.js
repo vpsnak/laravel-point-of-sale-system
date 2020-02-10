@@ -81,6 +81,8 @@ export default new Vuex.Store({
             state.token = null;
             state.cashRegister = null;
             state.store = null;
+            state.menu.top_menu = [];
+            state.menu.side_menu = [];
 
             if (router.currentRoute.name !== "login") {
                 router.push({ name: "login" });
