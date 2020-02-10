@@ -7,6 +7,15 @@ use Illuminate\Http\Request;
 
 class MenuItemController extends Controller
 {
+
+
+    protected $model = MenuItem::class;
+
+    public function all()
+    {
+        return response($this->model::paginate(), 200);
+    }
+
     /**
      * Display a listing of the resource.
      *
