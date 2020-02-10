@@ -6,7 +6,9 @@ const state = {
     app_name: process.env.MIX_APP_NAME,
     mas_env: "",
 
-    app_load: 0
+    app_load: 0,
+
+    echo: {}
 };
 
 const mutations = {
@@ -106,8 +108,8 @@ const actions = {
 
         return new Promise((resolve, reject) => {
             try {
-                let Echo = require("laravel-echo");
-                Echo = new Echo.default({
+                state.echo = require("laravel-echo");
+                state.echo = new state.echo.default({
                     broadcaster: "pusher",
                     key: process.env.MIX_PUSHER_APP_KEY,
                     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
@@ -127,7 +129,7 @@ const actions = {
                       })
                     : "";
 
-                resolve(Echo);
+                resolve(true);
             } catch (error) {
                 console.log(error);
                 context.state.verbose
@@ -142,7 +144,7 @@ const actions = {
             }
         });
     },
-    initPrivateChannels(context, echo) {
+    initPrivateChannels(context) {
         context.state.verbose
             ? context.commit("setInitInfo", {
                   action: "initPrivateChannels",
@@ -152,9 +154,9 @@ const actions = {
             : "";
         return new Promise((resolve, reject) => {
             try {
-                echo.private(`user.${context.rootState.user.id}`).listen(
-                    "CashRegisterLogin",
-                    e => {
+                state.echo
+                    .private(`user.${context.rootState.user.id}`)
+                    .listen("CashRegisterLogin", e => {
                         console.log(e);
 
                         if (_.has(e, "mutations")) {
@@ -172,8 +174,7 @@ const actions = {
                                 root: true
                             });
                         }
-                    }
-                );
+                    });
 
                 context.state.verbose
                     ? context.commit("setInitInfo", {
@@ -183,7 +184,7 @@ const actions = {
                       })
                     : "";
 
-                resolve(echo);
+                resolve(true);
             } catch (error) {
                 context.state.verbose
                     ? context.commit("setInitInfo", {

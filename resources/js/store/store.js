@@ -68,15 +68,19 @@ export default new Vuex.Store({
             state.productList = value;
         },
         logout(state) {
-            state.user = null;
-            state.token = null;
-            state.cashRegister = null;
-            state.store = null;
+            if (_.has(state.user, "id")) {
+                state.config.echo.leave(`user.${state.user.id}`);
+            }
 
             Cookies.remove("user");
             Cookies.remove("token");
             Cookies.remove("store");
             Cookies.remove("cash_register");
+
+            state.user = null;
+            state.token = null;
+            state.cashRegister = null;
+            state.store = null;
 
             if (router.currentRoute.name !== "login") {
                 router.push({ name: "login" });
