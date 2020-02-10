@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\MenuItem;
 use Illuminate\Http\Request;
 
+
 class MenuItemController extends Controller
 {
 
@@ -13,9 +14,10 @@ class MenuItemController extends Controller
 
     public function all()
     {
-        return response($this->model::paginate(), 200);
+        $role = auth()->user()->roles()->first();
+        // $role = $role->load('menuItems');
+        return response($role->menuItems()->get(), 200);
     }
-
     /**
      * Display a listing of the resource.
      *

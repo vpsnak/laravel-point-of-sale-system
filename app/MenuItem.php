@@ -3,15 +3,10 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Permission\Models\Role;
+use App\Role;
 
 class MenuItem extends Model
 {
-    public function getByRole(Role $role, string $location)
-    {
-        return self::where()->get();
-    }
-
     public function setActionAttribute($value)
     {
         if (is_array($value)) {

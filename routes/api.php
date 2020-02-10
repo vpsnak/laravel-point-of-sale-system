@@ -19,7 +19,7 @@ Route::get('/mas/env', 'MasAccountController@getEnv')->middleware('scope:admin,s
 Route::get('/mas/set/{mode}', 'MasAccountController@setEnv')->middleware('scope:admin');
 
 // menu
-Route::get('/menu', 'MenuItemController@all');
+Route::get('/menu-items', 'MenuItemController@all')->middleware('scope:admin,store_manager,cashier');
 
 // roles
 Route::get('/roles', "RoleController@all")->middleware('scope:admin');
@@ -32,7 +32,7 @@ Route::post('/auth/verify', 'UserController@verifySelfPwd')->middleware('scope:a
 Route::post('/auth/password', 'UserController@changeSelfPwd')->middleware('scope:admin,store_manager');
 
 // users
-Route::get('/users', 'UserController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/users', 'UserController@all');
 Route::get('/users/get/{id}', 'UserController@get')->middleware('scope:admin,store_manager,cashier');
 Route::post('/users/create', 'UserController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/users/search', 'UserController@search')->middleware('scope:admin,store_manager,cashier');
