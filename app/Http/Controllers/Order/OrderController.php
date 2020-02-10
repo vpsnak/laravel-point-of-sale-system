@@ -30,6 +30,8 @@ class OrderController extends Controller
 
     public function create(Request $request)
     {
+        $user = auth()->user();
+
         $validatedID = $request->validate([
             'id' => 'nullable|exists:orders,id'
         ]);
@@ -81,11 +83,11 @@ class OrderController extends Controller
             'shipping_type' => 'string|nullable',
             'shipping_cost' => 'numeric|nullable',
             'notes' => 'string|nullable',
-            'store_id' => 'required|exists:stores,id',
             'shipping.occasion' => 'nullable|required_if:shipping.method,delivery|numeric',
         ]);
 
-        $validatedData['created_by'] = auth()->user()->id;
+        $validatedData['store_id'] = $user->open_register->cash_register->store->id;
+        $validatedData['created_by'] = $user->id;
 
         $shippingData = $request->validate([
             'shipping.method' => 'required|in:retail,pickup,delivery',

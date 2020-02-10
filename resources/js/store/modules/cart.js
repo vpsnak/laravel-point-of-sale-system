@@ -319,11 +319,11 @@ export default {
         }
     },
     actions: {
-        mailReceipt({ commit, state, rootState }, payload) {
+        mailReceipt(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
                     .post(
-                        `${rootState.baseUrl}mail-receipt/${state.order.id}`,
+                        `${context.rootState.baseUrl}mail-receipt/${context.state.order.id}`,
                         payload
                     )
                     .then(response => {
@@ -332,7 +332,7 @@ export default {
                             type: "success"
                         };
 
-                        commit("setNotification", notification, {
+                        context.commit("setNotification", notification, {
                             root: true
                         });
                         resolve(response);
@@ -342,17 +342,20 @@ export default {
                             msg: error.response.data.errors,
                             type: "error"
                         };
-                        commit("setNotification", notification, {
+                        context.commit("setNotification", notification, {
                             root: true
                         });
                         reject(error);
                     });
             });
         },
-        saveGuestEmail({ commit, rootState }, payload) {
+        saveGuestEmail(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .post(rootState.baseUrl + "guest-email/create", payload)
+                    .post(
+                        `${context.config.base_url}/guest-email/create`,
+                        payload
+                    )
                     .then(response => {
                         resolve(response);
                     })
@@ -361,7 +364,7 @@ export default {
                             msg: error.response.data.errors,
                             type: "error"
                         };
-                        commit("setNotification", notification, {
+                        context.commit("setNotification", notification, {
                             root: true
                         });
                         reject(error);
@@ -371,7 +374,9 @@ export default {
         createReceipt(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(`${this.state.base_url}/receipts/create/${payload}`)
+                    .get(
+                        `${context.config.base_url}/receipts/create/${payload}`
+                    )
                     .then(response => {
                         resolve(response.data);
                     })
@@ -397,27 +402,27 @@ export default {
                     });
             });
         },
-        submitOrder({ state, commit, dispatch }) {
+        submitOrder(context) {
             return new Promise((resolve, reject) => {
                 let payload = {
                     model: "orders",
                     data: {
-                        customer_id: state.customer ? state.customer.id : "",
-                        store_id: this.state.store.id,
+                        customer_id: context.state.customer
+                            ? context.state.customer.id
+                            : "",
                         status: "pending",
-                        discount_type: state.discount_type,
-                        discount_amount: state.discount_amount,
-                        products: state.products,
-                        shipping: state.shipping,
-                        billing_address: state.billing_address
+                        discount_type: context.state.discount_type,
+                        discount_amount: context.state.discount_amount,
+                        products: context.state.products,
+                        shipping: context.state.shipping,
+                        billing_address: context.state.billing_address
                     }
                 };
 
-                dispatch("create", payload, {
-                    root: true
-                })
+                context
+                    .dispatch("create", payload, { root: true })
                     .then(response => {
-                        commit("setOrder", response);
+                        context.commit("setOrder", response);
                         resolve(response);
                     })
                     .catch(error => {

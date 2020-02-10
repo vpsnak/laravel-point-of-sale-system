@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/test/{id}', 'AppController@test');
+// Route::get('/test/{id}', 'AppController@test');
 
 // mas
 // Route::get('/mas/test', 'MasAccountController@test');
@@ -22,7 +22,7 @@ Route::get('/mas/set/{mode}', 'MasAccountController@setEnv')->middleware('scope:
 Route::get('/roles', "RoleController@all")->middleware('scope:admin');
 Route::post('/roles/set', "RoleController@setRole")->middleware('scope:admin');
 
-//auth
+// auth
 Route::get('/auth/logout', 'UserController@logout')->middleware('scope:admin,store_manager,cashier');
 Route::post('/auth/login', 'UserController@login')->middleware('guest');
 Route::post('/auth/verify', 'UserController@verifySelfPwd')->middleware('scope:admin,store_manager,cashier');

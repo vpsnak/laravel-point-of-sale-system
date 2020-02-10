@@ -24,7 +24,7 @@ class ProductController extends BaseController
 
         $validatedExtra = $request->validate([
             'id' => 'nullable|exists:products,id',
-            'categories' => 'required|array',
+            'categories' => 'nullable|array',
             'stores' => 'required|array',
             'final_price' => 'required|numeric',
         ]);

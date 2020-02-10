@@ -187,7 +187,7 @@ export default {
         })
         .catch(error => {
           // unhandled error
-          console.log(error.response);
+          console.log(error);
         })
         .finally(() => {
           this.disableActions = false;
@@ -221,7 +221,7 @@ export default {
           })
           .catch(error => {
             // unhandled error
-            console.log(error.response);
+            console.log(error);
             reject(error);
           })
           .finally(() => {

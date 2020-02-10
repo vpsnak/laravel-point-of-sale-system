@@ -11,11 +11,11 @@ use Illuminate\Http\Request;
 
 class AppController extends Controller
 {
-    public function test(Order $id)
+    public function test()
     {
         // $a = "{$id->billingAddress['first_name']} {$id->billingAddress['last_name']}";
-        $r = MasOrderController::submitToMas($id);
-        return response(['mas response' => $r, 'shipping_address' => $id->shipping_address, 'billing_address' => $id->billing_address]);
+        // $r = MasOrderController::submitToMas($id);
+        // return response(['mas response' => $r, 'shipping_address' => $id->shipping_address, 'billing_address' => $id->billing_address]);
 
         // if () {
         //     $address_region = [];

@@ -96,19 +96,25 @@ export default {
     init() {
       this.resetLoad();
       this.resetAppState();
+      this.initWebSockets()
+        .then(() => {
+          this.loadPercent = 15;
 
-      this.initWebSockets().then(() => {
-        this.loadPercent = 15;
-
-        this.initPrivateChannels()
-          .then(() => {
-            this.loadPercent = 15;
-          })
-          .catch(error => {
+          this.initPrivateChannels()
+            .then(() => {
+              this.loadPercent = 15;
+            })
+            .catch(error => {
+              this.setError(error);
+            });
+        })
+        .catch(error => {
+          if (process.env.NODE_ENV === "development") {
+            this.loadPercent = 30;
+          } else {
             this.setError(error);
-          });
-      });
-
+          }
+        });
       this.getMasEnv()
         .then(() => {
           this.loadPercent = 30;
