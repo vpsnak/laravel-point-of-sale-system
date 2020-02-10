@@ -1,10 +1,13 @@
 import "@mdi/font/css/materialdesignicons.css";
 import "material-design-icons-iconfont/dist/material-design-icons.css";
+import "velocity-animate";
 import store from "./store/store";
 import Cookies from "js-cookie";
-
+// window.Velocity = require("velocity-animate");
 window._ = require("lodash");
+window.Pusher = require("pusher-js");
 
+Pusher.logToConsole = process.env.NODE_ENV === "production" ? false : true;
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
  * to our Laravel back-end. This library automatically handles sending the
@@ -25,7 +28,7 @@ window.axios.interceptors.response.use(undefined, function(error) {
         store.commit("logout");
     }
 
-    return Promise.reject(error);
+    return Promise.reject(false);
 });
 
 /**

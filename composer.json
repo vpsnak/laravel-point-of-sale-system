@@ -17,6 +17,7 @@
         "laravel/framework": "^6.0",
         "laravel/passport": "^7.5",
         "laravel/tinker": "^1.0",
+        "pusher/pusher-php-server": "^4.1",
         "rodenastyle/stream-parser": "^1.2",
         "spatie/laravel-permission": "^3.2"
     },

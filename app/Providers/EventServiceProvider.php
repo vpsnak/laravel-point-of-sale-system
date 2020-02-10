@@ -15,18 +15,32 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        Registered::class => [
-            SendEmailVerificationNotification::class,
-        ],
-
-        // 'Laravel\Passport\Events\AccessTokenCreated' => [
-        //     'App\Listeners\RevokeOldTokens',
+        // Registered::class => [
+        //     SendEmailVerificationNotification::class,
         // ],
+
+        // 'App\Events\CashRegisterLogin' => [
+        //     'App\Listeners\CashRegisterSession',
+        // ],
+
+        'Laravel\Passport\Events\AccessTokenCreated' => [
+            'App\Listeners\RevokeOldTokens',
+        ],
 
         // 'Laravel\Passport\Events\RefreshTokenCreated' => [
         //     'App\Listeners\PruneOldTokens',
         // ]
     ];
+
+    /**
+     * Determine if events and listeners should be automatically discovered.
+     *
+     * @return bool
+     */
+    public function shouldDiscoverEvents()
+    {
+        return true;
+    }
 
     /**
      * Register any events for your application.

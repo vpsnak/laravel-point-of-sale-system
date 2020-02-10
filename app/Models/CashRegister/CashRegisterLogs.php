@@ -2,9 +2,12 @@
 
 namespace App;
 
+use App\Events\CashRegisterLogin;
+
 class CashRegisterLogs extends BaseModel
 {
     protected $with = ['cash_register'];
+
     protected $fillable = [
         'user_id',
         'cash_register_id',
