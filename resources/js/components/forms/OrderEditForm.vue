@@ -2,24 +2,25 @@
   <v-tabs vertical>
     <v-tab>
       <v-icon left>mdi-cash-multiple</v-icon>
-      Payments & Refunds
+      <v-spacer />
+      <span>Payments & Refunds</span>
     </v-tab>
     <v-tab>
-      <v-icon left>mdi-lock</v-icon>
-      Items
+      <v-icon left>mdi-package-variant</v-icon>
+      <v-spacer />
+      <span>Items</span>
     </v-tab>
     <v-tab>
-      <v-icon left>mdi-access-point</v-icon>
-      Delivery Options
+      <v-icon left>mdi-file-document-edit-outline</v-icon>
+      <v-spacer />
+      <v-icon left>mdi-file-document-edit</v-icon>
+      <span>Order Options</span>
     </v-tab>
 
     <v-tab-item>
       <v-card flat>
         <v-card-text>
-          <p>
-            Sed aliquam ultrices mauris. Donec posuere vulputate arcu. Morbi ac
-            felis. Etiam feugiat lorem non metus. Sed a libero.
-          </p>
+          <paymentHistory></paymentHistory>
         </v-card-text>
       </v-card>
     </v-tab-item>

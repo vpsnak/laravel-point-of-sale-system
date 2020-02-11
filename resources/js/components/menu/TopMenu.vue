@@ -54,10 +54,12 @@
               <v-icon>mdi-cash-register</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title>{{ store.name }}</v-list-item-title>
-              <v-list-item-subtitle>{{
-                cashRegister.name
-              }}</v-list-item-subtitle>
+              <v-list-item-title>
+                {{ store.name }}
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                {{ cashRegister.name }}
+              </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
           <v-divider />
@@ -69,7 +71,7 @@
               <v-list-item-title>Generate X report</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="cashRegisterLogout()">
+          <v-list-item @click.stop="cashRegisterLogout()">
             <v-list-item-avatar>
               <v-icon color="secondary">mdi-logout</v-icon>
             </v-list-item-avatar>
@@ -78,7 +80,7 @@
             </v-list-item-content>
           </v-list-item>
           <v-divider></v-divider>
-          <v-list-item @click="closeCashRegisterDialog()">
+          <v-list-item @click.stop="closeCashRegisterDialog()">
             <v-list-item-avatar>
               <v-icon color="red">mdi-alpha-z-circle</v-icon>
             </v-list-item-avatar>
@@ -112,26 +114,25 @@
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
+
           <v-divider />
-          <v-list-item to="/logout">
+
+          <v-list-item
+            v-for="menu_item in top_menu"
+            :key="menu_item.id"
+            :to="menuAction(menu_item)"
+            exact
+          >
             <v-list-item-avatar>
-              <v-icon>mdi-logout-variant</v-icon>
+              <v-icon>{{ menu_item.icon }}</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title>Sign out</v-list-item-title>
+              <v-list-item-title>{{ menu_item.title }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click="changePasswordDialog">
-            <v-list-item-avatar>
-              <v-icon>mdi-key</v-icon>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title>
-                Change password
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
+
           <v-divider />
+
           <v-list-item @click.stop="darkMode = !darkMode">
             <v-list-item-avatar>
               <v-icon>mdi-brightness-4</v-icon>

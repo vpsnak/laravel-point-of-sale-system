@@ -1,12 +1,6 @@
 <template>
   <div>
-    <data-table
-      icon="mdi-buffer"
-      title="Orders"
-      :headers="headers"
-      data-url="orders"
-      :disableNewBtn="true"
-    >
+    <data-table>
       <template v-slot:item.customer="{ item }">
         {{ item.customer ? item.customer.email : "Guest" }}
       </template>
@@ -42,8 +36,8 @@
         </v-tooltip>
 
         <v-tooltip
-          bottom
           v-if="['pending', 'pending_payment'].indexOf(item.status) >= 0"
+          bottom
         >
           <template v-slot:activator="{ on }">
             <v-btn
@@ -120,6 +114,14 @@ import { mapMutations, mapActions, mapState } from "vuex";
 
 export default {
   mounted() {
+    this.setDataTable({
+      icon: "mdi-buffer",
+      title: "Orders",
+      headers: this.headers,
+      model: "orders",
+      disableNewBtn: true,
+      loading: true
+    });
     EventBus.$on("order-table-cancel-order", event => {
       if (event.payload && this.selectedItem) {
         this.disableActions = true;
@@ -154,11 +156,11 @@ export default {
   },
 
   computed: {
-    ...mapState("datatable", ["loading"]),
+    ...mapState("datatable", ["data_table"]),
 
     disableActions: {
       get() {
-        return this.loading;
+        return this.data_table.loading;
       },
       set(value) {
         this.setLoading(value);
@@ -168,7 +170,7 @@ export default {
 
   methods: {
     ...mapMutations("dialog", ["setDialog", "editItem", "viewItem"]),
-    ...mapMutations("datatable", ["setLoading"]),
+    ...mapMutations("datatable", ["setLoading", "setDataTable"]),
     ...mapMutations("cart", ["setCheckoutDialog"]),
     ...mapActions(["getOne", "delete"]),
 
