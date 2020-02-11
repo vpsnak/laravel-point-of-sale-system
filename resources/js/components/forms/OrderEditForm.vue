@@ -1,19 +1,15 @@
 <template>
-  <v-tabs vertical>
+  <v-tabs grow centered>
     <v-tab>
       <v-icon left>mdi-cash-multiple</v-icon>
-      <v-spacer />
-      <span>Payments & Refunds</span>
+      <span>Payments & Order status</span>
     </v-tab>
     <v-tab>
       <v-icon left>mdi-package-variant</v-icon>
-      <v-spacer />
       <span>Items</span>
     </v-tab>
     <v-tab>
       <v-icon left>mdi-file-document-edit-outline</v-icon>
-      <v-spacer />
-      <v-icon left>mdi-file-document-edit</v-icon>
       <span>Order Options</span>
     </v-tab>
 

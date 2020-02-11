@@ -180,7 +180,7 @@ const actions = {
 
                 resolve(true);
             } catch (error) {
-                console.log(error);
+                console.error(error);
                 context.state.verbose
                     ? context.commit("setInitInfo", {
                           action: "initWebSockets",
@@ -206,8 +206,6 @@ const actions = {
                 state.echo
                     .private(`user.${context.rootState.user.id}`)
                     .listen("CashRegisterLogin", e => {
-                        console.log(e);
-
                         if (_.has(e, "mutations")) {
                             e.mutations.forEach(mutation => {
                                 context.commit(

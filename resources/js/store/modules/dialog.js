@@ -51,42 +51,7 @@ const mutations = {
     },
 
     setDialog(state, value) {
-        state.interactive_dialog.show = true;
-        value.width ? (state.interactive_dialog.width = value.width) : "";
-        value.fullscreen
-            ? (state.interactive_dialog.fullscreen = value.fullscreen)
-            : "";
-        value.icon ? (state.interactive_dialog.icon = value.icon) : "";
-        value.title ? (state.interactive_dialog.title = value.title) : "";
-        value.titleCloseBtn
-            ? (state.interactive_dialog.titleCloseBtn = value.titleCloseBtn)
-            : "";
-        value.component
-            ? (state.interactive_dialog.component = value.component)
-            : "";
-        value.readonly
-            ? (state.interactive_dialog.readonly = value.readonly)
-            : "";
-        value.content ? (state.interactive_dialog.content = value.content) : "";
-        value.model ? (state.interactive_dialog.model = value.model) : "";
-        value.persistent
-            ? (state.interactive_dialog.persistent = value.persistent)
-            : "";
-        value.action ? (state.interactive_dialog.action = value.action) : "";
-        value.cancelBtnTxt
-            ? (state.interactive_dialog.cancelBtnTxt = value.cancelBtnTxt)
-            : "";
-        value.confirmationBtnTxt
-            ? (state.interactive_dialog.confirmationBtnTxt =
-                  value.confirmationBtnTxt)
-            : "";
-        value.content ? (state.interactive_dialog.content = value.content) : "";
-        value.contentClass
-            ? (state.interactive_dialog.contentClass = value.contentClass)
-            : "";
-        value.eventChannel
-            ? (state.interactive_dialog.eventChannel = value.eventChannel)
-            : "";
+        state.interactive_dialog = { ...state.interactive_dialog, ...value };
     },
     resetDialog(state) {
         state.interactive_dialog.show = false;

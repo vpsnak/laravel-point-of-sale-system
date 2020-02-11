@@ -80,7 +80,7 @@ export default {
 
   mounted() {
     EventBus.$on("data-table", event => {
-      console.log(event);
+      console.info({ component: "data-table", event });
 
       switch (event.action) {
         case "paginate":
@@ -184,7 +184,6 @@ export default {
         this.search_action = false;
 
         this.setLoading(true);
-        console.log(this.data_table.model);
         this.getAll({
           model: this.data_table.model,
           page: event ? event.page : this.currentPage,

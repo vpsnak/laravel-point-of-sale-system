@@ -16,17 +16,7 @@ const state = {
 // mutations
 const mutations = {
     setDataTable(state, value) {
-        console.log(value);
-        state.data_table.rows = value.rows || [];
-        state.data_table.icon = value.icon || "";
-        state.data_table.title = value.title || "";
-        state.data_table.headers = value.headers || [];
-        state.data_table.model = value.model || "";
-        state.data_table.btnTxt = value.btnTxt || "";
-        state.data_table.newForm = value.newForm || "";
-        state.data_table.disableNewBtn = value.disableNewBtn || false;
-        state.data_table.loading = value.loading || false;
-        console.log(state.data_table);
+        state.data_table = { ...state.data_table, ...value };
     },
     setRows(state, value) {
         state.data_table.rows = value;

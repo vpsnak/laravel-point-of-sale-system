@@ -196,10 +196,15 @@ export default new Vuex.Store({
                         resolve(true);
                     })
                     .catch(error => {
-                        context.commit("setNotification", {
-                            msg: error.response.data.errors,
-                            type: "error"
-                        });
+                        if (_.has(error, ".response.data.errors")) {
+                            context.commit("setNotification", {
+                                msg: error.response.data.errors,
+                                type: "error"
+                            });
+                        } else {
+                            console.error(error);
+                        }
+
                         reject(error);
                     });
             });
@@ -219,10 +224,15 @@ export default new Vuex.Store({
                         resolve(response.data);
                     })
                     .catch(error => {
-                        context.commit("setNotification", {
-                            msg: error.response.data.errors,
-                            type: "error"
-                        });
+                        if (_.has(error, "response.data.errors")) {
+                            context.commit("setNotification", {
+                                msg: error.response.data.errors,
+                                type: "error"
+                            });
+                        } else {
+                            console.error(error);
+                        }
+
                         reject(error);
                     });
             });
@@ -242,10 +252,14 @@ export default new Vuex.Store({
                         resolve(response.data);
                     })
                     .catch(error => {
-                        context.commit("setNotification", {
-                            msg: error.response.data.errors,
-                            type: "error"
-                        });
+                        if (_.has(error, "response.data.errors")) {
+                            context.commit("setNotification", {
+                                msg: error.response.data.errors,
+                                type: "error"
+                            });
+                        } else {
+                            console.error(error);
+                        }
                         reject(error);
                     });
             });
@@ -273,10 +287,14 @@ export default new Vuex.Store({
                         }
                     })
                     .catch(error => {
-                        context.commit("setNotification", {
-                            msg: error.response.data.errors,
-                            type: "error"
-                        });
+                        if (_.has(error, "response.data.errors")) {
+                            context.commit("setNotification", {
+                                msg: error.response.data.errors,
+                                type: "error"
+                            });
+                        } else {
+                            console.error(error);
+                        }
                         reject(error);
                     });
             });
@@ -296,10 +314,14 @@ export default new Vuex.Store({
                         resolve(response.data.data || response.data);
                     })
                     .catch(error => {
-                        context.commit("setNotification", {
-                            msg: error.response.data.errors,
-                            type: "error"
-                        });
+                        if (_.has(error, "response.data.errors")) {
+                            context.commit("setNotification", {
+                                msg: error.response.data.errors,
+                                type: "error"
+                            });
+                        } else {
+                            console.error(error);
+                        }
                         reject(error);
                     });
             });
@@ -322,10 +344,14 @@ export default new Vuex.Store({
                         resolve(response.data);
                     })
                     .catch(error => {
-                        context.commit("setNotification", {
-                            msg: error.response.data.errors,
-                            type: "error"
-                        });
+                        if (_.has(error, "response.data.errors")) {
+                            context.commit("setNotification", {
+                                msg: error.response.data.errors,
+                                type: "error"
+                            });
+                        } else {
+                            console.error(error);
+                        }
                         reject(error);
                     });
             });
@@ -353,10 +379,14 @@ export default new Vuex.Store({
                         }
                     })
                     .catch(error => {
-                        context.commit("setNotification", {
-                            msg: error.response.data.errors,
-                            type: "error"
-                        });
+                        if (_.has(error, "response.data.errors")) {
+                            context.commit("setNotification", {
+                                msg: error.response.data.errors,
+                                type: "error"
+                            });
+                        } else {
+                            console.error(error);
+                        }
                         reject(error);
                     });
             });
@@ -517,10 +547,14 @@ export default new Vuex.Store({
                         resolve(response.data);
                     })
                     .catch(error => {
-                        context.commit("setNotification", {
-                            msg: error.response.data.errors,
-                            type: "error"
-                        });
+                        if (_.has(error, "response.data.errors")) {
+                            context.commit("setNotification", {
+                                msg: error.response.data.errors,
+                                type: "error"
+                            });
+                        } else {
+                            console.error(error);
+                        }
 
                         reject(error);
                     });
@@ -553,10 +587,14 @@ export default new Vuex.Store({
                         resolve(response.data.data || response.data);
                     })
                     .catch(error => {
-                        context.commit("setNotification", {
-                            msg: error.response.data.errors,
-                            type: "error"
-                        });
+                        if (_.has(error, "response.data.errors")) {
+                            context.commit("setNotification", {
+                                msg: error.response.data.errors,
+                                type: "error"
+                            });
+                        } else {
+                            console.error(error);
+                        }
 
                         reject(error);
                     });
@@ -581,10 +619,14 @@ export default new Vuex.Store({
                         resolve(response.data);
                     })
                     .catch(error => {
-                        context.commit("setNotification", {
-                            msg: error.response.data.errors,
-                            type: "error"
-                        });
+                        if (_.has(error, "response.data.errors")) {
+                            context.commit("setNotification", {
+                                msg: error.response.data.errors,
+                                type: "error"
+                            });
+                        } else {
+                            console.error(error);
+                        }
                         reject(error);
                     });
             });
@@ -606,10 +648,14 @@ export default new Vuex.Store({
                         resolve(response.data.data || response.data);
                     })
                     .catch(error => {
-                        context.commit("setNotification", {
-                            msg: error.response.data.errors,
-                            type: "error"
-                        });
+                        if (_.has(error, "response.data.errors")) {
+                            context.commit("setNotification", {
+                                msg: error.response.data.errors,
+                                type: "error"
+                            });
+                        } else {
+                            console.error(error);
+                        }
                         reject(error);
                     });
             });
@@ -628,10 +674,14 @@ export default new Vuex.Store({
                         resolve(response.data);
                     })
                     .catch(error => {
-                        context.commit("setNotification", {
-                            msg: error.response.data.errors,
-                            type: "error"
-                        });
+                        if (_.has(error, "response.data.errors")) {
+                            context.commit("setNotification", {
+                                msg: error.response.data.errors,
+                                type: "error"
+                            });
+                        } else {
+                            console.error(error);
+                        }
                         reject(error);
                     });
             });

@@ -19,7 +19,7 @@ class MasOrderController extends Controller
         $masAccount = MasAccount::getActive();
 
         $payload = [];
-        $payload['MessageType'] = '0';
+        $payload['MessageType'] = '28';
         // $payload['MessageText'] = "POS Order ID: {$order->id}";
         $payload['MessageText'] = "POS " . now();
 

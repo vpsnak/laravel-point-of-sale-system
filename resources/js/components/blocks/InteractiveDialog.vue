@@ -116,7 +116,7 @@ export default {
             payload
           });
 
-          console.log({
+          console.info({
             module: "interactive-dialog",
             payload,
             event_channel: this.dialog.eventChannel

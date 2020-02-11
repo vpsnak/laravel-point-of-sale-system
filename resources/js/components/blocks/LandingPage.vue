@@ -153,7 +153,7 @@ export default {
       this.loadPercent = 0;
       this.color = "red";
       this.error_txt = "Error";
-      console.log(error);
+      console.error(error);
     },
 
     // animations

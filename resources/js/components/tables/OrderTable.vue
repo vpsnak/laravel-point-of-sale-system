@@ -1,6 +1,6 @@
 <template>
   <div>
-    <data-table>
+    <data-table v-if="data_table.model">
       <template v-slot:item.customer="{ item }">
         {{ item.customer ? item.customer.email : "Guest" }}
       </template>
@@ -23,7 +23,7 @@
             <v-btn
               :ref="item.id"
               small
-              :disabled="disableActions"
+              :disabled="data_table.loading"
               @click.stop="receipt(item.id)"
               class="my-2"
               icon
@@ -43,7 +43,7 @@
             <v-btn
               :ref="item.id"
               small
-              :disabled="disableActions"
+              :disabled="data_table.loading"
               @click.stop="checkout(item.id)"
               class="my-2"
               icon
@@ -61,7 +61,7 @@
               icon
               small
               color="red"
-              :disabled="disableActions"
+              :disabled="data_table.loading"
               @click.stop="cancelOrderDialog(item)"
               class="my-2"
               v-on="on"
@@ -76,8 +76,8 @@
           <template v-slot:activator="{ on }">
             <v-btn
               small
-              :disabled="disableActions"
-              @click.stop="editOrder(item)"
+              :disabled="data_table.loading"
+              @click.stop="editOrder(item.id)"
               class="my-2"
               v-on="on"
               icon
@@ -92,7 +92,7 @@
           <template v-slot:activator="{ on }">
             <v-btn
               small
-              :disabled="disableActions"
+              :disabled="data_table.loading"
               @click.stop="(item.form = viewForm), viewItem(item)"
               class="my-2"
               v-on="on"
@@ -122,9 +122,10 @@ export default {
       disableNewBtn: true,
       loading: true
     });
+
     EventBus.$on("order-table-cancel-order", event => {
       if (event.payload && this.selectedItem) {
-        this.disableActions = true;
+        this.data_table.loading(true);
         this.cancelOrder().then(() => {
           EventBus.$emit("data-table", { action: "paginate" });
         });
@@ -156,16 +157,7 @@ export default {
   },
 
   computed: {
-    ...mapState("datatable", ["data_table"]),
-
-    disableActions: {
-      get() {
-        return this.data_table.loading;
-      },
-      set(value) {
-        this.setLoading(value);
-      }
-    }
+    ...mapState("datatable", ["data_table"])
   },
 
   methods: {
@@ -173,6 +165,7 @@ export default {
     ...mapMutations("datatable", ["setLoading", "setDataTable"]),
     ...mapMutations("cart", ["setCheckoutDialog"]),
     ...mapActions(["getOne", "delete"]),
+    ...mapActions("cart", ["setOrder", "resetState"]),
 
     parseStatusName(value) {
       return _.upperFirst(value.replace("_", " "));
@@ -193,12 +186,13 @@ export default {
           return "";
       }
     },
-    editOrder(order) {
+    editOrder(id) {
       const editDialog = {
-        width: 800,
+        show: true,
+        width: 1000,
         icon: "edit",
         titleCloseBtn: true,
-        title: `Edit Order #${order.id}`,
+        title: `Edit Order #${id}`,
         component: "orderEditForm",
         persistent: true,
         eventChannel: "data-table"
@@ -206,31 +200,55 @@ export default {
 
       this.setDialog(editDialog);
     },
-    receipt(id) {},
+    receipt(id) {
+      this.setLoading(true);
 
-    checkout(id) {
-      this.disableActions = true;
-      this.getOne({
-        model: "orders",
-        data: { id },
-        mutation: "cart/setCustomer"
-      })
-        .then(response => {
-          this.$store.commit("cart/resetState");
-          this.$store.state.cart.checkoutSteps[0].completed = true;
-          this.$store.state.cart.currentCheckoutStep = 2;
-          this.$store.commit("cart/setOrder", response);
-          this.setCheckoutDialog(true);
+      this.getSingleOrder(id)
+        .then(() => {
+          // this.setDialog({});
         })
-        .catch(error => {
-          // unhandled error
-          console.log(error);
-        })
+        .catch()
         .finally(() => {
-          this.disableActions = false;
+          this.setLoading(false);
         });
     },
+
+    checkout(id) {
+      this.setLoading(true);
+
+      this.getSingleOrder(id)
+        .then(() => {
+          this.setCheckoutDialog(true);
+        })
+        .catch()
+        .finally(() => {
+          this.setLoading(false);
+        });
+    },
+    getSingleOrder(id) {
+      return new Promise((resolve, reject) => {
+        this.getOne({
+          model: "orders",
+          data: { id },
+          mutation: "cart/setCustomer"
+        })
+          .then(response => {
+            this.resetState();
+            this.$store.state.cart.checkoutSteps[0].completed = true;
+            this.$store.state.cart.currentCheckoutStep = 2;
+            this.setOrder(response);
+            resolve(true);
+          })
+          .catch(error => {
+            // unhandled error
+            console.error(error);
+            reject(error);
+          });
+      });
+    },
     cancelOrderDialog(item) {
+      this.selectedItem = item;
+
       this.setDialog({
         show: true,
         width: 600,
@@ -242,8 +260,6 @@ export default {
         persistent: true,
         eventChannel: "order-table-cancel-order"
       });
-
-      this.selectedItem = item;
     },
     cancelOrder() {
       return new Promise((resolve, reject) => {
@@ -258,7 +274,7 @@ export default {
           })
           .catch(error => {
             // unhandled error
-            console.log(error);
+            console.error(error);
             reject(error);
           })
           .finally(() => {

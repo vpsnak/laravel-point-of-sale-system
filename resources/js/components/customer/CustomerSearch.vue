@@ -205,7 +205,7 @@ export default {
         })
         .catch(error => {
           // undocumented error
-          console.log(error.response);
+          console.error(error);
         })
         .finally(() => (this.loading = false));
     }

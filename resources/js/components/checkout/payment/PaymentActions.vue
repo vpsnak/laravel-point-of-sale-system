@@ -329,7 +329,7 @@ export default {
           })
           .catch(error => {
             // unhandled error
-            console.log(error);
+            console.error(error);
           })
           .finally(() => {
             this.orderLoading = false;

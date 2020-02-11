@@ -167,7 +167,7 @@ const state = {
 };
 
 const getters = {
-    getHeaders: (state, table) => {
-        return state[table];
+    getHeaders: (state, model) => {
+        return state[model];
     }
 };

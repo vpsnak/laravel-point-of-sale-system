@@ -1,7 +1,9 @@
 <template>
   <v-card>
     <v-card-title>
-      <span class="subheading">History</span>
+      <span class="subheading">
+        Payment History
+      </span>
     </v-card-title>
     <v-card-text>
       <v-data-table
@@ -53,7 +55,7 @@ import { EventBus } from "../../../plugins/event-bus";
 export default {
   mounted() {
     EventBus.$on("payment-history-refund", event => {
-      console.log(event);
+      console.info(event);
       if (event.payload && this.selected_payment) {
         this.refund();
       }
