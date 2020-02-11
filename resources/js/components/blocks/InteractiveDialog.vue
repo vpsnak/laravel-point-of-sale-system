@@ -78,9 +78,9 @@
           >{{ dialog.cancelBtnTxt }}</v-btn
         >
 
-        <v-btn @click="closeEvent(true, true)" text color="success">{{
-          dialog.confirmationBtnTxt
-        }}</v-btn>
+        <v-btn @click="closeEvent(true, true)" text color="success">
+          {{ dialog.confirmationBtnTxt }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

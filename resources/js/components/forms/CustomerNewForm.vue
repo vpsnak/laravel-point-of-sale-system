@@ -410,8 +410,7 @@ export default {
                 .then(response => {
                     this.$emit("submit", {
                         data: { customer: response },
-                        getRows: true,
-                        model: "customers",
+                        action: "paginate",
                         notification: {
                             msg: "Customer added successfully",
                             type: "success"

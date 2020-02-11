@@ -10,6 +10,8 @@ import router from "./plugins/router";
 import vuetify from "./plugins/vuetify"; // path to vuetify export
 import BarcodeScanner from "simple-barcode-scanner";
 import VueBarcode from "vue-barcode";
+import Donut from "vue-css-donut-chart";
+import "vue-css-donut-chart/dist/vcdonut.css";
 
 import {
     ValidationProvider,
@@ -22,6 +24,7 @@ window.Vue = require("vue");
 Vue.component("ValidationProvider", ValidationProvider);
 Vue.component("ValidationObserver", ValidationObserver);
 Vue.component("barcode", VueBarcode);
+Vue.use(Donut);
 
 const scanner = BarcodeScanner();
 

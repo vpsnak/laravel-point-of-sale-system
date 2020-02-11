@@ -3,7 +3,7 @@
     <v-tabs grow centered>
       <v-tab>
         <v-icon left>mdi-cash-multiple</v-icon>
-        <span>Payments & Order status</span>
+        <span>Payment History & Refunds</span>
       </v-tab>
       <v-tab>
         <v-icon left>mdi-package-variant</v-icon>
@@ -15,12 +15,15 @@
       </v-tab>
 
       <v-tab-item>
-        <v-card flat>
+        <v-card-text>
+            <costAnalysis editOrder />
+        </v-card-text>
           <v-card-text>
             <paymentHistory editOrder />
+        </v-card-text>
+        <v-card-text>
             <paymentRefunds />
-          </v-card-text>
-        </v-card>
+        </v-card-text>
       </v-tab-item>
       <v-tab-item>
         <v-card flat>
