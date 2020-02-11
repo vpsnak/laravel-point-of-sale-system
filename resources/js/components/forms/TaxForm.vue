@@ -16,7 +16,7 @@
                 ></v-text-field>
             </ValidationProvider>
             <ValidationProvider
-                rules="required|numeric|min:0|max_value:100"
+                rules="required|min:0|max_value:100"
                 v-slot="{ errors, valid }"
                 name="Percentage"
             >
@@ -24,7 +24,6 @@
                     :readonly="$props.readonly"
                     label="Percentage"
                     v-model="formFields.percentage"
-                    type="number"
                     :min="0"
                     :disabled="loading"
                     :error-messages="errors"
