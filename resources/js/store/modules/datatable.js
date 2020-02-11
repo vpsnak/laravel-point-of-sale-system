@@ -15,6 +15,17 @@ const state = {
 
 // mutations
 const mutations = {
+    resetDataTable(state) {
+        state.data_table.rows = [];
+        state.data_table.icon = "";
+        state.data_table.title = "";
+        state.data_table.headers = [];
+        state.data_table.model = "";
+        state.data_table.btnTxt = "";
+        state.data_table.newForm = "";
+        state.data_table.disableNewBtn = false;
+        state.data_table.loading = false;
+    },
     setDataTable(state, value) {
         state.data_table = { ...state.data_table, ...value };
     },

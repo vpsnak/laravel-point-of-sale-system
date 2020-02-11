@@ -106,6 +106,7 @@ export default {
     }
   },
   beforeDestroy() {
+    this.resetDataTable();
     EventBus.$off();
     if (this.data_table.newForm === "productForm") {
       this.$root.$off("barcodeScan");
@@ -140,7 +141,7 @@ export default {
   },
   methods: {
     ...mapMutations("dialog", ["setDialog"]),
-    ...mapMutations("datatable", ["setRows", "setLoading"]),
+    ...mapMutations("datatable", ["setRows", "setLoading", "resetDataTable"]),
     ...mapActions(["getAll", "search"]),
 
     search(e, page = false) {

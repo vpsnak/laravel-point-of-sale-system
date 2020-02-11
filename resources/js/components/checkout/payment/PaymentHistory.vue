@@ -25,14 +25,18 @@
         </template>
 
         <template v-slot:item.actions="{ item }">
-          <v-tooltip bottom>
+          <v-tooltip
+            bottom
+            v-if="
+              item.status === 'approved' && !item.refunded && !$props.editOrder
+            "
+          >
             <template v-slot:activator="{ on }">
               <v-btn
                 @click="refundDialog(item)"
                 icon
                 v-on="on"
                 :loading="loading || refundLoading || paymentHistoryLoading"
-                v-if="item.status === 'approved' && !item.refunded"
               >
                 <v-icon v-if="item.payment_type.type === 'cash'"
                   >mdi-cash-refund</v-icon
@@ -68,6 +72,7 @@ export default {
   },
 
   props: {
+    editOrder: Boolean,
     loading: Boolean
   },
 
@@ -145,23 +150,6 @@ export default {
           return null;
       }
     },
-    getPaymentHistory() {
-      if (this.order.id) {
-        this.paymentHistoryLoading = true;
-
-        let payload = {
-          model: "payments",
-          keyword: this.order.id
-        };
-        this.search(payload)
-          .then(response => {
-            this.setPaymentHistory(response);
-          })
-          .finally(() => {
-            this.paymentHistoryLoading = false;
-          });
-      }
-    },
     refund() {
       this.refundLoading = true;
       let payload = {
@@ -181,7 +169,6 @@ export default {
           this.$emit("refund", error.response.data);
         });
     },
-
     refundDialog(item) {
       this.selected_payment = item;
 

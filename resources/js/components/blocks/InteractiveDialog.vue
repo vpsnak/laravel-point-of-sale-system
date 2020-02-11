@@ -34,7 +34,7 @@
 
       <v-divider class="mb-3"></v-divider>
 
-      <v-card-text>
+      <v-card-text v-if="!dialog.no_padding">
         <component
           v-if="dialog.component"
           :is="dialog.component"
@@ -49,6 +49,20 @@
         ></div>
       </v-card-text>
 
+      <div v-else>
+        <component
+          v-if="dialog.component"
+          :is="dialog.component"
+          :readonly="dialog.readonly"
+          :model="dialog.model"
+          @submit="submit"
+        ></component>
+        <div
+          v-else
+          v-html="dialog.content"
+          :class="dialog.contentClass || ''"
+        ></div>
+      </div>
       <!-- confirmation actions -->
       <v-card-actions
         class="d-flex align-center mt-5"

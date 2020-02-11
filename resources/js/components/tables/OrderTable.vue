@@ -161,11 +161,19 @@ export default {
   },
 
   methods: {
-    ...mapMutations("dialog", ["setDialog", "editItem", "viewItem"]),
-    ...mapMutations("datatable", ["setLoading", "setDataTable"]),
-    ...mapMutations("cart", ["setCheckoutDialog"]),
     ...mapActions(["getOne", "delete"]),
-    ...mapActions("cart", ["setOrder", "resetState"]),
+    ...mapMutations("dialog", ["setDialog", "editItem", "viewItem"]),
+    ...mapMutations("datatable", [
+      "setLoading",
+      "setDataTable",
+      "resetDataTable"
+    ]),
+    ...mapMutations("cart", [
+      "setCheckoutDialog",
+      "setPaymentHistory",
+      "setOrder",
+      "resetState"
+    ]),
 
     parseStatusName(value) {
       return _.upperFirst(value.replace("_", " "));
@@ -187,18 +195,25 @@ export default {
       }
     },
     editOrder(id) {
-      const editDialog = {
-        show: true,
-        width: 1000,
-        icon: "edit",
-        titleCloseBtn: true,
-        title: `Edit Order #${id}`,
-        component: "orderEditForm",
-        persistent: true,
-        eventChannel: "data-table"
-      };
-
-      this.setDialog(editDialog);
+      this.getSingleOrder(id)
+        .then(() => {
+          const editDialog = {
+            show: true,
+            width: 1000,
+            icon: "edit",
+            titleCloseBtn: true,
+            title: `Edit Order #${id}`,
+            component: "orderEditForm",
+            persistent: true,
+            eventChannel: "data-table",
+            no_padding: true
+          };
+          this.setDialog(editDialog);
+        })
+        .catch()
+        .finally(() => {
+          this.setLoading(false);
+        });
     },
     receipt(id) {
       this.setLoading(true);
