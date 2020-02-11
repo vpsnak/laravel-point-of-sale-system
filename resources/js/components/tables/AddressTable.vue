@@ -1,86 +1,86 @@
 <template>
-    <data-table
-        icon="mdi-account-card-details"
-        title="Addresses"
-        :headers="headers"
-        data-url="addresses"
-        btnTxt="New Address"
-        :newForm="form"
-    >
-        <template v-slot:item.actions="{ item }">
-            <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                    <v-btn
-                        small
-                        :disabled="disableActions"
-                        @click.stop="(item.form = form), editItem(item)"
-                        class="my-2"
-                        v-on="on"
-                        icon
-                    >
-                        <v-icon small>edit</v-icon>
-                    </v-btn>
-                </template>
-                <span>Edit</span>
-            </v-tooltip>
+	<data-table v-if="data_table.model">
+		<template v-slot:item.actions="{ item }">
+			<v-tooltip bottom>
+				<template v-slot:activator="{ on }">
+					<v-btn
+						small
+						:disabled="data_table.loading"
+						@click.stop="(item.form = form), editItem(item)"
+						class="my-2"
+						v-on="on"
+						icon
+					>
+						<v-icon small>edit</v-icon>
+					</v-btn>
+				</template>
+				<span>Edit</span>
+			</v-tooltip>
 
-            <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                    <v-btn
-                        small
-                        :disabled="disableActions"
-                        @click.stop="(item.form = form), viewItem(item)"
-                        class="my-2"
-                        v-on="on"
-                        icon
-                    >
-                        <v-icon small>mdi-eye</v-icon>
-                    </v-btn>
-                </template>
-                <span>View</span>
-            </v-tooltip>
-        </template>
-    </data-table>
+			<v-tooltip bottom>
+				<template v-slot:activator="{ on }">
+					<v-btn
+						small
+						:disabled="data_table.loading"
+						@click.stop="(item.form = form), viewItem(item)"
+						class="my-2"
+						v-on="on"
+						icon
+					>
+						<v-icon small>mdi-eye</v-icon>
+					</v-btn>
+				</template>
+				<span>View</span>
+			</v-tooltip>
+		</template>
+	</data-table>
 </template>
 
 <script>
 import { mapState, mapMutations } from "vuex";
 
 export default {
-    data() {
-        return {
-            form: "addressForm",
-            headers: [
-                { text: "#", value: "id" },
-                { text: "First Name", value: "first_name" },
-                { text: "Last Name", value: "last_name" },
-                { text: "Address", value: "street" },
-                { text: "Second address", value: "street2" },
-                { text: "City", value: "city" },
-                { text: "Country ID", value: "country_id" },
-                { text: "State", value: "address_region.default_name" },
-                { text: "Zip Code", value: "postcode" },
-                { text: "Phone", value: "phone" },
-                { text: "Actions", value: "actions" }
-            ]
-        };
-    },
+	mounted() {
+		this.setDataTable({
+			icon: "mdi-account-card-details",
+			title: "Addresses",
+			headers: this.headers,
+			model: "addresses",
+			component: this.form,
+			newForm: this.form,
+			btnTxt: "New Address",
+			loading: true
+		});
+	},
+	data() {
+		return {
+			form: "addressForm",
+			headers: [
+				{ text: "#", value: "id" },
+				{ text: "First Name", value: "first_name" },
+				{ text: "Last Name", value: "last_name" },
+				{ text: "Address", value: "street" },
+				{ text: "Second address", value: "street2" },
+				{ text: "City", value: "city" },
+				{ text: "Country ID", value: "country_id" },
+				{ text: "State", value: "address_region.default_name" },
+				{ text: "Zip Code", value: "postcode" },
+				{ text: "Phone", value: "phone" },
+				{ text: "Actions", value: "actions" }
+			]
+		};
+	},
 
-    computed: {
-        ...mapState("datatable", ["loading"]),
-
-        disableActions: {
-            get() {
-                return this.loading;
-            },
-            set(value) {
-                this.setLoading(value);
-            }
-        }
-    },
-    methods: {
-        ...mapMutations("dialog", ["viewItem", "editItem"]),
-        ...mapMutations("datatable", ["setLoading"])
-    }
+	computed: {
+		...mapState("datatable", ["data_table"])
+	},
+	methods: {
+		...mapMutations("dialog", ["setDialog", "editItem", "viewItem"]),
+		...mapMutations("datatable", [
+			"setLoading",
+			"setDataTable",
+			"resetDataTable"
+		])
+	}
 };
 </script>
