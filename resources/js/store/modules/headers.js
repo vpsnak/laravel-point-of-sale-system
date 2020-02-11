@@ -112,7 +112,7 @@ const state = {
         { text: "Created by", value: "created_by" },
         { text: "Actions", value: "actions" }
     ],
-    taxTable: [
+    taxes: [
         { text: "#", value: "id" },
         { text: "Name", value: "name" },
         { text: "Percentage", value: "percentage" },
@@ -167,7 +167,13 @@ const state = {
 };
 
 const getters = {
-    getHeaders: (state, model) => {
+    getHeaders: state => {
         return state[model];
     }
+};
+
+export default {
+    namespaced: true,
+    state,
+    getters
 };

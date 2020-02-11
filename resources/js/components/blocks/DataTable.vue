@@ -44,7 +44,7 @@
                 disable-sort
                 dense
                 :disable-filtering="true"
-                :headers="data_table.headers"
+                :headers="getHeaders"
                 :items="data_table.rows"
                 :loading="data_table.loading"
                 :items-per-page="15"
@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from "vuex";
+import { mapActions, mapMutations, mapState, mapGetters } from "vuex";
 import { EventBus } from "../../plugins/event-bus";
 
 export default {
@@ -89,6 +89,7 @@ export default {
     },
 
     mounted() {
+        console.log(this.getHeaders);
         EventBus.$on("data-table", event => {
             console.info({ component: "data-table", event });
             if (_.has(event, "payload.action")) {
@@ -129,6 +130,7 @@ export default {
         }
     },
     computed: {
+        ...mapGetters("datatable", ["getHeaders"]),
         ...mapState("datatable", ["data_table"]),
 
         footerProps() {

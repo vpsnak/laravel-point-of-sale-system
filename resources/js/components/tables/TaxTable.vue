@@ -1,43 +1,45 @@
 <template>
-    <data-table v-if="data_table.model">
-        <template v-slot:item.actions="{ item }">
-            <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                    <v-btn
-                        small
-                        :disabled="data_table.loading"
-                        @click.stop="(item.form = form), editItem(item)"
-                        class="my-2"
-                        v-on="on"
-                        icon
-                    >
-                        <v-icon small>edit</v-icon>
-                    </v-btn>
-                </template>
-                <span>Edit</span>
-            </v-tooltip>
+    <div>
+        <data-table v-if="data_table.model">
+            <template v-slot:item.actions="{ item }">
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-btn
+                            small
+                            :disabled="data_table.loading"
+                            @click.stop="(item.form = form), editItem(item)"
+                            class="my-2"
+                            v-on="on"
+                            icon
+                        >
+                            <v-icon small>edit</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Edit</span>
+                </v-tooltip>
 
-            <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                    <v-btn
-                        small
-                        :disabled="data_table.loading"
-                        @click.stop="(item.form = form), viewItem(item)"
-                        class="my-2"
-                        v-on="on"
-                        icon
-                    >
-                        <v-icon small>mdi-eye</v-icon>
-                    </v-btn>
-                </template>
-                <span>View</span>
-            </v-tooltip>
-        </template>
-    </data-table>
+                <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                        <v-btn
+                            small
+                            :disabled="data_table.loading"
+                            @click.stop="(item.form = form), viewItem(item)"
+                            class="my-2"
+                            v-on="on"
+                            icon
+                        >
+                            <v-icon small>mdi-eye</v-icon>
+                        </v-btn>
+                    </template>
+                    <span>View</span>
+                </v-tooltip>
+            </template>
+        </data-table>
+    </div>
 </template>
 
 <script>
-import { mapMutations, mapState } from "vuex";
+import { mapMutations, mapState, mapGetters } from "vuex";
 
 export default {
     mounted() {
@@ -56,13 +58,7 @@ export default {
 
     data() {
         return {
-            form: "taxForm",
-            headers: [
-                { text: "#", value: "id" },
-                { text: "Name", value: "name" },
-                { text: "Percentage", value: "percentage" },
-                { text: "Actions", value: "actions" }
-            ]
+            form: "taxForm"
         };
     },
     computed: {
