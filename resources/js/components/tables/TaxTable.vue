@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState, mapGetters } from "vuex";
+import { mapMutations, mapState } from "vuex";
 
 export default {
     mounted() {

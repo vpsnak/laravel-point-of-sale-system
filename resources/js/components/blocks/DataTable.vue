@@ -89,7 +89,6 @@ export default {
     },
 
     mounted() {
-        console.log(this.getHeaders);
         EventBus.$on("data-table", event => {
             console.info({ component: "data-table", event });
             if (_.has(event, "payload.action")) {
