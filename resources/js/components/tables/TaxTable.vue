@@ -46,7 +46,6 @@ export default {
         this.setDataTable({
             icon: "mdi-sack-percent",
             title: "Taxes",
-            headers: this.headers,
             model: "taxes",
             component: this.form,
             newForm: this.form,

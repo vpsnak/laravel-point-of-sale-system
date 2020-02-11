@@ -60,7 +60,6 @@ export default {
         this.setDataTable({
             icon: "mdi-account-group",
             title: "Customers",
-            headers: this.headers,
             model: "customers",
             component: this.form,
             newForm: "customerNewForm",
@@ -71,16 +70,7 @@ export default {
     },
     data() {
         return {
-            form: "customer",
-            headers: [
-                { text: "#", value: "id" },
-                { text: "First name", value: "first_name" },
-                { text: "Last name", value: "last_name" },
-                { text: "E-mail", value: "email" },
-                { text: "No tax", value: "no_tax" },
-                { text: "House Account", value: "house_account_status" },
-                { text: "Actions", value: "actions" }
-            ]
+            form: "customer"
         };
     },
     computed: {

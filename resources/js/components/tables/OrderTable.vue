@@ -122,7 +122,6 @@ export default {
         this.setDataTable({
             icon: "mdi-buffer",
             title: "Orders",
-            headers: this.headers,
             model: "orders",
             disableNewBtn: true,
             loading: true
@@ -145,19 +144,7 @@ export default {
     data() {
         return {
             viewForm: "order",
-
-            selectedItem: null,
-            headers: [
-                { text: "#", value: "id" },
-                { text: "Customer", value: "customer" },
-                { text: "Store", value: "store.name" },
-                { text: "Status", value: "status" },
-                { text: "Total", value: "total" },
-                { text: "Total paid", value: "total_paid" },
-                { text: "Created by", value: "created_by.name" },
-                { text: "Created at", value: "created_at" },
-                { text: "Actions", value: "actions" }
-            ]
+            selectedItem: null
         };
     },
 
