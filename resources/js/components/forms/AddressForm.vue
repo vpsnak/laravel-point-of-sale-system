@@ -101,9 +101,10 @@
                         name="State"
                     >
                         <v-select
+                            :disabled="loading"
                             :readonly="$props.readonly"
                             :loading="loading"
-                            v-model="formFields.region"
+                            v-model="formFields.region_id"
                             :items="regions"
                             label="States"
                             :error-messages="errors"
@@ -120,6 +121,7 @@
                         name="Countries"
                     >
                         <v-select
+                            :disabled="loading"
                             :readonly="$props.readonly"
                             :loading="loading"
                             v-model="formFields.country_id"
@@ -269,7 +271,7 @@ export default {
                 street2: null,
                 city: null,
                 country_id: null,
-                region: null,
+                region_id: null,
                 postcode: null,
                 phone: null,
                 company: null,
