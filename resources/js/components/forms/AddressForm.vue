@@ -309,7 +309,9 @@ export default {
         }),
         submit() {
             this.loading = true;
-            if (!this.$props.model) {
+            if (_.isObject(this.formFields.region_id)) {
+                this.formFields.region = this.formFields.region_id.region_id;
+            } else {
                 this.formFields.region = this.formFields.region_id;
             }
             let payload = {
