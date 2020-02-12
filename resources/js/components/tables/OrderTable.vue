@@ -92,7 +92,6 @@
                     </template>
                     <span>Edit</span>
                 </v-tooltip>
-
                 <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
                         <v-btn

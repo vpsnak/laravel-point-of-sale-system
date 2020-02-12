@@ -7,7 +7,7 @@
             </span>
         </v-card-title>
         <v-container>
-            <v-row align="center" justify="center">
+            <v-row align="center" justify="center" no-gutters>
                 <v-col>
                     <vc-donut
                         hasLegend
@@ -74,7 +74,7 @@ export default {
                 sections.push({
                     label: `Tax: $${this.precision(this.tax)}`,
                     value: this.tax,
-                    color: "lightgray"
+                    color: "gray"
                 });
             }
 

@@ -25,14 +25,10 @@
                 </span>
             </template>
 
-            <template v-slot:item.actions="{ item }">
+            <template v-slot:item.actions="{ item }" v-if="!$props.editOrder">
                 <v-tooltip
                     bottom
-                    v-if="
-                        item.status === 'approved' &&
-                            !item.refunded &&
-                            !$props.editOrder
-                    "
+                    v-if="item.status === 'approved' && !item.refunded"
                 >
                     <template v-slot:activator="{ on }">
                         <v-btn
@@ -64,6 +60,12 @@ import { EventBus } from "../../../plugins/event-bus";
 
 export default {
     mounted() {
+        if (!this.$props.editOrder) {
+            this.headers.push({
+                text: "Actions",
+                value: "actions"
+            });
+        }
         EventBus.$on("payment-history-refund", event => {
             console.info(event);
             if (event.payload && this.selected_payment) {
@@ -116,10 +118,6 @@ export default {
                     text: "Amount (USD)",
                     value: "amount",
                     sortable: false
-                },
-                {
-                    text: "Actions",
-                    value: "actions"
                 }
             ]
         };
