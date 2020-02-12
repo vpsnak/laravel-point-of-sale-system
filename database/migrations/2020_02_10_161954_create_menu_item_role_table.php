@@ -14,14 +14,10 @@ class CreateMenuItemRoleTable extends Migration
     public function up()
     {
         Schema::create('menu_item_role', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
 
-            $table->unsignedBigInteger('menu_item_id');
+            $table->unsignedInteger('menu_item_id');
             $table->unsignedBigInteger('role_id');
-
-
-            $table->foreign('menu_item_id')->references('id')->on('menu_items');
-            $table->foreign('role_id')->references('id')->on('roles');
         });
     }
 

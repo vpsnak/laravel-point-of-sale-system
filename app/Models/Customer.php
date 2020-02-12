@@ -23,12 +23,14 @@ class Customer extends BaseModel
         'updated_at' => "datetime:m/d/Y H:i:s"
     ];
 
-    protected $with = ['addresses'];
     protected $appends = ['full_name'];
 
+    /**
+     * Get the comments for the blog post.
+     */
     public function addresses()
     {
-        return $this->belongsToMany(Address::class);
+        return $this->hasMany(Address::class);
     }
 
     public function getFullNameAttribute()

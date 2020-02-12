@@ -16,34 +16,27 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            $table->unsignedBigInteger('customer_id')->nullable();
-            $table->string('status')->nullable();
-            $table->enum('discount_type', ['flat', 'percentage'])->nullable();
-            $table->unsignedSmallInteger('discount_amount')->default(0)->nullable();
+
+            $table->string('status')->nullable()->default('pending');
+            $table->enum('discount_type', ['none', 'flat', 'percentage'])->nullable()->default('none');
+            $table->unsignedSmallInteger('discount_amount')->nullable()->default(0);
             $table->decimal('tax')->unsigned();
-            $table->decimal('subtotal');
-            $table->decimal('change')->default(0);
-            $table->string('notes')->nullable();
-            $table->string('shipping_type')->nullable();
-            $table->decimal('shipping_cost')->default(0);
-            $table->string('store_pickup_id')->nullable();
-            $table->string('delivery_date')->nullable();
-            $table->string('delivery_slot')->nullable();
-            $table->string('occasion')->nullable();
+            $table->decimal('shipping_cost', 10, 2);
+            $table->decimal('subtotal', 10, 2);
+            $table->decimal('change', 10, 2)->default(0);
+            $table->text('notes')->nullable();
 
             $table->json('items');
             $table->json('billing_address')->nullable();
-            $table->json('shipping_address')->nullable();
+
+            $table->unsignedBigInteger('customer_id')->nullable();
+            $table->unsignedBigInteger('store_id');
+            $table->unsignedBigInteger('created_by');
 
             $table->unsignedBigInteger('magento_shipping_address_id')->nullable();
             $table->unsignedBigInteger('magento_billing_address_id')->nullable();
-            $table->unsignedBigInteger('store_id');
-            $table->unsignedBigInteger('created_by');
-            $table->timestamps();
 
-            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('restrict');
-            $table->foreign('store_id')->references('id')->on('stores')->onDelete('restrict');
-            $table->foreign('created_by')->references('id')->on('users')->onDelete('restrict');
+            $table->timestamps();
         });
     }
 

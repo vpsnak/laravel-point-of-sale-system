@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factory;
 
 $factory->define(Address::class, function (Faker $faker) {
     return [
+        'customer_id' => $faker->numberBetween(1, 30),
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,
         'street' => $faker->streetAddress,
@@ -16,6 +17,6 @@ $factory->define(Address::class, function (Faker $faker) {
         'country_id' => $faker->countryCode,
         'region' => rand(1, 100),
         'postcode' => $faker->randomElement(['00606', '10025', '01524', '01561', '97029', '0']),
-        'phone' => $faker->phoneNumber
+        'phone' => $faker->numberBetween(10000000000, 20000000000)
     ];
 });
