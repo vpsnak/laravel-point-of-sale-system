@@ -37,9 +37,9 @@ class Address extends BaseModel
         'magento_id'
     ];
 
-    public static function setIsDefaultShippingAttribute($value)
+    public function setIsDefaultShippingAttribute($value)
     {
-        $currentCustomerShipping = $this->customer->addresses->whereIs_default_shipping(true)->first();
+        $currentCustomerShipping = $this->customer->addresses->where('is_default_shipping', true)->first();
         if ($currentCustomerShipping && $value) {
             $currentCustomerShipping->is_default_shipping = false;
             $currentCustomerShipping->save();
@@ -47,9 +47,9 @@ class Address extends BaseModel
         $this->attributes['is_default_shipping'] = $value;
     }
 
-    public static function setIsDefaultBillingAttribute($value)
+    public function setIsDefaultBillingAttribute($value)
     {
-        $currentCustomerBilling = $this->customer->addresses->whereIs_default_billing(true)->first();
+        $currentCustomerBilling = $this->customer->addresses->where('is_default_billing', true)->first();
         if ($currentCustomerBilling && $value) {
             $currentCustomerBilling->is_default_billing = false;
             $currentCustomerBilling->save();
