@@ -12,105 +12,88 @@ class CustomerController extends BaseController
 {
     protected $model = Customer::class;
 
-    public function create(Request $request)
+    public function update(Request $request, Customer $model)
     {
-        $validatedExtra = $request->validate([
-            'id' => 'nullable|exists:customers,id',
-            'address' => 'nullable|array',
+        $validatedData = $request->validate([
+            'id' => 'required|exists:users,id',
+            'email' => 'email|unique:users,email,' . $model->id,
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'house_account_status' => 'nullable|bool',
+            'house_account_number' => 'nullable|string',
+            'house_account_limit' => 'nullable|numeric',
+            'no_tax' => 'nullable|bool',
+            'file' => 'nullable|file|max:15000|mimes:jpeg,jpg,png,pdf',
+            'comment' => 'nullable|string',
+            'phone' => 'nullable|string'
         ]);
 
-        if (!empty($validatedExtra['id'])) {
-            $validatedData = $request->validate([
-                'email' => [
-                    'required',
-                    'email',
-                    Rule::unique('customers', 'email')->ignore($validatedExtra['id'])
-                ],
-                'first_name' => 'required|string',
-                'last_name' => 'required|string',
-                'house_account_status' => 'nullable|bool',
-                'house_account_number' => 'nullable|string',
-                'house_account_limit' => 'nullable|numeric',
-                'no_tax' => 'nullable|bool',
-                'file' => 'nullable|file|max:15000|mimes:jpeg,jpg,png,pdf',
-                'comment' => 'nullable|string',
-                'phone' => 'nullable|string'
-            ]);
+        if ($validatedData['no_tax'] && empty($validatedData['file'])) {
 
-            if ($validatedData['no_tax'] && empty($validatedData['file'])) {
-                $customer = Customer::findOrFail($validatedExtra['id']);
-                if (empty($customer->no_tax_file)) {
-                    return response(['errors' => ['Zero Tax' => 'Certification file is required when zero tax is enabled']], 500);
-                }
+            if (empty($model->no_tax_file)) {
+                return response(['errors' => ['Zero Tax' => 'Certification file is required when zero tax is enabled']], 422);
             }
-        } else {
-            $validatedData = $request->validate([
-                'email' => 'required|email|unique:customers,email',
-                'first_name' => 'required|string',
-                'last_name' => 'required|string',
-                'house_account_status' => 'nullable|bool',
-                'house_account_number' => 'nullable|string|unique:customers,house_account_number',
-                'house_account_limit' => 'nullable|numeric',
-                'no_tax' => 'nullable|bool',
-                'file' => 'nullable|required_if:no_tax,1|file|max:15000|mimes:jpeg,jpg,png,pdf',
-                'comment' => 'nullable|string',
-                'phone' => 'nullable|string'
-            ]);
-
-            $addressData = $request->validate([
-                'address.first_name' => 'required|string',
-                'address.last_name' => 'required|string',
-                'address.street' => 'required|string',
-                'address.street2' => 'nullable|string',
-                'address.city' => 'required|string',
-                'address.country_id' => 'required|exists:countries,country_id',
-                'address.region' => 'required|exists:regions,region_id',
-                'address.postcode' => 'required|string',
-                'address.phone' => 'required|string',
-                'address.company' => 'nullable|string',
-                'address.vat_id' => 'nullable|string',
-                'address.billing' => 'nullable|bool',
-                'address.shipping' => 'nullable|bool',
-                'address.location' => 'nullable|string',
-                'address.location_name' => 'nullable|string'
-            ]);
         }
+    }
 
-        $fileExt = '';
+    public function create(Request $request)
+    {
+        $validatedData = $request->validate([
+            'email' => 'required|email|unique:customers,email',
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'house_account_status' => 'nullable|bool',
+            'house_account_number' => 'nullable|string|unique:customers,house_account_number',
+            'house_account_limit' => 'nullable|numeric',
+            'no_tax' => 'nullable|bool',
+            'file' => 'nullable|required_if:no_tax,1|file|max:15000|mimes:jpeg,jpg,png,pdf',
+            'comment' => 'nullable|string',
+            'phone' => 'nullable|string'
+        ]);
+
+        $addressData = $request->validate([
+            'address.first_name' => 'required|string',
+            'address.last_name' => 'required|string',
+            'address.street' => 'required|string',
+            'address.street2' => 'nullable|string',
+            'address.city' => 'required|string',
+            'address.country_id' => 'required|exists:countries,country_id',
+            'address.region' => 'required|exists:regions,region_id',
+            'address.postcode' => 'required|string',
+            'address.phone' => 'required|string',
+            'address.company' => 'nullable|string',
+            'address.vat_id' => 'nullable|string',
+            'address.billing' => 'nullable|bool',
+            'address.shipping' => 'nullable|bool',
+            'address.location' => 'nullable|string',
+            'address.location_name' => 'nullable|string'
+        ]);
+
+        $customer = Customer::create($validatedData);
 
         if (array_key_exists('file', $validatedData) && $validatedData['no_tax']) {
-            $fileExt = '.' . $request->file('file')->extension();
-            $validatedData['no_tax_file'] = $request->file('file')->storeAs(
-                'public/uploads/no_tax',
-                $validatedExtra['id'] . $fileExt
-            );
-
-            unset($validatedData['file']);
-        }
-
-        $customer = $this->getCustomer($validatedExtra['id'] ?? null, $validatedData);
-
-        if ($request->file('file') && $validatedData['no_tax']) {
-            $customer->no_tax_file = "/storage/uploads/no_tax/{$customer->id}{$fileExt}";
+            $filePath = self::noTaxFileCreation($validatedData['file'], $customer->id);
+            // @TODO DEBUG
+            var_dump($filePath);
+            die;
+            // $customer->no_tax_file = "/storage/uploads/no_tax/{$customer->id}{$fileExt}";
             $customer->save();
         }
 
-        if (empty($validatedExtra['id'])) {
-            $customer->addresses()->create($addressData['address']);
-        }
+        $customer->addresses()->create($addressData['address']);
 
-        return response(Customer::with('addresses')->find($customer->id), empty($validatedExtra['id']) ? 201 : 200);
+        return response(Customer::with('addresses')->find($customer->id), 201);
     }
 
-    private function getCustomer($id, $data)
+    private static function noTaxFileCreation($file, int $id)
     {
-        if (!empty($id)) {
-            $this->model::updateData($id, $data);
-            $model = $this->model::getOne($id);
-        } else {
-            $model = $this->model::store($data);
-        }
-        return $model;
+        $fileExt = '.' . $file->extension();
+        $filePath = $file->storeAs(
+            'public/uploads/no_tax',
+            $id . $fileExt
+        );
+
+        return $filePath;
     }
 
     public function search(Request $request)

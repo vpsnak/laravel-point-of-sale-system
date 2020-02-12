@@ -11,8 +11,8 @@ class Order extends Model
 
     protected $fillable = [
         'magento_id',
-        "magento_shipping_address_id",
-        "magento_billing_address_id",
+        'magento_shipping_address_id',
+        'magento_billing_address_id',
         'customer_id',
         'store_id',
         'created_by',
@@ -23,23 +23,18 @@ class Order extends Model
         'tax',
         'subtotal',
         'change',
-        'shipping_type',
         'shipping_cost',
-        'shipping_address',
         'billing_address',
-        'store_pickup_id',
-        'delivery_date',
-        'delivery_slot',
-        'occasion',
-        'notes',
+        'delivery',
+        'method',
+        'notes'
     ];
 
     protected $with = [
         'payments',
         'customer',
         'store',
-        'created_by',
-        'store_pickup'
+        'created_by'
     ];
 
     protected $casts = [
@@ -135,11 +130,6 @@ class Order extends Model
     public function store()
     {
         return $this->belongsTo(Store::class);
-    }
-
-    public function store_pickup()
-    {
-        return $this->hasOne(StorePickup::class, 'id', 'store_pickup_id');
     }
 
     public function created_by()
