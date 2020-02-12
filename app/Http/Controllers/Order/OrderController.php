@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Address;
 use App\Payment;
 use App\Customer;
 use App\Giftcard;
@@ -9,7 +10,7 @@ use App\Helper\Price;
 use App\Jobs\ProcessOrder;
 use App\Order;
 use App\Store;
-use Carbon\Carbon;
+use App\StorePickup;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -28,10 +29,6 @@ class OrderController extends Controller
     }
 
     public function update(Request $request, Order $order)
-    {
-    }
-
-    public function create(Request $request)
     {
         // $user = auth()->user();
 
@@ -77,64 +74,20 @@ class OrderController extends Controller
 
         //     return response($order, 200);
         // }
+    }
 
+    public function create(Request $request)
+    {
         $validatedData = $request->validate([
-            'customer_id' => 'nullable|exists:customers,id',
+            'customer_id' => 'nullable|required_if:method,pickup,delivery|exists:customers,id',
             'discount_type' => 'string|nullable',
             'discount_amount' => 'numeric|nullable',
-            'shipping_type' => 'string|nullable',
             'shipping_cost' => 'numeric|nullable',
             'method' => 'required|in:retail,pickup,delivery',
             'notes' => 'string|nullable',
-        ]);
-
-        // $validatedData['store_id'] = $user->open_register->cash_register->store->id;
-        // $validatedData['created_by'] = $user->id;
-
-        $shippingData = $request->validate([
-            'delivery.occasion' => 'nullable|required_if:shipping.method,delivery|numeric',
-            'delivery.cost' => 'required_if:shipping.method,pickup,delivery|numeric',
-            'delivery.date' => 'required_if:shipping.method,pickup,delivery|date',
-            'delivery.timeSlotLabel' => 'nullable|required_if:shipping.method,pickup,delivery|string',
-            'delivery.location' => 'nullable|required_if:shipping.method,delivery|numeric',
-
-            'delivery.pickup_point' => 'required_if:shipping.method,pickup|numeric',
-        ]);
-
-        $shippingAddressData = $request->validate([
-            'shipping.address.first_name' => 'required_if:shipping.method,delivery|string',
-            'shipping.address.last_name' => 'required_if:shipping.method,delivery|string',
-            'shipping.address.street' => 'required_if:shipping.method,delivery|string',
-            'shipping.address.street2' => 'nullable|string',
-            'shipping.address.city' => 'required_if:shipping.method,delivery|string',
-            'shipping.address.country_id' => 'required_if:shipping.method,delivery|exists:countries,country_id',
-            'shipping.address.region' => 'required_if:shipping.method,delivery|exists:regions,region_id',
-            'shipping.address.postcode' => 'required_if:shipping.method,delivery|string',
-            'shipping.address.phone' => 'required_if:shipping.method,delivery|string',
-        ]);
-
-        $billingAddressData = $request->validate([
-            'billing_address.first_name' => 'required_if:shipping.method,delivery|string',
-            'billing_address.last_name' => 'required_if:shipping.method,delivery|string',
-            'billing_address.street' => 'required_if:shipping.method,delivery|string',
-            'billing_address.street2' => 'nullable|string',
-            'billing_address.city' => 'required_if:shipping.method,delivery|string',
-            'billing_address.country_id' => 'required_if:shipping.method,delivery|exists:countries,country_id',
-            'billing_address.region' => 'required_if:shipping.method,delivery|exists:regions,region_id',
-            'billing_address.postcode' => 'required_if:shipping.method,delivery|string',
-            'billing_address.phone' => 'required_if:shipping.method,delivery|string',
-        ]);
-
-        $validatedData['shipping_type'] = $shippingData['shipping']['method'] ?? null;
-        $validatedData['store_pickup_id'] = $shippingData['shipping']['pickup_point']['id'] ?? null;
-        $validatedData['shipping_cost'] = $shippingData['shipping']['cost'] ?? null;
-        $validatedData['delivery_date'] = $shippingData['shipping']['date'] ?? Carbon::today();
-        $validatedData['delivery_slot'] = $shippingData['shipping']['timeSlotLabel'] ?? null;
-        $validatedData['occasion'] = $shippingData['shipping']['occasion'] ?? null;
-        $validatedData['notes'] = $shippingData['shipping']['notes'] ?? null;
-
-        $items = $request->validate([
-            'products' => 'required|array',
+            // items (products)
+            'products' => 'required',
+            'products.*.id' => 'nullable|numeric',
             'products.*.name' => 'required|string',
             'products.*.sku' => 'required|string',
             'products.*.final_price' => 'required|numeric',
@@ -142,38 +95,66 @@ class OrderController extends Controller
             'products.*.discount_type' => 'string|nullable',
             'products.*.discount_amount' => 'numeric|nullable',
             'products.*.notes' => 'string|nullable',
+            // billing
+            'billing_address_id' => 'required_if:method,delivery|exists:customers,id',
+            // delivery
+            'delivery.date' => 'required_if:method,pickup,delivery|date',
+            'delivery.time' => 'nullable|required_if:method,pickup,delivery|string',
+            'delivery.location' => 'nullable|required_if:method,delivery|numeric',
+            'delivery.occasion' => 'nullable|required_if:method,delivery|numeric',
+            'delivery.cost' => 'required_if:method,pickup,delivery|numeric',
+            // delivery address (shipping address)
+            'delivery.address_id' => 'required_if:method,delivery|exists:addresses,id',
+            // pickup point (store_pickup)
+            'delivery.pickup_point_id' => 'required_if:method,pickup|exists:store_pickups,id',
         ]);
 
+        $user = auth()->user();
+        $store = $user->open_register->cash_register->store->id;
+
+        if (isset($validatedData['billing_address_id'])) {
+            $billing_address =  Address::findOrFail($validatedData['billing_address_id']);
+            unset($validatedData['billing_address_id']);
+        }
+
+        if (isset($validatedData['delivery']) && isset($validatedData['delivery']['address_id'])) {
+            $delivery_address =  Address::findOrFail($validatedData['delivery']['address_id']);
+            unset($validatedData['delivery']['address_id']);
+        }
+
+        if (isset($validatedData['delivery']) && isset($validatedData['delivery']['pickup_point_id'])) {
+            $pickup_point =  StorePickup::findOrFail($validatedData['delivery']['pickup_point_id']);
+            unset($validatedData['delivery']['pickup_point_id']);
+        }
+
+        // $validatedData['created_by'] = $user->id;
+        // $validatedData['store_id'] = $store->id;
+
         $has_tax = true;
-        $customer = Customer::find($validatedData['customer_id']);
-        if (!empty($customer)) {
+        if (isset($validatedData['customer_id'])) {
+            $customer = Customer::findOrFail($validatedData['customer_id']);
             $has_tax = $customer->no_tax ? false : true;
         }
 
-        $validatedData = $this->setSubtotal($validatedData, $items['products']);
+        $validatedData['subtotal'] = $this->setSubtotal($validatedData);
         if ($has_tax) {
-            $validatedData = $this->setTax($validatedData, Store::findOrFail($validatedData['store_id']));
+            $validatedData['tax'] = $this->setTax($store);
         } else {
             $validatedData['tax'] = 0;
         }
 
         $order = new Order($validatedData);
 
-        // dirty dirty dirty hacks
-        if (!empty($billingAddressData) && array_key_exists('billing_address', $billingAddressData)) {
-            $order->billing_address = $billingAddressData['billing_address'];
-        }
-
-        if (!empty($shippingAddressData) && array_key_exists('shipping', $shippingAddressData)) {
-            $order->shipping_address = $shippingAddressData['shipping']['address'];
-        }
-
         $products = [];
-        foreach ($items['products'] as $product) {
+        foreach ($validatedData['products'] as $product) {
             array_push($products, $this->parseProduct($product));
         }
 
         $order->items = $products;
+        $order->billing_address = $billing_address ?? null;
+        $order->delivery['address'] = $delivery_address ?? null;
+        $order->delivery['pickup_point'] = $pickup_point ?? null;
+
         $order->save();
 
         ProcessOrder::dispatchNow($order);
@@ -181,27 +162,30 @@ class OrderController extends Controller
         return response($order, 201);
     }
 
-    private function setSubtotal($orderData, $products)
+    private function setSubtotal(array $validatedData)
     {
+        var_dump($validatedData['products']);
+        die;
         $subtotal = 0;
-        foreach ($products as $product) {
+        foreach ($validatedData['products'] as $product) {
             $total = $product['final_price'] * $product['qty'];
+
             if (isset($product['discount_type']) && isset($product['discount_amount'])) {
                 $total = Price::calculateDiscount($total, $product['discount_type'], $product['discount_amount']);
             }
+
             $subtotal += $total;
         }
-        if (isset($orderData['discount_type']) && isset($orderData['discount_amount'])) {
-            $subtotal = Price::calculateDiscount($subtotal, $orderData['discount_type'], $orderData['discount_amount']);
+        if (isset($validatedData['discount_type']) && isset($validatedData['discount_amount'])) {
+            $subtotal = Price::calculateDiscount($subtotal, $validatedData['discount_type'], $validatedData['discount_amount']);
         }
-        $orderData['subtotal'] = $subtotal;
-        return $orderData;
+
+        return $subtotal;
     }
 
-    private function setTax($orderData, Store $store)
+    private function setTax(Store $store)
     {
-        $orderData['tax'] = $store->tax->percentage;
-        return $orderData;
+        return $store->tax->percentage;
     }
 
     private function parseProduct($product)

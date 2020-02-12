@@ -10,9 +10,6 @@ class Order extends Model
     protected $appends = ['total', 'total_without_tax', 'total_paid'];
 
     protected $fillable = [
-        'magento_id',
-        'magento_shipping_address_id',
-        'magento_billing_address_id',
         'customer_id',
         'store_id',
         'created_by',
@@ -27,7 +24,11 @@ class Order extends Model
         'billing_address',
         'delivery',
         'method',
-        'notes'
+        'notes',
+
+        'magento_id',
+        'magento_shipping_address_id',
+        'magento_billing_address_id',
     ];
 
     protected $with = [
@@ -44,10 +45,33 @@ class Order extends Model
         'updated_at' => "datetime:m/d/Y H:i:s"
     ];
 
-    // public function getDeliveryAttribute($value)
-    // {
-    //     return json_decode($value, true);
-    // }
+    public function getDeliveryAddressAttribute()
+    {
+        return $this->delivery['address'];
+    }
+
+    public function setDeliveryAddressAttribute($value)
+    {
+        if (is_array($value)) {
+            $this->attributes['delivery']['address'] = json_encode($value);
+        } else {
+            $this->attributes['delivery']['address'] = $value;
+        }
+    }
+
+    public function getPickupPointAttribute()
+    {
+        return $this->delivery['pickup_point'];
+    }
+
+    public function setPickupPointAttribute($value)
+    {
+        if (is_array($value)) {
+            $this->attributes['delivery']['pickup_point'] = json_encode($value);
+        } else {
+            $this->attributes['delivery']['pickup_point'] = $value;
+        }
+    }
 
     public function setCreatedByAttribute($value)
     {
