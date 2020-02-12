@@ -14,7 +14,7 @@
                     </v-card-text>
                 </v-card>
             </v-col>
-            <v-col cols="12" v-if="customerData.addresses.length > 0">
+            <v-col cols="12" v-if="customerData.addresses">
                 <v-card>
                     <v-toolbar dense color="blue-grey darken-4" dark>
                         <v-toolbar-title>Address Book</v-toolbar-title>
@@ -25,10 +25,10 @@
                             :key="address.id"
                         >
                             {{ address.first_name }} {{ address.last_name }}
-                            <span v-if="address.billing"
+                            <span v-if="address.is_default_billing"
                                 >(Default Billing)</span
                             >
-                            <span v-if="address.shipping"
+                            <span v-if="address.is_default_shipping"
                                 >(Default Shipping)</span
                             >
                         </v-tab>
