@@ -271,6 +271,7 @@ export default {
                 street2: null,
                 city: null,
                 country_id: null,
+                region: null,
                 region_id: null,
                 postcode: null,
                 phone: null,
@@ -308,7 +309,11 @@ export default {
         }),
         submit() {
             this.loading = true;
-
+            if (_.isObject(this.formFields.region_id)) {
+                this.formFields.region = this.formFields.region_id.region_id;
+            } else {
+                this.formFields.region = this.formFields.region_id;
+            }
             let payload = {
                 model: "addresses",
                 data: { ...this.formFields }
