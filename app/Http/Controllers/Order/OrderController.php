@@ -19,7 +19,6 @@ class OrderController extends Controller
         return response(Order::without([
             'items',
             'payments',
-            'store_pickup'
         ])->paginate());
     }
 
@@ -28,77 +27,78 @@ class OrderController extends Controller
         return response($model);
     }
 
+    public function update(Request $request, Order $order)
+    {
+    }
+
     public function create(Request $request)
     {
-        $user = auth()->user();
+        // $user = auth()->user();
 
-        $validatedID = $request->validate([
-            'id' => 'nullable|exists:orders,id'
-        ]);
+        // $validatedID = $request->validate([
+        //     'id' => 'nullable|exists:orders,id'
+        // ]);
 
-        if (!empty($validatedID)) {
-            $validatedData = $request->validate([
-                'status' => 'required|in:pending_payment,paid,complete',
-                'shipping_type' => 'string|nullable',
-                'shipping_cost' => 'numeric|nullable',
-            ]);
-            $order = Order::findOrFail($validatedID['id']);
-            $order->fill($validatedData);
+        // if (!empty($validatedID)) {
+        //     $validatedData = $request->validate([
+        //         'status' => 'required|in:pending_payment,paid,complete',
+        //         'shipping_type' => 'string|nullable',
+        //         'shipping_cost' => 'numeric|nullable',
+        //     ]);
+        //     $order = Order::findOrFail($validatedID['id']);
+        //     $order->fill($validatedData);
 
-            ProcessOrder::dispatchNow($order);
+        //     ProcessOrder::dispatchNow($order);
 
-            if ($validatedData['status'] === 'complete') {
-                foreach ($order->items as $product) {
+        //     if ($validatedData['status'] === 'complete') {
+        //         foreach ($order->items as $product) {
 
-                    if (isset($product['sku'])) {
-                        $code = explode('-', $product['sku']);
-                        if (count($code) > 1 && $code[0] === 'giftCard') {
-                            $giftCard = Giftcard::whereCode($code[1])->first();
+        //             if (isset($product['sku'])) {
+        //                 $code = explode('-', $product['sku']);
+        //                 if (count($code) > 1 && $code[0] === 'giftCard') {
+        //                     $giftCard = Giftcard::whereCode($code[1])->first();
 
-                            if (!$giftCard) {
-                                $giftCard = new Giftcard;
-                                $giftCard->name = $product['name'];
-                                $giftCard->code = $code[1];
-                            }
-                            if (!$giftCard->enabled) {
-                                $giftCard->enabled = true;
-                                $giftCard->amount = $product->final_price;
-                            } else {
-                                $giftCard->amount += $product->final_price;
-                            }
-                            $giftCard->save();
-                        }
-                    }
-                }
-            }
+        //                     if (!$giftCard) {
+        //                         $giftCard = new Giftcard;
+        //                         $giftCard->name = $product['name'];
+        //                         $giftCard->code = $code[1];
+        //                     }
+        //                     if (!$giftCard->enabled) {
+        //                         $giftCard->enabled = true;
+        //                         $giftCard->amount = $product->final_price;
+        //                     } else {
+        //                         $giftCard->amount += $product->final_price;
+        //                     }
+        //                     $giftCard->save();
+        //                 }
+        //             }
+        //         }
+        //     }
 
-            return response($order, 200);
-        }
+        //     return response($order, 200);
+        // }
 
         $validatedData = $request->validate([
             'customer_id' => 'nullable|exists:customers,id',
-            'status' => 'required|in:pending,pending_payment,paid,complete,canceled',
             'discount_type' => 'string|nullable',
             'discount_amount' => 'numeric|nullable',
             'shipping_type' => 'string|nullable',
             'shipping_cost' => 'numeric|nullable',
+            'method' => 'required|in:retail,pickup,delivery',
             'notes' => 'string|nullable',
-            'shipping.occasion' => 'nullable|required_if:shipping.method,delivery|numeric',
         ]);
 
-        $validatedData['store_id'] = $user->open_register->cash_register->store->id;
-        $validatedData['created_by'] = $user->id;
+        // $validatedData['store_id'] = $user->open_register->cash_register->store->id;
+        // $validatedData['created_by'] = $user->id;
 
         $shippingData = $request->validate([
-            'shipping.method' => 'required|in:retail,pickup,delivery',
-            'shipping.notes' => 'nullable|string',
+            'delivery.occasion' => 'nullable|required_if:shipping.method,delivery|numeric',
+            'delivery.cost' => 'required_if:shipping.method,pickup,delivery|numeric',
+            'delivery.date' => 'required_if:shipping.method,pickup,delivery|date',
+            'delivery.timeSlotLabel' => 'nullable|required_if:shipping.method,pickup,delivery|string',
+            'delivery.location' => 'nullable|required_if:shipping.method,delivery|numeric',
 
-            'shipping.cost' => 'required_if:shipping.method,pickup,delivery|numeric',
-            'shipping.date' => 'required_if:shipping.method,pickup,delivery|date',
-            'shipping.timeSlotLabel' => 'nullable|required_if:shipping.method,pickup,delivery|string',
-            'shipping.location' => 'nullable|required_if:shipping.method,delivery|numeric',
-
-            'shipping.pickup_point.id' => 'required_if:shipping.method,pickup|numeric',
+            'delivery.pickup_point' => 'required_if:shipping.method,pickup|numeric',
         ]);
 
         $shippingAddressData = $request->validate([

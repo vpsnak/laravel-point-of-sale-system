@@ -38,14 +38,40 @@ class Order extends Model
     ];
 
     protected $casts = [
+        'delivery' => 'array',
+        'items' => 'array',
         'created_at' => "datetime:m/d/Y H:i:s",
         'updated_at' => "datetime:m/d/Y H:i:s"
     ];
 
-    public function getItemsAttribute($value)
+    // public function getDeliveryAttribute($value)
+    // {
+    //     return json_decode($value, true);
+    // }
+
+    public function setCreatedByAttribute($value)
     {
-        return json_decode($value, true);
+        $this->attributes['created_by'] = $value ?? auth()->user()->id;
     }
+
+    public function setStoreIdAttribute($value)
+    {
+        $this->attributes['store_id'] = $value ?? auth()->user()->open_register->cash_register->store->id;
+    }
+
+    public function setDeliveryAttribute($value)
+    {
+        if (is_array($value)) {
+            $this->attributes['delivery'] = json_encode($value);
+        } else {
+            $this->attributes['delivery'] = $value;
+        }
+    }
+
+    // public function getItemsAttribute($value)
+    // {
+    //     return json_decode($value, true);
+    // }
 
     public function setItemsAttribute($value)
     {
