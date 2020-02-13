@@ -135,7 +135,7 @@ export default {
         setOrderRemaining(state, value) {
             state.order_remaining = value;
         },
-        completeOrderLoading(state, value) {
+        setCompleteOrderLoading(state, value) {
             state.complete_order_loading = value;
         },
         setRefundLoading(state, value) {
@@ -308,7 +308,7 @@ export default {
             return new Promise((resolve, reject) => {
                 axios
                     .post(
-                        `${context.config.base_url}/mail-receipt/${context.state.order.id}`,
+                        `${context.rootState.config.base_url}/mail-receipt/${context.state.order.id}`,
                         payload
                     )
                     .then(response => {
@@ -338,7 +338,7 @@ export default {
             return new Promise((resolve, reject) => {
                 axios
                     .post(
-                        `${context.config.base_url}/guest-email/create`,
+                        `${context.rootState.config.base_url}/guest-email/create`,
                         payload
                     )
                     .then(response => {
@@ -360,7 +360,7 @@ export default {
             return new Promise((resolve, reject) => {
                 axios
                     .get(
-                        `${context.config.base_url}/receipts/create/${payload}`
+                        `${context.rootState.config.base_url}/receipts/create/${payload}`
                     )
                     .then(response => {
                         resolve(response.data);
