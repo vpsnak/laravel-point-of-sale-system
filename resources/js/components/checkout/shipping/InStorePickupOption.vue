@@ -89,10 +89,11 @@
                   :loading="loading"
                   label="Location"
                   :items="store_pickups"
-                  item-text="label"
+                  item-text="name"
                   item-value="id"
                   v-model="storePickup"
-                  prepend-icon="mdi-city"
+                  prepend-icon="mdi-store"
+                  return-object
                   @change="validate"
                 ></v-select>
               </ValidationProvider>
