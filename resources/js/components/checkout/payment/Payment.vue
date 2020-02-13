@@ -100,7 +100,8 @@ export default {
       "setOrderChange",
       "setOrderRemaining",
       "setOrderStatus",
-      "setRefundLoading"
+      "setRefundLoading",
+      "setPaymentRefundedStatus"
     ]),
     ...mapMutations(["setNotification"]),
     ...mapActions(["search", "create", "getAll", "getOne"]),
@@ -172,9 +173,7 @@ export default {
           event.refunded_payment_id
         ]);
 
-        // @TODO set payment to refunded
-        // this.payments[index].refunded = true;
-
+        this.setPaymentRefundedStatus(index);
         this.setPaymentHistory(event.refund);
       }
 

@@ -140,20 +140,26 @@
 </template>
 ​
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex";
 
 export default {
+  props: {
+    loading: Boolean
+  },
+
   mounted() {
     this.getPaymentTypes();
     this.amount = this.remainingAmount;
   },
 
-  beforeDestroy() {
-    this.$off("sendPayment");
+  watch: {
+    remainingAmount(value) {
+      this.amount = value;
+    }
   },
 
-  props: {
-    loading: Boolean
+  beforeDestroy() {
+    this.$off("sendPayment");
   },
 
   data() {
@@ -218,7 +224,7 @@ export default {
       return parseFloat(this.$store.state.cart.customer.house_account_limit);
     },
     remainingAmount() {
-      return this.order_remaining || this.order_total;
+      return this.order_remaining || this.order_total.toFixed(2);
     },
     amount: {
       get() {
@@ -231,6 +237,7 @@ export default {
   },
 
   methods: {
+    ...mapMutations("cart", ["setPaymentLoading"]),
     ...mapActions("cart", ["submitOrder"]),
     ...mapActions(["getAll"]),
 
@@ -301,7 +308,7 @@ export default {
           }
         }
         if (parseFloat(this.amount) > parseFloat(this.remainingAmount)) {
-          this.amount = this.remainingAmount.toFixed(2);
+          this.amount = this.remainingAmount;
         }
       } else {
         if (parseFloat(this.amount) > 9999) {
@@ -320,7 +327,7 @@ export default {
     },
     sendPayment() {
       this.orderLoading = true;
-      this.$store.state.cart.paymentLoading = true;
+      this.setPaymentLoading(true);
 
       if (!this.order_id) {
         this.submitOrder()
