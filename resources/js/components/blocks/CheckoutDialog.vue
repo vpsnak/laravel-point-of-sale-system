@@ -46,7 +46,7 @@
       <v-card-text>
         <v-row dense>
           <v-col :lg="8">
-            <checkoutStepper />
+            <checkoutStepper v-if="checkoutDialog" />
           </v-col>
           <v-col :lg="4">
             <cart
@@ -67,20 +67,6 @@ import { mapMutations, mapActions, mapState } from "vuex";
 export default {
   beforeDestroy() {
     this.$off("close");
-  },
-
-  data() {
-    return {
-      confirmationDialog: {
-        action: "confirmation",
-        title: "Cancel order?",
-        content: "Are you sure you want to <b>cancel</b> the current order?",
-        actions: true,
-        persistent: true,
-        cancelBtnTxt: "No",
-        confirmationBtnTxt: "Yes"
-      }
-    };
   },
 
   computed: {
@@ -143,7 +129,16 @@ export default {
       if (this.order_status === "complete") {
         this.resetState();
       } else if (this.order_id && this.order_status !== "complete") {
-        this.setDialog(this.confirmationDialog);
+        this.setDialog({
+          show: true,
+          action: "confirmation",
+          title: "Cancel order?",
+          content: "Are you sure you want to <b>cancel</b> the current order?",
+          actions: true,
+          persistent: true,
+          cancelBtnTxt: "No",
+          confirmationBtnTxt: "Yes"
+        });
       } else {
         this.state = false;
       }
