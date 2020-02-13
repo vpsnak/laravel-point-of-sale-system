@@ -336,8 +336,8 @@ export default {
                     region: null,
                     postcode: null,
                     phone: null,
-                    shipping: true,
-                    billing: true,
+                    is_default_billing: true,
+                    is_default_shipping: true,
                     location: null,
                     location_name: null
                 }
@@ -424,23 +424,21 @@ export default {
         },
         clear() {
             this.formFields = { ...this.defaultValues };
-            this.formFields.address.first_name = null;
-            this.formFields.address.last_name = null;
-            this.formFields.address.street = null;
-            this.formFields.address.street2 = null;
-            this.formFields.address.city = null;
-            this.formFields.address.country_id = null;
-            this.formFields.address.region = null;
-            this.formFields.address.postcode = null;
-            this.formFields.address.phone = null;
-            this.formFields.address.location = null;
-            this.formFields.address.location_name = null;
+            // this.formFields.address.first_name = null;
+            // this.formFields.address.last_name = null;
+            // this.formFields.address.street = null;
+            // this.formFields.address.street2 = null;
+            // this.formFields.address.city = null;
+            // this.formFields.address.country_id = null;
+            // this.formFields.address.region = null;
+            // this.formFields.address.postcode = null;
+            // this.formFields.address.phone = null;
+            // this.formFields.address.location = null;
+            // this.formFields.address.location_name = null;
         },
         ...mapActions({
             getAll: "getAll",
-            getOne: "getOne",
-            create: "create",
-            delete: "delete"
+            create: "create"
         })
     },
     beforeDestroy() {

@@ -22,8 +22,8 @@ class Address extends BaseModel
         'phone',
         'company',
         'vat_id',
-        'billing',
-        'shipping',
+        'is_default_billing',
+        'is_default_shipping',
         'location',
         'location_name'
     ];
@@ -37,9 +37,28 @@ class Address extends BaseModel
         'magento_id'
     ];
 
-    public function customers()
+    public function setIsDefaultShippingAttribute($value)
     {
-        return $this->belongsTo(Customer::class);
+        if ($customer = $this->customer) {
+            $currentCustomerShipping = $customer->addresses->where('is_default_shipping', 1)->first();
+            if ($currentCustomerShipping && $value) {
+                $currentCustomerShipping->is_default_shipping = false;
+                $currentCustomerShipping->save();
+            }
+        }
+        $this->attributes['is_default_shipping'] = $value;
+    }
+
+    public function setIsDefaultBillingAttribute($value)
+    {
+        if ($customer = $this->customer) {
+            $currentCustomerBilling = $customer->addresses->where('is_default_billing', 1)->first();
+            if ($currentCustomerBilling && $value) {
+                $currentCustomerBilling->is_default_billing = false;
+                $currentCustomerBilling->save();
+            }
+        }
+        $this->attributes['is_default_billing'] = $value;
     }
 
     public function getAddressCountryAttribute()
@@ -53,6 +72,11 @@ class Address extends BaseModel
     public function getAddressRegionAttribute()
     {
         return ($this->region_id ?? $this->region_name) ?? $this->region;
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
     }
 
     public function country()

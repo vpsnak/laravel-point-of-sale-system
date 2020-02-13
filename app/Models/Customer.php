@@ -37,4 +37,14 @@ class Customer extends BaseModel
     {
         return "{$this->first_name} {$this->last_name}";
     }
+
+    public function getDefaultBilling()
+    {
+        return $this->addresses->where('is_default_billing', true)->first();
+    }
+
+    public function getDefaultShipping()
+    {
+        return $this->addresses->where('is_default_shipping', true)->first();
+    }
 }
