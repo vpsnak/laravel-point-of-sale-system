@@ -2,7 +2,7 @@
     <div class="d-flex flex-grow-1" style="height:38vh; overflow-y:auto">
         <v-expansion-panels class="d-block" accordion>
             <v-expansion-panel
-                v-for="(product, index) in products"
+                v-for="(product, index) in cart_products"
                 :key="index"
             >
                 <v-expansion-panel-header class="pa-2" ripple @click.stop>
@@ -41,7 +41,7 @@
                                     :value="parsedPrice(product)"
                                     :hint="
                                         'Original price: $' +
-                                            originalPrice(index)
+                                            original_price(index)
                                     "
                                     dense
                                 ></v-text-field>
@@ -145,10 +145,10 @@
                             <v-tooltip bottom color="red">
                                 <template v-slot:activator="{ on }">
                                     <v-btn
-                                        class="mx-2"
                                         v-if="editable"
+                                        class="mx-2"
                                         icon
-                                        @click.stop="removeItem(product)"
+                                        @click.stop="removeProduct(index)"
                                         color="red"
                                         v-on="on"
                                     >
@@ -198,100 +198,82 @@ export default {
     props: {
         editable: Boolean
     },
-    computed: {
-        ...mapState("cart", ["discountTypes"]),
 
-        products: {
-            get() {
-                if (this.$store.state.cart.order.id) {
-                    return this.$store.state.cart.order.items;
-                } else {
-                    return this.$store.state.cart.products;
-                }
-            },
-            set(value) {
-                if (this.$store.state.cart.order.id) {
-                    this.$store.state.cart.order.items = value;
-                } else {
-                    this.$store.state.cart.products = value;
-                }
-            }
-        }
+    computed: {
+        ...mapState("cart", ["discountTypes", "order", "cart_products"])
     },
+
     methods: {
         ...mapMutations("dialog", ["setDialog"]),
+        ...mapMutations("cart", [
+            "removeProduct",
+            "setCartProductData",
+            "decreaseProductQty",
+            "increaseProductQty"
+        ]),
 
-        cancelEvent(index, event) {
-            if (!this.editPrice(index)) {
-                event.preventDefault();
-            }
-        },
         getSelectedInput(index) {
             return this.$refs[`priceField${index}`][0];
         },
         setPrice(index, price = null, toggleEdit = false) {
             if (!this.getSelectedInput(index).lazyValue) {
-                this.getSelectedInput(index).lazyValue = this.originalPrice(
+                this.getSelectedInput(index).lazyValue = this.original_price(
                     index
                 );
             }
-            if (price) {
-                this.products[index].price.amount = this.products[
-                    index
-                ].final_price = price;
-            } else {
-                this.products[index].price.amount = this.products[
-                    index
-                ].final_price = this.getSelectedInput(index).lazyValue;
-            }
+
+            const new_price = price || this.getSelectedInput(index).lazyValue;
+
+            let payload = {
+                index,
+                data: {
+                    price: { amount: price },
+                    final_price: new_price
+                }
+            };
+
+            this.setCartProductData(payload);
+
             if (toggleEdit) {
                 this.toggleEdit(index);
             }
         },
         revertPrice(index) {
             this.$nextTick(() => {
-                this.setPrice(index, this.originalPrice(index), true);
+                this.setPrice(index, this.original_price(index), true);
 
-                this.getSelectedInput(index).lazyValue = this.originalPrice(
+                this.getSelectedInput(index).lazyValue = this.original_price(
                     index
                 );
 
                 this.getSelectedInput(index).blur();
             });
         },
-        originalPrice(index) {
-            if (_.has(this.products[index], "originalPrice")) {
-                return this.products[index].originalPrice;
+        original_price(index) {
+            if (_.has(this.cart_products[index], "original_price")) {
+                return this.cart_products[index].original_price;
             } else {
-                return this.parsedPrice(this.products[index]);
+                this.parsedPrice(this.cart_products[index]);
             }
         },
         editPrice(index) {
-            if (_.has(this.products[index], "editPrice")) {
-                return this.products[index].editPrice;
-            } else {
-                return false;
-            }
+            return this.cart_products[index].edit_price;
         },
         toggleEdit(index) {
-            if (!_.has(this.products[index], "originalPrice")) {
-                Vue.set(
-                    this.products[index],
-                    "originalPrice",
-                    this.parsedPrice(this.products[index])
-                );
+            let payload = {
+                index
+            };
+
+            if (!_.has(this.cart_products[index], "original_price")) {
+                payload.data = {
+                    original_price: this.parsedPrice(this.cart_products[index])
+                };
+
+                this.setCartProductData(payload);
             }
 
-            Vue.set(
-                this.products[index],
-                "editPrice",
-                !this.products[index].editPrice
-            );
-
             if (this.editPrice(index)) {
-                this.$nextTick(() => {
-                    this.getSelectedInput(index).focus();
-                });
+                this.getSelectedInput(index).focus();
             } else {
                 this.setPrice(index);
             }
@@ -321,14 +303,10 @@ export default {
             }
         },
         decreaseQty(product) {
-            this.$store.commit("cart/decreaseProductQty", product);
+            this.decreaseProductQty(product);
         },
         increaseQty(product) {
-            this.$store.commit("cart/increaseProductQty", product);
-        },
-        removeItem(product) {
-            const index = this.products.indexOf(product);
-            this.products.splice(index, 1);
+            this.increaseProductQty(product);
         }
     }
 };

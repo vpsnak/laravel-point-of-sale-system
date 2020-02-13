@@ -1,85 +1,97 @@
 <template>
-  <div>
-    <payment @payment="payment" />
+    <div>
+        <payment />
 
-    <v-container>
-      <v-row justify="center" align="center">
-        <v-col :lg="6" :md="12" justify="center" align="center">
-          <h3 v-if="change > 0" class="my-3">
-            Change:
-            <span class="amber--text" v-text="'$ ' + change" />
-          </h3>
+        <v-container>
+            <v-row justify="center" align="center">
+                <v-col :lg="6" :md="12" justify="center" align="center">
+                    <h3 v-if="order_change > 0" class="my-3">
+                        Change:
+                        <span class="amber--text" v-text="'$ ' + change" />
+                    </h3>
 
-          <v-btn
-            v-if="order.id && completed && !$store.state.cart.refundLoading"
-            color="primary"
-            @click="complete"
-            :loading="loading"
-            :disabled="loading"
-          >
-            Complete order
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-container>
-  </div>
+                    <v-btn
+                        v-if="order && completed && !refund_loading"
+                        color="primary"
+                        @click="complete"
+                        :loading="loading"
+                        :disabled="loading"
+                    >
+                        Complete order
+                    </v-btn>
+                </v-col>
+            </v-row>
+        </v-container>
+    </div>
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions, mapMutations } from "vuex";
 export default {
-  data() {
-    return {
-      completed: false,
-      change: 0
-    };
-  },
-
-  computed: {
-    ...mapState("cart", ["order"]),
-
-    loading: {
-      get() {
-        return this.$store.state.cart.completeOrderLoading;
-      },
-      set(value) {
-        this.$store.state.cart.completeOrderLoading = value;
-      }
-    }
-  },
-
-  methods: {
-    ...mapActions(["create"]),
-    ...mapActions("cart", ["createReceipt", "completeStep"]),
-
-    payment(payload) {
-      if (payload.order_status === "paid") {
-        this.completed = true;
-      } else {
-        this.completed = false;
-      }
-
-      this.change = payload.change;
+    data() {
+        return {
+            completed: false,
+            change: 0
+        };
     },
-    complete() {
-      this.loading = true;
-      let payload = {
-        model: "orders",
-        data: {
-          id: this.order.id,
-          status: "complete"
-        },
-        mutation: "cart/setOrder"
-      };
 
-      this.create(payload).then(response => {
-        this.completeStep().then(() => {
-          this.createReceipt(this.order.id).then(response => {
-            this.loading = false;
-          });
-        });
-      });
+    watch: {
+        order_status(value) {
+            if (value === "paid") {
+                this.completed = true;
+            } else {
+                this.completed = false;
+            }
+        }
+    },
+
+    computed: {
+        ...mapState("cart", [
+            "order_id",
+            "order_status",
+            "order_change",
+            "refund_loading",
+            "complete_order_loading"
+        ]),
+
+        loading: {
+            get() {
+                return this.complete_order_loading;
+            },
+            set(value) {
+                this.setCompleteOrderLoading(value);
+            }
+        }
+    },
+
+    methods: {
+        ...mapMutations("cart", ["completeOrderLoading"]),
+        ...mapActions(["create"]),
+        ...mapActions("cart", [
+            "createReceipt",
+            "completeStep",
+            "order_status"
+        ]),
+
+        complete() {
+            this.loading = true;
+            let payload = {
+                model: "orders",
+                data: {
+                    id: this.order_id,
+                    status: "complete"
+                },
+                mutation: "cart/setOrder"
+            };
+
+            this.create(payload).then(response => {
+                this.completeStep().then(() => {
+                    this.createReceipt(this.order_id).then(response => {
+                        this.loading = false;
+                    });
+                });
+            });
+        }
     }
-  }
 };
 </script>

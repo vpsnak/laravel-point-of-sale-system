@@ -105,12 +105,15 @@ class OrderController extends Controller
             'delivery.cost' => 'required_if:method,pickup,delivery|numeric',
             // delivery address (shipping address)
             'delivery.address_id' => 'required_if:method,delivery|exists:addresses,id',
-            // pickup point (store_pickup)
-            'delivery.pickup_point_id' => 'required_if:method,pickup|exists:store_pickups,id',
+            // store_pickup
+            'delivery.store_pickup_id' => 'required_if:method,pickup|exists:store_pickups,id',
         ]);
 
         $user = auth()->user();
-        $store = $user->open_register->cash_register->store->id;
+        $store = $user->open_register->cash_register->store;
+
+        $validatedData['created_by'] = $user->id;
+        $validatedData['store_id'] = $store->id;
 
         if (isset($validatedData['billing_address_id'])) {
             $billing_address =  Address::findOrFail($validatedData['billing_address_id']);
@@ -122,13 +125,10 @@ class OrderController extends Controller
             unset($validatedData['delivery']['address_id']);
         }
 
-        if (isset($validatedData['delivery']) && isset($validatedData['delivery']['pickup_point_id'])) {
-            $pickup_point =  StorePickup::findOrFail($validatedData['delivery']['pickup_point_id']);
-            unset($validatedData['delivery']['pickup_point_id']);
+        if (isset($validatedData['delivery']) && isset($validatedData['delivery']['store_pickup_id'])) {
+            $store_pickup =  StorePickup::findOrFail($validatedData['delivery']['store_pickup_id']);
+            unset($validatedData['delivery']['store_pickup_id']);
         }
-
-        // $validatedData['created_by'] = $user->id;
-        // $validatedData['store_id'] = $store->id;
 
         $has_tax = true;
         if (isset($validatedData['customer_id'])) {
@@ -138,7 +138,7 @@ class OrderController extends Controller
 
         $validatedData['subtotal'] = $this->setSubtotal($validatedData);
         if ($has_tax) {
-            $validatedData['tax'] = $this->setTax($store);
+            $validatedData['tax'] = $store->tax->percentage;
         } else {
             $validatedData['tax'] = 0;
         }
@@ -150,22 +150,33 @@ class OrderController extends Controller
             array_push($products, $this->parseProduct($product));
         }
 
+
         $order->items = $products;
         $order->billing_address = $billing_address ?? null;
-        $order->delivery['address'] = $delivery_address ?? null;
-        $order->delivery['pickup_point'] = $pickup_point ?? null;
+
+        $delivery = [];
+        if (isset($delivery_address)) {
+            $delivery['address'] = $delivery_address;
+        } else if (isset($pickup_point)) {
+            $delivery['store_pickup'] = $store_pickup;
+        }
+        $order->delivery = $delivery;
 
         $order->save();
 
         ProcessOrder::dispatchNow($order);
 
-        return response($order, 201);
+        return response([
+            'order_id' => $order->id,
+            'order_status' => 'created',
+            'order_total' => $order->total,
+            'order_total_without_tax' => $order->total_without_tax,
+            'order_total_tax' => $order->total_tax,
+        ], 201);
     }
 
     private function setSubtotal(array $validatedData)
     {
-        var_dump($validatedData['products']);
-        die;
         $subtotal = 0;
         foreach ($validatedData['products'] as $product) {
             $total = $product['final_price'] * $product['qty'];
@@ -181,11 +192,6 @@ class OrderController extends Controller
         }
 
         return $subtotal;
-    }
-
-    private function setTax(Store $store)
-    {
-        return $store->tax->percentage;
     }
 
     private function parseProduct($product)

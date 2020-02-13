@@ -10,7 +10,7 @@
                         :complete="checkoutStep.completed"
                     >
                         {{ checkoutStep.name }}
-                        <v-divider></v-divider>
+                        <v-divider />
                     </v-stepper-step>
                 </v-stepper-header>
                 <v-stepper-items>
@@ -38,7 +38,7 @@
 
                     <v-btn
                         @click="previousStep()"
-                        v-show="!order.id || currentStep === 1"
+                        v-show="!order || currentStep === 1"
                         text
                         color="deep-orange"
                     >
@@ -48,7 +48,7 @@
                         Back
                     </v-btn>
 
-                    <v-spacer></v-spacer>
+                    <v-spacer />
 
                     <v-btn
                         @click="completeStep()"
@@ -74,8 +74,7 @@
 import { mapState, mapMutations, mapActions } from "vuex";
 export default {
     computed: {
-        ...mapState("cart", ["currentCheckoutStep"]),
-        ...mapState("cart", ["isValid", "order"]),
+        ...mapState("cart", ["currentCheckoutStep", "isValid", "order"]),
 
         disableNext() {
             if (this.currentStep === 1) {

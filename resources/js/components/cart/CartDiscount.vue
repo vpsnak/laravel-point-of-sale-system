@@ -11,10 +11,19 @@
                     item-text="label"
                     item-value="value"
                 ></v-select>
-                <v-text-field v-else-if="!editable" :value="discountType" label="Discount" disabled></v-text-field>
+                <v-text-field
+                    v-else-if="!editable"
+                    :value="discountType"
+                    label="Discount"
+                    disabled
+                ></v-text-field>
             </v-col>
 
-            <v-col cols="6" class="pa-0 pl-2" v-if="discountType && discountType !== 'None'">
+            <v-col
+                cols="6"
+                class="pa-0 pl-2"
+                v-if="discountType && discountType !== 'None'"
+            >
                 <ValidationProvider
                     v-slot="{ valid }"
                     :rules="`between:${0},${max}`"
@@ -40,7 +49,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 import { mapGetters } from "vuex";
 
 export default {
@@ -55,6 +64,11 @@ export default {
         }
     },
     methods: {
+        ...mapMutations("cart", [
+            "setCartDiscountType",
+            "setCartDiscountAmount"
+        ]),
+
         validate() {
             this.setDiscount(this.discountAmount);
             this.$store.commit("cart/isValidDiscount");
@@ -82,55 +96,33 @@ export default {
         },
         setDiscount(value) {
             if (this.$props.product_index === -1) {
-                this.order.discount_amount = value;
+                this.setCartDiscountAmount(value);
 
                 this.$refs.checkoutObs.validate().then(result => {
-                    this.order.discount_error = !result;
-                    return;
+                    this.discount_error = !result;
                 });
             } else {
                 Vue.set(this.product, "discount_amount", value);
 
                 this.$refs.checkoutObs.validate().then(result => {
                     Vue.set(this.product, "discount_error", !result);
-                    return;
                 });
             }
         }
     },
     computed: {
-        ...mapState("cart", ["discountTypes"]),
-        order: {
-            get() {
-                if (this.$store.state.cart.order.id) {
-                    return this.$store.state.cart.order;
-                } else {
-                    return this.$store.state.cart;
-                }
-            },
-            set(value) {
-                if (this.$store.state.cart.order.id) {
-                    this.$store.commit("cart/setOrder", value);
-                } else {
-                    this.$store.state.cart = value;
-                }
-            }
-        },
-        product: {
-            get() {
-                if (this.order.items) {
-                    return this.order.items[this.$props.product_index];
-                } else {
-                    return this.order.products[this.$props.product_index];
-                }
-            },
-            set(value) {
-                if (this.order.items) {
-                    this.order.items[this.$props.product_index] = value;
-                } else {
-                    this.order.products[this.$props.product_index] = value;
-                }
-            }
+        ...mapState("cart", [
+            "order_total",
+            "discountTypes",
+            "order_id",
+            "cart_products",
+            "discount_type",
+            "discount_amount",
+            "discount_error"
+        ]),
+
+        product() {
+            return this.cart_products[this.$props.product_index];
         },
         max() {
             switch (this.discountType) {
@@ -138,8 +130,8 @@ export default {
                 case "Flat":
                     if (this.$props.product_index === -1) {
                         let max = (
-                            parseFloat(this.order.cart_price) +
-                            parseFloat(this.order.discount_amount)
+                            parseFloat(this.order_total) +
+                            parseFloat(this.discount_amount)
                         ).toFixed(2);
 
                         return parseFloat(max - 0.01);
@@ -156,14 +148,14 @@ export default {
         discountType: {
             get() {
                 if (this.$props.product_index === -1) {
-                    return this.order.discount_type;
+                    return this.discount_type;
                 } else {
                     return this.product.discount_type;
                 }
             },
             set(value) {
                 if (this.$props.product_index === -1) {
-                    this.order.discount_type = value;
+                    this.setCartDiscountType(value);
                 } else {
                     Vue.set(this.product, "discount_type", value);
                 }
@@ -174,7 +166,7 @@ export default {
         discountAmount: {
             get() {
                 if (this.$props.product_index === -1) {
-                    return this.order.discount_amount;
+                    return this.discount_amount;
                 } else {
                     return this.product.discount_amount;
                 }

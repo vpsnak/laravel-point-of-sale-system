@@ -12,7 +12,7 @@
             dense
             height="15vh"
             :headers="headers"
-            :items="order.payments"
+            :items="payments"
             class="elevation-1"
             disable-pagination
             disable-filtering
@@ -41,9 +41,9 @@
                                     paymentHistoryLoading
                             "
                         >
-                            <v-icon v-if="item.payment_type.type === 'cash'"
-                                >mdi-cash-refund</v-icon
-                            >
+                            <v-icon v-if="item.payment_type.type === 'cash'">
+                                mdi-cash-refund
+                            </v-icon>
                             <v-icon v-else>mdi-credit-card-refund</v-icon>
                         </v-btn>
                     </template>
@@ -59,6 +59,11 @@ import { mapActions, mapState, mapMutations } from "vuex";
 import { EventBus } from "../../../plugins/event-bus";
 
 export default {
+    props: {
+        editOrder: Boolean,
+        loading: Boolean
+    },
+
     mounted() {
         if (!this.$props.editOrder) {
             this.headers.push({
@@ -77,11 +82,6 @@ export default {
     beforeDestroy() {
         this.$off("refund");
         EventBus.$off();
-    },
-
-    props: {
-        editOrder: Boolean,
-        loading: Boolean
     },
 
     data() {
@@ -123,21 +123,21 @@ export default {
         };
     },
     computed: {
-        ...mapState("cart", ["order"]),
+        ...mapState("cart", ["order", "refund_loading", "payments"]),
 
         refundLoading: {
             get() {
-                return this.$store.state.cart.refundLoading;
+                return this.refund_loading;
             },
             set(value) {
-                this.$store.state.cart.refundLoading = value;
+                this.setRefundLoading(value);
             }
         }
     },
     methods: {
-        ...mapActions(["search", "delete"]),
         ...mapMutations("dialog", ["setDialog"]),
-        ...mapActions("cart", ["setPaymentHistory"]),
+        ...mapActions(["search", "delete"]),
+        ...mapActions("cart", ["setPaymentHistory", "setRefundLoading"]),
 
         parseStatus(status) {
             return _.upperFirst(status);
@@ -167,7 +167,7 @@ export default {
                 })
                 .catch(error => {
                     if (error.response.data.refund) {
-                        this.order.payments = error.response.data.refund;
+                        this.payments = error.response.data.refund;
                     }
 
                     this.$emit("refund", error.response.data);

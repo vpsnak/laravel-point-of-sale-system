@@ -2,11 +2,12 @@ export default {
     namespaced: true,
 
     state: {
+        tax_percentage: 0,
         checkoutDialog: false,
-        retail: true,
-        refundLoading: false,
+        refund_loading: false,
         paymentLoading: false,
-        completeOrderLoading: false,
+        complete_order_loading: false,
+        payments: [],
 
         isValid: false,
         isValidCheckout: false,
@@ -85,68 +86,87 @@ export default {
         currentCheckoutStep: 2,
 
         customer: null,
-        products: [],
-        cart_price: 0,
+        method: "retail",
+        shipping_cost: null,
+        cart_products: [],
 
         discount_type: "",
         discount_amount: 0,
 
-        shipping: {
-            pickup_point: undefined,
+        delivery: {
+            store_pickup_id: undefined,
             address: undefined,
-            notes: "",
-            method: "retail",
             date: undefined,
-            timeSlotLabel: null,
-            cost: 0,
+            time: null,
             location: null,
             occasion: 9
         },
 
         billing_address: undefined,
 
-        order: {
-            id: null,
-            customer_id: null,
-            status: null,
-            discount_type: null,
-            discount_amount: null,
-            tax: null,
-            subtotal: null,
-            change: null,
-            notes: null,
-            shipping_type: null,
-            shipping_cost: null,
-            shipping_address: null,
-            billing_address: null,
-            store_pickup_id: null,
-            delivery_date: null,
-            delivery_slot: null,
-            occasion: null,
-            store_id: {},
-            created_by: {},
-            created_at: null,
-            updated_at: null,
-            total: null,
-            total_without_tax: null,
-            total_paid: null,
-            items: [],
-            payments: [],
-            customer: {},
-            shipping_address: null,
-            store_pickup: null
-        }
+        order_id: null,
+        order_status: null,
+        order_total: 0,
+        order_total_without_tax: null,
+        order_total_tax: null,
+        order_change: null,
+        order_remaining: null
     },
 
     mutations: {
+        setOrderId(state, value) {
+            state.order_id = value;
+        },
+        setOrderStatus(state, value) {
+            state.order_status = value;
+        },
+        setOrderTotal(state, value) {
+            state.order_total = value;
+        },
+        setOrderTotalWithoutTax(state, value) {
+            state.order_total_without_tax = value;
+        },
+        setOrderTotalTax(state, value) {
+            state.order_total_tax = value;
+        },
+        setOrderChange(state, value) {
+            state.order_change = value;
+        },
+        setOrderRemaining(state, value) {
+            state.order_remaining = value;
+        },
+        completeOrderLoading(state, value) {
+            state.complete_order_loading = value;
+        },
+        setRefundLoading(state, value) {
+            state.refund_loading = value;
+        },
+        setIsValidCheckout(state, value) {
+            state.isValidCheckout = value;
+        },
+        setTaxPercentage(state, value) {
+            state.tax_percentage = value;
+        },
+        setCartDiscountType(state, value) {
+            state.discount_type = value;
+        },
+        setCartDiscountAmount(state, value) {
+            state.discount_amount = value;
+        },
+        setMethod(state, value) {
+            state.method = value;
+        },
+        setMethodStep(state, value) {
+            state.checkoutSteps[0] = { ...state.checkoutSteps[0], value };
+        },
         setCheckoutDialog(state, value) {
             state.checkoutDialog = value;
         },
         setPaymentHistory(state, value) {
             if (Array.isArray(value)) {
-                state.order.payments = value;
+                state.payments = value;
             } else {
-                state.order.payments.push(value);
+                state.payments.push(value);
             }
         },
         isValidDiscount(state) {
@@ -156,7 +176,7 @@ export default {
                 result = false;
             }
 
-            state.products.forEach(product => {
+            state.cart_products.forEach(product => {
                 if (product.discount_error) {
                     result = false;
                 }
@@ -165,52 +185,54 @@ export default {
             state.isValidCheckout = result;
         },
         setShippingCost(state, value) {
-            state.shipping.cost = value;
+            state.delivery_cost = value;
         },
-        toggleRetail(state, retail) {
-            if (retail) {
-                state.retail = true;
-                state.checkoutSteps[0].completed = true;
-                state.currentCheckoutStep = 2;
+        addProduct(state, newProduct) {
+            let index = _.findIndex(state.cart_products, product => {
+                return product.id === newProduct.id;
+            });
+
+            if (index !== -1) {
+                state.cart_products[index].qty++;
             } else {
-                state.retail = false;
-                state.checkoutSteps[0].completed = false;
-                state.currentCheckoutStep = 1;
+                let clonedProduct = _.cloneDeep(newProduct);
+                Vue.set(clonedProduct, "qty", 1);
+
+                state.cart_products.push(clonedProduct);
             }
         },
-        addProduct(state, product) {
-            let index = _.findIndex(state.products, productState => {
-                return productState.id === product.id;
+        removeProduct(state, index) {
+            state.cart_products.splice(index, 1);
+        },
+        increaseProductQty(state, target_product) {
+            let index = _.findIndex(state.cart_products, product => {
+                return product.id === target_product.id;
             });
 
             if (index != -1) {
-                state.products[index].qty++;
-            } else {
-                Vue.set(product, "qty", 1);
-                state.products.push(_.cloneDeep(product));
+                state.cart_products[index].qty++;
             }
         },
-        increaseProductQty(state, product) {
-            let index = _.findIndex(state.products, productState => {
-                return productState.id === product.id;
+        decreaseProductQty(state, target_product) {
+            let index = _.findIndex(state.cart_products, product => {
+                return product.id === target_product.id;
             });
 
-            if (index != -1) {
-                state.products[index].qty++;
+            if (index != -1 && state.cart_products[index].qty > 1) {
+                state.cart_products[index].qty--;
             }
         },
-        decreaseProductQty(state, product) {
-            let index = _.findIndex(state.products, productState => {
-                return productState.id === product.id;
-            });
+        setCartProductData(state, payload) {
+            const newData = {
+                ...state.cart_products[payload.index],
+                ...payload.data
+            };
 
-            if (index != -1 && state.products[index].qty > 1) {
-                state.products[index].qty--;
-            }
+            state.cart_products[payload.index] = newData;
         },
-        setCustomer(state, customer) {
-            if (_.isObjectLike(customer)) {
-                state.customer = customer;
+        setCustomer(state, value) {
+            if (_.isObjectLike(value)) {
+                state.customer = value;
             } else {
                 state.customer = null;
             }
@@ -227,53 +249,20 @@ export default {
                 state.currentCheckoutStep--;
             }
         },
-        setOrder(state, order) {
-            state.order = order;
-        },
-        setCartPrice(state, cartPrice) {
-            state.cart_price = cartPrice;
-        },
         resetState(state) {
+            state.order_id = null;
+            state.order_status = null;
+            state.order_total = null;
+            state.order_total_without_tax = null;
+            state.order_total_tax = null;
+
             state.checkoutDialog = false;
             state.paymentLoading = false;
             state.customer = null;
 
-            state.products = [];
+            state.cart_products = [];
             state.discount_type = "";
             state.discount_amount = 0;
-            state.order = {
-                id: null,
-                customer_id: null,
-                status: null,
-                discount_type: null,
-                discount_amount: null,
-                tax: null,
-                subtotal: null,
-                change: null,
-                notes: null,
-                shipping_type: null,
-                shipping_cost: null,
-                shipping_address: null,
-                billing_address: null,
-                store_pickup_id: null,
-                delivery_date: null,
-                delivery_slot: null,
-                occasion: null,
-                store_id: {},
-                created_by: {},
-                created_at: null,
-                updated_at: null,
-                total: null,
-                total_without_tax: null,
-                total_paid: null,
-                items: [],
-                payments: [],
-                customer: {},
-                shipping_address: null,
-                store_pickup: null
-            };
-
-            state.total_price = 0;
 
             state.checkoutSteps[0].name = "Cash & Carry";
             state.checkoutSteps[0].icon = "mdi-cart-arrow-right";
@@ -283,31 +272,27 @@ export default {
                 checkoutStep.completed = false;
             });
 
-            state.shipping = {
-                address: undefined,
-                method: "retail",
-                date: undefined,
-                timeSlotLabel: null,
-                cost: 0,
+            state.delivery = {
+                address_id: null,
+                date: null,
+                time: null,
                 location: null,
-                occasion: 9
+                occasion: 9,
+                pickup_point_id: null
             };
-            state.billing_address = undefined;
-            state.completeOrderLoading = false;
+            state.billing_address = null;
+            state.complete_order_loading = false;
         },
         resetShipping(state) {
-            let notes = state.shipping.notes;
-            state.shipping = {
-                notes: notes,
-                address: undefined,
-                method: "retail",
-                date: undefined,
-                timeSlotLabel: null,
-                cost: 0,
+            state.delivery = {
+                address_id: null,
+                date: null,
+                time: null,
                 location: null,
-                occasion: 9
+                occasion: 9,
+                pickup_point_id: null
             };
-            state.billing_address = undefined;
+            state.billing_address = null;
 
             state.currentCheckoutStep = 1;
             state.checkoutSteps.forEach(checkoutStep => {
@@ -323,7 +308,7 @@ export default {
             return new Promise((resolve, reject) => {
                 axios
                     .post(
-                        `${context.rootState.baseUrl}mail-receipt/${context.state.order.id}`,
+                        `${context.config.base_url}/mail-receipt/${context.state.order.id}`,
                         payload
                     )
                     .then(response => {
@@ -407,22 +392,40 @@ export default {
                 let payload = {
                     model: "orders",
                     data: {
+                        products: context.state.cart_products,
+                        method: context.state.method,
+                        discount_type: context.state.discount_type,
+                        discount_amount: context.state.discount_amount,
                         customer_id: context.state.customer
                             ? context.state.customer.id
                             : "",
-                        status: "pending",
-                        discount_type: context.state.discount_type,
-                        discount_amount: context.state.discount_amount,
-                        products: context.state.products,
-                        shipping: context.state.shipping,
-                        billing_address: context.state.billing_address
+                        billing_address: context.state.billing_address,
+                        notes: context.state.notes
                     }
                 };
+
+                if (context.state.method !== "retail") {
+                    payload.delivery = context.state.delivery;
+                }
+
+                if (context.state.method === "delivery") {
+                    payload.shipping_cost = context.state.shipping_cost;
+                }
 
                 context
                     .dispatch("create", payload, { root: true })
                     .then(response => {
-                        context.commit("setOrder", response);
+                        context.commit("setOrderId", response.order_id);
+                        context.commit("setOrderStatus", response.order_status);
+                        context.commit("setOrderTotal", response.order_total);
+                        context.commit(
+                            "setOrderTotalWithoutTax",
+                            response.order_total_without_tax
+                        );
+                        context.commit(
+                            "setOrderTotalTax",
+                            response.order_total_tax
+                        );
                         resolve(response);
                     })
                     .catch(error => {

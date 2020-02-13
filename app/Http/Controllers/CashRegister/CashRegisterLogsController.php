@@ -10,8 +10,6 @@ use Illuminate\Support\Carbon;
 
 class CashRegisterLogsController extends BaseController
 {
-    protected $model = CashRegisterLogs::class;
-
     public function create(Request $request)
     {
         $validatedData = $request->validate([
@@ -31,9 +29,9 @@ class CashRegisterLogsController extends BaseController
         ]);
 
         if (!empty($validatedID)) {
-            return response($this->model::updateData($validatedID, $validatedData), 200);
+            return response(CashRegisterLogs::updateData($validatedID, $validatedData));
         } else {
-            return response($this->model::store($validatedData), 201);
+            return response(CashRegisterLogs::store($validatedData), 201);
         }
     }
 
@@ -65,7 +63,7 @@ class CashRegisterLogsController extends BaseController
             $user->open_register->user_id = null;
             $user->open_register->save();
 
-            return response(['info' => ["Success!"]], 200);
+            return response(['info' => ["Success!"]]);
         } else {
             return response(['errors' => ["{$user->name} wasn't assigned to any cash register"]], 422);
         }
@@ -77,9 +75,11 @@ class CashRegisterLogsController extends BaseController
 
         if ($user->open_register) {
             return response([
+                'store_name' => $user->open_register->cash_register->store->name,
+                'tax_percentage' => $user->open_register->cash_register->store->tax->percentage,
                 'cashRegister' => $user->open_register,
                 'info' => ["Your open session with cash register: <b>{$user->open_register->cash_register->name}</b> has been restored"]
-            ], 200);
+            ]);
         }
     }
 
@@ -103,20 +103,21 @@ class CashRegisterLogsController extends BaseController
         $cash_register = CashRegister::getOne($validatedData['cash_register_id']);
         if ($cash_register->is_open) {
             $response = $this->handleOpenRegister($cash_register->getOpenLog());
-            return response($response);
         } else {
             $validatedData['user_id'] = $user->id;
             $validatedData['opened_by'] = $user->id;
             $validatedData['status'] = 1;
             $validatedData['opening_time'] = Carbon::now();
-
-            $log = $this->model::store($validatedData);
-
-            return response([
+            $response = [
                 'info' => ['Your session with cash register is active'],
-                'cashRegister' => $this->model::getOne($log->id)
-            ], 201);
+                'cashRegister' => CashRegisterLogs::create($validatedData)
+            ];
         }
+
+        $response['store_name'] = $response['cashRegister']->cash_register->store->name;
+        $response['tax_percentage'] = $response['cashRegister']->cash_register->store->tax->percentage;
+
+        return response($response, 201);
     }
 
     private function handleOpenRegister(CashRegisterLogs $cash_register_log)

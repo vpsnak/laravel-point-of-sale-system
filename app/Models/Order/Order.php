@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $appends = ['total', 'total_without_tax', 'total_paid'];
+    protected $appends = ['total', 'total_without_tax', 'total_paid', 'total_tax'];
 
     protected $fillable = [
         'customer_id',
@@ -59,28 +59,18 @@ class Order extends Model
         }
     }
 
-    public function getPickupPointAttribute()
+    public function getStorePickupAttribute()
     {
-        return $this->delivery['pickup_point'];
+        return $this->delivery['store_pickup'];
     }
 
     public function setPickupPointAttribute($value)
     {
         if (is_array($value)) {
-            $this->attributes['delivery']['pickup_point'] = json_encode($value);
+            $this->attributes['delivery']['store_pickup'] = json_encode($value);
         } else {
-            $this->attributes['delivery']['pickup_point'] = $value;
+            $this->attributes['delivery']['store_pickup'] = $value;
         }
-    }
-
-    public function setCreatedByAttribute($value)
-    {
-        $this->attributes['created_by'] = $value ?? auth()->user()->id;
-    }
-
-    public function setStoreIdAttribute($value)
-    {
-        $this->attributes['store_id'] = $value ?? auth()->user()->open_register->cash_register->store->id;
     }
 
     public function setDeliveryAttribute($value)
@@ -153,7 +143,7 @@ class Order extends Model
         $total = Price::calculateDiscount($total, $this->discount_type, $this->discount_amount);
         $total += $this->shipping_cost;
 
-        return $total;
+        return round($total, 2);
     }
 
     public function getTotalPaidAttribute()
@@ -164,7 +154,12 @@ class Order extends Model
                 $total_paid += $payment->amount;
             }
         };
-        return $total_paid + $this->change;
+        return round($total_paid + $this->change, 2);
+    }
+
+    public function getTotalTaxAttribute()
+    {
+        return round($this->total - $this->total_without_tax, 2);
     }
 
     public function payments()

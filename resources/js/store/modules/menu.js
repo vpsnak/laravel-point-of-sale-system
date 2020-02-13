@@ -1,11 +1,16 @@
 const state = {
     visibility: true,
 
+    store_name: "",
+
     top_menu: [],
     side_menu: []
 };
 
 const mutations = {
+    setStoreName(state, value) {
+        state.store_name = value;
+    },
     setVisibility(state, value) {
         state.visibility = value;
     },

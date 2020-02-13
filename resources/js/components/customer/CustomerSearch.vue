@@ -86,7 +86,7 @@ import { EventBus } from "../../plugins/event-bus";
 
 export default {
     mounted() {
-        if (this.order.id) {
+        if (this.order) {
             this.cartCustomer = this.order.customer;
         }
         EventBus.$on("customer-search", event => {
@@ -131,7 +131,7 @@ export default {
                 return this.customer;
             },
             set(value) {
-                if (!this.order.id) {
+                if (!this.order) {
                     if (value !== this.cartCustomer) {
                         this.resetShipping();
                     }
