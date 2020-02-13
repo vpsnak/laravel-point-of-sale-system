@@ -228,13 +228,15 @@ export default {
       return parseFloat(this.customer.house_account_limit);
     },
     remainingAmount() {
-      return this.order_remaining || this.toFixed(this.order_total, 2);
+      // return this.order_remaining || this.toFixed(this.order_total, 2);
+      return this.order_remaining || this.order_total.toFixed(2);
     },
     amount: {
       get() {
         return this.paymentAmount;
       },
       set(value) {
+        // this.paymentAmount = this.toFixed(value, 2);
         this.paymentAmount = value;
       }
     }
@@ -245,10 +247,10 @@ export default {
     ...mapActions("cart", ["submitOrder"]),
     ...mapActions(["getAll"]),
 
-    toFixed(num, fixed) {
-      var re = new RegExp("^-?\\d+(?:.\\d{0," + (fixed || -1) + "})?");
-      return num.toString().match(re)[0];
-    },
+    // toFixed(num, fixed) {
+    //   var re = new RegExp("^-?\\d+(?:.\\d{0," + (fixed || -1) + "})?");
+    //   return num.toString().match(re)[0];
+    // },
 
     getPaymentTypes() {
       this.getAll({ model: "payment-types" }).then(response => {

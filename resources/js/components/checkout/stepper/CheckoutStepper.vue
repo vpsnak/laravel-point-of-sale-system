@@ -19,7 +19,7 @@
             :key="checkoutStep.id"
             :step="checkoutStep.id"
           >
-            <v-col align="center" justify="center">
+            <v-col align="center">
               <v-icon :color="checkoutStep.color">
                 {{ checkoutStep.icon }}
               </v-icon>
@@ -38,7 +38,7 @@
 
           <v-btn
             @click="previousStep()"
-            v-show="!order_id && currentStep === 1"
+            v-show="!order_id && currentCheckoutStep === 2"
             text
             color="deep-orange"
           >
@@ -55,7 +55,7 @@
             :disabled="disableNext"
             color="green"
             text
-            v-show="currentStep === 1 ? true : false"
+            v-show="currentCheckoutStep === 1 ? true : false"
           >
             Next
             <v-icon large>
@@ -74,24 +74,17 @@
 import { mapState, mapMutations, mapActions } from "vuex";
 export default {
   computed: {
-    ...mapState("cart", ["currentCheckoutStep", "isValid", "order_id"]),
+    ...mapState("cart", [
+      "currentCheckoutStep",
+      "isValid",
+      "order_id",
+      "checkoutSteps"
+    ]),
 
     disableNext() {
       if (this.currentStep === 1) {
         return !this.isValid;
       }
-    },
-
-    currentStep: {
-      get() {
-        return this.currentCheckoutStep;
-      },
-      set(value) {
-        currentCheckoutStep;
-      }
-    },
-    checkoutSteps() {
-      return this.$store.state.cart.checkoutSteps;
     }
   },
   methods: {

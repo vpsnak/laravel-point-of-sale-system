@@ -19,7 +19,7 @@
       <span>$ {{ shippingCost.toFixed(2) }}</span>
     </div>
 
-    <v-divider />
+    <v-divider v-if="shippingCost" />
 
     <div class="d-flex justify-space-between pa-2 bb-1">
       <span>Tax</span>
@@ -57,7 +57,7 @@ export default {
 
     shippingCost() {
       if (this.shipping_cost) {
-        return this.shipping_cost;
+        return parseFloat(this.shipping_cost);
       } else {
         return 0;
       }

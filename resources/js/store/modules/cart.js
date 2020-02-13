@@ -110,10 +110,32 @@ export default {
     order_total_without_tax: 0,
     order_total_tax: 0,
     order_change: 0,
-    order_remaining: 0
+    order_remaining: 0,
+    order_notes: ""
   },
 
   mutations: {
+    setOrderNotes(state, value) {
+      state.order_notes = value;
+    },
+    setDeliveryStorePickupId(state, value) {
+      state.delivery.store_pickup_id = value;
+    },
+    setDeliveryAddress(state, value) {
+      state.delivery.address = value;
+    },
+    setDeliveryDate(state, value) {
+      state.delivery.date = value;
+    },
+    setDeliveryTime(state, value) {
+      state.delivery.time = value;
+    },
+    setDeliveryLocation(state, value) {
+      state.delivery.location = value;
+    },
+    setDeliveryOccasion(state, value) {
+      state.delivery.occasion = value;
+    },
     setOrderId(state, value) {
       state.order_id = value;
     },
@@ -160,7 +182,9 @@ export default {
       state.method = value;
     },
     setMethodStep(state, value) {
-      state.checkoutSteps[0] = { ...state.checkoutSteps[0], value };
+      state.checkoutSteps[0].name = value.name;
+      state.checkoutSteps[0].icon = value.icon;
+      state.checkoutSteps[0].color = value.color;
     },
     setCheckoutDialog(state, value) {
       state.checkoutDialog = value;
@@ -194,7 +218,7 @@ export default {
       state.isValidCheckout = result;
     },
     setShippingCost(state, value) {
-      state.delivery_cost = value;
+      state.shipping_cost = value;
     },
     addProduct(state, newProduct) {
       let index = _.findIndex(state.cart_products, product => {
@@ -266,6 +290,7 @@ export default {
       state.order_total_tax = 0;
       state.order_remaining = 0;
       state.order_change = 0;
+      state.order_notes = "";
 
       state.payments = [];
 
@@ -297,6 +322,7 @@ export default {
       state.complete_order_loading = false;
     },
     resetShipping(state) {
+      state.method = "retail";
       state.delivery = {
         address_id: null,
         date: null,
@@ -413,7 +439,7 @@ export default {
               ? context.state.customer.id
               : "",
             billing_address: context.state.billing_address,
-            notes: context.state.notes
+            notes: context.state.order_notes
           }
         };
 
