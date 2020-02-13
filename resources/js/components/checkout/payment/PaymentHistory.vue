@@ -73,7 +73,6 @@ export default {
   },
 
   beforeDestroy() {
-    this.$off("refund");
     EventBus.$off();
   },
 
@@ -148,7 +147,7 @@ export default {
       }
     },
     refund() {
-      this.refundLoading = true;
+      this.setRefundLoading(true);
       let payload = {
         model: "payments",
         id: this.selected_payment.id
@@ -156,12 +155,34 @@ export default {
 
       this.delete(payload)
         .then(response => {
-          this.$emit("refund", response);
+          if (response.refunded_payment_id) {
+            const index = _.findIndex(this.payments, [
+              "id",
+              response.refunded_payment_id
+            ]);
+
+            this.setPaymentRefundedStatus(index);
+            this.setPaymentHistory(response.refund);
+          }
+
+          this.setOrderChange(response.change);
+          this.setOrderRemaining(response.remaining);
+          this.setOrderStatus(response.order_status);
+
+          const notification = {
+            msg: response.msg,
+            type: response.status
+          };
+
+          this.setRefundLoading(false);
+          this.setNotification(notification);
         })
         .catch(error => {
           if (_.has(error, "response.data.refund")) {
             this.payments = error.response.data.refund;
             this.$emit("refund", error.response.data);
+          } else {
+            console.error(error);
           }
         });
     },

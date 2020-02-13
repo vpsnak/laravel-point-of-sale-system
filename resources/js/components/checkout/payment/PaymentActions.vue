@@ -180,7 +180,12 @@ export default {
   },
 
   computed: {
-    ...mapState("cart", ["order_remaining", "order_id", "order_total"]),
+    ...mapState("cart", [
+      "order_remaining",
+      "order_id",
+      "order_total",
+      "customer"
+    ]),
 
     getIcon() {
       return _.find(this.paymentTypes, ["type", this.paymentType]).icon;
@@ -202,29 +207,28 @@ export default {
     },
     houseAccountNumber() {
       if (this.houseAccount) {
-        return this.$store.state.cart.customer.house_account_number;
+        return this.customer.house_account_number;
       } else {
         return false;
       }
     },
     houseAccount() {
-      if (this.$store.state.cart.customer) {
-        if (
-          this.$store.state.cart.customer.house_account_status &&
-          this.$store.state.cart.customer.house_account_number &&
-          this.$store.state.cart.customer.house_account_limit > 0
-        ) {
-          return true;
-        }
+      if (
+        this.customer &&
+        this.customer.house_account_status &&
+        this.customer.house_account_number &&
+        this.customer.house_account_limit > 0
+      ) {
+        return true;
       } else {
         return false;
       }
     },
     houseAccountLimit() {
-      return parseFloat(this.$store.state.cart.customer.house_account_limit);
+      return parseFloat(this.customer.house_account_limit);
     },
     remainingAmount() {
-      return this.order_remaining || this.order_total.toFixed(2);
+      return this.order_remaining || this.toFixed(this.order_total, 2);
     },
     amount: {
       get() {
@@ -240,6 +244,11 @@ export default {
     ...mapMutations("cart", ["setPaymentLoading"]),
     ...mapActions("cart", ["submitOrder"]),
     ...mapActions(["getAll"]),
+
+    toFixed(num, fixed) {
+      var re = new RegExp("^-?\\d+(?:.\\d{0," + (fixed || -1) + "})?");
+      return num.toString().match(re)[0];
+    },
 
     getPaymentTypes() {
       this.getAll({ model: "payment-types" }).then(response => {
@@ -295,6 +304,7 @@ export default {
 
       this.$emit("sendPayment", payload);
       this.limits();
+      this.orderLoading = false;
     },
     limits() {
       if (this.paymentType !== "cash") {
@@ -332,7 +342,6 @@ export default {
       if (!this.order_id) {
         this.submitOrder()
           .then(() => {
-            this.$store.state.cart.products = [];
             this.pay();
           })
           .catch(error => {
@@ -344,7 +353,6 @@ export default {
           });
       } else {
         this.pay();
-        this.orderLoading = false;
       }
     }
   }

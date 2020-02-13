@@ -9,7 +9,6 @@ use App\Giftcard;
 use App\Helper\Price;
 use App\Jobs\ProcessOrder;
 use App\Order;
-use App\Store;
 use App\StorePickup;
 use Illuminate\Http\Request;
 
@@ -283,9 +282,9 @@ class OrderController extends Controller
     public static function updateOrderStatus(Payment $payment, bool $refund = false)
     {
         $order = $payment->order;
-        $change = number_format($order->total - $order->total_paid, 2, '.', '');
+        $change = $order->total - $order->total_paid;
 
-        if ($change > 0) {
+        if ($change === 0) {
             if ($order->status !== 'pending_payment') {
                 $order->change = 0;
                 $order->status = 'pending_payment';
@@ -293,7 +292,7 @@ class OrderController extends Controller
         } else {
             // change is negative so fix payment amount and save the change to order
             if (!$refund) {
-                $payment->amount = number_format(abs($payment->amount) + (float) $change, 2, '.', '');
+                $payment->amount = abs($payment->amount) + (float) $change;
                 $payment->save();
 
                 if ($order->status !== 'paid') {
@@ -317,8 +316,8 @@ class OrderController extends Controller
 
         $order = $order->refresh();
         return [
-            'remaining' => ($order->change === '0.00') ? number_format($order->total - $order->total_paid, 2, '.', '') : '0.00',
-            'change' => $order->change,
+            'remaining' => $order->total - $order->total_paid,
+            'change' =>  $order->total - $order->total_paid,
             'order_status' => $order->status
         ];
     }

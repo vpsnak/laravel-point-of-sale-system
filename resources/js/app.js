@@ -14,8 +14,8 @@ import Donut from "vue-css-donut-chart";
 import "vue-css-donut-chart/dist/vcdonut.css";
 
 import {
-    ValidationProvider,
-    ValidationObserver
+  ValidationProvider,
+  ValidationObserver
 } from "vee-validate/dist/vee-validate.full";
 import store from "./store/store";
 
@@ -38,13 +38,13 @@ const scanner = BarcodeScanner();
 
 const files = require.context("./", true, /\.vue$/i);
 files.keys().map(key =>
-    Vue.component(
-        key
-            .split("/")
-            .pop()
-            .split(".")[0],
-        files(key).default
-    )
+  Vue.component(
+    key
+      .split("/")
+      .pop()
+      .split(".")[0],
+    files(key).default
+  )
 );
 
 /**
@@ -54,15 +54,16 @@ files.keys().map(key =>
  */
 
 const app = new Vue({
-    el: "#app",
-    template: "<master />",
-    router,
-    store,
-    vuetify,
-    mounted() {
-        scanner.on((code, event) => {
-            event.preventDefault();
-            this.$emit("barcodeScan", code);
-        });
-    }
+  el: "#app",
+  template: "<master />",
+  router,
+  store,
+  vuetify,
+
+  mounted() {
+    scanner.on((code, event) => {
+      event.preventDefault();
+      this.$emit("barcodeScan", code);
+    });
+  }
 });

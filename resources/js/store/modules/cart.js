@@ -94,23 +94,23 @@ export default {
     discount_amount: 0,
 
     delivery: {
-      store_pickup_id: undefined,
-      address: undefined,
-      date: undefined,
+      store_pickup_id: null,
+      address: null,
+      date: null,
       time: null,
       location: null,
       occasion: 9
     },
 
-    billing_address: undefined,
+    billing_address: null,
 
     order_id: null,
     order_status: null,
     order_total: 0,
-    order_total_without_tax: null,
-    order_total_tax: null,
-    order_change: null,
-    order_remaining: null
+    order_total_without_tax: 0,
+    order_total_tax: 0,
+    order_change: 0,
+    order_remaining: 0
   },
 
   mutations: {
@@ -261,9 +261,11 @@ export default {
     resetState(state) {
       state.order_id = null;
       state.order_status = null;
-      state.order_total = null;
-      state.order_total_without_tax = null;
-      state.order_total_tax = null;
+      state.order_total = 0;
+      state.order_total_without_tax = 0;
+      state.order_total_tax = 0;
+      state.order_remaining = 0;
+      state.order_change = 0;
 
       state.payments = [];
 

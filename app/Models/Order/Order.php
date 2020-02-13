@@ -129,7 +129,7 @@ class Order extends Model
         $total = $this->total_without_tax;
         $total = Price::calculateTax($total, $this->tax);
 
-        return round($total, 2);
+        return floor($total * 100) / 100;
     }
 
     public function getTotalWithoutTaxAttribute()
@@ -143,7 +143,7 @@ class Order extends Model
         $total = Price::calculateDiscount($total, $this->discount_type, $this->discount_amount);
         $total += $this->shipping_cost;
 
-        return round($total, 2);
+        return $total;
     }
 
     public function getTotalPaidAttribute()
@@ -154,12 +154,12 @@ class Order extends Model
                 $total_paid += $payment->amount;
             }
         };
-        return round($total_paid + $this->change, 2);
+        return $total_paid + $this->change;
     }
 
     public function getTotalTaxAttribute()
     {
-        return round($this->total - $this->total_without_tax, 2);
+        return $this->total - $this->total_without_tax;
     }
 
     public function payments()
