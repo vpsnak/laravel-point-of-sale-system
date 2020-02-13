@@ -24,8 +24,8 @@ class AddressController extends BaseController
             'phone' => 'required|numeric',
             'company' => 'nullable|string',
             'vat_id' => 'nullable|string',
-            'billing' => 'nullable|bool',
-            'shipping' => 'nullable|bool',
+            'is_default_billing' => 'nullable|bool',
+            'is_default_shipping' => 'nullable|bool',
             'location' => 'nullable|string',
             'location_name' => 'nullable|string'
         ]);

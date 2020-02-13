@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Address;
 use App\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -63,8 +64,8 @@ class CustomerController extends BaseController
             'address.phone' => 'required|string',
             'address.company' => 'nullable|string',
             'address.vat_id' => 'nullable|string',
-            'address.billing' => 'nullable|bool',
-            'address.shipping' => 'nullable|bool',
+            'address.is_default_billing' => 'nullable|bool',
+            'address.is_default_shipping' => 'nullable|bool',
             'address.location' => 'nullable|string',
             'address.location_name' => 'nullable|string'
         ]);
@@ -80,7 +81,8 @@ class CustomerController extends BaseController
             $customer->save();
         }
 
-        $customer->addresses()->create($addressData['address']);
+        $addressData['address']['customer_id'] = $customer->id;
+        Address::create($addressData['address']);
 
         return response(Customer::with('addresses')->find($customer->id), 201);
     }

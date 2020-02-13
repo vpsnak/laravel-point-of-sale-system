@@ -224,12 +224,12 @@
                 <v-row justify="space-around">
                     <v-switch
                         :readonly="$props.readonly"
-                        v-model="formFields.billing"
+                        v-model="formFields.is_default_billing"
                         label="Default billing"
                     ></v-switch>
                     <v-switch
                         :readonly="$props.readonly"
-                        v-model="formFields.shipping"
+                        v-model="formFields.is_default_shipping"
                         label="Default shipping"
                     ></v-switch>
                 </v-row>
@@ -277,8 +277,8 @@ export default {
                 phone: null,
                 company: null,
                 vat_id: null,
-                shipping: false,
-                billing: false,
+                is_default_billing: false,
+                is_default_shipping: false,
                 location: null,
                 location_name: null
             }

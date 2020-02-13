@@ -39,20 +39,24 @@ class Address extends BaseModel
 
     public function setIsDefaultShippingAttribute($value)
     {
-        $currentCustomerShipping = $this->customer->addresses->where('is_default_shipping', true)->first();
-        if ($currentCustomerShipping && $value) {
-            $currentCustomerShipping->is_default_shipping = false;
-            $currentCustomerShipping->save();
+        if ($customer = $this->customer) {
+            $currentCustomerShipping = $customer->addresses->where('is_default_shipping', 1)->first();
+            if ($currentCustomerShipping && $value) {
+                $currentCustomerShipping->is_default_shipping = false;
+                $currentCustomerShipping->save();
+            }
         }
         $this->attributes['is_default_shipping'] = $value;
     }
 
     public function setIsDefaultBillingAttribute($value)
     {
-        $currentCustomerBilling = $this->customer->addresses->where('is_default_billing', true)->first();
-        if ($currentCustomerBilling && $value) {
-            $currentCustomerBilling->is_default_billing = false;
-            $currentCustomerBilling->save();
+        if ($customer = $this->customer) {
+            $currentCustomerBilling = $customer->addresses->where('is_default_billing', 1)->first();
+            if ($currentCustomerBilling && $value) {
+                $currentCustomerBilling->is_default_billing = false;
+                $currentCustomerBilling->save();
+            }
         }
         $this->attributes['is_default_billing'] = $value;
     }
