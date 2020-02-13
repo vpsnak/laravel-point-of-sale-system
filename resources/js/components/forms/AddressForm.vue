@@ -136,7 +136,7 @@
                 </v-col>
                 <v-col cols="4">
                     <ValidationProvider
-                        rules="required|max:100"
+                        rules="max:100"
                         v-slot="{ errors, valid }"
                         name="Location"
                     >
@@ -154,7 +154,7 @@
                 </v-col>
                 <v-col cols="4">
                     <ValidationProvider
-                        rules="required|max:100"
+                        rules="max:100"
                         v-slot="{ errors, valid }"
                         name="Location name"
                     >

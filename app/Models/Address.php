@@ -25,7 +25,8 @@ class Address extends BaseModel
         'is_default_billing',
         'is_default_shipping',
         'location',
-        'location_name'
+        'location_name',
+        'customer_id'
     ];
 
     protected $casts = [
