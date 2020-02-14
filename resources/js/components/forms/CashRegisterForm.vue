@@ -1,50 +1,54 @@
 <template>
   <ValidationObserver v-slot="{ invalid }">
     <v-form @submit.prevent="submit">
-      <ValidationProvider
-        rules="required|max:191"
-        v-slot="{ errors, valid }"
-        name="Name"
-      >
-        <v-text-field
-          :readonly="$props.readonly"
-          v-model="formFields.name"
-          label="Name"
-          :disabled="loading"
-          :error-messages="errors"
-          :success="valid"
-        ></v-text-field>
-      </ValidationProvider>
-      <ValidationProvider
-        rules="required"
-        v-slot="{ errors, valid }"
-        name="Stores"
-      >
-        <v-select
-          :readonly="$props.readonly"
-          v-model="formFields.store_id"
-          label="Stores"
-          :items="stores"
-          item-text="name"
-          item-value="id"
-          :disabled="loading"
-          :error-messages="errors"
-          :success="valid"
-        ></v-select>
-      </ValidationProvider>
-      <v-row v-if="!$props.readonly">
-        <v-col cols="12" align="center" justify="center">
-          <v-btn
-            class="mr-4"
-            type="submit"
-            :loading="loading"
-            :disabled="invalid || loading"
-            color="secondary"
-            >submit</v-btn
-          >
-          <v-btn v-if="!model" @click="clear" color="orange">clear</v-btn>
-        </v-col>
-      </v-row>
+      <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
+        <ValidationProvider
+          rules="required|max:191"
+          v-slot="{ errors, valid }"
+          name="Name"
+        >
+          <v-text-field
+            :readonly="$props.readonly"
+            v-model="formFields.name"
+            label="Name"
+            :disabled="loading"
+            :error-messages="errors"
+            :success="valid"
+          ></v-text-field>
+        </ValidationProvider>
+        <ValidationProvider
+          rules="required"
+          v-slot="{ errors, valid }"
+          name="Stores"
+        >
+          <v-select
+            :readonly="$props.readonly"
+            v-model="formFields.store_id"
+            label="Stores"
+            :items="stores"
+            item-text="name"
+            item-value="id"
+            :disabled="loading"
+            :error-messages="errors"
+            :success="valid"
+          ></v-select>
+        </ValidationProvider>
+      </v-container>
+      <v-container>
+        <v-row v-if="!$props.readonly">
+          <v-col cols="12" align="center" justify="center">
+            <v-btn
+              class="mr-4"
+              type="submit"
+              :loading="loading"
+              :disabled="invalid || loading"
+              color="secondary"
+              >submit</v-btn
+            >
+            <v-btn v-if="!model" @click="clear" color="orange">clear</v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-form>
   </ValidationObserver>
 </template>
