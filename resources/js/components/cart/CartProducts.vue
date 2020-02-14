@@ -30,11 +30,11 @@
                   :ref="'priceField' + index"
                   :min="0"
                   type="number"
-                  :readonly="!product.is_editing_price"
-                  :flat="!product.is_editing_price"
-                  :outlined="product.is_editing_price"
-                  :solo="!product.is_editing_price"
-                  :color="product.is_editing_price ? 'yellow' : ''"
+                  :readonly="!cart_products_map[index]"
+                  :flat="!cart_products_map[index]"
+                  :outlined="cart_products_map[index]"
+                  :solo="!cart_products_map[index]"
+                  :color="cart_products_map[index] ? 'yellow' : ''"
                   :value="parsedPrice(product)"
                   :hint="'Original price: $' + original_price(index)"
                   dense
@@ -178,6 +178,12 @@ export default {
     editable: Boolean
   },
 
+  data() {
+    return {
+      cart_products_map: []
+    };
+  },
+
   computed: {
     ...mapState("cart", ["discountTypes", "cart_products"])
   },
@@ -190,6 +196,16 @@ export default {
       "decreaseProductQty",
       "increaseProductQty"
     ]),
+
+    toggleEditPrice(index) {
+      const mapped_product = this.cart_products_map[index];
+
+      if (!mapped_product) {
+        this.cart_products_map[index] = true;
+      }
+
+      return this.cart_products_map[index];
+    },
 
     getSelectedInput(index) {
       return this.$refs[`priceField${index}`][0];
@@ -215,15 +231,12 @@ export default {
         this.toggleEdit(index);
       }
     },
-    toggleisEditingPrice(index) {
-      this.$set(this.cart_products[index], "is_editing_price", false);
-    },
     revertPrice(index) {
       this.setPrice(index, this.original_price(index), true);
 
       this.getSelectedInput(index).lazyValue = this.original_price(index);
 
-      this.toggleisEditingPrice(index);
+      this.toggleEditPrice(index);
       this.getSelectedInput(index).blur();
     },
     original_price(index) {
@@ -232,7 +245,7 @@ export default {
       }
     },
     toggleEdit(index) {
-      this.toggleisEditingPrice(index);
+      this.toggleEditPrice(index);
 
       this.$nextTick(() => {
         if (this.cart_products[index].is_editing_price) {

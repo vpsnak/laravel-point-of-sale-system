@@ -9,7 +9,7 @@ class Product extends BaseModel
     const LARAVEL_STORE_ID = 1;
     const MAGENTO_STORE_ID = 2;
 
-    protected $appends = ['final_price', 'stock', 'magento_stock', 'laravel_stock', 'original_price', 'is_editing_price'];
+    protected $appends = ['final_price', 'stock', 'magento_stock', 'laravel_stock', 'original_price'];
 
     protected $with = ['stores', 'price', 'categories'];
 
@@ -30,11 +30,6 @@ class Product extends BaseModel
         'created_at' => "datetime:m/d/Y H:i:s",
         'updated_at' => "datetime:m/d/Y H:i:s"
     ];
-
-    public function getIsEditingPriceAttribute()
-    {
-        return false;
-    }
 
     public function getOriginalPriceAttribute()
     {

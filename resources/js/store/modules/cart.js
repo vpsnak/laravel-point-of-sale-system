@@ -240,7 +240,7 @@ export default {
       state.cart_products.splice(index, 1);
     },
     increaseProductQty(state, target_product) {
-      let index = _.findIndex(state.cart_products, product => {
+      const index = _.findIndex(state.cart_products, product => {
         return product.id === target_product.id;
       });
 
@@ -249,7 +249,7 @@ export default {
       }
     },
     decreaseProductQty(state, target_product) {
-      let index = _.findIndex(state.cart_products, product => {
+      const index = _.findIndex(state.cart_products, product => {
         return product.id === target_product.id;
       });
 
