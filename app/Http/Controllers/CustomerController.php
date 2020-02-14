@@ -11,6 +11,13 @@ use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends Controller
 {
+    protected $model = Customer::class;
+
+    public function all()
+    {
+        return response($this->model::paginate(), 200);
+    }
+
     public function get(Customer $model)
     {
         return response($model->load('addresses'));
