@@ -93,7 +93,6 @@
                   item-value="id"
                   v-model="storePickup"
                   prepend-icon="mdi-store"
-                  return-object
                   @change="validate"
                 ></v-select>
               </ValidationProvider>
@@ -154,6 +153,7 @@ export default {
       this.validate();
     }
   },
+
   computed: {
     ...mapState("cart", ["delivery", "shipping_cost"]),
 

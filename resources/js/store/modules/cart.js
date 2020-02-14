@@ -283,6 +283,8 @@ export default {
       }
     },
     resetState(state) {
+      state.method = "retail";
+
       state.order_id = null;
       state.order_status = null;
       state.order_total = 0;
@@ -315,8 +317,7 @@ export default {
         date: null,
         time: null,
         location: null,
-        occasion: 9,
-        pickup_point_id: null
+        occasion: 9
       };
       state.billing_address = null;
       state.complete_order_loading = false;
@@ -328,8 +329,7 @@ export default {
         date: null,
         time: null,
         location: null,
-        occasion: 9,
-        pickup_point_id: null
+        occasion: 9
       };
       state.billing_address = null;
 
@@ -444,11 +444,8 @@ export default {
         };
 
         if (context.state.method !== "retail") {
-          payload.delivery = context.state.delivery;
-        }
-
-        if (context.state.method === "delivery") {
-          payload.shipping_cost = context.state.shipping_cost;
+          payload.data.delivery = context.state.delivery;
+          payload.data.shipping_cost = context.state.shipping_cost;
         }
 
         context

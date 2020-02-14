@@ -190,7 +190,6 @@ export default {
     getIcon() {
       return _.find(this.paymentTypes, ["type", this.paymentType]).icon;
     },
-
     paymentTypes: {
       get() {
         if (this.houseAccount) {

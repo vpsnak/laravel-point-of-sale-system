@@ -95,17 +95,17 @@ class OrderController extends Controller
             'products.*.discount_amount' => 'numeric|nullable',
             'products.*.notes' => 'string|nullable',
             // billing
-            'billing_address_id' => 'required_if:method,delivery|exists:customers,id',
+            'billing_address_id' => 'required_if:method,delivery|exists:addresses,id',
             // delivery
+            'delivery' => 'required_if:method,pickup,delivery|array',
             'delivery.date' => 'required_if:method,pickup,delivery|date',
             'delivery.time' => 'nullable|required_if:method,pickup,delivery|string',
             'delivery.location' => 'nullable|required_if:method,delivery|numeric',
             'delivery.occasion' => 'nullable|required_if:method,delivery|numeric',
-            'delivery.cost' => 'required_if:method,pickup,delivery|numeric',
             // delivery address (shipping address)
-            'delivery.address_id' => 'required_if:method,delivery|exists:addresses,id',
+            'delivery.address_id' => 'nullable|required_if:method,delivery|exists:addresses,id',
             // store_pickup
-            'delivery.store_pickup_id' => 'required_if:method,pickup|exists:store_pickups,id',
+            'delivery.store_pickup_id' => 'nullable|required_if:method,pickup|exists:store_pickups,id',
         ]);
 
         $user = auth()->user();
