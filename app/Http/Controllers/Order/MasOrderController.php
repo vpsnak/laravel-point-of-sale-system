@@ -21,7 +21,7 @@ class MasOrderController extends Controller
         $payload = [];
         $payload['MessageType'] = '28';
         // $payload['MessageText'] = "POS Order ID: {$order->id}";
-        $payload['MessageText'] = "POS " . now();
+        $payload['MessageText'] = 'POS Order #' . $order->id;
 
         $payload['SenderMdNumber'] = $masAccount->direct_id;
         $payload['FulfillerMDNumber'] = $masAccount->fulfiller_md_number;
@@ -39,9 +39,9 @@ class MasOrderController extends Controller
             $payload['Payments'] = $payments;
         }
 
-        $payload['MdseAmount'] = number_format($order->total_without_tax, 2, '.', '');
-        $payload['TaxAmount'] = number_format($order->total - $order->total_without_tax, 2, '.', '');
-        $payload['TotalAmount'] = number_format($order->total, 2, '.', '');
+        $payload['MdseAmount'] = (string) $order->total_without_tax;
+        $payload['TaxAmount'] = (string) $order->total_tax;
+        $payload['TotalAmount'] = (string) $order->total;
 
         self::log('Payload: ' . json_encode($payload));
         try {
@@ -151,24 +151,24 @@ class MasOrderController extends Controller
             'RecipientZip' => '10024',
             'RecipientPhone' => '+6974526666',
             'SpecialInstructions' => $order->delivery_slot,
-            'DeliveryDate' => $order->delivery_date ?? $order->updated_at,
-            'DeliveryEndDate' => $order->delivery_date ?? $order->updated_at,
+            'DeliveryDate' => $order->updated_at,
+            'DeliveryEndDate' => $order->updated_at,
             'CardMessage' => '',
             'OccasionType' => 9,
             'ResidenceType' => 11,
         ];
 
-        $customer = $order->customer;
+        $customer = ($order->load('customer'))->customer;
         if (empty($customer)) {
             return $response;
         }
 
-        $shipping_address = $order->shipping_address;
+        $shipping_address = $order->delivery['address'];
         if (empty($shipping_address)) {
             return $response;
         }
         if (!empty($shipping_address->company)) {
-            $shipping_notes .= 'Company: ' . $shipping_address->company;
+            $shipping_notes .= 'Company: ' . $order->delivery['address']['company'];
         }
         // Delivery Time slots will be sent in SpecialInstructions , you can also put an abbreviated version in ShippingPriority (IE> 5P-9P for 5pm to 9pm)
         $response['RecipientFirstName'] = $shipping_address['first_name'];
@@ -183,15 +183,15 @@ class MasOrderController extends Controller
         $response['RecipientZip'] = $shipping_address['postcode'];
         $response['RecipientPhone'] = $shipping_address['phone'];
 
-        if (!empty($order->occasion)) {
-            $response['OccasionType'] = $order->occasion;
+        if (!empty($order->delivery['occasion'])) {
+            $response['OccasionType'] = $order->delivery['occasion'];
         }
         if (!empty($order->location)) {
-            $response['ResidenceType'] = $order->location;
+            $response['ResidenceType'] = $shipping_address['location'];
         }
 
-        if (!empty($order->delivery_slot)) {
-            $response['SpecialInstructions'] = $order->delivery_slot;
+        if (!empty($order->delivery['time'])) {
+            $response['SpecialInstructions'] = $order->delivery['time'];
         }
 
         return $response;
