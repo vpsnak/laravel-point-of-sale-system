@@ -1,87 +1,91 @@
 <template>
   <ValidationObserver v-slot="{ invalid }">
     <v-form @submit.prevent="submit">
-      <ValidationProvider
-        rules="required"
-        v-slot="{ errors, valid }"
-        name="Name"
-      >
-        <v-select
-          :loading="loading"
-          v-model="store_id"
-          :disabled="storeDisabled"
-          :items="stores"
-          label="Stores"
-          item-text="name"
-          item-value="id"
-          @change="changeCashRegisters"
-          @input="enableCashRegisters"
-          :error-messages="errors"
-          :success="valid"
-        ></v-select>
-      </ValidationProvider>
-      <ValidationProvider
-        rules="required"
-        v-slot="{ errors, valid }"
-        name="Name"
-      >
-        <v-select
-          :loading="loading"
-          :disabled="cashRegisterDisabled"
-          v-model="cash_register_id"
-          :items="cash_registers"
-          label="Cash Register"
-          item-text="name"
-          item-value="id"
-          @input="enableOpeningAmount"
-          :error-messages="errors"
-          :success="valid"
-        ></v-select>
-      </ValidationProvider>
-      <ValidationProvider
-        v-if="!cashRegisterIsopen"
-        rules="required|max_value:99999"
-        v-slot="{ errors, valid }"
-        name="Name"
-      >
-        <v-text-field
-          v-if="!cashRegisterIsopen"
-          :loading="loading"
-          :disabled="openingAmountDisabled"
-          v-model="opening_amount"
-          type="number"
-          label="Opening amount"
-          :error-messages="errors"
-          :success="valid"
-        ></v-text-field>
-      </ValidationProvider>
-      <v-row>
-        <v-col
-          cols="6"
-          v-if="remainingAmount && cash_register_id && cashRegisterIsopen"
+      <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
+        <ValidationProvider
+          rules="required"
+          v-slot="{ errors, valid }"
+          name="Name"
         >
-          <span class="title">
-            Amount:
-            <span
-              class="amber--text"
-              v-text="'$ ' + remainingAmount.toFixed(2)"
-            />
-          </span>
-        </v-col>
-        <v-col cols="6">
-          <v-btn
-            color="secondary"
-            type="submit"
+          <v-select
             :loading="loading"
-            :disabled="disableOpenCashRegister || invalid"
-            >Open Cash Register</v-btn
+            v-model="store_id"
+            :disabled="storeDisabled"
+            :items="stores"
+            label="Stores"
+            item-text="name"
+            item-value="id"
+            @change="changeCashRegisters"
+            @input="enableCashRegisters"
+            :error-messages="errors"
+            :success="valid"
+          ></v-select>
+        </ValidationProvider>
+        <ValidationProvider
+          rules="required"
+          v-slot="{ errors, valid }"
+          name="Name"
+        >
+          <v-select
+            :loading="loading"
+            :disabled="cashRegisterDisabled"
+            v-model="cash_register_id"
+            :items="cash_registers"
+            label="Cash Register"
+            item-text="name"
+            item-value="id"
+            @input="enableOpeningAmount"
+            :error-messages="errors"
+            :success="valid"
+          ></v-select>
+        </ValidationProvider>
+        <ValidationProvider
+          v-if="!cashRegisterIsopen"
+          rules="required|max_value:99999"
+          v-slot="{ errors, valid }"
+          name="Name"
+        >
+          <v-text-field
+            v-if="!cashRegisterIsopen"
+            :loading="loading"
+            :disabled="openingAmountDisabled"
+            v-model="opening_amount"
+            type="number"
+            label="Opening amount"
+            :error-messages="errors"
+            :success="valid"
+          ></v-text-field>
+        </ValidationProvider>
+      </v-container>
+      <v-container>
+        <v-row>
+          <v-col
+            cols="6"
+            v-if="remainingAmount && cash_register_id && cashRegisterIsopen"
           >
-        </v-col>
-      </v-row>
-      <v-alert v-if="cashRegisterIsopen" dense outlined type="warning">
-        Warning: The selected cash register is already
-        <strong>open</strong>
-      </v-alert>
+            <span class="title">
+              Amount:
+              <span
+                class="amber--text"
+                v-text="'$ ' + remainingAmount.toFixed(2)"
+              />
+            </span>
+          </v-col>
+          <v-col cols="6">
+            <v-btn
+              color="secondary"
+              type="submit"
+              :loading="loading"
+              :disabled="disableOpenCashRegister || invalid"
+              >Open Cash Register</v-btn
+            >
+          </v-col>
+        </v-row>
+        <v-alert v-if="cashRegisterIsopen" dense outlined type="warning">
+          Warning: The selected cash register is already
+          <strong>open</strong>
+        </v-alert>
+      </v-container>
     </v-form>
   </ValidationObserver>
 </template>

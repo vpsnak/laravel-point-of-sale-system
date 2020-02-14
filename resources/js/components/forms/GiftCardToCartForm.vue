@@ -5,73 +5,81 @@
     tag="form"
     @submit.prevent="submit"
   >
-    <ValidationProvider
-      rules="required|max:191"
-      v-slot="{ errors, valid }"
-      name="Name"
-    >
-      <v-text-field
-        disabled
-        v-model="giftCard.name"
-        label="Name"
-        :error-messages="errors"
-        :success="valid"
-      ></v-text-field>
-    </ValidationProvider>
-    <ValidationProvider
-      :rules="{
-        required: true,
-        max_value: 99999,
-        min_value: 1,
-        regex: /^[\d]{1,8}(\.[\d]{1,2})?$/g
-      }"
-      v-slot="{ errors, valid }"
-      name="Price Amount"
-    >
-      <v-text-field
-        type="number"
-        v-model="giftCard.final_price"
-        label="Price"
-        :error-messages="errors"
-        :success="valid"
-      ></v-text-field>
-    </ValidationProvider>
+    <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
+      <ValidationProvider
+        rules="required|max:191"
+        v-slot="{ errors, valid }"
+        name="Name"
+      >
+        <v-text-field
+          disabled
+          v-model="giftCard.name"
+          label="Name"
+          :error-messages="errors"
+          :success="valid"
+        ></v-text-field>
+      </ValidationProvider>
+      <ValidationProvider
+        :rules="{
+          required: true,
+          max_value: 99999,
+          min_value: 1,
+          regex: /^[\d]{1,8}(\.[\d]{1,2})?$/g
+        }"
+        v-slot="{ errors, valid }"
+        name="Price Amount"
+      >
+        <v-text-field
+          type="number"
+          v-model="giftCard.final_price"
+          label="Price"
+          :error-messages="errors"
+          :success="valid"
+        ></v-text-field>
+      </ValidationProvider>
 
-    <ValidationProvider
-      rules="required|max:191"
-      v-slot="{ errors, valid }"
-      name="Code"
-    >
-      <v-text-field
-        disabled
-        v-model="giftCard.code"
-        label="Code"
-        :error-messages="errors"
-        :success="valid"
-      ></v-text-field>
-    </ValidationProvider>
+      <ValidationProvider
+        rules="required|max:191"
+        v-slot="{ errors, valid }"
+        name="Code"
+      >
+        <v-text-field
+          disabled
+          v-model="giftCard.code"
+          label="Code"
+          :error-messages="errors"
+          :success="valid"
+        ></v-text-field>
+      </ValidationProvider>
 
-    <ValidationProvider rules="max:191" v-slot="{ errors }" name="Notes">
-      <v-textarea
-        :rows="3"
-        v-model="giftCard.notes"
-        label="Notes"
-        :error-messages="errors"
-        count
-        no-resize
-      ></v-textarea>
-    </ValidationProvider>
-    <v-alert v-if="giftCardEnabled" dense outlined type="warning">
-      This gift card with {{ giftCardEnabledAmount }} $ is enabled. If you want
-      to recharge it type the amount and add it to cart
-    </v-alert>
-    <v-row>
-      <v-col cols="12" align="center" justify="center">
-        <v-btn color="secondary" class="mr-4" type="submit" :disabled="invalid"
-          >Add to cart</v-btn
-        >
-      </v-col>
-    </v-row>
+      <ValidationProvider rules="max:191" v-slot="{ errors }" name="Notes">
+        <v-textarea
+          :rows="3"
+          v-model="giftCard.notes"
+          label="Notes"
+          :error-messages="errors"
+          count
+          no-resize
+        ></v-textarea>
+      </ValidationProvider>
+      <v-alert v-if="giftCardEnabled" dense outlined type="warning">
+        This gift card with {{ giftCardEnabledAmount }} $ is enabled. If you
+        want to recharge it type the amount and add it to cart
+      </v-alert>
+    </v-container>
+    <v-container>
+      <v-row>
+        <v-col cols="12" align="center" justify="center">
+          <v-btn
+            color="secondary"
+            class="mr-4"
+            type="submit"
+            :disabled="invalid"
+            >Add to cart</v-btn
+          >
+        </v-col>
+      </v-row>
+    </v-container>
   </ValidationObserver>
 </template>
 
