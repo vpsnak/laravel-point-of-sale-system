@@ -130,7 +130,7 @@ export default {
       set(value) {
         if (!this.order_id) {
           if (value !== this.cartCustomer) {
-            this.resetShipping();
+            this.resetShipping(true);
           }
         }
         this.setCustomer(value);

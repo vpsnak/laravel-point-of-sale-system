@@ -78,12 +78,15 @@ export default {
       "currentCheckoutStep",
       "isValid",
       "order_id",
-      "checkoutSteps"
+      "checkoutSteps",
+      "method"
     ]),
 
     disableNext() {
-      if (this.currentStep === 1) {
+      if (this.currentCheckoutStep === 1 && this.method !== "retail") {
         return !this.isValid;
+      } else {
+        return false;
       }
     }
   },

@@ -8,7 +8,12 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn-toggle v-model="shippingMethod" mandatory group>
+      <v-btn-toggle
+        v-model="shippingMethod"
+        mandatory
+        group
+        @change="resetShipping()"
+      >
         <v-tooltip bottom color="primary">
           <template v-slot:activator="{ on }">
             <v-btn
@@ -123,7 +128,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations("cart", ["setMethod", "setMethodStep"]),
+    ...mapMutations("cart", ["setMethod", "setMethodStep", "resetShipping"]),
 
     setOrderOptions(value) {
       switch (value) {

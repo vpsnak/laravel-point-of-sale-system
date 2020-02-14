@@ -363,7 +363,8 @@ export default {
       "setDeliveryTime",
       "setDeliveryOccasion",
       "setBillingAddressId",
-      "setCustomerAddress"
+      "setCustomerAddress",
+      "setIsValid"
     ]),
     ...mapActions(["postRequest"]),
 
@@ -385,7 +386,7 @@ export default {
     validate() {
       this.$nextTick(() => {
         this.$refs.deliveryValidation.validate().then(result => {
-          this.$store.state.cart.isValid = result;
+          this.setIsValid(result);
         });
       });
     },

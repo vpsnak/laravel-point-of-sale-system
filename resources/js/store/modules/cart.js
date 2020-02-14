@@ -326,8 +326,7 @@ export default {
       state.billing_address_id = null;
       state.complete_order_loading = false;
     },
-    resetShipping(state) {
-      state.method = "retail";
+    resetShipping(state, hard) {
       state.delivery = {
         address_id: null,
         date: null,
@@ -340,9 +339,13 @@ export default {
       state.checkoutSteps.forEach(checkoutStep => {
         checkoutStep.completed = false;
       });
-      state.checkoutSteps[0].name = "Cash & Carry";
-      state.checkoutSteps[0].icon = "mdi-cart-arrow-right";
-      state.checkoutSteps[0].color = "primary";
+
+      if (hard) {
+        state.method = "retail";
+        state.checkoutSteps[0].name = "Cash & Carry";
+        state.checkoutSteps[0].icon = "mdi-cart-arrow-right";
+        state.checkoutSteps[0].color = "primary";
+      }
     }
   },
   actions: {
