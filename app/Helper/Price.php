@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Helper;
-
 
 class Price
 {
@@ -24,5 +22,10 @@ class Price
     public static function calculateTax($price, $tax)
     {
         return $price + ($price * ($tax / 100));
+    }
+
+    public static function doublePrecision(float $float, int $precision)
+    {
+        return bcdiv($float, 1, $precision);
     }
 }
