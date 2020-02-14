@@ -4,7 +4,7 @@
       <ValidationObserver ref="inStorePickupValidation">
         <v-form>
           <v-row align="center" justify="center">
-            <v-col :cols="4" :lg="2" class="pa-1">
+            <v-col :cols="4" :lg="2">
               <v-menu
                 v-model="datePicker"
                 transition="scale-transition"
@@ -24,7 +24,7 @@
                       :error-messages="errors"
                       :success="valid"
                       v-on="on"
-                      @blur="parseDate, validate"
+                      @blur="parseDate, validate()"
                       readonly
                     ></v-text-field>
                   </ValidationProvider>
@@ -35,7 +35,7 @@
                 ></v-date-picker>
               </v-menu>
             </v-col>
-            <v-col :cols="4" :lg="3" class="pa-1">
+            <v-col :cols="4" :lg="3">
               <ValidationProvider
                 rules="required"
                 v-slot="{ errors, valid }"
@@ -51,13 +51,13 @@
                   :success="valid"
                   item-text="label"
                   v-model="timeSlot"
-                  @input="setCost"
+                  @input="setCost()"
                   @click:append-outer="addTimeSlotDialog()"
-                  @change="validate"
+                  @change="validate()"
                 ></v-select>
               </ValidationProvider>
             </v-col>
-            <v-col :cols="4" :lg="1" class="pa-1">
+            <v-col :cols="4" :lg="1">
               <ValidationProvider
                 rules="required"
                 v-slot="{ errors, valid }"
@@ -71,13 +71,13 @@
                   :min="0"
                   prepend-icon="mdi-currency-usd"
                   v-model="shippingCost"
-                  @input="validate"
+                  @input="validate()"
                 ></v-text-field>
               </ValidationProvider>
             </v-col>
           </v-row>
           <v-row align="center" justify="center">
-            <v-col :cols="6" class="pa-1">
+            <v-col :cols="6">
               <ValidationProvider
                 rules="required"
                 v-slot="{ errors, valid }"
@@ -93,7 +93,7 @@
                   item-value="id"
                   v-model="storePickup"
                   prepend-icon="mdi-store"
-                  @change="validate"
+                  @change="validate()"
                 ></v-select>
               </ValidationProvider>
             </v-col>
@@ -205,7 +205,8 @@ export default {
       "setShippingCost",
       "setDeliveryStorePickupId",
       "setDeliveryDate",
-      "setDeliveryTime"
+      "setDeliveryTime",
+      "setIsValid"
     ]),
 
     addTimeSlotDialog() {
@@ -222,7 +223,7 @@ export default {
     validate() {
       this.$nextTick(() => {
         this.$refs.inStorePickupValidation.validate().then(result => {
-          this.$store.state.cart.isValid = result;
+          this.setIsValid(result);
         });
       });
     },

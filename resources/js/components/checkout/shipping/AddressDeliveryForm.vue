@@ -134,7 +134,7 @@
             ></v-select>
           </ValidationProvider>
         </v-col>
-        <v-col cols="12">
+        <v-col :cols="6">
           <ValidationProvider
             rules="required"
             v-slot="{ errors, valid }"
@@ -150,25 +150,44 @@
             ></v-text-field>
           </ValidationProvider>
         </v-col>
+        <v-col :cols="6">
+          <ValidationProvider
+            rules="required"
+            v-slot="{ errors, valid }"
+            name="Location"
+          >
+            <v-select
+              :readonly="$props.readonly"
+              :error-messages="errors"
+              :success="valid"
+              :disabled="loading"
+              label="Location"
+              :items="locations"
+              item-text="label"
+              item-value="id"
+              v-model="formFields.location"
+              prepend-icon="mdi-city"
+            ></v-select>
+          </ValidationProvider>
+        </v-col>
       </v-row>
       <v-row v-if="!$props.readonly">
-        <v-spacer></v-spacer>
-        <v-btn type="submit" :disabled="invalid || loading" :loading="loading"
-          >Submit</v-btn
-        >
+        <v-spacer />
+        <v-btn type="submit" :disabled="invalid || loading" :loading="loading">
+          Submit
+        </v-btn>
       </v-row>
     </div>
   </ValidationObserver>
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapState, mapActions, mapMutations } from "vuex";
 
 export default {
   props: {
     model: Object,
-    readonly: Boolean,
-    isBilling: Boolean
+    readonly: Boolean
   },
   data() {
     return {
@@ -177,7 +196,7 @@ export default {
       regions: [],
       default: {
         first_name: "",
-        last_name: null,
+        last_name: "",
         street: null,
         street2: null,
         city: null,
@@ -186,8 +205,8 @@ export default {
         postcode: null,
         phone: null,
         deliverydate: null,
-        shipping: false,
-        billing: false
+        billing: false,
+        location: 11
       }
     };
   },
@@ -197,9 +216,11 @@ export default {
     this.getAllCountries();
   },
   computed: {
+    ...mapState("cart", ["locations", "customer"]),
+
     formFields: {
       get() {
-        if (this.$props.model !== undefined) {
+        if (this.$props.model) {
           return this.$props.model;
         } else {
           return this.default;
@@ -208,6 +229,8 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(["setNotification"]),
+
     submit() {
       this.formFields.region = this.formFields.region_id;
 
@@ -216,11 +239,10 @@ export default {
         data: this.formFields
       };
 
-      payload.data.type = this.$props.model.type;
-      payload.data.customer_id = this.$store.state.cart.customer.id;
+      payload.data.customer_id = this.customer.id;
 
       this.create(payload).then(response => {
-        this.$store.commit("setNotification", {
+        this.setNotification({
           msg: response.info,
           type: "success"
         });

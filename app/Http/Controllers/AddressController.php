@@ -26,7 +26,7 @@ class AddressController extends BaseController
             'vat_id' => 'nullable|string',
             'is_default_billing' => 'nullable|bool',
             'is_default_shipping' => 'nullable|bool',
-            'location' => 'nullable|string',
+            'location' => 'nullable|numeric|between:1,12',
             'location_name' => 'nullable|string'
         ]);
 
@@ -37,14 +37,6 @@ class AddressController extends BaseController
         $customerID = $request->validate([
             'customer_id' => 'nullable|exists:customers,id'
         ]);
-
-        $type = $request->validate([
-            'type' => 'nullable|string'
-        ]);
-
-        if (!empty($type)) {
-            $validatedData[$type['type']] = 1;
-        }
 
         if (!empty($validatedID)) {
             $address = $this->model::updateData($validatedID['id'], $validatedData);

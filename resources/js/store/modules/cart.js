@@ -9,7 +9,7 @@ export default {
     complete_order_loading: false,
     payments: [],
 
-    isValid: false,
+    is_valid: false,
     isValidCheckout: false,
     discount_error: false,
 
@@ -95,14 +95,13 @@ export default {
 
     delivery: {
       store_pickup_id: null,
-      address: null,
+      address_id: null,
       date: null,
       time: null,
-      location: null,
       occasion: 9
     },
 
-    billing_address: null,
+    billing_address_id: null,
 
     order_id: null,
     order_status: null,
@@ -121,17 +120,17 @@ export default {
     setDeliveryStorePickupId(state, value) {
       state.delivery.store_pickup_id = value;
     },
-    setDeliveryAddress(state, value) {
-      state.delivery.address = value;
+    setBillingAddressId(state, value) {
+      state.billing_address_id = value;
+    },
+    setDeliveryAddressId(state, value) {
+      state.delivery.address_id = value;
     },
     setDeliveryDate(state, value) {
       state.delivery.date = value;
     },
     setDeliveryTime(state, value) {
       state.delivery.time = value;
-    },
-    setDeliveryLocation(state, value) {
-      state.delivery.location = value;
     },
     setDeliveryOccasion(state, value) {
       state.delivery.occasion = value;
@@ -198,6 +197,9 @@ export default {
       } else {
         state.payments.push(value);
       }
+    },
+    setIsValid(state, value) {
+      state.is_valid = value;
     },
     setIsValidCheckout(state, value) {
       state.isValidCheckout = value;
@@ -270,6 +272,9 @@ export default {
         state.customer = null;
       }
     },
+    setCustomerAddress(state, value) {
+      state.customer.addresses.push(value);
+    },
     completeStep(state) {
       let index = -1 + state.currentCheckoutStep;
       state.checkoutSteps[index].completed = true;
@@ -316,10 +321,9 @@ export default {
         address_id: null,
         date: null,
         time: null,
-        location: null,
         occasion: 9
       };
-      state.billing_address = null;
+      state.billing_address_id = null;
       state.complete_order_loading = false;
     },
     resetShipping(state) {
@@ -328,10 +332,9 @@ export default {
         address_id: null,
         date: null,
         time: null,
-        location: null,
         occasion: 9
       };
-      state.billing_address = null;
+      state.billing_address_id = null;
 
       state.currentCheckoutStep = 1;
       state.checkoutSteps.forEach(checkoutStep => {
@@ -438,7 +441,7 @@ export default {
             customer_id: context.state.customer
               ? context.state.customer.id
               : "",
-            billing_address: context.state.billing_address,
+            billing_address_id: context.state.billing_address_id,
             notes: context.state.order_notes
           }
         };

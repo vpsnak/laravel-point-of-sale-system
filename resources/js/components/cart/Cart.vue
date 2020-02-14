@@ -16,7 +16,7 @@
               icon
               value="retail"
               v-on="on"
-              :disabled="order ? true : false"
+              :disabled="order_id ? true : false"
             >
               <v-icon>mdi-cart-arrow-right</v-icon>
             </v-btn>
@@ -29,7 +29,7 @@
               color="warning"
               icon
               value="pickup"
-              :disabled="!$store.state.cart.customer || order ? true : false"
+              :disabled="!customer || order_id ? true : false"
               v-on="on"
             >
               <v-icon>mdi-storefront</v-icon>
@@ -43,7 +43,7 @@
               color="purple"
               icon
               value="delivery"
-              :disabled="!$store.state.cart.customer || order ? true : false"
+              :disabled="!customer || order_id ? true : false"
               v-on="on"
             >
               <v-icon>mdi-truck-delivery</v-icon>
@@ -70,10 +70,10 @@
 
     <div class="d-flex flex-column">
       <v-row class="d-flex justify-start align-center">
-        <v-col cols="4" class="px-5 py-0">
+        <v-col :cols="4" class="px-5 py-0">
           <v-label>Cart discount</v-label>
         </v-col>
-        <v-col cols="4" class="px-2 py-0">
+        <v-col :cols="4" class="px-2 py-0">
           <cartDiscount :product_index="-1" :editable="editable"></cartDiscount>
         </v-col>
       </v-row>
@@ -100,7 +100,13 @@ export default {
     actions: Boolean
   },
   computed: {
-    ...mapState("cart", ["order", "delivery", "method", "cart_products"]),
+    ...mapState("cart", [
+      "order_id",
+      "customer",
+      "delivery",
+      "method",
+      "cart_products"
+    ]),
 
     shippingMethod: {
       get() {
@@ -120,7 +126,6 @@ export default {
     ...mapMutations("cart", ["setMethod", "setMethodStep"]),
 
     setOrderOptions(value) {
-      console.log(value);
       switch (value) {
         case "retail":
           this.setMethodStep({

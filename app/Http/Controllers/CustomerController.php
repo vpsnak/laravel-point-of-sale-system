@@ -9,9 +9,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 
-class CustomerController extends BaseController
+class CustomerController extends Controller
 {
-    protected $model = Customer::class;
+    public function get(Customer $model)
+    {
+        return response($model->load('addresses'));
+    }
 
     public function update(Request $request, Customer $model)
     {
@@ -104,17 +107,15 @@ class CustomerController extends BaseController
             'keyword' => 'required'
         ]);
 
-        return $this->searchResult(
-            [
-                'first_name',
-                'last_name',
-                'email',
-                'addresses.phone',
-                DB::raw("concat(first_name, ' ', last_name)"),
-                DB::raw("concat(last_name, ' ', first_name)"),
-            ],
-            $validatedData['keyword'],
-            true
-        );
+        $columns = [
+            'first_name',
+            'last_name',
+            'email',
+            'addresses.phone',
+            DB::raw("concat(first_name, ' ', last_name)"),
+            DB::raw("concat(last_name, ' ', first_name)"),
+        ];
+
+        return Customer::query()->search($columns, $validatedData['keyword'])->with('addresses')->get();
     }
 }

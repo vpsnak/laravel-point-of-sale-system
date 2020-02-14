@@ -91,16 +91,15 @@ class OrderController extends Controller
             'products.*.sku' => 'required|string',
             'products.*.final_price' => 'required|numeric',
             'products.*.qty' => 'required|numeric',
-            'products.*.discount_type' => 'string|nullable',
-            'products.*.discount_amount' => 'numeric|nullable',
-            'products.*.notes' => 'string|nullable',
+            'products.*.discount_type' => 'nullable|string',
+            'products.*.discount_amount' => 'nullable|numeric',
+            'products.*.notes' => 'nullable|string',
             // billing
-            'billing_address_id' => 'required_if:method,delivery|exists:addresses,id',
+            'billing_address_id' => 'nullable|required_if:method,delivery|exists:addresses,id',
             // delivery
-            'delivery' => 'required_if:method,pickup,delivery|array',
-            'delivery.date' => 'required_if:method,pickup,delivery|date',
+            'delivery' => 'nullable|required_if:method,pickup,delivery|array',
+            'delivery.date' => 'nullable|required_if:method,pickup,delivery|date',
             'delivery.time' => 'nullable|required_if:method,pickup,delivery|string',
-            'delivery.location' => 'nullable|required_if:method,delivery|numeric',
             'delivery.occasion' => 'nullable|required_if:method,delivery|numeric',
             // delivery address (shipping address)
             'delivery.address_id' => 'nullable|required_if:method,delivery|exists:addresses,id',
