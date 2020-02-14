@@ -71,6 +71,7 @@ export default {
 
   computed: {
     ...mapState("cart", [
+      "cart_products",
       "order_id",
       "order_status",
       "checkoutDialog",
@@ -109,6 +110,11 @@ export default {
     state(v) {
       if (!v) {
         this.$emit("close", true);
+      }
+    },
+    cart_products(v) {
+      if (v.length === 0) {
+        this.state = false;
       }
     }
   },

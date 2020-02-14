@@ -129,7 +129,7 @@
                     class="mx-2"
                     v-if="editable"
                     icon
-                    @click.stop="removeItem(product)"
+                    @click.stop="removeItem(index)"
                     color="red"
                     v-on="on"
                   >
@@ -299,6 +299,9 @@ export default {
     },
     increaseQty(product) {
       this.increaseProductQty(product);
+    },
+    removeItem(index) {
+      this.products.splice(index, 1);
     }
   }
 };
