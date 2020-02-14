@@ -113,6 +113,7 @@ export default {
     order_notes: "",
     order_billing_address: null,
     order_delivery_address: null,
+    order_delivery_store_pickup: null,
     order_delivery_store_pickup: null
   },
 
@@ -206,7 +207,7 @@ export default {
     setPaymentRefundedStatus(state, index) {
       state.payments[index].refunded = true;
     },
-    setPaymentHistory(state, value) {
+    setPayments(state, value) {
       if (Array.isArray(value)) {
         state.payments = value;
       } else {
@@ -485,31 +486,37 @@ export default {
     loadOrder(context, order) {
       console.log(order);
       return new Promise(resolve => {
-        context.setOrderId(order.id);
-        context.setCartProducts(order.items);
-        context.setMethod(order.method);
-        context.setOrderStatus(order.status);
-        context.setOrderTotal(order.total);
-        context.setOrderTotalWithoutTax(order.total_without_tax);
-        context.setOrderTotalTax(order.total_tax);
-        context.setOrderChange(order.change);
-        context.setOrderRemaining(order.remaining);
-        context.setOrderNotes(order.notes);
-        context.setCartDiscountType(order.discount_type);
-        context.setCartDiscountAmount(order.discount_amount);
-        context.setCustomer(order.customer);
+        context.commit("resetState");
+
+        context.commit("setOrderId", order.id);
+        context.commit("setCartProducts", order.items);
+        context.commit("setMethod", order.method);
+        context.commit("setOrderStatus", order.status);
+        context.commit("setOrderTotal", order.total);
+        context.commit("setOrderTotalWithoutTax", order.total_without_tax);
+        context.commit("setOrderTotalTax", order.total_tax);
+        context.commit("setOrderChange", order.change);
+        context.commit("setOrderRemaining", order.remaining);
+        context.commit("setPayments", order.payments);
+        context.commit("setCartDiscountType", order.discount_type);
+        context.commit("setCartDiscountAmount", order.discount_amount);
+        context.commit("setCustomer", order.customer);
+        context.commit("setOrderNotes", order.notes);
 
         if (order.method !== "retail") {
-          context.setShippingCost(order.shipping_cost);
-          context.setDeliveryDate(order.delivery.date);
-          context.setDeliveryTime(order.delivery.time);
+          context.commit("setShippingCost", order.shipping_cost);
+          context.commit("setDeliveryDate", order.delivery.date);
+          context.commit("setDeliveryTime", order.delivery.time);
 
           if (order.method === "pickup") {
-            context.setDeliveryStorePickup(order.delivery.store_pickup);
+            context.commit(
+              "setDeliveryStorePickup",
+              order.delivery.store_pickup
+            );
           } else if (order.method === "delivery") {
-            context.setBillingAddress(order.billing_address);
-            context.setDeliveryAddress(order.delivery.address);
-            context.setDeliveryOccasion(order.delivery.occasion);
+            context.commit("setBillingAddress", order.billing_address);
+            context.commit("setDeliveryAddress", order.delivery.address);
+            context.commit("setDeliveryOccasion", order.delivery.occasion);
           }
         }
 

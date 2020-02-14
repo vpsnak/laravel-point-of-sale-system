@@ -48,7 +48,7 @@ export default {
 
   methods: {
     ...mapMutations("cart", [
-      "setPaymentHistory",
+      "setPayments",
       "setOrderChange",
       "setOrderRemaining",
       "setOrderStatus"
@@ -90,7 +90,7 @@ export default {
           this.setOrderRemaining(response.remaining);
           this.setOrderStatus(response.order_status);
 
-          this.setPaymentHistory(response.payment);
+          this.setPayments(response.payment);
 
           if (payload.data.payment_type === "house-account") {
             this.$store.state.cart.customer.house_account_limit -=
@@ -106,7 +106,7 @@ export default {
         .catch(error => {
           console.error(error);
           if (_.has(error.response.data, "payment")) {
-            this.setPaymentHistory(error.response.data.payment);
+            this.setPayments(error.response.data.payment);
           }
         })
         .finally(() => {

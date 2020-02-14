@@ -130,7 +130,7 @@ export default {
     ...mapMutations("cart", [
       "setRefundLoading",
       "setPaymentRefundedStatus",
-      "setPaymentHistory",
+      "setPayments",
       "setOrderChange",
       "setOrderRemaining",
       "setOrderStatus"
@@ -170,7 +170,7 @@ export default {
             ]);
 
             this.setPaymentRefundedStatus(index);
-            this.setPaymentHistory(response.refund);
+            this.setPayments(response.refund);
           }
 
           this.setOrderChange(response.change);

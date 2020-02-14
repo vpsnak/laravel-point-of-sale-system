@@ -73,9 +73,11 @@ export default {
         );
       });
 
-      subtotal -=
-        subtotal -
-        this.calcDiscount(subtotal, this.discount_type, this.discount_amount);
+      if (this.discount_type && this.discount_amount > 0) {
+        subtotal -=
+          subtotal -
+          this.calcDiscount(subtotal, this.discount_type, this.discount_amount);
+      }
 
       return parseFloat(subtotal);
     },
