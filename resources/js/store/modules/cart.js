@@ -110,10 +110,25 @@ export default {
     order_total_tax: 0,
     order_change: 0,
     order_remaining: 0,
-    order_notes: ""
+    order_notes: "",
+    order_billing_address: null,
+    order_delivery_address: null,
+    order_delivery_store_pickup: null
   },
 
   mutations: {
+    setDeliveryStorePickup(state, value) {
+      state.order_delivery_store_pickup = value;
+    },
+    setBillingAddress(state, value) {
+      state.order_billing_address = value;
+    },
+    setDeliveryAddress(state, value) {
+      state.order_delivery_address = value;
+    },
+    setOrderDelivery(state, value) {
+      state.delivery = value;
+    },
     setOrderNotes(state, value) {
       state.order_notes = value;
     },
@@ -467,6 +482,41 @@ export default {
           });
       });
     },
+    loadOrder(context, order) {
+      console.log(order);
+      return new Promise(resolve => {
+        context.setOrderId(order.id);
+        context.setCartProducts(order.items);
+        context.setMethod(order.method);
+        context.setOrderStatus(order.status);
+        context.setOrderTotal(order.total);
+        context.setOrderTotalWithoutTax(order.total_without_tax);
+        context.setOrderTotalTax(order.total_tax);
+        context.setOrderChange(order.change);
+        context.setOrderRemaining(order.remaining);
+        context.setOrderNotes(order.notes);
+        context.setCartDiscountType(order.discount_type);
+        context.setCartDiscountAmount(order.discount_amount);
+        context.setCustomer(order.customer);
+
+        if (order.method !== "retail") {
+          context.setShippingCost(order.shipping_cost);
+          context.setDeliveryDate(order.delivery.date);
+          context.setDeliveryTime(order.delivery.time);
+
+          if (order.method === "pickup") {
+            context.setDeliveryStorePickup(order.delivery.store_pickup);
+          } else if (order.method === "delivery") {
+            context.setBillingAddress(order.billing_address);
+            context.setDeliveryAddress(order.delivery.address);
+            context.setDeliveryOccasion(order.delivery.occasion);
+          }
+        }
+
+        resolve(true);
+      });
+    },
+
     completeStep(context) {
       context.commit("completeStep");
       context.commit("nextCheckoutStep");

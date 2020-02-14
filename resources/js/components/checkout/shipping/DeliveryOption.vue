@@ -214,15 +214,19 @@ export default {
       }
     });
 
-    EventBus.$on("shipping-addresses", event => {
+    EventBus.$on("billing-address", event => {
       if (event.payload) {
         this.addresses.push(event.payload);
 
-        if (this.dialog.model.type === "shipping") {
-          this.setDeliveryAddressId(event.payload.id);
-        } else {
-          this.setBillingAddressId(event.payload.id);
-        }
+        this.billingAddress = event.payload;
+      }
+    });
+
+    EventBus.$on("delivery-address", event => {
+      if (event.payload) {
+        this.addresses.push(event.payload);
+
+        this.shipping.address = event.payload;
       }
     });
   },
@@ -402,15 +406,18 @@ export default {
       let icon;
       let title;
       let data;
+      let eventChannel;
 
       if (action === "delivery") {
         icon = "mdi-map-marker";
         title = address_id ? "Edit delivery address" : "New delivery address";
         data = this.selected_delivery_address;
+        eventChannel = "delivery-address";
       } else {
         icon = "mdi-receipt";
         title = address_id ? "Edit billing address" : "New billing address";
         data = this.selected_billing_address;
+        eventChannel = "billing-address";
       }
 
       this.setDialog({
@@ -424,7 +431,7 @@ export default {
         content: "",
         model: data,
         persistent: true,
-        eventChannel: "shipping-addresses"
+        eventChannel
       });
     },
     setCost(item) {
@@ -435,16 +442,12 @@ export default {
       }
     },
     getTimeSlots() {
-      if (
-        this.delivery.address_id &&
-        this.delivery.date &&
-        this.method === "delivery"
-      ) {
+      if (this.delivery.address_id && this.delivery.date) {
         this.loading = true;
         let payload = {
           url: "shipping/timeslot",
           data: {
-            postcode: this.delivery.address_id.postcode, // @TODO get postcode from selected address object
+            postcode: this.selected_delivery_address.postcode,
             date: this.delivery.date
           }
         };

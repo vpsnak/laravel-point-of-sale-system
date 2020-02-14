@@ -127,7 +127,15 @@ export default {
     }
   },
   methods: {
-    ...mapMutations("cart", ["setRefundLoading"]),
+    ...mapMutations("cart", [
+      "setRefundLoading",
+      "setPaymentRefundedStatus",
+      "setPaymentHistory",
+      "setOrderChange",
+      "setOrderRemaining",
+      "setOrderStatus"
+    ]),
+    ...mapMutations(["setNotification"]),
     ...mapMutations("dialog", ["setDialog"]),
     ...mapActions(["search", "delete"]),
 

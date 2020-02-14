@@ -6,19 +6,14 @@
     </h3>
 
     <orderReceipt v-if="order_status === 'paid'" />
-
-    <v-btn color="primary" @click="resetState()">Close</v-btn>
   </div>
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState } from "vuex";
 export default {
   computed: {
     ...mapState("cart", ["order_status", "order_change"])
-  },
-  methods: {
-    ...mapMutations("cart", ["resetState"])
   }
 };
 </script>

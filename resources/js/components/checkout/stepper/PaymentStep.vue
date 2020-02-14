@@ -12,10 +12,11 @@
 
           <v-btn
             v-if="completed && !refund_loading"
-            color="primary"
+            color="success"
             @click="complete"
             :loading="loading"
             :disabled="loading"
+            text
           >
             Complete order
           </v-btn>

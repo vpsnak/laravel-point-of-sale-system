@@ -48,7 +48,16 @@
             Back
           </v-btn>
 
-          <v-spacer />
+          <v-spacer v-show="currentCheckoutStep !== 3" />
+
+          <v-btn
+            @click="resetState()"
+            color="success"
+            text
+            v-show="currentCheckoutStep === 3 ? true : false"
+          >
+            Close
+          </v-btn>
 
           <v-btn
             @click="completeStep()"
@@ -76,7 +85,7 @@ export default {
   computed: {
     ...mapState("cart", [
       "currentCheckoutStep",
-      "isValid",
+      "is_valid",
       "order_id",
       "checkoutSteps",
       "method"
@@ -84,14 +93,14 @@ export default {
 
     disableNext() {
       if (this.currentCheckoutStep === 1 && this.method !== "retail") {
-        return !this.isValid;
+        return !this.is_valid;
       } else {
         return false;
       }
     }
   },
   methods: {
-    ...mapMutations("cart", ["previousStep"]),
+    ...mapMutations("cart", ["previousStep", "resetState"]),
     ...mapActions("cart", ["completeStep"])
   }
 };

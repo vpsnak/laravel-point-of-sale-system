@@ -48,7 +48,11 @@
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-btn
-                    v-if="editable && !product.sku.startsWith('giftCard')"
+                    v-if="
+                      product.editable_price &&
+                        editable &&
+                        !product.sku.startsWith('giftCard')
+                    "
                     :color="editPrice(index) ? 'yellow' : ''"
                     :input-value="editPrice(index) ? true : false"
                     @click.stop="toggleEdit(index)"
@@ -141,7 +145,7 @@
             </div>
           </div>
         </v-expansion-panel-header>
-        <v-expansion-panel-content class="pa-3">
+        <v-expansion-panel-content>
           <v-container fluid>
             <v-row no-gutters>
               <v-col :cols="12">
@@ -156,7 +160,8 @@
               <v-col :cols="12">
                 <v-textarea
                   v-model="product.notes"
-                  rows="3"
+                  prepend-inner-icon="mdi-card-text-outline"
+                  :rows="2"
                   label="Notes"
                   :hint="'For product: ' + product.name"
                   counter

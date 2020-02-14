@@ -7,7 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $appends = ['total', 'total_without_tax', 'total_paid', 'total_tax'];
+    protected $appends = [
+        'total',
+        'total_without_tax',
+        'total_paid',
+        'total_tax',
+        'remaining'
+    ];
 
     protected $fillable = [
         'customer_id',
@@ -44,6 +50,17 @@ class Order extends Model
         'created_at' => "datetime:m/d/Y H:i:s",
         'updated_at' => "datetime:m/d/Y H:i:s"
     ];
+
+    public function getRemainingAttribute()
+    {
+        $remaining = Price::numberPrecision($this->total - $this->total_paid);
+
+        if ($remaining < 0) {
+            return 0;
+        } else {
+            return $remaining;
+        }
+    }
 
     public function getDeliveryAddressAttribute()
     {
@@ -129,7 +146,7 @@ class Order extends Model
         $total = $this->total_without_tax;
         $total = Price::calculateTax($total, $this->tax);
 
-        return floor($total * 100) / 100;
+        return Price::numberPrecision(($total * 100) / 100);
     }
 
     public function getTotalWithoutTaxAttribute()
@@ -143,7 +160,7 @@ class Order extends Model
         $total = Price::calculateDiscount($total, $this->discount_type, $this->discount_amount);
         $total += $this->shipping_cost;
 
-        return $total;
+        return Price::numberPrecision($total);
     }
 
     public function getTotalPaidAttribute()
@@ -154,12 +171,12 @@ class Order extends Model
                 $total_paid += $payment->amount;
             }
         };
-        return $total_paid + $this->change;
+        return Price::numberPrecision($total_paid + $this->change);
     }
 
     public function getTotalTaxAttribute()
     {
-        return $this->total - $this->total_without_tax;
+        return Price::numberPrecision($this->total - $this->total_without_tax);
     }
 
     public function payments()

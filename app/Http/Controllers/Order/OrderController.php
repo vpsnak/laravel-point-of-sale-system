@@ -153,11 +153,24 @@ class OrderController extends Controller
         $order->billing_address = $billing_address ?? null;
 
         $delivery = [];
-        if (isset($delivery_address)) {
-            $delivery['address'] = $delivery_address;
-        } else if (isset($pickup_point)) {
-            $delivery['store_pickup'] = $store_pickup;
+
+        switch ($validatedData['method']) {
+            default:
+            case 'retail':
+                break;
+            case 'pickup':
+                $delivery['date'] = $validatedData['delivery']['date'];
+                $delivery['time'] = $validatedData['delivery']['time'];
+                $delivery['store_pickup'] = $store_pickup;
+                break;
+            case 'delivery':
+                $delivery['date'] = $validatedData['delivery']['date'];
+                $delivery['time'] = $validatedData['delivery']['time'];
+                $delivery['occasion'] = $validatedData['delivery']['occasion'];
+                $delivery['address'] = $delivery_address;
+                break;
         }
+
         $order->delivery = $delivery;
 
         $order->save();
@@ -281,33 +294,34 @@ class OrderController extends Controller
     public static function updateOrderStatus(Payment $payment, bool $refund = false)
     {
         $order = $payment->order;
-        $change = $order->total - $order->total_paid;
+        $remaining = Price::numberPrecision($order->total - $order->total_paid);
+        $change = Price::numberPrecision($order->total_paid - $order->total);
 
-        if ($change === 0) {
+        if ($change < 0) {
+            $change = 0;
+        }
+
+        if ($remaining < 0) {
+            $remaining = 0;
+        }
+
+        if ($remaining > 0) {
             if ($order->status !== 'pending_payment') {
                 $order->change = 0;
                 $order->status = 'pending_payment';
             }
         } else {
-            // change is negative so fix payment amount and save the change to order
             if (!$refund) {
-                $payment->amount = abs($payment->amount) + (float) $change;
+                $payment->amount = Price::numberPrecision($payment->amount - $change);
                 $payment->save();
 
                 if ($order->status !== 'paid') {
-                    $order->change = abs($change);
+                    $order->change = $change;
                     $order->status = 'paid';
                 }
             } else {
-                $order->change = abs($change);
+                $order->change = $change;
                 $order->save();
-
-                if ($order->status !== ('pending_payment' || 'pending')) {
-                    if ($order->total - $order->total_paid > 0) {
-                        $order->change = 0;
-                        $order->status = 'pending_payment';
-                    }
-                }
             }
         }
 
@@ -315,8 +329,8 @@ class OrderController extends Controller
 
         $order = $order->refresh();
         return [
-            'remaining' => $order->total - $order->total_paid,
-            'change' =>  $order->total - $order->total_paid,
+            'remaining' => $remaining,
+            'change' =>  $change,
             'order_status' => $order->status
         ];
     }

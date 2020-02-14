@@ -154,7 +154,9 @@ export default {
 
   watch: {
     remainingAmount(value) {
-      this.amount = value;
+      if (this.order_status === "pending_payment") {
+        this.amount = value;
+      }
     }
   },
 
@@ -184,6 +186,7 @@ export default {
       "order_remaining",
       "order_id",
       "order_total",
+      "order_status",
       "customer"
     ]),
 
@@ -246,10 +249,20 @@ export default {
     ...mapActions("cart", ["submitOrder"]),
     ...mapActions(["getAll"]),
 
-    // toFixed(num, fixed) {
-    //   var re = new RegExp("^-?\\d+(?:.\\d{0," + (fixed || -1) + "})?");
-    //   return num.toString().match(re)[0];
-    // },
+    doublePrecision(num) {
+      num = _.toString(num);
+
+      num = num.split(".");
+      if (num.length === 2 && num[1].length > 2) {
+        num[1] = num[1].slice(0, 2);
+      }
+
+      if (num[1] === undefined) {
+        num[1] = "00";
+      }
+
+      return parseFloat(`${num[0]}.${num[1]}`);
+    },
 
     getPaymentTypes() {
       this.getAll({ model: "payment-types" }).then(response => {

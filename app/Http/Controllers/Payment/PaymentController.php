@@ -278,6 +278,10 @@ class PaymentController extends Controller
 
     public function refundPayment(Payment $payment, bool $setOrderStatus = true)
     {
+        if ($payment->refunded) {
+            return response(['errors' => ['Refund' => 'This payment has already been refunded']], 422);
+        }
+
         switch ($payment->paymentType->type) {
             case 'pos-terminal':
                 $result = $this->posRefund($payment);

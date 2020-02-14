@@ -24,8 +24,8 @@ class Price
         return $price + ($price * ($tax / 100));
     }
 
-    public static function doublePrecision(float $float, int $precision)
+    public static function numberPrecision($number, int $precision = 2)
     {
-        return bcdiv($float, 1, $precision);
+        return (float) bcdiv($number, 1, $precision);
     }
 }

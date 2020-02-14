@@ -154,7 +154,8 @@ export default {
       "setDataTable",
       "resetDataTable"
     ]),
-    ...mapMutations("cart", ["setCheckoutDialog", "setOrder", "resetState"]),
+    ...mapMutations("cart", ["setCheckoutDialog", "resetState"]),
+    ...mapActions("cart", ["loadOrder"]),
 
     parseStatusName(value) {
       return _.upperFirst(value.replace("_", " "));
@@ -230,9 +231,7 @@ export default {
         })
           .then(response => {
             this.resetState();
-            this.$store.state.cart.checkoutSteps[0].completed = true;
-            this.$store.state.cart.currentCheckoutStep = 2;
-            this.setOrder(response);
+            this.loadOrder(response);
             resolve(true);
           })
           .catch(error => {

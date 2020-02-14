@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Carbon;
+use App\Helper\Price;
 use App\MasAccount;
 use App\MasOrder;
 use App\Order;
@@ -163,7 +163,7 @@ class MasOrderController extends Controller
             return $response;
         }
 
-        $shipping_address = $order->delivery['address'];
+        $shipping_address = $order->delivery['address'] ?? null;
         if (empty($shipping_address)) {
             return $response;
         }
@@ -210,7 +210,7 @@ class MasOrderController extends Controller
             ];
 
             if ($item['price'] > $item['final_price']) {
-                $response[$item['id']]['DiscountAmount'] = number_format($item['price'] - $item['final_price'], 2, '.', '');
+                $response[$item['id']]['DiscountAmount'] = Price::numberPrecision($item['price'] - $item['final_price']);
             } else {
                 $response[$item['id']]['DiscountAmount'] = "0";
             }

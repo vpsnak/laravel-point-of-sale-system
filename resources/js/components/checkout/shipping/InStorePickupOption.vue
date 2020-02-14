@@ -45,14 +45,14 @@
                   :loading="loading"
                   label="Time Slot"
                   prepend-icon="mdi-clock"
-                  append-outer-icon="mdi-plus"
+                  append-icon="mdi-plus"
                   :items="time_slots"
                   :error-messages="errors"
                   :success="valid"
                   item-text="label"
                   v-model="timeSlot"
                   @input="setCost()"
-                  @click:append-outer="addTimeSlotDialog()"
+                  @click:append="addTimeSlotDialog()"
                   @change="validate()"
                 ></v-select>
               </ValidationProvider>
@@ -66,10 +66,10 @@
                 <v-text-field
                   type="number"
                   label="Fees"
+                  prefix="$"
                   :error-messages="errors"
                   :success="valid"
                   :min="0"
-                  prepend-icon="mdi-currency-usd"
                   v-model="shippingCost"
                   @input="validate()"
                 ></v-text-field>
@@ -90,7 +90,7 @@
                   label="Location"
                   :items="store_pickups"
                   item-text="name"
-                  item-value="id"
+                  return-object
                   v-model="storePickup"
                   prepend-icon="mdi-store"
                   @change="validate()"
@@ -132,6 +132,7 @@ export default {
       time_slots: [],
       datePicker: false,
       store_pickups: [],
+      selected_store_pickup: null,
 
       dialog: {
         show: false,
@@ -167,10 +168,11 @@ export default {
     },
     storePickup: {
       get() {
-        return this.delivery.store_pickup_id;
+        return this.selected_store_pickup;
       },
       set(value) {
-        this.setDeliveryStorePickupId(value);
+        this.selected_store_pickup = value;
+        this.setDeliveryStorePickupId(value.id);
       }
     },
     timeSlot: {
