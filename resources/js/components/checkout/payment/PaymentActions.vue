@@ -1,5 +1,5 @@
 <template>
-  <div v-show="remainingAmount > 0">
+  <div>
     <v-container fluid>
       <v-row dense justify="center" align="center">
         <v-col cols="12" justify="center" align="center">
@@ -86,7 +86,7 @@
           <v-text-field
             dense
             label="Code"
-            :prepend-inner-icon="getIcon()"
+            :prepend-inner-icon="getIcon"
             :disabled="loading || orderLoading"
             v-model="code"
           ></v-text-field>
@@ -140,20 +140,26 @@
 </template>
 ​
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex";
 
 export default {
+  props: {
+    loading: Boolean
+  },
+
   mounted() {
     this.getPaymentTypes();
+    this.amount = this.remainingAmount;
+  },
+
+  watch: {
+    remainingAmount(value) {
+      this.amount = value;
+    }
   },
 
   beforeDestroy() {
     this.$off("sendPayment");
-  },
-
-  props: {
-    remaining: String,
-    loading: Boolean
   },
 
   data() {
@@ -174,8 +180,16 @@ export default {
   },
 
   computed: {
-    ...mapState("cart", ["order"]),
+    ...mapState("cart", [
+      "order_remaining",
+      "order_id",
+      "order_total",
+      "customer"
+    ]),
 
+    getIcon() {
+      return _.find(this.paymentTypes, ["type", this.paymentType]).icon;
+    },
     paymentTypes: {
       get() {
         if (this.houseAccount) {
@@ -192,47 +206,51 @@ export default {
     },
     houseAccountNumber() {
       if (this.houseAccount) {
-        return this.$store.state.cart.customer.house_account_number;
+        return this.customer.house_account_number;
       } else {
         return false;
       }
     },
     houseAccount() {
-      if (this.$store.state.cart.customer) {
-        if (
-          this.$store.state.cart.customer.house_account_status &&
-          this.$store.state.cart.customer.house_account_number &&
-          this.$store.state.cart.customer.house_account_limit > 0
-        ) {
-          return true;
-        }
+      if (
+        this.customer &&
+        this.customer.house_account_status &&
+        this.customer.house_account_number &&
+        this.customer.house_account_limit > 0
+      ) {
+        return true;
       } else {
         return false;
       }
     },
     houseAccountLimit() {
-      return parseFloat(this.$store.state.cart.customer.house_account_limit);
+      return parseFloat(this.customer.house_account_limit);
     },
     remainingAmount() {
-      if (parseFloat(this.$props.remaining) >= 0) {
-        this.amount = this.$props.remaining;
-        return parseFloat(this.$props.remaining);
-      } else {
-        this.amount = parseFloat(this.$store.state.cart.cart_price).toFixed(2);
-        return parseFloat(this.$store.state.cart.cart_price);
-      }
+      // return this.order_remaining || this.toFixed(this.order_total, 2);
+      return this.order_remaining || this.order_total.toFixed(2);
     },
     amount: {
       get() {
         return this.paymentAmount;
       },
       set(value) {
+        // this.paymentAmount = this.toFixed(value, 2);
         this.paymentAmount = value;
       }
     }
   },
 
   methods: {
+    ...mapMutations("cart", ["setPaymentLoading"]),
+    ...mapActions("cart", ["submitOrder"]),
+    ...mapActions(["getAll"]),
+
+    // toFixed(num, fixed) {
+    //   var re = new RegExp("^-?\\d+(?:.\\d{0," + (fixed || -1) + "})?");
+    //   return num.toString().match(re)[0];
+    // },
+
     getPaymentTypes() {
       this.getAll({ model: "payment-types" }).then(response => {
         this.paymentTypes = response;
@@ -244,27 +262,27 @@ export default {
       switch (this.paymentType) {
         case "pos-terminal":
           payload = {
-            paymentAmount: this.paymentAmount,
+            paymentAmount: this.amount,
             paymentType: this.paymentType
           };
           break;
         case "cash":
           payload = {
-            paymentAmount: this.paymentAmount,
+            paymentAmount: this.amount,
             paymentType: this.paymentType
           };
           break;
         case "card":
           payload = {
             card: this.card,
-            paymentAmount: this.paymentAmount,
+            paymentAmount: this.amount,
             paymentType: this.paymentType
           };
           break;
         case "house-account":
           payload = {
             house_account_number: this.houseAccountNumber,
-            paymentAmount: this.paymentAmount,
+            paymentAmount: this.amount,
             paymentType: this.paymentType
           };
           break;
@@ -277,7 +295,7 @@ export default {
         case "giftcard":
           payload = {
             code: this.code,
-            paymentAmount: this.paymentAmount,
+            paymentAmount: this.amount,
             paymentType: this.paymentType
           };
           break;
@@ -287,6 +305,7 @@ export default {
 
       this.$emit("sendPayment", payload);
       this.limits();
+      this.orderLoading = false;
     },
     limits() {
       if (this.paymentType !== "cash") {
@@ -300,11 +319,11 @@ export default {
           }
         }
         if (parseFloat(this.amount) > parseFloat(this.remainingAmount)) {
-          this.amount = this.remainingAmount.toFixed(2);
+          this.amount = this.remainingAmount;
         }
       } else {
-        if (parseFloat(this.amount) > 99999) {
-          this.amount = 99999;
+        if (parseFloat(this.amount) > 9999) {
+          this.amount = 9999;
         }
       }
     },
@@ -319,12 +338,11 @@ export default {
     },
     sendPayment() {
       this.orderLoading = true;
-      this.$store.state.cart.paymentLoading = true;
+      this.setPaymentLoading(true);
 
-      if (!this.order.id) {
+      if (!this.order_id) {
         this.submitOrder()
           .then(() => {
-            this.$store.state.cart.products = [];
             this.pay();
           })
           .catch(error => {
@@ -336,15 +354,7 @@ export default {
           });
       } else {
         this.pay();
-        this.orderLoading = false;
       }
-    },
-
-    ...mapActions("cart", ["submitOrder"]),
-    ...mapActions(["getAll"]),
-
-    getIcon() {
-      return _.find(this.paymentTypes, ["type", this.paymentType]).icon;
     }
   }
 };

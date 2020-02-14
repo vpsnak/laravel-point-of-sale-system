@@ -7,12 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $appends = ['total', 'total_without_tax', 'total_paid'];
+    protected $appends = ['total', 'total_without_tax', 'total_paid', 'total_tax'];
 
     protected $fillable = [
-        'magento_id',
-        "magento_shipping_address_id",
-        "magento_billing_address_id",
         'customer_id',
         'store_id',
         'created_by',
@@ -23,34 +20,72 @@ class Order extends Model
         'tax',
         'subtotal',
         'change',
-        'shipping_type',
         'shipping_cost',
-        'shipping_address',
         'billing_address',
-        'store_pickup_id',
-        'delivery_date',
-        'delivery_slot',
-        'occasion',
+        'delivery',
+        'method',
         'notes',
+
+        'magento_id',
+        'magento_shipping_address_id',
+        'magento_billing_address_id',
     ];
 
     protected $with = [
         'payments',
         'customer',
         'store',
-        'created_by',
-        'store_pickup'
+        'created_by'
     ];
 
     protected $casts = [
+        'delivery' => 'array',
+        'items' => 'array',
         'created_at' => "datetime:m/d/Y H:i:s",
         'updated_at' => "datetime:m/d/Y H:i:s"
     ];
 
-    public function getItemsAttribute($value)
+    public function getDeliveryAddressAttribute()
     {
-        return json_decode($value, true);
+        return $this->delivery['address'];
     }
+
+    public function setDeliveryAddressAttribute($value)
+    {
+        if (is_array($value)) {
+            $this->attributes['delivery']['address'] = json_encode($value);
+        } else {
+            $this->attributes['delivery']['address'] = $value;
+        }
+    }
+
+    public function getStorePickupAttribute()
+    {
+        return $this->delivery['store_pickup'];
+    }
+
+    public function setPickupPointAttribute($value)
+    {
+        if (is_array($value)) {
+            $this->attributes['delivery']['store_pickup'] = json_encode($value);
+        } else {
+            $this->attributes['delivery']['store_pickup'] = $value;
+        }
+    }
+
+    public function setDeliveryAttribute($value)
+    {
+        if (is_array($value)) {
+            $this->attributes['delivery'] = json_encode($value);
+        } else {
+            $this->attributes['delivery'] = $value;
+        }
+    }
+
+    // public function getItemsAttribute($value)
+    // {
+    //     return json_decode($value, true);
+    // }
 
     public function setItemsAttribute($value)
     {
@@ -94,7 +129,7 @@ class Order extends Model
         $total = $this->total_without_tax;
         $total = Price::calculateTax($total, $this->tax);
 
-        return round($total, 2);
+        return floor($total * 100) / 100;
     }
 
     public function getTotalWithoutTaxAttribute()
@@ -122,6 +157,11 @@ class Order extends Model
         return $total_paid + $this->change;
     }
 
+    public function getTotalTaxAttribute()
+    {
+        return $this->total - $this->total_without_tax;
+    }
+
     public function payments()
     {
         return $this->hasMany(Payment::class);
@@ -135,11 +175,6 @@ class Order extends Model
     public function store()
     {
         return $this->belongsTo(Store::class);
-    }
-
-    public function store_pickup()
-    {
-        return $this->hasOne(StorePickup::class, 'id', 'store_pickup_id');
     }
 
     public function created_by()

@@ -6,6 +6,7 @@ use App\Http\Controllers\MasOrderController;
 use App\Order;
 use App\CashRegisterReport;
 use App\Product;
+use App\Customer;
 use App\Helper\PhpHelper;
 use Illuminate\Http\Request;
 
@@ -42,6 +43,17 @@ class AppController extends Controller
         // ];
         // return $onlinePartner;
         // }
+
+        // CHECK getDefaultBilling getDefaultShipping setIsDefaultBillingAttribute setIsDefaultShippingAttribute
+        // $customer = Customer::getOne(1);
+        // $billingAddress = $customer->getDefaultBilling();
+        // $shippingAddress = $customer->getDefaultShipping();
+        // $customer_addresses = $customer->addresses;
+        // $customer_address_first = $customer->addresses->get(0);
+        // $customer_address_second = $customer->addresses->get(1);
+        // $customer_address_first->setIsDefaultBillingAttribute(1);
+        // $customer_address_second->setIsDefaultShippingAttribute(1);
+        // return response($customer_addresses, 201);
     }
 
     public function index()

@@ -20,6 +20,7 @@ class ProductController extends BaseController
             'url' => 'nullable|string',
             'photo_url' => 'nullable|string',
             'description' => 'nullable|string',
+            'editable_price' => 'nullable|boolean'
         ]);
 
         $validatedExtra = $request->validate([

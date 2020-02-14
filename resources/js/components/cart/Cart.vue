@@ -8,12 +8,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn-toggle
-        v-model="shippingMethod"
-        @change="setOrderOptions"
-        mandatory
-        group
-      >
+      <v-btn-toggle v-model="shippingMethod" mandatory group>
         <v-tooltip bottom color="primary">
           <template v-slot:activator="{ on }">
             <v-btn
@@ -21,7 +16,7 @@
               icon
               value="retail"
               v-on="on"
-              :disabled="order.id ? true : false"
+              :disabled="order ? true : false"
             >
               <v-icon>mdi-cart-arrow-right</v-icon>
             </v-btn>
@@ -34,7 +29,7 @@
               color="warning"
               icon
               value="pickup"
-              :disabled="!$store.state.cart.customer || order.id ? true : false"
+              :disabled="!$store.state.cart.customer || order ? true : false"
               v-on="on"
             >
               <v-icon>mdi-storefront</v-icon>
@@ -48,7 +43,7 @@
               color="purple"
               icon
               value="delivery"
-              :disabled="!$store.state.cart.customer || order.id ? true : false"
+              :disabled="!$store.state.cart.customer || order ? true : false"
               v-on="on"
             >
               <v-icon>mdi-truck-delivery</v-icon>
@@ -95,7 +90,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex";
 
 export default {
   props: {
@@ -105,101 +100,52 @@ export default {
     actions: Boolean
   },
   computed: {
-    cart: {
-      get() {
-        return this.$store.state.cart;
-      },
-      set(value) {
-        this.$store.state.cart = value;
-      }
-    },
+    ...mapState("cart", ["order", "delivery", "method", "cart_products"]),
 
     shippingMethod: {
       get() {
-        return this.cart.shipping.method;
+        return this.method;
       },
       set(value) {
-        this.cart.shipping.method = value;
-      }
-    },
-    orderOptions: {
-      get() {
-        return this.cart.checkoutSteps[0];
-      },
-      set(value) {
-        this.cart.checkoutSteps[0] = value;
-      }
-    },
-    order: {
-      get() {
-        return this.cart.order;
-      },
-      set(value) {
-        this.cart.order = value;
-      }
-    },
-    cartDiscount() {
-      let discount = {
-        discount_type: this.$store.state.cart.discount_type,
-        discount_amount: this.$store.state.cart.discount_amount
-      };
-
-      return discount;
-    },
-    products: {
-      get() {
-        if (this.order.id) {
-          return this.order.items;
-        } else {
-          return this.cart.products;
-        }
-      },
-      set(value) {
-        if (this.order.id) {
-          this.order.items = value;
-        } else {
-          this.cart.products = value;
-        }
-      }
-    },
-    customerList: {
-      get() {
-        return this.$store.state.customerList;
-      },
-      set(value) {
-        this.$store.state.customerList = value;
+        this.setMethod(value);
+        this.setOrderOptions(value);
       }
     },
     totalProducts() {
-      return _.size(this.products) ? false : true;
+      return _.size(this.cart_products) ? false : true;
     }
   },
 
   methods: {
-    setOrderOptions() {
-      switch (this.shippingMethod) {
+    ...mapMutations("cart", ["setMethod", "setMethodStep"]),
+
+    setOrderOptions(value) {
+      console.log(value);
+      switch (value) {
         case "retail":
-          this.orderOptions.name = "Cash & Carry";
-          this.orderOptions.icon = "mdi-cart-arrow-right";
-          this.orderOptions.color = "primary";
+          this.setMethodStep({
+            name: "Cash & Carry",
+            icon: "mdi-cart-arrow-right",
+            color: "primary"
+          });
           break;
         case "pickup":
-          this.orderOptions.name = "In Store Pickup";
-          this.orderOptions.icon = "mdi-storefront";
-          this.orderOptions.color = "warning";
+          this.setMethodStep({
+            name: "In Store Pickup",
+            icon: "mdi-storefront",
+            color: "warning"
+          });
           break;
         case "delivery":
-          this.orderOptions.name = "Delivery";
-          this.orderOptions.icon = "mdi-truck-delivery";
-          this.orderOptions.color = "success";
+          this.setMethodStep({
+            name: "Delivery",
+            icon: "mdi-truck-delivery",
+            color: "success"
+          });
           break;
         default:
           break;
       }
-    },
-    addAll(cart) {
-      this.products.splice(0);
-      this.products = cart;
     }
   }
 };

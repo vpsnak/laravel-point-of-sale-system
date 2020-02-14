@@ -5,7 +5,7 @@
         <v-icon left>mdi-receipt</v-icon>
         <h3>
           Order Number
-          <i class="cyan--text">#{{ order.id }}</i>
+          <i class="cyan--text">#{{ order_id }}</i>
         </h3>
       </v-subheader>
       <v-divider></v-divider>
@@ -45,14 +45,11 @@ export default {
     };
   },
   computed: {
-    ...mapState("cart", ["order"]),
+    ...mapState("cart", ["order_id", "customer"]),
 
-    customer() {
-      return this.order.customer;
-    },
     customerEmail: {
       get() {
-        if (this.customer) {
+        if (!this.customer_email && this.customer) {
           return this.customer.email;
         } else {
           return this.customer_email;
@@ -71,18 +68,19 @@ export default {
     ...mapActions("cart", ["saveGuestEmail", "mailReceipt"]),
 
     printReceipt() {
-      window.open(`/receipt/${this.order.id}`, "_blank");
+      window.open(`/receipt/${this.order_id}`, "_blank");
     },
     mailReceipt() {
       this.loading = true;
 
-      this.saveGuestEmail({ email: this.customerEmail }).finally(() => {
-        this.mailReceipt({ email: this.customerEmail }).finally(() => {
-          this.loading = false;
+      this.saveGuestEmail({ email: this.customerEmail })
+        .catch()
+        .finally(() => {
+          this.mailReceipt({ email: this.customerEmail }).finally(() => {
+            this.loading = false;
+          });
         });
-      });
     }
   }
 };
 </script>
-this.$store.commit("cart/resetState");

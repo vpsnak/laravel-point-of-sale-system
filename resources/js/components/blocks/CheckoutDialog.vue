@@ -18,14 +18,14 @@
               color="red"
             >
               <v-icon>
-                {{ order.id ? "mdi-cancel" : "mdi-close" }}
+                {{ order_id ? "mdi-cancel" : "mdi-close" }}
               </v-icon>
             </v-btn>
           </template>
           <span>{{ closeBtnTxt }}</span>
         </v-tooltip>
 
-        <v-tooltip bottom v-if="order.id" color="orange">
+        <v-tooltip bottom v-if="order_id" color="orange">
           <template v-slot:activator="{ on }">
             <v-btn
               :disabled="disableControls"
@@ -46,13 +46,13 @@
       <v-card-text>
         <v-row dense>
           <v-col :lg="8">
-            <checkoutStepper />
+            <checkoutStepper v-if="checkoutDialog" />
           </v-col>
           <v-col :lg="4">
             <cart
               icon="mdi-clipboard-list"
               title="Order summary"
-              :editable="order.id ? false : true"
+              :editable="order_id ? false : true"
             ></cart>
           </v-col>
         </v-row>
@@ -69,32 +69,16 @@ export default {
     this.$off("close");
   },
 
-  data() {
-    return {
-      confirmationDialog: {
-        action: "confirmation",
-        title: "Cancel order?",
-        content: "Are you sure you want to <b>cancel</b> the current order?",
-        actions: true,
-        persistent: true,
-        cancelBtnTxt: "No",
-        confirmationBtnTxt: "Yes"
-      }
-    };
-  },
-
   computed: {
     ...mapState("cart", [
-      "order",
+      "order_id",
+      "order_status",
       "checkoutDialog",
       "currentCheckoutStep",
       "paymentLoading",
       "refundLoading",
       "completeOrderLoading"
     ]),
-    cart() {
-      return this.$store.state.cart;
-    },
     disableControls() {
       if (
         this.paymentLoading ||
@@ -107,7 +91,7 @@ export default {
       }
     },
     closeBtnTxt() {
-      return this.order.id && this.currentCheckoutStep !== 3
+      return this.order_id && this.currentCheckoutStep !== 3
         ? "Cancel order"
         : "Close";
     },
@@ -131,29 +115,41 @@ export default {
 
   methods: {
     ...mapMutations("dialog", ["setDialog"]),
-    ...mapMutations("cart", ["resetState"]),
-    ...mapMutations("cart", ["setCheckoutDialog"]),
+    ...mapMutations("cart", [
+      "setCheckoutDialog",
+      "setIsValidCheckout",
+      "resetState"
+    ]),
     ...mapActions(["delete"]),
 
     hold() {
       this.resetState();
     },
     close() {
-      if (this.order.id && this.order.status === "complete") {
+      if (this.order_status === "complete") {
         this.resetState();
-      } else if (this.order.id && this.order.status !== "complete") {
-        this.setDialog(this.confirmationDialog);
+      } else if (this.order_id && this.order_status !== "complete") {
+        this.setDialog({
+          show: true,
+          action: "confirmation",
+          title: "Cancel order?",
+          content: "Are you sure you want to <b>cancel</b> the current order?",
+          actions: true,
+          persistent: true,
+          cancelBtnTxt: "No",
+          confirmationBtnTxt: "Yes"
+        });
       } else {
         this.state = false;
       }
     },
     confirmation(event) {
       if (event) {
-        this.cart.isValidCheckout = false;
+        this.setIsValidCheckout(false);
 
         let payload = {
           model: "orders",
-          id: this.order.id
+          id: this.order_id
         };
         this.delete(payload).then(response => {
           this.resetState();

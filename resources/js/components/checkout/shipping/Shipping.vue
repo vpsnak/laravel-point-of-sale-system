@@ -1,25 +1,26 @@
 <template>
-	<div>
-		<deliveryOption v-if="shipping.method === 'delivery'"></deliveryOption>
-		<inStorePickupOption v-if="shipping.method === 'pickup'"></inStorePickupOption>
-		<retailOption v-if="shipping.method === 'retail'"></retailOption>
-	</div>
+    <component :is="template" />
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
-	computed: {
-		shippingMethod() {
-			return this.shipping.method;
-		},
-		shipping: {
-			get() {
-				return this.$store.state.cart.shipping;
-			},
-			set(value) {
-				this.$store.state.cart.shipping = value;
-			}
-		}
-	}
+    computed: {
+        ...mapState("cart", ["method"]),
+
+        template() {
+            switch (this.method) {
+                case "delivery":
+                    return "deliveryOption";
+                case "pickup":
+                    return "inStorePickupOption";
+                case "retail":
+                    return "orderNotes";
+                default:
+                    return "orderNotes";
+            }
+        }
+    }
 };
 </script>

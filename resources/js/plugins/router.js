@@ -34,7 +34,7 @@ router.beforeEach((to, from, next) => {
     // guard sales page if no register is selected
     else if (
         to.matched.some(record => record.name === "sales") &&
-        !store.getters.openedRegister
+        !store.state.cashRegister
     ) {
         next({
             path: "/open-cash-register",
@@ -45,7 +45,7 @@ router.beforeEach((to, from, next) => {
     // guard sales page if no register is selected
     else if (
         to.matched.some(record => record.name === "orders") &&
-        !store.getters.openedRegister
+        !store.state.cashRegister
     ) {
         next({
             path: "/open-cash-register",
@@ -56,7 +56,7 @@ router.beforeEach((to, from, next) => {
     // guard open register route if already logged in
     else if (
         to.matched.some(record => record.name === "openCashRegister") &&
-        store.getters.openedRegister
+        store.state.cashRegister
     ) {
         next({ name: "dashboard" });
     } else {

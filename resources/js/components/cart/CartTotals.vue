@@ -19,7 +19,7 @@
       <span>$ {{ shippingCost.toFixed(2) }}</span>
     </div>
 
-    <v-divider />
+    <v-divider v-if="shippingCost" />
 
     <div class="d-flex justify-space-between pa-2 bb-1">
       <span>Tax</span>
@@ -30,54 +30,34 @@
 
     <div class="d-flex justify-space-between pa-2">
       <span>Total</span>
-      <span>$ {{ total.toFixed(2) }}</span>
+      <span>$ {{ order_total.toFixed(2) }}</span>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState, mapMutations } from "vuex";
+
 export default {
   computed: {
-    cart: {
-      get() {
-        return this.$store.state.cart;
-      },
-      set(value) {
-        this.$store.state.cart = value;
-      }
-    },
-    order: {
-      get() {
-        return this.cart.order;
-      },
-      set(value) {
-        this.cart.order = value;
-      }
-    },
-    products: {
-      get() {
-        if (this.order.id) {
-          return this.order.items;
-        } else {
-          return this.cart.products;
-        }
-      },
-      set(value) {
-        if (this.order.id) {
-          this.order.items = value;
-        } else {
-          this.cart.products = value;
-        }
-      }
-    },
-    customer() {
-      return this.cart.customer;
-    },
+    ...mapState("cart", [
+      "tax_percentage",
+      "order_id",
+      "cart_products",
+      "customer",
+      "order_total",
+      "discount_type",
+      "discount_amount",
+      "shipping_cost",
+      "order_status",
+      "order_total",
+      "order_total_without_tax",
+      "order_total_tax"
+    ]),
+
     shippingCost() {
-      if (this.order.id) {
-        return parseFloat(this.order.shipping_cost);
-      } else if (this.cart.shipping.cost) {
-        return parseFloat(this.cart.shipping.cost);
+      if (this.shipping_cost) {
+        return parseFloat(this.shipping_cost);
       } else {
         return 0;
       }
@@ -85,55 +65,29 @@ export default {
     subTotalwDiscount() {
       let subtotal = 0;
 
-      if (this.order.id) {
-        this.products.forEach(item => {
-          subtotal += this.calcDiscount(
-            item.price * item.qty,
-            item.discount_type,
-            item.discount_amount
-          );
-        });
+      this.cart_products.forEach(product => {
+        subtotal += this.calcDiscount(
+          product.price.amount * product.qty,
+          product.discount_type,
+          product.discount_amount
+        );
+      });
 
-        subtotal -=
-          subtotal -
-          this.calcDiscount(
-            subtotal,
-            this.order.discount_type,
-            this.order.discount_amount
-          );
-      } else {
-        this.products.forEach(product => {
-          subtotal += this.calcDiscount(
-            product.price.amount * product.qty,
-            product.discount_type,
-            product.discount_amount
-          );
-        });
-
-        subtotal -=
-          subtotal -
-          this.calcDiscount(
-            subtotal,
-            this.cart.discount_type,
-            this.cart.discount_amount
-          );
-      }
+      subtotal -=
+        subtotal -
+        this.calcDiscount(subtotal, this.discount_type, this.discount_amount);
 
       return parseFloat(subtotal);
     },
     tax() {
-      if (this.customer) {
-        if (this.customer.no_tax) {
-          return 0;
-        }
-      }
-
-      if (this.order.id) {
-        return parseFloat(this.order.total - this.order.total_without_tax);
+      if (this.order_total_tax) {
+        return this.order_total_tax;
+      } else if (this.customer && this.customer.no_tax) {
+        return 0;
       } else {
         return parseFloat(
           ((this.subTotalwDiscount + this.shippingCost) *
-            parseFloat(this.$store.state.store.tax.percentage)) /
+            parseFloat(this.tax_percentage)) /
             100
         );
       }
@@ -141,35 +95,20 @@ export default {
     totalDiscount() {
       let subtotalNoDiscount = 0;
 
-      if (this.order.id) {
-        this.order.items.forEach(item => {
-          subtotalNoDiscount += item.price * item.qty;
-        });
-      } else {
-        this.cart.products.forEach(product => {
-          subtotalNoDiscount += product.price.amount * product.qty;
-        });
-      }
-      this.total = this.total;
+      this.cart_products.forEach(product => {
+        subtotalNoDiscount += product.price.amount * product.qty;
+      });
+
+      this.setOrderTotal(this.subTotalwDiscount + this.tax + this.shippingCost);
+
+      this.isValidDiscount();
 
       return subtotalNoDiscount - this.subTotalwDiscount;
-    },
-    total: {
-      get() {
-        return this.cart.cart_price;
-      },
-      set() {
-        Vue.set(
-          this.cart,
-          "cart_price",
-          this.subTotalwDiscount + this.tax + this.shippingCost
-        );
-
-        this.$store.commit("cart/isValidDiscount");
-      }
     }
   },
   methods: {
+    ...mapMutations("cart", ["setOrderTotal", "isValidDiscount"]),
+
     calcDiscount(price, type, amount) {
       if (type && amount) {
         switch (_.lowerCase(type)) {

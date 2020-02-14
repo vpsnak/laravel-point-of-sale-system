@@ -28,7 +28,6 @@ export default new Vuex.Store({
         user: Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null,
         token: Cookies.get("token") || null,
 
-        store: null,
         cashRegister: null,
 
         // notification
@@ -54,13 +53,6 @@ export default new Vuex.Store({
             } else {
                 return false;
             }
-        },
-        openedRegister: state => {
-            if (state.store && state.cashRegister) {
-                return true;
-            } else {
-                return false;
-            }
         }
     },
     mutations: {
@@ -80,7 +72,10 @@ export default new Vuex.Store({
             state.user = null;
             state.token = null;
             state.cashRegister = null;
-            state.store = null;
+
+            state.cart.tax_percentage = 0;
+
+            state.menu.store_name = "";
             state.menu.top_menu = [];
             state.menu.side_menu = [];
 
@@ -90,9 +85,6 @@ export default new Vuex.Store({
         },
         setCashRegister(state, cashRegister) {
             state.cashRegister = cashRegister;
-        },
-        setStore(state, store) {
-            state.store = store;
         },
         setUser(state, user) {
             if (user) {
@@ -404,8 +396,12 @@ export default new Vuex.Store({
                             response.data.cashRegister.cash_register
                         );
                         context.commit(
-                            "setStore",
-                            response.data.cashRegister.cash_register.store
+                            "menu/setStoreName",
+                            response.data.store_name
+                        );
+                        context.commit(
+                            "setTaxPercentage",
+                            response.data.tax_percentage
                         );
                         context.commit("setNotification", {
                             msg: response.data.info,

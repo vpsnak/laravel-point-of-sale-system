@@ -1,25 +1,21 @@
 <template>
   <div class="my-5 d-flex align-center justify-space-around flex-column">
-    <h3 v-if="change > 0">
+    <h3 v-if="order_change > 0">
       Change:
-      <span class="amber--text" v-text="'$ ' + change" />
+      <span class="amber--text" v-text="'$ ' + order_change" />
     </h3>
 
-    <orderReceipt />
+    <orderReceipt v-if="order_status === 'paid'" />
 
     <v-btn color="primary" @click="resetState()">Close</v-btn>
   </div>
 </template>
 
 <script>
-import { mapActions, mapState, mapMutations } from "vuex";
+import { mapState, mapMutations } from "vuex";
 export default {
   computed: {
-    ...mapState("cart", ["order"]),
-
-    change() {
-      return Math.abs(this.order.total - this.order.total_paid);
-    }
+    ...mapState("cart", ["order_status", "order_change"])
   },
   methods: {
     ...mapMutations("cart", ["resetState"])

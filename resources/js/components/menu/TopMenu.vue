@@ -28,13 +28,13 @@
         <v-spacer></v-spacer>
 
         <v-chip
-            v-if="!openedRegister"
+            v-if="!cashRegister"
             text
             @click="$router.push({ name: 'openCashRegister' })"
             >Select cash register
         </v-chip>
         <v-menu
-            v-if="openedRegister"
+            v-if="cashRegister"
             left
             bottom
             offset-x
@@ -55,7 +55,7 @@
                         </v-list-item-avatar>
                         <v-list-item-content>
                             <v-list-item-title>
-                                {{ store.name }}
+                                {{ store_name }}
                             </v-list-item-title>
                             <v-list-item-subtitle>
                                 {{ cashRegister.name }}
@@ -200,13 +200,10 @@ export default {
     },
 
     computed: {
-        ...mapState("menu", ["top_menu", "visibility"]),
+        ...mapState("menu", ["top_menu", "visibility", "store_name"]),
         ...mapState("config", ["app_env", "app_name", "mas_env"]),
-        ...mapState(["user", "cashRegister", "store"]),
+        ...mapState(["user", "cashRegister"]),
 
-        openedRegister() {
-            return this.$store.getters.openedRegister;
-        },
         darkMode: {
             get() {
                 return this.$vuetify.theme.dark;

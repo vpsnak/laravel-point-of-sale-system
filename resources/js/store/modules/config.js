@@ -282,8 +282,13 @@ const actions = {
                             { root: true }
                         );
                         context.commit(
-                            "setStore",
-                            response.data.cashRegister.cash_register.store,
+                            "menu/setStoreName",
+                            response.data.store_name,
+                            { root: true }
+                        );
+                        context.commit(
+                            "cart/setTaxPercentage",
+                            response.data.tax_percentage,
                             { root: true }
                         );
                     }
