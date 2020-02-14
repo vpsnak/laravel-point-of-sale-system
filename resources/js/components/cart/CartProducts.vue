@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-grow-1" style="height:38vh; overflow-y:auto">
     <v-expansion-panels class="d-block" accordion>
-      <v-expansion-panel v-for="(product, index) in cart_products" :key="index">
+      <v-expansion-panel v-for="(product, index) in products" :key="index">
         <v-expansion-panel-header class="pa-2" ripple @click.stop>
           <div class="d-flex flex-column" v-if="product.photo_url">
             <v-img
@@ -30,13 +30,13 @@
                   :ref="'priceField' + index"
                   :min="0"
                   type="number"
-                  :readonly="!cart_products_map[index]"
-                  :flat="!cart_products_map[index]"
-                  :outlined="cart_products_map[index]"
-                  :solo="!cart_products_map[index]"
-                  :color="cart_products_map[index] ? 'yellow' : ''"
+                  :readonly="!editPrice(index)"
+                  :flat="!editPrice(index)"
+                  :outlined="editPrice(index)"
+                  :solo="!editPrice(index)"
+                  :color="editPrice(index) ? 'yellow' : ''"
                   :value="parsedPrice(product)"
-                  :hint="'Original price: $' + original_price(index)"
+                  :hint="'Original price: $' + originalPrice(index)"
                   dense
                 ></v-text-field>
               </div>
@@ -49,8 +49,8 @@
                 <template v-slot:activator="{ on }">
                   <v-btn
                     v-if="editable && !product.sku.startsWith('giftCard')"
-                    :color="product.is_editing_price ? 'yellow' : ''"
-                    :input-value="product.is_editing_price"
+                    :color="editPrice(index) ? 'yellow' : ''"
+                    :input-value="editPrice(index) ? true : false"
                     @click.stop="toggleEdit(index)"
                     icon
                     v-on="on"
@@ -126,10 +126,10 @@
               <v-tooltip bottom color="red">
                 <template v-slot:activator="{ on }">
                   <v-btn
-                    v-if="editable"
                     class="mx-2"
+                    v-if="editable"
                     icon
-                    @click.stop="removeProduct(index)"
+                    @click.stop="removeItem(product)"
                     color="red"
                     v-on="on"
                   >
@@ -142,28 +142,30 @@
           </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content class="pa-3">
-          <v-row no-gutters>
-            <v-col cols="12">
-              <cartDiscount
-                :product_index="index"
-                :product_price="parsedPrice(product) * product.qty"
-                :editable="editable"
-              ></cartDiscount>
-            </v-col>
-          </v-row>
-          <v-row no-gutters>
-            <v-col cols="12">
-              <v-textarea
-                v-model="product.notes"
-                rows="3"
-                label="Notes"
-                :hint="'For product: ' + product.name"
-                counter
-                no-resize
-                :disabled="!editable"
-              ></v-textarea>
-            </v-col>
-          </v-row>
+          <v-container fluid>
+            <v-row no-gutters>
+              <v-col :cols="12">
+                <cartDiscount
+                  :product_index="index"
+                  :product_price="parsedPrice(product) * product.qty"
+                  :editable="editable"
+                ></cartDiscount>
+              </v-col>
+            </v-row>
+            <v-row no-gutters>
+              <v-col :cols="12">
+                <v-textarea
+                  v-model="product.notes"
+                  rows="3"
+                  label="Notes"
+                  :hint="'For product: ' + product.name"
+                  counter
+                  no-resize
+                  :disabled="!editable"
+                ></v-textarea>
+              </v-col>
+            </v-row>
+          </v-container>
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -177,85 +179,98 @@ export default {
   props: {
     editable: Boolean
   },
-
-  data() {
-    return {
-      cart_products_map: []
-    };
-  },
-
   computed: {
-    ...mapState("cart", ["discountTypes", "cart_products"])
-  },
+    ...mapState("cart", ["discountTypes", "cart_products"]),
 
+    products: {
+      get() {
+        return this.cart_products;
+      },
+      set(value) {
+        this.setCartProducts(value);
+      }
+    }
+  },
   methods: {
     ...mapMutations("dialog", ["setDialog"]),
-    ...mapMutations("cart", [
-      "removeProduct",
-      "setCartProductData",
-      "decreaseProductQty",
-      "increaseProductQty"
-    ]),
+    ...mapMutations("cart", ["setCartProducts"]),
 
-    toggleEditPrice(index) {
-      const mapped_product = this.cart_products_map[index];
-
-      if (!mapped_product) {
-        this.cart_products_map[index] = true;
+    cancelEvent(index, event) {
+      if (!this.editPrice(index)) {
+        event.preventDefault();
       }
-
-      return this.cart_products_map[index];
     },
-
     getSelectedInput(index) {
       return this.$refs[`priceField${index}`][0];
     },
     setPrice(index, price = null, toggleEdit = false) {
       if (!this.getSelectedInput(index).lazyValue) {
-        this.getSelectedInput(index).lazyValue = this.original_price(index);
+        this.getSelectedInput(index).lazyValue = this.originalPrice(index);
       }
-
-      const new_price = price || this.getSelectedInput(index).lazyValue;
-
-      let payload = {
-        index,
-        data: {
-          price: { amount: price },
-          final_price: new_price
-        }
-      };
-
-      this.setCartProductData(payload);
-
+      if (price) {
+        this.products[index].price.amount = this.products[
+          index
+        ].final_price = price;
+      } else {
+        this.products[index].price.amount = this.products[
+          index
+        ].final_price = this.getSelectedInput(index).lazyValue;
+      }
       if (toggleEdit) {
         this.toggleEdit(index);
       }
     },
     revertPrice(index) {
-      this.setPrice(index, this.original_price(index), true);
+      this.$nextTick(() => {
+        this.setPrice(index, this.originalPrice(index), true);
 
-      this.getSelectedInput(index).lazyValue = this.original_price(index);
+        this.getSelectedInput(index).lazyValue = this.originalPrice(index);
 
-      this.toggleEditPrice(index);
-      this.getSelectedInput(index).blur();
+        this.getSelectedInput(index).blur();
+      });
     },
-    original_price(index) {
-      if (_.has(this.cart_products[index], "original_price")) {
-        return this.cart_products[index].original_price;
+    originalPrice(index) {
+      if (_.has(this.products[index], "original_price")) {
+        return this.products[index].original_price;
+      } else {
+        return this.parsedPrice(this.products[index]);
+      }
+    },
+    editPrice(index) {
+      if (_.has(this.products[index], "editPrice")) {
+        return this.products[index].editPrice;
+      } else {
+        return false;
       }
     },
     toggleEdit(index) {
-      this.toggleEditPrice(index);
+      Vue.set(
+        this.products[index],
+        "editPrice",
+        !this.products[index].editPrice
+      );
 
-      this.$nextTick(() => {
-        if (this.cart_products[index].is_editing_price) {
+      if (this.editPrice(index)) {
+        this.$nextTick(() => {
           this.getSelectedInput(index).focus();
-        } else {
-          this.setPrice(index);
-        }
-      });
+        });
+      } else {
+        this.setPrice(index);
+      }
     },
 
+    viewProductDialog(product) {
+      this.setDialog({
+        show: true,
+        width: 1000,
+        title: "Cart item",
+        titleCloseBtn: true,
+        icon: "mdi-package-variant",
+        component: "product",
+        model: product,
+        persistent: true
+      });
+    },
     viewProductDialog(product) {
       this.setDialog({
         show: true,

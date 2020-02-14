@@ -257,13 +257,8 @@ export default {
         state.cart_products[index].qty--;
       }
     },
-    setCartProductData(state, payload) {
-      const newData = {
-        ...state.cart_products[payload.index],
-        ...payload.data
-      };
-
-      state.cart_products[payload.index] = newData;
+    setCartProducts(state, value) {
+      state.cart_products = value;
     },
     setCustomer(state, value) {
       if (_.isObjectLike(value)) {
