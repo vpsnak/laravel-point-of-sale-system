@@ -30,11 +30,11 @@
                   :ref="'priceField' + index"
                   :min="0"
                   type="number"
-                  :readonly="!editPrice(index)"
-                  :flat="!editPrice(index)"
-                  :outlined="editPrice(index)"
-                  :solo="!editPrice(index)"
-                  :color="editPrice(index) ? 'yellow' : ''"
+                  :readonly="!product.is_editing_price"
+                  :flat="!product.is_editing_price"
+                  :outlined="product.is_editing_price"
+                  :solo="!product.is_editing_price"
+                  :color="product.is_editing_price ? 'yellow' : ''"
                   :value="parsedPrice(product)"
                   :hint="'Original price: $' + original_price(index)"
                   dense
@@ -49,8 +49,8 @@
                 <template v-slot:activator="{ on }">
                   <v-btn
                     v-if="editable && !product.sku.startsWith('giftCard')"
-                    :color="editPrice(index) ? 'yellow' : ''"
-                    :input-value="editPrice(index) ? true : false"
+                    :color="product.is_editing_price ? 'yellow' : ''"
+                    :input-value="product.is_editing_price"
                     @click.stop="toggleEdit(index)"
                     icon
                     v-on="on"
@@ -215,43 +215,32 @@ export default {
         this.toggleEdit(index);
       }
     },
+    toggleisEditingPrice(index) {
+      this.$set(this.cart_products[index], "is_editing_price", false);
+    },
     revertPrice(index) {
-      this.$nextTick(() => {
-        this.setPrice(index, this.original_price(index), true);
+      this.setPrice(index, this.original_price(index), true);
 
-        this.getSelectedInput(index).lazyValue = this.original_price(index);
+      this.getSelectedInput(index).lazyValue = this.original_price(index);
 
-        this.getSelectedInput(index).blur();
-      });
+      this.toggleisEditingPrice(index);
+      this.getSelectedInput(index).blur();
     },
     original_price(index) {
       if (_.has(this.cart_products[index], "original_price")) {
         return this.cart_products[index].original_price;
-      } else {
-        this.parsedPrice(this.cart_products[index]);
       }
-    },
-    editPrice(index) {
-      return this.cart_products[index].edit_price;
     },
     toggleEdit(index) {
-      let payload = {
-        index
-      };
+      this.toggleisEditingPrice(index);
 
-      if (!_.has(this.cart_products[index], "original_price")) {
-        payload.data = {
-          original_price: this.parsedPrice(this.cart_products[index])
-        };
-
-        this.setCartProductData(payload);
-      }
-
-      if (this.editPrice(index)) {
-        this.getSelectedInput(index).focus();
-      } else {
-        this.setPrice(index);
-      }
+      this.$nextTick(() => {
+        if (this.cart_products[index].is_editing_price) {
+          this.getSelectedInput(index).focus();
+        } else {
+          this.setPrice(index);
+        }
+      });
     },
 
     viewProductDialog(product) {
