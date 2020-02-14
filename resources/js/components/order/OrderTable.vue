@@ -4,11 +4,9 @@
       <template v-slot:item.customer="{ item }">
         {{ item.customer ? item.customer.email : "Guest" }}
       </template>
-      <template v-slot:item.total="{ item }">
-        $ {{ item.total.toFixed(2) }}
-      </template>
+      <template v-slot:item.total="{ item }"> $ {{ item.total }} </template>
       <template v-slot:item.total_paid="{ item }">
-        $ {{ item.total_paid.toFixed(2) }}
+        $ {{ item.total_paid }}
       </template>
 
       <template v-slot:item.status="{ item }">
@@ -185,10 +183,11 @@ export default {
             icon: "edit",
             titleCloseBtn: true,
             title: `Edit Order #${id}`,
-            component: "orderEditForm",
+            component: "orderForm",
             persistent: true,
             eventChannel: "data-table",
-            no_padding: true
+            no_padding: true,
+            fullscreen: true
           };
           this.setDialog(editDialog);
         })

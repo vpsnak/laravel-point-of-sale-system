@@ -11,16 +11,16 @@
         <v-col :cols="6">
           <span class="subheading">
             Order:
-            <b :class="statusColor(order.status)">
-              {{ parseStatusName(order.status) }}
+            <b :class="statusColor(order_status)">
+              {{ parseStatusName(order_status) }}
             </b>
           </span>
         </v-col>
         <v-col :cols="6">
           <span class="subheading">
             MAS:
-            <b :class="statusColor(order.status)">
-              {{ parseStatusName(order.status) }}
+            <b :class="statusColor(order_status)">
+              {{ parseStatusName(order_status) }}
             </b>
           </span>
         </v-col>
@@ -33,7 +33,7 @@ import { mapState } from "vuex";
 
 export default {
   computed: {
-    ...mapState("cart", ["order"])
+    ...mapState("cart", ["order_status"])
   },
   methods: {
     parseStatusName(value) {

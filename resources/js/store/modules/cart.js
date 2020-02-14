@@ -160,6 +160,9 @@ export default {
     setOrderTotal(state, value) {
       state.order_total = value;
     },
+    setOrderTotalPaid(state, value) {
+      state.order_total_paid = value;
+    },
     setOrderTotalWithoutTax(state, value) {
       state.order_total_without_tax = value;
     },
@@ -305,6 +308,7 @@ export default {
       state.order_status = null;
       state.order_total = 0;
       state.order_total_without_tax = 0;
+      state.order_total_paid = 0;
       state.order_total_tax = 0;
       state.order_remaining = 0;
       state.order_change = 0;
@@ -493,6 +497,7 @@ export default {
         context.commit("setMethod", order.method);
         context.commit("setOrderStatus", order.status);
         context.commit("setOrderTotal", order.total);
+        context.commit("setOrderTotalPaid", order.total_paid);
         context.commit("setOrderTotalWithoutTax", order.total_without_tax);
         context.commit("setOrderTotalTax", order.total_tax);
         context.commit("setOrderChange", order.change);
