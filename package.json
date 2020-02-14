@@ -20,7 +20,7 @@
         "pusher-js": "^5.1.1",
         "resolve-url-loader": "^3.1.1",
         "simple-barcode-scanner": "^2.0.0",
-        "vee-validate": "^3.2.4",
+        "vee-validate": "^3.2.5",
         "velocity-animate": "^1.5.2",
         "vue-barcode": "^1.2.0",
         "vue-css-donut-chart": "^1.2.0",
