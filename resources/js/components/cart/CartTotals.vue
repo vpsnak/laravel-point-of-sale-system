@@ -67,7 +67,7 @@ export default {
 
       this.cart_products.forEach(product => {
         subtotal += this.calcDiscount(
-          product.price.amount * product.qty,
+          product.final_price * product.qty,
           product.discount_type,
           product.discount_amount
         );
@@ -98,7 +98,7 @@ export default {
       let subtotalNoDiscount = 0;
 
       this.cart_products.forEach(product => {
-        subtotalNoDiscount += product.price.amount * product.qty;
+        subtotalNoDiscount += product.final_price * product.qty;
       });
 
       this.setOrderTotal(this.subTotalwDiscount + this.tax + this.shippingCost);
