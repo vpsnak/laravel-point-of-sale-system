@@ -114,10 +114,18 @@ export default {
     order_billing_address: null,
     order_delivery_address: null,
     order_delivery_store_pickup: null,
-    order_delivery_store_pickup: null
+    order_delivery_store_pickup: null,
+    order_timestamp: null,
+    order_created_by: null
   },
 
   mutations: {
+    setOrderCreatedBy(state, value) {
+      state.order_created_by = value;
+    },
+    setOrderTimestamp(state, value) {
+      state.order_timestamp = value;
+    },
     setDeliveryStorePickup(state, value) {
       state.order_delivery_store_pickup = value;
     },
@@ -507,6 +515,11 @@ export default {
         context.commit("setCartDiscountAmount", order.discount_amount);
         context.commit("setCustomer", order.customer);
         context.commit("setOrderNotes", order.notes);
+        context.commit("setOrderCreatedBy", order.created_by);
+        context.commit("setOrderTimestamp", {
+          created_at: order.created_at,
+          updated_at: order.updated_at
+        });
 
         if (order.method !== "retail") {
           context.commit("setShippingCost", order.shipping_cost);

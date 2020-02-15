@@ -1,30 +1,16 @@
 <template>
-  <v-card outlined>
-    <v-card-title>
-      <v-icon left>mdi-chart-pie</v-icon>
-      <span class="subheading">
-        Payment Analysis
-      </span>
-    </v-card-title>
-    <v-container>
-      <v-row align="center" justify="center" no-gutters>
-        <v-col>
-          <vc-donut
-            hasLegend
-            legendPlacement="bottom"
-            :sections="costSections"
-            :size="150"
-            :thickness="13"
-            :total="order_total"
-            background="#1e1e1e"
-          >
-            <h2>$ {{ sumTotals }}</h2>
-            total paid
-          </vc-donut>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-card>
+  <vc-donut
+    hasLegend
+    legendPlacement="right"
+    :sections="costSections"
+    :size="150"
+    :thickness="13"
+    :total="order_total"
+    :background="bgColor"
+  >
+    <h2>$ {{ sumTotals }}</h2>
+    <h2>total paid</h2>
+  </vc-donut>
 </template>
 
 <script>
@@ -33,7 +19,7 @@ export default {
   data() {
     return {
       sections: [],
-      exc_refunds: true,
+      inc_refunds: false,
 
       card_total: 0,
       pos_terminal_total: 0,
@@ -44,45 +30,7 @@ export default {
       refund_total: 0
     };
   },
-  mounted() {
-    this.sections = [
-      {
-        label: `credit card API: $${this.card_total}`,
-        value: this.card_total,
-        color: "#003f5c"
-      },
-      {
-        label: `credit card POS: $${this.pos_terminal_total}`,
-        value: this.pos_terminal_total,
-        color: "#374c80"
-      },
-      {
-        label: `cash: $${this.cash_total}`,
-        value: this.cash_total,
-        color: "#7a5195"
-      },
-      {
-        label: `house account: $${this.house_account_total}`,
-        value: this.house_account_total,
-        color: "#bc5090"
-      },
-      {
-        label: `coupon: $${this.coupon_total}`,
-        value: this.coupon_total,
-        color: "#ef5675"
-      },
-      {
-        label: `gift card: $${this.giftcard_total}`,
-        value: this.giftcard_total,
-        color: "#ff764a"
-      },
-      {
-        label: `refunds: $${this.refund_total}`,
-        value: this.refund_total,
-        color: "#ff764a"
-      }
-    ];
-  },
+
   computed: {
     ...mapState("cart", [
       "order_id",
@@ -102,31 +50,43 @@ export default {
       "payments"
     ]),
 
+    bgColor() {
+      if (this.$vuetify.theme.dark) {
+        return "#1e1e1e";
+      }
+    },
+
     costSections() {
       this.payments.forEach(payment => {
-        if (!payment.refunded) {
+        if (!payment.refunded && payment.status === "approved") {
           switch (payment.payment_type.type) {
             case "pos-terminal":
-              this.pos_terminal_total += parseFloat(payment.amount);
+              this.pos_terminal_total =
+                Number(this.pos_terminal_total) + Number(payment.amount);
               break;
             case "card":
-              this.card_total += parseFloat(payment.amount);
+              this.card_total =
+                Number(this.card_total) + Number(payment.amount);
               break;
             case "cash":
-              this.cash_total += parseFloat(payment.amount);
+              this.cash_total =
+                Number(this.cash_total) + Number(payment.amount);
               break;
             case "house-account":
-              this.house_account_total += parseFloat(payment.amount);
+              this.house_account_total =
+                Number(this.house_account_total) + Number(payment.amount);
               break;
             case "coupon":
-              this.coupon_total += parseFloat(payment.amount);
+              this.coupon_total =
+                Number(this.coupon_total) + Number(payment.amount);
               break;
             case "giftcard":
-              this.giftcard_total += parseFloat(payment.amount);
+              this.giftcard_total =
+                Number(this.giftcard_total) + Number(payment.amount);
               break;
           }
         } else {
-          refund_total += parseFloat(payment.amount);
+          this.refund_total += Number(payment.amount);
         }
       });
 
@@ -134,57 +94,65 @@ export default {
         this.sections.push({
           label: `Credit Card API: $${this.card_total}`,
           value: this.card_total,
-          color: "gray"
+          color: "#003f5c"
         });
       }
-
       if (this.pos_terminal_total > 0) {
         this.sections.push({
           label: `Credit Card POS: $${this.pos_terminal_total}`,
           value: this.pos_terminal_total,
-          color: "gray"
+          color: "#374c80"
         });
       }
       if (this.cash_total > 0) {
         this.sections.push({
           label: `Cash: $${this.cash_total}`,
           value: this.cash_total,
-          color: "purple"
+          color: "#7a5195"
         });
       }
       if (this.house_account_total > 0) {
         this.sections.push({
           label: `House account: $${this.house_account_total}`,
           value: this.house_account_total,
-          color: "purple"
+          color: "#bc5090"
         });
       }
       if (this.coupon_total > 0) {
         this.sections.push({
-          label: `Cash: $${this.coupon_total}`,
+          label: `Coupons: $${this.coupon_total}`,
           value: this.coupon_total,
-          color: "purple"
+          color: "#ef5675"
         });
       }
       if (this.giftcard_total > 0) {
         this.sections.push({
-          label: `Cash: $${this.giftcard_total}`,
+          label: `Giftcards: $${this.giftcard_total}`,
           value: this.giftcard_total,
-          color: "purple"
+          color: "#ff764a"
+        });
+      }
+      if (this.refund_total > 0 && this.inc_refunds) {
+        this.sections.push({
+          label: `Refunds: $${this.refund_total}`,
+          value: this.refund_total,
+          color: "#ff764a"
         });
       }
       return this.sections;
     },
     sumTotals() {
       let totals =
-        parseFloat(this.card_total) +
-        parseFloat(this.pos_terminal_total) +
-        parseFloat(this.cash_total) +
-        parseFloat(this.house_account_total) +
-        parseFloat(this.coupon_total) +
-        parseFloat(this.giftcard_total);
+        Number(this.card_total) +
+        Number(this.pos_terminal_total) +
+        Number(this.cash_total) +
+        Number(this.house_account_total) +
+        Number(this.coupon_total) +
+        Number(this.giftcard_total);
 
-      !this.exc_refunds ? totals + parseFloat(this.refund_total) : "";
+      if (this.inc_refunds) {
+        totals + Number(this.refund_total);
+      }
       return totals;
     }
   }

@@ -15,25 +15,23 @@
       </v-tab>
 
       <v-tab-item>
-        <v-row no-gutters>
+        <v-row no-gutters justify="center">
           <v-col :cols="6">
             <orderStatus />
-            <orderDetails />
           </v-col>
           <v-col :cols="6">
-            <orderCostAnalysis editOrder />
+            <orderGraphs />
           </v-col>
         </v-row>
         <v-row no-gutters>
-          <v-col :md="6">
+          <v-col :cols="12">
             <paymentHistory editOrder />
           </v-col>
-          <v-col :md="6">
-            <orderPaymentAnalysis />
-          </v-col>
         </v-row>
         <v-row no-gutters>
-          <paymentRefunds />
+          <v-col :cols="12">
+            <paymentRefunds />
+          </v-col>
         </v-row>
       </v-tab-item>
       <v-tab-item>

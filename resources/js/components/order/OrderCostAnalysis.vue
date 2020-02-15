@@ -1,54 +1,21 @@
 <template>
-  <v-card outlined>
-    <v-card-title>
-      <v-icon left>mdi-chart-pie</v-icon>
-      <span class="subheading">
-        Cost Analysis
-      </span>
-    </v-card-title>
-    <v-container>
-      <v-row align="center" justify="center" no-gutters>
-        <v-col>
-          <vc-donut
-            hasLegend
-            legendPlacement="bottom"
-            :sections="costSections"
-            :size="150"
-            :thickness="13"
-            :total="order_total"
-            background="#1e1e1e"
-          >
-            <h2>$ {{ order_total }}</h2>
-            total cost
-          </vc-donut>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-card>
+  <vc-donut
+    hasLegend
+    legendPlacement="left"
+    :sections="costSections"
+    :size="150"
+    :thickness="13"
+    :total="order_total"
+    :background="bgColor"
+  >
+    <h2>$ {{ order_total }}</h2>
+    <h2>total cost</h2>
+  </vc-donut>
 </template>
 
 <script>
 import { mapState } from "vuex";
 export default {
-  mounted() {
-    this.sections = [
-      {
-        label: `Items: $${this.order_total_without_tax}`,
-        value: this.order_total_without_tax,
-        color: "#4caf50"
-      },
-      {
-        label: `Shipping: $${this.shipping_cost}`,
-        value: this.shipping_cost,
-        color: "purple"
-      },
-      {
-        label: `Tax: $${this.order_total_tax}`,
-        value: this.order_total_tax,
-        color: "lightgray"
-      }
-    ];
-  },
   computed: {
     ...mapState("cart", [
       "order_id",
@@ -66,6 +33,12 @@ export default {
       "shipping_cost"
     ]),
 
+    bgColor() {
+      if (this.$vuetify.theme.dark) {
+        return "#1e1e1e";
+      }
+    },
+
     costSections() {
       let sections = [];
 
@@ -73,7 +46,7 @@ export default {
         sections.push({
           label: `Items: $${this.order_total_without_tax}`,
           value: this.order_total_without_tax,
-          color: "#4caf50"
+          color: "#003f5c"
         });
       }
 
@@ -81,14 +54,14 @@ export default {
         sections.push({
           label: `Shipping: $${this.shipping_cost}`,
           value: this.shipping_cost,
-          color: "purple"
+          color: "#bc5090"
         });
       }
       if (this.order_total_tax > 0) {
         sections.push({
           label: `Tax: $${this.order_total_tax}`,
           value: this.order_total_tax,
-          color: "gray"
+          color: "#ffa600"
         });
       }
 
