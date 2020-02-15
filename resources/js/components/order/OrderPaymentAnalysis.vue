@@ -1,16 +1,21 @@
 <template>
-  <vc-donut
-    hasLegend
-    legendPlacement="right"
-    :sections="costSections"
-    :size="150"
-    :thickness="13"
-    :total="order_total"
-    :background="bgColor"
-  >
-    <h2>$ {{ sumTotals }}</h2>
-    <h2>total paid</h2>
-  </vc-donut>
+  <div class="d-flex flex-column align-center">
+    <h3>
+      Payments
+    </h3>
+    <vc-donut
+      hasLegend
+      legendPlacement="right"
+      :sections="costSections"
+      :size="150"
+      :thickness="13"
+      :total="sumTotals"
+      :background="bgColor"
+    >
+      <h2>$ {{ sumTotals }}</h2>
+      <h2>total paid</h2>
+    </vc-donut>
+  </div>
 </template>
 
 <script>
@@ -19,7 +24,6 @@ export default {
   data() {
     return {
       sections: [],
-      inc_refunds: false,
 
       card_total: 0,
       pos_terminal_total: 0,
@@ -85,7 +89,7 @@ export default {
                 Number(this.giftcard_total) + Number(payment.amount);
               break;
           }
-        } else {
+        } else if (payment.refunded && payment.status === "approved") {
           this.refund_total += Number(payment.amount);
         }
       });
@@ -132,11 +136,11 @@ export default {
           color: "#ff764a"
         });
       }
-      if (this.refund_total > 0 && this.inc_refunds) {
+      if (this.refund_total > 0) {
         this.sections.push({
           label: `Refunds: $${this.refund_total}`,
           value: this.refund_total,
-          color: "#ff764a"
+          color: "#ffa600"
         });
       }
       return this.sections;
@@ -148,11 +152,9 @@ export default {
         Number(this.cash_total) +
         Number(this.house_account_total) +
         Number(this.coupon_total) +
-        Number(this.giftcard_total);
+        Number(this.giftcard_total) +
+        Number(this.refund_total);
 
-      if (this.inc_refunds) {
-        totals + Number(this.refund_total);
-      }
       return totals;
     }
   }

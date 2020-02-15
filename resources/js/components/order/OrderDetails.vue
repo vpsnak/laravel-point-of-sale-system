@@ -42,9 +42,12 @@
     <v-col :cols="4">
       <v-card elevation="0">
         <v-card-title>
-          <v-icon left>mdi-account-outline</v-icon>
+          <v-icon left>mdi-file-tree</v-icon>
           <span class="subtitle-1">
-            Status
+            Status:
+            <b :class="statusColor(order_status)">
+              <i>{{ parseStatusName(order_status) }}</i>
+            </b>
           </span>
         </v-card-title>
       </v-card>
@@ -54,7 +57,10 @@
         <v-card-title>
           <v-icon left>mdi-package-variant</v-icon>
           <span class="subtitle-1">
-            Items
+            Type:
+            <b>
+              <i>{{ parseMethodName(method) }}</i>
+            </b>
           </span>
         </v-card-title>
       </v-card>
@@ -64,7 +70,10 @@
         <v-card-title>
           <v-icon left>mdi-account-outline</v-icon>
           <span class="subtitle-1">
-            Customer
+            Customer:
+            <b>
+              <i>{{ customer ? customer.name : "Guest" }}</i>
+            </b>
           </span>
         </v-card-title>
       </v-card>
@@ -76,20 +85,35 @@ import { mapState } from "vuex";
 
 export default {
   computed: {
-    ...mapState("cart", ["order", "order_created_by", "order_timestamp"])
+    ...mapState("cart", [
+      "order_created_by",
+      "order_timestamp",
+      "order_status",
+      "method",
+      "customer"
+    ])
   },
   methods: {
-    parseStatusName(value) {
-      return _.upperFirst(value.replace("_", " "));
+    parseMethodName(method) {
+      switch (method) {
+        case "retail":
+        case "delivery":
+          return _.startCase(method);
+        case "pickup":
+          return "Store pickup";
+      }
+    },
+    parseStatusName(status) {
+      return _.upperFirst(status.replace("_", " "));
     },
     statusColor(status) {
       switch (status) {
         case "canceled":
           return "red--text";
         case "pending":
-          return "primary--text";
+          return "amber--text";
         case "pending_payment":
-          return "primary--text";
+          return "amber--text";
         case "paid":
           return "cyan--text";
         case "complete":

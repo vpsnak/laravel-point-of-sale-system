@@ -1,16 +1,21 @@
 <template>
-  <vc-donut
-    hasLegend
-    legendPlacement="left"
-    :sections="costSections"
-    :size="150"
-    :thickness="13"
-    :total="order_total"
-    :background="bgColor"
-  >
-    <h2>$ {{ order_total }}</h2>
-    <h2>total cost</h2>
-  </vc-donut>
+  <div class="d-flex flex-column align-center">
+    <h3>
+      Order cost
+    </h3>
+    <vc-donut
+      hasLegend
+      legendPlacement="left"
+      :sections="costSections"
+      :size="150"
+      :thickness="13"
+      :total="order_total"
+      :background="bgColor"
+    >
+      <h2>$ {{ order_total }}</h2>
+      <h2>total cost</h2>
+    </vc-donut>
+  </div>
 </template>
 
 <script>

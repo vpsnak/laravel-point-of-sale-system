@@ -1,7 +1,7 @@
 <template>
   <v-card outlined>
     <v-card-title>
-      <v-icon left>mdi-clipboard-list-outline</v-icon>
+      <v-icon left>mdi-information-variant</v-icon>
       <span class="subheading">
         Basic info
       </span>
@@ -11,13 +11,3 @@
     </v-container>
   </v-card>
 </template>
-<script>
-import { mapState } from "vuex";
-
-export default {
-  computed: {
-    ...mapState("cart", ["order_status", "order_created_by", "order_timestamp"])
-  },
-  methods: {}
-};
-</script>

@@ -163,9 +163,9 @@ export default {
         case "canceled":
           return "red--text";
         case "pending":
-          return "primary--text";
+          return "amber--text";
         case "pending_payment":
-          return "primary--text";
+          return "amber--text";
         case "paid":
           return "cyan--text";
         case "complete":

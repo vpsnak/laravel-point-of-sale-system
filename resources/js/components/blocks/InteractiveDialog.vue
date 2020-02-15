@@ -68,7 +68,7 @@
         class="d-flex align-center mt-5"
         v-if="dialog.action === 'confirmation' || dialog.action === 'info'"
       >
-        <div class="flex-grow-1"></div>
+        <v-spacer />
 
         <v-btn
           v-if="dialog.action === 'confirmation'"

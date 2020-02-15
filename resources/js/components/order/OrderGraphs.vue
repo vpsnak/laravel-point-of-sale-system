@@ -3,7 +3,7 @@
     <v-card-title>
       <v-icon left>mdi-chart-pie</v-icon>
       <span class="subheading">
-        Cost & Payments Analysis
+        Analysis
       </span>
     </v-card-title>
     <v-container>

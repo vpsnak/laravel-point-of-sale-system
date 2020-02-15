@@ -2,12 +2,14 @@
   <v-card elevation="12">
     <v-tabs grow centered>
       <v-tab>
-        <v-icon left>mdi-cash-multiple</v-icon>
+        <v-icon left>mdi-clipboard-list-outline</v-icon>
         <span>Order summary & actions</span>
       </v-tab>
       <v-tab>
         <v-icon left>mdi-package-variant</v-icon>
-        <span>Items</span>
+        <span>
+          Items <b class="primary--text">({{ cart_products.length }})</b>
+        </span>
       </v-tab>
       <v-tab>
         <v-icon left>mdi-file-document-edit-outline</v-icon>
@@ -51,3 +53,12 @@
     </v-tabs>
   </v-card>
 </template>
+
+<script>
+import { mapState } from "vuex";
+export default {
+  computed: {
+    ...mapState("cart", ["cart_products"])
+  }
+};
+</script>
