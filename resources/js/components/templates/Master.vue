@@ -10,9 +10,11 @@
 
     <topMenu v-if="showComponents" />
 
-    <v-content>
-      <transition name="fade" mode="out-in"> <router-view /> </transition>
-    </v-content>
+    <transition name="fade" mode="out-in">
+      <v-content>
+        <router-view />
+      </v-content>
+    </transition>
   </v-app>
 </template>
 

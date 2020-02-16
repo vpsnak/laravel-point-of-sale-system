@@ -97,10 +97,11 @@ export default {
     parseMethodName(method) {
       switch (method) {
         case "retail":
-        case "delivery":
-          return _.startCase(method);
+          return "Cash & Carry";
         case "pickup":
           return "Store pickup";
+        case "delivery":
+          return "Delivery";
       }
     },
     parseStatusName(status) {

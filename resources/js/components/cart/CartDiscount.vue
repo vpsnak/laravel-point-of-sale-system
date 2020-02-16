@@ -1,50 +1,44 @@
 <template>
-  <ValidationObserver ref="checkoutObs">
-    <div class="d-flex" :key="$props.product_index">
-      <v-col cols="6" class="pa-0 pr-2">
-        <v-select
-          @change="validate"
-          v-if="editable"
-          v-model="discountType"
-          :items="discountTypes"
-          label="Discount"
-          item-text="label"
-          item-value="value"
-        ></v-select>
-        <v-text-field
-          v-else-if="!editable"
-          :value="discountType"
-          label="Discount"
-          disabled
-        ></v-text-field>
-      </v-col>
+  <ValidationObserver ref="checkoutObs" tag="v-row">
+    <v-col :cols="6">
+      <v-select
+        @change="validate"
+        v-if="editable"
+        v-model="discountType"
+        :items="discountTypes"
+        label="Discount"
+        item-text="label"
+        item-value="value"
+      ></v-select>
+      <v-text-field
+        v-else-if="!editable"
+        :value="discountType"
+        label="Discount"
+        disabled
+      ></v-text-field>
+    </v-col>
 
-      <v-col
-        cols="6"
-        class="pa-0 pl-2"
-        v-if="discountType && discountType !== 'None'"
+    <v-col :cols="6" v-if="discountType && discountType !== 'None'">
+      <ValidationProvider
+        v-slot="{ valid }"
+        :rules="`between:${0},${max}`"
+        name="Discount amount"
       >
-        <ValidationProvider
-          v-slot="{ valid }"
-          :rules="`between:${0},${max}`"
-          name="Discount amount"
-        >
-          <v-text-field
-            @blur="limits"
-            @change="validate"
-            @keyup="validate"
-            v-model="discountAmount"
-            type="number"
-            label="Amount"
-            :min="0"
-            :max="max.toFixed(2)"
-            :error-messages="!valid ? 'Invalid amount' : undefined"
-            :success="valid"
-            :disabled="!editable"
-          ></v-text-field>
-        </ValidationProvider>
-      </v-col>
-    </div>
+        <v-text-field
+          @blur="limits"
+          @change="validate"
+          @keyup="validate"
+          v-model="discountAmount"
+          type="number"
+          label="Amount"
+          :min="0"
+          :max="max.toFixed(2)"
+          :error-messages="!valid ? 'Invalid amount' : undefined"
+          :success="valid"
+          :disabled="!editable"
+        ></v-text-field>
+      </ValidationProvider>
+    </v-col>
   </ValidationObserver>
 </template>
 

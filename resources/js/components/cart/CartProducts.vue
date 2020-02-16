@@ -146,31 +146,25 @@
           </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
-          <v-container fluid>
-            <v-row no-gutters>
-              <v-col :cols="12">
-                <cartDiscount
-                  :product_index="index"
-                  :product_price="parsedPrice(product) * product.qty"
-                  :editable="editable"
-                ></cartDiscount>
-              </v-col>
-            </v-row>
-            <v-row no-gutters>
-              <v-col :cols="12">
-                <v-textarea
-                  v-model="product.notes"
-                  prepend-inner-icon="mdi-card-text-outline"
-                  :rows="2"
-                  label="Notes"
-                  :hint="'For product: ' + product.name"
-                  counter
-                  no-resize
-                  :disabled="!editable"
-                ></v-textarea>
-              </v-col>
-            </v-row>
-          </v-container>
+          <cartDiscount
+            :product_index="index"
+            :product_price="parsedPrice(product) * product.qty"
+            :editable="editable"
+          ></cartDiscount>
+          <v-row>
+            <v-col :cols="12">
+              <v-textarea
+                v-model="product.notes"
+                prepend-inner-icon="mdi-card-text-outline"
+                :rows="2"
+                label="Notes"
+                :hint="'For product: ' + product.name"
+                counter
+                no-resize
+                :disabled="!editable"
+              ></v-textarea>
+            </v-col>
+          </v-row>
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
