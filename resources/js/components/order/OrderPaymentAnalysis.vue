@@ -5,10 +5,10 @@
     :sections="costSections"
     :size="150"
     :thickness="13"
-    :total="sumTotals"
+    :total="Number(sumTotals)"
     :background="bgColor"
   >
-    <h2>$ {{ sumTotals }}</h2>
+    <h2>$ {{ Number(sumTotals) }}</h2>
     <h2>total paid</h2>
   </vc-donut>
 </template>
@@ -150,7 +150,7 @@ export default {
         Number(this.giftcard_total) +
         Number(this.refund_total);
 
-      return totals;
+      return totals.toFixed(2);
     }
   }
 };

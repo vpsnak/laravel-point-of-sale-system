@@ -120,6 +120,9 @@ export default {
   },
 
   mutations: {
+    setRefreshOrder(state, value) {
+      state.refresh_order = value;
+    },
     setOrderCreatedBy(state, value) {
       state.order_created_by = value;
     },
@@ -310,19 +313,19 @@ export default {
       }
     },
     resetState(state) {
+      state.order_id = null;
+
       state.method = "retail";
 
-      state.order_id = null;
       state.order_status = null;
       state.order_total = 0;
-      state.order_total_without_tax = 0;
-      state.order_total_paid = 0;
       state.order_total_tax = 0;
+      state.order_total_without_tax = 0;
       state.order_remaining = 0;
       state.order_change = 0;
-      state.order_notes = "";
-
+      state.order_total_paid = 0;
       state.payments = [];
+      state.order_notes = "";
 
       state.checkoutDialog = false;
       state.payment_loading = false;

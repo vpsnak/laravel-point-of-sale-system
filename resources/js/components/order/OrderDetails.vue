@@ -105,7 +105,9 @@ export default {
       }
     },
     parseStatusName(status) {
-      return _.upperFirst(status.replace("_", " "));
+      if (status) {
+        return _.upperFirst(status.replace("_", " "));
+      }
     },
     statusColor(status) {
       switch (status) {

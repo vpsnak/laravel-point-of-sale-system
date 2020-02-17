@@ -1,6 +1,6 @@
 <template>
   <v-container fluid :class="loading ? 'fill-height' : ''">
-    <v-row justify="center" align="center" v-if="loading">
+    <v-row justify="center" align="center" v-if="loading || !order_id">
       <div class="text-center ma-12">
         <v-progress-circular
           :indeterminate="true"
@@ -11,7 +11,7 @@
       </div>
     </v-row>
 
-    <v-row no-gutters v-else>
+    <v-row no-gutters v-else-if="order_id">
       <v-col cols="12">
         <v-card>
           <v-card-title>
@@ -24,7 +24,7 @@
 
             <v-tooltip bottom color="red">
               <template v-slot:activator="{ on }">
-                <v-btn @click.stop="$router.go(-1)" color="red" icon v-on="on">
+                <v-btn @click.stop="close()" color="red" icon v-on="on">
                   <v-icon>mdi-close</v-icon>
                 </v-btn>
               </template>
@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions, mapMutations } from "vuex";
 export default {
   data() {
     return {
@@ -81,9 +81,14 @@ export default {
     ...mapState("cart", ["cart_products", "order_id"])
   },
   methods: {
+    ...mapMutations("cart", ["resetState"]),
     ...mapActions(["getOne"]),
     ...mapActions("cart", ["loadOrder"]),
 
+    close() {
+      this.$router.go(-1);
+      this.resetState();
+    },
     getOrder(id) {
       return new Promise((resolve, reject) => {
         this.getOne({

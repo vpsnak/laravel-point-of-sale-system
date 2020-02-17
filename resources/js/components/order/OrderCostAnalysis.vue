@@ -30,7 +30,8 @@ export default {
       "order_delivery_address",
       "order_delivery_store_pickup",
       "order_delivery_store_pickup",
-      "shipping_cost"
+      "shipping_cost",
+      "refresh_order"
     ]),
 
     bgColor() {
