@@ -1,5 +1,5 @@
 <template>
-  <v-card outlined>
+  <v-card outlined class="fill-height">
     <v-card-title>
       <v-icon left>mdi-information-variant</v-icon>
       <span class="subheading">

@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="fill-height">
+  <v-container fluid :class="loading ? 'fill-height' : ''">
     <v-row justify="center" align="center" v-if="loading">
       <div class="text-center ma-12">
         <v-progress-circular
@@ -11,9 +11,27 @@
       </div>
     </v-row>
 
-    <v-row v-else>
+    <v-row no-gutters v-else>
       <v-col cols="12">
-        <v-card elevation="12">
+        <v-card>
+          <v-card-title>
+            <v-icon class="pr-2">
+              edit
+            </v-icon>
+
+            Edit order # {{ order_id }}
+            <v-spacer />
+
+            <v-tooltip bottom color="red">
+              <template v-slot:activator="{ on }">
+                <v-btn @click.stop="$router.go(-1)" color="red" icon v-on="on">
+                  <v-icon>mdi-close</v-icon>
+                </v-btn>
+              </template>
+              <span>Close</span>
+            </v-tooltip>
+          </v-card-title>
+
           <v-tabs grow centered v-model="selected_tab">
             <v-tab>
               <v-icon left>mdi-clipboard-list-outline</v-icon>
@@ -60,7 +78,7 @@ export default {
   },
 
   computed: {
-    ...mapState("cart", ["cart_products"])
+    ...mapState("cart", ["cart_products", "order_id"])
   },
   methods: {
     ...mapActions(["getOne"]),
