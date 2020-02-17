@@ -112,7 +112,7 @@
                   <v-col cols="auto">
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
-                        <v-btn icon v-on="on">
+                        <v-btn icon v-on="on" @click="viewProduct(product)">
                           <v-icon>mdi-eye</v-icon>
                         </v-btn>
                       </template>
@@ -123,7 +123,7 @@
                   <v-col cols="auto">
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
-                        <v-btn icon v-on="on">
+                        <v-btn icon v-on="on" @click="editProduct(product)">
                           <v-icon>edit</v-icon>
                         </v-btn>
                       </template>
@@ -134,9 +134,21 @@
                   <v-col cols="auto">
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
-                        <v-btn icon v-on="on">
-                          <v-icon>mdi-card-text-outline</v-icon>
-                        </v-btn>
+                        <v-badge
+                          color="pink"
+                          dot
+                          :value="hasNotes(product)"
+                          overlap
+                        >
+                          <v-btn
+                            icon
+                            v-on="on"
+                            @click="viewNotes(product)"
+                            :disabled="!hasNotes(product)"
+                          >
+                            <v-icon>mdi-card-text-outline</v-icon>
+                          </v-btn>
+                        </v-badge>
                       </template>
                       <span>View notes</span>
                     </v-tooltip>
@@ -145,7 +157,12 @@
                   <v-col cols="auto">
                     <v-tooltip bottom color="red">
                       <template v-slot:activator="{ on }">
-                        <v-btn icon color="red" v-on="on">
+                        <v-btn
+                          icon
+                          color="red"
+                          v-on="on"
+                          @click="removeProduct(index)"
+                        >
                           <v-icon>mdi-delete-outline</v-icon>
                         </v-btn>
                       </template>
@@ -163,7 +180,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapMutations } from "vuex";
 
 export default {
   data() {
@@ -180,6 +197,24 @@ export default {
     }
   },
   methods: {
+    ...mapMutations("dialog", ["setDialog"]),
+
+    editProduct(product) {
+      this.setDialog({});
+    },
+    viewProduct(product) {
+      this.setDialog({});
+    },
+    viewNotes(product) {
+      this.setDialog({});
+    },
+    hasNotes(product) {
+      if (product.notes && product.notes.length > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     save() {
       this.edit_products = false;
     },

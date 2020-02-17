@@ -4,24 +4,23 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4e523aa12dfc4382995d52fcd85f3c18",
+    "content-hash": "309245b7b46ffd1926620274c1d1058e",
     "packages": [
         {
             "name": "codeitnowin/barcode",
-            "version": "3.0.3",
+            "version": "3.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/codeitnowin/barcode-generator.git",
-                "reference": "6325a15ae904ec401b947e1a3e868de1c2cc80b0"
+                "reference": "a84e923469a631e48723cd1cca21858605966904"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/codeitnowin/barcode-generator/zipball/6325a15ae904ec401b947e1a3e868de1c2cc80b0",
-                "reference": "6325a15ae904ec401b947e1a3e868de1c2cc80b0",
+                "url": "https://api.github.com/repos/codeitnowin/barcode-generator/zipball/a84e923469a631e48723cd1cca21858605966904",
+                "reference": "a84e923469a631e48723cd1cca21858605966904",
                 "shasum": ""
             },
             "require": {
-                "ext-gd": "*",
                 "php": ">=5.3.2"
             },
             "type": "library",
@@ -53,7 +52,7 @@
                 "qrcode",
                 "symfony"
             ],
-            "time": "2018-10-25T18:32:10+00:00"
+            "time": "2018-06-01T13:33:52+00:00"
         },
         {
             "name": "defuse/php-encryption",
@@ -2649,16 +2648,16 @@
         },
         {
             "name": "spatie/laravel-permission",
-            "version": "3.7.1",
+            "version": "3.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-permission.git",
-                "reference": "3aff5437b3e66e877dcc3158f6cfaaced8e468ab"
+                "reference": "ce5d82fc5f5300575876c42131f9e9ae2e18f6aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-permission/zipball/3aff5437b3e66e877dcc3158f6cfaaced8e468ab",
-                "reference": "3aff5437b3e66e877dcc3158f6cfaaced8e468ab",
+                "url": "https://api.github.com/repos/spatie/laravel-permission/zipball/ce5d82fc5f5300575876c42131f9e9ae2e18f6aa",
+                "reference": "ce5d82fc5f5300575876c42131f9e9ae2e18f6aa",
                 "shasum": ""
             },
             "require": {
@@ -2713,7 +2712,7 @@
                 "security",
                 "spatie"
             ],
-            "time": "2020-02-15T17:52:58+00:00"
+            "time": "2020-02-17T17:06:57+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -7362,7 +7361,7 @@
     "prefer-lowest": false,
     "platform": {
         "php": "^7.2",
-        "ext-json": "^1.5"
+        "ext-json": "*"
     },
     "platform-dev": []
 }

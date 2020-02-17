@@ -1,0 +1,3 @@
+Known bugs:
+payment amount does not update if qty changes/discount gets applies (if cart total changes)
+orders table refresh after edit (conditionally)
