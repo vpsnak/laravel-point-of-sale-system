@@ -1,21 +1,16 @@
 <template>
-  <div class="d-flex flex-column align-center">
-    <h3>
-      Payments
-    </h3>
-    <vc-donut
-      hasLegend
-      legendPlacement="right"
-      :sections="costSections"
-      :size="150"
-      :thickness="13"
-      :total="sumTotals"
-      :background="bgColor"
-    >
-      <h2>$ {{ sumTotals }}</h2>
-      <h2>total paid</h2>
-    </vc-donut>
-  </div>
+  <vc-donut
+    hasLegend
+    legendPlacement="right"
+    :sections="costSections"
+    :size="150"
+    :thickness="13"
+    :total="sumTotals"
+    :background="bgColor"
+  >
+    <h2>$ {{ sumTotals }}</h2>
+    <h2>total paid</h2>
+  </vc-donut>
 </template>
 
 <script>

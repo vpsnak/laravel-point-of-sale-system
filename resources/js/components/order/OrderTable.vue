@@ -1,6 +1,6 @@
 <template>
   <div>
-    <data-table v-if="data_table.model">
+    <data-table v-if="render">
       <template v-slot:item.customer="{ item }">
         {{ item.customer ? item.customer.email : "Guest" }}
       </template>
@@ -73,9 +73,9 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
+              :to="`/order/` + item.id"
               small
               :disabled="data_table.loading"
-              @click.stop="editOrder(item.id)"
               class="my-2"
               v-on="on"
               icon
@@ -111,6 +111,9 @@ import { mapMutations, mapActions, mapState } from "vuex";
 
 export default {
   mounted() {
+    this.render = false;
+    this.resetDataTable();
+
     this.setDataTable({
       icon: "mdi-buffer",
       title: "Orders",
@@ -127,6 +130,8 @@ export default {
         });
       }
     });
+
+    this.render = true;
   },
 
   beforeDestroy() {
@@ -135,6 +140,7 @@ export default {
 
   data() {
     return {
+      render: false,
       viewForm: "order",
       selectedItem: null
     };
@@ -156,7 +162,9 @@ export default {
     ...mapActions("cart", ["loadOrder"]),
 
     parseStatusName(value) {
-      return _.upperFirst(value.replace("_", " "));
+      if (value) {
+        return _.upperFirst(value.replace("_", " "));
+      }
     },
     statusColor(status) {
       switch (status) {
@@ -174,28 +182,6 @@ export default {
           return "";
       }
     },
-    editOrder(id) {
-      this.getSingleOrder(id)
-        .then(() => {
-          const editDialog = {
-            show: true,
-            width: 1000,
-            icon: "edit",
-            titleCloseBtn: true,
-            title: `Edit Order #${id}`,
-            component: "orderForm",
-            persistent: true,
-            eventChannel: "data-table",
-            no_padding: true,
-            fullscreen: true
-          };
-          this.setDialog(editDialog);
-        })
-        .catch()
-        .finally(() => {
-          this.setLoading(false);
-        });
-    },
     receipt(id) {
       this.setLoading(true);
 
@@ -208,7 +194,6 @@ export default {
           this.setLoading(false);
         });
     },
-
     checkout(id) {
       this.setLoading(true);
 
@@ -225,8 +210,7 @@ export default {
       return new Promise((resolve, reject) => {
         this.getOne({
           model: "orders",
-          data: { id },
-          mutation: "cart/setCustomer"
+          data: { id }
         })
           .then(response => {
             this.resetState();

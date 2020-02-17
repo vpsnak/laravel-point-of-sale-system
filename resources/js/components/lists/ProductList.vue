@@ -198,12 +198,12 @@
         justify="center"
         style="height: 58vh; overflow-y: auto;"
       >
-        <h2 v-if="!loader">No products found</h2>
         <v-progress-circular
-          v-else
+          v-if="loader"
           indeterminate
           color="secondary"
         ></v-progress-circular>
+        <h2 v-else-if="!productList.length">No products found</h2>
       </v-row>
     </v-card-text>
   </v-card>
@@ -226,6 +226,7 @@ export default {
       btnactive: true
     };
   },
+
   mounted() {
     this.getAllProducts();
     this.getAllCategories();
@@ -235,6 +236,7 @@ export default {
       }
     });
   },
+
   beforeDestroy() {
     this.$root.$off("barcodeScan");
   },

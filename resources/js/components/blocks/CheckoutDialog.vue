@@ -140,7 +140,7 @@ export default {
           action: "confirmation",
           title: "Cancel order?",
           content: "Are you sure you want to <b>cancel</b> the current order?",
-          actions: true,
+          action: "confirmation",
           persistent: true,
           cancelBtnTxt: "No",
           confirmationBtnTxt: "Yes"

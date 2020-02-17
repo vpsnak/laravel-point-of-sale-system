@@ -18,7 +18,7 @@
         <v-card-title>
           <v-icon left>mdi-calendar-plus</v-icon>
           <span class="subtitle-1">
-            Created at:
+            Created:
             <b>
               <i>{{ order_timestamp.created_at }}</i>
             </b>
@@ -31,7 +31,7 @@
         <v-card-title>
           <v-icon left>mdi-calendar-check-outline</v-icon>
           <span class="subtitle-1">
-            Updated at:
+            Updated:
             <b>
               <i>{{ order_timestamp.updated_at }}</i>
             </b>

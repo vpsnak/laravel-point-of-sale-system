@@ -75,8 +75,8 @@
           @click="closeEvent(false, true)"
           text
           color="error"
-          >{{ dialog.cancelBtnTxt }}</v-btn
-        >
+          >{{ dialog.cancelBtnTxt }}
+        </v-btn>
 
         <v-btn @click="closeEvent(true, true)" text color="success">
           {{ dialog.confirmationBtnTxt }}

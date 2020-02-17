@@ -5,6 +5,7 @@
         v-for="menu_item in side_menu"
         :key="menu_item.id"
         :to="menuAction(menu_item)"
+        exact
       >
         <v-list-item-icon>
           <v-icon>{{ menu_item.icon }}</v-icon>
@@ -42,7 +43,7 @@ export default {
 
     menuAction(item) {
       if (_.has(item, "action.link")) {
-        return item.action.link;
+        return `/${item.action.link}`;
       } else if (_.has(item, "action.method")) {
         return item.action.method;
       }

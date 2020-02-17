@@ -92,7 +92,7 @@
                     v-if="editable"
                     class="mx-2"
                     icon
-                    @click.stop="decreaseQty(product)"
+                    @click.stop="decreaseProductQty(product)"
                   >
                     <v-icon>remove</v-icon>
                   </v-btn>
@@ -119,7 +119,7 @@
                     icon
                     class="mx-2"
                     v-if="editable"
-                    @click.stop="increaseQty(product)"
+                    @click.stop="increaseProductQty(product)"
                   >
                     <v-icon>add</v-icon>
                   </v-btn>
@@ -192,7 +192,11 @@ export default {
   },
   methods: {
     ...mapMutations("dialog", ["setDialog"]),
-    ...mapMutations("cart", ["setCartProducts"]),
+    ...mapMutations("cart", [
+      "setCartProducts",
+      "increaseProductQty",
+      "decreaseProductQty"
+    ]),
 
     cancelEvent(index, event) {
       if (!this.editPrice(index)) {
@@ -292,12 +296,6 @@ export default {
       if (product.qty < 1) {
         product.qty = 1;
       }
-    },
-    decreaseQty(product) {
-      this.decreaseProductQty(product);
-    },
-    increaseQty(product) {
-      this.increaseProductQty(product);
     },
     removeItem(index) {
       this.products.splice(index, 1);

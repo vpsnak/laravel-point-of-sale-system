@@ -6,13 +6,11 @@
 
     <checkoutDialog v-if="showComponents && checkoutDialog" />
 
-    <sideMenu v-if="showComponents" />
-
-    <topMenu v-if="showComponents" />
-
     <transition name="fade" mode="out-in">
       <v-content>
-        <router-view />
+        <router-view class="view side-menu" name="side_menu"></router-view>
+        <router-view class="view top-menu" name="top_menu"></router-view>
+        <router-view class="view one"></router-view>
       </v-content>
     </transition>
   </v-app>

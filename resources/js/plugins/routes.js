@@ -1,4 +1,6 @@
 // Auth
+import TopMenu from "../components/menu/TopMenu";
+import SideMenu from "../components/menu/SideMenu";
 import Login from "../components/auth/Login";
 import Logout from "../components/auth/Logout";
 
@@ -9,6 +11,7 @@ import OpenCashRegister from "../components/pages/OpenCashRegister";
 
 // data tables
 import Orders from "../components/order/OrderTable";
+import OrderPage from "../components/order/OrderPage";
 import Customers from "../components/tables/CustomerTable";
 import Products from "../components/tables/ProductTable";
 import Categories from "../components/tables/CategoryTable";
@@ -38,7 +41,11 @@ export default [
   {
     name: "dashboard",
     path: "/dashboard",
-    component: Dashboard,
+    components: {
+      default: Dashboard,
+      side_menu: SideMenu,
+      top_menu: TopMenu
+    },
     meta: { requiresAuth: true }
   },
   {
@@ -56,97 +63,167 @@ export default [
   {
     name: "openCashRegister",
     path: "/open-cash-register",
-    component: OpenCashRegister,
+    components: {
+      default: OpenCashRegister,
+      side_menu: SideMenu,
+      top_menu: TopMenu
+    },
     meta: { requiresAuth: true }
   },
   {
     name: "sales",
     path: "/sales",
-    component: Sales,
+    components: {
+      default: Sales,
+      side_menu: SideMenu,
+      top_menu: TopMenu
+    },
     meta: { requiresAuth: true }
   },
   {
     name: "orders",
     path: "/orders",
-    component: Orders,
+    components: {
+      default: Orders,
+      side_menu: SideMenu,
+      top_menu: TopMenu
+    },
+    meta: { requiresAuth: true }
+  },
+  {
+    name: "order",
+    path: "/order/:id",
+    component: OrderPage,
     meta: { requiresAuth: true }
   },
   {
     name: "customers",
     path: "/customers",
-    component: Customers,
+    components: {
+      default: Customers,
+      side_menu: SideMenu,
+      top_menu: TopMenu
+    },
     meta: { requiresAuth: true }
   },
   {
     name: "products",
     path: "/products",
-    component: Products,
+    components: {
+      default: Products,
+      side_menu: SideMenu,
+      top_menu: TopMenu
+    },
     meta: { requiresAuth: true }
   },
   {
     name: "categories",
     path: "/categories",
-    component: Categories,
+    components: {
+      default: Categories,
+      side_menu: SideMenu,
+      top_menu: TopMenu
+    },
     meta: { requiresAuth: true }
   },
   {
     name: "stores",
     path: "/stores",
-    component: Stores,
+    components: {
+      default: Stores,
+      side_menu: SideMenu,
+      top_menu: TopMenu
+    },
     meta: { requiresAuth: true }
   },
   {
     name: "Users",
     path: "/users",
-    component: Users,
+    components: {
+      default: Users,
+      side_menu: SideMenu,
+      top_menu: TopMenu
+    },
     meta: { requiresAuth: true }
   },
   {
     name: "StorePickups",
     path: "/store-pickups",
-    component: StorePickups,
+    components: {
+      default: StorePickups,
+      side_menu: SideMenu,
+      top_menu: TopMenu
+    },
     meta: { requiresAuth: true }
   },
   {
     name: "Taxes",
     path: "/taxes",
-    component: Taxes,
+    components: {
+      default: Taxes,
+      side_menu: SideMenu,
+      top_menu: TopMenu
+    },
     meta: { requiresAuth: true }
   },
   {
     name: "CashRegisters",
     path: "/cash-registers",
-    component: CashRegisters,
+    components: {
+      default: CashRegisters,
+      side_menu: SideMenu,
+      top_menu: TopMenu
+    },
     meta: { requiresAuth: true }
   },
   {
     name: "Reports",
     path: "/reports",
-    component: Reports,
+    components: {
+      default: Reports,
+      side_menu: SideMenu,
+      top_menu: TopMenu
+    },
     meta: { requiresAuth: true }
   },
   {
     name: "GiftCards",
     path: "/gift-cards",
-    component: GiftCards,
+    components: {
+      default: GiftCards,
+      side_menu: SideMenu,
+      top_menu: TopMenu
+    },
     meta: { requiresAuth: true }
   },
   {
     name: "Coupons",
     path: "/coupons",
-    component: Coupons,
+    components: {
+      default: Coupons,
+      side_menu: SideMenu,
+      top_menu: TopMenu
+    },
     meta: { requiresAuth: true }
   },
   {
     name: "Addresses",
     path: "/addresses",
-    component: Addresses,
+    components: {
+      default: Addresses,
+      side_menu: SideMenu,
+      top_menu: TopMenu
+    },
     meta: { requiresAuth: true }
   },
   {
     name: "Companies",
     path: "/companies",
-    component: Companies,
+    components: {
+      default: Companies,
+      side_menu: SideMenu,
+      top_menu: TopMenu
+    },
     meta: { requiresAuth: true }
   }
 ];

@@ -6,7 +6,9 @@
           {{ data_table.icon }}
         </v-icon>
         {{ data_table.title }}
-        <v-spacer></v-spacer>
+
+        <v-spacer />
+
         <v-text-field
           :disabled="data_table.loading"
           :search="search"
@@ -108,13 +110,15 @@ export default {
       });
     }
   },
+
   beforeDestroy() {
-    this.resetDataTable();
     EventBus.$off();
     if (this.data_table.newForm === "productForm") {
       this.$root.$off("barcodeScan");
     }
+    this.resetDataTable();
   },
+
   computed: {
     ...mapGetters("datatable", ["getHeaders"]),
     ...mapState("datatable", ["data_table"]),
@@ -143,6 +147,7 @@ export default {
       }
     }
   },
+
   methods: {
     ...mapMutations("dialog", ["setDialog"]),
     ...mapMutations("datatable", ["setRows", "setLoading", "resetDataTable"]),
