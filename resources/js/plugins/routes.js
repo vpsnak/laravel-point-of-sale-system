@@ -91,10 +91,18 @@ export default [
     meta: { requiresAuth: true }
   },
   {
-    name: "order",
+    name: "viewOrder",
     path: "/order/:id",
     component: OrderPage,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
+    props: { editable: false }
+  },
+  {
+    name: "editOrder",
+    path: "/order/:id",
+    component: OrderPage,
+    meta: { requiresAuth: true },
+    props: { editable: true }
   },
   {
     name: "customers",

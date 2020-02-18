@@ -8,7 +8,6 @@ use App\ElavonApiPayment;
 use App\Http\Controllers\ElavonSdkPaymentController;
 use App\Http\Controllers\OrderController;
 use App\Giftcard;
-use App\Helper\PhpHelper;
 use App\Helper\Price;
 use App\Order;
 use App\Payment;
@@ -259,6 +258,46 @@ class PaymentController extends Controller
         $coupon->increment('uses');
 
         return true;
+    }
+
+    public function createUnlinkedRefund(Request $request)
+    {
+        $validatedData = $request->validate([
+            'order_id' => 'required|exists:orders,id',
+            'method' => 'required|string',
+            'amount' => 'required|numeric',
+            // giftcard validation
+            'giftcard_code' => 'nullable|required_if:method,giftcard-existing|exists:giftcards,code',
+            'giftcard.code' => 'nullable|required_if:method,giftcard-new|string',
+            'giftcard.name' => 'nullable|required_if:method,giftcard-new|string',
+            // cc validation
+            'card.number' => 'nullable|required_if:method,cc-api',
+            'card.holder' => 'nullable|required_if:method,cc-api',
+            'card.exp_date' => 'nullable|required_if:method,cc-api',
+            'card.cvc' => 'nullable|required_if:method,cc-api'
+        ]);
+
+        switch ($validatedData['method']) {
+            case 'cc-api':
+                break;
+            case 'cc-pos':
+                break;
+            case 'giftcard-existing':
+                $giftcard = Giftcard::whereCode($validatedData['giftcard_code'])->firstOrFail();
+                $giftcard->amount += $validatedData['amount'];
+                $giftcard->save();
+                break;
+            case 'giftcard-new':
+                Giftcard::create([
+                    'code' => $validatedData['giftcard.code'],
+                    'name' => $validatedData['giftcard.name'],
+                    'amount' => $validatedData['amount'],
+                    'enabled' => true,
+                ]);
+                break;
+        }
+
+        return response('test', 500);
     }
 
     private function createRefund(Payment $payment, bool $succeed)

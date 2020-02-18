@@ -120,8 +120,8 @@ export default {
   },
 
   mutations: {
-    setRefreshOrder(state, value) {
-      state.refresh_order = value;
+    setCartProduct(state, payload) {
+      state.cart_products[payload.index] = payload.value;
     },
     setOrderCreatedBy(state, value) {
       state.order_created_by = value;
@@ -281,6 +281,7 @@ export default {
     decreaseProductQty(state, target_product) {
       const index = _.findIndex(state.cart_products, product => {
         return product.id === target_product.id;
+        setOrderTimestamp;
       });
 
       if (index != -1 && state.cart_products[index].qty > 1) {

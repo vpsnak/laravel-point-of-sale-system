@@ -20,9 +20,9 @@
 import { mapGetters, mapMutations, mapState } from "vuex";
 
 export default {
-  mounted() {
+  created() {
     if (this.auth && this.app_load <= 100) {
-      this.$router.push({ name: "landingPage" });
+      this.$router.replace({ name: "landingPage" });
     }
   },
   computed: {

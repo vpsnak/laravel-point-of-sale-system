@@ -49,8 +49,8 @@
             </v-tab>
 
             <v-tabs-items v-model="selected_tab">
-              <OrderSummaryTabItem />
-              <OrderItemsTabItem />
+              <OrderSummaryTabItem :editable="this.$props.editable" />
+              <OrderItemsTabItem :editable="this.$props.editable" />
               <OrderDeliveryOptionsTabItem />
             </v-tabs-items>
           </v-tabs>
@@ -63,6 +63,9 @@
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
 export default {
+  props: {
+    editable: Boolean
+  },
   data() {
     return {
       loading: true,
@@ -71,7 +74,6 @@ export default {
   },
 
   created() {
-    console.log(this.$route.params);
     this.getOrder(this.$route.params.id).then(() => {
       this.loading = false;
     });
@@ -82,9 +84,22 @@ export default {
   },
   methods: {
     ...mapMutations("cart", ["resetState"]),
+    ...mapMutations("dialog", ["setDialog"]),
     ...mapActions(["getOne"]),
     ...mapActions("cart", ["loadOrder"]),
 
+    confirmationDialog() {
+      this.setDialog({
+        show: true,
+        action: "confirmation",
+        title: "Cancel order?",
+        content: "Are you sure you want to <b>cancel</b> the current order?",
+        action: "confirmation",
+        persistent: true,
+        cancelBtnTxt: "No",
+        confirmationBtnTxt: "Yes"
+      });
+    },
     close() {
       this.$router.go(-1);
       this.resetState();

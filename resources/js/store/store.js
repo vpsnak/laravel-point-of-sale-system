@@ -5,6 +5,7 @@ import "es6-promise/auto";
 import Cookies from "js-cookie";
 import router from "../plugins/router";
 //modules
+import requests from "./modules/requests";
 import config from "./modules/config";
 import menu from "./modules/menu";
 import cart from "./modules/cart";
@@ -17,6 +18,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   strict: false,
   modules: {
+    requests,
     config,
     menu,
     cart,

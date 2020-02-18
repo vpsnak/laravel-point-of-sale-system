@@ -120,10 +120,10 @@
                     </v-tooltip>
                   </v-col>
 
-                  <v-col cols="auto">
+                  <v-col cols="auto" v-if="$props.editable">
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
-                        <v-btn icon v-on="on" @click="editProduct(product)">
+                        <v-btn icon v-on="on" @click="toggleEdit(index)">
                           <v-icon>edit</v-icon>
                         </v-btn>
                       </template>
@@ -154,7 +154,7 @@
                     </v-tooltip>
                   </v-col>
 
-                  <v-col cols="auto">
+                  <v-col cols="auto" v-if="$props.editable">
                     <v-tooltip bottom color="red">
                       <template v-slot:activator="{ on }">
                         <v-btn
@@ -183,11 +183,10 @@
 import { mapState, mapMutations } from "vuex";
 
 export default {
-  data() {
-    return {
-      edit_products: false
-    };
+  props: {
+    editable: Boolean
   },
+
   computed: {
     ...mapState("cart", ["cart_products"]),
     // configurable price, qty, add / remove product, discounts, save btn, close confirmation if unsaved changes are detected, validator
@@ -196,17 +195,32 @@ export default {
       return "primary--text";
     }
   },
+
   methods: {
     ...mapMutations("dialog", ["setDialog"]),
 
-    editProduct(product) {
-      this.setDialog({});
-    },
+    toggleEdit(index) {},
     viewProduct(product) {
-      this.setDialog({});
+      this.setDialog({
+        show: true,
+        title: `View: ${product.name}`,
+        component: "product",
+        icon: "mdi-package-variant",
+        model: product,
+        width: 1000,
+        titleCloseBtn: true
+      });
     },
     viewNotes(product) {
-      this.setDialog({});
+      this.setDialog({
+        show: true,
+        title: `Notes: ${product.name}`,
+        component: "orderItemNotes",
+        icon: "mdi-card-text-outline",
+        model: product.notes,
+        width: 1000,
+        titleCloseBtn: true
+      });
     },
     hasNotes(product) {
       if (product.notes && product.notes.length > 0) {
@@ -214,9 +228,6 @@ export default {
       } else {
         return false;
       }
-    },
-    save() {
-      this.edit_products = false;
     },
     hasDiscount(product) {
       if (

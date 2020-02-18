@@ -41,11 +41,12 @@ Route::patch('/users/update/{model}', 'UserController@update')->middleware('scop
 Route::delete('/users/{id}', 'UserController@delete')->middleware('scope:admin');
 
 // payments
-Route::get('/payments', 'PaymentController@all')->middleware('scope:admin,cashier');
-Route::get('/payments/get/{payment}', 'PaymentController@get')->middleware('scope:admin,cashier');
-Route::post('/payments/create', 'PaymentController@create')->middleware('scope:admin,cashier');
-Route::post('/payments/search', 'PaymentController@search')->middleware('scope:admin,cashier');
-Route::delete('/payments/{payment}', 'PaymentController@refundPayment')->middleware('scope:admin,cashier');
+Route::get('/payments', 'PaymentController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/payments/get/{payment}', 'PaymentController@get')->middleware('scope:admin,store_manager,cashier');
+Route::post('/payments/create', 'PaymentController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/payments/search', 'PaymentController@search')->middleware('scope:admin,store_manager,cashier');
+Route::post('payments/unlinked-refund', 'PaymentController@createUnlinkedRefund')->middleware('scope:admin,store_manager');
+Route::delete('/payments/{payment}', 'PaymentController@refundPayment')->middleware('scope:admin,store_manager,cashier');
 
 // customers
 Route::get('/customers', 'CustomerController@all')->middleware('scope:admin,store_manager,cashier');

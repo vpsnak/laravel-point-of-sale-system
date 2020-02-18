@@ -10,7 +10,7 @@ const state = {
     readonly: false,
     content: "",
     model: null,
-    persistent: null,
+    persistent: false,
     action: "",
     cancelBtnTxt: "Cancel",
     confirmationBtnTxt: "OK",
@@ -37,7 +37,6 @@ const mutations = {
     state.interactive_dialog.eventChannel = "data-table";
     state.interactive_dialog.no_padding = false;
   },
-
   viewItem(state, item) {
     state.interactive_dialog.show = true;
     state.interactive_dialog.fullscreen = false;
@@ -48,11 +47,10 @@ const mutations = {
     state.interactive_dialog.component = item.form;
     state.interactive_dialog.readonly = true;
     state.interactive_dialog.model = item;
-    state.interactive_dialog.persistent = null;
+    state.interactive_dialog.persistent = false;
     state.interactive_dialog.eventChannel = "";
     state.interactive_dialog.no_padding = false;
   },
-
   setDialog(state, value) {
     state.interactive_dialog = { ...state.interactive_dialog, ...value };
   },
@@ -67,7 +65,7 @@ const mutations = {
     state.interactive_dialog.readonly = false;
     state.interactive_dialog.content = "";
     state.interactive_dialog.model = null;
-    state.interactive_dialog.persistent = null;
+    state.interactive_dialog.persistent = false;
     state.interactive_dialog.action = "";
     state.interactive_dialog.cancelBtnTxt = "Cancel";
     state.interactive_dialog.confirmationBtnTxt = "OK";

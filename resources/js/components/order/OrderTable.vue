@@ -73,7 +73,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
-              :to="`/order/` + item.id"
+              :to="{ name: 'editOrder', params: { id: item.id } }"
               small
               :disabled="data_table.loading"
               class="my-2"
@@ -90,7 +90,7 @@
             <v-btn
               small
               :disabled="data_table.loading"
-              @click.stop="(item.form = viewForm), viewItem(item)"
+              :to="{ name: 'viewOrder', params: { id: item.id } }"
               class="my-2"
               v-on="on"
               icon

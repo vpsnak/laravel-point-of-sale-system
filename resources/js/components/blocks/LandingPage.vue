@@ -1,13 +1,13 @@
 <template>
   <v-container v-if="this.app_load <= 100" class="fill-height" fluid>
     <v-row align="center" justify="center">
-      <v-col cols="12" sm="8" md="4">
+      <v-col :cols="12" :sm="8" :md="4">
         <v-img
           contain
           src="https://www.plantshed.com//skin/frontend/plantshed/default/images/ps-logo.svg"
         ></v-img>
       </v-col>
-      <v-col cols="12" align="center" justify="center">
+      <v-col :cols="12" align="center" justify="center">
         <v-progress-circular
           rotate="270"
           :color="color"
@@ -21,7 +21,7 @@
       </v-col>
     </v-row>
     <v-row v-if="verbose && init_info.length">
-      <v-col cols="12">
+      <v-col :cols="12">
         <transition-group
           name="staggered-fade"
           tag="table"
@@ -157,19 +157,19 @@ export default {
     },
 
     // animations
-    beforeEnter: function(el) {
+    beforeEnter(el) {
       el.style.opacity = 0;
       el.style.height = 0;
     },
-    enter: function(el, done) {
-      var delay = el.dataset.index * 150;
-      setTimeout(function() {
+    enter(el, done) {
+      const delay = el.dataset.index * 150;
+      setTimeout(() => {
         Velocity(el, { opacity: 1, height: "1.6em" }, { complete: done });
       }, delay);
     },
-    leave: function(el, done) {
-      var delay = el.dataset.index * 150;
-      setTimeout(function() {
+    leave(el, done) {
+      const delay = el.dataset.index * 150;
+      setTimeout(() => {
         Velocity(el, { opacity: 0, height: 0 }, { complete: done });
       }, delay);
     }
