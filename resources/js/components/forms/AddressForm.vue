@@ -255,7 +255,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
   props: {
@@ -301,16 +301,14 @@ export default {
   beforeDestroy() {
     this.$off("submit");
   },
+
   computed: {
-    locations() {
-      return this.$store.state.cart.locations;
-    }
+    ...mapState("cart", ["locations"])
   },
+
   methods: {
-    ...mapActions({
-      getAll: "getAll",
-      create: "create"
-    }),
+    ...mapActions(["getAll", "create"]),
+
     submit() {
       this.loading = true;
       if (_.isObject(this.formFields.region_id)) {

@@ -25,20 +25,20 @@ class DatabaseSeeder extends Seeder
         $this->call(BankAccountSeeder::class);
         $this->call(CashRegisterSeeder::class);
 
+        $this->call(PlantshedPostCodes::class);
+        $this->call(PlantshedAreasSeeder::class);
+
         // $this->call(ShippingSeeder::class);
 
         if (config('app.env') === 'local') {
             $this->call(CustomerSeeder::class);
             $this->call(AddressSeeder::class);
 
+            $this->call(GiftcardSeeder::class);
+            $this->call(CouponSeeder::class);
+
             // $this->call(ProductSeeder::class);
             // $this->call(CategorySeeder::class);
         }
-
-        $this->call(GiftcardSeeder::class);
-        $this->call(CouponSeeder::class);
-
-        $this->call(PlantshedPostCodes::class);
-        $this->call(PlantshedAreasSeeder::class);
     }
 }

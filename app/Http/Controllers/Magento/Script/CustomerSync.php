@@ -44,9 +44,7 @@ class CustomerSync
         'firstname' => 'first_name',
         'lastname' => 'last_name',
         'region_id' => 'region',
-        'telephone' => 'phone',
-        'is_default_billing' => 'billing',
-        'is_default_shipping' => 'shipping'
+        'telephone' => 'phone'
     ];
 
     public static function getFromMagento($force = false)
@@ -62,11 +60,14 @@ class CustomerSync
                 break;
             }
             foreach ($customers as $customer) {
-                if (count($customer->addresses) == 0) {
+                if (count($customer->addresses) === 0) {
                     continue;
                 }
-                $parsedCustomer = Helper::getParsedData($customer, self::customerFieldsToParse,
-                    self::customerFieldsToRename);
+                $parsedCustomer = Helper::getParsedData(
+                    $customer,
+                    self::customerFieldsToParse,
+                    self::customerFieldsToRename
+                );
                 $storedCustomer = \App\Customer::getFirst('email', $customer->email);
                 if ($force || Helper::hasDifferences($parsedCustomer, $storedCustomer)) {
                     self::log('Getting Customer: ' . $customer->email);
@@ -77,8 +78,14 @@ class CustomerSync
                 }
                 foreach ($customer->addresses as $address) {
                     try {
-                        $parsedAddress = Helper::getParsedData($address, self::addressFieldsToParse,
-                            self::addressFieldsToRename);
+                        $parsedAddress = Helper::getParsedData(
+                            $address,
+                            self::addressFieldsToParse,
+                            self::addressFieldsToRename
+                        );
+                        $parsedAddress['customer_id'] = $storedCustomer->id;
+                        echo $parsedAddress['region'];
+
                         $storedAddress = Address::getFirst('magento_id', $address->entity_id);
                         if ($force || Helper::hasDifferences($parsedAddress, $storedAddress)) {
                             self::log('Getting Customer (' . $customer->email . ') Address: ' . $address->entity_id);
@@ -89,17 +96,19 @@ class CustomerSync
                                 $parsedAddress['street'] = $street[0];
                                 $parsedAddress['street2'] = $street[1];
                             }
+                            self::log($storedCustomer->id);
 
                             $updatedAddress = Address::updateOrCreate(
                                 ['magento_id' => $address->entity_id],
                                 $parsedAddress
                             );
-                            if (empty($storedAddress)) {
-                                $storedCustomer->addresses()->attach($updatedAddress);
-                            }
+                            // if (empty($storedAddress)) {
+                            //     $storedCustomer->addresses()->attach($updatedAddress);
+                            // }
                         }
-                    } catch (Exception $e) {
-                        self::log('Skipping Customer (' . $customer->email . ') Address: ' . $address->entity_id);
+                    } catch (\Exception $e) {
+                        self::log($e);
+                        // self::log('Skipping Customer (' . $customer->email . ') Address: ' . $address->entity_id);
                         continue;
                     }
                 }
@@ -117,7 +126,7 @@ class CustomerSync
         $client = new Customer();
         foreach (\App\Customer::all() as $customer) {
             if ($customer->magento_id == 0) {
-//                // @TODO add tax vat to customer
+                //                // @TODO add tax vat to customer
                 $response = $client->sendCustomer([
                     'firstname' => $customer->first_name,
                     'lastname' => $customer->last_name,

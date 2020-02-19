@@ -13,6 +13,14 @@ class ForeignKeys extends Migration
      */
     public function up()
     {
+        Schema::table('regions', function (Blueprint $table) {
+            $table->foreign('country_id')->references('id')->on('countries');
+        });
+
+        Schema::table('addresses', function (Blueprint $table) {
+            $table->foreign('region_id')->references('id')->on('regions');
+        });
+
         Schema::table('menu_item_role', function (Blueprint $table) {
             $table->foreign('menu_item_id')->references('id')->on('menu_items');
             $table->foreign('role_id')->references('id')->on('roles');
@@ -58,6 +66,14 @@ class ForeignKeys extends Migration
      */
     public function down()
     {
+        Schema::table('regions', function (Blueprint $table) {
+            $table->dropForeign(['country_id']);
+        });
+
+        Schema::table('addresses', function (Blueprint $table) {
+            $table->dropForeign(['region_id']);
+        });
+
         Schema::table('menu_item_role', function (Blueprint $table) {
             $table->dropForeign(['menu_item_id']);
             $table->dropForeign(['role_id']);

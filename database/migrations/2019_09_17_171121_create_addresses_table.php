@@ -23,8 +23,7 @@ class CreateAddressesTable extends Migration
             $table->string('street');
             $table->string('street2')->nullable();
             $table->string('city');
-            $table->string('country_id');
-            $table->string('region');
+            $table->unsignedSmallInteger('region_id');
             $table->string('postcode', 10);
             $table->string('phone', 20)->index();
             $table->string('company')->nullable();

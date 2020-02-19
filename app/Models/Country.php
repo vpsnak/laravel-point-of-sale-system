@@ -2,7 +2,20 @@
 
 namespace App;
 
-class Country extends BaseModel
+use Illuminate\Database\Eloquent\Model;
+
+class Country extends Model
 {
-    protected $primaryKey = 'country_id';
+    public $timestamps = false;
+
+    protected $fillable = [
+        'iso2_code',
+        'iso3_code',
+        'name',
+    ];
+
+    public function regions()
+    {
+        return $this->hasMany(Region::class);
+    }
 }

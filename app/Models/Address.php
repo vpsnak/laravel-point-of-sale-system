@@ -4,7 +4,6 @@ namespace App;
 
 class Address extends BaseModel
 {
-    //    protected $with = ['areaCode', 'customers'];
     //    protected $with = ['customers'];
 
     protected $appends = ['address_country', 'address_region'];
@@ -16,8 +15,7 @@ class Address extends BaseModel
         'street',
         'street2',
         'city',
-        'country_id',
-        'region',
+        'region_id',
         'postcode',
         'phone',
         'company',
@@ -64,36 +62,13 @@ class Address extends BaseModel
         $this->attributes['is_default_billing'] = $value;
     }
 
-    public function getAddressCountryAttribute()
-    {
-        if (!empty($this->country)) {
-            return $this->country->iso2_code;
-        }
-        return $this->country_id;
-    }
-
-    public function getAddressRegionAttribute()
-    {
-        return ($this->region_id ?? $this->region_name) ?? $this->region;
-    }
-
     public function customer()
     {
         return $this->belongsTo(Customer::class);
     }
 
-    public function country()
+    public function region()
     {
-        return $this->belongsTo(Country::class, 'country_id', 'country_id');
-    }
-
-    protected function region_id()
-    {
-        return $this->belongsTo(Region::class, 'region', 'region_id');
-    }
-
-    protected function region_name()
-    {
-        return $this->belongsTo(Region::class, 'region', 'default_name');
+        return $this->belongsTo(Region::class);
     }
 }
