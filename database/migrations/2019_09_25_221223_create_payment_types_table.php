@@ -14,12 +14,11 @@ class CreatePaymentTypesTable extends Migration
     public function up()
     {
         Schema::create('payment_types', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->tinyIncrements('id');
             $table->string('name');
             $table->string('type');
             $table->string('icon')->nullable();
-            $table->boolean('status')->default(1);
-            $table->timestamps();
+            $table->boolean('status')->default(true);
         });
     }
 

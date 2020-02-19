@@ -33,7 +33,7 @@ class PaymentController extends Controller
         $validatedData['cash_register_id'] = auth()->user()->open_register->cash_register->id;
 
         $newPayment = $validatedData;
-        $newPayment['payment_type'] = PaymentType::getFirst('type', $validatedData['payment_type'])->id;
+        $newPayment['payment_type'] = PaymentType::whereType($validatedData['payment_type'])->first()->id;
         $newPayment['status'] = 'pending';
 
         $payment = Payment::create($newPayment);
@@ -266,10 +266,11 @@ class PaymentController extends Controller
             'order_id' => 'required|exists:orders,id',
             'method' => 'required|string',
             'amount' => 'required|numeric',
-            // giftcard validation
-            'giftcard_code' => 'nullable|required_if:method,giftcard-existing|exists:giftcards,code',
-            'giftcard.code' => 'nullable|required_if:method,giftcard-new|string',
-            'giftcard.name' => 'nullable|required_if:method,giftcard-new|string',
+            // giftcard-existing validation
+            'existing_gc_code' => 'nullable|required_if:method,giftcard-existing|exists:giftcards,code',
+            // giftcard-new validation
+            'giftcard.code' => 'nullable|required_if:method,giftcard-new|unique:giftcards,code|string',
+            'giftcard.name' => 'nullable|required_if:method,giftcard-new|string|',
             // cc validation
             'card.number' => 'nullable|required_if:method,cc-api',
             'card.holder' => 'nullable|required_if:method,cc-api',
@@ -277,30 +278,62 @@ class PaymentController extends Controller
             'card.cvc' => 'nullable|required_if:method,cc-api'
         ]);
 
+        $order = Order::findOrFail($validatedData['order_id']);
+        $refundType = PaymentType::whereType($validatedData['method'])->firstOrFail();
+        $user = auth()->user();
+        $cash_register_id = $user->open_register->cash_register_id;
+
+        if ($validatedData['amount'] > $order->total_paid) {
+            return response(['errors' => [
+                ['The amount field cannot exceed the total paid amount of $' . $order->total_paid]
+            ]], 422);
+        }
+
+        $code = null;
         switch ($validatedData['method']) {
             case 'cc-api':
                 break;
             case 'cc-pos':
                 break;
             case 'giftcard-existing':
-                $giftcard = Giftcard::whereCode($validatedData['giftcard_code'])->firstOrFail();
+                $code = $validatedData['existing_gc_code'];
+                $giftcard = Giftcard::whereCode($validatedData['existing_gc_code'])->firstOrFail();
                 $giftcard->amount += $validatedData['amount'];
                 $giftcard->save();
                 break;
             case 'giftcard-new':
+                $code = $validatedData['giftcard']['code'];
                 Giftcard::create([
-                    'code' => $validatedData['giftcard.code'],
-                    'name' => $validatedData['giftcard.name'],
+                    'code' => $validatedData['giftcard']['code'],
+                    'name' => $validatedData['giftcard']['name'],
                     'amount' => $validatedData['amount'],
                     'enabled' => true,
                 ]);
                 break;
         }
 
-        return response('test', 500);
+        $refund = new Payment([
+            'payment_type' => $refundType->id,
+            'amount' => abs($validatedData['amount']) * -1,
+            'code' => $code,
+            'status' => 'refunded',
+            'refunded' => false,
+            'cash_register_id' => $cash_register_id,
+            'order_id' => $order->id,
+            'created_by' => $user->id
+        ]);
+
+        $refund->save();
+        $refund = $refund->load(['created_by', 'paymentType', 'order']);
+
+        $orderStatus = OrderController::updateOrderStatus($refund, true);
+        $orderStatus['info'] = ['Refund' => 'Refund completed successfully!'];
+        $orderStatus['refund'] = $refund->refresh();
+
+        return response($orderStatus, 500);
     }
 
-    private function createRefund(Payment $payment, bool $succeed)
+    private function createLinkedRefund(Payment $payment, bool $succeed)
     {
         $refund = $payment->replicate();
         $refund->amount = abs($refund->amount) * -1;
@@ -350,7 +383,7 @@ class PaymentController extends Controller
 
         if ($setOrderStatus) {
             if (is_array($result) && array_key_exists('errors', $result)) {
-                $refund = $this->createRefund($payment, false);
+                $refund = $this->createLinkedRefund($payment, false);
                 $refund->load(['created_by', 'paymentType', 'order']);
 
                 $orderStatus = OrderController::updateOrderStatus($refund, true);
@@ -359,7 +392,7 @@ class PaymentController extends Controller
 
                 return response($orderStatus, 500);
             } else {
-                $refund = $this->createRefund($payment, true);
+                $refund = $this->createLinkedRefund($payment, true);
                 $refund->load(['created_by', 'paymentType', 'order']);
 
                 $orderStatus = OrderController::updateOrderStatus($refund, true);
@@ -373,7 +406,7 @@ class PaymentController extends Controller
             if (is_array($result) && array_key_exists('errors', $result)) {
                 return ['errors' => $result['errors']];
             } else {
-                $refund = $this->createRefund($payment, true);
+                $refund = $this->createLinkedRefund($payment, true);
                 return $refund;
             }
         }

@@ -5,29 +5,15 @@ namespace App\Http\Controllers;
 use App\PaymentType;
 use Illuminate\Http\Request;
 
-class PaymentTypeController extends BaseController
+class PaymentTypeController extends Controller
 {
-    protected $model = PaymentType::class;
-
-    public function create(Request $request)
+    public function paymentTypes()
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string',
-            'type' => 'required|boolean',
-            'status' => 'required|boolean',
-            'is_default' => 'required|boolean',
-        ]);
+        return response(PaymentType::getPaymentTypes());
+    }
 
-        $validatedData['created_by'] = auth()->user()->id;
-
-        $validatedID = $request->validate([
-            'id' => 'nullable|exists:payment_types,id'
-        ]);
-
-        if (!empty($validatedID)) {
-            return response($this->model::updateData($validatedID, $validatedData), 200);
-        } else {
-            return response($this->model::store($validatedData), 201);
-        }
+    public function refundTypes()
+    {
+        return response(PaymentType::getRefundTypes());
     }
 }

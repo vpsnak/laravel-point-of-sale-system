@@ -217,16 +217,14 @@ export default {
     EventBus.$on("billing-address", event => {
       if (event.payload) {
         this.addresses.push(event.payload);
-
-        this.billingAddress = event.payload;
+        this.billingAddressId = event.payload;
       }
     });
 
     EventBus.$on("delivery-address", event => {
       if (event.payload) {
         this.addresses.push(event.payload);
-
-        this.shipping.address = event.payload;
+        this.deliveryAddressId = event.payload;
       }
     });
   },
@@ -300,14 +298,6 @@ export default {
         this.setBillingAddressId(value);
       }
     },
-    shippingCost: {
-      get() {
-        return this.shipping_cost;
-      },
-      set(value) {
-        this.setShippingCost(value);
-      }
-    },
     deliveryAddressId: {
       get() {
         return this.delivery.address_id;
@@ -317,6 +307,14 @@ export default {
           this.selected_delivery_address = this.getAddressById(value);
           this.setDeliveryAddressId(value);
         }
+      }
+    },
+    shippingCost: {
+      get() {
+        return this.shipping_cost;
+      },
+      set(value) {
+        this.setShippingCost(value);
       }
     },
     deliveryDate: {

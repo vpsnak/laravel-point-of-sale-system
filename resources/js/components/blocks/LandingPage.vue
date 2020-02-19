@@ -141,7 +141,7 @@ export default {
     },
     redirect() {
       if (this.$route.name !== "dashboard") {
-        this.$router.push({ name: "dashboard" });
+        this.$router.replace({ name: "dashboard" });
       }
     },
     resetAppState() {

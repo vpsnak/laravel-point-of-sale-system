@@ -2,13 +2,23 @@
 
 namespace App;
 
-class PaymentType extends BaseModel
+use Illuminate\Database\Eloquent\Model;
+
+class PaymentType extends Model
 {
-    protected $fillable = [
-        'name',
-        'type',
-        'status',
-        'is_default',
-        'created_by',
+    public $timestamps = false;
+
+    protected $casts = [
+        'status' => 'boolean'
     ];
+
+    public static function getPaymentTypes()
+    {
+        return self::whereStatus(true)->get();
+    }
+
+    public static function getRefundTypes()
+    {
+        return self::whereStatus(false)->get();
+    }
 }

@@ -1,16 +1,30 @@
 <template>
-  <vc-donut
-    hasLegend
-    legendPlacement="left"
-    :sections="costSections"
-    :size="150"
-    :thickness="13"
-    :total="order_total"
-    :background="bgColor"
-  >
-    <h2>$ {{ order_total }}</h2>
-    <h2>total cost</h2>
-  </vc-donut>
+  <v-card outlined class="fill-height">
+    <v-card-title>
+      <v-icon left>mdi-chart-pie</v-icon>
+      <span class="subheading">
+        Order cost analysis
+      </span>
+    </v-card-title>
+    <v-container>
+      <v-row justify="center" align="center">
+        <v-col>
+          <vc-donut
+            hasLegend
+            legendPlacement="left"
+            :sections="costSections"
+            :size="150"
+            :thickness="13"
+            :total="order_total"
+            :background="bgColor"
+          >
+            <h2>$ {{ order_total }}</h2>
+            <h2>total cost</h2>
+          </vc-donut>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-card>
 </template>
 
 <script>
@@ -23,6 +37,7 @@ export default {
       "order_total",
       "order_total_without_tax",
       "order_total_tax",
+      "order_total_item_cost",
       "order_change",
       "order_remaining",
       "order_notes",
@@ -43,14 +58,13 @@ export default {
     costSections() {
       let sections = [];
 
-      if (this.order_total_without_tax > 0) {
+      if (this.order_total_item_cost > 0) {
         sections.push({
-          label: `Items: $${this.order_total_without_tax}`,
-          value: this.order_total_without_tax,
+          label: `Items: $${this.order_total_item_cost}`,
+          value: this.order_total_item_cost,
           color: "#003f5c"
         });
       }
-
       if (this.shipping_cost > 0) {
         sections.push({
           label: `Shipping: $${this.shipping_cost}`,

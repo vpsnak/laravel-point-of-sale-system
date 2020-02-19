@@ -108,6 +108,7 @@ export default {
     order_total: 0,
     order_total_without_tax: 0,
     order_total_tax: 0,
+    order_total_item_cost: 0,
     order_change: 0,
     order_remaining: 0,
     order_notes: "",
@@ -122,6 +123,9 @@ export default {
   mutations: {
     setCartProduct(state, payload) {
       state.cart_products[payload.index] = payload.value;
+    },
+    setOrderTotalItemCost(state, value) {
+      state.order_total_item_cost = value;
     },
     setOrderCreatedBy(state, value) {
       state.order_created_by = value;
@@ -325,6 +329,8 @@ export default {
       state.order_remaining = 0;
       state.order_change = 0;
       state.order_total_paid = 0;
+      state.order_total_item_cost = 0;
+
       state.payments = [];
       state.order_notes = "";
 
@@ -511,6 +517,7 @@ export default {
         context.commit("setOrderTotal", order.total);
         context.commit("setOrderTotalPaid", order.total_paid);
         context.commit("setOrderTotalWithoutTax", order.total_without_tax);
+        context.commit("setOrderTotalItemCost", order.total_item_cost);
         context.commit("setOrderTotalTax", order.total_tax);
         context.commit("setOrderChange", order.change);
         context.commit("setOrderRemaining", order.remaining);

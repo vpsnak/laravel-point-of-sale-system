@@ -18,17 +18,17 @@ Pusher.logToConsole = process.env.NODE_ENV === "production" ? false : true;
 window.axios = require("axios");
 window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 Cookies.get("token")
-    ? (window.axios.defaults.headers.common["Authorization"] = Cookies.get(
-          "token"
-      ))
-    : "";
+  ? (window.axios.defaults.headers.common["Authorization"] = Cookies.get(
+      "token"
+    ))
+  : "";
 
-window.axios.interceptors.response.use(undefined, function(error) {
-    if (error.response.status === 401) {
-        store.commit("logout");
-    }
+window.axios.interceptors.response.use(undefined, error => {
+  if (error.response.status === 401) {
+    store.commit("logout");
+  }
 
-    return Promise.reject(false);
+  return Promise.reject(error);
 });
 
 /**
@@ -40,11 +40,11 @@ window.axios.interceptors.response.use(undefined, function(error) {
 let token = document.head.querySelector('meta[name="csrf-token"]');
 
 if (token) {
-    window.axios.defaults.headers.common["X-CSRF-TOKEN"] = token.content;
+  window.axios.defaults.headers.common["X-CSRF-TOKEN"] = token.content;
 } else {
-    console.error(
-        "CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token"
-    );
+  console.error(
+    "CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token"
+  );
 }
 
 /**

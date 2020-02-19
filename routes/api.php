@@ -84,18 +84,14 @@ Route::post('/taxes/search', 'TaxController@search')->middleware('scope:admin,st
 Route::delete('/taxes/{id}', 'TaxController@delete')->middleware('scope:admin,store_manager,cashier');
 
 // payment-types
-Route::get('/payment-types', 'PaymentTypeController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/payment-types/get/{id}', 'PaymentTypeController@get')->middleware('scope:admin,store_manager,cashier');
-Route::post('/payment-types/create', 'PaymentTypeController@create')->middleware('scope:admin,store_manager,cashier');
-Route::post('/payment-types/search', 'PaymentTypeController@search')->middleware('scope:admin,store_manager,cashier');
-Route::delete('/payment-types/{id}', 'PaymentTypeController@delete')->middleware('scope:admin,store_manager,cashier');
+Route::get('/payment-types', 'PaymentTypeController@paymentTypes')->middleware('scope:admin,store_manager,cashier');
+Route::get('/refund-types', 'PaymentTypeController@refundTypes')->middleware('scope:admin,store_manager');
 
 // cash-registers
 Route::get('/cash-registers', 'CashRegisterController@all')->middleware('scope:admin,store_manager,cashier');
 Route::get('/cash-registers/get/{id}', 'CashRegisterController@get')->middleware('scope:admin,store_manager,cashier');
 Route::post('/cash-registers/create', 'CashRegisterController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/cash-registers/search', 'CashRegisterController@search')->middleware('scope:admin,store_manager,cashier');
-Route::delete('/cash-registers/{id}', 'CashRegisterController@delete')->middleware('scope:admin,store_manager,cashier');
 
 // cash-register-reports
 Route::get('/cash-register-reports', 'CashRegisterReportController@all')->middleware('scope:admin,store_manager,cashier');;

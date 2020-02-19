@@ -13,12 +13,18 @@ class PaymentType extends Seeder
     public function run()
     {
         DB::table('payment_types')->insert([
-            ['name' => 'CC', 'type' => 'pos-terminal', 'icon' => 'mdi-credit-card-scan', 'status' => 1],
-            ['name' => 'Cash', 'type' => 'cash', 'icon' => 'mdi-cash-usd', 'status' => 1],
-            ['name' => 'CC API', 'type' => 'card', 'icon' => 'mdi-credit-card', 'status' => 1],
-            ['name' => 'House Account', 'type' => 'house-account', 'icon' => 'mdi-home-variant-outline', 'status' => 1],
-            ['name' => 'Coupon', 'type' => 'coupon', 'icon' => 'mdi-ticket', 'status' => 1],
-            ['name' => 'Gift Card', 'type' => 'giftcard', 'icon' => 'mdi-wallet-giftcard', 'status' => 1],
-        ]); 
+            // payment types
+            ['name' => 'CC', 'type' => 'pos-terminal', 'icon' => 'mdi-credit-card-scan', 'status' => true],
+            ['name' => 'Cash', 'type' => 'cash', 'icon' => 'mdi-cash-usd', 'status' => true],
+            ['name' => 'CC API', 'type' => 'card', 'icon' => 'mdi-credit-card', 'status' => true],
+            ['name' => 'House Account', 'type' => 'house-account', 'icon' => 'mdi-home-variant-outline', 'status' => true],
+            ['name' => 'Coupon', 'type' => 'coupon', 'icon' => 'mdi-ticket', 'status' => true],
+            ['name' => 'Gift Card', 'type' => 'giftcard', 'icon' => 'mdi-wallet-giftcard', 'status' => true],
+            // refund types
+            ['name' => 'Existing gift card', 'type' => 'giftcard-existing', 'icon' => 'mdi-wallet-giftcard', 'status' => false],
+            ['name' => 'New gift card', 'type' => 'giftcard-new', 'icon' => 'mdi-wallet-giftcard', 'status' => false],
+            ['name' => 'CC API', 'type' => 'cc-api', 'icon' => 'mdi-credit-card', 'status' => false],
+            ['name' => 'CC', 'type' => 'cc-pos', 'icon' => 'mdi-credit-card-scan', 'status' => false],
+        ]);
     }
 }

@@ -1,11 +1,14 @@
 <template>
   <v-tab-item>
     <v-row no-gutters justify="center">
-      <v-col :cols="6">
+      <v-col :md="6">
         <orderStatus />
       </v-col>
-      <v-col :cols="6">
-        <orderGraphs />
+      <v-col :md="3">
+        <orderCostAnalysis />
+      </v-col>
+      <v-col :md="3">
+        <orderPaymentAnalysis />
       </v-col>
     </v-row>
     <v-row no-gutters>

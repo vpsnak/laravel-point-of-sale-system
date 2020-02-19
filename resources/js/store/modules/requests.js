@@ -4,13 +4,16 @@ const actions = {
       const successNotification = payload.success_notification || false;
       const errorNotification = payload.error_notification;
       const mutations = payload.mutations;
-      const console = process.env.NODE_ENV === "development" ? true : false;
+      const console_out = process.env.NODE_ENV === "development" ? true : false;
 
       axios
-        .post(`${context.state.base_url}/${payload.endpoint}`, payload.data)
+        .post(
+          `${context.rootState.config.base_url}/${payload.endpoint}`,
+          payload.data
+        )
         .then(response => {
           if (successNotification && _.has(response.data, "notification")) {
-            context.commit("setDialog", response.data.notification);
+            context.commit("setNotification", response.data.notification);
           }
 
           if (mutations) {
@@ -19,7 +22,7 @@ const actions = {
             });
           }
 
-          if (console) {
+          if (console_out) {
             console.info(response.data);
           }
 
@@ -39,12 +42,16 @@ const actions = {
           }
 
           if (errorNotification && _.has(error_response, "errors")) {
-            context.commit("setDialog", {
-              msg: error_response.errors,
-              type: "error"
-            });
+            context.commit(
+              "setNotification",
+              {
+                msg: error_response.errors,
+                type: "error"
+              },
+              { root: true }
+            );
           }
-          if (console) {
+          if (console_out) {
             console.error(error_response);
           }
 

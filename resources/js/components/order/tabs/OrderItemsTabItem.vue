@@ -26,16 +26,16 @@
                   </v-col>
                   <v-col cols="auto">
                     <h4>
-                      <i>SKU:</i>
-                      <span :class="valueColors">{{ product.sku }}</span>
+                      SKU:
+                      <i :class="valueColors">{{ product.sku }}</i>
                     </h4>
                   </v-col>
                   <v-col cols="auto">
                     <h4>
-                      <i>Original price:</i>
-                      <span :class="valueColors">
+                      Original price:
+                      <i :class="valueColors">
                         ${{ product.original_price }}
-                      </span>
+                      </i>
                     </h4>
                   </v-col>
                 </v-row>
@@ -52,52 +52,52 @@
                       </v-col>
                       <v-col cols="auto" v-if="hasDiscount(product)">
                         <h4 v-if="hasDiscount">
-                          <i>Price w/o discount:</i>
-                          <span :class="valueColors">${{ product.price }}</span>
+                          Price w/o discount:
+                          <i :class="valueColors">${{ product.price }}</i>
                         </h4>
                         <h4>
-                          <i>Discount type:</i>
-                          <span :class="valueColors">
+                          Discount type:
+                          <i :class="valueColors">
                             {{ product.discount_type }}
-                          </span>
+                          </i>
                         </h4>
                         <h4 v-if="product.discount_type === 'Flat'">
-                          <i>Discount amount:</i>
-                          <span :class="valueColors">
+                          Discount amount:
+                          <i :class="valueColors">
                             ${{ product.discount_amount }}
-                          </span>
+                          </i>
                         </h4>
                         <h4 v-else>
-                          <i>Discount %:</i>
-                          <span :class="valueColors">
+                          Discount %:
+                          <i :class="valueColors">
                             {{ product.discount_amount }}
-                          </span>
+                          </i>
                         </h4>
                       </v-col>
                       <v-col cols="auto">
                         <h4>
-                          <i>Qty ordered:</i>
-                          <span :class="valueColors">
+                          Qty ordered:
+                          <i :class="valueColors">
                             {{ product.qty }}
-                          </span>
+                          </i>
                         </h4>
                         <h4 v-if="hasDiscount(product)">
-                          <i>Sale price w/ discount:</i>
-                          <span :class="valueColors">
+                          Sale price w/ discount:
+                          <i :class="valueColors">
                             ${{ product.final_price }}
-                          </span>
+                          </i>
                         </h4>
                         <h4 v-else>
-                          <i>Sale price:</i>
-                          <span :class="valueColors">
+                          Sale price:
+                          <i :class="valueColors">
                             ${{ product.final_price }}
-                          </span>
+                          </i>
                         </h4>
                         <h4>
-                          <i>Total:</i>
-                          <span :class="valueColors">
+                          Total:
+                          <i :class="valueColors">
                             ${{ product.qty * product.final_price }}
-                          </span>
+                          </i>
                         </h4>
                       </v-col>
                     </v-row>

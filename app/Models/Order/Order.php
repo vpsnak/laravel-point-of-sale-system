@@ -12,6 +12,7 @@ class Order extends Model
         'total_without_tax',
         'total_paid',
         'total_tax',
+        'total_item_cost',
         'remaining'
     ];
 
@@ -47,6 +48,7 @@ class Order extends Model
     protected $casts = [
         'delivery' => 'array',
         'items' => 'array',
+        'shipping_cost' => 'float',
         'created_at' => "datetime:m/d/Y H:i:s",
         'updated_at' => "datetime:m/d/Y H:i:s"
     ];
@@ -99,11 +101,6 @@ class Order extends Model
         }
     }
 
-    // public function getItemsAttribute($value)
-    // {
-    //     return json_decode($value, true);
-    // }
-
     public function setItemsAttribute($value)
     {
         if (is_array($value)) {
@@ -141,6 +138,12 @@ class Order extends Model
         }
     }
 
+    public function getTotalItemCostAttribute()
+    {
+        $totalItemCost = $this->total_without_tax - $this->shipping_cost;
+        return Price::numberPrecision(abs($totalItemCost));
+    }
+
     public function getTotalAttribute()
     {
         $total = $this->total_without_tax;
@@ -167,7 +170,7 @@ class Order extends Model
     {
         $total_paid = 0;
         foreach ($this->payments as $payment) {
-            if ($payment->status === 'approved' && !$payment->refunded) {
+            if ($payment->status !== 'failed' && !$payment->status !== 'pending') {
                 $total_paid += $payment->amount;
             }
         };
