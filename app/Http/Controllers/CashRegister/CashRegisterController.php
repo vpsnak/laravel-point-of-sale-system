@@ -22,6 +22,7 @@ class CashRegisterController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string',
             'store_id' => 'required|exists:stores,id',
+            'active' => 'required|boolean'
         ]);
         $validatedData['user_id'] = auth()->user()->id;
 
@@ -34,6 +35,7 @@ class CashRegisterController extends Controller
             'id' => 'nullable|exists:cash_registers,id',
             'name' => 'required|string',
             'store_id' => 'required|exists:stores,id',
+            'active' => 'required|boolean'
         ]);
         $validatedData['user_id'] = auth()->user()->id;
         $cashRegister = CashRegister::findOrFail($validatedData['id']);
