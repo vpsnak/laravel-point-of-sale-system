@@ -154,34 +154,26 @@
           </ValidationProvider>
         </v-col>
         <v-col :cols="6">
-          <ValidationProvider
-            rules="required"
-            v-slot="{ errors, valid }"
-            name="Location"
-          >
-            <v-select
-              :readonly="$props.readonly"
-              :error-messages="errors"
-              :success="valid"
-              :disabled="loading"
-              label="Location"
-              :items="locations"
-              item-text="label"
-              return-object
-              v-model="location"
-              prepend-icon="mdi-city"
-            ></v-select>
-          </ValidationProvider>
+          <v-select
+            :readonly="$props.readonly"
+            :disabled="loading"
+            label="Location"
+            :items="locations"
+            item-text="label"
+            return-object
+            v-model="location"
+            prepend-icon="mdi-city"
+          ></v-select>
         </v-col>
       </v-row>
-      <v-row v-if="!$props.readonly">
-        <v-spacer />
+      <v-row v-if="!$props.readonly" justify="center">
         <v-btn
+          color="success"
           type="submit"
           :disabled="invalid || loading"
           :loading="submit_loading"
         >
-          Submit
+          save
         </v-btn>
       </v-row>
     </div>
@@ -274,8 +266,6 @@ export default {
 
       let payload = {
         method: "post",
-        success_notification: true,
-        error_notification: true,
         endpoint: this.address.id ? "addresses/update" : "addresses/create",
         model: "addresses",
         data: this.address
@@ -297,7 +287,6 @@ export default {
       this.country_loading = true;
 
       const payload = {
-        error_notification: true,
         method: "get",
         endpoint: "countries"
       };

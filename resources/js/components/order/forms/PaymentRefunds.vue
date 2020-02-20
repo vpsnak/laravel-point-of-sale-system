@@ -267,8 +267,6 @@ export default {
       let payload = {
         method: "post",
         endpoint: "payments/unlinked-refund",
-        success_notification: true,
-        error_notification: true,
         mutations: [],
         data: {
           order_id: this.order_id,

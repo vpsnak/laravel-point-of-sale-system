@@ -2,7 +2,9 @@
 
 namespace App;
 
-class Store extends BaseModel
+use Illuminate\Database\Eloquent\Model;
+
+class Store extends Model
 {
     protected $with = [
         'company',

@@ -21,7 +21,6 @@ class CashRegisterLogsController extends BaseController
             'closing_time' => 'date',
             'note' => 'string',
         ]);
-
         $validatedData['user_id'] = $validatedData['opened_by'] = auth()->user()->id;
 
         $validatedID = $request->validate([
@@ -74,11 +73,17 @@ class CashRegisterLogsController extends BaseController
         $user = auth()->user();
 
         if ($user->open_register) {
+            $cash_register =  $user->open_register->cash_register;
+            $store = $cash_register->store;
+
             return response([
-                'store_name' => $user->open_register->cash_register->store->name,
-                'tax_percentage' => $user->open_register->cash_register->store->tax->percentage,
-                'cashRegister' => $user->open_register,
-                'info' => ["Your open session with cash register: <b>{$user->open_register->cash_register->name}</b> has been restored"]
+                'notification' => [
+                    'msg' => ["Your open session with cash register: <b>{$cash_register->name}</b> has been restored"],
+                    'type' => 'success'
+                ],
+                'cash_register' => $cash_register,
+                'store_name' => $store->name,
+                'tax_percentage' => $store->tax->percentage,
             ]);
         }
     }
@@ -100,7 +105,7 @@ class CashRegisterLogsController extends BaseController
         $user = auth()->user();
         //        @TODO refactor
 
-        $cash_register = CashRegister::getOne($validatedData['cash_register_id']);
+        $cash_register = CashRegister::findOrFail($validatedData['cash_register_id']);
         if ($cash_register->is_open) {
             $response = $this->handleOpenRegister($cash_register->getOpenLog());
         } else {
@@ -108,14 +113,22 @@ class CashRegisterLogsController extends BaseController
             $validatedData['opened_by'] = $user->id;
             $validatedData['status'] = 1;
             $validatedData['opening_time'] = Carbon::now();
+
+            $cash_register_log = CashRegisterLogs::create($validatedData);
+            $cash_register = $cash_register_log->cash_register;
+            $store = $cash_register->store;
+
             $response = [
-                'info' => ['Your session with cash register is active'],
-                'cashRegister' => CashRegisterLogs::create($validatedData)
+                'notification' => [
+                    'msg' => ['Your session with cash register is active'],
+                    'type' => 'success'
+                ],
+                'cash_register' => $cash_register,
+                'store_name' => $store->name,
+                'tax_percentage' => $store->tax->percentage,
             ];
         }
 
-        $response['store_name'] = $response['cashRegister']->cash_register->store->name;
-        $response['tax_percentage'] = $response['cashRegister']->cash_register->store->tax->percentage;
 
         return response($response, 201);
     }
@@ -133,10 +146,17 @@ class CashRegisterLogsController extends BaseController
 
             $cash_register_log->user_id = $user->id;
             $cash_register_log->save();
+            $cash_register = $cash_register_log->cash_register;
+            $store = $cash_register->store;
 
             return [
-                'info' => ['Success'],
-                'cashRegister' => $cash_register_log
+                'notification' => [
+                    'msg' => ['Success'],
+                    'type' => 'success'
+                ],
+                'cash_register' => $cash_register,
+                'store_name' => $store->name,
+                'tax_percentage' => $store->tax->percentage,
             ];
         }
 
@@ -146,10 +166,17 @@ class CashRegisterLogsController extends BaseController
             $user->open_register->user_id = null;
             $user->open_register->save();
         }
+        $cash_register = $cash_register_log->cash_register;
+        $store = $cash_register->store;
 
         return [
-            'info' => ['User cash register changed'],
-            'cashRegister' => $cash_register_log
+            'notification' => [
+                'msg' => ['User cash register changed'],
+                'type' => 'success'
+            ],
+            'cash_register' => $cash_register,
+            'store_name' => $store->name,
+            'tax_percentage' => $store->tax->percentage,
         ];
     }
 }

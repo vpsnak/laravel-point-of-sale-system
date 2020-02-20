@@ -368,41 +368,18 @@ export default new Vuex.Store({
     },
     openCashRegister(context, payload) {
       return new Promise((resolve, reject) => {
-        axios
-          .post(
-            `${context.state.config.base_url}/cash-register-logs/open`,
-            payload
-          )
+        payload.method = "post";
+        payload.endpoint = "cash-register-logs/open";
+        context
+          .dispatch("requests/request", payload)
           .then(response => {
-            context.commit(
-              "setCashRegister",
-              response.data.cashRegister.cash_register
-            );
-            context.commit("menu/setStoreName", response.data.store_name);
-            context.commit(
-              "cart/setTaxPercentage",
-              response.data.tax_percentage
-            );
-            context.commit("setNotification", {
-              msg: response.data.info,
-              type: "success"
-            });
+            context.commit("setCashRegister", response.cash_register);
+            context.commit("menu/setStoreName", response.store_name);
+            context.commit("cart/setTaxPercentage", response.tax_percentage);
 
             resolve(response.data);
           })
           .catch(error => {
-            if (error.response) {
-              context.commit("setNotification", {
-                msg: error.response.data.errors,
-                type: "error"
-              });
-            } else {
-              context.commit("setNotification", {
-                msg: "Unexpected error occured",
-                type: "error"
-              });
-            }
-
             reject(error);
           });
       });

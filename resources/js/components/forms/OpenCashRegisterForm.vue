@@ -5,14 +5,14 @@
         <ValidationProvider
           rules="required"
           v-slot="{ errors, valid }"
-          name="Name"
+          name="Store"
         >
           <v-select
             :loading="loading"
-            v-model="store_id"
+            v-model="selected_store_id"
             :disabled="storeDisabled"
             :items="stores"
-            label="Stores"
+            label="Store"
             item-text="name"
             item-value="id"
             @change="changeCashRegisters"
@@ -24,12 +24,12 @@
         <ValidationProvider
           rules="required"
           v-slot="{ errors, valid }"
-          name="Name"
+          name="Cash Register"
         >
           <v-select
             :loading="loading"
             :disabled="cashRegisterDisabled"
-            v-model="cash_register_id"
+            v-model="selected_cash_register_id"
             :items="cash_registers"
             label="Cash Register"
             item-text="name"
@@ -41,13 +41,12 @@
         </ValidationProvider>
         <ValidationProvider
           v-if="!cashRegisterIsopen"
-          rules="required|max_value:99999"
+          rules="required|between:1,9999"
           v-slot="{ errors, valid }"
           name="Name"
         >
           <v-text-field
             v-if="!cashRegisterIsopen"
-            :loading="loading"
             :disabled="openingAmountDisabled"
             v-model="opening_amount"
             type="number"
@@ -58,10 +57,12 @@
         </ValidationProvider>
       </v-container>
       <v-container>
-        <v-row>
+        <v-row justify="center" align="center">
           <v-col
-            cols="6"
-            v-if="remainingAmount && cash_register_id && cashRegisterIsopen"
+            :cols="6"
+            v-if="
+              remainingAmount && selected_cash_register_id && cashRegisterIsopen
+            "
           >
             <span class="title">
               Amount:
@@ -71,14 +72,14 @@
               />
             </span>
           </v-col>
-          <v-col cols="6">
+          <v-col :cols="6">
             <v-btn
               color="secondary"
               type="submit"
               :loading="loading"
               :disabled="disableOpenCashRegister || invalid"
-              >Open Cash Register</v-btn
-            >
+              >Open Cash Register
+            </v-btn>
           </v-col>
         </v-row>
         <v-alert v-if="cashRegisterIsopen" dense outlined type="warning">
@@ -90,7 +91,7 @@
   </ValidationObserver>
 </template>
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapMutations } from "vuex";
 
 export default {
   data() {
@@ -101,55 +102,35 @@ export default {
       storeDisabled: true,
       cashRegisterDisabled: true,
       openingAmountDisabled: true,
-      store_id: null,
-      cash_register_id: null,
+      selected_store_id: null,
+      selected_cash_register_id: null,
       opening_amount: null,
       status: true,
       remainingAmount: null
     };
   },
   mounted() {
-    this.getAll({
-      model: "stores"
-    }).then(stores => {
-      this.stores = stores;
-      if (this.role == "admin") {
-        this.storeDisabled = false;
-      }
-      this.loading = false;
-    });
-
-    this.getAll({
-      model: "cash-registers"
-    })
-      .then(cash_registers => {
-        this.cash_registers = cash_registers;
-      })
-      .finally(() => {
-        this.loading = false;
-      });
-
-    this.$root.$on("barcodeScan", barcode => {
-      this.barcodeHandling(barcode);
-    });
+    this.getStores();
   },
   computed: {
-    ...mapState(["store", "cashRegister"]),
-
     cashRegisterIsopen() {
-      for (const cash_register of this.cash_registers) {
-        if (
-          cash_register.id == this.cash_register_id &&
-          cash_register.is_open
-        ) {
-          this.remainingAmount = cash_register.earnings.cash_total;
-          return true;
-        }
+      const open_cash_register = _.find(this.cash_registers, {
+        id: this.selected_cash_register_id,
+        is_open: true
+      });
+      if (open_cash_register) {
+        this.remainingAmount = open_cash_register.earnings.cash_total;
+        return true;
+      } else {
+        this.remainingAmount = 0;
+        return false;
       }
-      return false;
     },
     disableOpenCashRegister() {
-      if ((this.store_id && this.opening_amount) || this.cashRegisterIsopen) {
+      if (
+        (this.selected_store_id && this.opening_amount) ||
+        this.cashRegisterIsopen
+      ) {
         return false;
       } else {
         return true;
@@ -160,30 +141,57 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(["setCashRegister"]),
+    ...mapMutations("menu", ["setStoreName"]),
+    ...mapMutations("cart", ["setTaxPercentage"]),
+
+    ...mapActions("requests", ["request"]),
+    ...mapActions(["openCashRegister"]),
+
+    getStores() {
+      this.request({
+        method: "get",
+        endpoint: "stores"
+      })
+        .then(response => {
+          this.stores = response;
+
+          if (this.role == "admin") {
+            this.storeDisabled = false;
+          }
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
     submit() {
       this.loading = true;
 
       let payload = {
-        store_id: this.store_id,
-        cash_register_id: this.cash_register_id,
-        opening_amount: this.opening_amount,
-        status: this.status
+        data: {
+          store_id: this.selected_store_id,
+          cash_register_id: this.selected_cash_register_id,
+          opening_amount: this.opening_amount,
+          status: this.status
+        }
       };
       this.openCashRegister(payload)
         .then(response => {
           this.$emit("submit", true);
         })
-        .catch()
         .finally(() => {
           this.loading = false;
         });
     },
     changeCashRegisters() {
-      for (const store of this.stores) {
-        if (store.id == this.store_id) {
+      this.cash_registers = [];
+      this.selected_cash_register_id = null;
+      this.stores.forEach(store => {
+        if (store.id === this.selected_store_id) {
           this.cash_registers = store.cash_registers;
+          return;
         }
-      }
+      });
     },
     cashierDisabled() {
       if (this.role == "admin" || this.role == "store_manager") {
@@ -219,25 +227,19 @@ export default {
         });
     },
     barcodeHandling(barcode) {
-      for (const cash_register of this.cash_registers) {
+      this.cash_registers.forEach(cash_register => {
         if (cash_register.barcode === barcode) {
-          this.cash_register_id = cash_register.id;
-          this.store_id = cash_register.store.id;
+          this.selected_cash_register_id = cash_register.id;
+          this.selected_store_id = cash_register.store.id;
           this.storeDisabled = true;
           if (cash_register.is_open === false) {
             this.enableOpeningAmount();
           }
         }
-      }
-    },
-    ...mapActions({
-      getAll: "getAll",
-      getOne: "getOne",
-      create: "create",
-      openCashRegister: "openCashRegister",
-      delete: "delete"
-    })
+      });
+    }
   },
+
   beforeDestroy() {
     this.$off("submit");
   }

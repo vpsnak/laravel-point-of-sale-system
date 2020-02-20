@@ -17,8 +17,8 @@ class ReceiptController extends Controller
     public function create(Order $model)
     {
         $store = $model->store;
-        $cash_register = $model->created_by()->first()->open_register()->first()->cash_register()->first();
-        $created_by = $model->created_by()->first();
+        $cash_register = $model->created_by->open_register->cash_register;
+        $created_by = $model->created_by;
         $payments = [];
 
         foreach (json_decode($model['payments'], true) as $payment) {
@@ -93,11 +93,11 @@ class ReceiptController extends Controller
 
     public function all()
     {
-        return response($this->model::paginate(), 200);
+        return response(Receipt::paginate(), 200);
     }
 
-    public function get($id)
+    public function get(Receipt $model)
     {
-        return response($this->model::find($id), 200);
+        return response($model, 200);
     }
 }

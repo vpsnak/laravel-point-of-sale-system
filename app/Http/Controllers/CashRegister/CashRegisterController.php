@@ -5,9 +5,17 @@ namespace App\Http\Controllers;
 use App\CashRegister;
 use Illuminate\Http\Request;
 
-class CashRegisterController extends BaseController
+class CashRegisterController extends Controller
 {
-    protected $model = CashRegister::class;
+    public function all()
+    {
+        return response(CashRegister::all());
+    }
+
+    public function getOne(CashRegister $model)
+    {
+        return response($model);
+    }
 
     public function create(Request $request)
     {
@@ -15,17 +23,26 @@ class CashRegisterController extends BaseController
             'name' => 'required|string',
             'store_id' => 'required|exists:stores,id',
         ]);
-
         $validatedData['created_by'] = auth()->user()->id;
 
-        $validatedID = $request->validate([
-            'id' => 'nullable|exists:cash_registers,id'
-        ]);
+        return response(CashRegister::create($validatedData), 201);
+    }
 
-        if (!empty($validatedID)) {
-            return response($this->model::updateData($validatedID, $validatedData), 200);
-        } else {
-            return response($this->model::store($validatedData), 201);
-        }
+    public function update(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id' => 'nullable|exists:cash_registers,id',
+            'name' => 'required|string',
+            'store_id' => 'required|exists:stores,id',
+        ]);
+        $validatedData['created_by'] = auth()->user()->id;
+        $cashRegister = CashRegister::findOrFail($validatedData['id']);
+
+        return response([
+            'data' => $cashRegister,
+            'notification' => [
+                'msg' => "Cash register: {$cashRegister->name} updated successfully!"
+            ]
+        ]);
     }
 }

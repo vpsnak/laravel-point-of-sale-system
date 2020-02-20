@@ -3,13 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Store;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
-class StoreController extends BaseController
+class StoreController extends Controller
 {
-    protected $model = Store::class;
+    public function all()
+    {
+        return response(Store::with(['cash_registers'])->get());
+    }
+
+    public function getOne(Store $model)
+    {
+        return response($model->load('cash_registers'));
+    }
 
     public function create(Request $request)
     {
@@ -22,32 +28,47 @@ class StoreController extends BaseController
             'postcode' => 'required|string',
             'city' => 'required|string',
         ]);
-
         $validatedData['created_by'] = auth()->user()->id;
 
-        $validatedID = $request->validate([
-            'id' => 'nullable|exists:stores,id'
-        ]);
+        $store = Store::create($validatedData);
 
-        if (!empty($validatedID)) {
-            return response($this->model::updateData($validatedID, $validatedData), 200);
-        } else {
-            return response($this->model::store($validatedData), 201);
-        }
+        return response([
+            'data' => $store,
+            'notification' => [
+                'msg' => "Store {$store->name} created successfully!",
+                'type' => 'success'
+            ]
+        ], 201);
     }
 
-    /**
-     * @return ResponseFactory|Response
-     */
-    public function all()
+    public function update(Request $request)
     {
-        if (!isset($this->model)) {
-            return response('Model not found', 404);
-        }
+        $validatedData = $request->validate([
+            'id' => 'nullable|exists:stores,id',
+            'name' => 'required|string',
+            'tax_id' => 'required|exists:taxes,id',
+            'company_id' => 'required|exists:companies,id',
+            'phone' => 'required|string',
+            'street' => 'required|string',
+            'postcode' => 'required|string',
+            'city' => 'required|string',
+        ]);
+        $validatedData['created_by'] = auth()->user()->id;
 
-        return response($this->model::with(['cash_registers'])->paginate(), 200);
+        $store = Store::findOrFail($validatedData['id']);
+        $store->fill($validatedData);
+        $store->save();
+
+        return response([
+            'data' => $store,
+            'notification' => [
+                'msg' => "Store {$store->name} updated successfully!",
+                'type' => 'success'
+            ]
+        ]);
     }
 
+    // @TODO Search?
     public function search(Request $request)
     {
         $validatedData = $request->validate([

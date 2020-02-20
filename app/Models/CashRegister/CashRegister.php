@@ -3,14 +3,11 @@
 namespace App;
 
 use App\Http\Controllers\CashRegisterReportController;
+use Illuminate\Database\Eloquent\Model;
 
-class CashRegister extends BaseModel
+class CashRegister extends Model
 {
-    protected $appends = ['is_open', 'store', 'payments', 'earnings'];
-    protected $with = [
-        //        'logs',
-        //        'payments'
-    ];
+    protected $appends = ['is_open', 'earnings'];
 
     protected $fillable = [
         'name',
@@ -34,9 +31,9 @@ class CashRegister extends BaseModel
         return null;
     }
 
-    public function getStoreAttribute()
+    public function store()
     {
-        return Store::getOne($this->store_id);
+        return $this->belongsTo(Store::class);
     }
 
     public function getIsOpenAttribute()

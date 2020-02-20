@@ -82,9 +82,8 @@ class CustomerSync
                             self::addressFieldsToRename
                         );
                         $parsedAddress['customer_id'] = $storedCustomer->id;
-                        echo $parsedAddress['region_id'];
 
-                        $storedAddress = Address::getFirst('magento_id', $address->entity_id);
+                        $storedAddress = Address::where('magento_id', $address->entity_id)->first();
                         if ($force || Helper::hasDifferences($parsedAddress, $storedAddress)) {
                             self::log('Getting Customer (' . $customer->email . ') Address: ' . $address->entity_id);
 

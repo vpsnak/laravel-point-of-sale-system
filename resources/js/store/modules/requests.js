@@ -1,8 +1,8 @@
 const actions = {
   request(context, payload) {
     return new Promise((resolve, reject) => {
-      const successNotification = payload.success_notification || false;
-      const errorNotification = payload.error_notification;
+      const noSuccessNotification = payload.no_success_notification;
+      const noErrorNotification = payload.no_error_notification;
       const mutations = payload.mutations;
       const console_out = process.env.NODE_ENV === "development" ? true : false;
 
@@ -12,8 +12,10 @@ const actions = {
         data: payload.data
       })
         .then(response => {
-          if (successNotification && _.has(response.data, "notification")) {
-            context.commit("setNotification", response.data.notification);
+          if (!noSuccessNotification && _.has(response.data, "notification")) {
+            context.commit("setNotification", response.data.notification, {
+              root: true
+            });
           }
 
           if (mutations) {
@@ -41,7 +43,7 @@ const actions = {
             error_response = error;
           }
 
-          if (errorNotification && _.has(error_response, "errors")) {
+          if (!noErrorNotification && _.has(error_response, "errors")) {
             context.commit(
               "setNotification",
               {
