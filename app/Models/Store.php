@@ -21,7 +21,7 @@ class Store extends Model
         'is_default',
         'company_id',
         'tax_id',
-        'created_by',
+        'user_id',
     ];
 
     protected $casts = [

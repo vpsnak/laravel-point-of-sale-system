@@ -7,7 +7,7 @@ class CashRegisterReport extends BaseModel
     protected $fillable = [
         'report_name',
         'report_type',
-        'created_by',
+        'user_id',
         'cash_register_id',
         'opening_amount',
         'closing_amount',

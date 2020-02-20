@@ -23,13 +23,13 @@ class CreatePaymentsTable extends Migration
             $table->string('status');
             $table->boolean('refunded')->default(0);
 
-            $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
 
             $table->foreign('payment_type')->references('id')->on('payment_types')->onDelete('restrict');
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('restrict');
             $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('restrict');
-            $table->foreign('created_by')->references('id')->on('users')->onDelete('restrict');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
         });
     }
 

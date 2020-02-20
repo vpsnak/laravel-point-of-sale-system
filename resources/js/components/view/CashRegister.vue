@@ -63,7 +63,7 @@
                     <td>{{ payment.amount }}</td>
                     <td>{{ payment.status }}</td>
                     <td>{{ payment.refunded }}</td>
-                    <td>{{ payment.created_by }}</td>
+                    <td>{{ payment.user_id }}</td>
                   </tr>
                 </tbody>
               </template>

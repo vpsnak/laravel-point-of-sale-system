@@ -28,7 +28,7 @@ class StoreController extends Controller
             'postcode' => 'required|string',
             'city' => 'required|string',
         ]);
-        $validatedData['created_by'] = auth()->user()->id;
+        $validatedData['user_id'] = auth()->user()->id;
 
         $store = Store::create($validatedData);
 
@@ -53,7 +53,7 @@ class StoreController extends Controller
             'postcode' => 'required|string',
             'city' => 'required|string',
         ]);
-        $validatedData['created_by'] = auth()->user()->id;
+        $validatedData['user_id'] = auth()->user()->id;
 
         $store = Store::findOrFail($validatedData['id']);
         $store->fill($validatedData);

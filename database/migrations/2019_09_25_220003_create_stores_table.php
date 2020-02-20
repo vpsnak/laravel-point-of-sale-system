@@ -23,12 +23,12 @@ class CreateStoresTable extends Migration
             $table->string('city');
             $table->unsignedBigInteger('company_id');
             $table->unsignedBigInteger('tax_id')->default(0);
-            $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('user_id');
 
             $table->timestamps();
 
             $table->foreign('tax_id')->references('id')->on('taxes')->onDelete('cascade');
-            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

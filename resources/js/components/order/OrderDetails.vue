@@ -7,7 +7,7 @@
           <span class="subtitle-1">
             Operator:
             <b>
-              <i>{{ order_created_by.name }}</i>
+              <i>{{ order_user_id.name }}</i>
             </b>
           </span>
         </v-card-title>
@@ -86,7 +86,7 @@ import { mapState } from "vuex";
 export default {
   computed: {
     ...mapState("cart", [
-      "order_created_by",
+      "order_user_id",
       "order_timestamp",
       "order_status",
       "method",

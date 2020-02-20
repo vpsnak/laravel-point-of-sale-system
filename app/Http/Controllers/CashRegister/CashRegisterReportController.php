@@ -34,7 +34,7 @@ class CashRegisterReportController extends BaseController
         $open_log = $cash_register->logs->where('status', 1)->first();
         if (!empty($open_log)) {
             $report = self::generateReport($open_log->id);
-            $report['created_by'] = auth()->user()->id;
+            $report['user_id'] = auth()->user()->id;
             $report['cash_register_id'] = $id;
             $report['report_type'] = 'x';
             $report['report_name'] = 'Report ' . strtoupper($report['report_type']) . ' ' . now();
@@ -43,7 +43,7 @@ class CashRegisterReportController extends BaseController
             $log = $cash_register->logs()->latest()->first();
             if (!empty($log)) {
                 $report = self::generateReport($log->id);
-                $report['created_by'] = auth()->user()->id;
+                $report['user_id'] = auth()->user()->id;
                 $report['cash_register_id'] = $id;
                 $report['report_type'] = 'z';
                 $report['report_name'] = 'Report ' . strtoupper($report['report_type']) . ' ' . now();

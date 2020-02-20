@@ -40,7 +40,7 @@ class CreateOrder extends Command
     {
         $order_data = array(
             'customer_id' => 1,
-            'created_by' => 33,
+            'user_id' => 33,
             'store_id' => 1,
             'status' => 'pending',
             'discount_type' => '',
@@ -73,7 +73,7 @@ class CreateOrder extends Command
                             'id' => 1,
                             'name' => 'Plantshed Laravel',
                             'tax_id' => 1,
-                            'created_by' => 1,
+                            'user_id' => 1,
                             'created_at' => null,
                             'updated_at' => null,
                             'pivot' =>

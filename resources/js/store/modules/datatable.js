@@ -80,7 +80,7 @@ const state = {
       { text: "Status", value: "status" },
       { text: "Total", value: "total" },
       { text: "Total paid", value: "total_paid" },
-      { text: "Created by", value: "created_by.name" },
+      { text: "Created by", value: "user_id.name" },
       { text: "Created at", value: "created_at" },
       { text: "Actions", value: "actions" }
     ],
@@ -111,7 +111,7 @@ const state = {
       { text: "City", value: "city" },
       { text: "Tax", value: "tax.name" },
       { text: "Company", value: "company.name" },
-      { text: "Created by", value: "created_by" },
+      { text: "Created by", value: "user_id" },
       { text: "Actions", value: "actions" }
     ],
     taxes: [
@@ -138,7 +138,7 @@ const state = {
       },
       {
         text: "Operator",
-        value: "created_by.name",
+        value: "user_id.name",
         sortable: false
       },
       {

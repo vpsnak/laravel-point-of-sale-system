@@ -88,7 +88,7 @@ export default {
         },
         {
           text: "Operator",
-          value: "created_by.name",
+          value: "user_id.name",
           sortable: false
         },
         {

@@ -17,7 +17,7 @@ class CreateCashRegisterReportsTable extends Migration
             $table->bigIncrements('id');
             $table->string('report_name');
             $table->string('report_type');
-            $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('cash_register_id');
             $table->decimal('opening_amount', 12, 2)->default(0);
             $table->decimal('closing_amount', 12, 2)->default(0);
@@ -43,7 +43,7 @@ class CreateCashRegisterReportsTable extends Migration
             $table->integer('order_in_store_count')->default(0);
             $table->integer('order_delivery_count')->default(0);
 
-            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('cascade');
 
             $table->timestamps();
