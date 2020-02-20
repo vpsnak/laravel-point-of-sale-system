@@ -116,6 +116,7 @@ export default new Vuex.Store({
       }
     },
     setNotification(state, notification) {
+      state.notification = [];
       state.notification = notification;
     },
     setProductList(state, products) {

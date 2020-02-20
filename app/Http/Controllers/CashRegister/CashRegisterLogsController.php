@@ -8,7 +8,7 @@ use App\Events\CashRegisterLogin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
-class CashRegisterLogsController extends BaseController
+class CashRegisterLogsController extends Controller
 {
     public function create(Request $request)
     {

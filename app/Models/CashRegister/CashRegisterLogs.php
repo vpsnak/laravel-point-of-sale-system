@@ -2,9 +2,9 @@
 
 namespace App;
 
-use App\Events\CashRegisterLogin;
+use Illuminate\Database\Eloquent\Model;
 
-class CashRegisterLogs extends BaseModel
+class CashRegisterLogs extends Model
 {
     protected $with = ['cash_register'];
 
