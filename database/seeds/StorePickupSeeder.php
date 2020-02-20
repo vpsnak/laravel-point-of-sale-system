@@ -12,19 +12,19 @@ class StorePickupSeeder extends Seeder
      */
     public function run()
     {
-        StorePickup::store([
+        StorePickup::create([
             'name' => '96 Dromoi',
             'street' => '209 West 96th street',
             'region_id' => 43, // New York
             'country_id' => 'US',
         ]);
-        StorePickup::store([
+        StorePickup::create([
             'name' => '555 kolomvoi',
             'street' => '555 Columbus Ave',
             'region_id' => 43, // New York
             'country_id' => 'US',
         ]);
-        StorePickup::store([
+        StorePickup::create([
             'name' => 'Enas Prigkipas',
             'street' => '1 Prince St.',
             'street1' => '(at Bowery)',

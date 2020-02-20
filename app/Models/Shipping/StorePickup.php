@@ -11,7 +11,6 @@ class StorePickup extends Model
         'street',
         'street1',
         'region_id',
-        'country_id'
     ];
 
     protected $casts = [

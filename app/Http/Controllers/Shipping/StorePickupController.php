@@ -13,7 +13,6 @@ class StorePickupController extends Controller
             'name' => 'required|string',
             'street' => 'required|string',
             'street1' => 'nullable|string',
-            'country_id' => 'required|exists:countries,id',
             'region_id' => 'required|exists:regions,id',
         ]);
 
@@ -27,7 +26,6 @@ class StorePickupController extends Controller
             'name' => 'required|string',
             'street' => 'required|string',
             'street1' => 'nullable|string',
-            'country_id' => 'required|exists:countries,id',
             'region_id' => 'required|exists:regions,id',
         ]);
 
@@ -46,7 +44,7 @@ class StorePickupController extends Controller
         return response(StorePickup::with('region')->paginate());
     }
 
-    //@TODO FIX SEARCH
+    //@TODO FIX SEARCH?
     public function search(Request $request)
     {
         $validatedData = $request->validate([

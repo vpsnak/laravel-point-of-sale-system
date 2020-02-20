@@ -20,17 +20,17 @@ class MasOrderController extends Controller
 
         $payload = [];
         $payload['MessageType'] = '28';
-        // $payload['MessageText'] = "POS Order ID: {$order->id}";
-        $payload['MessageText'] = 'POS Order #' . $order->id;
+        $payload['MessageText'] = "POS Order #{$order->id}";
 
         $payload['SenderMdNumber'] = $masAccount->direct_id;
         $payload['FulfillerMDNumber'] = $masAccount->fulfiller_md_number;
         // $payload['FulfillerMDNumber'] = 'USZZ000035';
         $payload['PriorityType'] = '1';
 
+        if (!empty($onlinePartner)) {
+            $payload['OnlinePartner'] = self::parseOnlinePartner($order);
+        }
 
-
-        $payload['OnlinePartner'] = self::parseOnlinePartner($order);
         $payload['OrderItems'] = self::parseOrderItems($order->items);
         $payload['RecipientDetail'] = self::parseOrderRecipient($order);
 
@@ -39,9 +39,9 @@ class MasOrderController extends Controller
             $payload['Payments'] = $payments;
         }
 
-        $payload['MdseAmount'] = (string) $order->total_without_tax;
-        $payload['TaxAmount'] = (string) $order->total_tax;
-        $payload['TotalAmount'] = (string) $order->total;
+        $payload['MdseAmount'] = $order->total_without_tax;
+        $payload['TaxAmount'] = $order->total_tax;
+        $payload['TotalAmount'] = $order->total;
 
         self::log('Payload: ' . json_encode($payload));
         try {
@@ -59,9 +59,9 @@ class MasOrderController extends Controller
 
             $json = (string) $response->getBody()->getContents();
             self::log('Response: ' . $json);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $json = (string) $e->getResponse()->getBody();
-            self::log('Error: ' . $json);
+            self::log("Error: {$json}");
         }
 
         $response = json_decode($json);
@@ -70,26 +70,17 @@ class MasOrderController extends Controller
             MasOrder::updateOrCreate(['order_id' => $order->id], [
                 'status' => 'error',
             ]);
-            $errors = [];
 
             return ['errors' => $response->ErrorMessage, 'payload' => $payload];
         }
-
-        // if (isset($response->ErrorMessage)) {
-        //     MasOrder::updateOrCreate(['order_id' => $order->id], [
-        //         'status' => 'error',
-        //     ]);
-        //     $errors = [];
-        //     foreach ($response->ErrorMessage as $error) {
-        //         $errors[] = $error->MessageNumber . ' - ' . $error->Message;
-        //     }
-        //     return ['errors' => $errors];
-        // }
-
+        // @TODO change mas orders table
         if (!empty($response->Messages)) {
             MasOrder::updateOrCreate(['order_id' => $order->id], [
-                'mas_id' => $response->Messages->ControlNumber,
+                'mas_control_number' => $response->Messages->ControlNumber,
+                'mas_message_number' => $response->Messages->MessageNumber,
                 'status' => 'success',
+                'payload' => $payload,
+                'response' => $response->Messages
             ]);
             return ['success' => $response->Messages, 'payload' => $payload];
         } else if (!empty($response->ControlNumber)) {
@@ -102,7 +93,7 @@ class MasOrderController extends Controller
             MasOrder::updateOrCreate(['order_id' => $order->id], [
                 'status' => 'error on success',
             ]);
-            return ['error' => $response . ' - ' . $response, 'payload' => $payload];
+            return ['errors' => [$response], 'payload' => $payload];
         }
     }
 
@@ -114,7 +105,7 @@ class MasOrderController extends Controller
                 'SoldAddress' => $order->billing_address['street'],
                 'SoldAddress2' => $order->billing_address['street2'],
                 'SoldCity' => $order->billing_address['city'],
-                'SoldState' => $order->billing_address['state'] ?? 'NJ', // temporary hack
+                'SoldState' => $order->billing_address['region']['code'], //TODO EVALUATION
                 'SoldZip' => $order->billing_address['postcode'],
                 'SoldPhoneHome' => $order->billing_address['phone'],
                 'SoldPhoneWork' => $order->billing_address['phone'],
@@ -144,7 +135,7 @@ class MasOrderController extends Controller
             'RecipientAttention' => $shipping_notes,
             'RecipientEmail' => 'vpallis@webo2.gr',
             'RecipientAddress' => '555 Columbus Ave',
-            'RecipientAddress2' => '',
+            'RecipientAddress2' => null,
             'RecipientCity' => 'Manhattan',
             'RecipientState' => 'NY',
             'RecipientCountry' => 'US',
@@ -178,8 +169,8 @@ class MasOrderController extends Controller
         $response['RecipientAddress'] = $shipping_address['street'];
         $response['RecipientAddress2'] = $shipping_address['street2'];
         $response['RecipientCity'] = $shipping_address['city'];
-        $response['RecipientState'] = $shipping_address['region'] ?? null;
-        $response['RecipientCountry'] = $shipping_address['country'] ?? $shipping_address['country_id'];
+        $response['RecipientState'] = $shipping_address['region']['code'];
+        $response['RecipientCountry'] = $shipping_address['region']['country']['iso2_code']; //TODO EVALUATION
         $response['RecipientZip'] = $shipping_address['postcode'];
         $response['RecipientPhone'] = $shipping_address['phone'];
 
@@ -241,7 +232,6 @@ class MasOrderController extends Controller
                     $response[$i]['RoutingNumber'] = '';
                     $response[$i]['CreditCardType'] = '';
                     $response[$i]['GiftCardNumber'] = '';
-
                     break;
                 case 'card':
                     $response[$i]['PaymentAmount'] = $payment->amount;
@@ -256,7 +246,6 @@ class MasOrderController extends Controller
                     $response[$i]['RoutingNumber'] = '';
                     $response[$i]['CreditCardType'] = '';
                     $response[$i]['GiftCardNumber'] = '';
-
                     break;
                 case 'pos-terminal':
                     $response[$i]['PaymentAmount'] = $payment->amount;
@@ -271,7 +260,6 @@ class MasOrderController extends Controller
                     $response[$i]['RoutingNumber'] = '';
                     $response[$i]['CreditCardType'] = '';
                     $response[$i]['GiftCardNumber'] = '';
-
                     break;
                 case 'house-account':
                     $response[$i]['PaymentAmount'] = $payment->amount;
@@ -286,7 +274,6 @@ class MasOrderController extends Controller
                     $response[$i]['RoutingNumber'] = '';
                     $response[$i]['CreditCardType'] = '';
                     $response[$i]['GiftCardNumber'] = '';
-
                     break;
                 case 'giftcard':
                     $response[$i]['PaymentAmount'] = $payment->amount;
