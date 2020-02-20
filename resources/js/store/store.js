@@ -384,41 +384,24 @@ export default new Vuex.Store({
           });
       });
     },
-    logoutCashRegister(context) {
+    cashRegisterLogout(context) {
       return new Promise((resolve, reject) => {
-        axios
-          .get(`${context.state.config.base_url}/cash-register-logs/logout`)
+        context
+          .dispatch("requests/request", {
+            method: "get",
+            endpoint: "cash-register-logs/logout"
+          })
           .then(response => {
-            if (router.currentRoute.name === ("sales" || "orders")) {
-              router.push({ name: "dashboard" });
+            if (["sales", "orders"].indexOf(router.currentRoute.name) >= 0) {
+              router.replace({ name: "dashboard" });
             }
 
             context.commit("setCashRegister", null);
-            context.commit("setStore", null);
-            context.commit("setNotification", {
-              msg: response.data.info,
-              type: "success"
-            });
+            context.commit("cart/setTaxPercentage", null);
 
             resolve(true);
           })
           .catch(error => {
-            if (error.response) {
-              context.commit("setNotification", {
-                msg: error.response.data.errors,
-                type: "error"
-              });
-
-              context.commit("setCashRegister", null);
-              context.commit("setStore", null);
-              context.commit("setNotification", notification);
-            } else {
-              context.commit("setNotification", {
-                msg: "Unexpected error occured",
-                type: "error"
-              });
-            }
-
             reject(error);
           });
       });

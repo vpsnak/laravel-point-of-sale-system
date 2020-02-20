@@ -30,7 +30,7 @@ class CashRegisterReportController extends BaseController
 
     public static function generateReportByCashRegisterId($id)
     {
-        $cash_register = CashRegister::getOne($id);
+        $cash_register = CashRegister::findOrFail($id);
         $open_log = $cash_register->logs->where('status', 1)->first();
         if (!empty($open_log)) {
             $report = self::generateReport($open_log->id);

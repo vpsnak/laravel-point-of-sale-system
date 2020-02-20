@@ -19,7 +19,7 @@ class Order extends Model
     protected $fillable = [
         'customer_id',
         'store_id',
-        'created_by',
+        'user_id',
         'status',
         'items',
         'discount_type',
@@ -199,7 +199,7 @@ class Order extends Model
 
     public function created_by()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class);
     }
 
     public function receipts()

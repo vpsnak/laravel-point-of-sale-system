@@ -222,6 +222,7 @@ export default {
     ...mapMutations("dialog", ["setDialog"]),
     ...mapMutations("menu", ["setVisibility"]),
     ...mapActions("config", ["setMasEnv"]),
+    ...mapActions(["cashRegisterLogout"]),
 
     menuAction(item) {
       if (_.has(item, "action.method")) {
@@ -239,9 +240,6 @@ export default {
       if (_.has(item, "action.link")) {
         return item.action.link;
       }
-    },
-    cashRegisterLogout() {
-      this.$store.dispatch("logoutCashRegister");
     },
     txtColor(mode) {
       switch (mode) {

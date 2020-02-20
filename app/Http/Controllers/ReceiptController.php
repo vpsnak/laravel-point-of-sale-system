@@ -4,18 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Receipt;
 use App\Order;
-use App\User;
-use App\CashRegister;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 
 
 class ReceiptController extends Controller
 {
     public function create(Order $model)
     {
+        var_dump($model);
+        $model = $model->load('created_by');
         $store = $model->store;
         $cash_register = $model->created_by->open_register->cash_register;
         $created_by = $model->created_by;

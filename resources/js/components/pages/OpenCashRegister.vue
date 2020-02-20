@@ -1,7 +1,7 @@
 <template>
   <v-container class="fill-height">
     <v-row align="center" justify="center">
-      <v-col :cols="12" :sm="8" :md="4">
+      <v-col cols="12" :md="8" :xl="4" :lg="6">
         <v-card class="elevation-12 mx-auto pa-2">
           <v-card-title>
             <v-icon class="mr-2">

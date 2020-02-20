@@ -62,7 +62,12 @@ class CashRegisterLogsController extends BaseController
             $user->open_register->user_id = null;
             $user->open_register->save();
 
-            return response(['info' => ["Success!"]]);
+            return response([
+                'notification' => [
+                    'msg' => ["Logged out successfully!"],
+                    'type' => 'success',
+                ]
+            ]);
         } else {
             return response(['errors' => ["{$user->name} wasn't assigned to any cash register"]], 422);
         }
@@ -151,7 +156,7 @@ class CashRegisterLogsController extends BaseController
 
             return [
                 'notification' => [
-                    'msg' => ['Success'],
+                    'msg' => ['Logged in successfully!'],
                     'type' => 'success'
                 ],
                 'cash_register' => $cash_register,

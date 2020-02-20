@@ -55,7 +55,7 @@ class ForeignKeys extends Migration
         Schema::table('orders', function (Blueprint $table) {
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('restrict');
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('restrict');
-            $table->foreign('created_by')->references('id')->on('users')->onDelete('restrict');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
         });
     }
 
@@ -108,7 +108,7 @@ class ForeignKeys extends Migration
         Schema::table('orders', function (Blueprint $table) {
             $table->dropForeign(['customer_id'])->references('id')->on('customers')->onDelete('restrict');
             $table->dropForeign(['store_id'])->references('id')->on('stores')->onDelete('restrict');
-            $table->dropForeign(['created_by'])->references('id')->on('users')->onDelete('restrict');
+            $table->dropForeign(['user_id'])->references('id')->on('users')->onDelete('restrict');
         });
     }
 }

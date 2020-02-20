@@ -110,7 +110,7 @@ class OrderController extends Controller
         $user = auth()->user();
         $store = $user->open_register->cash_register->store;
 
-        $validatedData['created_by'] = $user->id;
+        $validatedData['user_id'] = $user->id;
         $validatedData['store_id'] = $store->id;
 
         if (isset($validatedData['billing_address_id'])) {

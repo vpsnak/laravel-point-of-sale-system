@@ -30,7 +30,7 @@ class CreateOrdersTable extends Migration
             $table->enum('method', ['retail', 'pickup', 'delivery']);
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->unsignedBigInteger('store_id');
-            $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('magento_id')->nullable();
             $table->unsignedBigInteger('magento_shipping_address_id')->nullable();
             $table->unsignedBigInteger('magento_billing_address_id')->nullable();
