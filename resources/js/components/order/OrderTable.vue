@@ -151,7 +151,6 @@ export default {
   },
 
   methods: {
-    ...mapActions(["getOne", "delete"]),
     ...mapMutations("dialog", ["setDialog", "editItem", "viewItem"]),
     ...mapMutations("datatable", [
       "setLoading",
@@ -159,6 +158,7 @@ export default {
       "resetDataTable"
     ]),
     ...mapMutations("cart", ["setCheckoutDialog", "resetState"]),
+    ...mapActions(["getOne", "delete"]),
     ...mapActions("cart", ["loadOrder"]),
 
     parseStatusName(value) {
@@ -189,7 +189,6 @@ export default {
         .then(() => {
           // this.setDialog({});
         })
-        .catch()
         .finally(() => {
           this.setLoading(false);
         });
@@ -201,7 +200,6 @@ export default {
         .then(() => {
           this.setCheckoutDialog(true);
         })
-        .catch()
         .finally(() => {
           this.setLoading(false);
         });
@@ -211,17 +209,11 @@ export default {
         this.getOne({
           model: "orders",
           data: { id }
-        })
-          .then(response => {
-            this.resetState();
-            this.loadOrder(response);
-            resolve(true);
-          })
-          .catch(error => {
-            // unhandled error
-            console.error(error);
-            reject(error);
-          });
+        }).then(response => {
+          this.resetState();
+          this.loadOrder(response);
+          resolve(true);
+        });
       });
     },
     cancelOrderDialog(item) {
@@ -249,11 +241,6 @@ export default {
         this.delete(payload)
           .then(() => {
             resolve(true);
-          })
-          .catch(error => {
-            // unhandled error
-            console.error(error);
-            reject(error);
           })
           .finally(() => {
             this.selectedItem = null;
