@@ -6,7 +6,6 @@ use App\Helper\Price;
 use App\MasAccount;
 use App\MasOrder;
 use App\Order;
-use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 
@@ -17,6 +16,8 @@ class MasOrderController extends Controller
     public static function submitToMas(Order $order)
     {
         $masAccount = MasAccount::getActive();
+        $order = $order->load('store');
+        $store = $order->store;
 
         $payload = [];
         $payload['MessageType'] = '28';
@@ -28,7 +29,7 @@ class MasOrderController extends Controller
         $payload['PriorityType'] = '1';
 
         $payload['OnlinePartner'] = self::parseOnlinePartner($order);
-        $payload['OnlinePartner']['MarketCode'] = $order->method === 'retail' ? 'SW' : 'SO';
+        $payload['OnlinePartner']['MarketCode'] = $store->is_phone_center ? 'SO' : 'SW';
 
         $payload['OrderItems'] = self::parseOrderItems($order->items);
         $payload['RecipientDetail'] = self::parseOrderRecipient($order);
@@ -42,7 +43,6 @@ class MasOrderController extends Controller
         $payload['TaxAmount'] = $order->total_tax;
         $payload['TotalAmount'] = $order->total;
 
-        self::log('Payload: ' . json_encode($payload));
         try {
             $client = new Client();
 
@@ -65,14 +65,18 @@ class MasOrderController extends Controller
 
         $response = json_decode($json);
 
+        self::log($response);
+
         if (isset($response->ErrorMessage)) {
             MasOrder::updateOrCreate(['order_id' => $order->id], [
                 'status' => 'error',
+                'payload' => $payload,
+                'response' => $response->ErrorMessage
             ]);
 
             return ['errors' => $response->ErrorMessage, 'payload' => $payload];
         }
-        // @TODO change mas orders table
+
         if (!empty($response->Messages)) {
             MasOrder::updateOrCreate(['order_id' => $order->id], [
                 'mas_control_number' => $response->Messages->ControlNumber,
@@ -298,6 +302,10 @@ class MasOrderController extends Controller
 
     private static function log($message)
     {
+        if (!is_string($message)) {
+            $message = json_encode($message);
+        }
+
         Log::channel('connector')->info(self::LOG_PREFIX . ': ' . $message);
     }
 }
