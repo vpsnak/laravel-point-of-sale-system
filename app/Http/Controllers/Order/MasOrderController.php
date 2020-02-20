@@ -27,9 +27,8 @@ class MasOrderController extends Controller
         // $payload['FulfillerMDNumber'] = 'USZZ000035';
         $payload['PriorityType'] = '1';
 
-        if (!empty($onlinePartner)) {
-            $payload['OnlinePartner'] = self::parseOnlinePartner($order);
-        }
+        $payload['OnlinePartner'] = self::parseOnlinePartner($order);
+        $payload['OnlinePartner']['MarketCode'] = $order->method === 'retail' ? 'SW' : 'SO';
 
         $payload['OrderItems'] = self::parseOrderItems($order->items);
         $payload['RecipientDetail'] = self::parseOrderRecipient($order);
