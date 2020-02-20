@@ -28,7 +28,7 @@ class CreateStoresTable extends Migration
             $table->timestamps();
 
             $table->foreign('tax_id')->references('id')->on('taxes')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
         });
     }
 

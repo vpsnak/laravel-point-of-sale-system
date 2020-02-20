@@ -43,7 +43,7 @@ class CreateCashRegisterReportsTable extends Migration
             $table->integer('order_in_store_count')->default(0);
             $table->integer('order_delivery_count')->default(0);
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
             $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('cascade');
 
             $table->timestamps();

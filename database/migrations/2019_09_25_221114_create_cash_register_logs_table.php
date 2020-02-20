@@ -26,7 +26,7 @@ class CreateCashRegisterLogsTable extends Migration
             $table->unsignedBigInteger('closed_by')->nullable();
             $table->text('note')->nullable();
             $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
             $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('cascade');
             $table->foreign('opened_by')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('closed_by')->references('id')->on('users')->onDelete('cascade');
