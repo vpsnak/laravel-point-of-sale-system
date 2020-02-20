@@ -22,6 +22,7 @@ class CreateCashRegistersTable extends Migration
             $table->string('barcode')->nullable();
             $table->ipAddress('pos_terminal_ip');
             $table->string('pos_terminal_port');
+            $table->boolean('active');
 
             $table->timestamps();
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');

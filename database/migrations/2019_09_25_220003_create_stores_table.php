@@ -21,6 +21,8 @@ class CreateStoresTable extends Migration
             $table->string('street');
             $table->string('postcode');
             $table->string('city');
+            $table->boolean('active');
+            $table->boolean('is_phone_center');
             $table->unsignedBigInteger('company_id');
             $table->unsignedBigInteger('tax_id')->default(0);
             $table->unsignedBigInteger('user_id');
@@ -28,7 +30,7 @@ class CreateStoresTable extends Migration
             $table->timestamps();
 
             $table->foreign('tax_id')->references('id')->on('taxes')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
         });
     }
 
