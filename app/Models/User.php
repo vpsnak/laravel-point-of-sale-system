@@ -14,7 +14,7 @@ class User extends Authenticatable
 
     protected $guard_name = 'api';
 
-    protected $with = ['open_register', 'roles'];
+    protected $with = ['roles'];
     /**
      * The attributes that are mass assignable.
      *

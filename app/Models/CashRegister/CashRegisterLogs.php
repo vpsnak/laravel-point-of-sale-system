@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class CashRegisterLogs extends Model
 {
-    protected $with = ['cash_register'];
-
     protected $fillable = [
         'user_id',
         'cash_register_id',

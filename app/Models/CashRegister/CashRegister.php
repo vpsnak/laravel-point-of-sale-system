@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CashRegister extends Model
 {
-    protected $appends = ['is_open', 'earnings'];
+    protected $appends = ['is_open', 'earnings', 'open_session_user'];
 
     protected $fillable = [
         'name',
@@ -36,6 +36,15 @@ class CashRegister extends Model
         return $this->belongsTo(Store::class);
     }
 
+    public function getOpenSessionUserAttribute()
+    {
+        if ($this->is_open) {
+            return $this->getOpenLog()->with('user')->first()->user;
+        } else {
+            return false;
+        }
+    }
+
     public function getIsOpenAttribute()
     {
         if (!empty($this->getOpenLog())) {
@@ -46,7 +55,12 @@ class CashRegister extends Model
 
     public function getOpenLog()
     {
-        return $this->hasMany(CashRegisterLogs::class)->whereStatus(1)->first();
+        return $this->cashRegisterLogs()->where('status', true)->first();
+    }
+
+    public function cashRegisterLogs()
+    {
+        return $this->hasMany(CashRegisterLogs::class);
     }
 
     public function getPaymentsAttribute()

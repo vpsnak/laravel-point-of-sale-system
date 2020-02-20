@@ -57,6 +57,7 @@ class CashRegisterLogsController extends Controller
     public function logout()
     {
         $user = auth()->user();
+        $user = $user->load('open_register');
 
         if ($user->open_register) {
             $user->open_register->user_id = null;

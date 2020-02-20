@@ -72,11 +72,22 @@
             >Start session
           </v-btn>
         </v-row>
-        <v-row v-if="cashRegisterIsopen" align="center" justify="center">
+        <v-row align="center" justify="center">
           <v-col cols="auto">
-            <v-alert dense outlined type="info">
-              The selected cash register is already
-              <strong>open</strong>
+            <v-alert
+              text
+              prominent
+              :type="open_session_user ? 'warning' : 'info'"
+              v-if="cashRegisterIsopen"
+            >
+              <span v-if="open_session_user">
+                {{ open_session_user.name }} has an active session with the
+                selected cash register
+              </span>
+              <span v-else>
+                The selected cash register is already open
+                <br />No user has an active session
+              </span>
             </v-alert>
           </v-col>
         </v-row>
@@ -90,6 +101,7 @@ import { mapActions, mapState, mapMutations } from "vuex";
 export default {
   data() {
     return {
+      open_session_user: null,
       loading: true,
       stores: [],
       cash_registers: [],
@@ -103,9 +115,15 @@ export default {
       remainingAmount: null
     };
   },
+
   mounted() {
     this.getStores();
   },
+
+  beforeDestroy() {
+    this.$off("submit");
+  },
+
   computed: {
     cashRegisterIsopen() {
       const open_cash_register = _.find(this.cash_registers, {
@@ -115,6 +133,13 @@ export default {
       if (open_cash_register) {
         this.opening_amount = this.remainingAmount =
           open_cash_register.earnings.cash_total;
+
+        if (_.has(open_cash_register, "open_session_user")) {
+          this.open_session_user = open_cash_register.open_session_user;
+        } else {
+          this.open_session_user = null;
+        }
+
         return true;
       } else {
         this.remainingAmount = 0;
@@ -135,6 +160,7 @@ export default {
       return this.$store.getters.role;
     }
   },
+
   methods: {
     ...mapMutations(["setCashRegister"]),
     ...mapMutations("menu", ["setStoreName"]),
@@ -233,10 +259,6 @@ export default {
         }
       });
     }
-  },
-
-  beforeDestroy() {
-    this.$off("submit");
   }
 };
 </script>
