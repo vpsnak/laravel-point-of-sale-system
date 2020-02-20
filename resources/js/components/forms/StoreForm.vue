@@ -157,7 +157,7 @@ export default {
         company_id: null,
         taxable: false,
         is_default: false,
-        created_by: null
+        user_id: null
       }
     };
   },

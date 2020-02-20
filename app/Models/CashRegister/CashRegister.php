@@ -12,7 +12,7 @@ class CashRegister extends Model
     protected $fillable = [
         'name',
         'store_id',
-        'created_by',
+        'user_id',
         'barcode',
         'pos_terminal',
         'printer',
@@ -65,7 +65,7 @@ class CashRegister extends Model
 
     public function getPaymentsAttribute()
     {
-        return $this->hasMany(Payment::class, 'cash_register_id', 'id')->without(['order', 'created_by'])->get();
+        return $this->hasMany(Payment::class, 'cash_register_id', 'id')->without(['order', 'user_id'])->get();
     }
 
     public function logs()

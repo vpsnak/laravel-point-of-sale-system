@@ -116,7 +116,7 @@ export default {
 				this.getOne({
 					model: "users",
 					data: {
-						id: this.cashRegisterReportsData.created_by
+						id: this.cashRegisterReportsData.user_id
 					}
 				}).then(response => {
 					this.user = response;
@@ -141,7 +141,7 @@ export default {
 				this.getOne({
 					model: "users",
 					data: {
-						id: this.cashRegisterReportsData.created_by
+						id: this.cashRegisterReportsData.user_id
 					}
 				}).then(response => {
 					this.user = response;

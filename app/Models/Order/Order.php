@@ -42,7 +42,7 @@ class Order extends Model
         'payments',
         'customer',
         'store',
-        'created_by'
+        'user_id'
     ];
 
     protected $casts = [
@@ -197,7 +197,7 @@ class Order extends Model
         return $this->belongsTo(Store::class);
     }
 
-    public function created_by()
+    public function user_id()
     {
         return $this->belongsTo(User::class);
     }

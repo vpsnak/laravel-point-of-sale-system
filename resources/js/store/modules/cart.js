@@ -117,7 +117,7 @@ export default {
     order_delivery_store_pickup: null,
     order_delivery_store_pickup: null,
     order_timestamp: null,
-    order_created_by: null
+    order_user_id: null
   },
 
   mutations: {
@@ -128,7 +128,7 @@ export default {
       state.order_total_item_cost = value;
     },
     setOrderCreatedBy(state, value) {
-      state.order_created_by = value;
+      state.order_user_id = value;
     },
     setOrderTimestamp(state, value) {
       state.order_timestamp = value;
@@ -526,7 +526,7 @@ export default {
         context.commit("setCartDiscountAmount", order.discount_amount);
         context.commit("setCustomer", order.customer);
         context.commit("setOrderNotes", order.notes);
-        context.commit("setOrderCreatedBy", order.created_by);
+        context.commit("setOrderCreatedBy", order.user_id);
         context.commit("setOrderTimestamp", {
           created_at: order.created_at,
           updated_at: order.updated_at

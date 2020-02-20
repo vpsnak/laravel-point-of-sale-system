@@ -21,7 +21,7 @@ class StoreSeeder extends Seeder
                 'postcode' => '10025',
                 'city' => 'New York NY',
                 'tax_id' => 1,
-                'created_by' => 1,
+                'user_id' => 1,
             ],
             [
                 'company_id' => 2,
@@ -31,7 +31,7 @@ class StoreSeeder extends Seeder
                 'postcode' => '10024',
                 'city' => 'New York NY',
                 'tax_id' => 1,
-                'created_by' => 1,
+                'user_id' => 1,
             ],
             [
                 'company_id' => 2,
@@ -41,7 +41,7 @@ class StoreSeeder extends Seeder
                 'postcode' => '10012',
                 'city' => 'New York NY',
                 'tax_id' => 1,
-                'created_by' => 1,
+                'user_id' => 1,
             ]
         ]);
     }

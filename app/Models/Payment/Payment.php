@@ -14,7 +14,7 @@ class Payment extends Model
 
     protected $with = [
         'paymentType',
-        'created_by',
+        'user_id',
         'elavonApiPayments',
         'elavonSdkPayments'
     ];
@@ -27,7 +27,7 @@ class Payment extends Model
         'refunded',
         'cash_register_id',
         'order_id',
-        'created_by',
+        'user_id',
     ];
 
     public function paymentType()
@@ -40,9 +40,9 @@ class Payment extends Model
         return $this->belongsTo(Order::class);
     }
 
-    public function created_by()
+    public function user_id()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function cash_register()

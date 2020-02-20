@@ -39,7 +39,7 @@
 										<td>{{ cash_register.barcode }}</td>
 										<td>{{ cash_register.pos_terminal }}</td>
 										<td>{{ cash_register.printer }}</td>
-										<td>{{ cash_register.created_by }}</td>
+										<td>{{ cash_register.user_id }}</td>
 										<td>{{ cash_register.created_at }}</td>
 										<td>{{ cash_register.updated_at }}</td>
 									</tr>
@@ -90,7 +90,7 @@ export default {
         this.getOne({
           model: "users",
           data: {
-            id: this.storeData.created_by
+            id: this.storeData.user_id
           }
         }).then(response => {
           this.user = response;

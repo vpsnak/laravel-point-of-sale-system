@@ -23,7 +23,7 @@ class CashRegisterController extends Controller
             'name' => 'required|string',
             'store_id' => 'required|exists:stores,id',
         ]);
-        $validatedData['created_by'] = auth()->user()->id;
+        $validatedData['user_id'] = auth()->user()->id;
 
         return response(CashRegister::create($validatedData), 201);
     }
@@ -35,7 +35,7 @@ class CashRegisterController extends Controller
             'name' => 'required|string',
             'store_id' => 'required|exists:stores,id',
         ]);
-        $validatedData['created_by'] = auth()->user()->id;
+        $validatedData['user_id'] = auth()->user()->id;
         $cashRegister = CashRegister::findOrFail($validatedData['id']);
 
         return response([

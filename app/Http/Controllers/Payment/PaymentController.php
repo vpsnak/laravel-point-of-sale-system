@@ -29,7 +29,7 @@ class PaymentController extends Controller
             'code' => 'required_if:payment_type,coupon|required_if:payment_type,giftcard',
             'house_account_number' => 'required_if:payment_type,house-account'
         ]);
-        $validatedData['created_by'] = auth()->user()->id;
+        $validatedData['user_id'] = auth()->user()->id;
         $validatedData['cash_register_id'] = auth()->user()->open_register->cash_register->id;
 
         $newPayment = $validatedData;
@@ -77,7 +77,7 @@ class PaymentController extends Controller
             if (array_key_exists('errors', $response)) {
                 $payment->status = 'failed';
                 $payment->save();
-                $response['payment'] = $payment->load(['created_by', 'paymentType']);
+                $response['payment'] = $payment->load(['user_id', 'paymentType']);
 
                 return response($response, 422);
             }
@@ -85,7 +85,7 @@ class PaymentController extends Controller
 
         $payment->status = 'approved';
         $payment->save();
-        $payment->load(['created_by', 'paymentType', 'order']);
+        $payment->load(['user_id', 'paymentType', 'order']);
         $orderStatus = OrderController::updateOrderStatus($payment);
         $orderStatus['payment'] = $payment;
 
@@ -320,11 +320,11 @@ class PaymentController extends Controller
             'refunded' => false,
             'cash_register_id' => $cash_register_id,
             'order_id' => $order->id,
-            'created_by' => $user->id
+            'user_id' => $user->id
         ]);
 
         $refund->save();
-        $refund = $refund->load(['created_by', 'paymentType', 'order']);
+        $refund = $refund->load(['user_id', 'paymentType', 'order']);
 
         $orderStatus = OrderController::updateOrderStatus($refund, true);
         $orderStatus['info'] = ['Refund' => 'Refund completed successfully!'];
@@ -338,7 +338,7 @@ class PaymentController extends Controller
         $refund = $payment->replicate();
         $refund->amount = abs($refund->amount) * -1;
         $refund->status = $succeed ? 'refunded' : 'failed';
-        $refund->created_by = auth()->user()->id;
+        $refund->user_id = auth()->user()->id;
         $refund->cash_register_id = auth()->user()->open_register->cash_register_id;
         $refund->save();
 
@@ -384,7 +384,7 @@ class PaymentController extends Controller
         if ($setOrderStatus) {
             if (is_array($result) && array_key_exists('errors', $result)) {
                 $refund = $this->createLinkedRefund($payment, false);
-                $refund->load(['created_by', 'paymentType', 'order']);
+                $refund->load(['user_id', 'paymentType', 'order']);
 
                 $orderStatus = OrderController::updateOrderStatus($refund, true);
                 $orderStatus['errors'] = $result['errors'];
@@ -393,7 +393,7 @@ class PaymentController extends Controller
                 return response($orderStatus, 500);
             } else {
                 $refund = $this->createLinkedRefund($payment, true);
-                $refund->load(['created_by', 'paymentType', 'order']);
+                $refund->load(['user_id', 'paymentType', 'order']);
 
                 $orderStatus = OrderController::updateOrderStatus($refund, true);
                 $orderStatus['refunded_payment_id'] = $payment->id;
