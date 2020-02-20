@@ -51,7 +51,17 @@ class User extends Authenticatable
         $this->attributes['password'] = Hash::make($value);
     }
 
-    public static function getActiveUsers()
+    public static function getRoleNameByIndentifier($identifier)
+    {
+        $user = self::findForPassport($identifier);
+        if ($user) {
+            return $user->roles[0]->name;
+        } else {
+            return null;
+        }
+    }
+
+    public static function activeUsers()
     {
         return self::whereActive(true);
     }
@@ -76,9 +86,9 @@ class User extends Authenticatable
         return $this->openRegister()->whereStatus(1);
     }
 
-    public function findForPassport(string $identifier)
+    public static function findForPassport(string $identifier)
     {
-        return $this->where('active', true)
+        return self::where('active', true)
             ->where(function ($query) use ($identifier) {
                 $query->orWhere('email', $identifier)
                     ->orWhere('username', $identifier)

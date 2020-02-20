@@ -8,21 +8,14 @@ use GuzzleHttp\Client;
 
 class UserController extends Controller
 {
-    protected $model = User::class;
-
     public function all()
     {
-        return response($this->model::paginate(), 200);
+        return response(User::paginate());
     }
 
-    public function get($id)
+    public function get($model)
     {
-        return response($this->model::find($id), 200);
-    }
-
-    public function delete(User $user)
-    {
-        return response($user->delete(), 200);
+        return response(User::findOrFail($model));
     }
 
     public function login(Request $request)
@@ -33,40 +26,26 @@ class UserController extends Controller
         ]);
 
         $http = new Client;
-        $user = User::getActiveUsers()->orWhere('email', $validatedData['username'])
-            ->orWhere('username', $validatedData['username'])
-            ->orWhere('phone', $validatedData['username'])->without('open_register')->first();
 
-        if (!$user) {
-            return response(['errors' => [
-                'Login' => 'Invalid credentials',
-            ]], 500);
-        } else {
-            if (!$user->verifyPwd($validatedData['password'])) {
-                return response(['errors' => [
-                    'Login' => 'Invalid credentials',
-                ]], 500);
-            }
-            $role = ($user->roles)[0]['name'];
-            $response = $http->post(config('app.url') . '/oauth/token', [
-                'form_params' => [
-                    'grant_type' => 'password',
-                    'client_id' => '2',
-                    'client_secret' => 'wtx0OMH1wmzMjVu8KV72vC6QXDqijRrBJygHJRV7',
-                    'username' => $validatedData['username'],
-                    'password' => $validatedData['password'],
-                    'scope' => $role,
-                ],
-            ]);
+        $response = $http->post(config('app.url') . '/oauth/token', [
+            'form_params' => [
+                'grant_type' => 'password',
+                'client_id' => '2',
+                'client_secret' => 'wtx0OMH1wmzMjVu8KV72vC6QXDqijRrBJygHJRV7',
+                'username' => $validatedData['username'],
+                'password' => $validatedData['password'],
+                'scope' => User::getRoleNameByIndentifier($validatedData['username']),
+            ],
+        ]);
 
-            $token = (json_decode((string) $response->getBody(), true))['access_token'];
+        $user = User::findForPassport($validatedData['username']);
+        $token = (json_decode((string) $response->getBody(), true))['access_token'];
 
-            return response([
-                'info' => ['Login' => 'Welcome <strong>' . $user->name . '</strong>'],
-                'user' => $user,
-                'token' => $token
-            ], 200);
-        }
+        return response([
+            'info' => ['Login' => "Welcome <b>{$user->name}</b>"],
+            'user' => $user,
+            'token' => "Bearer $token"
+        ]);
     }
 
     public function changeSelfPwd(Request $request)
@@ -130,7 +109,7 @@ class UserController extends Controller
 
         $user->token()->delete();
 
-        return response(['info' => ['Logout' => 'Goodbye...']], 200);
+        return response(['info' => ['Logout' => 'Goodbye...']]);
     }
 
 
@@ -140,11 +119,10 @@ class UserController extends Controller
             'keyword' => 'required|string'
         ]);
 
-
         $columns = ['username', 'name', 'email', 'phone'];
-        $query = $this->model::query()->search($columns, $validatedData['keyword']);
+        $query = User::query()->search($columns, $validatedData['keyword']);
 
-        return response($query->paginate(), 200);
+        return response($query->paginate());
     }
 
     public function create(Request $request)
@@ -155,6 +133,7 @@ class UserController extends Controller
             'username' => 'required|string',
             'email' => 'required|email',
             'phone' => 'required|numeric',
+            'active' => 'required|boolean'
         ]);
 
         $user = User::create($validatedData);
@@ -162,18 +141,21 @@ class UserController extends Controller
         return response(['info' => ['User ' . $user->name . ' created successfully!']], 201);
     }
 
-    public function update(User $model, Request $request)
+    public function update(Request $request)
     {
         $validatedData = $request->validate([
+            'id' => 'required|exists:users,id',
             'name' => 'required|string',
             'username' => 'required|string',
             'email' => 'required|email',
             'phone' => 'required|numeric',
+            'active' => 'required|boolean'
         ]);
+        $user = User::findOrFail($validatedData['id']);
 
-        $model->update($validatedData);
-        $model->save();
+        $user->fill($validatedData);
+        $user->save();
 
-        return response(['info' => ['User ' . $model->name . ' updated successfully!']], 200);
+        return response(['info' => ['User ' . $user->name . ' updated successfully!']]);
     }
 }
