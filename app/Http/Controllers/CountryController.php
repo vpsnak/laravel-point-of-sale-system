@@ -3,14 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Country;
-use Illuminate\Http\Request;
 
-class CountryController extends BaseController
+class CountryController extends Controller
 {
-    protected $model = Country::class;
-
     public function all()
     {
-        return response(Country::all());
+        return response(Country::with('regions')->get());
+    }
+
+    public function regions(Country $model)
+    {
+        return response($model->regions);
     }
 }

@@ -259,12 +259,13 @@ export default {
   },
 
   methods: {
-    ...mapActions("requests", ["post"]),
+    ...mapActions("requests", ["request"]),
 
     submitRefund() {
       this.loading = true;
 
       let payload = {
+        method: "post",
         endpoint: "payments/unlinked-refund",
         success_notification: true,
         error_notification: true,
@@ -292,7 +293,7 @@ export default {
           return;
       }
 
-      this.post(payload)
+      this.request(payload)
         .then(response => {
           console.log(response);
         })

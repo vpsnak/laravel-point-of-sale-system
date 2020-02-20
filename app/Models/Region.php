@@ -8,10 +8,12 @@ class Region extends Model
 {
     public $timestamps = false;
 
+    protected $with = ['country'];
+
     protected $fillable = [
         'country_id',
         'code',
-        'default_name',
+        'name',
     ];
 
     public function country()
@@ -22,5 +24,10 @@ class Region extends Model
     public function addresses()
     {
         return $this->hasMany(Address::class);
+    }
+
+    public function store_pickups()
+    {
+        return $this->hasMany(StorePickup::class);
     }
 }

@@ -17,7 +17,7 @@ class CreateRegionsTable extends Migration
             $table->smallIncrements('id');
 
             $table->string('code');
-            $table->string('default_name');
+            $table->string('name');
 
             $table->unsignedSmallInteger('country_id');
         });

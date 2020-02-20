@@ -110,8 +110,8 @@
                 label="States"
                 :error-messages="errors"
                 :success="valid"
-                item-text="default_name"
-                item-value="region_id"
+                item-text="name"
+                item-value="id"
               ></v-select>
             </ValidationProvider>
           </v-col>
@@ -125,13 +125,13 @@
                 :disabled="loading"
                 :readonly="$props.readonly"
                 :loading="loading"
-                v-model="formFields.country_id"
+                v-model="formFields.region.country_id"
                 :items="countries"
                 label="Countries"
                 :error-messages="errors"
                 :success="valid"
-                item-text="iso2_code"
-                item-value="iso2_code"
+                item-text="name"
+                item-value="id"
               ></v-select>
             </ValidationProvider>
           </v-col>
@@ -267,7 +267,6 @@ export default {
       loading: false,
       defaultValues: {},
       countries: [],
-      regions: [],
       formFields: {
         first_name: null,
         last_name: null,

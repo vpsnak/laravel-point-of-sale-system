@@ -14,7 +14,7 @@
             name="First name"
           >
             <v-text-field
-              v-model="formFields.first_name"
+              v-model="address.first_name"
               :readonly="$props.readonly"
               label="First name"
               :disabled="loading"
@@ -29,7 +29,7 @@
           >
             <v-text-field
               :readonly="$props.readonly"
-              v-model="formFields.street"
+              v-model="address.street"
               label="Address"
               :disabled="loading"
               :error-messages="errors"
@@ -45,7 +45,7 @@
             name="Last Name"
           >
             <v-text-field
-              v-model="formFields.last_name"
+              v-model="address.last_name"
               :readonly="$props.readonly"
               label="Last name"
               :disabled="loading"
@@ -57,7 +57,7 @@
           <ValidationProvider v-slot="{ errors, valid }" name="Second Address">
             <v-text-field
               :readonly="$props.readonly"
-              v-model="formFields.street2"
+              v-model="address.street2"
               label="Second Address"
               :disabled="loading"
               :error-messages="errors"
@@ -72,7 +72,7 @@
             name="City"
           >
             <v-text-field
-              v-model="formFields.city"
+              v-model="address.city"
               :readonly="$props.readonly"
               label="City"
               :disabled="loading"
@@ -89,7 +89,7 @@
           >
             <v-text-field
               :readonly="$props.readonly"
-              v-model="formFields.postcode"
+              v-model="address.postcode"
               label="Zip Code"
               :disabled="loading"
               :error-messages="errors"
@@ -97,41 +97,44 @@
             ></v-text-field>
           </ValidationProvider>
         </v-col>
-        <v-col cols="3">
-          <ValidationProvider
-            rules="required"
-            v-slot="{ errors, valid }"
-            name="State"
-          >
-            <v-select
-              v-model="formFields.region_id"
-              :readonly="$props.readonly"
-              :items="regions"
-              label="States"
-              item-text="default_name"
-              item-value="region_id"
-              :error-messages="errors"
-              :success="valid"
-            ></v-select>
-          </ValidationProvider>
-        </v-col>
-        <v-col cols="3">
+        <v-col :cols="3">
           <ValidationProvider
             rules="required"
             v-slot="{ errors, valid }"
             name="Country"
           >
-            <v-select
+            <v-autocomplete
+              @change="countryChanged"
               :readonly="$props.readonly"
-              v-model="formFields.country_id"
+              v-model="address.country"
               :items="countries"
-              label="Countries"
+              label="Country"
               required
-              item-text="iso2_code"
-              item-value="iso2_code"
+              item-text="name"
+              return-object
               :error-messages="errors"
               :success="valid"
-            ></v-select>
+              :loading="country_loading"
+            ></v-autocomplete>
+          </ValidationProvider>
+        </v-col>
+        <v-col :cols="3">
+          <ValidationProvider
+            rules="required"
+            v-slot="{ errors, valid }"
+            name="State"
+          >
+            <v-autocomplete
+              v-model="address.region"
+              :loading="region_loading"
+              :readonly="$props.readonly"
+              :items="regions"
+              label="State"
+              item-text="name"
+              return-object
+              :error-messages="errors"
+              :success="valid"
+            ></v-autocomplete>
           </ValidationProvider>
         </v-col>
         <v-col :cols="6">
@@ -142,7 +145,7 @@
           >
             <v-text-field
               :readonly="$props.readonly"
-              v-model="formFields.phone"
+              v-model="address.phone"
               label="Phone"
               :disabled="loading"
               :error-messages="errors"
@@ -164,8 +167,8 @@
               label="Location"
               :items="locations"
               item-text="label"
-              item-value="id"
-              v-model="formFields.location"
+              return-object
+              v-model="location"
               prepend-icon="mdi-city"
             ></v-select>
           </ValidationProvider>
@@ -173,7 +176,11 @@
       </v-row>
       <v-row v-if="!$props.readonly">
         <v-spacer />
-        <v-btn type="submit" :disabled="invalid || loading" :loading="loading">
+        <v-btn
+          type="submit"
+          :disabled="invalid || loading"
+          :loading="submit_loading"
+        >
           Submit
         </v-btn>
       </v-row>
@@ -191,17 +198,21 @@ export default {
   },
   data() {
     return {
-      loading: false,
-      countries: [],
+      submit_loading: false,
+      country_loading: false,
+      region_loading: false,
+
       regions: [],
-      default: {
+      countries: [],
+      address: {
+        customer_id: null,
         first_name: "",
         last_name: "",
         street: null,
         street2: null,
         city: null,
-        country_id: null,
-        region_id: null,
+        region: null,
+        country: null,
         postcode: null,
         phone: null,
         deliverydate: null,
@@ -212,65 +223,114 @@ export default {
   },
 
   mounted() {
-    this.getAllRegions();
-    this.getAllCountries();
+    this.getAllCountries(true);
+
+    if (this.$props.model) {
+      this.address = { ...this.address, ...this.$props.model };
+      this.address.region = this.$props.model.region;
+      this.address.country = this.$props.model.region.country;
+    }
   },
+
   computed: {
     ...mapState("cart", ["locations", "customer"]),
 
-    formFields: {
+    location: {
       get() {
-        if (this.$props.model) {
-          return this.$props.model;
-        } else {
-          return this.default;
-        }
+        _.find(this.locations, { id: this.address.location });
+      },
+      set(value) {
+        this.address.location = value.id;
+      }
+    },
+
+    countryRegions() {
+      return this.address.country.regions;
+    },
+    loading() {
+      if (this.submit_loading || this.country_loading || this.region_loading) {
+        return true;
+      } else {
+        return false;
       }
     }
   },
   methods: {
     ...mapMutations(["setNotification"]),
+    ...mapActions("requests", ["request"]),
 
+    countryChanged(country) {
+      if (
+        country &&
+        this.address.region &&
+        this.address.region.country.id !== country.id
+      ) {
+        this.address.region = null;
+      }
+      this.getRegionsByCountry(country);
+    },
     submit() {
-      this.formFields.region = this.formFields.region_id;
+      this.submit_loading = true;
 
       let payload = {
+        method: "post",
+        success_notification: true,
+        error_notification: true,
+        endpoint: this.address.id ? "addresses/update" : "addresses/create",
         model: "addresses",
-        data: this.formFields
+        data: this.address
       };
 
-      payload.data.customer_id = this.customer.id;
+      payload.data.customer_id = this.address.customer_id || this.customer.id;
+      payload.data.region_id = this.address.region.id;
+      payload.data.country_id = this.address.country.id;
 
-      this.create(payload).then(response => {
-        this.setNotification({
-          msg: response.info,
-          type: "success"
-        });
-
-        this.$emit("submit", { data: response["address"] });
-      });
-    },
-
-    getAllRegions() {
-      this.loading = true;
-      this.getAll({
-        model: "regions"
-      })
-        .then(regions => {
-          this.regions = regions;
+      this.request(payload)
+        .then(response => {
+          this.$emit("submit", { data: response["address"] });
         })
         .finally(() => {
-          this.loading = false;
+          this.submit_loading = false;
         });
     },
-    getAllCountries() {
-      this.getAll({
-        model: "countries"
-      }).then(countries => {
-        this.countries = countries;
-      });
+    getAllCountries(modelInit) {
+      this.country_loading = true;
+
+      const payload = {
+        error_notification: true,
+        method: "get",
+        endpoint: "countries"
+      };
+      this.request(payload)
+        .then(response => {
+          this.countries = response;
+
+          if (modelInit) {
+            this.getRegionsByCountry(this.$props.model.region.country);
+          }
+        })
+        .catch(error => {
+          this.country_loading = false;
+        })
+        .finally(() => {
+          this.country_loading = false;
+        });
     },
-    ...mapActions(["create", "getAll"])
+    getRegionsByCountry(country) {
+      this.region_loading = true;
+
+      const payload = {
+        method: "get",
+        endpoint: `countries/${country.id}/regions`
+      };
+      this.request(payload)
+        .then(response => {
+          this.regions = response;
+        })
+        .finally(() => {
+          this.region_loading = false;
+        });
+    }
   },
   beforeDestroy() {
     this.$off("submit");

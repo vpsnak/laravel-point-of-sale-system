@@ -121,7 +121,8 @@
           <v-list-item
             v-for="menu_item in top_menu"
             :key="menu_item.id"
-            :to="menuAction(menu_item)"
+            :to="menuLink(menu_item)"
+            @click.stop="menuAction(menu_item)"
             exact
           >
             <v-list-item-avatar>
@@ -223,10 +224,20 @@ export default {
     ...mapActions("config", ["setMasEnv"]),
 
     menuAction(item) {
+      if (_.has(item, "action.method")) {
+        console.log(item.action.method);
+        switch (item.action.method) {
+          case "changePasswordDialog":
+            this.changePasswordDialog();
+            break;
+          default:
+            break;
+        }
+      }
+    },
+    menuLink(item) {
       if (_.has(item, "action.link")) {
         return item.action.link;
-      } else if (_.has(item, "action.method")) {
-        return item.action.method;
       }
     },
     cashRegisterLogout() {

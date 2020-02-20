@@ -14,7 +14,7 @@ $factory->define(Address::class, function (Faker $faker) {
         'street' => $faker->streetAddress,
         'street2' => $faker->streetAddress,
         'city' => $faker->city,
-        'region_id' => rand(1, 100),
+        'region_id' => $faker->numberBetween(1, 100),
         'postcode' => $faker->randomElement(['00606', '10025', '01524', '01561', '97029', '0']),
         'phone' => $faker->numberBetween(10000000000, 20000000000)
     ];

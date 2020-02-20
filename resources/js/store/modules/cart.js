@@ -303,7 +303,7 @@ export default {
       }
     },
     setCustomerAddress(state, value) {
-      state.customer.addresses.push(value);
+      state.customer.addresses = value;
     },
     completeStep(state) {
       let index = -1 + state.currentCheckoutStep;

@@ -11,7 +11,7 @@ class CountrySeeder extends Seeder
      */
     public function run()
     {
-        DB::table('country')->insert([
+        DB::table('countries')->insert([
             [
                 'name' => 'Andorra',
                 'iso2_code' => 'AD',
@@ -33,7 +33,7 @@ class CountrySeeder extends Seeder
                 'iso3_code' => 'ATG'
             ],
             [
-                'name' => 'Aland Islands',
+                'name' => 'Anguilla',
                 'iso2_code' => 'AI',
                 'iso3_code' => 'AIA'
             ],
@@ -448,212 +448,212 @@ class CountrySeeder extends Seeder
                 'iso3_code' => 'GNQ'
             ],
             [
-                'name' => '',
+                'name' => 'Greece',
                 'iso2_code' => 'GR',
                 'iso3_code' => 'GRC'
             ],
             [
-                'name' => '',
+                'name' => 'South Georgia and the South Sandwich Islands',
                 'iso2_code' => 'GS',
                 'iso3_code' => 'SGS'
             ],
             [
-                'name' => '',
+                'name' => 'Guatemala',
                 'iso2_code' => 'GT',
                 'iso3_code' => 'GTM'
             ],
             [
-                'name' => '',
+                'name' => 'Guam',
                 'iso2_code' => 'GU',
                 'iso3_code' => 'GUM'
             ],
             [
-                'name' => '',
+                'name' => 'Guinea-Bissau',
                 'iso2_code' => 'GW',
                 'iso3_code' => 'GNB'
             ],
             [
-                'name' => '',
+                'name' => 'Guyana',
                 'iso2_code' => 'GY',
                 'iso3_code' => 'GUY'
             ],
             [
-                'name' => '',
+                'name' => 'Hong Kong, SAR China',
                 'iso2_code' => 'HK',
                 'iso3_code' => 'HKG'
             ],
             [
-                'name' => '',
+                'name' => 'Heard and Mcdonald Islands',
                 'iso2_code' => 'HM',
                 'iso3_code' => 'HMD'
             ],
             [
-                'name' => '',
+                'name' => 'Honduras',
                 'iso2_code' => 'HN',
                 'iso3_code' => 'HND'
             ],
             [
-                'name' => '',
+                'name' => 'Croatia',
                 'iso2_code' => 'HR',
                 'iso3_code' => 'HRV'
             ],
             [
-                'name' => '',
+                'name' => 'Haiti',
                 'iso2_code' => 'HT',
                 'iso3_code' => 'HTI'
             ],
             [
-                'name' => '',
+                'name' => 'Hungary',
                 'iso2_code' => 'HU',
                 'iso3_code' => 'HUN'
             ],
             [
-                'name' => '',
+                'name' => 'Indonesia',
                 'iso2_code' => 'ID',
                 'iso3_code' => 'IDN'
             ],
             [
-                'name' => '',
+                'name' => 'Ireland',
                 'iso2_code' => 'IE',
                 'iso3_code' => 'IRL'
             ],
             [
-                'name' => '',
+                'name' => 'Israel',
                 'iso2_code' => 'IL',
                 'iso3_code' => 'ISR'
             ],
             [
-                'name' => '',
+                'name' => 'Isle of Man',
                 'iso2_code' => 'IM',
                 'iso3_code' => 'IMN'
             ],
             [
-                'name' => '',
+                'name' => 'India',
                 'iso2_code' => 'IN',
                 'iso3_code' => 'IND'
             ],
             [
-                'name' => '',
+                'name' => 'British Indian Ocean Territory',
                 'iso2_code' => 'IO',
                 'iso3_code' => 'IOT'
             ],
             [
-                'name' => '',
+                'name' => 'Iraq',
                 'iso2_code' => 'IQ',
                 'iso3_code' => 'IRQ'
             ],
             [
-                'name' => '',
+                'name' => 'Iran, Islamic Republic of',
                 'iso2_code' => 'IR',
                 'iso3_code' => 'IRN'
             ],
             [
-                'name' => '',
+                'name' => 'Iceland',
                 'iso2_code' => 'IS',
                 'iso3_code' => 'ISL'
             ],
             [
-                'name' => '',
+                'name' => 'Italy',
                 'iso2_code' => 'IT',
                 'iso3_code' => 'ITA'
             ],
             [
-                'name' => '',
+                'name' => 'Jersey',
                 'iso2_code' => 'JE',
                 'iso3_code' => 'JEY'
             ],
             [
-                'name' => '',
+                'name' => 'Jamaica',
                 'iso2_code' => 'JM',
                 'iso3_code' => 'JAM'
             ],
             [
-                'name' => '',
+                'name' => 'Jordan',
                 'iso2_code' => 'JO',
                 'iso3_code' => 'JOR'
             ],
             [
-                'name' => '',
+                'name' => 'JAPAN',
                 'iso2_code' => 'JP',
                 'iso3_code' => 'JPN'
             ],
             [
-                'name' => '',
+                'name' => 'Kenya',
                 'iso2_code' => 'KE',
                 'iso3_code' => 'KEN'
             ],
             [
-                'name' => '',
+                'name' => 'Kyrgyzstan',
                 'iso2_code' => 'KG',
                 'iso3_code' => 'KGZ'
             ],
             [
-                'name' => '',
+                'name' => 'Cambodia',
                 'iso2_code' => 'KH',
                 'iso3_code' => 'KHM'
             ],
             [
-                'name' => '',
+                'name' => 'Kiribati',
                 'iso2_code' => 'KI',
                 'iso3_code' => 'KIR'
             ],
             [
-                'name' => '',
+                'name' => 'Comoros',
                 'iso2_code' => 'KM',
                 'iso3_code' => 'COM'
             ],
             [
-                'name' => '',
+                'name' => 'Saint Kitts and Nevis',
                 'iso2_code' => 'KN',
                 'iso3_code' => 'KNA'
             ],
             [
-                'name' => '',
+                'name' => 'Korea (North)',
                 'iso2_code' => 'KP',
                 'iso3_code' => 'PRK'
             ],
             [
-                'name' => '',
+                'name' => 'Korea (South)',
                 'iso2_code' => 'KR',
                 'iso3_code' => 'KOR'
             ],
             [
-                'name' => '',
+                'name' => 'Kuwait',
                 'iso2_code' => 'KW',
                 'iso3_code' => 'KWT'
             ],
             [
-                'name' => '',
+                'name' => 'Cayman Islands',
                 'iso2_code' => 'KY',
                 'iso3_code' => 'CYM'
             ],
             [
-                'name' => '',
+                'name' => 'Kazakhstan',
                 'iso2_code' => 'KZ',
                 'iso3_code' => 'KAZ'
             ],
             [
-                'name' => '',
+                'name' => 'Lao PDR',
                 'iso2_code' => 'LA',
                 'iso3_code' => 'LAO'
             ],
             [
-                'name' => '',
+                'name' => 'Lebanon',
                 'iso2_code' => 'LB',
                 'iso3_code' => 'LBN'
             ],
             [
-                'name' => '',
+                'name' => 'Saint Lucia',
                 'iso2_code' => 'LC',
                 'iso3_code' => 'LCA'
             ],
             [
-                'name' => '',
+                'name' => 'Liechtenstein',
                 'iso2_code' => 'LI',
                 'iso3_code' => 'LIE'
             ],
             [
-                'name' => '',
+                'name' => 'Sri Lanka',
                 'iso2_code' => 'LK',
                 'iso3_code' => 'LKA'
             ],
@@ -663,582 +663,582 @@ class CountrySeeder extends Seeder
                 'iso3_code' => 'LBR'
             ],
             [
-                'name' => '',
+                'name' => 'Liberia',
                 'iso2_code' => 'LS',
                 'iso3_code' => 'LSO'
             ],
             [
-                'name' => '',
+                'name' => 'Lithuania',
                 'iso2_code' => 'LT',
                 'iso3_code' => 'LTU'
             ],
             [
-                'name' => '',
+                'name' => 'Luxembourg',
                 'iso2_code' => 'LU',
                 'iso3_code' => 'LUX'
             ],
             [
-                'name' => '',
+                'name' => 'Latvia',
                 'iso2_code' => 'LV',
                 'iso3_code' => 'LVA'
             ],
             [
-                'name' => '',
+                'name' => 'Libya',
                 'iso2_code' => 'LY',
                 'iso3_code' => 'LBY'
             ],
             [
-                'name' => '',
+                'name' => 'Morocco',
                 'iso2_code' => 'MA',
                 'iso3_code' => 'MAR'
             ],
             [
-                'name' => '',
+                'name' => 'Monaco',
                 'iso2_code' => 'MC',
                 'iso3_code' => 'MCO'
             ],
             [
-                'name' => '',
+                'name' => 'Moldova',
                 'iso2_code' => 'MD',
                 'iso3_code' => 'MDA'
             ],
             [
-                'name' => '',
+                'name' => 'Montenegro',
                 'iso2_code' => 'ME',
                 'iso3_code' => 'MNE'
             ],
             [
-                'name' => '',
+                'name' => 'Saint-Martin (French part)',
                 'iso2_code' => 'MF',
                 'iso3_code' => 'MAF'
             ],
             [
-                'name' => '',
+                'name' => 'Madagascar',
                 'iso2_code' => 'MG',
                 'iso3_code' => 'MDG'
             ],
             [
-                'name' => '',
+                'name' => 'Marshall Islands',
                 'iso2_code' => 'MH',
                 'iso3_code' => 'MHL'
             ],
             [
-                'name' => '',
+                'name' => 'Macedonia, Republic of',
                 'iso2_code' => 'MK',
                 'iso3_code' => 'MKD'
             ],
             [
-                'name' => '',
+                'name' => 'Mali',
                 'iso2_code' => 'ML',
                 'iso3_code' => 'MLI'
             ],
             [
-                'name' => '',
+                'name' => 'Myanmar',
                 'iso2_code' => 'MM',
                 'iso3_code' => 'MMR'
             ],
             [
-                'name' => '',
+                'name' => 'Mongolia',
                 'iso2_code' => 'MN',
                 'iso3_code' => 'MNG'
             ],
             [
-                'name' => '',
+                'name' => 'Macao, SAR China',
                 'iso2_code' => 'MO',
                 'iso3_code' => 'MAC'
             ],
             [
-                'name' => '',
+                'name' => 'Northern Mariana Islands',
                 'iso2_code' => 'MP',
                 'iso3_code' => 'MNP'
             ],
             [
-                'name' => '',
+                'name' => 'Martinique',
                 'iso2_code' => 'MQ',
                 'iso3_code' => 'MTQ'
             ],
             [
-                'name' => '',
+                'name' => 'Mauritania',
                 'iso2_code' => 'MR',
                 'iso3_code' => 'MRT'
             ],
             [
-                'name' => '',
+                'name' => 'Montserrat',
                 'iso2_code' => 'MS',
                 'iso3_code' => 'MSR'
             ],
             [
-                'name' => '',
+                'name' => 'Malta',
                 'iso2_code' => 'MT',
                 'iso3_code' => 'MLT'
             ],
             [
-                'name' => '',
+                'name' => 'Mauritius',
                 'iso2_code' => 'MU',
                 'iso3_code' => 'MUS'
             ],
             [
-                'name' => '',
+                'name' => 'Maldives',
                 'iso2_code' => 'MV',
                 'iso3_code' => 'MDV'
             ],
             [
-                'name' => '',
+                'name' => 'Malawi',
                 'iso2_code' => 'MW',
                 'iso3_code' => 'MWI'
             ],
             [
-                'name' => '',
+                'name' => 'Mexico',
                 'iso2_code' => 'MX',
                 'iso3_code' => 'MEX'
             ],
             [
-                'name' => '',
+                'name' => 'Malaysia',
                 'iso2_code' => 'MY',
                 'iso3_code' => 'MYS'
             ],
             [
-                'name' => '',
+                'name' => 'Mozambique',
                 'iso2_code' => 'MZ',
                 'iso3_code' => 'MOZ'
             ],
             [
-                'name' => '',
+                'name' => 'Namibia',
                 'iso2_code' => 'NA',
                 'iso3_code' => 'NAM'
             ],
             [
-                'name' => '',
+                'name' => 'New Caledonia',
                 'iso2_code' => 'NC',
                 'iso3_code' => 'NCL'
             ],
             [
-                'name' => '',
+                'name' => 'Niger',
                 'iso2_code' => 'NE',
                 'iso3_code' => 'NER'
             ],
             [
-                'name' => '',
+                'name' => 'Norfolk Island',
                 'iso2_code' => 'NF',
                 'iso3_code' => 'NFK'
             ],
             [
-                'name' => '',
+                'name' => 'Nigeria',
                 'iso2_code' => 'NG',
                 'iso3_code' => 'NGA'
             ],
             [
-                'name' => '',
+                'name' => 'Nicaragua',
                 'iso2_code' => 'NI',
                 'iso3_code' => 'NIC'
             ],
             [
-                'name' => '',
+                'name' => 'Netherlands',
                 'iso2_code' => 'NL',
                 'iso3_code' => 'NLD'
             ],
             [
-                'name' => '',
+                'name' => 'Norway',
                 'iso2_code' => 'NO',
                 'iso3_code' => 'NOR'
             ],
             [
-                'name' => '',
+                'name' => 'Nepal',
                 'iso2_code' => 'NP',
                 'iso3_code' => 'NPL'
             ],
             [
-                'name' => '',
+                'name' => 'Nauru',
                 'iso2_code' => 'NR',
                 'iso3_code' => 'NRU'
             ],
             [
-                'name' => '',
+                'name' => 'Niue',
                 'iso2_code' => 'NU',
                 'iso3_code' => 'NIU'
             ],
             [
-                'name' => '',
+                'name' => 'New Zealand',
                 'iso2_code' => 'NZ',
                 'iso3_code' => 'NZL'
             ],
             [
-                'name' => '',
+                'name' => 'Oman',
                 'iso2_code' => 'OM',
                 'iso3_code' => 'OMN'
             ],
             [
-                'name' => '',
+                'name' => 'Panama',
                 'iso2_code' => 'PA',
                 'iso3_code' => 'PAN'
             ],
             [
-                'name' => '',
+                'name' => 'Peru',
                 'iso2_code' => 'PE',
                 'iso3_code' => 'PER'
             ],
             [
-                'name' => '',
+                'name' => 'French Polynesia',
                 'iso2_code' => 'PF',
                 'iso3_code' => 'PYF'
             ],
             [
-                'name' => '',
+                'name' => 'Papua New Guinea',
                 'iso2_code' => 'PG',
                 'iso3_code' => 'PNG'
             ],
             [
-                'name' => '',
+                'name' => 'Philippines',
                 'iso2_code' => 'PH',
                 'iso3_code' => 'PHL'
             ],
             [
-                'name' => '',
+                'name' => 'Pakistan',
                 'iso2_code' => 'PK',
                 'iso3_code' => 'PAK'
             ],
             [
-                'name' => '',
+                'name' => 'Poland',
                 'iso2_code' => 'PL',
                 'iso3_code' => 'POL'
             ],
             [
-                'name' => '',
+                'name' => 'Saint Pierre and Miquelon',
                 'iso2_code' => 'PM',
                 'iso3_code' => 'SPM'
             ],
             [
-                'name' => '',
+                'name' => 'Pitcairn',
                 'iso2_code' => 'PN',
                 'iso3_code' => 'PCN'
             ],
             [
-                'name' => '',
+                'name' => 'Puerto Rico',
                 'iso2_code' => 'PR',
                 'iso3_code' => 'PRI'
             ],
             [
-                'name' => '',
+                'name' => 'Palestinian Territory',
                 'iso2_code' => 'PS',
                 'iso3_code' => 'PSE'
             ],
             [
-                'name' => '',
+                'name' => 'Portugal',
                 'iso2_code' => 'PT',
                 'iso3_code' => 'PRT'
             ],
             [
-                'name' => '',
+                'name' => 'Palau',
                 'iso2_code' => 'PW',
                 'iso3_code' => 'PLW'
             ],
             [
-                'name' => '',
+                'name' => 'Paraguay',
                 'iso2_code' => 'PY',
                 'iso3_code' => 'PRY'
             ],
             [
-                'name' => '',
+                'name' => 'Qatar',
                 'iso2_code' => 'QA',
                 'iso3_code' => 'QAT'
             ],
             [
-                'name' => '',
+                'name' => 'Réunion',
                 'iso2_code' => 'RE',
                 'iso3_code' => 'REU'
             ],
             [
-                'name' => '',
+                'name' => 'Romania',
                 'iso2_code' => 'RO',
                 'iso3_code' => 'ROU'
             ],
             [
-                'name' => '',
+                'name' => 'Serbia',
                 'iso2_code' => 'RS',
                 'iso3_code' => 'SRB'
             ],
             [
-                'name' => '',
+                'name' => 'Russian Federation',
                 'iso2_code' => 'RU',
                 'iso3_code' => 'RUS'
             ],
             [
-                'name' => '',
+                'name' => 'Rwanda',
                 'iso2_code' => 'RW',
                 'iso3_code' => 'RWA'
             ],
             [
-                'name' => '',
+                'name' => 'Saudi Arabia',
                 'iso2_code' => 'SA',
                 'iso3_code' => 'SAU'
             ],
             [
-                'name' => '',
+                'name' => 'Solomon Islands',
                 'iso2_code' => 'SB',
                 'iso3_code' => 'SLB'
             ],
             [
-                'name' => '',
+                'name' => 'Seychelles',
                 'iso2_code' => 'SC',
                 'iso3_code' => 'SYC'
             ],
             [
-                'name' => '',
+                'name' => 'Sudan',
                 'iso2_code' => 'SD',
                 'iso3_code' => 'SDN'
             ],
             [
-                'name' => '',
+                'name' => 'Sweden',
                 'iso2_code' => 'SE',
                 'iso3_code' => 'SWE'
             ],
             [
-                'name' => '',
+                'name' => 'Singapore',
                 'iso2_code' => 'SG',
                 'iso3_code' => 'SGP'
             ],
             [
-                'name' => '',
+                'name' => 'Saint Helena',
                 'iso2_code' => 'SH',
                 'iso3_code' => 'SHN'
             ],
             [
-                'name' => '',
+                'name' => 'Slovenia',
                 'iso2_code' => 'SI',
                 'iso3_code' => 'SVN'
             ],
             [
-                'name' => '',
+                'name' => 'Svalbard and Jan Mayen Islands',
                 'iso2_code' => 'SJ',
                 'iso3_code' => 'SJM'
             ],
             [
-                'name' => '',
+                'name' => 'Slovakia',
                 'iso2_code' => 'SK',
                 'iso3_code' => 'SVK'
             ],
             [
-                'name' => '',
+                'name' => 'Sierra Leone',
                 'iso2_code' => 'SL',
                 'iso3_code' => 'SLE'
             ],
             [
-                'name' => '',
+                'name' => 'San Marino',
                 'iso2_code' => 'SM',
                 'iso3_code' => 'SMR'
             ],
             [
-                'name' => '',
+                'name' => 'Senegal',
                 'iso2_code' => 'SN',
                 'iso3_code' => 'SEN'
             ],
             [
-                'name' => '',
+                'name' => 'Somalia',
                 'iso2_code' => 'SO',
                 'iso3_code' => 'SOM'
             ],
             [
-                'name' => '',
+                'name' => 'Suriname',
                 'iso2_code' => 'SR',
                 'iso3_code' => 'SUR'
             ],
             [
-                'name' => '',
+                'name' => 'Sao Tome and Principe',
                 'iso2_code' => 'ST',
                 'iso3_code' => 'STP'
             ],
             [
-                'name' => '',
+                'name' => 'El Salvador',
                 'iso2_code' => 'SV',
                 'iso3_code' => 'SLV'
             ],
             [
-                'name' => '',
+                'name' => 'Syrian Arab Republic (Syria)',
                 'iso2_code' => 'SY',
                 'iso3_code' => 'SYR'
             ],
             [
-                'name' => '',
+                'name' => 'Swaziland',
                 'iso2_code' => 'SZ',
                 'iso3_code' => 'SWZ'
             ],
             [
-                'name' => '',
+                'name' => 'Turks and Caicos Islands',
                 'iso2_code' => 'TC',
                 'iso3_code' => 'TCA'
             ],
             [
-                'name' => '',
+                'name' => 'Chad',
                 'iso2_code' => 'TD',
                 'iso3_code' => 'TCD'
             ],
             [
-                'name' => '',
+                'name' => 'French Southern Territories',
                 'iso2_code' => 'TF',
                 'iso3_code' => 'ATF'
             ],
             [
-                'name' => '',
+                'name' => 'Togo',
                 'iso2_code' => 'TG',
                 'iso3_code' => 'TGO'
             ],
             [
-                'name' => '',
+                'name' => 'Thailand',
                 'iso2_code' => 'TH',
                 'iso3_code' => 'THA'
             ],
             [
-                'name' => '',
+                'name' => 'Tajikistan',
                 'iso2_code' => 'TJ',
                 'iso3_code' => 'TJK'
             ],
             [
-                'name' => '',
+                'name' => 'Tokelau',
                 'iso2_code' => 'TK',
                 'iso3_code' => 'TKL'
             ],
             [
-                'name' => '',
+                'name' => 'Timor-Leste',
                 'iso2_code' => 'TL',
                 'iso3_code' => 'TLS'
             ],
             [
-                'name' => '',
+                'name' => 'Turkmenistan',
                 'iso2_code' => 'TM',
                 'iso3_code' => 'TKM'
             ],
             [
-                'name' => '',
+                'name' => 'Tunisia',
                 'iso2_code' => 'TN',
                 'iso3_code' => 'TUN'
             ],
             [
-                'name' => '',
+                'name' => 'Tonga',
                 'iso2_code' => 'TO',
                 'iso3_code' => 'TON'
             ],
             [
-                'name' => '',
+                'name' => 'Turkey',
                 'iso2_code' => 'TR',
                 'iso3_code' => 'TUR'
             ],
             [
-                'name' => '',
+                'name' => 'Trinidad and Tobago',
                 'iso2_code' => 'TT',
                 'iso3_code' => 'TTO'
             ],
             [
-                'name' => '',
+                'name' => 'Tuvalu',
                 'iso2_code' => 'TV',
                 'iso3_code' => 'TUV'
             ],
             [
-                'name' => '',
+                'name' => 'Taiwan, Republic of China',
                 'iso2_code' => 'TW',
                 'iso3_code' => 'TWN'
             ],
             [
-                'name' => '',
+                'name' => 'Tanzania, United Republic of',
                 'iso2_code' => 'TZ',
                 'iso3_code' => 'TZA'
             ],
             [
-                'name' => '',
+                'name' => 'Ukraine',
                 'iso2_code' => 'UA',
                 'iso3_code' => 'UKR'
             ],
             [
-                'name' => '',
+                'name' => 'Uganda',
                 'iso2_code' => 'UG',
                 'iso3_code' => 'UGA'
             ],
             [
-                'name' => '',
+                'name' => 'US Minor Outlying Islands',
                 'iso2_code' => 'UM',
                 'iso3_code' => 'UMI'
             ],
             [
-                'name' => '',
+                'name' => 'United States of America',
                 'iso2_code' => 'US',
                 'iso3_code' => 'USA'
             ],
             [
-                'name' => '',
+                'name' => 'Uruguay',
                 'iso2_code' => 'UY',
                 'iso3_code' => 'URY'
             ],
             [
-                'name' => '',
+                'name' => 'Uzbekistan',
                 'iso2_code' => 'UZ',
                 'iso3_code' => 'UZB'
             ],
             [
-                'name' => '',
+                'name' => 'Holy See (Vatican City State)',
                 'iso2_code' => 'VA',
                 'iso3_code' => 'VAT'
             ],
             [
-                'name' => '',
+                'name' => 'Saint Vincent and Grenadines',
                 'iso2_code' => 'VC',
                 'iso3_code' => 'VCT'
             ],
             [
-                'name' => '',
+                'name' => 'Venezuela (Bolivarian Republic)',
                 'iso2_code' => 'VE',
                 'iso3_code' => 'VEN'
             ],
             [
-                'name' => '',
+                'name' => 'British Virgin Islands',
                 'iso2_code' => 'VG',
                 'iso3_code' => 'VGB'
             ],
             [
-                'name' => '',
+                'name' => 'Virgin Islands, US',
                 'iso2_code' => 'VI',
                 'iso3_code' => 'VIR'
             ],
             [
-                'name' => '',
+                'name' => 'Viet Nam',
                 'iso2_code' => 'VN',
                 'iso3_code' => 'VNM'
             ],
             [
-                'name' => '',
+                'name' => 'Vanuatu',
                 'iso2_code' => 'VU',
                 'iso3_code' => 'VUT'
             ],
             [
-                'name' => '',
+                'name' => 'Wallis and Futuna Islands',
                 'iso2_code' => 'WF',
                 'iso3_code' => 'WLF'
             ],
             [
-                'name' => '',
+                'name' => 'Samoa',
                 'iso2_code' => 'WS',
                 'iso3_code' => 'WSM'
             ],
             [
-                'name' => '',
+                'name' => 'Yemen',
                 'iso2_code' => 'YE',
                 'iso3_code' => 'YEM'
             ],
             [
-                'name' => '',
+                'name' => 'Mayotte',
                 'iso2_code' => 'YT',
                 'iso3_code' => 'MYT'
             ],
             [
-                'name' => '',
+                'name' => 'South Africa',
                 'iso2_code' => 'ZA',
                 'iso3_code' => 'ZAF'
             ],
             [
-                'name' => '',
+                'name' => 'Zambia',
                 'iso2_code' => 'ZM',
                 'iso3_code' => 'ZMB'
             ],
             [
-                'name' => '',
+                'name' => 'Zimbabwe',
                 'iso2_code' => 'ZW',
                 'iso3_code' => 'ZWE'
             ]

@@ -7,7 +7,6 @@ namespace App\Http\Controllers\Magento\Script;
 use App\Address;
 use App\Http\Controllers\Magento\Customer;
 use App\Http\Controllers\Magento\Helper;
-use Exception;
 use Illuminate\Support\Facades\Log;
 
 class CustomerSync
@@ -43,7 +42,6 @@ class CustomerSync
     protected const addressFieldsToRename = [
         'firstname' => 'first_name',
         'lastname' => 'last_name',
-        'region_id' => 'region',
         'telephone' => 'phone'
     ];
 
@@ -84,7 +82,7 @@ class CustomerSync
                             self::addressFieldsToRename
                         );
                         $parsedAddress['customer_id'] = $storedCustomer->id;
-                        echo $parsedAddress['region'];
+                        echo $parsedAddress['region_id'];
 
                         $storedAddress = Address::getFirst('magento_id', $address->entity_id);
                         if ($force || Helper::hasDifferences($parsedAddress, $storedAddress)) {
@@ -102,9 +100,6 @@ class CustomerSync
                                 ['magento_id' => $address->entity_id],
                                 $parsedAddress
                             );
-                            // if (empty($storedAddress)) {
-                            //     $storedCustomer->addresses()->attach($updatedAddress);
-                            // }
                         }
                     } catch (\Exception $e) {
                         self::log($e);

@@ -12,6 +12,8 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(OauthClientsSeeder::class);
+        $this->call(CountrySeeder::class);
+        $this->call(RegionSeeder::class);
         $this->call(RoleSeeder::class);
         $this->call(UserSeeder::class);
         $this->call(MasAccountSeeder::class);
@@ -26,9 +28,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CashRegisterSeeder::class);
 
         $this->call(PlantshedPostCodes::class);
-        $this->call(PlantshedAreasSeeder::class);
-
-        // $this->call(ShippingSeeder::class);
 
         if (config('app.env') === 'local') {
             $this->call(CustomerSeeder::class);
@@ -37,8 +36,8 @@ class DatabaseSeeder extends Seeder
             $this->call(GiftcardSeeder::class);
             $this->call(CouponSeeder::class);
 
-            // $this->call(ProductSeeder::class);
-            // $this->call(CategorySeeder::class);
+            $this->call(ProductSeeder::class);
+            $this->call(CategorySeeder::class);
         }
     }
 }

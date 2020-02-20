@@ -6,28 +6,26 @@ use App\Address;
 use App\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 
 class CustomerController extends Controller
 {
-    protected $model = Customer::class;
-
     public function all()
     {
-        return response($this->model::paginate(), 200);
+        return response(Customer::paginate());
     }
 
     public function get(Customer $model)
     {
+        // $customer = ;
         return response($model->load('addresses'));
     }
 
-    public function update(Request $request, Customer $model)
+    public function update(Request $request)
     {
         $validatedData = $request->validate([
-            'id' => 'required|exists:users,id',
-            'email' => 'email|unique:users,email,' . $model->id,
+            'id' => 'required|exists:customers,id',
+            'email' => 'email|unique:customers,email,' . $request->id,
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'house_account_status' => 'nullable|bool',
@@ -39,9 +37,11 @@ class CustomerController extends Controller
             'phone' => 'nullable|string'
         ]);
 
+        $customer = Customer::firstOrFail($validatedData['id']);
+
         if ($validatedData['no_tax'] && empty($validatedData['file'])) {
 
-            if (empty($model->no_tax_file)) {
+            if (empty($customer->no_tax_file)) {
                 return response(['errors' => ['Zero Tax' => 'Certification file is required when zero tax is enabled']], 422);
             }
         }

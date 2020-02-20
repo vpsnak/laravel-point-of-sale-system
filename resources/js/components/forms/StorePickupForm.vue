@@ -30,7 +30,7 @@
             :loading="loading"
             :error-messages="errors"
             :success="valid"
-            item-text="default_name"
+            item-text="name"
             item-value="region_id"
           ></v-select>
         </ValidationProvider>

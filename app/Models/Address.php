@@ -2,11 +2,11 @@
 
 namespace App;
 
-class Address extends BaseModel
-{
-    //    protected $with = ['customers'];
+use Illuminate\Database\Eloquent\Model;
 
-    protected $appends = ['address_country', 'address_region'];
+class Address extends Model
+{
+    protected $with = ['region'];
 
     protected $fillable = [
         'magento_id',
@@ -41,10 +41,12 @@ class Address extends BaseModel
     public function setIsDefaultShippingAttribute($value)
     {
         if ($customer = $this->customer) {
-            $currentCustomerShipping = $customer->addresses->where('is_default_shipping', 1)->first();
-            if ($currentCustomerShipping && $value) {
-                $currentCustomerShipping->is_default_shipping = false;
-                $currentCustomerShipping->save();
+            $defaultShippingAddresses = $customer->addresses()->where('is_default_shipping', 1)->get();
+            if ($defaultShippingAddresses && $value) {
+                foreach ($defaultShippingAddresses as $defaultShippingAddress) {
+                    $defaultShippingAddress->is_default_billing = false;
+                    $defaultShippingAddress->save();
+                }
             }
         }
         $this->attributes['is_default_shipping'] = $value;
@@ -53,10 +55,12 @@ class Address extends BaseModel
     public function setIsDefaultBillingAttribute($value)
     {
         if ($customer = $this->customer) {
-            $currentCustomerBilling = $customer->addresses->where('is_default_billing', 1)->first();
-            if ($currentCustomerBilling && $value) {
-                $currentCustomerBilling->is_default_billing = false;
-                $currentCustomerBilling->save();
+            $defaultBillingAddresses = $customer->addresses()->where('is_default_billing', 1)->get();
+            if ($defaultBillingAddresses && $value) {
+                foreach ($defaultBillingAddresses as $defaultBillingAddress) {
+                    $defaultBillingAddress->is_default_billing = false;
+                    $defaultBillingAddress->save();
+                }
             }
         }
         $this->attributes['is_default_billing'] = $value;

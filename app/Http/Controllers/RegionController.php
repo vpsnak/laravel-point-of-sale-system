@@ -3,12 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Region;
-use Illuminate\Http\Request;
 
-class RegionController extends BaseController
+class RegionController extends Controller
 {
-    protected $model = Region::class;
-
     public function all()
     {
         return response(Region::all());

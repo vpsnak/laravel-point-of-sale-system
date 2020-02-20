@@ -210,12 +210,12 @@
               name="State"
             >
               <v-select
-                v-model="formFields.address.region"
+                v-model="formFields.address.region_id"
                 :items="regions"
                 label="States"
                 required
-                item-text="default_name"
-                item-value="region_id"
+                item-text="name"
+                item-value="id"
                 :error-messages="errors"
                 :success="valid"
               ></v-select>

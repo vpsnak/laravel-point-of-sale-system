@@ -214,17 +214,29 @@ export default {
       }
     });
 
-    EventBus.$on("billing-address", event => {
+    EventBus.$on("billing-address-new", event => {
       if (event.payload) {
         this.addresses.push(event.payload);
-        this.billingAddressId = event.payload;
+        this.billingAddressId = event.payload.id;
       }
     });
 
-    EventBus.$on("delivery-address", event => {
+    EventBus.$on("billing-address-edit", event => {
+      if (event.payload) {
+        this.billingAddressId = event.payload.id;
+      }
+    });
+
+    EventBus.$on("delivery-address-new", event => {
       if (event.payload) {
         this.addresses.push(event.payload);
-        this.deliveryAddressId = event.payload;
+        this.deliveryAddressId = event.payload.id;
+      }
+    });
+
+    EventBus.$on("delivery-address-edit", event => {
+      if (event.payload) {
+        this.deliveryAddressId = event.payload.id;
       }
     });
   },
@@ -368,7 +380,7 @@ export default {
       "setCustomerAddress",
       "setIsValid"
     ]),
-    ...mapActions(["postRequest"]),
+    ...mapActions("requests", ["request"]),
 
     getAddressById(id) {
       return _.find(this.customer.addresses, { id: id });
@@ -401,6 +413,7 @@ export default {
       }
     },
     addressDialog(action, address_id) {
+      console.log(address_id);
       let icon;
       let title;
       let data;
@@ -409,18 +422,22 @@ export default {
       if (action === "delivery") {
         icon = "mdi-map-marker";
         title = address_id ? "Edit delivery address" : "New delivery address";
-        data = this.selected_delivery_address;
-        eventChannel = "delivery-address";
+        data = address_id ? this.selected_delivery_address : null;
+        eventChannel = address_id
+          ? "delivery-address-edit"
+          : "delivery-address-new";
       } else {
         icon = "mdi-receipt";
         title = address_id ? "Edit billing address" : "New billing address";
-        data = this.selected_billing_address;
-        eventChannel = "billing-address";
+        data = address_id ? this.selected_billing_address : null;
+        eventChannel = address_id
+          ? "billing-address-edit"
+          : "billing-address-new";
       }
 
       this.setDialog({
         show: true,
-        width: 600,
+        width: 750,
         fullscreen: false,
         title: title,
         titleCloseBtn: true,
@@ -443,13 +460,14 @@ export default {
       if (this.delivery.address_id && this.delivery.date) {
         this.loading = true;
         let payload = {
+          method: post,
           url: "shipping/timeslot",
           data: {
             postcode: this.selected_delivery_address.postcode,
             date: this.delivery.date
           }
         };
-        this.postRequest(payload)
+        this.request(payload)
           .then(response => {
             this.timeSlots = response;
           })
@@ -468,11 +486,11 @@ export default {
         " " +
         item.city +
         ", " +
-        item.address_region.default_name +
+        item.region.name +
         ", " +
         item.postcode +
         ", " +
-        item.address_country
+        item.region.country.iso3_code
       );
     }
   }

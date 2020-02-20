@@ -64,9 +64,7 @@ export default [
     name: "openCashRegister",
     path: "/open-cash-register",
     components: {
-      default: OpenCashRegister,
-      side_menu: SideMenu,
-      top_menu: TopMenu
+      default: OpenCashRegister
     },
     meta: { requiresAuth: true }
   },

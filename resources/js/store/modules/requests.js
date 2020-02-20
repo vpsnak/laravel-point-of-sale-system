@@ -1,16 +1,16 @@
 const actions = {
-  post(context, payload) {
+  request(context, payload) {
     return new Promise((resolve, reject) => {
       const successNotification = payload.success_notification || false;
       const errorNotification = payload.error_notification;
       const mutations = payload.mutations;
       const console_out = process.env.NODE_ENV === "development" ? true : false;
 
-      axios
-        .post(
-          `${context.rootState.config.base_url}/${payload.endpoint}`,
-          payload.data
-        )
+      axios({
+        method: payload.method,
+        url: `${context.rootState.config.base_url}/${payload.endpoint}`,
+        data: payload.data
+      })
         .then(response => {
           if (successNotification && _.has(response.data, "notification")) {
             context.commit("setNotification", response.data.notification);

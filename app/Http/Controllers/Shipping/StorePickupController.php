@@ -5,36 +5,48 @@ namespace App\Http\Controllers;
 use App\StorePickup;
 use Illuminate\Http\Request;
 
-class StorePickupController extends BaseController
+class StorePickupController extends Controller
 {
-    protected $model = StorePickup::class;
-
     public function create(Request $request)
     {
         $validatedData = $request->validate([
             'name' => 'required|string',
             'street' => 'required|string',
             'street1' => 'nullable|string',
-            'country_id' => 'required|exists:countries,country_id',
-            'region_id' => 'required|exists:regions,region_id',
+            'country_id' => 'required|exists:countries,id',
+            'region_id' => 'required|exists:regions,id',
         ]);
 
-        $validatedID = $request->validate([
-            'id' => 'nullable|exists:store_pickups,id'
+        return response($this->model::store($validatedData), 201);
+    }
+
+    public function update(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id' => 'required|exists:store_pickups,id',
+            'name' => 'required|string',
+            'street' => 'required|string',
+            'street1' => 'nullable|string',
+            'country_id' => 'required|exists:countries,id',
+            'region_id' => 'required|exists:regions,id',
         ]);
 
-        if (!empty($validatedID)) {
-            return response($this->model::updateData($validatedID, $validatedData), 200);
-        } else {
-            return response($this->model::store($validatedData), 201);
-        }
+        $storePickup = StorePickup::findOrFail($validatedData['id']);
+        $storePickup->fill($validatedData);
+        $storePickup->save();
+
+        return response(['notification' => [
+            "msg" => "Store pickup: {$storePickup->name} successfully updated!",
+            "type" => "success"
+        ]]);
     }
 
     public function all()
     {
-        return response($this->model::paginate());
+        return response(StorePickup::with('region')->paginate());
     }
 
+    //@TODO FIX SEARCH
     public function search(Request $request)
     {
         $validatedData = $request->validate([
