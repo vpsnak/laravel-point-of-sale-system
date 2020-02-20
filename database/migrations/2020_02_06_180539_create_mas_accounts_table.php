@@ -23,6 +23,8 @@ class CreateMasAccountsTable extends Migration
             $table->string('username');
             $table->string('password');
             $table->boolean('active');
+            $table->json('default_recipient_account');
+            $table->json('default_online_partner_account');
         });
     }
 

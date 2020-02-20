@@ -266,7 +266,7 @@ export default {
 
       let payload = {
         method: "post",
-        endpoint: "payments/unlinked-refund",
+        url: "payments/unlinked-refund",
         mutations: [],
         data: {
           order_id: this.order_id,

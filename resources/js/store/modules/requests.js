@@ -8,7 +8,7 @@ const actions = {
 
       axios({
         method: payload.method,
-        url: `${context.rootState.config.base_url}/${payload.endpoint}`,
+        url: `${context.rootState.config.base_url}/${payload.url}`,
         data: payload.data
       })
         .then(response => {

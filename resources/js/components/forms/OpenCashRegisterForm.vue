@@ -172,7 +172,7 @@ export default {
     getStores() {
       this.request({
         method: "get",
-        endpoint: "stores"
+        url: "stores"
       })
         .then(response => {
           this.stores = response;

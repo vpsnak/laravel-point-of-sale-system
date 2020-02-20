@@ -3,36 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\MasAccount;
-use App\Order;
+use App\Region;
+use Illuminate\Http\Request;
 
 class MasAccountController extends Controller
 {
-    protected static $mas_direct_id = 'USZZ000035';
-    protected static $user = 'pshed';
-    protected static $pass = '9JNH76k#';
-
-    public function test()
-    {
-        $masAccounts = MasAccount::all();
-
-        return response([
-            'accounts' => $masAccounts,
-            'karfwtila' => [
-                'user' => 'pshed',
-                'pass' => '9JNH76k#',
-                'FulfillerMDNumber' => 'USNY000012',
-                'mas_direct_id' => 'USZZ000035',
-                'test' => 'http://masapitest.cloudapp.net/MASDirect.Api.Service.svc/api/messagesj',
-                'production' => 'https://api.masdirectnetwork.com/api/messages'
-            ],
-            'headers' => [
-                'test' => $masAccounts[0]->getAuthHeader(),
-                'prod' => $masAccounts[1]->getAuthHeader(),
-                'snak' => 'Basic ' . base64_encode(self::$user . ':' . self::$pass . ':' . self::$mas_direct_id),
-            ]
-        ]);
-    }
-
     public function getEnv()
     {
         return response(MasAccount::getActive()->environment);
@@ -54,6 +29,94 @@ class MasAccountController extends Controller
         return response([
             "info" => ["MAS" => ["MAS environment: $masAccount->environment"]],
             "payload" => $masAccount->environment
+        ]);
+    }
+
+    public function getDefaultRecipientAccount($environment)
+    {
+        return response(MasAccount::where('environment', $environment)->first('default_recipient_account'));
+    }
+
+    public function getDefaultOnlinePartnerAccount($environment)
+    {
+        return response(MasAccount::where('environment', $environment)->first('default_online_partner_account'));
+    }
+
+    public function setDefaultRecipientAccount(Request $request)
+    {
+        $validatedData = $request->validate([
+            'environment' => 'required|exists:mas_accounts,environment',
+            'region_id' => 'required|exists:regions,id',
+
+            'ExtensionData' => 'nullable|string',
+            'RecipientFirstName' => 'required|string',
+            'RecipientLastName' => 'required|string',
+            'RecipientEmail' => 'required|email',
+            'RecipientAddress' => 'required|string',
+            'RecipientAddress2' => 'nullable|string',
+            'RecipientCity' => 'required|string',
+            'RecipientZip' => 'required|numeric|digits:5',
+            'RecipientPhone' => 'required|string',
+            'CardMessage' => 'nullable|string',
+            'OccasionType' => 'required|numeric',
+            'ResidenceType' => 'required|numeric',
+        ]);
+        $mas_account = MasAccount::where('environment', $validatedData['environment'])->first();
+        $region = Region::findOrFail($validatedData['region_id']);
+
+
+        unset($validatedData['region_id']);
+        unset($validatedData['environment']);
+        $validatedData['RecipientState'] = $region->code;
+        $validatedData['RecipientCountry'] = $region->country->iso2_code;
+        $mas_account->default_recipient_account = $validatedData;
+        $mas_account->save();
+
+        return response([
+            'notification' => [
+                'msg' => ["Default recipient account for mas env: {$mas_account->environment} updated successfully!"],
+                'type' => 'success'
+            ]
+        ]);
+    }
+
+    public function setDefaultOnlinePartnerAccount(Request $request)
+    {
+        $validatedData = $request->validate([
+            'environment' => 'required|exists:mas_accounts,environment',
+            'region_id' => 'required|exists:regions,id',
+
+            'SoldName' => 'required|string',
+            'SoldAddress' => 'required|string',
+            'SoldAddress2' => 'nullable|string',
+            'SoldCity' => 'required|string',
+            'SoldZip' => 'required|string|size:5',
+            'SoldPhoneHome' => 'required|string',
+            'SoldPhoneWork' => 'required|string',
+            'SoldPhoneMobile' => 'required|string',
+            'SoldEmail' => 'required|email',
+            'SalesRep' => 'nullable|string',
+            'ShippingVia' => 'nullable|string',
+            'ShippingPriority' => 'nullable|numeric',
+            'AuthCode' => 'nullable|string',
+            'SoldAttention' => 'nullable|string',
+            'CustomerId' => 'nullable|string',
+        ]);
+        $mas_account = MasAccount::where('environment', $validatedData['environment'])->first();
+        $region = Region::findOrFail($validatedData['region_id']);
+
+        unset($validatedData['region_id']);
+        unset($validatedData['environment']);
+        $validatedData['SoldState'] = $region->code;
+        // $validatedData['SoldCountry'] = $region->country->iso2_code;
+        $mas_account->default_online_partner_account = $validatedData;
+        $mas_account->save();
+
+        return response([
+            'notification' => [
+                'msg' => ["Default online partnet account for mas env: {$mas_account->environment} updated successfully!"],
+                'type' => 'success'
+            ]
         ]);
     }
 }

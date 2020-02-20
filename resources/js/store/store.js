@@ -369,7 +369,7 @@ export default new Vuex.Store({
     openCashRegister(context, payload) {
       return new Promise((resolve, reject) => {
         payload.method = "post";
-        payload.endpoint = "cash-register-logs/open";
+        payload.url = "cash-register-logs/open";
         context
           .dispatch("requests/request", payload)
           .then(response => {
@@ -389,7 +389,7 @@ export default new Vuex.Store({
         context
           .dispatch("requests/request", {
             method: "get",
-            endpoint: "cash-register-logs/logout"
+            url: "cash-register-logs/logout"
           })
           .then(response => {
             if (["sales", "orders"].indexOf(router.currentRoute.name) >= 0) {

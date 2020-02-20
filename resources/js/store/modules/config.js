@@ -249,7 +249,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       let payload = {
         method: "get",
-        endpoint: "cash-register-logs/retrieve"
+        url: "cash-register-logs/retrieve"
       };
 
       context

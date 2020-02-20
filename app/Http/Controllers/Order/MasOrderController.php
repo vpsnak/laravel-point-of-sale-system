@@ -88,8 +88,11 @@ class MasOrderController extends Controller
             return ['success' => $response->Messages, 'payload' => $payload];
         } else if (!empty($response->ControlNumber)) {
             MasOrder::updateOrCreate(['order_id' => $order->id], [
-                'mas_id' => $response->ControlNumber,
+                'mas_control_number' => $response->ControlNumber,
+                'mas_message_number' => $response->MessageNumber,
                 'status' => 'success',
+                'payload' => $payload,
+                'response' => $response
             ]);
             return ['success' => $response, 'payload' => $payload];
         } else {

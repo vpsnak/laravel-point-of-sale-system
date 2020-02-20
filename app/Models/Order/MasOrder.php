@@ -12,7 +12,7 @@ class MasOrder extends Model
         'mas_message_number',
         'status',
         'payload',
-        'response'
+        'response',
     ];
 
     public function order()

@@ -266,7 +266,7 @@ export default {
 
       let payload = {
         method: "post",
-        endpoint: this.address.id ? "addresses/update" : "addresses/create",
+        url: this.address.id ? "addresses/update" : "addresses/create",
         model: "addresses",
         data: this.address
       };
@@ -288,7 +288,7 @@ export default {
 
       const payload = {
         method: "get",
-        endpoint: "countries"
+        url: "countries"
       };
       this.request(payload)
         .then(response => {
@@ -310,7 +310,7 @@ export default {
 
       const payload = {
         method: "get",
-        endpoint: `countries/${country.id}/regions`
+        url: `countries/${country.id}/regions`
       };
       this.request(payload)
         .then(response => {

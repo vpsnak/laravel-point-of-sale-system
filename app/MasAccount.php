@@ -8,8 +8,13 @@ class MasAccount extends Model
 {
     public $timestamps = false;
 
+    protected $fillable = [
+        'default_recipient_account',
+        'default_online_partner_account'
+    ];
+
     protected $casts = [
-        'active' => 'boolean'
+        'active' => 'boolean',
     ];
 
     public static function getActive()
@@ -60,5 +65,23 @@ class MasAccount extends Model
     public function getPasswordAttribute($value)
     {
         return decrypt($value);
+    }
+
+    public function setDefaultRecipientAccount($value)
+    {
+        if (!is_string($value)) {
+            $this->attributes['default_recipient_account'] = json_encode($value);
+        } else {
+            $this->attributes['default_recipient_account'] = $value;
+        }
+    }
+
+    public function setDefaultOnlinePartnerAccount($value)
+    {
+        if (!is_string($value)) {
+            $this->attributes['default_online_partner_account'] = json_encode($value);
+        } else {
+            $this->attributes['default_online_partner_account'] = $value;
+        }
     }
 }

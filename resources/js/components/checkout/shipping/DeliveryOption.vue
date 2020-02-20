@@ -460,7 +460,7 @@ export default {
       if (this.delivery.address_id && this.delivery.date) {
         this.loading = true;
         let payload = {
-          method: post,
+          method: "post",
           url: "shipping/timeslot",
           data: {
             postcode: this.selected_delivery_address.postcode,
