@@ -19,12 +19,14 @@ class Store extends Model
         'city',
         'taxable',
         'is_default',
+        'active',
         'company_id',
         'tax_id',
         'user_id',
     ];
 
     protected $casts = [
+        'active' => 'boolean',
         'created_at' => "datetime:m/d/Y H:i:s",
         'updated_at' => "datetime:m/d/Y H:i:s"
     ];

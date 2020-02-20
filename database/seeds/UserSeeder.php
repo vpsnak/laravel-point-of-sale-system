@@ -18,6 +18,7 @@ class UserSeeder extends Seeder
             'email' => 'pkafritsas@webo2.gr',
             'phone' => '777777777A',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+            'active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -31,6 +32,7 @@ class UserSeeder extends Seeder
             'email' => 'npapaioannou@webo2.gr',
             'phone' => '1111111111',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+            'active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -44,6 +46,7 @@ class UserSeeder extends Seeder
             'email' => 'vpallis@webo2.gr',
             'phone' => '0000000000',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+            'active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -57,6 +60,7 @@ class UserSeeder extends Seeder
             'email' => 'cgidersos@webo2.gr',
             'phone' => '3333333333',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+            'active' => false,
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -70,6 +74,7 @@ class UserSeeder extends Seeder
             'email' => 'cafetex@cafetex.gr',
             'phone' => '1231231230',
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+            'active' => true,
             'created_at' => now(),
             'updated_at' => now(),
         ]);

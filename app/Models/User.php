@@ -25,7 +25,8 @@ class User extends Authenticatable
         'username',
         'email',
         'phone',
-        'password'
+        'password',
+        'active'
     ];
 
     /**
@@ -39,6 +40,7 @@ class User extends Authenticatable
     ];
 
     protected $casts = [
+        'active' => 'boolean',
         'email_verified_at' => 'datetime',
         'created_at' => "datetime:m/d/Y H:i:s",
         'updated_at' => "datetime:m/d/Y H:i:s"
@@ -49,11 +51,11 @@ class User extends Authenticatable
         $this->attributes['password'] = Hash::make($value);
     }
 
-    /**
-     *
-     * @var string
-     * @return bool
-     */
+    public static function getActiveUsers()
+    {
+        return self::whereActive(true);
+    }
+
     public function verifyPwd(string $password)
     {
         return Hash::check($password, $this->password);
@@ -74,8 +76,13 @@ class User extends Authenticatable
         return $this->openRegister()->whereStatus(1);
     }
 
-    public function findForPassport($username)
+    public function findForPassport(string $identifier)
     {
-        return $this->orWhere('email', $username)->orWhere('username', $username)->orWhere('phone', $username)->first();
+        return $this->where('active', true)
+            ->where(function ($query) use ($identifier) {
+                $query->orWhere('email', $identifier)
+                    ->orWhere('username', $identifier)
+                    ->orWhere('phone', $identifier);
+            })->first();
     }
 }

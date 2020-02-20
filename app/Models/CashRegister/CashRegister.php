@@ -11,6 +11,7 @@ class CashRegister extends Model
 
     protected $fillable = [
         'name',
+        'active',
         'store_id',
         'user_id',
         'barcode',
@@ -19,6 +20,7 @@ class CashRegister extends Model
     ];
 
     protected $casts = [
+        'active' => 'boolean',
         'created_at' => "datetime:m/d/Y H:i:s",
         'updated_at' => "datetime:m/d/Y H:i:s"
     ];
