@@ -125,9 +125,6 @@ export default {
       let strippedItems = items.map(
         ({ discount_type, discount_amount, ...attrs }) => attrs
       );
-      strippedItems.forEach(item => {
-        item.final_price = item.original_price;
-      });
 
       state.cart_products = strippedItems;
     },

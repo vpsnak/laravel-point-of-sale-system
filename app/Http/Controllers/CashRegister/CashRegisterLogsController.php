@@ -40,7 +40,7 @@ class CashRegisterLogsController extends Controller
             'cash_register_id' => 'required|exists:cash_registers,id',
         ]);
 
-        $validatedData['closing_amount'] = auth()->user()->open_register->cash_register->earnings['cash_total'];
+        $validatedData['closing_amount'] = auth()->user()->open_register->cash_register->earnings()['cash_total'];
         $validatedData['closed_by'] = auth()->user()->id;
         $validatedData['status'] = 0;
         $validatedData['closing_time'] = Carbon::now();
@@ -97,7 +97,7 @@ class CashRegisterLogsController extends Controller
     public function amount(CashRegister $id)
     {
         return response(
-            $id->logs->where('status', 1)->first()->cash_register->earnings['cash_total']
+            $id->logs->where('status', 1)->first()->cash_register->earnings()['cash_total']
         );
     }
 

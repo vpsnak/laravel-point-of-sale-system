@@ -41,6 +41,7 @@
       </v-card-title>
 
       <v-data-table
+        fixed-header
         disable-sort
         dense
         :disable-filtering="true"
