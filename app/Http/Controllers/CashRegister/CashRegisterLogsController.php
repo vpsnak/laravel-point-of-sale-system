@@ -94,10 +94,10 @@ class CashRegisterLogsController extends Controller
         }
     }
 
-    public function amount(CashRegister $id)
+    public function amount(CashRegister $model)
     {
         return response(
-            $id->logs->where('status', 1)->first()->cash_register->earnings()['cash_total']
+            $model->logs()->where('status', true)->first()->cash_register->earnings()['cash_total']
         );
     }
 

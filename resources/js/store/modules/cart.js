@@ -337,6 +337,7 @@ export default {
       state.order_change = 0;
       state.order_total_paid = 0;
       state.order_total_item_cost = 0;
+      state.shipping_cost = 0;
 
       state.payments = [];
       state.order_notes = "";
@@ -513,7 +514,6 @@ export default {
       });
     },
     loadOrder(context, order) {
-      console.log(order);
       return new Promise(resolve => {
         context.commit("resetState");
 

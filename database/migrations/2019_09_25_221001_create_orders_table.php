@@ -28,6 +28,8 @@ class CreateOrdersTable extends Migration
             $table->json('billing_address')->nullable();
             $table->json('delivery')->nullable();
             $table->enum('method', ['retail', 'pickup', 'delivery']);
+
+            $table->unsignedBigInteger('mas_order_id')->nullable();
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->unsignedBigInteger('store_id');
             $table->unsignedBigInteger('user_id');

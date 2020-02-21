@@ -17,6 +17,7 @@ class Order extends Model
     ];
 
     protected $fillable = [
+        'mas_order_id',
         'customer_id',
         'store_id',
         'user_id',
@@ -39,6 +40,7 @@ class Order extends Model
     ];
 
     protected $with = [
+        'masOrder',
         'payments',
         'customer',
         'store',
@@ -180,6 +182,11 @@ class Order extends Model
     public function getTotalTaxAttribute()
     {
         return Price::numberPrecision($this->total - $this->total_without_tax);
+    }
+
+    public function masOrder()
+    {
+        return $this->hasOne(MasOrder::class);
     }
 
     public function payments()

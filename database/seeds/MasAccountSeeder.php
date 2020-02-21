@@ -14,7 +14,7 @@ class MasAccountSeeder extends Seeder
     {
         MasAccount::create([
             'environment' => 'test',
-            'endpoint' => 'http://masapitest.cloudapp.net/MASDirect.Api.Service.svc/api/messagesj',
+            'endpoint' => 'http://masapitest.cloudapp.net/MASDirect.Api.Service.svc/api',
             'direct_id' => 'USZZ000035',
             'fulfiller_md_number' => 'USNY000012',
             'username' => 'pshed',
@@ -24,7 +24,7 @@ class MasAccountSeeder extends Seeder
 
         MasAccount::create([
             'environment' => 'production',
-            'endpoint' => 'https://api.masdirectnetwork.com/api/messages',
+            'endpoint' => 'https://api.masdirectnetwork.com/api',
             'direct_id' => 'USZZ000035',
             'fulfiller_md_number' => 'USNY000012',
             'username' => 'pshed',

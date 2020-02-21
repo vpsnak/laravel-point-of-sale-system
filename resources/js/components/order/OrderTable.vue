@@ -175,7 +175,7 @@ export default {
       "setDataTable",
       "resetDataTable"
     ]),
-    ...mapActions(["getOne", "delete"]),
+    ...mapActions(["delete"]),
     ...mapActions("requests", ["request"]),
     ...mapActions("cart", ["loadOrder"]),
 
@@ -242,7 +242,7 @@ export default {
       return new Promise((resolve, reject) => {
         this.request({
           method: "get",
-          url: `orders/${id}`
+          url: `orders/get/${id}`
         }).then(response => {
           this.resetState();
           this.loadOrder(response);

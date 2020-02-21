@@ -82,7 +82,7 @@ export default {
         },
         {
           text: "Operator",
-          value: "user_id.name",
+          value: "created_by.name",
           sortable: false
         },
         {
@@ -138,7 +138,7 @@ export default {
     ...mapActions(["search", "delete"]),
 
     enableRefund(item) {
-      if ($props.editOrder) {
+      if (this.$props.editOrder) {
         if (
           item.status === "approved" &&
           !item.refunded &&

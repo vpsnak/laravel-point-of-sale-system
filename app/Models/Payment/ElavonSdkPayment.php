@@ -23,4 +23,23 @@ class ElavonSdkPayment extends Model
     {
         return $this->belongsTo(Payment::class);
     }
+
+    public function setLogAttribute($value)
+    {
+        if (is_array($value)) {
+            $this->attributes['log'] = json_encode($value);
+        } else {
+            $this->attributes['log'] = $value;
+        }
+    }
+
+    public function getLogAttribute($value)
+    {
+        return json_decode($value, true);
+    }
+
+    public function getPaymentTransactionData()
+    {
+        return $this->log['data']['paymentGatewayCommand']['paymentTransactionData'];
+    }
 }

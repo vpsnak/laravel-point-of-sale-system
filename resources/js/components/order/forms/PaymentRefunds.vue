@@ -28,8 +28,8 @@
           </v-col>
         </v-row>
         <!-- giftcard-existing -->
-        <v-row dense justify="center" v-if="method === 'giftcard-existing'">
-          <v-col :md="4">
+        <v-row dense v-if="method === 'giftcard-existing'">
+          <v-col :md="3" :offset-md="3">
             <ValidationProvider
               name="Gift card code"
               rules="required"
@@ -87,106 +87,6 @@
             </ValidationProvider>
           </v-col>
         </v-row>
-        <v-row justify="center" v-if="method === 'cc-api'">
-          <v-col :md="4">
-            <ValidationProvider
-              name="Card number"
-              rules="required"
-              v-slot="{ errors, valid }"
-            >
-              <v-text-field
-                dense
-                :error-messages="errors"
-                :success="valid"
-                autocomplete="off"
-                label="Card number"
-                type="number"
-                prepend-inner-icon="mdi-credit-card"
-                v-model="card.number"
-                :disabled="loading"
-              ></v-text-field>
-            </ValidationProvider>
-          </v-col>
-          <v-col :md="2">
-            <ValidationProvider
-              name="Exp date"
-              rules="required"
-              v-slot="{ errors, valid }"
-            >
-              <v-text-field
-                dense
-                :error-messages="errors"
-                :success="valid"
-                autocomplete="off"
-                :disabled="loading"
-                label="Exp date"
-                v-model="card.exp_date"
-                prepend-inner-icon="mdi-calendar"
-              ></v-text-field>
-            </ValidationProvider>
-          </v-col>
-        </v-row>
-        <v-row justify="center" v-if="method === 'cc-api'">
-          <v-col :md="4">
-            <ValidationProvider rules="required" v-slot="{ errors, valid }">
-              <v-text-field
-                dense
-                :error-messages="errors"
-                :success="valid"
-                autocomplete="off"
-                label="Card holder's name"
-                prepend-inner-icon="mdi-account-box"
-                v-model="card.holder"
-                :disabled="loading"
-              ></v-text-field>
-            </ValidationProvider>
-          </v-col>
-          <v-col :md="2">
-            <ValidationProvider rules="required" v-slot="{ errors, valid }">
-              <v-text-field
-                dense
-                :error-messages="errors"
-                :success="valid"
-                autocomplete="off"
-                label="CVC/CVV"
-                type="number"
-                prepend-inner-icon="mdi-lock"
-                v-model="card.cvc"
-                :disabled="loading"
-              ></v-text-field>
-            </ValidationProvider>
-          </v-col>
-        </v-row>
-        <v-row justify="center" justify-md="start" align="center">
-          <v-col :md="2" :offset-md="3">
-            <ValidationProvider
-              :rules="'required|between:0.1,' + maxRefund"
-              v-slot="{ errors, valid }"
-              name="Amount"
-            >
-              <v-text-field
-                :error-messages="errors"
-                :success="valid"
-                v-model="amount"
-                :disabled="loading"
-                type="number"
-                label="Amount"
-                prefix="$"
-              ></v-text-field>
-            </ValidationProvider>
-          </v-col>
-          <v-col :md="4" :offset-md="2">
-            <v-btn
-              type="submit"
-              text
-              color="primary"
-              :disabled="invalid"
-              :loading="loading"
-            >
-              Refund
-            </v-btn>
-          </v-col>
-        </v-row>
       </ValidationObserver>
     </v-container>
   </v-card>
@@ -211,18 +111,6 @@ export default {
           text: "New gift card",
           icon: "mdi-wallet-giftcard",
           value: "giftcard-new"
-        },
-        {
-          id: 9,
-          text: "CC API",
-          icon: "mdi-credit-card",
-          value: "cc-api"
-        },
-        {
-          id: 10,
-          text: "CC",
-          icon: "mdi-credit-card-scan",
-          value: "cc-pos"
         }
       ],
       method: "giftcard-existing",
@@ -231,12 +119,6 @@ export default {
       giftcard: {
         code: null,
         name: null
-      },
-      card: {
-        number: "",
-        holder: "",
-        exp_date: "",
-        cvc: ""
       }
     };
   },
@@ -282,12 +164,8 @@ export default {
         case "giftcard-new":
           payload.data.giftcard = this.giftcard;
           break;
-        case "cc-api":
-          break;
-        case "cc-pos":
-          payload.data.card = this.card;
-          break;
         default:
+          this.loading = false;
           return;
       }
 
@@ -295,7 +173,6 @@ export default {
         .then(response => {
           console.log(response);
         })
-
         .finally(() => {
           this.loading = false;
         });

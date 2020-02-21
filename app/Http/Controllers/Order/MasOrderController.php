@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ElavonSdkPayment;
 use App\Helper\Price;
 use App\MasAccount;
 use App\MasOrder;
@@ -46,7 +47,13 @@ class MasOrderController extends Controller
         try {
             $client = new Client();
 
-            $response = $client->post($masAccount->endpoint, [
+            if ($masAccount->environment === 'production') {
+                $url = 'messages';
+            } else {
+                $url = 'messagesj';
+            }
+
+            $response = $client->post("{$masAccount->endpoint}/{$url}", [
                 'headers' => [
                     'Authorization' => $masAccount->getAuthHeader(),
                     'Content-Type' => 'application/json',
@@ -58,7 +65,7 @@ class MasOrderController extends Controller
 
             $json = (string) $response->getBody()->getContents();
             self::log('Response: ' . $json);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $json = (string) $e->getResponse()->getBody();
             self::log("Error: {$json}");
         }
@@ -81,7 +88,7 @@ class MasOrderController extends Controller
             MasOrder::updateOrCreate(['order_id' => $order->id], [
                 'mas_control_number' => $response->Messages->ControlNumber,
                 'mas_message_number' => $response->Messages->MessageNumber,
-                'status' => 'success',
+                'status' => 'submitted',
                 'payload' => $payload,
                 'response' => $response->Messages
             ]);
@@ -90,7 +97,7 @@ class MasOrderController extends Controller
             MasOrder::updateOrCreate(['order_id' => $order->id], [
                 'mas_control_number' => $response->ControlNumber,
                 'mas_message_number' => $response->MessageNumber,
-                'status' => 'success',
+                'status' => 'submitted',
                 'payload' => $payload,
                 'response' => $response
             ]);
@@ -227,45 +234,31 @@ class MasOrderController extends Controller
             switch ($payment->paymentType->type) {
                 case 'cash':
                     $response[$i]['PaymentAmount'] = $payment->amount;
-                    $response[$i]['PaymentType'] = "7";
-                    $response[$i]['BillingAccount'] = '';
-                    $response[$i]['BillingExpiration'] = '';
-                    $response[$i]['BillingCv2'] = '';
-                    $response[$i]['PNRefToken'] = '';
-                    $response[$i]['AuthCode'] = '';
-                    $response[$i]['BillingZip'] = '';
-                    $response[$i]['CheckNumber'] = '';
-                    $response[$i]['RoutingNumber'] = '';
-                    $response[$i]['CreditCardType'] = '';
-                    $response[$i]['GiftCardNumber'] = '';
+                    $response[$i]['PaymentType'] = 7;
+                    $response[$i]['AuthCode'] = 'cash';
                     break;
                 case 'card':
                     $response[$i]['PaymentAmount'] = $payment->amount;
-                    $response[$i]['PaymentType'] = "1";
+                    $response[$i]['PaymentType'] = 1;
                     $response[$i]['BillingAccount'] = '';
                     $response[$i]['BillingExpiration'] = '';
                     $response[$i]['BillingCv2'] = '';
                     $response[$i]['PNRefToken'] = '';
-                    $response[$i]['AuthCode'] = '';
+                    $response[$i]['AuthCode'] = $payment->code;
                     $response[$i]['BillingZip'] = '';
                     $response[$i]['CheckNumber'] = '';
                     $response[$i]['RoutingNumber'] = '';
                     $response[$i]['CreditCardType'] = '';
-                    $response[$i]['GiftCardNumber'] = '';
                     break;
                 case 'pos-terminal':
+                    $log = $payment->elavonSdkPayments()->latest()->first();
+
                     $response[$i]['PaymentAmount'] = $payment->amount;
-                    $response[$i]['PaymentType'] = "1";
-                    $response[$i]['BillingAccount'] = '';
-                    $response[$i]['BillingExpiration'] = '';
-                    $response[$i]['BillingCv2'] = '';
-                    $response[$i]['PNRefToken'] = '';
-                    $response[$i]['AuthCode'] = '';
+                    $response[$i]['PaymentType'] = 1;
+                    $response[$i]['PNRefToken'] = null;
+                    $response[$i]['AuthCode'] = $payment->code;
                     $response[$i]['BillingZip'] = '';
-                    $response[$i]['CheckNumber'] = '';
-                    $response[$i]['RoutingNumber'] = '';
-                    $response[$i]['CreditCardType'] = '';
-                    $response[$i]['GiftCardNumber'] = '';
+                    $response[$i]['CreditCardType'] = MasOrder::getCreditCardType($log->getPaymentTransactionData()['cardScheme']);
                     break;
                 case 'house-account':
                     $response[$i]['PaymentAmount'] = $payment->amount;
@@ -273,27 +266,15 @@ class MasOrderController extends Controller
                     $response[$i]['BillingExpiration'] = '';
                     $response[$i]['BillingCv2'] = '';
                     $response[$i]['PaymentType'] = '';
-                    $response[$i]['PNRefToken'] = '';
-                    $response[$i]['AuthCode'] = '';
-                    $response[$i]['BillingZip'] = '';
-                    $response[$i]['CheckNumber'] = '';
-                    $response[$i]['RoutingNumber'] = '';
-                    $response[$i]['CreditCardType'] = '';
-                    $response[$i]['GiftCardNumber'] = '';
+                    $response[$i]['PNRefToken'] = null;
+                    $response[$i]['AuthCode'] = 'house_account';
                     break;
                 case 'giftcard':
                     $response[$i]['PaymentAmount'] = $payment->amount;
-                    $response[$i]['PaymentType'] = "2";
+                    $response[$i]['PaymentType'] = 2;
                     $response[$i]['GiftCardNumber'] = $payment->code;
-                    $response[$i]['BillingAccount'] = '';
-                    $response[$i]['BillingExpiration'] = '';
-                    $response[$i]['BillingCv2'] = '';
-                    $response[$i]['PNRefToken'] = '';
-                    $response[$i]['AuthCode'] = '';
-                    $response[$i]['BillingZip'] = '';
-                    $response[$i]['CheckNumber'] = '';
-                    $response[$i]['RoutingNumber'] = '';
-                    $response[$i]['CreditCardType'] = '';
+                    $response[$i]['PNRefToken'] = null;
+                    $response[$i]['AuthCode'] = 'giftcard';
                     break;
                 default:
                     break;
@@ -305,27 +286,29 @@ class MasOrderController extends Controller
 
     public static function getOrderDetails(Order $model)
     {
-        $masOrder = MasOrder::where('order_id', $model->order_id)->first();
+        if ($model->masOrder) {
+            $masAccount = MasAccount::getActive();
+            try {
+                $client = new Client();
 
-        $masAccount = MasAccount::getActive();
+                $response = $client->get("$masAccount->endpoint/orders/{$model->masOrder->mas_message_number}", [
+                    'headers' => [
+                        'Authorization' => $masAccount->getAuthHeader(),
+                        'Content-Type' => 'application/json',
+                        'Accept' => 'application/json'
+                    ],
+                    'connect_timeout' => 15
+                ]);
 
-        try {
-            $client = new Client();
-
-            $response = $client->get("$masAccount->endpoint/{$masOrder->mas_message_number}", [
-                'headers' => [
-                    'Authorization' => $masAccount->getAuthHeader(),
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json'
-                ],
-                'connect_timeout' => 15
-            ]);
-
-            $json = (string) $response->getBody()->getContents();
-            self::log('Response: ' . $json);
-        } catch (\Exception $e) {
-            $json = (string) $e->getResponse()->getBody();
-            self::log("Error: {$json}");
+                $json = (string) $response->getBody()->getContents();
+                self::log('Response: ' . $json);
+                return response($json);
+            } catch (Exception $e) {
+                $json = (string) $e->getResponse()->getBody();
+                self::log("Error: {$json}");
+            }
+        } else {
+            return response(['errors' => ["No status for order #{$model->id}<br>Check if the order is submitted and try again"]]);
         }
     }
 

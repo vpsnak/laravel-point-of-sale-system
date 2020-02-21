@@ -96,7 +96,7 @@
         <v-col :lg="2" :md="3">
           <v-text-field
             prepend-inner-icon="mdi-currency-usd"
-            v-model="remainingAmount"
+            :value="remainingAmount"
             disabled
             label="Remaining Amount"
           ></v-text-field>
@@ -154,7 +154,7 @@ export default {
 
   watch: {
     remainingAmount(value) {
-      if (this.order_status === "pending_payment") {
+      if (this.order_status === "pending_payment" || !this.order_status) {
         this.amount = value;
       }
     }
@@ -173,10 +173,12 @@ export default {
       code: null,
 
       card: {
-        card_holder: null,
-        number: null,
-        cvc: null,
-        exp_date: null
+        card_holder:
+          process.env.NODE_ENV === "development" ? "John Longjohn" : null,
+        number:
+          process.env.NODE_ENV === "development" ? "4000000000000002" : null,
+        cvc: process.env.NODE_ENV === "development" ? "123" : null,
+        exp_date: process.env.NODE_ENV === "development" ? "1224" : null
       }
     };
   },
@@ -341,11 +343,13 @@ export default {
       }
     },
     clearState() {
-      this.code = null;
-      this.card.number = null;
-      this.card.card_holder = null;
-      this.card.cvc = null;
-      this.card.exp_date = null;
+      if (process.env.NODE_ENV === "production") {
+        this.code = null;
+        this.card.number = null;
+        this.card.card_holder = null;
+        this.card.cvc = null;
+        this.card.exp_date = null;
+      }
 
       this.limits();
     },

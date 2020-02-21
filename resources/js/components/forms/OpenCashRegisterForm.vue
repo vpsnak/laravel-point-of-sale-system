@@ -48,6 +48,7 @@
         <v-row align="center" justify="space-between" no-gutters>
           <v-col :cols="4" :lg="2" :md="3">
             <ValidationProvider
+              v-if="fill_amount"
               rules="required|between:1,9999"
               v-slot="{ errors, valid }"
               name="Opening amount"
@@ -96,11 +97,12 @@
   </ValidationObserver>
 </template>
 <script>
-import { mapActions, mapState, mapMutations } from "vuex";
+import { mapActions, mapState, mapMutations, mapGetters } from "vuex";
 
 export default {
   data() {
     return {
+      fill_amount: false,
       open_session_user: null,
       loading: true,
       stores: [],
@@ -111,8 +113,7 @@ export default {
       selected_store_id: null,
       selected_cash_register_id: null,
       opening_amount: null,
-      status: true,
-      remainingAmount: null
+      status: true
     };
   },
 
@@ -125,25 +126,26 @@ export default {
   },
 
   computed: {
+    ...mapGetters(["role"]),
+
     cashRegisterIsopen() {
-      const open_cash_register = _.find(this.cash_registers, {
-        id: this.selected_cash_register_id,
-        is_open: true
-      });
-      if (open_cash_register) {
-        this.opening_amount = this.remainingAmount =
-          open_cash_register.earnings.cash_total;
+      if (this.selected_store_id && this.selected_cash_register_id) {
+        const open_cash_register = _.find(this.cash_registers, {
+          id: this.selected_cash_register_id,
+          is_open: true
+        });
+        if (open_cash_register) {
+          if (_.has(open_cash_register, "open_session_user")) {
+            this.open_session_user = open_cash_register.open_session_user;
+          } else {
+            this.open_session_user = null;
+          }
 
-        if (_.has(open_cash_register, "open_session_user")) {
-          this.open_session_user = open_cash_register.open_session_user;
+          return true;
         } else {
-          this.open_session_user = null;
+          this.fill_amount = true;
+          return false;
         }
-
-        return true;
-      } else {
-        this.remainingAmount = 0;
-        return false;
       }
     },
     disableOpenCashRegister() {
@@ -155,9 +157,6 @@ export default {
       } else {
         return true;
       }
-    },
-    role() {
-      return this.$store.getters.role;
     }
   },
 
@@ -192,7 +191,7 @@ export default {
         data: {
           store_id: this.selected_store_id,
           cash_register_id: this.selected_cash_register_id,
-          opening_amount: this.opening_amount,
+          opening_amount: this.opening_amount || null,
           status: this.status
         }
       };
@@ -205,6 +204,8 @@ export default {
         });
     },
     changeCashRegisters() {
+      this.fill_amount = false;
+      this.opening_amount = null;
       this.cash_registers = [];
       this.selected_cash_register_id = null;
       this.stores.forEach(store => {
@@ -227,25 +228,6 @@ export default {
 
     enableOpeningAmount() {
       this.openingAmountDisabled = false;
-    },
-    getAllStores() {
-      this.getAll({
-        model: "stores"
-      }).then(stores => {
-        this.stores = stores;
-      });
-    },
-    getAllCashRegisters() {
-      this.loading = true;
-      this.getAll({
-        model: "cash-registers"
-      })
-        .then(cash_registers => {
-          this.cash_registers = cash_registers;
-        })
-        .finally(() => {
-          this.loading = false;
-        });
     },
     barcodeHandling(barcode) {
       this.cash_registers.forEach(cash_register => {
