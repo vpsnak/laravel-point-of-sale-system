@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CashRegister extends Model
 {
-    protected $appends = ['is_open', 'earnings', 'open_session_user'];
+    protected $appends = ['is_open', 'open_session_user'];
 
     protected $fillable = [
         'name',
@@ -25,7 +25,7 @@ class CashRegister extends Model
         'updated_at' => "datetime:m/d/Y H:i:s"
     ];
 
-    public function getEarningsAttribute()
+    public function earnings()
     {
         if ($this->is_open) {
             return CashRegisterReportController::generateReport($this->getOpenLog()->id);
@@ -67,7 +67,7 @@ class CashRegister extends Model
 
     public function getPaymentsAttribute()
     {
-        return $this->hasMany(Payment::class, 'cash_register_id', 'id')->without(['order', 'user_id'])->get();
+        return $this->hasMany(Payment::class, 'cash_register_id', 'id')->without(['order', 'created_by'])->get();
     }
 
     public function logs()

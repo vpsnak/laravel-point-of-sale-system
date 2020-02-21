@@ -117,10 +117,17 @@ export default {
     order_delivery_store_pickup: null,
     order_delivery_store_pickup: null,
     order_timestamp: null,
-    order_user_id: null
+    order_created_by: null
   },
 
   mutations: {
+    setReorder(state, items) {
+      let strippedItems = items.map(
+        ({ discount_type, discount_amount, ...attrs }) => attrs
+      );
+
+      state.cart_products = strippedItems;
+    },
     setCartProduct(state, payload) {
       state.cart_products[payload.index] = payload.value;
     },
@@ -128,7 +135,7 @@ export default {
       state.order_total_item_cost = value;
     },
     setOrderCreatedBy(state, value) {
-      state.order_user_id = value;
+      state.order_created_by = value;
     },
     setOrderTimestamp(state, value) {
       state.order_timestamp = value;
@@ -526,7 +533,7 @@ export default {
         context.commit("setCartDiscountAmount", order.discount_amount);
         context.commit("setCustomer", order.customer);
         context.commit("setOrderNotes", order.notes);
-        context.commit("setOrderCreatedBy", order.user_id);
+        context.commit("setOrderCreatedBy", order.created_by);
         context.commit("setOrderTimestamp", {
           created_at: order.created_at,
           updated_at: order.updated_at

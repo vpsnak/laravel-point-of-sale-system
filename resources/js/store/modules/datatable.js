@@ -80,7 +80,7 @@ const state = {
       { text: "Status", value: "status" },
       { text: "Total", value: "total" },
       { text: "Total paid", value: "total_paid" },
-      { text: "Created by", value: "user_id.name" },
+      { text: "Created by", value: "created_by.name" },
       { text: "Created at", value: "created_at" },
       { text: "Actions", value: "actions" }
     ],
@@ -138,7 +138,7 @@ const state = {
       },
       {
         text: "Operator",
-        value: "user_id.name",
+        value: "created_by.name",
         sortable: false
       },
       {

@@ -23,8 +23,6 @@ class PaymentType extends Seeder
             // refund types
             ['name' => 'Existing gift card', 'type' => 'giftcard-existing', 'icon' => 'mdi-wallet-giftcard', 'status' => false],
             ['name' => 'New gift card', 'type' => 'giftcard-new', 'icon' => 'mdi-wallet-giftcard', 'status' => false],
-            ['name' => 'CC API', 'type' => 'cc-api', 'icon' => 'mdi-credit-card', 'status' => false],
-            ['name' => 'CC', 'type' => 'cc-pos', 'icon' => 'mdi-credit-card-scan', 'status' => false],
         ]);
     }
 }

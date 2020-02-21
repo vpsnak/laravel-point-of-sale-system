@@ -27,7 +27,7 @@
               >
             </div>
           </v-card-text>
-          <v-simple-table>
+          <v-simple-table fixed-header>
             <template v-slot:default>
               <thead>
                 <tr>
@@ -74,10 +74,14 @@ import { mapActions } from "vuex";
 
 export default {
   props: {
-    model: Number
+    model: Object
   },
   data() {
     return {
+      headers: [
+        { text: "Store name", value: "store.name" },
+        { text: "Qty", value: "store.pivot.qty" }
+      ],
       product: null
     };
   },

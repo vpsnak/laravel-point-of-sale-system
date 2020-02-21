@@ -25,8 +25,8 @@
         </span>
       </template>
 
-      <template v-slot:item.actions="{ item }" v-if="!$props.editOrder">
-        <v-tooltip bottom v-if="item.status === 'approved' && !item.refunded">
+      <template v-slot:item.actions="{ item }">
+        <v-tooltip bottom v-if="enableRefund(item)">
           <template v-slot:activator="{ on }">
             <v-btn
               @click="refundDialog(item)"
@@ -58,12 +58,6 @@ export default {
   },
 
   mounted() {
-    if (!this.$props.editOrder) {
-      this.headers.push({
-        text: "Actions",
-        value: "actions"
-      });
-    }
     EventBus.$on("payment-history-refund", event => {
       console.info(event);
       if (event.payload && this.selected_payment) {
@@ -110,6 +104,10 @@ export default {
           text: "Amount (USD)",
           value: "amount",
           sortable: false
+        },
+        {
+          text: "Actions",
+          value: "actions"
         }
       ]
     };
@@ -139,6 +137,25 @@ export default {
     ...mapMutations("dialog", ["setDialog"]),
     ...mapActions(["search", "delete"]),
 
+    enableRefund(item) {
+      if ($props.editOrder) {
+        if (
+          item.status === "approved" &&
+          !item.refunded &&
+          item.payment_type.type !== "cash"
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        if (item.status === "approved" && !item.refunded) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    },
     parseStatus(status) {
       return _.upperFirst(status);
     },

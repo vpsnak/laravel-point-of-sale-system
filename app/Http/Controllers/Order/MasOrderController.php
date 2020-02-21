@@ -303,6 +303,36 @@ class MasOrderController extends Controller
         return array_values($response);
     }
 
+    public static function getOrderDetails(Order $model)
+    {
+        $masOrder = MasOrder::where('order_id', $model->order_id)->first();
+
+        $masAccount = MasAccount::getActive();
+
+        try {
+            $client = new Client();
+
+            $response = $client->get("$masAccount->endpoint/{$masOrder->mas_message_number}", [
+                'headers' => [
+                    'Authorization' => $masAccount->getAuthHeader(),
+                    'Content-Type' => 'application/json',
+                    'Accept' => 'application/json'
+                ],
+                'connect_timeout' => 15
+            ]);
+
+            $json = (string) $response->getBody()->getContents();
+            self::log('Response: ' . $json);
+        } catch (\Exception $e) {
+            $json = (string) $e->getResponse()->getBody();
+            self::log("Error: {$json}");
+        }
+    }
+
+    private function updateOrderStatus()
+    {
+    }
+
     private static function log($message)
     {
         if (!is_string($message)) {
