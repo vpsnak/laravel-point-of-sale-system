@@ -67,7 +67,7 @@ class AppController extends Controller
             'order' => $order,
             'user_id' => $order->user_id()->first(),
             'store' => $order->store()->first(),
-            'cash_register' => $order->user_id()->first()->open_register()->first()->cash_register()->first(),
+            'cash_register' => $order->created_by->open_register->cash_register,
         ]);
     }
 

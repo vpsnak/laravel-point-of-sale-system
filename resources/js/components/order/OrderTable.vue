@@ -100,6 +100,23 @@
           </template>
           <span>View</span>
         </v-tooltip>
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              :ref="item.id"
+              small
+              :disabled="data_table.loading"
+              @click.stop="reorder(item.id)"
+              class="my-2"
+              icon
+              v-on="on"
+            >
+              <v-icon small>mdi-cart-arrow-down</v-icon>
+            </v-btn>
+          </template>
+          <span>Reorder</span>
+        </v-tooltip>
       </template>
     </data-table>
   </div>
@@ -151,14 +168,15 @@ export default {
   },
 
   methods: {
+    ...mapMutations("cart", ["setCheckoutDialog", "resetState", "setReorder"]),
     ...mapMutations("dialog", ["setDialog", "editItem", "viewItem"]),
     ...mapMutations("datatable", [
       "setLoading",
       "setDataTable",
       "resetDataTable"
     ]),
-    ...mapMutations("cart", ["setCheckoutDialog", "resetState"]),
     ...mapActions(["getOne", "delete"]),
+    ...mapActions("requests", ["request"]),
     ...mapActions("cart", ["loadOrder"]),
 
     parseStatusName(value) {
@@ -181,6 +199,22 @@ export default {
         default:
           return "";
       }
+    },
+    reorder(id) {
+      this.setLoading(true);
+      this.resetState();
+      this.request({
+        method: "get",
+        url: `orders/get/${id}`
+      })
+        .then(response => {
+          this.setReorder(response.items);
+          this.$router.push({ name: "sales" });
+          this.setCheckoutDialog(true);
+        })
+        .finally(() => {
+          this.setLoading(false);
+        });
     },
     receipt(id) {
       this.setLoading(true);
@@ -206,9 +240,9 @@ export default {
     },
     getSingleOrder(id) {
       return new Promise((resolve, reject) => {
-        this.getOne({
-          model: "orders",
-          data: { id }
+        this.request({
+          method: "get",
+          url: `orders/${id}`
         }).then(response => {
           this.resetState();
           this.loadOrder(response);
