@@ -11,7 +11,12 @@
             <v-spacer />
             <v-tooltip bottom color="red">
               <template v-slot:activator="{ on }">
-                <v-btn @click="$router.go(-1)" color="red" icon v-on="on">
+                <v-btn
+                  @click="$router.replace({ name: 'dashboard' })"
+                  color="red"
+                  icon
+                  v-on="on"
+                >
                   <v-icon>
                     mdi-close
                   </v-icon>
