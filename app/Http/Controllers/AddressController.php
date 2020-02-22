@@ -41,7 +41,10 @@ class AddressController extends Controller
 
             $address = Address::create($validatedData);
 
-            return response(['address' => $address->load('region'), 'info' => ["Address successfully created!"]], 201);
+            return response(['address' => $address->load('region'), 'notification' => [
+                'msg' => ["Address successfully created!"],
+                'type' => 'success'
+            ]], 201);
         }
     }
 
@@ -76,7 +79,13 @@ class AddressController extends Controller
             $address->fill($validatedData);
             $address->save();
 
-            return response(['address' => $address->load('region'), 'info' => ["Address with id: $address->id successfully updated!"]]);
+            return response([
+                'address' => $address->load('region'),
+                'notification' => [
+                    'msg' => ["Address with id: $address->id successfully updated!"],
+                    'type' => 'success'
+                ]
+            ]);
         }
     }
 

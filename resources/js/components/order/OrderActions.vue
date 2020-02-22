@@ -1,84 +1,77 @@
 <template>
-  <v-card outlined>
-    <v-card-title>
-      <v-icon left>mdi-cursor-default-click-outline</v-icon>
-      <span class="subheading">
-        Actions
-      </span>
-    </v-card-title>
-    <v-container fluid>
-      <v-row justify="space-between" align="center" no-gutters>
-        <v-btn
-          v-if="canCheckout"
+  <div class="text-center">
+    <v-bottom-sheet v-model="orderPageActions">
+      <v-list>
+        <v-subheader>Actions</v-subheader>
+        <v-list-item
           @click.stop="checkout()"
+          v-if="canCheckout"
           :disabled="loading"
           :loading="checkout_loading"
         >
-          <v-icon left>mdi-currency-usd</v-icon>
-          Continue checkout
-        </v-btn>
-
-        <v-btn
-          v-if="canReceipt"
+          <v-list-item-avatar>
+            <v-icon>mdi-currency-usd</v-icon>
+          </v-list-item-avatar>
+          <v-list-item-title>Continue checkout</v-list-item-title>
+        </v-list-item>
+        <v-list-item
           @click.stop="receipt()"
+          v-if="canReceipt"
           :disabled="loading"
           :loading="receipt_loading"
         >
-          <v-icon left>
-            mdi-receipt
-          </v-icon>
-          Receipt
-        </v-btn>
-
-        <v-btn
+          <v-list-item-avatar>
+            <v-icon>mdi-receipt</v-icon>
+          </v-list-item-avatar>
+          <v-list-item-title>Receipt</v-list-item-title>
+        </v-list-item>
+        <v-list-item
           @click.stop="reorder()"
           :disabled="loading"
           :loading="reorder_loading"
         >
-          <v-icon left>
-            mdi-cart-arrow-down
-          </v-icon>
-          Reorder
-        </v-btn>
-
-        <v-btn
-          v-if="canUploadToMas"
+          <v-list-item-avatar>
+            <v-icon>mdi-cart-arrow-down</v-icon>
+          </v-list-item-avatar>
+          <v-list-item-title>Reorder</v-list-item-title>
+        </v-list-item>
+        <v-list-item
           @click.stop="uploadToMas()"
+          v-if="canUploadToMas"
           :disabled="loading"
           :loading="upload_to_mas_loading"
         >
-          <v-icon left>
-            mdi-file-upload-outline
-          </v-icon>
-          Upload to MAS
-        </v-btn>
-
-        <v-btn
-          v-if="canRefund"
+          <v-list-item-avatar>
+            <v-icon>mdi-file-upload-outline</v-icon>
+          </v-list-item-avatar>
+          <v-list-item-title>Upload to MAS</v-list-item-title>
+        </v-list-item>
+        <v-list-item
           @click.stop="refund()"
+          v-if="canRefund"
           :disabled="loading"
           :loading="refund_loading"
         >
-          <v-icon left>
-            mdi-credit-card-refund-outline
-          </v-icon>
-          Make a refund
-        </v-btn>
-
-        <v-btn
-          v-if="canCancel"
+          <v-list-item-avatar>
+            <v-icon>mdi-credit-card-refund-outline</v-icon>
+          </v-list-item-avatar>
+          <v-list-item-title>Make a refund</v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          color="red"
           @click.stop="cancelDialog()"
+          v-if="canCancel"
           :disabled="loading"
           :loading="cancel_loading"
         >
-          <v-icon left color="red">
-            mdi-cancel
-          </v-icon>
-          Cancel order
-        </v-btn>
-      </v-row>
-    </v-container>
-  </v-card>
+          <v-list-item-avatar>
+            <v-icon color="red">mdi-cancel</v-icon>
+          </v-list-item-avatar>
+          <v-list-item-title>Cancel order</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-bottom-sheet>
+  </div>
 </template>
 
 <script>
@@ -117,9 +110,18 @@ export default {
       "order_id",
       "cart_products",
       "order_status",
-      "payments"
+      "payments",
+      "order_page_actions"
     ]),
 
+    orderPageActions: {
+      get() {
+        return this.order_page_actions;
+      },
+      set(value) {
+        this.setOrderPageActions(value);
+      }
+    },
     loading() {
       if (
         this.checkout_loading ||
@@ -129,6 +131,7 @@ export default {
         this.refund_loading ||
         this.cancel_loading
       ) {
+        this.setOrderPageActions(false);
         return true;
       } else {
         return false;
@@ -162,8 +165,8 @@ export default {
     canRefund() {
       if (
         this.payments.length > 0 &&
-        this.order_status ===
-          ["pending", "pending_payment"].indexOf(this.order_status) >= 0
+        this.order_status !==
+          ["completed", "canceled"].indexOf(this.order_status) >= 0
       ) {
         return true;
       } else {
@@ -184,17 +187,22 @@ export default {
   },
   methods: {
     ...mapMutations("dialog", ["setDialog"]),
-    ...mapMutations("cart", ["setCheckoutDialog", "resetState", "setReorder"]),
+    ...mapMutations("cart", [
+      "setCheckoutDialog",
+      "resetState",
+      "setReorder",
+      "setOrderPageActions"
+    ]),
     ...mapActions("requests", ["request"]),
 
     refund() {
       this.setDialog({
         show: true,
         width: 600,
-        title: `Refunds for order #${order_id}`,
+        title: `Refunds for order #${this.order_id}`,
         titleCloseBtn: true,
-        icon: "mdi-alpha-z-circle",
-        component: "closeCashRegisterForm",
+        icon: "mdi-credit-card-refund-outline",
+        component: "orderRefundForm",
         persistent: true,
         eventChannel: "top-menu-generate-z"
       });
@@ -218,7 +226,7 @@ export default {
       this.setDialog({
         show: true,
         width: 600,
-        title: `Receipt #${id}`,
+        title: `Receipt #${this.order_id}`,
         titleCloseBtn: true,
         icon: "mdi-receipt",
         component: "orderReceipt",

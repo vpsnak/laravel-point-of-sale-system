@@ -117,10 +117,15 @@ export default {
     order_delivery_store_pickup: null,
     order_delivery_store_pickup: null,
     order_timestamp: null,
-    order_created_by: null
+    order_created_by: null,
+
+    order_page_actions: false
   },
 
   mutations: {
+    setOrderPageActions(state, value) {
+      state.order_page_actions = value;
+    },
     setReorder(state, items) {
       let strippedItems = items.map(
         ({ discount_type, discount_amount, ...attrs }) => attrs

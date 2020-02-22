@@ -11,17 +11,16 @@ class ReceiptController extends Controller
 {
     public function create(Order $model)
     {
-        var_dump($model);
-        $model = $model->load('user_id');
+        $model = $model->load('created_by');
         $store = $model->store;
-        $cash_register = $model->user_id->open_register->cash_register;
-        $user_id = $model->user_id;
+        $cash_register = $model->created_by->open_register->cash_register;
+        $created_by = $model->created_by;
         $payments = [];
 
         foreach (json_decode($model['payments'], true) as $payment) {
             if ($payment['payment_type']['type'] === 'card' || $payment['payment_type']['type'] === 'pos-terminal') {
                 $payment['payment_type']['name'] = 'Credit card';
-            } elseif ($payment['status'] === 'refunded') {
+            } else if ($payment['status'] === 'refunded') {
                 $payment['amount'] = abs($payment['amount']);
             }
             if (!($payment['status'] === 'failed')) {
@@ -34,8 +33,8 @@ class ReceiptController extends Controller
             "trans" => $model->id,
             "store" => ["name" => $store->name, "phone" => $store->phone, "street" => $store->street, "city" => $store->city, "postcode" => $store->postcode],
             "reg" => $cash_register->name,
-            "clrk" => $user_id->name,
-            "oper" => $user_id->name,
+            "clrk" => $created_by->name,
+            "oper" => $created_by->name,
             "date" => $model->created_at->format('m/d/Y'),
             "time" => $model->created_at->format('h:m:s'),
             "items" => $model->items,
@@ -64,12 +63,12 @@ class ReceiptController extends Controller
         $receipt['order_id'] = $model->id;
         $receipt['print_count'] = 0;
         $receipt['email_count'] = 0;
-        $receipt['issued_by'] = $user_id->id;
+        $receipt['issued_by'] = $created_by->id;
         $receipt['cash_register_id'] = $cash_register->id;
-        $receipt['content'] =  $content;
+        $receipt['content'] = $content;
 
         $receipt = Receipt::create($receipt);
-        return response(['info' => ['Receipt ' . $receipt->id . ' created successfully!']], 201);
+        return response(['data' => $receipt], 201);
     }
 
     public function printReceipt(Order $model)

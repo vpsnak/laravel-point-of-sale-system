@@ -13,7 +13,7 @@
 
     <v-row no-gutters v-else-if="order_id">
       <v-col cols="12">
-        <v-card>
+        <v-card class="fill-height">
           <v-card-title>
             <v-icon class="pr-2">
               edit
@@ -54,6 +54,22 @@
               <OrderDeliveryOptionsTabItem />
             </v-tabs-items>
           </v-tabs>
+          <v-tooltip bottom v-if="order_id && $props.editable" color="primary">
+            <template v-slot:activator="{ on }">
+              <v-btn
+                color="primary"
+                absolute
+                bottom
+                right
+                fab
+                v-on="on"
+                @click.stop="setOrderPageActions(true)"
+              >
+                <v-icon>mdi-cursor-default-click-outline</v-icon>
+              </v-btn>
+            </template>
+            <span>Actions</span>
+          </v-tooltip>
         </v-card>
       </v-col>
     </v-row>
@@ -80,13 +96,13 @@ export default {
   },
 
   computed: {
-    ...mapState("cart", ["cart_products", "order_id"])
+    ...mapState("cart", ["cart_products", "order_id", "order_page_actions"])
   },
   methods: {
-    ...mapMutations("cart", ["resetState"]),
+    ...mapMutations("cart", ["resetState", "setOrderPageActions"]),
     ...mapMutations("dialog", ["setDialog"]),
-    ...mapActions(["getOne"]),
     ...mapActions("cart", ["loadOrder"]),
+    ...mapActions("requests", ["request"]),
 
     confirmationDialog() {
       this.setDialog({
@@ -106,17 +122,15 @@ export default {
     },
     getOrder(id) {
       return new Promise((resolve, reject) => {
-        this.getOne({
-          model: "orders",
-          data: { id }
+        this.request({
+          method: "get",
+          url: `orders/get/${id}`
         })
           .then(response => {
             this.loadOrder(response);
             resolve(true);
           })
           .catch(error => {
-            // unhandled error
-            console.error(error);
             reject(error);
           });
       });
