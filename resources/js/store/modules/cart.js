@@ -349,6 +349,7 @@ export default {
 
       state.checkoutDialog = false;
       state.payment_loading = false;
+      state.order_page_actions = false;
       state.customer = null;
 
       state.cart_products = [];

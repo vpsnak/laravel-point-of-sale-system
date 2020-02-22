@@ -198,8 +198,8 @@ export default {
     refund() {
       this.setDialog({
         show: true,
-        width: 600,
-        title: `Refunds for order #${this.order_id}`,
+        width: 700,
+        title: `Issue a refund for order #${this.order_id}`,
         titleCloseBtn: true,
         icon: "mdi-credit-card-refund-outline",
         component: "orderRefundForm",

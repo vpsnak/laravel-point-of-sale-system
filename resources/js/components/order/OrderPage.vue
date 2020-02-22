@@ -18,10 +18,8 @@
             <v-icon class="pr-2">
               edit
             </v-icon>
-
             Edit order # {{ order_id }}
             <v-spacer />
-
             <v-tooltip bottom color="red">
               <template v-slot:activator="{ on }">
                 <v-btn @click.stop="close()" color="red" icon v-on="on">
@@ -60,7 +58,7 @@
                 color="primary"
                 absolute
                 bottom
-                right
+                left
                 fab
                 v-on="on"
                 @click.stop="setOrderPageActions(true)"
