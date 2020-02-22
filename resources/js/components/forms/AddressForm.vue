@@ -223,16 +223,16 @@
             </ValidationProvider>
           </v-col>
           <v-row justify="space-around">
-            <v-switch
+            <v-checkbox
               :readonly="$props.readonly"
               v-model="formFields.is_default_billing"
               label="Default billing"
-            ></v-switch>
-            <v-switch
+            ></v-checkbox>
+            <v-checkbox
               :readonly="$props.readonly"
               v-model="formFields.is_default_shipping"
               label="Default shipping"
-            ></v-switch>
+            ></v-checkbox>
           </v-row>
         </v-row>
       </v-container>

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMasOrdersTable extends Migration
+class CreateMasOrderLogsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,14 @@ class CreateMasOrdersTable extends Migration
      */
     public function up()
     {
-        Schema::create('mas_orders', function (Blueprint $table) {
+        Schema::create('mas_order_logs', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('order_id');
 
-            $table->string('mas_control_number')->nullable();
-            $table->string('mas_message_number')->nullable();
+            $table->json('payload');
+            $table->string('response');
             $table->string('status');
-
-            $table->text('notes')->nullable();
+            $table->string('environment');
 
             $table->timestamps();
         });
@@ -34,6 +33,6 @@ class CreateMasOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('mas_orders');
+        Schema::dropIfExists('mas_order_logs');
     }
 }

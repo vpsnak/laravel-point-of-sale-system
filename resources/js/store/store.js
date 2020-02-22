@@ -144,21 +144,19 @@ export default new Vuex.Store({
       });
     },
     logout(context) {
-      return new Promise((resolve, reject) => {
-        axios
+      return new Promise(resolve => {
+        const payload = {
+          method: "get",
+          url: "auth/logout"
+        };
+        context
+          .dispatch("requests/request", payload)
           .get(`${context.state.config.base_url}/auth/logout`)
-          .then(response => {
-            context.commit("config/resetLoad");
-            context.commit("setNotification", {
-              msg: response.data.info,
-              type: "info"
-            });
-            resolve(response.data);
-          })
-          .catch(error => {
-            reject(error);
+          .then(() => {
+            resolve(true);
           })
           .finally(() => {
+            context.commit("config/resetLoad");
             context.commit("logout");
           });
       });

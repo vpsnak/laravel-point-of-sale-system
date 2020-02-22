@@ -213,4 +213,9 @@ class Order extends Model
     {
         return $this->hasMany(Receipt::class);
     }
+
+    public function masOrderLog()
+    {
+        return $this->hasMany(MasOrderLog::class);
+    }
 }

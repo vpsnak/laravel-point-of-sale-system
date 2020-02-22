@@ -88,11 +88,11 @@
         </ValidationProvider>
 
         <v-row justify="space-around">
-          <v-switch
+          <v-checkbox
             :readonly="$props.readonly"
             v-model="formFields.editable_price"
             label="Editable  price"
-          ></v-switch>
+          ></v-checkbox>
         </v-row>
 
         <v-select
