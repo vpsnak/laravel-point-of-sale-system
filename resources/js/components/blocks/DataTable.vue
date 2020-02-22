@@ -180,6 +180,8 @@ export default {
 
             if (response.total !== this.totalItems) {
               this.totalItems = response.total;
+            } else {
+              this.totalItems = response.length;
             }
           })
           .finally(() => {
