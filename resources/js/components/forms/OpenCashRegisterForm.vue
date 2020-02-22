@@ -48,13 +48,13 @@
         <v-row align="center" justify="space-between" no-gutters>
           <v-col :cols="4" :lg="2" :md="3">
             <ValidationProvider
-              v-if="fill_amount"
+              v-if="fill_amount || !cashRegisterIsopen"
               rules="required|between:1,9999"
               v-slot="{ errors, valid }"
               name="Opening amount"
             >
               <v-text-field
-                :disabled="openingAmountDisabled || cashRegisterIsopen"
+                :disabled="openingAmountDisabled"
                 v-model="opening_amount"
                 prefix="$"
                 type="number"

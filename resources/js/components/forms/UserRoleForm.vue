@@ -27,8 +27,8 @@
               type="submit"
               :disabled="invalid || loading"
               :loading="loading"
-              >submit</v-btn
-            >
+              >submit
+            </v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -42,6 +42,17 @@ export default {
   props: {
     model: Object
   },
+  mounted() {
+    this.getAllUserRoles();
+    this.user_name = this.$props.model.name;
+    this.user_id = this.$props.model.id;
+    this.role_id = this.$props.model.roles[0].id;
+  },
+
+  beforeDestroy() {
+    this.$off("submit");
+  },
+
   data() {
     return {
       loading: false,
@@ -52,23 +63,22 @@ export default {
       role_id: null
     };
   },
-  mounted() {
-    this.getAllUserRoles();
-    this.user_name = this.$props.model.name;
-    this.user_id = this.$props.model.id;
-    this.role_id = this.$props.model.roles[0].id;
-  },
+
   methods: {
+    ...mapActions(["setRole"]),
+    ...mapActions("requests", ["request"]),
+
     submit() {
       this.loading = true;
-      let payload = {
-        model: "roles/set",
+      const payload = {
+        method: "post",
+        url: "roles/set",
         data: {
           user_id: this.user_id,
           role_id: this.role_id
         }
       };
-      this.setRole(payload)
+      this.request(payload)
         .then(() => {
           this.$emit("submit", true);
         })
@@ -78,8 +88,9 @@ export default {
     },
     getAllUserRoles() {
       this.loading = true;
-      this.getAll({
-        model: "roles"
+      this.request({
+        method: "get",
+        url: "roles"
       })
         .then(response => {
           this.roles = response;
@@ -87,15 +98,7 @@ export default {
         .finally(() => {
           this.loading = false;
         });
-    },
-    ...mapActions({
-      getAll: "getAll",
-      getOne: "getOne",
-      setRole: "setRole"
-    })
-  },
-  beforeDestroy() {
-    this.$off("submit");
+    }
   }
 };
 </script>

@@ -81,8 +81,16 @@ class MasOrderController extends Controller
         self::log($payload, $response, $status);
 
         if (isset($response->ErrorMessage)) {
+<<<<<<< HEAD
             $masOrder = MasOrder::updateOrCreate(['order_id' => $this->order->id], [
                 'status' => 'error'
+=======
+            MasOrder::updateOrCreate(['order_id' => $order->id], [
+                'status' => 'error',
+                'payload' => $payload,
+                'response' => $response->ErrorMessage,
+                'env' => $masAccount->environment
+>>>>>>> e1e900cdb973521faf532dc0863ec55b9b8fd604
             ]);
 
             return ['errors' => $response->ErrorMessage, 'payload' => $payload];
@@ -93,6 +101,12 @@ class MasOrderController extends Controller
                 'mas_control_number' => $response->Messages->ControlNumber,
                 'mas_message_number' => $response->Messages->MessageNumber,
                 'status' => 'submitted',
+<<<<<<< HEAD
+=======
+                'payload' => $payload,
+                'response' => $response->Messages,
+                'env' => $masAccount->environment
+>>>>>>> e1e900cdb973521faf532dc0863ec55b9b8fd604
             ]);
             return ['success' => $response->Messages, 'payload' => $payload];
         } else if (!empty($response->ControlNumber)) {
@@ -101,12 +115,21 @@ class MasOrderController extends Controller
                 'mas_message_number' => $response->MessageNumber,
                 'status' => 'submitted',
                 'payload' => $payload,
-                'response' => $response
+                'response' => $response,
+                'env' => $masAccount->environment
             ]);
             return ['success' => $response, 'payload' => $payload];
         } else {
+<<<<<<< HEAD
             MasOrder::updateOrCreate(['order_id' => $this->order->id], [
                 'status' => 'error on success',
+=======
+            MasOrder::updateOrCreate(['order_id' => $order->id], [
+                'status' => 'error',
+                'payload' => $payload,
+                'response' => $response,
+                'env' => $masAccount->environment
+>>>>>>> e1e900cdb973521faf532dc0863ec55b9b8fd604
             ]);
             return ['errors' => [$response], 'payload' => $payload];
         }

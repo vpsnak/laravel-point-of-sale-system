@@ -43,10 +43,10 @@ export default {
     this.resetDataTable();
 
     this.setDataTable({
-      icon: "mdi-wallet-giftcard",
+      icon: "mdi-ticket-percent",
       title: "Coupons",
       model: "coupons",
-      newForm: this.form,
+      newForm: "couponForm",
       btnTxt: "New Coupon",
       loading: true
     });
@@ -55,8 +55,7 @@ export default {
   },
   data() {
     return {
-      render: false,
-      form: "couponForm"
+      render: false
     };
   },
   computed: {

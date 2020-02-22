@@ -11,6 +11,10 @@
       <span>{{ parseRoleName(item.roles[0].name) }}</span>
     </template>
 
+    <template v-slot:item.active="{ item }">
+      {{ item.active ? "Yes" : "No" }}
+    </template>
+
     <template v-slot:item.actions="{ item }">
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">

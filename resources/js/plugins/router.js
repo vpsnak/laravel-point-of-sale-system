@@ -6,62 +6,62 @@ import store from "../store/store";
 Vue.use(VueRouter);
 
 export const router = new VueRouter({
-    // mode: "history",
-    routes
+  // mode: "history",
+  routes
 });
 
 router.beforeEach((to, from, next) => {
-    if (to.matched.some(record => record.meta.requiresAuth)) {
-        // this route requires auth, check if logged in
-        // if not, redirect to login page.
-        if (!store.getters.auth) {
-            store.commit("logout");
-        } else {
-            next();
-        }
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    // this route requires auth, check if logged in
+    // if not, redirect to login page.
+    if (!store.getters.auth) {
+      store.commit("logout");
     } else {
-        next();
+      next();
     }
+  } else {
+    next();
+  }
 
-    // guard login route if already logged in
-    if (
-        to.matched.some(record => record.name === "login") &&
-        store.getters.auth
-    ) {
-        next({ name: "dashboard" });
-    }
+  // guard login route if already logged in
+  if (
+    to.matched.some(record => record.name === "login") &&
+    store.getters.auth
+  ) {
+    next({ name: "dashboard" });
+  }
 
-    // guard sales page if no register is selected
-    else if (
-        to.matched.some(record => record.name === "sales") &&
-        !store.state.cashRegister
-    ) {
-        next({
-            path: "/open-cash-register",
-            query: { redirect: to.fullPath }
-        });
-    }
+  // guard sales page if no register is selected
+  else if (
+    to.matched.some(record => record.name === "sales") &&
+    !store.state.cashRegister
+  ) {
+    next({
+      path: "/open-cash-register",
+      query: { redirect: to.fullPath }
+    });
+  }
 
-    // guard sales page if no register is selected
-    else if (
-        to.matched.some(record => record.name === "orders") &&
-        !store.state.cashRegister
-    ) {
-        next({
-            path: "/open-cash-register",
-            query: { redirect: to.fullPath }
-        });
-    }
+  // guard sales page if no register is selected
+  else if (
+    to.matched.some(record => record.name === "orders") &&
+    !store.state.cashRegister
+  ) {
+    next({
+      path: "/open-cash-register",
+      query: { redirect: to.fullPath }
+    });
+  }
 
-    // guard open register route if already logged in
-    else if (
-        to.matched.some(record => record.name === "openCashRegister") &&
-        store.state.cashRegister
-    ) {
-        next({ name: "dashboard" });
-    } else {
-        next();
-    }
+  // guard open register route if already logged in
+  else if (
+    to.matched.some(record => record.name === "openCashRegister") &&
+    store.state.cashRegister
+  ) {
+    next({ name: "dashboard" });
+  } else {
+    next();
+  }
 });
 
 export default router;

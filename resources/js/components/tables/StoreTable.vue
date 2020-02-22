@@ -1,5 +1,9 @@
 <template>
   <data-table v-if="render">
+    <template v-slot:item.active="{ item }">
+      {{ item.active ? "Yes" : "No" }}
+    </template>
+
     <template v-slot:item.actions="{ item }">
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
@@ -44,7 +48,7 @@ export default {
     this.resetDataTable();
 
     this.setDataTable({
-      icon: "mdi-buffer",
+      icon: "mdi-store",
       title: "Stores",
       model: "stores",
       newForm: this.form,
