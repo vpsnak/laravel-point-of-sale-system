@@ -32,7 +32,8 @@ const state = {
       { text: "Store", value: "store.name" },
       { text: "Barcode", value: "barcode" },
       { text: "Is open", value: "is_open" },
-      { text: "Operator", value: "" },
+      { text: "Operator", value: "open_session_user.name" },
+      { text: "Active", value: "active" },
       { text: "Actions", value: "actions" }
     ],
     categories: [
@@ -112,7 +113,8 @@ const state = {
       { text: "City", value: "city" },
       { text: "Tax", value: "tax.name" },
       { text: "Company", value: "company.name" },
-      { text: "Created by", value: "user_id" },
+      { text: "Active", value: "active" },
+      { text: "Created by", value: "created_by" },
       { text: "Actions", value: "actions" }
     ],
     taxes: [
@@ -127,8 +129,9 @@ const state = {
       { text: "Email", value: "email" },
       { text: "Phone", value: "phone" },
       { text: "Role", value: "roles[0].name" },
-      { text: "Created_at", value: "created_at" },
-      { text: "Updated_at", value: "updated_at" },
+      { text: "Active", value: "active" },
+      { text: "Created at", value: "created_at" },
+      { text: "Updated at", value: "updated_at" },
       { text: "Actions", value: "actions" }
     ],
     paymentHistory: [
@@ -198,7 +201,11 @@ const mutations = {
     state.data_table = { ...state.data_table, ...value };
   },
   setRows(state, value) {
-    state.data_table.rows = value;
+    if (_.has(value, "data")) {
+      state.data_table.rows = value.data;
+    } else {
+      state.data_table.rows = value;
+    }
   },
   deleteRow(state, value) {
     state.data_table.rows = _.filter(state.data_table.rows, row => {

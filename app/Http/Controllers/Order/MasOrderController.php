@@ -78,7 +78,8 @@ class MasOrderController extends Controller
             MasOrder::updateOrCreate(['order_id' => $order->id], [
                 'status' => 'error',
                 'payload' => $payload,
-                'response' => $response->ErrorMessage
+                'response' => $response->ErrorMessage,
+                'env' => $masAccount->environment
             ]);
 
             return ['errors' => $response->ErrorMessage, 'payload' => $payload];
@@ -90,7 +91,8 @@ class MasOrderController extends Controller
                 'mas_message_number' => $response->Messages->MessageNumber,
                 'status' => 'submitted',
                 'payload' => $payload,
-                'response' => $response->Messages
+                'response' => $response->Messages,
+                'env' => $masAccount->environment
             ]);
             return ['success' => $response->Messages, 'payload' => $payload];
         } else if (!empty($response->ControlNumber)) {
@@ -99,12 +101,16 @@ class MasOrderController extends Controller
                 'mas_message_number' => $response->MessageNumber,
                 'status' => 'submitted',
                 'payload' => $payload,
-                'response' => $response
+                'response' => $response,
+                'env' => $masAccount->environment
             ]);
             return ['success' => $response, 'payload' => $payload];
         } else {
             MasOrder::updateOrCreate(['order_id' => $order->id], [
-                'status' => 'error on success',
+                'status' => 'error',
+                'payload' => $payload,
+                'response' => $response,
+                'env' => $masAccount->environment
             ]);
             return ['errors' => [$response], 'payload' => $payload];
         }

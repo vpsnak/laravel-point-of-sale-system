@@ -176,7 +176,7 @@ export default {
 
         this.request(payload)
           .then(response => {
-            this.setRows(response.data);
+            this.setRows(response);
 
             if (response.total !== this.totalItems) {
               this.totalItems = response.total;

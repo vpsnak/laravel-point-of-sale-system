@@ -449,34 +449,6 @@ export default new Vuex.Store({
       });
     },
 
-    setRole(context, payload) {
-      return new Promise((resolve, reject) => {
-        axios
-          .post(`${context.state.config.base_url}/roles/set`, payload.data)
-          .then(response => {
-            let notification = {
-              msg: response.data.info,
-              type: "success"
-            };
-            context.commit("setNotification", notification);
-
-            resolve(response.data);
-          })
-          .catch(error => {
-            if (_.has(error, "response.data.errors")) {
-              context.commit("setNotification", {
-                msg: error.response.data.errors,
-                type: "error"
-              });
-            } else {
-              console.error(error);
-            }
-
-            reject(error);
-          });
-      });
-    },
-
     create(context, payload) {
       return new Promise((resolve, reject) => {
         let options;
