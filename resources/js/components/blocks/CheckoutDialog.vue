@@ -63,10 +63,27 @@
 
 <script>
 import { mapMutations, mapActions, mapState } from "vuex";
+import { EventBus } from "../../plugins/event-bus";
 
 export default {
+  mounted() {
+    EventBus.$on("checkout-cancel-order", event => {
+      console.log(event);
+      if (event.payload) {
+        this.setIsValidCheckout(false);
+        this.request({
+          method: "delete",
+          url: `orders/${this.order_id}`
+        }).finally(() => {
+          this.resetState();
+        });
+      }
+    });
+  },
+
   beforeDestroy() {
     this.$off("close");
+    EventBus.$off();
   },
 
   computed: {
@@ -126,7 +143,7 @@ export default {
       "setIsValidCheckout",
       "resetState"
     ]),
-    ...mapActions(["delete"]),
+    ...mapActions("requests", ["request"]),
 
     hold() {
       this.resetState();
@@ -143,23 +160,11 @@ export default {
           action: "confirmation",
           persistent: true,
           cancelBtnTxt: "No",
-          confirmationBtnTxt: "Yes"
+          confirmationBtnTxt: "Yes",
+          eventChannel: "checkout-cancel-order"
         });
       } else {
         this.state = false;
-      }
-    },
-    confirmation(event) {
-      if (event) {
-        this.setIsValidCheckout(false);
-
-        let payload = {
-          model: "orders",
-          id: this.order_id
-        };
-        this.delete(payload).then(response => {
-          this.resetState();
-        });
       }
     }
   }

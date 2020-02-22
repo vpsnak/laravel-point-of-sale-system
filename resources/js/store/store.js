@@ -126,31 +126,20 @@ export default new Vuex.Store({
   actions: {
     login(context, payload) {
       return new Promise((resolve, reject) => {
-        axios
-          .post(`${context.state.config.base_url}/auth/login`, payload)
-          .then(response => {
-            let notification = {
-              msg: response.data.info,
-              type: "info"
-            };
-
-            window.axios.defaults.headers.common["Authorization"] =
-              response.data.token;
-
-            context.commit("setToken", response.data.token);
-            context.commit("setUser", response.data.user);
-            context.commit("setNotification", notification);
-
-            resolve(response.data);
+        context
+          .dispatch("requests/request", {
+            method: "post",
+            url: "auth/login",
+            data: payload
           })
-          .catch(error => {
-            let notification = {
-              msg: error.response.data.errors,
-              type: "error"
-            };
-            context.commit("setNotification", notification);
+          .then(response => {
+            window.axios.defaults.headers.common["Authorization"] =
+              response.token;
 
-            reject(error);
+            context.commit("setToken", response.token);
+            context.commit("setUser", response.user);
+
+            resolve(response);
           });
       });
     },

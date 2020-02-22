@@ -16,12 +16,15 @@ class CreateMasOrdersTable extends Migration
         Schema::create('mas_orders', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('order_id');
-            
+
             $table->string('mas_control_number')->nullable();
             $table->string('mas_message_number')->nullable();
-            $table->string('status')->nullable();
-            $table->json('payload');
-            $table->string('response');
+            $table->string('status');
+            $table->json('payload')->nullable();
+            $table->string('response')->nullable();
+            $table->string('env')->nullable();
+            $table->text('notes')->nullable();
+
             $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');

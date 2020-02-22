@@ -1,7 +1,6 @@
 import "@mdi/font/css/materialdesignicons.css";
 import "material-design-icons-iconfont/dist/material-design-icons.css";
 import "velocity-animate";
-import store from "./store/store";
 import Cookies from "js-cookie";
 // window.Velocity = require("velocity-animate");
 window._ = require("lodash");
@@ -22,14 +21,6 @@ Cookies.get("token")
       "token"
     ))
   : "";
-
-window.axios.interceptors.response.use(undefined, error => {
-  if (error.response.status === 401) {
-    store.commit("logout");
-  }
-
-  return Promise.reject(error);
-});
 
 /**
  * Next we will register the CSRF Token as a common header with Axios so that

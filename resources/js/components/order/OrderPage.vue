@@ -32,7 +32,7 @@
             </v-tooltip>
           </v-card-title>
 
-          <v-tabs grow centered v-model="selected_tab">
+          <v-tabs grow centered show-arrows v-model="selected_tab">
             <v-tab>
               <v-icon left>mdi-clipboard-list-outline</v-icon>
               <span>Order summary & actions</span>

@@ -8,6 +8,7 @@ use App\Customer;
 use App\Giftcard;
 use App\Helper\Price;
 use App\Jobs\ProcessOrder;
+use App\MasOrder;
 use App\Order;
 use App\StorePickup;
 use Illuminate\Http\Request;
@@ -309,6 +310,12 @@ class OrderController extends Controller
             if ($order->status !== 'pending_payment') {
                 $order->change = 0;
                 $order->status = 'pending_payment';
+                if ($order->masOrder->status === 'queued') {
+                    $order->masOrder->delete();
+                } else {
+                    // @TODO send cancel request to mas
+                    $order->masOrder->status = '';
+                }
             }
         } else {
             if (!$refund) {
@@ -318,6 +325,10 @@ class OrderController extends Controller
                 if ($order->status !== 'paid') {
                     $order->change = $change;
                     $order->status = 'paid';
+                    MasOrder::create([
+                        'order_id' => $order->id,
+                        'status' => 'queued'
+                    ]);
                 }
             } else {
                 $order->change = $change;

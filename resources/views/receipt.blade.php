@@ -107,13 +107,13 @@
                     </tr>
                     <tr>
                         <td class="small-header">Clrk:</td>
-                        <td>{{ $user_id->name }}</td>
+                        <td>{{ $order->created_by->name }}</td>
                         <td class="spaced-header">Date:</td>
                         <td>{{ $order->created_at->format('m/d/Y') }}</td>
                     </tr>
                     <tr>
                         <td class="small-header">Oper:</td>
-                        <td>{{ $user_id->name }}</td>
+                        <td>{{ $order->created_by->name }}</td>
                         <td class="spaced-header">Time:</td>
                         <td>{{ $order->created_at->format('h:m:s') }}</td>
                     </tr>

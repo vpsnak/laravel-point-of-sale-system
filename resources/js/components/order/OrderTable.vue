@@ -11,11 +11,84 @@
 
       <template v-slot:item.status="{ item }">
         <span :class="statusColor(item.status)">
-          <b>{{ parseStatusName(item.status) }}</b>
+          <b>{{ parseStatus(item) }}</b>
+        </span>
+      </template>
+
+      <template v-slot:item.mas_order.status="{ item }">
+        <span :class="masStatusColor(item.mas_order)">
+          <b>{{ parseMasStatus(item) }}</b>
         </span>
       </template>
 
       <template v-slot:item.actions="{ item }">
+        <v-tooltip
+          v-if="['pending', 'pending_payment'].indexOf(item.status) >= 0"
+          bottom
+        >
+          <template v-slot:activator="{ on }">
+            <v-btn
+              small
+              :disabled="data_table.loading"
+              @click.stop="checkout(item.id)"
+              class="my-2"
+              icon
+              v-on="on"
+            >
+              <v-icon small>mdi-currency-usd</v-icon>
+            </v-btn>
+          </template>
+          <span>Continue checkout</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              small
+              :disabled="data_table.loading"
+              @click.stop="reorder(item.id)"
+              class="my-2"
+              icon
+              v-on="on"
+            >
+              <v-icon small>mdi-cart-arrow-down</v-icon>
+            </v-btn>
+          </template>
+          <span>Reorder</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              small
+              :disabled="data_table.loading"
+              :to="{ name: 'viewOrder', params: { id: item.id } }"
+              class="my-2"
+              v-on="on"
+              icon
+            >
+              <v-icon small>mdi-eye</v-icon>
+            </v-btn>
+          </template>
+          <span>View</span>
+        </v-tooltip>
+
+        <v-tooltip bottom v-if="disableIfStatus(item)">
+          <template v-slot:activator="{ on }">
+            <v-btn
+              :to="{ name: 'editOrder', params: { id: item.id } }"
+              small
+              :disabled="data_table.loading"
+              class="my-2"
+              v-on="on"
+              icon
+            >
+              <v-icon small>edit</v-icon>
+            </v-btn>
+          </template>
+          <span>Edit</span>
+        </v-tooltip>
+
         <v-tooltip bottom v-if="['paid', 'complete'].indexOf(item.status) >= 0">
           <template v-slot:activator="{ on }">
             <v-btn
@@ -33,27 +106,7 @@
           <span>Receipt</span>
         </v-tooltip>
 
-        <v-tooltip
-          v-if="['pending', 'pending_payment'].indexOf(item.status) >= 0"
-          bottom
-        >
-          <template v-slot:activator="{ on }">
-            <v-btn
-              :ref="item.id"
-              small
-              :disabled="data_table.loading"
-              @click.stop="checkout(item.id)"
-              class="my-2"
-              icon
-              v-on="on"
-            >
-              <v-icon small>mdi-currency-usd</v-icon>
-            </v-btn>
-          </template>
-          <span>Continue checkout</span>
-        </v-tooltip>
-
-        <v-tooltip bottom v-if="item.status !== 'canceled'" color="red">
+        <v-tooltip bottom v-if="disableIfStatus(item)" color="red">
           <template v-slot:activator="{ on }">
             <v-btn
               icon
@@ -68,54 +121,6 @@
             </v-btn>
           </template>
           <span>Cancel order</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              :to="{ name: 'editOrder', params: { id: item.id } }"
-              small
-              :disabled="data_table.loading"
-              class="my-2"
-              v-on="on"
-              icon
-            >
-              <v-icon small>edit</v-icon>
-            </v-btn>
-          </template>
-          <span>Edit</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              small
-              :disabled="data_table.loading"
-              :to="{ name: 'viewOrder', params: { id: item.id } }"
-              class="my-2"
-              v-on="on"
-              icon
-            >
-              <v-icon small>mdi-eye</v-icon>
-            </v-btn>
-          </template>
-          <span>View</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              :ref="item.id"
-              small
-              :disabled="data_table.loading"
-              @click.stop="reorder(item.id)"
-              class="my-2"
-              icon
-              v-on="on"
-            >
-              <v-icon small>mdi-cart-arrow-down</v-icon>
-            </v-btn>
-          </template>
-          <span>Reorder</span>
         </v-tooltip>
       </template>
     </data-table>
@@ -143,9 +148,13 @@ export default {
       if (event.payload && this.selectedItem) {
         this.setLoading(true);
         this.cancelOrder().then(() => {
-          EventBus.$emit("data-table", { action: "paginate" });
+          EventBus.$emit("data-table", { payload: { action: "paginate" } });
         });
       }
+    });
+
+    EventBus.$on("orders-table-receipt", () => {
+      this.resetState();
     });
 
     this.render = true;
@@ -179,9 +188,9 @@ export default {
     ...mapActions("requests", ["request"]),
     ...mapActions("cart", ["loadOrder"]),
 
-    parseStatusName(value) {
-      if (value) {
-        return _.upperFirst(value.replace("_", " "));
+    parseStatus(item) {
+      if (item.status) {
+        return _.upperFirst(item.status.replace("_", " "));
       }
     },
     statusColor(status) {
@@ -194,10 +203,44 @@ export default {
           return "amber--text";
         case "paid":
           return "cyan--text";
-        case "complete":
+        case "completed":
           return "green--text";
         default:
           return "";
+      }
+    },
+    masStatusColor(mas_order) {
+      if (mas_order) {
+        switch (mas_order.status) {
+          case "submitted":
+            return "cyan--text";
+          case "printed":
+            return "cyan--text";
+          case "released":
+            return "cyan--text";
+          case "completed":
+            return "green--text";
+          default:
+            return "amber--text";
+        }
+      } else {
+        return "amber--text";
+      }
+    },
+    disableIfStatus(item) {
+      switch (item.status) {
+        case "completed":
+        case "canceled":
+          return false;
+        default:
+          return true;
+      }
+    },
+    parseMasStatus(item) {
+      if (item.mas_order && _.has(item.mas_order, "status")) {
+        return _.upperFirst(item.mas_order.status.replace("_", " "));
+      } else {
+        return "In queue";
       }
     },
     reorder(id) {
@@ -221,7 +264,16 @@ export default {
 
       this.getSingleOrder(id)
         .then(() => {
-          // this.setDialog({});
+          this.setDialog({
+            show: true,
+            width: 600,
+            title: `Receipt #${id}`,
+            titleCloseBtn: true,
+            icon: "mdi-receipt",
+            component: "orderReceipt",
+            persistent: true,
+            eventChannel: "orders-table-receipt"
+          });
         })
         .finally(() => {
           this.setLoading(false);

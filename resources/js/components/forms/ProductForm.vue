@@ -212,11 +212,7 @@ export default {
       this.create(payload)
         .then(() => {
           this.$emit("submit", {
-            action: "paginate",
-            notification: {
-              msg: "Product added successfully",
-              type: "success"
-            }
+            action: "paginate"
           });
           this.clear();
         })

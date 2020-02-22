@@ -13,6 +13,8 @@ class MasOrder extends Model
         'status',
         'payload',
         'response',
+        'env',
+        'notes'
     ];
 
     public static function getCreditCardType(string $cardScheme)

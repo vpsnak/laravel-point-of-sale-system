@@ -1,3 +1,5 @@
+import router from "../../plugins/router";
+
 const actions = {
   request(context, payload) {
     return new Promise((resolve, reject) => {
@@ -55,6 +57,13 @@ const actions = {
           }
           if (console_out) {
             console.error(error_response);
+          }
+
+          if (
+            error.response.status === 401 &&
+            router.currentRoute.name !== "login"
+          ) {
+            context.commit("logout", null, { root: true });
           }
 
           reject(error_response);

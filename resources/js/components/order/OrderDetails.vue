@@ -1,6 +1,6 @@
 <template>
   <v-row justify="center" align="center" no-gutters>
-    <v-col :cols="4">
+    <v-col :lg="4" :md="6" :cols="12">
       <v-card elevation="0">
         <v-card-title>
           <v-icon left>mdi-account-circle</v-icon>
@@ -13,7 +13,7 @@
         </v-card-title>
       </v-card>
     </v-col>
-    <v-col :cols="4">
+    <v-col :lg="4" :md="6" :cols="12">
       <v-card elevation="0">
         <v-card-title>
           <v-icon left>mdi-calendar-plus</v-icon>
@@ -26,7 +26,7 @@
         </v-card-title>
       </v-card>
     </v-col>
-    <v-col :cols="4">
+    <v-col :lg="4" :md="6" :cols="12">
       <v-card elevation="0">
         <v-card-title>
           <v-icon left>mdi-calendar-check-outline</v-icon>
@@ -39,40 +39,40 @@
         </v-card-title>
       </v-card>
     </v-col>
-    <v-col :cols="4">
+    <v-col :lg="4" :md="6" :cols="12">
       <v-card elevation="0">
         <v-card-title>
           <v-icon left>mdi-file-tree</v-icon>
           <span class="subtitle-1">
             Status:
             <b :class="statusColor(order_status)">
-              <i>{{ parseStatusName(order_status) }}</i>
+              <i>{{ parseStatus(order_status) }}</i>
             </b>
           </span>
         </v-card-title>
       </v-card>
     </v-col>
-    <v-col :cols="4">
+    <v-col :lg="4" :md="6" :cols="12">
       <v-card elevation="0">
         <v-card-title>
-          <v-icon left>mdi-package-variant</v-icon>
+          <v-icon left></v-icon>
           <span class="subtitle-1">
             Type:
             <b>
-              <i>{{ parseMethodName(method) }}</i>
+              <i>{{ parseMethod(method) }}</i>
             </b>
           </span>
         </v-card-title>
       </v-card>
     </v-col>
-    <v-col :cols="4">
+    <v-col :lg="4" :md="6" :cols="12">
       <v-card elevation="0">
         <v-card-title>
           <v-icon left>mdi-account-outline</v-icon>
           <span class="subtitle-1">
             Customer:
             <b>
-              <i>{{ customer ? customer.name : "Guest" }}</i>
+              <i>{{ customer ? customer.full_name : "Guest" }}</i>
             </b>
           </span>
         </v-card-title>
@@ -94,7 +94,7 @@ export default {
     ])
   },
   methods: {
-    parseMethodName(method) {
+    parseMethod(method) {
       switch (method) {
         case "retail":
           return "Cash & Carry";
@@ -104,7 +104,7 @@ export default {
           return "Delivery";
       }
     },
-    parseStatusName(status) {
+    parseStatus(status) {
       if (status) {
         return _.upperFirst(status.replace("_", " "));
       }

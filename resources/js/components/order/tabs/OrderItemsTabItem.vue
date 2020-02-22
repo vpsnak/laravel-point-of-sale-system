@@ -10,8 +10,9 @@
       <v-container fluid class="overflow-y-auto" style="max-height:80vh">
         <v-row dense align="center">
           <v-col
-            :md="4"
-            :cols="6"
+            :lg="4"
+            :md="6"
+            :cols="12"
             v-for="(product, index) in cart_products"
             :key="index"
           >

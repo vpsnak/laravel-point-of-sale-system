@@ -78,6 +78,7 @@ const state = {
       { text: "Customer", value: "customer" },
       { text: "Store", value: "store.name" },
       { text: "Status", value: "status" },
+      { text: "MAS Status", value: "mas_order.status" },
       { text: "Total", value: "total" },
       { text: "Total paid", value: "total_paid" },
       { text: "Created by", value: "created_by.name" },

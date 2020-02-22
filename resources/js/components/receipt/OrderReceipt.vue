@@ -73,13 +73,11 @@ export default {
     mailReceipt() {
       this.loading = true;
 
-      this.saveGuestEmail({ email: this.customerEmail })
-        .catch()
-        .finally(() => {
-          this.mailReceipt({ email: this.customerEmail }).finally(() => {
-            this.loading = false;
-          });
+      this.saveGuestEmail({ email: this.customerEmail }).finally(() => {
+        this.mailReceipt({ email: this.customerEmail }).finally(() => {
+          this.loading = false;
         });
+      });
     }
   }
 };

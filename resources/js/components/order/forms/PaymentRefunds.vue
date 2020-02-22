@@ -9,7 +9,7 @@
     <v-container :key="method">
       <ValidationObserver
         ref="refund-form"
-        v-slot="{ valid, invalid }"
+        v-slot="{ valid }"
         tag="v-form"
         @submit.stop="submitRefund"
       >

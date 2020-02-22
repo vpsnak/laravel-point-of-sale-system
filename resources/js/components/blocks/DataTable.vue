@@ -113,7 +113,7 @@ export default {
   },
 
   beforeDestroy() {
-    EventBus.$off();
+    EventBus.$off("data-table");
     if (this.data_table.newForm === "productForm") {
       this.$root.$off("barcodeScan");
     }
@@ -153,6 +153,7 @@ export default {
     ...mapMutations("dialog", ["setDialog"]),
     ...mapMutations("datatable", ["setRows", "setLoading", "resetDataTable"]),
     ...mapActions(["getAll", "search"]),
+    ...mapActions("requests", ["request"]),
 
     search(e, page = false) {
       if (this.keyword.length > 2 || this.search_action) {
@@ -165,15 +166,15 @@ export default {
             this.keyword = this.search_action;
           }
         }
+        const page = page ? `?page=${page}` : "";
 
-        let payload = {
-          model: this.data_table.model,
-          page: page || 1,
-          keyword: this.keyword,
-          dataTable: true
+        const payload = {
+          method: "get",
+          url: `${this.data_table.model}${page}`,
+          data: { keyword: this.keyword }
         };
 
-        this.searchRequest(payload)
+        this.request(payload)
           .then(response => {
             this.setRows(response.data);
 
@@ -195,11 +196,12 @@ export default {
         this.search_action = false;
 
         this.setLoading(true);
-        this.getAll({
-          model: this.data_table.model,
-          page: event ? event.page : this.currentPage,
-          dataTable: true
-        })
+        const page = event && event.page ? `?page=${event.page}` : "";
+        const payload = {
+          method: "get",
+          url: `${this.data_table.model}${page}`
+        };
+        this.request(payload)
           .then(response => {
             this.setRows(response.data);
 
@@ -207,7 +209,6 @@ export default {
               this.totalItems = response.total;
             }
           })
-          .catch(() => {})
           .finally(() => {
             this.setLoading(false);
           });
