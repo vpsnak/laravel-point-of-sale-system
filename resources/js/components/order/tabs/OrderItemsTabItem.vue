@@ -201,6 +201,7 @@ export default {
     ...mapMutations("dialog", ["setDialog"]),
 
     toggleEdit(index) {},
+
     viewProduct(product) {
       this.setDialog({
         show: true,

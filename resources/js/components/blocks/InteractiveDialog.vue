@@ -38,6 +38,7 @@
         <component
           v-if="dialog.component"
           :is="dialog.component"
+          v-bind="dialog.component_props"
           :readonly="dialog.readonly"
           :model="dialog.model"
           @submit="submit"
@@ -53,6 +54,7 @@
         <component
           v-if="dialog.component"
           :is="dialog.component"
+          v-bind="dialog.component_props"
           :readonly="dialog.readonly"
           :model="dialog.model"
           @submit="submit"
@@ -91,6 +93,9 @@ import { EventBus } from "../../plugins/event-bus";
 import { mapMutations, mapState } from "vuex";
 
 export default {
+  mounted() {
+    console.log(this.dialog.component_props);
+  },
   beforeDestroy() {
     if (this.dialog.eventChannel) {
       EventBus.$off(this.dialog.eventChannel);

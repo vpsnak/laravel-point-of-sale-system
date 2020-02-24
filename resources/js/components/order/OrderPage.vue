@@ -36,7 +36,7 @@
               <span>Order summary & actions</span>
             </v-tab>
             <v-tab>
-              <v-icon left>mdi-package-variant</v-icon>
+              <v-icon left>mdi-package-variant-closed</v-icon>
               <span>
                 Items <b class="primary--text">({{ cart_products.length }})</b>
               </span>

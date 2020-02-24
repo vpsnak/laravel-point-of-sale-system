@@ -9,6 +9,7 @@
       <v-spacer></v-spacer>
 
       <v-btn-toggle
+        v-if="!$props.order_edit"
         v-model="shippingMethod"
         mandatory
         group
@@ -87,7 +88,7 @@
 
       <cartTotals />
 
-      <div v-if="actions">
+      <div v-if="$props.actions">
         <cartActions :disabled="totalProducts" />
       </div>
     </div>
@@ -102,6 +103,7 @@ export default {
     title: String,
     icon: String,
     editable: Boolean,
+    order_edit: Boolean,
     actions: Boolean
   },
   computed: {

@@ -11,7 +11,7 @@
         <v-col>
           <vc-donut
             hasLegend
-            legendPlacement="left"
+            legendPlacement="bottom"
             :sections="costSections"
             :size="150"
             :thickness="13"

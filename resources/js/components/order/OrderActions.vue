@@ -4,6 +4,38 @@
       <v-list>
         <v-subheader>Actions</v-subheader>
         <v-list-item
+          @click.stop="editOrderItems()"
+          :disabled="loading"
+          :loading="checkout_loading"
+        >
+          <v-list-item-avatar>
+            <v-icon>mdi-package-variant</v-icon>
+          </v-list-item-avatar>
+          <v-list-item-title>Edit order items</v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          v-if="canEditDelivery"
+          @click.stop="editOrderDelivery()"
+          :disabled="loading"
+          :loading="checkout_loading"
+        >
+          <v-list-item-avatar>
+            <v-icon>mdi-package-variant</v-icon>
+          </v-list-item-avatar>
+          <v-list-item-title>Edit order delivery</v-list-item-title>
+        </v-list-item>
+        <v-list-item
+          @click.stop="saveChanges()"
+          v-if="canSave"
+          :disabled="loading"
+          :loading="checkout_loading"
+        >
+          <v-list-item-avatar>
+            <v-icon>mdi-content-save-edit-outline</v-icon>
+          </v-list-item-avatar>
+          <v-list-item-title>Save changes</v-list-item-title>
+        </v-list-item>
+        <v-list-item
           @click.stop="checkout()"
           v-if="canCheckout"
           :disabled="loading"
@@ -81,7 +113,6 @@ import { EventBus } from "../../plugins/event-bus";
 export default {
   mounted() {
     EventBus.$on("order-edit-cancel-order", event => {
-      console.log(event);
       if (event.payload) {
         this.cancelOrder();
       } else {
@@ -135,6 +166,18 @@ export default {
         return true;
       } else {
         return false;
+      }
+    },
+    canEditDelivery() {
+      if (this.method !== "retail") {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    canSave() {
+      if (true) {
+        return true;
       }
     },
     canCheckout() {
@@ -195,6 +238,19 @@ export default {
     ]),
     ...mapActions("requests", ["request"]),
 
+    editOrderItems() {
+      this.setDialog({
+        show: true,
+        fullscreen: true,
+        title: `Edit items for Order #${this.order_id}`,
+        titleCloseBtn: true,
+        icon: "mdi-package-variant",
+        component: "sales",
+        component_props: { order_edit: 1 },
+        persistent: true,
+        eventChannel: "order-page-edit-items"
+      });
+    },
     refund() {
       this.setDialog({
         show: true,

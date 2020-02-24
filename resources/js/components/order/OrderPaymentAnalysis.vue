@@ -138,13 +138,12 @@ export default {
           class: "amber--text"
         });
       }
-      if (this.refund_total < 0) {
-        this.sections.push({
-          title: "Total paid:",
-          value: this.sumTotals,
-          class: "success--text"
-        });
-      }
+      this.sections.push({
+        title: "Total paid:",
+        value: this.sumTotals >= 0 ? this.sumTotals : 0,
+        class: "success--text"
+      });
+
       return this.sections;
     },
     sumTotals() {

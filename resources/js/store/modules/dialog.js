@@ -7,6 +7,7 @@ const state = {
     title: "",
     titleCloseBtn: false,
     component: "",
+    component_props: {},
     readonly: false,
     content: "",
     model: null,
@@ -73,6 +74,7 @@ const mutations = {
     state.interactive_dialog.contentClass = "";
     state.interactive_dialog.eventChannel = "";
     state.interactive_dialog.no_padding = false;
+    state.interactive_dialog.component_props = {};
   }
 };
 
