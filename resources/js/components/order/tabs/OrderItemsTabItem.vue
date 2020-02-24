@@ -20,10 +20,10 @@
               <v-container>
                 <v-row align="center" justify="space-around">
                   <v-col cols="auto">
-                    <h3>
+                    <h4>
                       <b class="amber--text">{{ 1 + index }}.</b>
                       &nbsp;{{ product.name }}
-                    </h3>
+                    </h4>
                   </v-col>
                   <v-col cols="auto">
                     <h4>

@@ -53,6 +53,8 @@
               icon="mdi-clipboard-list"
               title="Order summary"
               :editable="order_id ? false : true"
+              :showMethods="true"
+              :showCustomer="true"
             ></cart>
           </v-col>
         </v-row>

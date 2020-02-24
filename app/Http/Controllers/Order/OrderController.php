@@ -310,12 +310,6 @@ class OrderController extends Controller
             if ($order->status !== 'pending_payment') {
                 $order->change = 0;
                 $order->status = 'pending_payment';
-                if ($order->masOrder->status === 'queued') {
-                    $order->masOrder->delete();
-                } else {
-                    // @TODO send cancel request to mas
-                    $order->masOrder->status = '';
-                }
             }
         } else {
             if (!$refund) {

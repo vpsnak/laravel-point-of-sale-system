@@ -76,7 +76,14 @@ export default [
       side_menu: SideMenu,
       top_menu: TopMenu
     },
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
+    props: {
+      default: {
+        showMethods: true,
+        showCustomer: true,
+        showActions: true
+      }
+    }
   },
   {
     name: "orders",
@@ -90,17 +97,26 @@ export default [
   },
   {
     name: "viewOrder",
-    path: "/order/:id",
+    path: "/order/view/:id",
     component: OrderPage,
     meta: { requiresAuth: true },
     props: { editable: false }
   },
   {
     name: "editOrder",
-    path: "/order/:id",
+    path: "/order/edit/:id",
     component: OrderPage,
     meta: { requiresAuth: true },
     props: { editable: true }
+  },
+  {
+    name: "editOrderItems",
+    path: "/order/edit/:id/items",
+    component: Sales,
+    meta: { requiresAuth: true },
+    props: {
+      showSave: true
+    }
   },
   {
     name: "customers",

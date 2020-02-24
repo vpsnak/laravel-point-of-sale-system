@@ -25,17 +25,6 @@
           <v-list-item-title>Edit order delivery</v-list-item-title>
         </v-list-item>
         <v-list-item
-          @click.stop="saveChanges()"
-          v-if="canSave"
-          :disabled="loading"
-          :loading="checkout_loading"
-        >
-          <v-list-item-avatar>
-            <v-icon>mdi-content-save-edit-outline</v-icon>
-          </v-list-item-avatar>
-          <v-list-item-title>Save changes</v-list-item-title>
-        </v-list-item>
-        <v-list-item
           @click.stop="checkout()"
           v-if="canCheckout"
           :disabled="loading"
@@ -182,11 +171,6 @@ export default {
         return false;
       }
     },
-    canSave() {
-      if (true) {
-        return true;
-      }
-    },
     canCheckout() {
       if (
         this.order_status ===
@@ -244,17 +228,7 @@ export default {
     ...mapActions("requests", ["request"]),
 
     editOrderItems() {
-      this.setDialog({
-        show: true,
-        fullscreen: true,
-        title: `Edit items for Order #${this.order_id}`,
-        titleCloseBtn: true,
-        icon: "mdi-package-variant",
-        component: "sales",
-        component_props: { order_edit: 1 },
-        persistent: true,
-        eventChannel: "order-page-edit-items"
-      });
+      this.$router.push({ name: "editOrderItems" });
     },
     refund() {
       // this.refund_loading = true;

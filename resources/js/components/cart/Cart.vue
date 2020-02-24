@@ -9,7 +9,7 @@
       <v-spacer></v-spacer>
 
       <v-btn-toggle
-        v-if="!$props.order_edit"
+        v-if="$props.showMethods"
         v-model="shippingMethod"
         mandatory
         group
@@ -60,15 +60,16 @@
       </v-btn-toggle>
     </div>
 
-    <v-divider class="py-1" />
+    <v-divider class="py-1" v-if="$props.showMethods" />
 
     <customerSearch
+      v-if="$props.showCustomer"
       :editable="editable"
       :keywordLength="3"
       class="pa-3"
     ></customerSearch>
 
-    <v-divider class="py-1" />
+    <v-divider class="py-1" v-if="$props.showCustomer" />
 
     <cartProducts :editable="editable"></cartProducts>
 
@@ -88,9 +89,8 @@
 
       <cartTotals />
 
-      <div v-if="$props.actions">
-        <cartActions :disabled="totalProducts" />
-      </div>
+      <cartActions v-if="$props.showActions" :disabled="totalProducts" />
+      <cartSave v-else-if="$props.showSave"></cartSave>
     </div>
   </v-card>
 </template>
@@ -103,9 +103,12 @@ export default {
     title: String,
     icon: String,
     editable: Boolean,
-    order_edit: Boolean,
-    actions: Boolean
+    showMethods: Boolean,
+    showCustomer: Boolean,
+    showActions: Boolean,
+    showSave: Boolean
   },
+
   computed: {
     ...mapState("cart", [
       "order_id",
