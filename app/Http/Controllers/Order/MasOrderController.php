@@ -78,19 +78,11 @@ class MasOrderController extends Controller
 
         $response = json_decode($response);
 
-        self::log($payload, $response, $status);
+        $this->log($payload, $response, $status);
 
         if (isset($response->ErrorMessage)) {
-<<<<<<< HEAD
-            $masOrder = MasOrder::updateOrCreate(['order_id' => $this->order->id], [
+            MasOrder::updateOrCreate(['order_id' => $this->order->id], [
                 'status' => 'error'
-=======
-            MasOrder::updateOrCreate(['order_id' => $order->id], [
-                'status' => 'error',
-                'payload' => $payload,
-                'response' => $response->ErrorMessage,
-                'env' => $masAccount->environment
->>>>>>> e1e900cdb973521faf532dc0863ec55b9b8fd604
             ]);
 
             return ['errors' => $response->ErrorMessage, 'payload' => $payload];
@@ -101,35 +93,18 @@ class MasOrderController extends Controller
                 'mas_control_number' => $response->Messages->ControlNumber,
                 'mas_message_number' => $response->Messages->MessageNumber,
                 'status' => 'submitted',
-<<<<<<< HEAD
-=======
-                'payload' => $payload,
-                'response' => $response->Messages,
-                'env' => $masAccount->environment
->>>>>>> e1e900cdb973521faf532dc0863ec55b9b8fd604
             ]);
             return ['success' => $response->Messages, 'payload' => $payload];
         } else if (!empty($response->ControlNumber)) {
             MasOrder::updateOrCreate(['order_id' => $this->order->id], [
                 'mas_control_number' => $response->ControlNumber,
                 'mas_message_number' => $response->MessageNumber,
-                'status' => 'submitted',
-                'payload' => $payload,
-                'response' => $response,
-                'env' => $masAccount->environment
+                'status' => 'submitted'
             ]);
             return ['success' => $response, 'payload' => $payload];
         } else {
-<<<<<<< HEAD
             MasOrder::updateOrCreate(['order_id' => $this->order->id], [
                 'status' => 'error on success',
-=======
-            MasOrder::updateOrCreate(['order_id' => $order->id], [
-                'status' => 'error',
-                'payload' => $payload,
-                'response' => $response,
-                'env' => $masAccount->environment
->>>>>>> e1e900cdb973521faf532dc0863ec55b9b8fd604
             ]);
             return ['errors' => [$response], 'payload' => $payload];
         }
@@ -314,14 +289,13 @@ class MasOrderController extends Controller
         $this->order = $model;
 
         if ($this->order->masOrder) {
-            $masAccount = MasAccount::getActive();
             $mas_message_number = $this->order->masOrder->mas_message_number;
             try {
                 $client = new Client();
 
-                $response = $client->get("$masAccount->endpoint/orders/{$this->order->masOrder->mas_message_number}", [
+                $response = $client->get("{$this->masAccount->endpoint}/orders/{$this->order->masOrder->mas_message_number}", [
                     'headers' => [
-                        'Authorization' => $masAccount->getAuthHeader(),
+                        'Authorization' => $this->masAccount->getAuthHeader(),
                         'Content-Type' => 'application/json',
                         'Accept' => 'application/json'
                     ],
@@ -336,7 +310,7 @@ class MasOrderController extends Controller
                 $status = 'failed';
             }
 
-            self::log("get Order {$mas_message_number}", $response, $status);
+            $this->log("get Order {$mas_message_number}", $response, $status);
         } else {
             return response(['errors' => ["Order #{$this->order->id} is not submitted to MAS"]]);
         }

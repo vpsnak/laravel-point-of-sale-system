@@ -121,17 +121,6 @@
                     </v-tooltip>
                   </v-col>
 
-                  <v-col cols="auto" v-if="$props.editable">
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
-                        <v-btn icon v-on="on" @click="toggleEdit(index)">
-                          <v-icon>edit</v-icon>
-                        </v-btn>
-                      </template>
-                      <span>Edit</span>
-                    </v-tooltip>
-                  </v-col>
-
                   <v-col cols="auto">
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on }">
@@ -152,22 +141,6 @@
                         </v-badge>
                       </template>
                       <span>View notes</span>
-                    </v-tooltip>
-                  </v-col>
-
-                  <v-col cols="auto" v-if="$props.editable">
-                    <v-tooltip bottom color="red">
-                      <template v-slot:activator="{ on }">
-                        <v-btn
-                          icon
-                          color="red"
-                          v-on="on"
-                          @click="removeProduct(index)"
-                        >
-                          <v-icon>mdi-delete-outline</v-icon>
-                        </v-btn>
-                      </template>
-                      <span>Remove from order</span>
                     </v-tooltip>
                   </v-col>
                 </v-row>
@@ -199,8 +172,6 @@ export default {
 
   methods: {
     ...mapMutations("dialog", ["setDialog"]),
-
-    toggleEdit(index) {},
 
     viewProduct(product) {
       this.setDialog({

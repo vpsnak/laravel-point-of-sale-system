@@ -224,20 +224,12 @@ export default {
       }
     },
     revertPrice(index) {
-      this.$nextTick(() => {
-        this.setPrice(index, this.originalPrice(index), true);
-
-        this.getSelectedInput(index).lazyValue = this.originalPrice(index);
-
-        this.getSelectedInput(index).blur();
-      });
+      this.getSelectedInput(index).lazyValue = null;
+      this.setPrice(index, null, true);
+      this.getSelectedInput(index).blur();
     },
     originalPrice(index) {
-      if (_.has(this.products[index], "original_price")) {
-        return this.products[index].original_price;
-      } else {
-        return this.parsedPrice(this.products[index]);
-      }
+      return this.products[index].original_price;
     },
     editPrice(index) {
       if (_.has(this.products[index], "editPrice")) {

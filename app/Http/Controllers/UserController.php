@@ -156,6 +156,6 @@ class UserController extends Controller
         $user->fill($validatedData);
         $user->save();
 
-        return response(['info' => ['User ' . $user->name . ' updated successfully!']]);
+        return response(['info' => ["User {$user->name} updated successfully!"]]);
     }
 }
