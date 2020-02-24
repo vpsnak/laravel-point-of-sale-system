@@ -2,60 +2,66 @@
 
 namespace App\Http\Controllers;
 
-use App\ElavonSdkPayment;
 use App\Helper\Price;
 use App\MasAccount;
 use App\MasOrder;
+use App\MasOrderLog;
 use App\Order;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Log;
 
 class MasOrderController extends Controller
 {
-    const LOG_PREFIX = 'MAS';
+    private $masAccount;
+    private $order;
+    private $store;
 
-    public static function submitToMas(Order $order)
+
+    public function __construct()
     {
-        $masAccount = MasAccount::getActive();
-        $order = $order->load('store');
-        $store = $order->store;
+        $this->masAccount = MasAccount::getActive();
+    }
+
+    public function submitToMas(Order $order)
+    {
+        $this->order = $order->load('store');
+        $this->store = $order->store;
 
         $payload = [];
         $payload['MessageType'] = '28';
-        $payload['MessageText'] = "POS Order #{$order->id}";
+        $payload['MessageText'] = "POS Order #{$this->order->id}";
 
-        $payload['SenderMdNumber'] = $masAccount->direct_id;
-        $payload['FulfillerMDNumber'] = $masAccount->fulfiller_md_number;
+        $payload['SenderMdNumber'] = $this->masAccount->direct_id;
+        $payload['FulfillerMDNumber'] = $this->masAccount->fulfiller_md_number;
         // $payload['FulfillerMDNumber'] = 'USZZ000035';
         $payload['PriorityType'] = '1';
 
-        $payload['OnlinePartner'] = self::parseOnlinePartner($order);
-        $payload['OnlinePartner']['MarketCode'] = $store->is_phone_center ? 'SO' : 'SW';
+        $payload['OnlinePartner'] = $this->parseOnlinePartner();
+        $payload['OnlinePartner']['MarketCode'] = $this->store->is_phone_center ? 'SO' : 'SW';
 
-        $payload['OrderItems'] = self::parseOrderItems($order->items);
-        $payload['RecipientDetail'] = self::parseOrderRecipient($order);
+        $payload['OrderItems'] = $this->parseOrderItems();
+        $payload['RecipientDetail'] = $this->parseOrderRecipient();
 
 
-        if ($payments = self::parseOrderPayments($order->payments)) {
+        if ($payments = $this->parseOrderPayments()) {
             $payload['Payments'] = $payments;
         }
 
-        $payload['MdseAmount'] = $order->total_without_tax;
-        $payload['TaxAmount'] = $order->total_tax;
-        $payload['TotalAmount'] = $order->total;
+        $payload['MdseAmount'] = $this->order->total_without_tax;
+        $payload['TaxAmount'] = $this->order->total_tax;
+        $payload['TotalAmount'] = $this->order->total;
 
         try {
             $client = new Client();
 
-            if ($masAccount->environment === 'production') {
+            if ($this->masAccount->environment === 'production') {
                 $url = 'messages';
             } else {
                 $url = 'messagesj';
             }
 
-            $response = $client->post("{$masAccount->endpoint}/{$url}", [
+            $response = $client->post("{$this->masAccount->endpoint}/{$url}", [
                 'headers' => [
-                    'Authorization' => $masAccount->getAuthHeader(),
+                    'Authorization' => $this->masAccount->getAuthHeader(),
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json'
                 ],
@@ -63,40 +69,48 @@ class MasOrderController extends Controller
                 'body' => json_encode($payload)
             ]);
 
-            $json = (string) $response->getBody()->getContents();
-            self::log('Response: ' . $json);
+            $response = (string) $response->getBody()->getContents();
+            $status = 'success';
         } catch (Exception $e) {
-            $json = (string) $e->getResponse()->getBody();
-            self::log("Error: {$json}");
+            $response = (string) $e->getResponse()->getBody();
+            $status = 'error';
         }
 
-        $response = json_decode($json);
+        $response = json_decode($response);
 
-        self::log($response);
+        self::log($payload, $response, $status);
 
         if (isset($response->ErrorMessage)) {
+<<<<<<< HEAD
+            $masOrder = MasOrder::updateOrCreate(['order_id' => $this->order->id], [
+                'status' => 'error'
+=======
             MasOrder::updateOrCreate(['order_id' => $order->id], [
                 'status' => 'error',
                 'payload' => $payload,
                 'response' => $response->ErrorMessage,
                 'env' => $masAccount->environment
+>>>>>>> e1e900cdb973521faf532dc0863ec55b9b8fd604
             ]);
 
             return ['errors' => $response->ErrorMessage, 'payload' => $payload];
         }
 
         if (!empty($response->Messages)) {
-            MasOrder::updateOrCreate(['order_id' => $order->id], [
+            MasOrder::updateOrCreate(['order_id' => $this->order->id], [
                 'mas_control_number' => $response->Messages->ControlNumber,
                 'mas_message_number' => $response->Messages->MessageNumber,
                 'status' => 'submitted',
+<<<<<<< HEAD
+=======
                 'payload' => $payload,
                 'response' => $response->Messages,
                 'env' => $masAccount->environment
+>>>>>>> e1e900cdb973521faf532dc0863ec55b9b8fd604
             ]);
             return ['success' => $response->Messages, 'payload' => $payload];
         } else if (!empty($response->ControlNumber)) {
-            MasOrder::updateOrCreate(['order_id' => $order->id], [
+            MasOrder::updateOrCreate(['order_id' => $this->order->id], [
                 'mas_control_number' => $response->ControlNumber,
                 'mas_message_number' => $response->MessageNumber,
                 'status' => 'submitted',
@@ -106,46 +120,51 @@ class MasOrderController extends Controller
             ]);
             return ['success' => $response, 'payload' => $payload];
         } else {
+<<<<<<< HEAD
+            MasOrder::updateOrCreate(['order_id' => $this->order->id], [
+                'status' => 'error on success',
+=======
             MasOrder::updateOrCreate(['order_id' => $order->id], [
                 'status' => 'error',
                 'payload' => $payload,
                 'response' => $response,
                 'env' => $masAccount->environment
+>>>>>>> e1e900cdb973521faf532dc0863ec55b9b8fd604
             ]);
             return ['errors' => [$response], 'payload' => $payload];
         }
     }
 
-    private static function parseOnlinePartner(Order $order)
+    private function parseOnlinePartner()
     {
-        if ($order->customer && $order->billing_address) {
+        if ($this->order->customer && $this->order->billing_address) {
             $onlinePartner = [
-                'SoldName' => "{$order->billing_address['first_name']} {$order->billing_address['last_name']}",
-                'SoldAddress' => $order->billing_address['street'],
-                'SoldAddress2' => $order->billing_address['street2'],
-                'SoldCity' => $order->billing_address['city'],
-                'SoldState' => $order->billing_address['region']['code'], //TODO EVALUATION
-                'SoldZip' => $order->billing_address['postcode'],
-                'SoldPhoneHome' => $order->billing_address['phone'],
-                'SoldPhoneWork' => $order->billing_address['phone'],
-                'SoldPhoneMobile' => $order->billing_address['phone'],
-                'SoldEmail' => $order->customer['email'],
+                'SoldName' => "{$this->order->billing_address['first_name']} {$this->order->billing_address['last_name']}",
+                'SoldAddress' => $this->order->billing_address['street'],
+                'SoldAddress2' => $this->order->billing_address['street2'],
+                'SoldCity' => $this->order->billing_address['city'],
+                'SoldState' => $this->order->billing_address['region']['code'], //TODO EVALUATION
+                'SoldZip' => $this->order->billing_address['postcode'],
+                'SoldPhoneHome' => $this->order->billing_address['phone'],
+                'SoldPhoneWork' => $this->order->billing_address['phone'],
+                'SoldPhoneMobile' => $this->order->billing_address['phone'],
+                'SoldEmail' => $this->order->customer['email'],
                 'SalesRep' => '',
                 'ShippingVia' => '',
                 'ShippingPriority' => '1',
                 'AuthCode' => '',
                 'SoldAttention' => '',
-                'CustomerId' => $order->customer['id'],
+                'CustomerId' => $this->order->customer['id'],
             ];
             return $onlinePartner;
         }
     }
 
-    private static function parseOrderRecipient(Order $order)
+    private function parseOrderRecipient()
     {
         $shipping_notes = '';
-        if (!empty($order->notes)) {
-            $shipping_notes .= "Notes: {$order->notes}";
+        if (!empty($this->order->notes)) {
+            $shipping_notes .= "Notes: {$this->order->notes}";
         }
         $response = [
             'ExtensionData' => null,
@@ -160,25 +179,25 @@ class MasOrderController extends Controller
             'RecipientCountry' => 'US',
             'RecipientZip' => '10024',
             'RecipientPhone' => '+6974526666',
-            'SpecialInstructions' => $order->delivery_slot,
-            'DeliveryDate' => $order->updated_at,
-            'DeliveryEndDate' => $order->updated_at,
+            'SpecialInstructions' => $this->order->delivery_slot,
+            'DeliveryDate' => $this->order->updated_at,
+            'DeliveryEndDate' => $this->order->updated_at,
             'CardMessage' => '',
             'OccasionType' => 9,
             'ResidenceType' => 11,
         ];
 
-        $customer = ($order->load('customer'))->customer;
+        $customer = ($this->order->load('customer'))->customer;
         if (empty($customer)) {
             return $response;
         }
 
-        $shipping_address = $order->delivery['address'] ?? null;
+        $shipping_address = $this->order->delivery['address'] ?? null;
         if (empty($shipping_address)) {
             return $response;
         }
         if (!empty($shipping_address->company)) {
-            $shipping_notes .= 'Company: ' . $order->delivery['address']['company'];
+            $shipping_notes .= 'Company: ' . $this->order->delivery['address']['company'];
         }
         // Delivery Time slots will be sent in SpecialInstructions , you can also put an abbreviated version in ShippingPriority (IE> 5P-9P for 5pm to 9pm)
         $response['RecipientFirstName'] = $shipping_address['first_name'];
@@ -193,24 +212,24 @@ class MasOrderController extends Controller
         $response['RecipientZip'] = $shipping_address['postcode'];
         $response['RecipientPhone'] = $shipping_address['phone'];
 
-        if (!empty($order->delivery['occasion'])) {
-            $response['OccasionType'] = $order->delivery['occasion'];
+        if (!empty($this->order->delivery['occasion'])) {
+            $response['OccasionType'] = $this->order->delivery['occasion'];
         }
-        if (!empty($order->location)) {
+        if (!empty($this->order->location)) {
             $response['ResidenceType'] = $shipping_address['location'];
         }
 
-        if (!empty($order->delivery['time'])) {
-            $response['SpecialInstructions'] = $order->delivery['time'];
+        if (!empty($this->order->delivery['time'])) {
+            $response['SpecialInstructions'] = $this->order->delivery['time'];
         }
 
         return $response;
     }
 
-    private static function parseOrderItems($items)
+    private function parseOrderItems()
     {
         $response = [];
-        foreach ($items as $item) {
+        foreach ($this->order->items as $item) {
             $response[$item['id']] = [
                 'ItemCode' => $item['sku'],
                 'ItemName' => $item['name'],
@@ -228,11 +247,11 @@ class MasOrderController extends Controller
         return array_values($response);
     }
 
-    private static function parseOrderPayments($payments)
+    private function parseOrderPayments()
     {
         $i = 0;
         $response = [];
-        foreach ($payments as $payment) {
+        foreach ($this->order->payments as $payment) {
             if ($payment->status !== 'approved' || $payment->refunded) {
                 continue;
             }
@@ -290,14 +309,17 @@ class MasOrderController extends Controller
         return array_values($response);
     }
 
-    public static function getOrderDetails(Order $model)
+    public function getOrderDetails(Order $model)
     {
-        if ($model->masOrder) {
+        $this->order = $model;
+
+        if ($this->order->masOrder) {
             $masAccount = MasAccount::getActive();
+            $mas_message_number = $this->order->masOrder->mas_message_number;
             try {
                 $client = new Client();
 
-                $response = $client->get("$masAccount->endpoint/orders/{$model->masOrder->mas_message_number}", [
+                $response = $client->get("$masAccount->endpoint/orders/{$this->order->masOrder->mas_message_number}", [
                     'headers' => [
                         'Authorization' => $masAccount->getAuthHeader(),
                         'Content-Type' => 'application/json',
@@ -306,15 +328,17 @@ class MasOrderController extends Controller
                     'connect_timeout' => 15
                 ]);
 
-                $json = (string) $response->getBody()->getContents();
-                self::log('Response: ' . $json);
-                return response($json);
+                $response = (string) $response->getBody()->getContents();
+                $status = 'success';
+                return response($response);
             } catch (Exception $e) {
-                $json = (string) $e->getResponse()->getBody();
-                self::log("Error: {$json}");
+                $response = (string) $e->getResponse()->getBody();
+                $status = 'failed';
             }
+
+            self::log("get Order {$mas_message_number}", $response, $status);
         } else {
-            return response(['errors' => ["No status for order #{$model->id}<br>Check if the order is submitted and try again"]]);
+            return response(['errors' => ["Order #{$this->order->id} is not submitted to MAS"]]);
         }
     }
 
@@ -322,12 +346,22 @@ class MasOrderController extends Controller
     {
     }
 
-    private static function log($message)
+    private function log($payload, $response, $status)
     {
-        if (!is_string($message)) {
-            $message = json_encode($message);
+        if (!is_string($payload)) {
+            $payload = json_encode($payload);
         }
 
-        Log::channel('connector')->info(self::LOG_PREFIX . ': ' . $message);
+        if (!is_string($response)) {
+            $response = json_encode($response);
+        }
+
+        MasOrderLog::create([
+            'mas_order_id' => $this->order->id,
+            'payload' => $payload,
+            'response' => $response,
+            'status' => $status,
+            'environment' => $this->masAccount->environment
+        ]);
     }
 }

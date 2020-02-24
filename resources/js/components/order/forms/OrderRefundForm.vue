@@ -97,14 +97,12 @@ import { mapState, mapMutations, mapActions } from "vuex";
 import { EventBus } from "../../../plugins/event-bus";
 
 export default {
-  mounted() {
-    EventBus.$on("order-edit-refund", event => {
-      console.log(event);
-      if (event) {
-        this.submitRefund();
-      }
-    });
+  mounted() {},
+
+  beforeDestroy() {
+    EventBus.$off();
   },
+
   data() {
     return {
       loading: false,
@@ -136,19 +134,6 @@ export default {
     ...mapMutations("dialog", ["setDialog"]),
     ...mapActions("requests", ["request"]),
 
-    confirmationDialog() {
-      this.setDialog({
-        show: true,
-        width: 600,
-        title: "Verify your password to issue the refund",
-        titleCloseBtn: true,
-        icon: "mdi-lock-alert",
-        component: "passwordForm",
-        model: { action: "verify" },
-        persistent: true,
-        eventChannel: "order-edit-refund"
-      });
-    },
     submitRefund() {
       this.loading = true;
 
@@ -162,7 +147,6 @@ export default {
           amount: this.amount
         }
       };
-
       switch (this.method) {
         case "giftcard-existing":
           payload.data.existing_gc_code = this.gc_code;
@@ -177,7 +161,6 @@ export default {
           this.loading = false;
           return;
       }
-
       this.request(payload)
         .then(response => {
           console.log(response);

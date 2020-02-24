@@ -119,6 +119,13 @@ export default {
         this.cancel_loading = false;
       }
     });
+
+    EventBus.$on("order-edit-refund-confirmation", event => {
+      this.refund_loading = false;
+      if (event.payload) {
+        this.setRefundDialog();
+      }
+    });
   },
 
   beforeDestroy() {
@@ -204,7 +211,6 @@ export default {
         return false;
       }
     },
-
     canRefund() {
       if (
         this.payments.length > 0 &&
@@ -216,7 +222,6 @@ export default {
         return false;
       }
     },
-
     canCancel() {
       if (
         this.order_status !==
@@ -229,7 +234,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations("dialog", ["setDialog"]),
+    ...mapMutations("dialog", ["setDialog", "resetDialog"]),
     ...mapMutations("cart", [
       "setCheckoutDialog",
       "resetState",
@@ -252,6 +257,13 @@ export default {
       });
     },
     refund() {
+      // this.refund_loading = true;
+      // const payload = {
+      //   title: "Verify your password to issue a refund",
+      //   eventChannel: "order-edit-refund-confirmation"
+      // };
+      // this.confirmationDialog(payload);
+
       this.setDialog({
         show: true,
         width: 700,
@@ -260,7 +272,19 @@ export default {
         icon: "mdi-credit-card-refund-outline",
         component: "orderRefundForm",
         persistent: true,
-        eventChannel: "top-menu-generate-z"
+        eventChannel: "order-edit-refund"
+      });
+    },
+    setRefundDialog() {
+      this.setDialog({
+        show: true,
+        width: 700,
+        title: `Issue a refund for order #${this.order_id}`,
+        titleCloseBtn: true,
+        icon: "mdi-credit-card-refund-outline",
+        component: "orderRefundForm",
+        persistent: true,
+        eventChannel: "order-edit-refund"
       });
     },
     reorder() {
@@ -293,17 +317,24 @@ export default {
     uploadToMas() {},
     cancelDialog() {
       this.cancel_loading = true;
+      const payload = {
+        title: `Verify your password to cancel order #${this.order_id}`,
+        eventChannel: "order-edit-cancel-order"
+      };
 
+      this.confirmationDialog(payload);
+    },
+    confirmationDialog(payload) {
       this.setDialog({
         show: true,
         width: 600,
-        title: `Verify your password to cancel order #${this.order_id}`,
+        title: payload.title,
         titleCloseBtn: true,
         icon: "mdi-lock-alert",
         component: "passwordForm",
         model: { action: "verify" },
         persistent: true,
-        eventChannel: "order-edit-cancel-order"
+        eventChannel: payload.eventChannel
       });
     },
     cancelOrder() {
