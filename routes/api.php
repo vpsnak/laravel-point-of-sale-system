@@ -83,6 +83,7 @@ Route::delete('/stores/{model}', 'StoreController@delete')->middleware('scope:ad
 Route::get('/taxes', 'TaxController@all')->middleware('scope:admin,store_manager,cashier');
 Route::get('/taxes/get/{model}', 'TaxController@get')->middleware('scope:admin,store_manager,cashier');
 Route::post('/taxes/create', 'TaxController@create')->middleware('scope:admin,store_manager,cashier');
+Route::patch('/taxes/update/{model}', 'TaxController@update')->middleware('scope:admin,store_manager,cashier');
 Route::post('/taxes/search', 'TaxController@search')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/taxes/{model}', 'TaxController@delete')->middleware('scope:admin,store_manager,cashier');
 

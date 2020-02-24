@@ -5,9 +5,17 @@ namespace App\Http\Controllers;
 use App\Tax;
 use Illuminate\Http\Request;
 
-class TaxController extends BaseController
+class TaxController extends Controller
 {
-    protected $model = Tax::class;
+    public function all()
+    {
+        return response(Tax::paginate());
+    }
+
+    public function get($model)
+    {
+        return response(Tax::findOrFail($model));
+    }
 
     public function create(Request $request)
     {
@@ -16,6 +24,9 @@ class TaxController extends BaseController
             'percentage' => 'required|numeric',
         ]);
 
+        $tax = Tax::create($validatedData);
+        
+        return response(['info' => ['Tax ' . $tax->name . ' created successfully!']], 201);
 
         $validatedID = $request->validate([
             'id' => 'nullable|exists:taxes,id'
@@ -27,17 +38,31 @@ class TaxController extends BaseController
             return response($this->model::store($validatedData), 201);
         }
     }
+    
+    public function update(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id' => 'required|exists:taxes,id',
+            'name' => 'required|string',
+            'percentage' => 'required|numeric',
+        ]);
+        $tax = Tax::findOrFail($validatedData['id']);
 
-       public function search(Request $request)
+        $tax->fill($validatedData);
+        $tax->save();
+
+        return response(['info' => ["Tax {$tax->name} updated successfully!"]]);
+    }
+    
+    public function search(Request $request)
     {
         $validatedData = $request->validate([
             'keyword' => 'required|string'
         ]);
 
-        return $this->searchResult(
-            ['name'],
-            $validatedData['keyword'],
-            true
-        );
+        $columns = ['name'];
+        $query = Tax::query()->search($columns, $validatedData['keyword']);
+
+        return response($query->paginate());
     }
 }
