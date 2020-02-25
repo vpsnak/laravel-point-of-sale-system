@@ -100,7 +100,7 @@ export default {
   mounted() {},
 
   beforeDestroy() {
-    EventBus.$off();
+    // EventBus.$off();
   },
 
   data() {

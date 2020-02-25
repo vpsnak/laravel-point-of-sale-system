@@ -145,7 +145,8 @@ export default {
   },
 
   beforeDestroy() {
-    EventBus.$off();
+    EventBus.$off("order-table-cancel-order");
+    EventBus.$off("orders-table-receipt");
   },
 
   data() {

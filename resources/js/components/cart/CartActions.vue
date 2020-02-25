@@ -105,7 +105,8 @@ export default {
   },
 
   beforeDestroy() {
-    EventBus.$off();
+    EventBus.$off("cart-actions-empty-current-cart");
+    EventBus.$off("cart-actions-restore-cart");
   },
 
   data() {

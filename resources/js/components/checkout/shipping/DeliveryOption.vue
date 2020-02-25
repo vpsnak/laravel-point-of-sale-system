@@ -242,7 +242,11 @@ export default {
   },
 
   beforeDestroy() {
-    EventBus.$off();
+    EventBus.$off("shipping-timeslot");
+    EventBus.$off("billing-address-new");
+    EventBus.$off("billing-address-edit");
+    EventBus.$off("delivery-address-new");
+    EventBus.$off("delivery-address-edit");
   },
 
   data() {

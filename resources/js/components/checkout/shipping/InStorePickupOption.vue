@@ -123,7 +123,7 @@ export default {
   },
 
   beforeDestroy() {
-    EventBus.$off();
+    EventBus.$off("shipping-timeslot");
   },
 
   data() {
