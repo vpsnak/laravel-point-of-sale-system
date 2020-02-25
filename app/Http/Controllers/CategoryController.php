@@ -13,7 +13,7 @@ class CategoryController extends Controller
         return response(Category::paginate());
     }
 
-    public function get($model)
+    public function getOne($model)
     {
         return response(Category::findOrFail($model));
     }
@@ -32,6 +32,7 @@ class CategoryController extends Controller
             'type' => 'success'
         ]]);
     }
+
     public function update(Request $request)
     {
         $validatedData = $request->validate([
