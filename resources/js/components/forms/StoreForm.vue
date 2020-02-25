@@ -113,6 +113,10 @@
           ></v-select>
         </ValidationProvider>
         <v-checkbox v-model="formFields.active" label="Active"></v-checkbox>
+        <v-checkbox
+          v-model="formFields.is_phone_center"
+          label="Phone center"
+        ></v-checkbox>
       </v-container>
       <v-container>
         <v-row v-if="!$props.readonly">
@@ -159,7 +163,8 @@ export default {
         taxable: false,
         is_default: false,
         user_id: null,
-        active: true
+        active: true,
+        is_phone_center: false
       }
     };
   },

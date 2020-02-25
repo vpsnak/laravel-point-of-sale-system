@@ -27,7 +27,8 @@ class StoreController extends Controller
             'street' => 'required|string',
             'postcode' => 'required|string',
             'city' => 'required|string',
-            'active' => 'required|boolean'
+            'active' => 'required|boolean',
+            'is_phone_center' => 'required|boolean'
 
         ]);
         $validatedData['user_id'] = auth()->user()->id;

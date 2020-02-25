@@ -20,12 +20,14 @@ class Store extends Model
         'taxable',
         'is_default',
         'active',
+        'is_phone_center',
         'company_id',
         'tax_id',
         'user_id',
     ];
 
     protected $casts = [
+        'is_phone_center' => 'boolean',
         'active' => 'boolean',
         'created_at' => "datetime:m/d/Y H:i:s",
         'updated_at' => "datetime:m/d/Y H:i:s"
