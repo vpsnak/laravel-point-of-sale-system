@@ -136,6 +136,7 @@ Route::delete('/store-pickups/{model}', 'StorePickupController@delete')->middlew
 // companies
 Route::get('/companies', 'CompanyController@all')->middleware('scope:admin,store_manager,cashier');
 Route::get('/companies/get/{model}', 'CompanyController@get')->middleware('scope:admin,store_manager,cashier');
+Route::patch('/companies/update/{model}', 'CompanyController@update')->middleware('scope:admin,store_manager,cashier');
 Route::post('/companies/create', 'CompanyController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/companies/search', 'CompanyController@search')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/companies/{model}', 'CompanyController@delete')->middleware('scope:admin,store_manager,cashier');

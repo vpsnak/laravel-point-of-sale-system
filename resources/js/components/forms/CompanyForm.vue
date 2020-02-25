@@ -85,20 +85,38 @@ export default {
         model: "companies",
         data: { ...this.formFields }
       };
-      this.create(payload)
-        .then(() => {
-          this.$emit("submit", {
-            action: "paginate",
-            notification: {
-              msg: "Company added successfully",
-              type: "success"
-            }
+      if (this.$props.model) {
+        axios
+          .patch(`/api/companies/update/${this.$props.model.id}`, payload.data)
+          .then(() => {
+            this.clear();
+            this.$emit("submit", {
+              action: "paginate",
+              notification: {
+                msg: "Company updated successfully",
+                type: "success"
+              }
+            });
+          })
+          .finally(() => {
+            this.loading = false;
           });
-          this.clear();
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+      } else {
+        this.create(payload)
+          .then(() => {
+            this.$emit("submit", {
+              action: "paginate",
+              notification: {
+                msg: "Company added successfully",
+                type: "success"
+              }
+            });
+            this.clear();
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      }
     },
     clear() {
       this.formFields = { ...this.defaultValues };

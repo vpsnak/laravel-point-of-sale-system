@@ -3,13 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Company;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
-class CompanyController extends BaseController
+class CompanyController extends Controller
 {
-    protected $model = Company::class;
+    public function all()
+    {
+        return response(Company::paginate());
+    }
+
+    public function get($model)
+    {
+        return response(Company::findOrFail($model));
+    }
 
     public function create(Request $request)
     {
@@ -18,27 +24,30 @@ class CompanyController extends BaseController
             'tax_number' => 'required|string',
         ]);
 
-        $validatedID = $request->validate([
-            'id' => 'nullable|exists:companies,id'
-        ]);
+        $company = Company::create($validatedData);
 
-        if (!empty($validatedID)) {
-            return response($this->model::updateData($validatedID, $validatedData), 200);
-        } else {
-            return response($this->model::store($validatedData), 201);
-        }
+        return response(['notification' => [
+            'msg' => ["Company {$company->name} created successfully!"],
+            'type' => 'success'
+        ]], 201);
     }
 
-    /**
-     * @return ResponseFactory|Response
-     */
-    public function all()
+    public function update(Request $request)
     {
-        if (!isset($this->model)) {
-            return response('Model not found', 404);
-        }
+        $validatedData = $request->validate([
+            'id' => 'required|exists:companies,id',
+            'name' => 'required|string',
+            'tax_number' => 'required|string',
+        ]);
+        $company = Company::findOrFail($validatedData['id']);
 
-        return response($this->model::paginate(), 200);
+        $company->fill($validatedData);
+        $company->save();
+
+        return response(['notification' => [
+            'msg' => ["User {$company->name} updated successfully!"],
+            'type' => 'success'
+        ]]);
     }
 
     public function search(Request $request)
@@ -47,10 +56,9 @@ class CompanyController extends BaseController
             'keyword' => 'required|string'
         ]);
 
-        return $this->searchResult(
-            ['name'],
-            $validatedData['keyword'],
-            true
-        );
+        $columns = ['name'];
+        $query = Company::query()->search($columns, $validatedData['keyword']);
+
+        return response($query->paginate());
     }
 }
