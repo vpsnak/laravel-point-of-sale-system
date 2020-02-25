@@ -16,18 +16,10 @@
         <paymentHistory editOrder />
       </v-col>
     </v-row>
-    <v-row no-gutters v-if="this.$props.editable">
+    <v-row no-gutters>
       <v-col :cols="12">
         <orderActions />
       </v-col>
     </v-row>
   </v-tab-item>
 </template>
-
-<script>
-export default {
-  props: {
-    editable: Boolean
-  }
-};
-</script>

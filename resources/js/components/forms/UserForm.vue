@@ -109,6 +109,20 @@ export default {
     model: Object,
     readonly: Boolean
   },
+
+  mounted() {
+    this.defaultValues = { ...this.formFields };
+    if (this.$props.model) {
+      this.formFields = {
+        ...this.$props.model
+      };
+    }
+  },
+
+  beforeDestroy() {
+    this.$off("submit");
+  },
+
   data() {
     return {
       loading: false,
@@ -125,57 +139,44 @@ export default {
       }
     };
   },
+
   computed: {
     disableSubmit() {
       return this.formFields.name ? false : true;
     }
   },
-  mounted() {
-    this.defaultValues = { ...this.formFields };
-    if (this.$props.model) {
-      this.formFields = {
-        ...this.$props.model
-      };
-    }
-  },
+
   methods: {
-    ...mapActions({
-      create: "create"
-    }),
+    ...mapActions("requests", ["request"]),
 
     submit() {
       this.loading = true;
-      let payload = {
-        model: "users",
-        data: { ...this.formFields }
-      };
 
       if (this.$props.model) {
-        axios
-          .patch(`/api/users/update/${this.$props.model.id}`, payload.data)
+        this.request({
+          method: "patch",
+          url: "users/update",
+          data: { ...this.formFields }
+        })
           .then(() => {
             this.clear();
             this.$emit("submit", {
-              action: "paginate",
-              notification: {
-                msg: "User added successfully",
-                type: "success"
-              }
+              action: "paginate"
             });
           })
           .finally(() => {
             this.loading = false;
           });
       } else {
-        this.create(payload)
+        this.request({
+          method: "post",
+          url: "users/create",
+          data: { ...this.formFields }
+        })
           .then(() => {
             this.clear();
             this.$emit("submit", {
-              action: "paginate",
-              notification: {
-                msg: "User added successfully",
-                type: "success"
-              }
+              action: "paginate"
             });
           })
           .finally(() => {
@@ -186,9 +187,6 @@ export default {
     clear() {
       this.formFields = { ...this.defaultValues };
     }
-  },
-  beforeDestroy() {
-    this.$off("submit");
   }
 };
 </script>

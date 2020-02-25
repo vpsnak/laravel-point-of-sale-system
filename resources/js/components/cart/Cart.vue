@@ -8,70 +8,21 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn-toggle
-        v-if="$props.showMethods"
-        v-model="shippingMethod"
-        mandatory
-        group
-        @change="resetShipping()"
-      >
-        <v-tooltip bottom color="primary">
-          <template v-slot:activator="{ on }">
-            <v-btn
-              color="primary"
-              icon
-              value="retail"
-              v-on="on"
-              :disabled="order_id ? true : false"
-            >
-              <v-icon>mdi-cart-arrow-right</v-icon>
-            </v-btn>
-          </template>
-          <span>Cash & Carry</span>
-        </v-tooltip>
-        <v-tooltip bottom color="warning">
-          <template v-slot:activator="{ on }">
-            <v-btn
-              color="warning"
-              icon
-              value="pickup"
-              :disabled="!customer || order_id ? true : false"
-              v-on="on"
-            >
-              <v-icon>mdi-storefront</v-icon>
-            </v-btn>
-          </template>
-          <span>In Store Pickup</span>
-        </v-tooltip>
-        <v-tooltip bottom color="purple">
-          <template v-slot:activator="{ on }">
-            <v-btn
-              color="purple"
-              icon
-              value="delivery"
-              :disabled="!customer || order_id ? true : false"
-              v-on="on"
-            >
-              <v-icon>mdi-truck-delivery</v-icon>
-            </v-btn>
-          </template>
-          <span>Delivery</span>
-        </v-tooltip>
-      </v-btn-toggle>
+      <cartMethods v-if="$props.showMethods" />
     </div>
 
     <v-divider class="py-1" v-if="$props.showMethods" />
 
     <customerSearch
       v-if="$props.showCustomer"
-      :editable="editable"
+      :editable="$props.editable"
       :keywordLength="3"
       class="pa-3"
     ></customerSearch>
 
     <v-divider class="py-1" v-if="$props.showCustomer" />
 
-    <cartProducts :editable="editable"></cartProducts>
+    <cartProducts :editable="$props.editable"></cartProducts>
 
     <v-divider />
 
@@ -81,7 +32,10 @@
           <v-label>Cart discount</v-label>
         </v-col>
         <v-col :cols="4" class="px-2 py-0">
-          <cartDiscount :product_index="-1" :editable="editable"></cartDiscount>
+          <cartDiscount
+            :product_index="-1"
+            :editable="$props.editable"
+          ></cartDiscount>
         </v-col>
       </v-row>
 
@@ -90,7 +44,7 @@
       <cartTotals />
 
       <cartActions v-if="$props.showActions" :disabled="totalProducts" />
-      <cartSave v-else-if="$props.showSave"></cartSave>
+      <orderSave v-else-if="$props.showSave" url="update-items"></orderSave>
     </div>
   </v-card>
 </template>
@@ -110,57 +64,10 @@ export default {
   },
 
   computed: {
-    ...mapState("cart", [
-      "order_id",
-      "customer",
-      "delivery",
-      "method",
-      "cart_products"
-    ]),
+    ...mapState("cart", ["cart_products"]),
 
-    shippingMethod: {
-      get() {
-        return this.method;
-      },
-      set(value) {
-        this.setMethod(value);
-        this.setOrderOptions(value);
-      }
-    },
     totalProducts() {
       return _.size(this.cart_products) ? false : true;
-    }
-  },
-
-  methods: {
-    ...mapMutations("cart", ["setMethod", "setMethodStep", "resetShipping"]),
-
-    setOrderOptions(value) {
-      switch (value) {
-        case "retail":
-          this.setMethodStep({
-            name: "Cash & Carry",
-            icon: "mdi-cart-arrow-right",
-            color: "primary"
-          });
-          break;
-        case "pickup":
-          this.setMethodStep({
-            name: "In Store Pickup",
-            icon: "mdi-storefront",
-            color: "warning"
-          });
-          break;
-        case "delivery":
-          this.setMethodStep({
-            name: "Delivery",
-            icon: "mdi-truck-delivery",
-            color: "success"
-          });
-          break;
-        default:
-          break;
-      }
     }
   }
 };

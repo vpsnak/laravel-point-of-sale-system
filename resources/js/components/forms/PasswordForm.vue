@@ -86,6 +86,11 @@ export default {
   props: {
     model: Object || undefined
   },
+
+  beforeDestroy() {
+    this.$off("submit");
+  },
+
   data() {
     return {
       showCurrentPassword: false,
@@ -99,6 +104,7 @@ export default {
       }
     };
   },
+
   computed: {
     action() {
       return this.$props.model.action;
@@ -116,12 +122,19 @@ export default {
       }
     }
   },
+
   methods: {
+    ...mapActions("requests", ["request"]),
+
     submit() {
       switch (this.action) {
         case "change_self":
           this.loading = true;
-          this.changeSelfPwd(this.formFields)
+          this.request({
+            method: "post",
+            url: "auth/password",
+            data: this.formFields
+          })
             .then(() => {
               this.$emit("submit", true);
             })
@@ -132,7 +145,11 @@ export default {
         case "change":
           this.loading = true;
           this.formFields.user_id = this.$props.model.id;
-          this.changeUserPwd(this.formFields)
+          this.request({
+            method: "post",
+            url: "users/password",
+            data: this.formFields
+          })
             .then(() => {
               this.$emit("submit", true);
             })
@@ -142,7 +159,11 @@ export default {
           break;
         case "verify":
           this.loading = true;
-          this.verifySelf(this.formFields)
+          this.request({
+            method: "post",
+            url: "auth/verify",
+            data: this.formFields
+          })
             .then(() => {
               this.$emit("submit", true);
             })
@@ -151,11 +172,7 @@ export default {
             });
           break;
       }
-    },
-    ...mapActions(["changeSelfPwd", "changeUserPwd", "verifySelf"])
-  },
-  beforeDestroy() {
-    this.$off("submit");
+    }
   }
 };
 </script>

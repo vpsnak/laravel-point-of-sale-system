@@ -33,26 +33,27 @@
           <v-tabs grow centered show-arrows v-model="selected_tab">
             <v-tab>
               <v-icon left>mdi-clipboard-list-outline</v-icon>
-              <span>Order summary & actions</span>
+              <span>View summary</span>
             </v-tab>
             <v-tab>
               <v-icon left>mdi-package-variant-closed</v-icon>
               <span>
-                Items <b class="primary--text">({{ cart_products.length }})</b>
+                View items
+                <b class="primary--text">({{ cart_products.length }})</b>
               </span>
             </v-tab>
             <v-tab>
-              <v-icon left>mdi-file-document-edit-outline</v-icon>
-              <span>Order Options</span>
+              <v-icon left>mdi-file-document-outline</v-icon>
+              <span>View options</span>
             </v-tab>
 
             <v-tabs-items v-model="selected_tab">
-              <OrderSummaryTabItem :editable="this.$props.editable" />
-              <OrderItemsTabItem :editable="this.$props.editable" />
+              <OrderSummaryTabItem />
+              <OrderItemsTabItem />
               <OrderDeliveryOptionsTabItem />
             </v-tabs-items>
           </v-tabs>
-          <v-tooltip bottom v-if="order_id && $props.editable" color="primary">
+          <v-tooltip bottom v-if="order_id" color="primary">
             <template v-slot:activator="{ on }">
               <v-btn
                 color="primary"
@@ -77,9 +78,6 @@
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
 export default {
-  props: {
-    editable: Boolean
-  },
   data() {
     return {
       loading: true,

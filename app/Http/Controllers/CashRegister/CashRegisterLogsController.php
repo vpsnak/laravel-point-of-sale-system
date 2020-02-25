@@ -50,8 +50,11 @@ class CashRegisterLogsController extends Controller
 
         return response([
             'report' => $report,
-            'info' => ['Cash register closed successfully!']
-        ], 200);
+            'notification' => [
+                'msg' => ['Cash register closed successfully!'],
+                'type' => 'success'
+            ]
+        ]);
     }
 
     public function logout()

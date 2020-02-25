@@ -299,7 +299,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["getAll", "getManyByOne", "search"]),
+    ...mapActions("requests", ["request"]),
+    ...mapActions(["getAll", "search"]),
     ...mapMutations(["setProductList"]),
     ...mapMutations("cart", ["addProduct"]),
     ...mapMutations("dialog", ["viewItem", "setDialog"]),
@@ -362,17 +363,15 @@ export default {
     },
     getProductsFromCategoryID() {
       this.initiateLoadingSearchResults(true);
-      let payload = {
-        model: "categories",
-        mutation: "setProductList",
-        page: this.currentPage,
-        data: {
-          id: this.selectedCategory,
-          model: "products"
-        }
+      const page = this.currentPage ? "?page=" + this.currentPage : "";
+      const payload = {
+        method: "get",
+        url: `categories/${this.selectedCategory}/products${page}`
       };
-      this.getManyByOne(payload)
+
+      this.request(payload)
         .then(response => {
+          this.setProductList = response.data.data;
           this.currentPage = response.current_page;
           this.lastPage = response.last_page;
         })

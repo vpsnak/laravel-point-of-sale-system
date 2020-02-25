@@ -42,7 +42,10 @@ class UserController extends Controller
         $token = (json_decode((string) $response->getBody(), true))['access_token'];
 
         return response([
-            'info' => ['Login' => "Welcome <b>{$user->name}</b>"],
+            'notification' => [
+                'msg' => ["Welcome <b>{$user->name}</b>!"],
+                'type' => 'success'
+            ],
             'user' => $user,
             'token' => "Bearer $token"
         ]);
@@ -62,9 +65,14 @@ class UserController extends Controller
             $user->password = $validatedData['password'];
             $user->save();
 
-            return response(['info' => ['Auth' => 'Password changed successfully!']]);
+            return response([
+                'notification' => [
+                    'msg' => ['Password changed successfully!'],
+                    'type' => 'success'
+                ]
+            ]);
         } else {
-            return response(['errors' => ['Auth' => 'Current password mismatch']], 422);
+            return response(['errors' => ['Current password is incorrect']], 422);
         }
     }
 
@@ -77,9 +85,12 @@ class UserController extends Controller
         $user = auth()->user();
 
         if ($user->verifyPwd($validatedData['current_password'])) {
-            return response(1, 200);
+            return response(['notification' => [
+                'msg' => ['Verified!'],
+                'type' => 'success'
+            ]]);
         } else {
-            return response(['errors' => ['Verification' => 'Password verification failed']], 500);
+            return response(['errors' => ['Password verification failed']], 500);
         }
     }
 
@@ -95,7 +106,10 @@ class UserController extends Controller
         $user->password = $validatedData['password'];
         $user->save();
 
-        return response(['info' => ['Auth' => 'Password changed successfully!']]);
+        return response(['notification' => [
+            'msg' => ['Password changed successfully!'],
+            'type' => 'success'
+        ]]);
     }
 
     public function logout()
@@ -109,7 +123,10 @@ class UserController extends Controller
 
         $user->token()->delete();
 
-        return response(['info' => ['Logout' => 'Goodbye...']]);
+        return response(['notification' => [
+            'msg' => ['Goodbye...'],
+            'type' => "success"
+        ]]);
     }
 
 
@@ -138,7 +155,10 @@ class UserController extends Controller
 
         $user = User::create($validatedData);
 
-        return response(['info' => ['User ' . $user->name . ' created successfully!']], 201);
+        return response(['notification' => [
+            'msg' => ["User {$user->name} created successfully!"],
+            'type' => 'success'
+        ]], 201);
     }
 
     public function update(Request $request)
@@ -156,6 +176,9 @@ class UserController extends Controller
         $user->fill($validatedData);
         $user->save();
 
-        return response(['info' => ["User {$user->name} updated successfully!"]]);
+        return response(['notification' => [
+            'msg' => ["User {$user->name} updated successfully!"],
+            'type' => 'success'
+        ]]);
     }
 }

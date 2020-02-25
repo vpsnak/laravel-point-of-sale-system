@@ -70,7 +70,6 @@ import { EventBus } from "../../plugins/event-bus";
 export default {
   mounted() {
     EventBus.$on("checkout-cancel-order", event => {
-      console.log(event);
       if (event.payload) {
         this.setIsValidCheckout(false);
         this.request({

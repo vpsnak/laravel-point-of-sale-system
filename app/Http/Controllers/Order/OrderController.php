@@ -15,6 +15,16 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
+    private $order;
+    private $order_data;
+    private $user;
+    private $store;
+
+    public function __construct(Order $order)
+    {
+        $this->order = $order;
+    }
+
     public function all()
     {
         return response(Order::without([
@@ -28,57 +38,102 @@ class OrderController extends Controller
         return response($model);
     }
 
-    public function update(Request $request, Order $order)
+    public function updateItems(Request $request)
     {
-        // $user = auth()->user();
+        $this->order_data = $request->validate([
+            'order_id' => 'required|exists:orders,id',
 
-        // $validatedID = $request->validate([
-        //     'id' => 'nullable|exists:orders,id'
-        // ]);
+            'discount_type' => 'string|nullable',
+            'discount_amount' => 'numeric|nullable',
+            // items (products)
+            'products' => 'required',
+            'products.*.id' => 'nullable|numeric',
+            'products.*.name' => 'required|string',
+            'products.*.sku' => 'required|string',
+            'products.*.final_price' => 'required|numeric',
+            'products.*.qty' => 'required|numeric',
+            'products.*.discount_type' => 'nullable|string',
+            'products.*.discount_amount' => 'nullable|numeric',
+            'products.*.notes' => 'nullable|string',
+        ]);
 
-        // if (!empty($validatedID)) {
-        //     $validatedData = $request->validate([
-        //         'status' => 'required|in:pending_payment,paid,complete',
-        //         'shipping_type' => 'string|nullable',
-        //         'shipping_cost' => 'numeric|nullable',
-        //     ]);
-        //     $order = Order::findOrFail($validatedID['id']);
-        //     $order->fill($validatedData);
+        $this->user = auth()->user();
+        $this->store = $this->user->open_register->cash_register->store;
 
-        //     ProcessOrder::dispatchNow($order);
+        // $this->order_data['user_id'] = $this->user->id;
 
-        //     if ($validatedData['status'] === 'complete') {
-        //         foreach ($order->items as $product) {
+        $addresses = $this->parseAddresses();
 
-        //             if (isset($product['sku'])) {
-        //                 $code = explode('-', $product['sku']);
-        //                 if (count($code) > 1 && $code[0] === 'giftCard') {
-        //                     $giftCard = Giftcard::whereCode($code[1])->first();
+        $this->parseTax();
 
-        //                     if (!$giftCard) {
-        //                         $giftCard = new Giftcard;
-        //                         $giftCard->name = $product['name'];
-        //                         $giftCard->code = $code[1];
-        //                     }
-        //                     if (!$giftCard->enabled) {
-        //                         $giftCard->enabled = true;
-        //                         $giftCard->amount = $product->final_price;
-        //                     } else {
-        //                         $giftCard->amount += $product->final_price;
-        //                     }
-        //                     $giftCard->save();
-        //                 }
-        //             }
-        //         }
-        //     }
+        $this->order = Order::findOrFail($this->order_data['order_id']);
+        $this->order->fill($this->order_data);
 
-        //     return response($order, 200);
-        // }
+        $this->parseProducts();
+
+        $this->order->save();
+
+        $this->updateOrderStatus(null, true);
+
+        ProcessOrder::dispatchNow($this->order);
+
+        return response(['notification' => [
+            'msg' => ['Your changes in order\'s items saved successfully!'],
+            'type' => 'success'
+        ]]);
+    }
+
+    public function updateOptions(Request $request)
+    {
+        $this->order_data = $request->validate([
+            'order_id' => 'required|exists:orders,id',
+            'customer_id' => 'required',
+            'shipping_cost' => 'numeric|nullable',
+            'method' => 'required|in:pickup,delivery',
+            'notes' => 'string|nullable',
+
+            // billing
+            'billing_address_id' => 'nullable|required_if:method,delivery|exists:addresses,id',
+            // delivery
+            'delivery' => 'nullable|required_if:method,pickup,delivery|array',
+            'delivery.date' => 'nullable|required_if:method,pickup,delivery|date',
+            'delivery.time' => 'nullable|required_if:method,pickup,delivery|string',
+            'delivery.occasion' => 'nullable|required_if:method,delivery|numeric',
+            // delivery address (shipping address)
+            'delivery.address_id' => 'nullable|required_if:method,delivery|exists:addresses,id',
+            // store_pickup
+            'delivery.store_pickup_id' => 'nullable|required_if:method,pickup|exists:store_pickups,id'
+        ]);
+
+        $this->user = auth()->user();
+        $this->store = $this->user->open_register->cash_register->store;
+
+        $this->order_data['user_id'] = $this->user->id;
+
+        $addresses = $this->parseAddresses();
+
+        $this->order = Order::findOrFail($this->order_data['order_id']);
+        $this->order->fill($this->order_data);
+
+        $this->order->billing_address = $addresses['billing_address'] ?? null;
+
+        $this->parseDelivery($addresses);
+
+        $this->order->save();
+
+        $this->updateOrderStatus(null, true);
+
+        ProcessOrder::dispatchNow($this->order);
+
+        return response(['notification' => [
+            'msg' => ['Your changes in order\'s options saved successfully!'],
+            'type' => 'success'
+        ]]);
     }
 
     public function create(Request $request)
     {
-        $validatedData = $request->validate([
+        $this->order_data = $request->validate([
             'customer_id' => 'nullable|required_if:method,pickup,delivery|exists:customers,id',
             'discount_type' => 'string|nullable',
             'discount_amount' => 'numeric|nullable',
@@ -105,92 +160,114 @@ class OrderController extends Controller
             // delivery address (shipping address)
             'delivery.address_id' => 'nullable|required_if:method,delivery|exists:addresses,id',
             // store_pickup
-            'delivery.store_pickup_id' => 'nullable|required_if:method,pickup|exists:store_pickups,id',
+            'delivery.store_pickup_id' => 'nullable|required_if:method,pickup|exists:store_pickups,id'
         ]);
 
-        $user = auth()->user();
-        $store = $user->open_register->cash_register->store;
+        $this->user = auth()->user();
+        $this->store = $this->user->open_register->cash_register->store;
 
-        $validatedData['user_id'] = $user->id;
-        $validatedData['store_id'] = $store->id;
+        $this->order_data['user_id'] = $this->user->id;
+        $this->order_data['store_id'] = $this->store->id;
 
-        if (isset($validatedData['billing_address_id'])) {
-            $billing_address =  Address::findOrFail($validatedData['billing_address_id']);
-            unset($validatedData['billing_address_id']);
-        }
+        $addresses = $this->parseAddresses();
 
-        if (isset($validatedData['delivery']) && isset($validatedData['delivery']['address_id'])) {
-            $delivery_address =  Address::findOrFail($validatedData['delivery']['address_id']);
-            unset($validatedData['delivery']['address_id']);
-        }
+        $this->parseTax();
 
-        if (isset($validatedData['delivery']) && isset($validatedData['delivery']['store_pickup_id'])) {
-            $store_pickup =  StorePickup::findOrFail($validatedData['delivery']['store_pickup_id']);
-            unset($validatedData['delivery']['store_pickup_id']);
-        }
+        $this->order = new Order($this->order_data);
 
-        $has_tax = true;
-        if (isset($validatedData['customer_id'])) {
-            $customer = Customer::findOrFail($validatedData['customer_id']);
-            $has_tax = $customer->no_tax ? false : true;
-        }
+        $this->parseProducts();
 
-        $validatedData['subtotal'] = $this->setSubtotal($validatedData);
-        if ($has_tax) {
-            $validatedData['tax'] = $store->tax->percentage;
-        } else {
-            $validatedData['tax'] = 0;
-        }
+        $this->order->billing_address = $addresses['billing_address'] ?? null;
 
-        $order = new Order($validatedData);
+        $this->parseDelivery($addresses);
 
-        $products = [];
-        foreach ($validatedData['products'] as $product) {
-            array_push($products, $this->parseProduct($product));
-        }
+        $this->order->save();
 
+        ProcessOrder::dispatchNow($this->order);
 
-        $order->items = $products;
-        $order->billing_address = $billing_address ?? null;
+        return response([
+            'order_id' => $this->order->id,
+            'order_status' => 'created',
+            'order_total' => $this->order->total,
+            'order_total_without_tax' => $this->order->total_without_tax,
+            'order_total_tax' => $this->order->total_tax,
+        ], 201);
+    }
 
+    private function parseDelivery(array $addresses)
+    {
         $delivery = [];
-
-        switch ($validatedData['method']) {
+        switch ($this->order_data['method']) {
             default:
             case 'retail':
                 break;
             case 'pickup':
-                $delivery['date'] = $validatedData['delivery']['date'];
-                $delivery['time'] = $validatedData['delivery']['time'];
-                $delivery['store_pickup'] = $store_pickup;
+                $delivery['date'] = $this->order_data['delivery']['date'];
+                $delivery['time'] = $this->order_data['delivery']['time'];
+                $delivery['store_pickup'] = $addresses['store_pickup'];
                 break;
             case 'delivery':
-                $delivery['date'] = $validatedData['delivery']['date'];
-                $delivery['time'] = $validatedData['delivery']['time'];
-                $delivery['occasion'] = $validatedData['delivery']['occasion'];
-                $delivery['address'] = $delivery_address;
+                $delivery['date'] = $this->order_data['delivery']['date'];
+                $delivery['time'] = $this->order_data['delivery']['time'];
+                $delivery['occasion'] = $this->order_data['delivery']['occasion'];
+                $delivery['address'] = $addresses['delivery_address'];
                 break;
         }
 
-        $order->delivery = $delivery;
-
-        $order->save();
-
-        ProcessOrder::dispatchNow($order);
-
-        return response([
-            'order_id' => $order->id,
-            'order_status' => 'created',
-            'order_total' => $order->total,
-            'order_total_without_tax' => $order->total_without_tax,
-            'order_total_tax' => $order->total_tax,
-        ], 201);
+        $this->order->delivery = $delivery;
     }
 
-    private function setSubtotal(array $validatedData)
+    private function parseProducts()
+    {
+        $products = [];
+        foreach ($this->order_data['products'] as $product) {
+            array_push($products, $this->parseProduct($product));
+        }
+
+        $this->order->items = $products;
+    }
+
+    private function parseTax()
+    {
+        $has_tax = true;
+        if (isset($this->order_data['customer_id'])) {
+            $customer = Customer::findOrFail($this->order_data['customer_id']);
+            $has_tax = $customer->no_tax ? false : true;
+        }
+
+        $this->order_data['subtotal'] = $this->setSubtotal($this->order_data);
+        if ($has_tax) {
+            $this->order_data['tax'] = $this->store->tax->percentage;
+        } else {
+            $this->order_data['tax'] = 0;
+        }
+    }
+
+    private function parseAddresses()
+    {
+        $response = [];
+        if (isset($this->order_data['billing_address_id'])) {
+            $response['billing_address'] =  Address::findOrFail($this->order_data['billing_address_id']);
+            unset($this->order_data['billing_address_id']);
+        }
+
+        if (isset($this->order_data['delivery']) && isset($this->order_data['delivery']['address_id'])) {
+            $response['delivery_address'] =  Address::findOrFail($this->order_data['delivery']['address_id']);
+            unset($this->order_data['delivery']['address_id']);
+        }
+
+        if (isset($this->order_data['delivery']) && isset($this->order_data['delivery']['store_pickup_id'])) {
+            $response['store_pickup'] =  StorePickup::findOrFail($this->order_data['delivery']['store_pickup_id']);
+            unset($this->order_data['delivery']['store_pickup_id']);
+        }
+
+        return $response;
+    }
+
+    private function setSubtotal()
     {
         $subtotal = 0;
-        foreach ($validatedData['products'] as $product) {
+        foreach ($this->order_data['products'] as $product) {
             $total = $product['final_price'] * $product['qty'];
 
             if (isset($product['discount_type']) && isset($product['discount_amount'])) {
@@ -199,8 +276,8 @@ class OrderController extends Controller
 
             $subtotal += $total;
         }
-        if (isset($validatedData['discount_type']) && isset($validatedData['discount_amount'])) {
-            $subtotal = Price::calculateDiscount($subtotal, $validatedData['discount_type'], $validatedData['discount_amount']);
+        if (isset($this->order_data['discount_type']) && isset($this->order_data['discount_amount'])) {
+            $subtotal = Price::calculateDiscount($subtotal, $this->order_data['discount_type'], $this->order_data['discount_amount']);
         }
 
         return $subtotal;
@@ -270,14 +347,17 @@ class OrderController extends Controller
         $model->save();
 
         return response([
-            'info' => ['Order' => "Order with id: $model->id successfully canceled!"],
-            'data' => $model,
-        ], 200);
+            'notification' => [
+                'msg' => ["Order #{$model->id} successfully canceled!"],
+                'type' => 'success'
+            ],
+            'data' => $model
+        ]);
     }
 
     public function search(Request $request)
     {
-        $validatedData = $request->validate([
+        $this->order_data = $request->validate([
             'keyword' => 'required|string'
         ]);
 
@@ -286,17 +366,16 @@ class OrderController extends Controller
             'payments',
             'store_pickup'
         ])
-            ->orWhere('status',  'LIKE', "%{$validatedData['keyword']}%")
-            ->orWhere('occasion', 'LIKE', "%{$validatedData['keyword']}%")
-            ->orWhere('location', 'LIKE', "%{$validatedData['keyword']}%")
+            ->orWhere('status',  'LIKE', "%{$this->order_data['keyword']}%")
+            ->orWhere('occasion', 'LIKE', "%{$this->order_data['keyword']}%")
+            ->orWhere('location', 'LIKE', "%{$this->order_data['keyword']}%")
             ->paginate();
     }
 
-    public static function updateOrderStatus(Payment $payment, bool $refund = false)
+    public function updateOrderStatus(Payment $payment = null, bool $refund = false)
     {
-        $order = $payment->order;
-        $remaining = Price::numberPrecision($order->total - $order->total_paid);
-        $change = Price::numberPrecision($order->total_paid - $order->total);
+        $remaining = Price::numberPrecision($this->order->total - $this->order->total_paid);
+        $change = Price::numberPrecision($this->order->total_paid - $this->order->total);
 
         if ($change < 0) {
             $change = 0;
@@ -307,36 +386,39 @@ class OrderController extends Controller
         }
 
         if ($remaining > 0) {
-            if ($order->status !== 'pending_payment') {
-                $order->change = 0;
-                $order->status = 'pending_payment';
+            if ($this->order->status !== 'pending_payment') {
+                $this->order->change = 0;
+                $this->order->status = 'pending_payment';
             }
         } else {
             if (!$refund) {
                 $payment->amount = Price::numberPrecision($payment->amount - $change);
                 $payment->save();
 
-                if ($order->status !== 'paid') {
-                    $order->change = $change;
-                    $order->status = 'paid';
+                if ($this->order->status !== 'paid') {
+                    $this->order->change = $change;
+                    $this->order->status = 'paid';
                     MasOrder::create([
-                        'order_id' => $order->id,
+                        'order_id' => $this->order->id,
                         'status' => 'queued'
                     ]);
                 }
             } else {
-                $order->change = $change;
-                $order->save();
+                if (empty($payment)) {
+                    $this->order->status = 'paid';
+                }
+                $this->order->change = $change;
+                $this->order->save();
             }
         }
 
-        $order->save();
+        $this->order->save();
 
-        $order = $order->refresh();
+        $this->order = $this->order->refresh();
         return [
             'remaining' => $remaining,
             'change' =>  $change,
-            'order_status' => $order->status
+            'order_status' => $this->order->status
         ];
     }
 

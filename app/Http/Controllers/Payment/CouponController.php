@@ -38,7 +38,10 @@ class CouponController extends BaseController
 
             $coupon->discount->save();
             // @TODO fix update
-            return response(['info' => ['Coupon updated successfully!']], 200);
+            return response(['notification' => [
+                'msg' => ['Coupon updated successfully!'],
+                'type' => 'success'
+            ]]);
         } else {
             $discount = Discount::store([
                 'type' => $discountData['discount']['type'],
@@ -47,7 +50,10 @@ class CouponController extends BaseController
             $coupon = $discount->coupon()->create($validatedData);
 
             return response([
-                'info' => ['Coupon created successfully!'],
+                'notification' => [
+                    'msg' => ['Coupon created successfully!'],
+                    'type' => 'success'
+                ],
                 $coupon
             ], 201);
         }

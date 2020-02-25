@@ -211,14 +211,16 @@ export default {
         this.getSelectedInput(index).lazyValue = this.originalPrice(index);
       }
       if (price) {
-        this.products[index].price.amount = this.products[
-          index
-        ].final_price = price;
+        this.products[index].final_price = price;
       } else {
-        this.products[index].price.amount = this.products[
+        this.products[index].final_price = this.getSelectedInput(
           index
-        ].final_price = this.getSelectedInput(index).lazyValue;
+        ).lazyValue;
       }
+      if (_.has(this.products[index], "price.amount")) {
+        this.products[index].price.amount = this.products[index].final_price;
+      }
+
       if (toggleEdit) {
         this.toggleEdit(index);
       }
@@ -253,7 +255,6 @@ export default {
         this.setPrice(index);
       }
     },
-
     viewProductDialog(product) {
       this.setDialog({
         show: true,

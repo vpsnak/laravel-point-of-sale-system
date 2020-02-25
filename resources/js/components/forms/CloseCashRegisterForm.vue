@@ -10,7 +10,6 @@
           <v-text-field
             :append-icon="showPassword ? 'visibility' : 'visibility_off'"
             :type="showPassword ? 'text' : 'password'"
-            :loading="loading"
             v-model="password"
             label="Password"
             :error-messages="errors"
@@ -20,7 +19,7 @@
           ></v-text-field>
         </ValidationProvider>
         <v-row>
-          <v-col :cols="12" v-if="cashRegister.earnings">
+          <v-col :cols="12">
             <v-text-field
               class="amber--text"
               label="Cash amount"
@@ -40,8 +39,9 @@
               type="submit"
               :loading="loading"
               :disabled="invalid"
-              >Close Cash Register</v-btn
             >
+              Close Cash Register
+            </v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -49,43 +49,52 @@
   </ValidationObserver>
 </template>
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 export default {
   data() {
     return {
+      loading: false,
       showPassword: false,
       amount: "",
-      loading: true,
       password: ""
     };
   },
   mounted() {
-    this.$store.dispatch("cashRegisterAmount").then(response => {
-      this.amount = response.toFixed(2);
-      this.loading = false;
-    });
+    this.cashRegisterAmount();
   },
   computed: {
-    store() {
-      return this.$store.state.store || false;
-    },
-    cashRegister() {
-      return this.$store.state.cashRegister || false;
-    }
+    ...mapState(["cashRegister"])
   },
   methods: {
+    ...mapActions(["closeCashRegister"]),
+    ...mapActions("requests", ["request"]),
+
+    cashRegisterAmount() {
+      this.loading = true;
+      this.request({
+        method: "get",
+        url: `cash-register-logs/${this.cashRegister.id}/amount`
+      })
+        .then(response => {
+          this.amount = response.toFixed(2);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
     submit() {
       this.loading = true;
-      let payload = {
-        current_password: this.password
-      };
-
-      this.verifySelf(payload)
+      this.request({
+        method: "post",
+        url: "auth/verify",
+        data: {
+          current_password: this.password
+        }
+      })
         .then(() => {
           let payload = {
             data: {
-              store_id: this.store.id,
               cash_register_id: this.cashRegister.id,
               password: this.password
             }
@@ -102,8 +111,7 @@ export default {
           this.password = "";
           this.loading = false;
         });
-    },
-    ...mapActions(["verifySelf", "closeCashRegister"])
+    }
   },
   beforeDestroy() {
     this.$off("submit");

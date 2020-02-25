@@ -23,21 +23,27 @@
 
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
-import { EventBus } from "../../plugins/event-bus";
-export default {
-  mounted() {
-    this.original_items = _.cloneDeep(this.cart_products);
+import { EventBus } from "../../../plugins/event-bus";
 
-    EventBus.$on("edit-order-items-save-confirmation", event => {
+export default {
+  props: {
+    url: String
+  },
+
+  mounted() {
+    EventBus.$on("order-save-confirmation", event => {
       if (event.payload) {
         this.save();
       }
     });
   },
 
+  beforeDestroy() {
+    EventBus.$off();
+  },
+
   data() {
     return {
-      original_items: [],
       saveLoading: false
     };
   },
@@ -58,7 +64,7 @@ export default {
   },
   methods: {
     ...mapMutations("dialog", ["setDialog"]),
-    ...mapActions("endpoints", ["endpoint"]),
+    ...mapActions("cart", ["submitOrder"]),
 
     confirmationDialog() {
       this.setDialog({
@@ -71,13 +77,18 @@ export default {
         persistent: true,
         cancelBtnTxt: "No",
         confirmationBtnTxt: "Yes",
-        eventChannel: "edit-order-items-save-confirmation"
+        eventChannel: "order-save-confirmation"
       });
     },
     save() {
       this.saveLoading = true;
-      this.saveLoading = false;
-      this.back();
+      this.submitOrder(this.$props.url)
+        .then(() => {
+          this.back();
+        })
+        .finally(() => {
+          this.saveLoading = false;
+        });
     },
     back() {
       this.$router.go(-1);

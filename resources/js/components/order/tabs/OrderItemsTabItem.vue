@@ -157,13 +157,8 @@
 import { mapState, mapMutations } from "vuex";
 
 export default {
-  props: {
-    editable: Boolean
-  },
-
   computed: {
     ...mapState("cart", ["cart_products"]),
-    // configurable price, qty, add / remove product, discounts, save btn, close confirmation if unsaved changes are detected, validator
 
     valueColors() {
       return "primary--text";
