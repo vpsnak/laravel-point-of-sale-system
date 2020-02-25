@@ -33,8 +33,9 @@ class OrderController extends Controller
         ])->paginate());
     }
 
-    public function get(Order $model)
+    public function getOne(Order $model)
     {
+        $model = $model->load('customer.addresses');
         return response($model);
     }
 

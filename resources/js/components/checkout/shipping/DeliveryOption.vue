@@ -15,9 +15,9 @@
                   :items="addresses"
                   prepend-icon="mdi-receipt"
                   label="Billing address"
-                  v-model="billingAddressId"
+                  v-model="billingAddress"
                   :item-text="getAddressText"
-                  item-value="id"
+                  return-object
                   :error-messages="errors"
                   :success="valid"
                 ></v-select>
@@ -28,10 +28,10 @@
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-btn
-                    :disabled="!billingAddressId"
+                    :disabled="!billingAddress"
                     icon
                     v-on="on"
-                    @click="addressDialog('billing', billingAddressId)"
+                    @click="addressDialog('billing', billingAddress)"
                   >
                     <v-icon>mdi-pencil</v-icon>
                   </v-btn>
@@ -60,9 +60,9 @@
                   :items="addresses"
                   prepend-icon="mdi-map-marker"
                   label="Delivery address"
-                  v-model="deliveryAddressId"
+                  v-model="deliveryAddress"
                   :item-text="getAddressText"
-                  item-value="id"
+                  return-object
                   :error-messages="errors"
                   :success="valid"
                 ></v-select>
@@ -73,10 +73,10 @@
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-btn
-                    :disabled="!deliveryAddressId"
+                    :disabled="!deliveryAddress"
                     icon
                     v-on="on"
-                    @click="addressDialog('delivery', deliveryAddressId)"
+                    @click="addressDialog('delivery', deliveryAddress)"
                   >
                     <v-icon>mdi-pencil</v-icon>
                   </v-btn>
@@ -99,8 +99,8 @@
 
             <v-col :cols="12" :lg="6">
               <addressDeliveryForm
-                v-if="selected_delivery_address"
-                :model="selected_delivery_address"
+                v-if="deliveryAddress"
+                :model="deliveryAddress"
                 readonly
               ></addressDeliveryForm>
             </v-col>
@@ -207,38 +207,12 @@ export default {
   mounted() {
     this.validate();
 
-    EventBus.$on("shipping-timeslot", event => {
-      if (event.payload) {
-        this.timeSlots.push(event.payload);
-        this.setDeliveryTime(event.payload.label);
-      }
-    });
+    this.initEventBus();
 
-    EventBus.$on("billing-address-new", event => {
-      if (event.payload) {
-        this.addresses.push(event.payload);
-        this.billingAddressId = event.payload.id;
-      }
-    });
-
-    EventBus.$on("billing-address-edit", event => {
-      if (event.payload) {
-        this.billingAddressId = event.payload.id;
-      }
-    });
-
-    EventBus.$on("delivery-address-new", event => {
-      if (event.payload) {
-        this.addresses.push(event.payload);
-        this.deliveryAddressId = event.payload.id;
-      }
-    });
-
-    EventBus.$on("delivery-address-edit", event => {
-      if (event.payload) {
-        this.deliveryAddressId = event.payload.id;
-      }
-    });
+    if (_.has(this.customer, "addresses")) {
+      this.billingAddress = this.order_billing_address;
+      this.deliveryAddress = this.order_delivery_address;
+    }
   },
 
   beforeDestroy() {
@@ -251,8 +225,8 @@ export default {
 
   data() {
     return {
-      selected_delivery_address: null,
-      selected_billing_address: null,
+      delivery_address: null,
+      billing_address: null,
       loading: false,
       time_slots: [],
       datePicker: false
@@ -266,6 +240,8 @@ export default {
 
   computed: {
     ...mapState("cart", [
+      "order_billing_address",
+      "order_delivery_address",
       "customer",
       "occasions",
       "delivery",
@@ -281,7 +257,6 @@ export default {
         this.setDeliveryTime(value);
       }
     },
-
     deliveryOccasion: {
       get() {
         return this.delivery.occasion;
@@ -305,23 +280,25 @@ export default {
         return null;
       }
     },
-    billingAddressId: {
+    billingAddress: {
       get() {
-        return this.billing_address_id;
+        return this.billing_address;
       },
       set(value) {
-        this.selected_billing_address = this.getAddressById(value);
-        this.setBillingAddressId(value);
+        this.billing_address = value;
+        if (_.has(value, "id")) {
+          this.setBillingAddressId(value.id);
+        }
       }
     },
-    deliveryAddressId: {
+    deliveryAddress: {
       get() {
-        return this.delivery.address_id;
+        return this.delivery_address;
       },
       set(value) {
-        if (value) {
-          this.selected_delivery_address = this.getAddressById(value);
-          this.setDeliveryAddressId(value);
+        this.delivery_address = value;
+        if (_.has(value, "id")) {
+          this.setDeliveryAddressId(value.id);
         }
       }
     },
@@ -343,24 +320,24 @@ export default {
     },
     addresses: {
       get() {
-        if (this.customer && !this.billingAddressId) {
+        if (this.customer && !this.billingAddress) {
           const billing_address = _.filter(this.customer.addresses, [
             "is_default_billing",
             true
           ]);
 
-          this.billingAddressId = billing_address.length
-            ? billing_address[0].id
+          this.billingAddress = billing_address.length
+            ? billing_address[0]
             : null;
         }
-        if (this.customer && !this.deliveryAddressId) {
+        if (this.customer && !this.deliveryAddress) {
           const shipping_address = _.filter(this.customer.addresses, [
             "is_default_shipping",
             true
           ]);
 
-          this.deliveryAddressId = shipping_address.length
-            ? shipping_address[0].id
+          this.deliveryAddress = shipping_address.length
+            ? shipping_address[0]
             : null;
         }
 
@@ -390,6 +367,41 @@ export default {
       return _.find(this.customer.addresses, { id: id });
     },
 
+    initEventBus() {
+      EventBus.$on("shipping-timeslot", event => {
+        if (event.payload) {
+          this.timeSlots.push(event.payload);
+          this.setDeliveryTime(event.payload.label);
+        }
+      });
+
+      EventBus.$on("billing-address-new", event => {
+        if (event.payload) {
+          this.addresses.push(event.payload);
+          this.billingAddress = event.payload;
+        }
+      });
+
+      EventBus.$on("billing-address-edit", event => {
+        if (event.payload) {
+          this.billingAddress = event.payload;
+        }
+      });
+
+      EventBus.$on("delivery-address-new", event => {
+        if (event.payload) {
+          this.addresses.push(event.payload);
+          this.deliveryAddress = event.payload;
+        }
+      });
+
+      EventBus.$on("delivery-address-edit", event => {
+        if (event.payload) {
+          this.deliveryAddress = event.payload;
+        }
+      });
+    },
+
     addTimeSlotDialog() {
       this.setDialog({
         show: true,
@@ -417,7 +429,6 @@ export default {
       }
     },
     addressDialog(action, address_id) {
-      console.log(address_id);
       let icon;
       let title;
       let data;
@@ -426,14 +437,14 @@ export default {
       if (action === "delivery") {
         icon = "mdi-map-marker";
         title = address_id ? "Edit delivery address" : "New delivery address";
-        data = address_id ? this.selected_delivery_address : null;
+        data = address_id ? this.delivery_address : null;
         eventChannel = address_id
           ? "delivery-address-edit"
           : "delivery-address-new";
       } else {
         icon = "mdi-receipt";
         title = address_id ? "Edit billing address" : "New billing address";
-        data = address_id ? this.selected_billing_address : null;
+        data = address_id ? this.billing_address : null;
         eventChannel = address_id
           ? "billing-address-edit"
           : "billing-address-new";
@@ -467,7 +478,7 @@ export default {
           method: "post",
           url: "shipping/timeslot",
           data: {
-            postcode: this.selected_delivery_address.postcode,
+            postcode: this.delivery_address.postcode,
             date: this.delivery.date
           }
         };

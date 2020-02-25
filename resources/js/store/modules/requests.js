@@ -7,6 +7,13 @@ const actions = {
       const noErrorNotification = payload.no_error_notification;
       const console_out = process.env.NODE_ENV === "development" ? true : false;
 
+      if (console_out) {
+        console.info({
+          request: `${payload.method} request to: ${context.rootState.config.base_url}/${payload.url}`,
+          payload: payload
+        });
+      }
+
       axios({
         method: payload.method,
         url: `${context.rootState.config.base_url}/${payload.url}`,
