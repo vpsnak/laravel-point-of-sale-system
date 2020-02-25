@@ -139,7 +139,7 @@ class PaymentController extends Controller
 
     private function couponPay($validatedData, Payment $payment)
     {
-        $coupon = Coupon::getFirst('code', $validatedData['code']);
+        $coupon = Coupon::where('code', $validatedData['code'])->first();
 
         if (empty($coupon)) {
             $payment->status = 'failed';
@@ -169,7 +169,8 @@ class PaymentController extends Controller
 
     private function giftcardPay($validatedData, Payment $payment)
     {
-        $giftcard = Giftcard::getFirst('code', $validatedData['code']);
+
+        $giftcard = Giftcard::where('code', $validatedData['code'])->first();
 
         if (!$giftcard->enabled) {
             return ['errors' => ['Gift card' => ['This gift card is inactive']]];

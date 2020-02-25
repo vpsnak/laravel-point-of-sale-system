@@ -135,20 +135,38 @@ export default {
         model: "gift-cards",
         data: { ...this.formFields }
       };
-      this.create(payload)
-        .then(() => {
-          this.$emit("submit", {
-            action: "paginate",
-            notification: {
-              msg: "Gift card added successfully",
-              type: "success"
-            }
+      if (this.$props.model) {
+        axios
+          .patch(`/api/gift-cards/update/${this.$props.model.id}`, payload.data)
+          .then(() => {
+            this.clear();
+            this.$emit("submit", {
+              action: "paginate",
+              notification: {
+                msg: "Gift card updated successfully",
+                type: "success"
+              }
+            });
+          })
+          .finally(() => {
+            this.loading = false;
           });
-          this.clear();
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+      } else {
+        this.create(payload)
+          .then(() => {
+            this.$emit("submit", {
+              action: "paginate",
+              notification: {
+                msg: "Gift card added successfully",
+                type: "success"
+              }
+            });
+            this.clear();
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      }
     },
     clear() {
       this.formFields = { ...this.defaultValues };

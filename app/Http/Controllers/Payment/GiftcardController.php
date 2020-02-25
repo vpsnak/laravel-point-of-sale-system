@@ -5,9 +5,17 @@ namespace App\Http\Controllers;
 use App\Giftcard;
 use Illuminate\Http\Request;
 
-class GiftcardController extends BaseController
+class GiftcardController extends Controller
 {
-    protected $model = Giftcard::class;
+    public function all()
+    {
+        return response(Giftcard::paginate());
+    }
+
+    public function get($model)
+    {
+        return response(Giftcard::findOrFail($model));
+    }
 
     public function create(Request $request)
     {
@@ -18,15 +26,26 @@ class GiftcardController extends BaseController
             'amount' => 'required|numeric',
         ]);
 
-        $validatedID = $request->validate([
-            'id' => 'nullable|exists:giftcards,id'
-        ]);
+        $giftcard = Giftcard::create($validatedData);
 
-        if (!empty($validatedID)) {
-            return response($this->model::updateData($validatedID, $validatedData), 200);
-        } else {
-            return response($this->model::store($validatedData), 201);
-        }
+        return response(['info' => ['Giftcard ' . $giftcard->name . ' created successfully!']], 201);
+    }
+
+    public function update(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id' => 'required|exists:giftcards,id',
+            'name' => 'required|string',
+            'code' => 'required|string',
+            'enabled' => 'required|boolean',
+            'amount' => 'required|numeric',
+        ]);
+        $giftcard = Giftcard::findOrFail($validatedData['id']);
+
+        $giftcard->fill($validatedData);
+        $giftcard->save();
+
+        return response(['info' => ["Giftcard {$giftcard->name} updated successfully!"]]);
     }
 
     public function search(Request $request)
@@ -35,10 +54,9 @@ class GiftcardController extends BaseController
             'keyword' => 'required|string'
         ]);
 
-        return $this->searchResult(
-            ['name', 'code'],
-            $validatedData['keyword'],
-            true
-        );
+        $columns =  ['name', 'code'];
+        $query = Giftcard::query()->search($columns, $validatedData['keyword']);
+
+        return response($query->paginate());
     }
 }

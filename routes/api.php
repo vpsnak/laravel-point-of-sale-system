@@ -111,6 +111,7 @@ Route::delete('/cash-register-reports/{model}', 'CashRegisterReportController@de
 Route::get('/gift-cards', 'GiftcardController@all')->middleware('scope:admin,store_manager,cashier');
 Route::get('/gift-cards/get/{model}', 'GiftcardController@get')->middleware('scope:admin,store_manager,cashier');
 Route::post('/gift-cards/create', 'GiftcardController@create')->middleware('scope:admin,store_manager,cashier');
+Route::patch('/gift-cards/update/{model}', 'GiftcardController@update')->middleware('scope:admin,store_manager,cashier');
 Route::post('/gift-cards/search', 'GiftcardController@search')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/gift-cards/{model}', 'GiftcardController@delete')->middleware('scope:admin,store_manager,cashier');
 

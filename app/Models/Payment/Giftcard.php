@@ -2,7 +2,9 @@
 
 namespace App;
 
-class Giftcard extends BaseModel
+use Illuminate\Database\Eloquent\Model;
+
+class Giftcard extends Model
 {
     protected $fillable = [
         'name',
