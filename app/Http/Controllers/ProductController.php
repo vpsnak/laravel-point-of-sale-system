@@ -94,6 +94,7 @@ class ProductController extends Controller
 
         $product->fill($validatedData);
         $product->price->save();
+        $product->save();
 
         return response(['notification' => [
             'msg' => ["Product {$product->name} updated successfully!"],
