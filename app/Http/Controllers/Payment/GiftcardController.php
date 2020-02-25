@@ -28,7 +28,10 @@ class GiftcardController extends Controller
 
         $giftcard = Giftcard::create($validatedData);
 
-        return response(['info' => ['Giftcard ' . $giftcard->name . ' created successfully!']], 201);
+        return response(['notification' => [
+            'msg' => ["Gift card {$giftcard->name} created successfully!"],
+            'type' => 'success'
+        ]]);
     }
 
     public function update(Request $request)
@@ -45,7 +48,10 @@ class GiftcardController extends Controller
         $giftcard->fill($validatedData);
         $giftcard->save();
 
-        return response(['info' => ["Giftcard {$giftcard->name} updated successfully!"]]);
+        return response(['notification' => [
+            'msg' => ["Gift card {$giftcard->name} updated successfully!"],
+            'type' => 'success'
+        ]]);
     }
 
     public function search(Request $request)

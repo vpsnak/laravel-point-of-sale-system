@@ -45,7 +45,7 @@ class CompanyController extends Controller
         $company->save();
 
         return response(['notification' => [
-            'msg' => ["User {$company->name} updated successfully!"],
+            'msg' => ["Company {$company->name} updated successfully!"],
             'type' => 'success'
         ]]);
     }

@@ -40,7 +40,10 @@ class CouponController extends Controller
 
         $coupon = $discount->coupon()->create($validatedData);
 
-        return response(['info' => ['Coupon ' . $coupon->name . ' created successfully!']], 201);
+        return response(['notification' => [
+            'msg' => ["Coupon {$coupon->name} created successfully!"],
+            'type' => 'success'
+        ]]);
     }
 
     public function update(Request $request)
@@ -69,7 +72,10 @@ class CouponController extends Controller
         $coupon->fill($validatedData);
         $coupon->save();
 
-        return response(['info' => ["Coupon {$coupon->name} updated successfully!"]]);
+        return response(['notification' => [
+            'msg' => ["Coupon {$coupon->name} updated successfully!"],
+            'type' => 'success'
+        ]]);
     }
 
     public function search(Request $request)

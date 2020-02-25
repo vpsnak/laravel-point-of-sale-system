@@ -26,7 +26,10 @@ class TaxController extends Controller
 
         $tax = Tax::create($validatedData);
 
-        return response(['info' => ['Tax ' . $tax->name . ' created successfully!']], 201);
+        return response(['notification' => [
+            'msg' => ["Tax {$tax->name} created successfully!"],
+            'type' => 'success'
+        ]], 201);
     }
 
     public function update(Request $request)
@@ -41,7 +44,10 @@ class TaxController extends Controller
         $tax->fill($validatedData);
         $tax->save();
 
-        return response(['info' => ["Tax {$tax->name} updated successfully!"]]);
+        return response(['notification' => [
+            'msg' => ["Tax {$tax->name} updated successfully!"],
+            'type' => 'success'
+        ]]);
     }
 
     public function search(Request $request)

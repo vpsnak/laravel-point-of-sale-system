@@ -75,43 +75,37 @@ export default {
     }
   },
   methods: {
-    ...mapActions({
-      create: "create"
-    }),
+    ...mapActions("requests", ["request"]),
 
     submit() {
       this.loading = true;
-      let payload = {
-        model: "companies",
-        data: { ...this.formFields }
-      };
+
       if (this.$props.model) {
-        axios
-          .patch(`/api/companies/update/${this.$props.model.id}`, payload.data)
+        this.request({
+          method: "patch",
+          url: "companies/update",
+          data: { ...this.formFields }
+        })
           .then(() => {
             this.clear();
             this.$emit("submit", {
-              action: "paginate",
-              notification: {
-                msg: "Company updated successfully",
-                type: "success"
-              }
+              action: "paginate"
             });
           })
           .finally(() => {
             this.loading = false;
           });
       } else {
-        this.create(payload)
+        this.request({
+          method: "post",
+          url: "companies/create",
+          data: { ...this.formFields }
+        })
           .then(() => {
-            this.$emit("submit", {
-              action: "paginate",
-              notification: {
-                msg: "Company added successfully",
-                type: "success"
-              }
-            });
             this.clear();
+            this.$emit("submit", {
+              action: "paginate"
+            });
           })
           .finally(() => {
             this.loading = false;

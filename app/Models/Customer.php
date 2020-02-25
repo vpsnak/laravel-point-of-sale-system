@@ -2,7 +2,9 @@
 
 namespace App;
 
-class Customer extends BaseModel
+use Illuminate\Database\Eloquent\Model;
+
+class Customer extends Model
 {
     protected $fillable = [
         'magento_id',

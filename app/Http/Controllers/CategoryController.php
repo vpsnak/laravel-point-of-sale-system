@@ -27,9 +27,11 @@ class CategoryController extends Controller
 
         $category = Category::create($validatedData);
 
-        return response(['info' => ['Category ' . $category->name . ' created successfully!']], 201);
+        return response(['notification' => [
+            'msg' => ["Category {$category->name} created successfully!"],
+            'type' => 'success'
+        ]]);
     }
-
     public function update(Request $request)
     {
         $validatedData = $request->validate([
@@ -42,7 +44,10 @@ class CategoryController extends Controller
         $category->fill($validatedData);
         $category->save();
 
-        return response(['info' => ["Category {$category->name} updated successfully!"]]);
+        return response(['notification' => [
+            'msg' => ["Category {$category->name} updated successfully!"],
+            'type' => 'success'
+        ]]);
     }
 
     public function productListingCategories()

@@ -52,7 +52,11 @@ class ProductController extends Controller
                 );
             }
         }
-        return response(['info' => ['Product ' . $product->name . ' created successfully!']], 201);
+
+        return response(['notification' => [
+            'msg' => ["Product {$product->name} created successfully!"],
+            'type' => 'success'
+        ]]);
     }
 
 
@@ -90,8 +94,13 @@ class ProductController extends Controller
 
         $product->fill($validatedData);
         $product->price->save();
-        return response(['info' => ["Product {$product->name} updated successfully!"]]);
+
+        return response(['notification' => [
+            'msg' => ["Product {$product->name} updated successfully!"],
+            'type' => 'success'
+        ]]);
     }
+
 
     public function search(Request $request)
     {
