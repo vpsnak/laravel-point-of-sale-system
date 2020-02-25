@@ -2,7 +2,9 @@
 
 namespace App;
 
-class CashRegisterReport extends BaseModel
+use Illuminate\Database\Eloquent\Model;
+
+class CashRegisterReport extends Model
 {
     protected $fillable = [
         'report_name',

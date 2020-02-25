@@ -9,9 +9,19 @@ use App\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
-class CashRegisterReportController extends BaseController
+class CashRegisterReportController extends Controller
 {
     protected $model = CashRegisterReport::class;
+
+    public function all()
+    {
+        return response(CashRegisterReport::paginate());
+    }
+
+    public function get($model)
+    {
+        return response(CashRegisterReport::findOrFail($model));
+    }
 
     public function create(Request $request)
     {
@@ -38,7 +48,7 @@ class CashRegisterReportController extends BaseController
             $report['cash_register_id'] = $id;
             $report['report_type'] = 'x';
             $report['report_name'] = 'Report ' . strtoupper($report['report_type']) . ' ' . now();
-            return CashRegisterReport::store($report);
+            return CashRegisterReport::create($report);
         } else {
             $log = $cash_register->logs()->latest()->first();
             if (!empty($log)) {
@@ -48,7 +58,7 @@ class CashRegisterReportController extends BaseController
                 $report['report_type'] = 'z';
                 $report['report_name'] = 'Report ' . strtoupper($report['report_type']) . ' ' . now();
 
-                return CashRegisterReport::store($report);
+                return CashRegisterReport::create($report);
             }
             return null;
         }
@@ -176,10 +186,9 @@ class CashRegisterReportController extends BaseController
             'keyword' => 'required|string'
         ]);
 
-        return $this->searchResult(
-            ['report_name', 'report_type'],
-            $validatedData['keyword'],
-            true
-        );
+        $columns = ['report_name', 'report_type'];
+        $query = CashRegisterReport::query()->search($columns, $validatedData['keyword']);
+
+        return response($query->paginate());
     }
 }
