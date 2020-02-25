@@ -44,17 +44,15 @@ class StorePickupController extends Controller
         return response(StorePickup::with('region')->paginate());
     }
 
-    //@TODO FIX SEARCH?
     public function search(Request $request)
     {
         $validatedData = $request->validate([
             'keyword' => 'required|string'
         ]);
 
-        return $this->searchResult(
-            ['name', 'street', 'street1', 'country_id', 'region_id'],
-            $validatedData['keyword'],
-            true
-        );
+        $columns = ['name', 'street', 'street1', 'country_id', 'region_id'];
+        $query = StorePickup::query()->search($columns, $validatedData['keyword']);
+
+        return response($query->paginate());
     }
 }

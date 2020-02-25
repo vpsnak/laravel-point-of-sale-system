@@ -71,17 +71,15 @@ class StoreController extends Controller
         ]);
     }
 
-    // @TODO Search?
     public function search(Request $request)
     {
         $validatedData = $request->validate([
             'keyword' => 'required|string'
         ]);
 
-        return $this->searchResult(
-            ['name', 'phone', 'street', 'postcode'],
-            $validatedData['keyword'],
-            true
-        );
+        $columns = ['name', 'phone', 'street', 'postcode'];
+        $query = Store::query()->search($columns, $validatedData['keyword']);
+
+        return response($query->paginate());
     }
 }
