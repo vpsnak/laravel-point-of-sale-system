@@ -145,7 +145,7 @@ Route::delete('/companies/{model}', 'CompanyController@delete')->middleware('sco
 
 //products
 Route::get('/products', 'ProductController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/products/get/{model}', 'ProductController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/products/get/{model}', 'ProductController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::get('/products/barcode/{model}', 'ProductController@getBarcode')->middleware('scope:admin,store_manager,cashier');
 Route::post('/products/create', 'ProductController@create')->middleware('scope:admin,store_manager,cashier');
 Route::patch('/products/update', 'ProductController@update')->middleware('scope:admin,store_manager,cashier');
