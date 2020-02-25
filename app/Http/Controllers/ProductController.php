@@ -8,9 +8,13 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class ProductController extends BaseController
+class ProductController extends Controller
 {
-    protected $model = Product::class;
+
+    public function all()
+    {
+        return response(Product::paginate());
+    }
 
     public function create(Request $request)
     {
@@ -24,13 +28,47 @@ class ProductController extends BaseController
         ]);
 
         $validatedExtra = $request->validate([
-            'id' => 'nullable|exists:products,id',
             'categories' => 'nullable|array',
             'stores' => 'required|array',
             'final_price' => 'required|numeric',
         ]);
 
-        $product = $this->getProduct($validatedExtra['id'] ?? null, $validatedData);
+        $product = Product::create($validatedData);
+
+        $product->price()->updateOrCreate(['amount' => $validatedExtra['final_price']]);
+
+        $product->categories()->sync($validatedExtra['categories']);
+
+        foreach ($validatedExtra['stores'] as $store) {
+            if (!empty($store['pivot'])) {
+                $product->stores()->syncWithoutDetaching(
+                    [$store['id'] => ['qty' => $store['pivot']['qty'] ?? 0]]
+                );
+            }
+        }
+        return response(['info' => ['Product ' . $product->name . ' created successfully!']], 201);
+    }
+
+
+    public function update(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id' => 'required|exists:products,id',
+            'name' => 'required|string',
+            'sku' => 'required|string',
+            'url' => 'nullable|string',
+            'photo_url' => 'nullable|string',
+            'description' => 'nullable|string',
+            'editable_price' => 'nullable|boolean',
+        ]);
+
+        $validatedExtra = $request->validate([
+            'categories' => 'nullable|array',
+            'stores' => 'required|array',
+            'final_price' => 'required|numeric',
+        ]);
+
+        $product = Product::findOrFail($validatedData['id']);
 
         $product->categories()->sync($validatedExtra['categories']);
 
@@ -42,30 +80,12 @@ class ProductController extends BaseController
             }
         }
 
-        //        @TODO fix amount create or update
-        // $product->price()->updateOrCreate(['amount' => $validatedExtra['final_price']]);
-        // $product->price->save();
+        $product->price->amount = $validatedExtra['final_price'];
 
-        if (isset($validatedExtra['id'])) {
-            $product->price->amount = $validatedExtra['final_price'];
-        } else {
-            $product->price()->updateOrCreate(['amount' => $validatedExtra['final_price']]);
-        }
+        $product->fill($validatedData);
+        $product->save();
 
-
-        $product->price->save();
-        return response($product, 200);
-    }
-
-    private function getProduct($id, $data)
-    {
-        if (!empty($id)) {
-            $this->model::updateData($id, $data);
-            $model = $this->model::getOne($id);
-        } else {
-            $model = $this->model::store($data);
-        }
-        return $model;
+        return response(['info' => ["Product {$product->name} updated successfully!"]]);
     }
 
     public function search(Request $request)
@@ -74,23 +94,10 @@ class ProductController extends BaseController
             'keyword' => 'required|string'
         ]);
 
-        return $this->searchResult(
-            ['sku', 'name', 'description'],
-            $validatedData['keyword'],
-            true
-        );
-    }
+        $columns = ['sku', 'name', 'description'];
+        $query = Product::query()->search($columns, $validatedData['keyword']);
 
-    /**
-     * @return ResponseFactory|Response
-     */
-    public function all()
-    {
-        if (!isset($this->model)) {
-            return response('Model not found', 404);
-        }
-
-        return response($this->model::paginate(), 200);
+        return response($query->paginate());
     }
 
     public function getBarcode(Product $product)

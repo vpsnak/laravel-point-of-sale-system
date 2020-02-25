@@ -148,6 +148,7 @@ Route::get('/products', 'ProductController@all')->middleware('scope:admin,store_
 Route::get('/products/get/{model}', 'ProductController@get')->middleware('scope:admin,store_manager,cashier');
 Route::get('/products/barcode/{model}', 'ProductController@getBarcode')->middleware('scope:admin,store_manager,cashier');
 Route::post('/products/create', 'ProductController@create')->middleware('scope:admin,store_manager,cashier');
+Route::patch('/products/update/{model}', 'ProductController@update')->middleware('scope:admin,store_manager,cashier');
 Route::post('/products/search', 'ProductController@search')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/products/{model}', 'ProductController@delete')->middleware('scope:admin');
 

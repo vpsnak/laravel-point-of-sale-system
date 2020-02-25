@@ -3,8 +3,9 @@
 namespace App;
 
 use App\Helper\Price;
+use Illuminate\Database\Eloquent\Model;
 
-class Product extends BaseModel
+class Product extends Model
 {
     const LARAVEL_STORE_ID = 1;
     const MAGENTO_STORE_ID = 2;

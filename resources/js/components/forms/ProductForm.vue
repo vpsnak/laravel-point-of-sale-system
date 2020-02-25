@@ -209,16 +209,38 @@ export default {
         model: "products",
         data: { ...this.formFields }
       };
-      this.create(payload)
-        .then(() => {
-          this.$emit("submit", {
-            action: "paginate"
+      if (this.$props.model) {
+        axios
+          .patch(`/api/products/update/${this.$props.model.id}`, payload.data)
+          .then(() => {
+            this.clear();
+            this.$emit("submit", {
+              action: "paginate",
+              notification: {
+                msg: "Product updated successfully",
+                type: "success"
+              }
+            });
+          })
+          .finally(() => {
+            this.loading = false;
           });
-          this.clear();
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+      } else {
+        this.create(payload)
+          .then(() => {
+            this.$emit("submit", {
+              action: "paginate",
+              notification: {
+                msg: "Product added successfully",
+                type: "success"
+              }
+            });
+            this.clear();
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      }
     },
     clear() {
       this.formFields = { ...this.defaultValues };

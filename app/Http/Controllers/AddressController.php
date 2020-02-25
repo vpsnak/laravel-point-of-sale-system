@@ -8,6 +8,11 @@ use App\Region;
 
 class AddressController extends Controller
 {
+    public function all()
+    {
+        return response(Address::paginate());
+    }
+
     public function getOne(Address $model)
     {
         return response($model);

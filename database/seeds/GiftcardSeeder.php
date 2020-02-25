@@ -34,7 +34,7 @@ class GiftcardSeeder extends Seeder
             ]
         ]);
         foreach (range(90001, 90010) as $giftcard_code) {
-            Giftcard::store([
+            Giftcard::create([
                 'name' => 'Inactive Giftcard',
                 'code' => '@' . str_pad($giftcard_code, 10, '0', STR_PAD_LEFT),
                 'enabled' => 0,
