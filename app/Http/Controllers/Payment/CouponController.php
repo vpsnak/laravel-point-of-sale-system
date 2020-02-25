@@ -33,7 +33,7 @@ class CouponController extends Controller
             'discount.amount' => 'required|numeric',
         ]);
 
-        $discount = Discount::store([
+        $discount = Discount::create([
             'type' => $discountData['discount']['type'],
             'amount' => $discountData['discount']['amount'],
         ]);

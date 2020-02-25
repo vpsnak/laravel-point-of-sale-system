@@ -14,11 +14,11 @@ class CouponSeeder extends Seeder
      */
     public function run()
     {
-        $flat = Discount::store([
+        $flat = Discount::create([
             'type' => 'flat',
             'amount' => 10
         ]);
-        $percentage = Discount::store([
+        $percentage = Discount::create([
             'type' => 'percentage',
             'amount' => 10
         ]);
