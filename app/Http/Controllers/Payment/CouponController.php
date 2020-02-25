@@ -6,9 +6,17 @@ use App\Coupon;
 use App\Discount;
 use Illuminate\Http\Request;
 
-class CouponController extends BaseController
+class CouponController extends Controller
 {
-    protected $model = Coupon::class;
+    public function all()
+    {
+        return response(Coupon::paginate());
+    }
+
+    public function get($model)
+    {
+        return response(Coupon::findOrFail($model));
+    }
 
     public function create(Request $request)
     {
@@ -19,44 +27,49 @@ class CouponController extends BaseController
             'from' => 'nullable|date',
             'to' => 'nullable|date',
         ]);
+
         $discountData = $request->validate([
             'discount.type' => 'required|in:flat,percentage',
             'discount.amount' => 'required|numeric',
         ]);
 
-
-        $validatedID = $request->validate([
-            'id' => 'nullable|exists:coupons,id'
+        $discount = Discount::store([
+            'type' => $discountData['discount']['type'],
+            'amount' => $discountData['discount']['amount'],
         ]);
 
-        if (!empty($validatedID)) {
-            $coupon = $this->model::findOrFail($validatedID['id']);
-            $coupon->update($validatedData);
+        $coupon = $discount->coupon()->create($validatedData);
 
-            $coupon->discount->type = $discountData['discount']['type'];
-            $coupon->discount->amount = $discountData['discount']['amount'];
+        return response(['info' => ['Coupon ' . $coupon->name . ' created successfully!']], 201);
+    }
 
-            $coupon->discount->save();
-            // @TODO fix update
-            return response(['notification' => [
-                'msg' => ['Coupon updated successfully!'],
-                'type' => 'success'
-            ]]);
-        } else {
-            $discount = Discount::store([
-                'type' => $discountData['discount']['type'],
-                'amount' => $discountData['discount']['amount'],
-            ]);
-            $coupon = $discount->coupon()->create($validatedData);
+    public function update(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id' => 'required|exists:coupons,id',
+            'name' => 'required|string',
+            'code' => 'required|string',
+            'uses' => 'required|numeric',
+            'from' => 'nullable|date',
+            'to' => 'nullable|date',
+        ]);
 
-            return response([
-                'notification' => [
-                    'msg' => ['Coupon created successfully!'],
-                    'type' => 'success'
-                ],
-                $coupon
-            ], 201);
-        }
+        $discountData = $request->validate([
+            'discount.type' => 'required|in:flat,percentage',
+            'discount.amount' => 'required|numeric',
+        ]);
+
+        $coupon = Coupon::findOrFail($validatedData['id']);
+
+        $coupon->discount->type = $discountData['discount']['type'];
+        $coupon->discount->amount = $discountData['discount']['amount'];
+
+        $coupon->discount->save();
+
+        $coupon->fill($validatedData);
+        $coupon->save();
+
+        return response(['info' => ["Coupon {$coupon->name} updated successfully!"]]);
     }
 
     public function search(Request $request)
@@ -65,10 +78,9 @@ class CouponController extends BaseController
             'keyword' => 'required|string'
         ]);
 
-        return $this->searchResult(
-            ['name', 'code'],
-            $validatedData['keyword'],
-            true
-        );
+        $columns = ['name', 'code'];
+        $query = Coupon::query()->search($columns, $validatedData['keyword']);
+
+        return response($query->paginate());
     }
 }

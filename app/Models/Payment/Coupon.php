@@ -2,7 +2,9 @@
 
 namespace App;
 
-class Coupon extends BaseModel
+use Illuminate\Database\Eloquent\Model;
+
+class Coupon extends Model
 {
     protected $with = ['discount'];
 

@@ -118,6 +118,7 @@ Route::delete('/gift-cards/{model}', 'GiftcardController@delete')->middleware('s
 Route::get('/coupons', 'CouponController@all')->middleware('scope:admin,store_manager,cashier');
 Route::get('/coupons/get/{model}', 'CouponController@get')->middleware('scope:admin,store_manager,cashier');
 Route::post('/coupons/create', 'CouponController@create')->middleware('scope:admin,store_manager,cashier');
+Route::patch('/coupons/update/{model}', 'CouponController@update')->middleware('scope:admin,store_manager,cashier');
 Route::post('/coupons/search', 'CouponController@search')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/coupons/{model}', 'CouponController@delete')->middleware('scope:admin,store_manager,cashier');
 

@@ -257,20 +257,38 @@ export default {
         model: "coupons",
         data: { ...this.formFields }
       };
-      this.create(payload)
-        .then(response => {
-          this.$emit("submit", {
-            action: "paginate",
-            notification: {
-              msg: response.info,
-              type: "success"
-            }
+      if (this.$props.model) {
+        axios
+          .patch(`/api/coupons/update/${this.$props.model.id}`, payload.data)
+          .then(() => {
+            this.clear();
+            this.$emit("submit", {
+              action: "paginate",
+              notification: {
+                msg: "Coupon updated successfully",
+                type: "success"
+              }
+            });
+          })
+          .finally(() => {
+            this.loading = false;
           });
-          this.clear();
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+      } else {
+        this.create(payload)
+          .then(() => {
+            this.$emit("submit", {
+              action: "paginate",
+              notification: {
+                msg: "Coupon added successfully",
+                type: "success"
+              }
+            });
+            this.clear();
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      }
     },
     clear() {
       this.formFields = { ...this.defaultValues };

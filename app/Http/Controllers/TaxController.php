@@ -25,20 +25,10 @@ class TaxController extends Controller
         ]);
 
         $tax = Tax::create($validatedData);
-        
+
         return response(['info' => ['Tax ' . $tax->name . ' created successfully!']], 201);
-
-        $validatedID = $request->validate([
-            'id' => 'nullable|exists:taxes,id'
-        ]);
-
-        if (!empty($validatedID)) {
-            return response($this->model::updateData($validatedID, $validatedData), 200);
-        } else {
-            return response($this->model::store($validatedData), 201);
-        }
     }
-    
+
     public function update(Request $request)
     {
         $validatedData = $request->validate([
@@ -53,7 +43,7 @@ class TaxController extends Controller
 
         return response(['info' => ["Tax {$tax->name} updated successfully!"]]);
     }
-    
+
     public function search(Request $request)
     {
         $validatedData = $request->validate([

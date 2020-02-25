@@ -46,7 +46,7 @@ export default {
       icon: "mdi-ticket-percent",
       title: "Coupons",
       model: "coupons",
-      newForm: "couponForm",
+      newForm: this.form,
       btnTxt: "New Coupon",
       loading: true
     });
@@ -55,7 +55,8 @@ export default {
   },
   data() {
     return {
-      render: false
+      render: false,
+      form: "couponForm"
     };
   },
   computed: {
