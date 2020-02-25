@@ -74,25 +74,42 @@ export default {
     }),
     submit() {
       this.loading = true;
-
       let payload = {
         model: "categories",
         data: { ...this.formFields }
       };
-      this.create(payload)
-        .then(() => {
-          this.$emit("submit", {
-            action: "paginate",
-            notification: {
-              msg: "Category added successfully",
-              type: "success"
-            }
+      if (this.$props.model) {
+        axios
+          .patch(`/api/categories/update/${this.$props.model.id}`, payload.data)
+          .then(() => {
+            this.clear();
+            this.$emit("submit", {
+              action: "paginate",
+              notification: {
+                msg: "Category updated successfully",
+                type: "success"
+              }
+            });
+          })
+          .finally(() => {
+            this.loading = false;
           });
-          this.clear();
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+      } else {
+        this.create(payload)
+          .then(() => {
+            this.$emit("submit", {
+              action: "paginate",
+              notification: {
+                msg: "Category added successfully",
+                type: "success"
+              }
+            });
+            this.clear();
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      }
     },
     clear() {
       this.formFields = { ...this.defaultValues };

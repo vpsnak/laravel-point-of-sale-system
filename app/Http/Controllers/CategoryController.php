@@ -6,9 +6,17 @@ use App\Product;
 use App\Category;
 use Illuminate\Http\Request;
 
-class CategoryController extends BaseController
+class CategoryController extends Controller
 {
-    protected $model = Category::class;
+    public function all()
+    {
+        return response(Category::paginate());
+    }
+
+    public function get($model)
+    {
+        return response(Category::findOrFail($model));
+    }
 
     public function create(Request $request)
     {
@@ -17,15 +25,24 @@ class CategoryController extends BaseController
             'in_product_listing' => 'required|boolean',
         ]);
 
-        $validatedID = $request->validate([
-            'id' => 'nullable|exists:categories,id'
-        ]);
+        $category = Category::create($validatedData);
 
-        if (!empty($validatedID)) {
-            return response($this->model::updateData($validatedID, $validatedData), 200);
-        } else {
-            return response($this->model::store($validatedData), 201);
-        }
+        return response(['info' => ['Category ' . $category->name . ' created successfully!']], 201);
+    }
+
+    public function update(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id' => 'required|exists:categories,id',
+            'name' => 'required|string',
+            'in_product_listing' => 'required|boolean',
+        ]);
+        $category = Category::findOrFail($validatedData['id']);
+
+        $category->fill($validatedData);
+        $category->save();
+
+        return response(['info' => ["Category {$category->name} updated successfully!"]]);
     }
 
     public function productListingCategories()
@@ -48,10 +65,9 @@ class CategoryController extends BaseController
             'keyword' => 'required|string'
         ]);
 
-        return $this->searchResult(
-            ['name','in_product_listing'],
-            $validatedData['keyword'],
-            true
-        );
+        $columns = ['name', 'in_product_listing'];
+        $query = Category::query()->search($columns, $validatedData['keyword']);
+
+        return response($query->paginate());
     }
 }

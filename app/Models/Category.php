@@ -2,7 +2,9 @@
 
 namespace App;
 
-class Category extends BaseModel
+use Illuminate\Database\Eloquent\Model;
+
+class Category extends Model
 {
     //    protected $with = ['products'];
 

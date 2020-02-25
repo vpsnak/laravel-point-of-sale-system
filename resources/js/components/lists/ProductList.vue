@@ -371,7 +371,7 @@ export default {
 
       this.request(payload)
         .then(response => {
-          this.setProductList = response.data.data;
+          this.setProductList(response.data);
           this.currentPage = response.current_page;
           this.lastPage = response.last_page;
         })

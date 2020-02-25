@@ -164,6 +164,7 @@ Route::get('/categories', 'CategoryController@all')->middleware('scope:admin,sto
 Route::get('/categories/get/{model}', 'CategoryController@get')->middleware('scope:admin,store_manager,cashier');
 Route::get('/categories/{category}/products', 'CategoryController@productsByCategory')->middleware('scope:admin,store_manager,cashier');
 Route::post('/categories/create', 'CategoryController@create')->middleware('scope:admin,store_manager,cashier');
+Route::patch('/categories/update/{model}', 'CategoryController@update')->middleware('scope:admin,store_manager,cashier');
 Route::post('/categories/search', 'CategoryController@search')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/categories/{model}', 'CategoryController@delete')->middleware('scope:admin');
 
