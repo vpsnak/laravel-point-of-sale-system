@@ -31,7 +31,7 @@
                     :disabled="!billingAddress"
                     icon
                     v-on="on"
-                    @click="addressDialog('billing', billingAddress)"
+                    @click="addressDialog('billing', true)"
                   >
                     <v-icon>mdi-pencil</v-icon>
                   </v-btn>
@@ -40,7 +40,11 @@
               </v-tooltip>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
-                  <v-btn icon v-on="on" @click="addressDialog('billing', null)">
+                  <v-btn
+                    icon
+                    v-on="on"
+                    @click="addressDialog('billing', false)"
+                  >
                     <v-icon>mdi-plus</v-icon>
                   </v-btn>
                 </template>
@@ -76,7 +80,7 @@
                     :disabled="!deliveryAddress"
                     icon
                     v-on="on"
-                    @click="addressDialog('delivery', deliveryAddress)"
+                    @click="addressDialog('delivery', true)"
                   >
                     <v-icon>mdi-pencil</v-icon>
                   </v-btn>
@@ -88,7 +92,7 @@
                   <v-btn
                     icon
                     v-on="on"
-                    @click="addressDialog('delivery', null)"
+                    @click="addressDialog('delivery', false)"
                   >
                     <v-icon>mdi-plus</v-icon>
                   </v-btn>
@@ -209,8 +213,10 @@ export default {
 
     this.initEventBus();
 
-    if (_.has(this.customer, "addresses")) {
+    if (this.order_billing_address) {
       this.billingAddress = this.order_billing_address;
+    }
+    if (this.order_delivery_address) {
       this.deliveryAddress = this.order_delivery_address;
     }
   },
@@ -331,13 +337,13 @@ export default {
             : null;
         }
         if (this.customer && !this.deliveryAddress) {
-          const shipping_address = _.filter(this.customer.addresses, [
+          const delivery_address = _.filter(this.customer.addresses, [
             "is_default_shipping",
             true
           ]);
 
-          this.deliveryAddress = shipping_address.length
-            ? shipping_address[0]
+          this.deliveryAddress = delivery_address.length
+            ? delivery_address[0]
             : null;
         }
 
@@ -428,7 +434,7 @@ export default {
         return null;
       }
     },
-    addressDialog(action, address_id) {
+    addressDialog(action, edit) {
       let icon;
       let title;
       let data;
@@ -436,18 +442,14 @@ export default {
 
       if (action === "delivery") {
         icon = "mdi-map-marker";
-        title = address_id ? "Edit delivery address" : "New delivery address";
-        data = address_id ? this.delivery_address : null;
-        eventChannel = address_id
-          ? "delivery-address-edit"
-          : "delivery-address-new";
+        title = edit ? "Edit delivery address" : "New delivery address";
+        data = edit ? this.deliveryAddress : null;
+        eventChannel = edit ? "delivery-address-edit" : "delivery-address-new";
       } else {
         icon = "mdi-receipt";
-        title = address_id ? "Edit billing address" : "New billing address";
-        data = address_id ? this.billing_address : null;
-        eventChannel = address_id
-          ? "billing-address-edit"
-          : "billing-address-new";
+        title = edit ? "Edit billing address" : "New billing address";
+        data = edit ? this.billingAddress : null;
+        eventChannel = edit ? "billing-address-edit" : "billing-address-new";
       }
 
       this.setDialog({
