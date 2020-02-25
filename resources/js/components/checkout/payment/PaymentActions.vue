@@ -358,7 +358,7 @@ export default {
       this.setPaymentLoading(true);
 
       if (!this.order_id) {
-        this.submitOrder()
+        this.submitOrder("create")
           .then(() => {
             this.pay();
           })

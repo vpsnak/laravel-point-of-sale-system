@@ -53,6 +53,8 @@
               icon="mdi-clipboard-list"
               title="Order summary"
               :editable="order_id ? false : true"
+              :showMethods="true"
+              :showCustomer="true"
             ></cart>
           </v-col>
         </v-row>
@@ -68,7 +70,6 @@ import { EventBus } from "../../plugins/event-bus";
 export default {
   mounted() {
     EventBus.$on("checkout-cancel-order", event => {
-      console.log(event);
       if (event.payload) {
         this.setIsValidCheckout(false);
         this.request({

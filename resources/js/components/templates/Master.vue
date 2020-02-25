@@ -10,7 +10,7 @@
       <v-content>
         <router-view class="view side-menu" name="side_menu"></router-view>
         <router-view class="view top-menu" name="top_menu"></router-view>
-        <router-view class="view one"></router-view>
+        <router-view class="view default"></router-view>
       </v-content>
     </transition>
   </v-app>

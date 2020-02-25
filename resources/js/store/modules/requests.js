@@ -54,6 +54,22 @@ const actions = {
               },
               { root: true }
             );
+          } else if (
+            !noErrorNotification &&
+            _.has(error_response, "message") &&
+            _.has(error_response, "exception")
+          ) {
+            context.commit(
+              "setNotification",
+              {
+                msg: [
+                  "Unhandled Exception!",
+                  `Message: ${error_response.message}<br>${error_response.file}<br>line: ${error_response.line}`
+                ],
+                type: "error"
+              },
+              { root: true }
+            );
           }
           if (console_out) {
             console.error(error_response);

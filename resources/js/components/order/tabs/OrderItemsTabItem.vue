@@ -20,10 +20,10 @@
               <v-container>
                 <v-row align="center" justify="space-around">
                   <v-col cols="auto">
-                    <h3>
+                    <h4>
                       <b class="amber--text">{{ 1 + index }}.</b>
                       &nbsp;{{ product.name }}
-                    </h3>
+                    </h4>
                   </v-col>
                   <v-col cols="auto">
                     <h4>
@@ -157,13 +157,8 @@
 import { mapState, mapMutations } from "vuex";
 
 export default {
-  props: {
-    editable: Boolean
-  },
-
   computed: {
     ...mapState("cart", ["cart_products"]),
-    // configurable price, qty, add / remove product, discounts, save btn, close confirmation if unsaved changes are detected, validator
 
     valueColors() {
       return "primary--text";

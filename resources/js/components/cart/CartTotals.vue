@@ -82,9 +82,7 @@ export default {
       return parseFloat(subtotal);
     },
     tax() {
-      if (this.order_total_tax) {
-        return this.order_total_tax;
-      } else if (this.customer && this.customer.no_tax) {
+      if (this.customer && this.customer.no_tax) {
         return 0;
       } else {
         return parseFloat(

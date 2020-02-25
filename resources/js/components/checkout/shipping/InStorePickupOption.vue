@@ -201,7 +201,7 @@ export default {
   },
 
   methods: {
-    ...mapActions(["postRequest", "getAll"]),
+    ...mapActions("requests", ["request"]),
     ...mapMutations("dialog", ["setDialog"]),
     ...mapMutations("cart", [
       "setShippingCost",
@@ -238,7 +238,8 @@ export default {
       }
     },
     getStores() {
-      this.getAll({ model: "store-pickups" }).then(response => {
+      const payload = { method: "get", url: "store-pickups" };
+      this.request(payload).then(response => {
         this.store_pickups = response;
       });
     },

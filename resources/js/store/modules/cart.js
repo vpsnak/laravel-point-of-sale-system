@@ -479,11 +479,13 @@ export default {
           });
       });
     },
-    submitOrder(context) {
+    submitOrder(context, url) {
       return new Promise((resolve, reject) => {
         let payload = {
-          model: "orders",
+          method: "post",
+          url: `orders/${url}`,
           data: {
+            order_id: context.state.order_id || null,
             products: context.state.cart_products,
             method: context.state.method,
             discount_type: context.state.discount_type,
@@ -502,16 +504,18 @@ export default {
         }
 
         context
-          .dispatch("create", payload, { root: true })
+          .dispatch("requests/request", payload, { root: true })
           .then(response => {
-            context.commit("setOrderId", response.order_id);
-            context.commit("setOrderStatus", response.order_status);
-            context.commit("setOrderTotal", response.order_total);
-            context.commit(
-              "setOrderTotalWithoutTax",
-              response.order_total_without_tax
-            );
-            context.commit("setOrderTotalTax", response.order_total_tax);
+            if (url === "create") {
+              context.commit("setOrderId", response.order_id);
+              context.commit("setOrderStatus", response.order_status);
+              context.commit("setOrderTotal", response.order_total);
+              context.commit(
+                "setOrderTotalWithoutTax",
+                response.order_total_without_tax
+              );
+              context.commit("setOrderTotalTax", response.order_total_tax);
+            }
             resolve(response);
           })
           .catch(error => {

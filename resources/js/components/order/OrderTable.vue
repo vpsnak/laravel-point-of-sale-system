@@ -62,7 +62,7 @@
             <v-btn
               small
               :disabled="data_table.loading"
-              :to="{ name: 'viewOrder', params: { id: item.id } }"
+              :to="{ name: 'viewOrderDetails', params: { id: item.id } }"
               class="my-2"
               v-on="on"
               icon
@@ -71,22 +71,6 @@
             </v-btn>
           </template>
           <span>View</span>
-        </v-tooltip>
-
-        <v-tooltip bottom v-if="disableIfStatus(item)">
-          <template v-slot:activator="{ on }">
-            <v-btn
-              :to="{ name: 'editOrder', params: { id: item.id } }"
-              small
-              :disabled="data_table.loading"
-              class="my-2"
-              v-on="on"
-              icon
-            >
-              <v-icon small>edit</v-icon>
-            </v-btn>
-          </template>
-          <span>Edit</span>
         </v-tooltip>
 
         <v-tooltip bottom v-if="['paid', 'complete'].indexOf(item.status) >= 0">
@@ -184,7 +168,6 @@ export default {
       "setDataTable",
       "resetDataTable"
     ]),
-    ...mapActions(["delete"]),
     ...mapActions("requests", ["request"]),
     ...mapActions("cart", ["loadOrder"]),
 
@@ -319,12 +302,12 @@ export default {
     },
     cancelOrder() {
       return new Promise((resolve, reject) => {
-        let payload = {
-          model: "orders",
-          id: this.selectedItem.id
+        const payload = {
+          method: "delete",
+          url: `orders${this.selectedItem.id}`
         };
 
-        this.delete(payload)
+        this.request(payload)
           .then(() => {
             resolve(true);
           })

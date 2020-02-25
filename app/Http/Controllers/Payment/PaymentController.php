@@ -86,7 +86,8 @@ class PaymentController extends Controller
         $payment->status = 'approved';
         $payment->save();
         $payment->load(['created_by', 'paymentType', 'order']);
-        $orderStatus = OrderController::updateOrderStatus($payment);
+        $orderController = new OrderController($payment->order);
+        $orderStatus = $orderController->updateOrderStatus($payment);
         $orderStatus['payment'] = $payment;
 
         return response($orderStatus, 201);
@@ -326,11 +327,15 @@ class PaymentController extends Controller
         $refund->save();
         $refund = $refund->load(['created_by', 'paymentType', 'order']);
 
-        $orderStatus = OrderController::updateOrderStatus($refund, true);
-        $orderStatus['info'] = ['Refund' => 'Refund completed successfully!'];
+        $orderController = new OrderController($payment->order);
+        $orderStatus = $orderController->updateOrderStatus($refund, true);
+        $orderStatus['notification'] = [
+            'msg' => ['Refund completed successfully!'],
+            'type' => 'success'
+        ];
         $orderStatus['refund'] = $refund->refresh();
 
-        return response($orderStatus, 500);
+        return response($orderStatus, 500); // 500 status for debug purposes only!
     }
 
     private function createLinkedRefund(Payment $payment, bool $succeed)
@@ -387,7 +392,8 @@ class PaymentController extends Controller
                 $refund = $this->createLinkedRefund($payment, false);
                 $refund->load(['created_by', 'paymentType', 'order']);
 
-                $orderStatus = OrderController::updateOrderStatus($refund, true);
+                $orderController = new OrderController($payment->order);
+                $orderStatus = $orderController->updateOrderStatus($refund, true);
                 $orderStatus['errors'] = $result['errors'];
                 $orderStatus['refund'] = $refund->refresh();
 
@@ -396,12 +402,16 @@ class PaymentController extends Controller
                 $refund = $this->createLinkedRefund($payment, true);
                 $refund->load(['created_by', 'paymentType', 'order']);
 
-                $orderStatus = OrderController::updateOrderStatus($refund, true);
+                $orderController = new OrderController($payment->order);
+                $orderStatus = $orderController->updateOrderStatus($refund, true);
                 $orderStatus['refunded_payment_id'] = $payment->id;
-                $orderStatus['info'] = ['Refund' => 'Refund completed successfully!'];
+                $orderStatus['notification'] = [
+                    'msg' => ['Refund completed successfully!'],
+                    'type' => 'success'
+                ];
                 $orderStatus['refund'] = $refund->refresh();
 
-                return response($orderStatus, 200);
+                return response($orderStatus);
             }
         } else {
             if (is_array($result) && array_key_exists('errors', $result)) {

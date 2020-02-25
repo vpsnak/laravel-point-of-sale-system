@@ -2,7 +2,7 @@
   <div class="text-center">
     <v-bottom-sheet v-model="orderPageActions">
       <v-list>
-        <v-subheader>Actions</v-subheader>
+        <v-subheader>Edit</v-subheader>
         <v-list-item
           @click.stop="editOrderItems()"
           :disabled="loading"
@@ -11,30 +11,21 @@
           <v-list-item-avatar>
             <v-icon>mdi-package-variant</v-icon>
           </v-list-item-avatar>
-          <v-list-item-title>Edit order items</v-list-item-title>
+          <v-list-item-title>Order items</v-list-item-title>
         </v-list-item>
         <v-list-item
-          v-if="canEditDelivery"
-          @click.stop="editOrderDelivery()"
+          v-if="canEditOrderOptions"
+          @click.stop="editOrderOptions()"
           :disabled="loading"
           :loading="checkout_loading"
         >
           <v-list-item-avatar>
-            <v-icon>mdi-package-variant</v-icon>
+            <v-icon>mdi-file-document-edit-outline</v-icon>
           </v-list-item-avatar>
-          <v-list-item-title>Edit order delivery</v-list-item-title>
+          <v-list-item-title>Order options</v-list-item-title>
         </v-list-item>
-        <v-list-item
-          @click.stop="saveChanges()"
-          v-if="canSave"
-          :disabled="loading"
-          :loading="checkout_loading"
-        >
-          <v-list-item-avatar>
-            <v-icon>mdi-content-save-edit-outline</v-icon>
-          </v-list-item-avatar>
-          <v-list-item-title>Save changes</v-list-item-title>
-        </v-list-item>
+        <v-divider />
+        <v-subheader>Actions</v-subheader>
         <v-list-item
           @click.stop="checkout()"
           v-if="canCheckout"
@@ -87,7 +78,7 @@
           <v-list-item-avatar>
             <v-icon>mdi-credit-card-refund-outline</v-icon>
           </v-list-item-avatar>
-          <v-list-item-title>Make a refund</v-list-item-title>
+          <v-list-item-title>Issue a refund</v-list-item-title>
         </v-list-item>
         <v-list-item
           color="red"
@@ -175,16 +166,11 @@ export default {
         return false;
       }
     },
-    canEditDelivery() {
+    canEditOrderOptions() {
       if (this.method !== "retail") {
         return true;
       } else {
         return false;
-      }
-    },
-    canSave() {
-      if (true) {
-        return true;
       }
     },
     canCheckout() {
@@ -244,17 +230,10 @@ export default {
     ...mapActions("requests", ["request"]),
 
     editOrderItems() {
-      this.setDialog({
-        show: true,
-        fullscreen: true,
-        title: `Edit items for Order #${this.order_id}`,
-        titleCloseBtn: true,
-        icon: "mdi-package-variant",
-        component: "sales",
-        component_props: { order_edit: 1 },
-        persistent: true,
-        eventChannel: "order-page-edit-items"
-      });
+      this.$router.push({ name: "editOrderItemsPage" });
+    },
+    editOrderOptions() {
+      this.$router.push({ name: "editOrderOptionsPage" });
     },
     refund() {
       // this.refund_loading = true;

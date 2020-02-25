@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-row align="center" justify="center" dense>
+    <v-row align="center" justify="center" no-gutters>
       <v-combobox
         :no-filter="true"
         v-if="editable"

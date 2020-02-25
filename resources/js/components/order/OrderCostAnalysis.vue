@@ -12,7 +12,7 @@
           <vc-donut
             hasLegend
             legendPlacement="bottom"
-            :sections="costSections"
+            :sections="costSections()"
             :size="150"
             :thickness="13"
             :total="order_total"
@@ -53,8 +53,9 @@ export default {
       if (this.$vuetify.theme.dark) {
         return "#1e1e1e";
       }
-    },
-
+    }
+  },
+  methods: {
     costSections() {
       let sections = [];
 
@@ -81,6 +82,12 @@ export default {
       }
 
       return sections;
+    }
+  },
+
+  watch: {
+    order_total() {
+      this.costSections();
     }
   }
 };

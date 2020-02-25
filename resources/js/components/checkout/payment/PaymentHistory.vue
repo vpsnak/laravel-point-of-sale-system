@@ -59,7 +59,6 @@ export default {
 
   mounted() {
     EventBus.$on("payment-history-refund", event => {
-      console.info(event);
       if (event.payload && this.selected_payment) {
         this.refund();
       }
@@ -135,7 +134,7 @@ export default {
     ]),
     ...mapMutations(["setNotification"]),
     ...mapMutations("dialog", ["setDialog"]),
-    ...mapActions(["search", "delete"]),
+    ...mapActions("requests", ["request"]),
 
     enableRefund(item) {
       if (this.$props.editOrder) {
@@ -174,11 +173,11 @@ export default {
     refund() {
       this.setRefundLoading(true);
       let payload = {
-        model: "payments",
-        id: this.selected_payment.id
+        method: "delete",
+        url: `payments/${this.selected_payment.id}`
       };
 
-      this.delete(payload)
+      this.request(payload)
         .then(response => {
           if (response.refunded_payment_id) {
             const index = _.findIndex(this.payments, [
@@ -194,13 +193,7 @@ export default {
           this.setOrderRemaining(response.remaining);
           this.setOrderStatus(response.order_status);
 
-          const notification = {
-            msg: response.msg,
-            type: response.status
-          };
-
           this.setRefundLoading(false);
-          this.setNotification(notification);
         })
         .catch(error => {
           if (_.has(error, "response.data.refund")) {

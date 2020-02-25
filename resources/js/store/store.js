@@ -161,76 +161,6 @@ export default new Vuex.Store({
           });
       });
     },
-    verifySelf(context, payload) {
-      return new Promise((resolve, reject) => {
-        axios
-          .post(`${context.state.config.base_url}/auth/verify`, payload)
-          .then(() => {
-            resolve(true);
-          })
-          .catch(error => {
-            if (_.has(error, ".response.data.errors")) {
-              context.commit("setNotification", {
-                msg: error.response.data.errors,
-                type: "error"
-              });
-            } else {
-              console.error(error);
-            }
-
-            reject(error);
-          });
-      });
-    },
-    changeSelfPwd(context, payload) {
-      return new Promise((resolve, reject) => {
-        axios
-          .post(`${context.state.config.base_url}/auth/password`, payload)
-          .then(response => {
-            context.commit("setNotification", {
-              msg: response.data.info,
-              type: "success"
-            });
-            resolve(response.data);
-          })
-          .catch(error => {
-            if (_.has(error, "response.data.errors")) {
-              context.commit("setNotification", {
-                msg: error.response.data.errors,
-                type: "error"
-              });
-            } else {
-              console.error(error);
-            }
-
-            reject(error);
-          });
-      });
-    },
-    changeUserPwd(context, payload) {
-      return new Promise((resolve, reject) => {
-        axios
-          .post(`${context.state.config.base_url}/users/password`, payload)
-          .then(response => {
-            context.commit("setNotification", {
-              msg: response.data.info,
-              type: "success"
-            });
-            resolve(response.data);
-          })
-          .catch(error => {
-            if (_.has(error, "response.data.errors")) {
-              context.commit("setNotification", {
-                msg: error.response.data.errors,
-                type: "error"
-              });
-            } else {
-              console.error(error);
-            }
-            reject(error);
-          });
-      });
-    },
     getAll(context, payload) {
       return new Promise((resolve, reject) => {
         let page = payload.page ? "?page=" + payload.page : "";
@@ -277,33 +207,6 @@ export default new Vuex.Store({
               });
             }
             resolve(response.data.data || response.data);
-          })
-          .catch(error => {
-            if (_.has(error, "response.data.errors")) {
-              context.commit("setNotification", {
-                msg: error.response.data.errors,
-                type: "error"
-              });
-            } else {
-              console.error(error);
-            }
-            reject(error);
-          });
-      });
-    },
-    getManyByOne(context, payload) {
-      return new Promise((resolve, reject) => {
-        let page = payload.page ? "?page=" + payload.page : "";
-
-        axios
-          .get(
-            `${context.state.config.base_url}/${payload.model}/${payload.data.id}/${payload.data.model}${page}`
-          )
-          .then(response => {
-            if (_.has(payload, "mutation")) {
-              context.commit(payload.mutation, response.data.data);
-            }
-            resolve(response.data);
           })
           .catch(error => {
             if (_.has(error, "response.data.errors")) {
@@ -393,57 +296,20 @@ export default new Vuex.Store({
           });
       });
     },
-    cashRegisterAmount(context) {
-      return new Promise((resolve, reject) => {
-        axios
-          .get(
-            `${context.state.config.base_url}/cash-register-logs/${context.state.cashRegister.id}/amount`
-          )
-          .catch(error => {
-            reject(error.response);
-          })
-          .then(response => {
-            resolve(response.data);
-          });
-      });
-    },
-
     closeCashRegister(context, payload) {
-      return new Promise((resolve, reject) => {
-        axios
-          .post(
-            `${context.state.config.base_url}/cash-register-logs/close`,
-            payload.data
-          )
-          .then(response => {
-            if (router.currentRoute.name === ("sales" || "orders")) {
-              router.push({ name: "dashboard" });
-            }
+      return new Promise(resolve => {
+        payload.method = "post";
+        payload.url = "cash-register-logs/close";
+        context.dispatch("requests/request", payload).then(response => {
+          if (["sales", "orders"].indexOf(router.currentRoute.name) >= 0) {
+            router.push({ name: "dashboard" });
+          }
 
-            context.commit("setCashRegister", null);
-            context.commit("setStore", null);
-            context.commit("setNotification", {
-              msg: response.data.info,
-              type: "success"
-            });
+          context.commit("setCashRegister", null);
+          context.commit("menu/setStoreName", null);
 
-            resolve(response.data);
-          })
-          .catch(error => {
-            if (error.response) {
-              context.commit("setNotification", {
-                msg: error.response.data.errors,
-                type: "error"
-              });
-            } else {
-              context.commit("setNotification", {
-                msg: "Unexpected error occured",
-                type: "error"
-              });
-            }
-
-            reject(error);
-          });
+          resolve(response.data);
+        });
       });
     },
 
@@ -482,89 +348,6 @@ export default new Vuex.Store({
               console.error(error);
             }
 
-            reject(error);
-          });
-      });
-    },
-    delete(context, payload) {
-      return new Promise((resolve, reject) => {
-        axios
-          .delete(
-            `${context.state.config.base_url}/${payload.model}/${payload.id}`
-          )
-          .then(response => {
-            if (_.has(payload, "mutation")) {
-              context.commit(payload.mutation, response.data);
-            }
-
-            context.commit("setNotification", {
-              msg: response.data.info,
-              type: "success"
-            });
-
-            resolve(response.data);
-          })
-          .catch(error => {
-            if (_.has(error, "response.data.errors")) {
-              context.commit("setNotification", {
-                msg: error.response.data.errors,
-                type: "error"
-              });
-            } else {
-              console.error(error);
-            }
-            reject(error);
-          });
-      });
-    },
-    postRequest(context, payload) {
-      return new Promise((resolve, reject) => {
-        axios
-          .post(`${context.state.config.base_url}/${payload.url}`, payload.data)
-          .then(response => {
-            if (_.has(payload, "mutation")) {
-              context.commit(
-                payload.mutation,
-                response.data.data || response.data
-              );
-            }
-            resolve(response.data.data || response.data);
-          })
-          .catch(error => {
-            if (_.has(error, "response.data.errors")) {
-              context.commit("setNotification", {
-                msg: error.response.data.errors,
-                type: "error"
-              });
-            } else {
-              console.error(error);
-            }
-            reject(error);
-          });
-      });
-    },
-    deleteRequest(context, payload) {
-      return new Promise((resolve, reject) => {
-        axios
-          .delete(`${context.state.config.base_url}/${payload.url}`)
-          .then(response => {
-            if (_.has(payload, "mutation")) {
-              context.commit(
-                payload.mutation,
-                response.data.data || response.data
-              );
-            }
-            resolve(response.data);
-          })
-          .catch(error => {
-            if (_.has(error, "response.data.errors")) {
-              context.commit("setNotification", {
-                msg: error.response.data.errors,
-                type: "error"
-              });
-            } else {
-              console.error(error);
-            }
             reject(error);
           });
       });

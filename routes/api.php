@@ -37,7 +37,7 @@ Route::get('/users/get/{model}', 'UserController@get')->middleware('scope:admin,
 Route::post('/users/create', 'UserController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/users/search', 'UserController@search')->middleware('scope:admin,store_manager,cashier');
 Route::post('/users/password', 'UserController@changeUserPwd')->middleware('scope:admin');
-Route::patch('/users/update/{model}', 'UserController@update')->middleware('scope:admin,store_manager');
+Route::patch('/users/update', 'UserController@update')->middleware('scope:admin,store_manager');
 Route::delete('/users/{model}', 'UserController@delete')->middleware('scope:admin');
 
 // payments
@@ -69,6 +69,8 @@ Route::get('/orders', 'OrderController@all')->middleware('scope:admin,store_mana
 Route::get('/orders/get/{model}', 'OrderController@get')->middleware('scope:admin,store_manager,cashier');
 Route::get('/orders/{model}/mas-status', 'MasOrderController@getOrderDetails');
 Route::post('/orders/create', 'OrderController@create')->middleware('scope:admin,store_manager,cashier');
+Route::post('/orders/update-items', 'OrderController@updateItems')->middleware('scope:admin,store_manager,cashier');
+Route::post('/orders/update-options', 'OrderController@updateOptions')->middleware('scope:admin,store_manager,cashier');
 Route::post('/orders/search', 'OrderController@search')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/orders/{model}', 'OrderController@rollbackOrder')->middleware('scope:admin,store_manager,cashier');
 

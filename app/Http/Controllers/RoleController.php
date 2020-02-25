@@ -43,7 +43,10 @@ class RoleController extends Controller
         }
 
         return response([
-            'info' => ['Auth' => 'Role ' . $role->name . ' assigned to ' . $user->name . ' successfully!']
+            'notification' => [
+                'msg' => ['Auth' => 'Role ' . $role->name . ' assigned to ' . $user->name . ' successfully!'],
+                'type' => 'success'
+            ]
         ]);
     }
 }
