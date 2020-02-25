@@ -41,6 +41,7 @@ class ProductController extends Controller
         $product = Product::create($validatedData);
 
         $product->price()->updateOrCreate(['amount' => $validatedExtra['final_price']]);
+        $product->price->save();
 
         $product->categories()->sync($validatedExtra['categories']);
 
@@ -88,8 +89,7 @@ class ProductController extends Controller
         $product->price->amount = $validatedExtra['final_price'];
 
         $product->fill($validatedData);
-        $product->save();
-
+        $product->price->save();
         return response(['info' => ["Product {$product->name} updated successfully!"]]);
     }
 
