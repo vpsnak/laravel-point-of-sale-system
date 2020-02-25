@@ -12,7 +12,7 @@ class CompanyController extends Controller
         return response(Company::paginate());
     }
 
-    public function get($model)
+    public function getOne($model)
     {
         return response(Company::findOrFail($model));
     }

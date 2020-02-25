@@ -13,7 +13,7 @@ class CouponController extends Controller
         return response(Coupon::paginate());
     }
 
-    public function get($model)
+    public function getOne($model)
     {
         return response(Coupon::findOrFail($model));
     }

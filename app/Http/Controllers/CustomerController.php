@@ -15,7 +15,7 @@ class CustomerController extends Controller
         return response(Customer::paginate());
     }
 
-    public function get(Customer $model)
+    public function getOne(Customer $model)
     {
         // $customer = ;
         return response($model->load('addresses'));

@@ -13,7 +13,7 @@ class UserController extends Controller
         return response(User::paginate());
     }
 
-    public function get($model)
+    public function getOne($model)
     {
         return response(User::findOrFail($model));
     }

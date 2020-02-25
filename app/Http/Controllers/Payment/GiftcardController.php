@@ -12,7 +12,7 @@ class GiftcardController extends Controller
         return response(Giftcard::paginate());
     }
 
-    public function get($model)
+    public function getOne($model)
     {
         return response(Giftcard::findOrFail($model));
     }

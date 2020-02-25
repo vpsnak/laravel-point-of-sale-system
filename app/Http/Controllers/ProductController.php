@@ -16,6 +16,11 @@ class ProductController extends Controller
         return response(Product::paginate());
     }
 
+    public function getOne($model)
+    {
+        return response(Product::findOrFail($model));
+    }
+
     public function create(Request $request)
     {
         $validatedData = $request->validate([
