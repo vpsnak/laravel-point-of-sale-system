@@ -6,9 +6,19 @@ use App\Cart;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
-class CartController extends BaseController
+class CartController extends Controller
 {
     protected $model = Cart::class;
+
+    public function all()
+    {
+        return response(Cart::paginate());
+    }
+
+    public function getOne($model)
+    {
+        return response(Cart::findOrFail($model));
+    }
 
     public function create(Request $request)
     {
@@ -22,10 +32,11 @@ class CartController extends BaseController
 
         $validatedData['cart'] = json_encode($validatedData['cart']);
 
-        if (empty($validatedData['name'])) { 
-            $validatedData['name'] = Carbon::now()->toDateString() . " (" .  $validatedData['product_count'] . " Products) - " . "$" .$validatedData['total_price']; 
+        if (empty($validatedData['name'])) {
+            $validatedData['name'] = Carbon::now()->toDateString() . " (" .  $validatedData['product_count'] . " Products) - " . "$" . $validatedData['total_price'];
         }
-        return response($this->model::store($validatedData), 201);  
+
+        return response(Cart::create($validatedData), 201);
     }
 
     public function getHold(Request $request)
@@ -33,7 +44,11 @@ class CartController extends BaseController
         $validatedData = $request->validate([
             'cash_register_id' => 'required|int'
         ]);
+        return response(Cart::where("cash_register_id", $validatedData['cash_register_id'])->get());
+    }
 
-        return response($this->model::getAll('cash_register_id', $validatedData['cash_register_id']));
+    public function delete($id)
+    {
+        return Cart::where('id', $id)->delete();
     }
 }

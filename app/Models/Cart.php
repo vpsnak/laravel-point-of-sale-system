@@ -2,7 +2,9 @@
 
 namespace App;
 
-class Cart extends BaseModel
+use Illuminate\Database\Eloquent\Model;
+
+class Cart extends Model
 {
     protected $fillable = [
         'cash_register_id',
