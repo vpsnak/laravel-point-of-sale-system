@@ -16,9 +16,9 @@
         <v-card class="fill-height">
           <v-card-title>
             <v-icon class="pr-2">
-              edit
+              mdi-eye
             </v-icon>
-            Edit order # {{ order_id }}
+            View order # {{ order_id }}
             <v-spacer />
             <v-tooltip bottom color="red">
               <template v-slot:activator="{ on }">
@@ -32,7 +32,7 @@
 
           <v-tabs grow centered show-arrows v-model="selected_tab">
             <v-tab>
-              <v-icon left>mdi-clipboard-list-outline</v-icon>
+              <v-icon left>mdi-file-document-outline</v-icon>
               <span>View summary</span>
             </v-tab>
             <v-tab>

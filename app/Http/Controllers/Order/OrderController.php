@@ -79,7 +79,7 @@ class OrderController extends Controller
         ProcessOrder::dispatchNow($this->order);
 
         return response(['notification' => [
-            'msg' => ['Your changes in order\'s items saved successfully!'],
+            'msg' => ['Your changes in order items saved successfully!'],
             'type' => 'success'
         ]]);
     }
@@ -127,7 +127,7 @@ class OrderController extends Controller
         ProcessOrder::dispatchNow($this->order);
 
         return response(['notification' => [
-            'msg' => ['Your changes in order\'s options saved successfully!'],
+            'msg' => ['Your changes in order options saved successfully!'],
             'type' => 'success'
         ]]);
     }

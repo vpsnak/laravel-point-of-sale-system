@@ -7,10 +7,20 @@
       </span>
     </v-card-title>
     <v-container>
-      <v-row justify="center" align="center" class="flex-column" dense>
-        <v-col v-for="(section, index) in costSections" :key="index" :md="6">
+      <v-row
+        justify="space-around"
+        align="center"
+        dense
+        v-for="(section, index) in costSections"
+        :key="index"
+      >
+        <v-col :lg="4" :cols="6" class="text-right">
           <h4>
-            {{ section.title }}&nbsp;
+            {{ section.title }}
+          </h4>
+        </v-col>
+        <v-col :lg="4" :cols="6">
+          <h4>
             <i :class="section.class">${{ section.value }}</i>
           </h4>
         </v-col>
@@ -91,55 +101,55 @@ export default {
 
       if (this.card_total > 0) {
         this.sections.push({
-          title: "Credit Card API:",
+          title: "Credit Card (keyed)",
           value: this.card_total,
           class: "primary--text"
         });
       }
       if (this.pos_terminal_total > 0) {
         this.sections.push({
-          title: "Credit Card POS:",
+          title: "Credit Card (POS)",
           value: this.pos_terminal_total,
           class: "primary--text"
         });
       }
       if (this.cash_total > 0) {
         this.sections.push({
-          title: "Cash:",
+          title: "Cash",
           value: this.cash_total,
           class: "primary--text"
         });
       }
       if (this.house_account_total > 0) {
         this.sections.push({
-          title: "House account:",
+          title: "House account",
           value: this.house_account_total,
           class: "primary--text"
         });
       }
       if (this.coupon_total > 0) {
         this.sections.push({
-          title: "Coupons:",
+          title: "Coupons",
           value: this.coupon_total,
           class: "primary--text"
         });
       }
       if (this.giftcard_total > 0) {
         this.sections.push({
-          title: "Giftcards:",
+          title: "Giftcards",
           value: this.giftcard_total,
           class: "primary--text"
         });
       }
       if (this.refund_total < 0) {
         this.sections.push({
-          title: "Refunds:",
+          title: "Refunds",
           value: this.refund_total * -1,
           class: "amber--text"
         });
       }
       this.sections.push({
-        title: "Total paid:",
+        title: "Total paid",
         value: this.sumTotals >= 0 ? this.sumTotals : 0,
         class: "success--text"
       });

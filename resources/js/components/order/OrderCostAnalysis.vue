@@ -3,7 +3,7 @@
     <v-card-title>
       <v-icon left>mdi-chart-pie</v-icon>
       <span class="subheading">
-        Order cost analysis
+        Cost analysis
       </span>
     </v-card-title>
     <v-container>
