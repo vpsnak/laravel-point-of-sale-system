@@ -1,205 +1,200 @@
 <template>
   <div>
     <v-container fluid>
-      <ValidationObserver ref="deliveryValidation">
-        <v-form>
-          <v-row align="center" justify="center">
-            <v-col :cols="12" :lg="7">
-              <ValidationProvider
-                rules="required"
-                v-slot="{ errors, valid }"
-                name="Billing address"
-              >
-                <v-select
-                  @change="validate"
-                  :items="addresses"
-                  prepend-icon="mdi-receipt"
-                  label="Billing address"
-                  v-model="billingAddress"
-                  :item-text="getAddressText"
-                  return-object
-                  :error-messages="errors"
-                  :success="valid"
-                ></v-select>
-              </ValidationProvider>
-            </v-col>
-
-            <div>
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    :disabled="!billingAddress"
-                    icon
-                    v-on="on"
-                    @click="addressDialog('billing', true)"
-                  >
-                    <v-icon>mdi-pencil</v-icon>
-                  </v-btn>
-                </template>
-                <span>Edit selected address</span>
-              </v-tooltip>
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    icon
-                    v-on="on"
-                    @click="addressDialog('billing', false)"
-                  >
-                    <v-icon>mdi-plus</v-icon>
-                  </v-btn>
-                </template>
-                <span>New billing address</span>
-              </v-tooltip>
-            </div>
-
-            <v-col :cols="10" :lg="7">
-              <ValidationProvider
-                rules="required"
-                v-slot="{ errors, valid }"
-                name="Delivery address"
-              >
-                <v-select
-                  @input="getTimeSlots"
-                  @change="validate"
-                  :items="addresses"
-                  prepend-icon="mdi-map-marker"
-                  label="Delivery address"
-                  v-model="deliveryAddress"
-                  :item-text="getAddressText"
-                  return-object
-                  :error-messages="errors"
-                  :success="valid"
-                ></v-select>
-              </ValidationProvider>
-            </v-col>
-
-            <div>
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    :disabled="!deliveryAddress"
-                    icon
-                    v-on="on"
-                    @click="addressDialog('delivery', true)"
-                  >
-                    <v-icon>mdi-pencil</v-icon>
-                  </v-btn>
-                </template>
-                <span>Edit selected address</span>
-              </v-tooltip>
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    icon
-                    v-on="on"
-                    @click="addressDialog('delivery', false)"
-                  >
-                    <v-icon>mdi-plus</v-icon>
-                  </v-btn>
-                </template>
-                <span>New delivery address</span>
-              </v-tooltip>
-            </div>
-
-            <v-col :cols="12" :lg="6">
-              <addressDeliveryForm
-                v-if="deliveryAddress"
-                :model="deliveryAddress"
-                readonly
-              ></addressDeliveryForm>
-            </v-col>
-          </v-row>
-
-          <v-row align="center" justify="center">
-            <v-col :cols="4" :lg="2">
-              <v-menu
-                v-model="datePicker"
-                transition="scale-transition"
-                offset-y
-                min-width="290px"
-              >
-                <template v-slot:activator="{ on }">
-                  <ValidationProvider
-                    rules="required"
-                    v-slot="{ errors, valid }"
-                    name="Date"
-                  >
-                    <v-text-field
-                      v-model="dateFormatted"
-                      label="Date"
-                      prepend-inner-icon="event"
-                      :error-messages="errors"
-                      :success="valid"
-                      v-on="on"
-                      @input="getTimeSlots"
-                      @blur="parseDate, validate"
-                      readonly
-                    ></v-text-field>
-                  </ValidationProvider>
-                </template>
-                <v-date-picker
-                  v-model="deliveryDate"
-                  @input="getTimeSlots"
-                  :min="new Date().toJSON()"
-                ></v-date-picker>
-              </v-menu>
-            </v-col>
-            <v-col :cols="4" :lg="3">
-              <ValidationProvider
-                rules="required"
-                v-slot="{ errors, valid }"
-                name="Time Slot"
-              >
-                <v-select
-                  :loading="loading"
-                  label="Time Slot"
-                  prepend-inner-icon="mdi-clock"
-                  append-icon="mdi-plus"
-                  :items="timeSlots"
-                  :error-messages="errors"
-                  :success="valid"
-                  item-text="label"
-                  v-model="deliveryTime"
-                  @input="setCost"
-                  @click:append="addTimeSlotDialog()"
-                  @change="validate"
-                ></v-select>
-              </ValidationProvider>
-            </v-col>
-            <v-col :cols="4" :lg="1">
-              <ValidationProvider
-                rules="required"
-                v-slot="{ errors, valid }"
-                name="Fees"
-              >
-                <v-text-field
-                  type="number"
-                  label="Fees"
-                  prefix="$"
-                  :error="errors.length ? true : false"
-                  :success="valid"
-                  :min="0"
-                  v-model="shippingCost"
-                  @input="validate"
-                ></v-text-field>
-              </ValidationProvider>
-            </v-col>
-            <v-col :cols="6" :lg="2">
+      <ValidationObserver ref="deliveryValidation" tag="v-form">
+        <v-row align="center" justify="center">
+          <v-col :cols="$props.readonly ? 12 : 10">
+            <ValidationProvider
+              rules="required"
+              v-slot="{ errors, valid }"
+              name="Billing address"
+            >
               <v-select
-                :loading="loading"
-                label="Occasion"
-                :items="occasions"
-                item-text="label"
-                item-value="id"
-                v-model="deliveryOccasion"
-                prepend-inner-icon="mdi-star-face"
+                :readonly="$props.readonly"
+                @change="validate"
+                :items="addresses"
+                prepend-icon="mdi-receipt"
+                label="Billing address"
+                v-model="billingAddress"
+                :item-text="getAddressText"
+                return-object
+                :error-messages="errors"
+                :success="valid"
               ></v-select>
-            </v-col>
-          </v-row>
-        </v-form>
+            </ValidationProvider>
+          </v-col>
+
+          <v-col :cols="2" v-if="!$props.readonly">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  :disabled="!billingAddress"
+                  icon
+                  v-on="on"
+                  @click="addressDialog('billing', true)"
+                >
+                  <v-icon>mdi-pencil</v-icon>
+                </v-btn>
+              </template>
+              <span>Edit selected address</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn icon v-on="on" @click="addressDialog('billing', false)">
+                  <v-icon>mdi-plus</v-icon>
+                </v-btn>
+              </template>
+              <span>New billing address</span>
+            </v-tooltip>
+          </v-col>
+
+          <v-col :cols="$props.readonly ? 12 : 10">
+            <ValidationProvider
+              rules="required"
+              v-slot="{ errors, valid }"
+              name="Delivery address"
+            >
+              <v-select
+                :readonly="$props.readonly"
+                @input="getTimeSlots"
+                @change="validate"
+                :items="addresses"
+                prepend-icon="mdi-map-marker"
+                label="Delivery address"
+                v-model="deliveryAddress"
+                :item-text="getAddressText"
+                return-object
+                :error-messages="errors"
+                :success="valid"
+              ></v-select>
+            </ValidationProvider>
+          </v-col>
+
+          <v-col :cols="2" v-if="!$props.readonly">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  :disabled="!deliveryAddress"
+                  icon
+                  v-on="on"
+                  @click="addressDialog('delivery', true)"
+                >
+                  <v-icon>mdi-pencil</v-icon>
+                </v-btn>
+              </template>
+              <span>Edit selected address</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn icon v-on="on" @click="addressDialog('delivery', false)">
+                  <v-icon>mdi-plus</v-icon>
+                </v-btn>
+              </template>
+              <span>New delivery address</span>
+            </v-tooltip>
+          </v-col>
+
+          <v-col :cols="12">
+            <addressDeliveryForm
+              v-if="deliveryAddress"
+              :model="deliveryAddress"
+              readonly
+            ></addressDeliveryForm>
+          </v-col>
+        </v-row>
+
+        <v-row align="center" justify="center">
+          <v-col :cols="3">
+            <v-menu
+              v-model="datePicker"
+              transition="scale-transition"
+              offset-y
+              min-width="290px"
+            >
+              <template v-slot:activator="{ on }">
+                <ValidationProvider
+                  rules="required"
+                  v-slot="{ errors, valid }"
+                  name="Date"
+                >
+                  <v-text-field
+                    v-model="dateFormatted"
+                    label="Date"
+                    prepend-inner-icon="event"
+                    :error-messages="errors"
+                    :success="valid"
+                    v-on="on"
+                    @input="getTimeSlots"
+                    @blur="parseDate, validate"
+                    readonly
+                  ></v-text-field>
+                </ValidationProvider>
+              </template>
+              <v-date-picker
+                v-model="deliveryDate"
+                @input="getTimeSlots"
+                :min="new Date().toJSON()"
+              ></v-date-picker>
+            </v-menu>
+          </v-col>
+          <v-col :cols="3">
+            <ValidationProvider
+              rules="required"
+              v-slot="{ errors, valid }"
+              name="Time Slot"
+            >
+              <v-select
+                :readonly="$props.readonly"
+                :loading="loading"
+                label="Time Slot"
+                prepend-inner-icon="mdi-clock"
+                :append-icon="$props.readonly ? null : 'mdi-plus'"
+                :items="timeSlots"
+                :error-messages="errors"
+                :success="valid"
+                item-text="label"
+                v-model="deliveryTime"
+                @input="setCost"
+                @click:append="$props.readonly ? null : addTimeSlotDialog()"
+                @change="validate"
+              ></v-select>
+            </ValidationProvider>
+          </v-col>
+          <v-col :cols="2">
+            <ValidationProvider
+              rules="required"
+              v-slot="{ errors, valid }"
+              name="Fees"
+            >
+              <v-text-field
+                :readonly="$props.readonly"
+                type="number"
+                label="Fees"
+                prefix="$"
+                :error="errors.length ? true : false"
+                :success="valid"
+                :min="0"
+                v-model="shippingCost"
+                @input="validate"
+              ></v-text-field>
+            </ValidationProvider>
+          </v-col>
+          <v-col :cols="4">
+            <v-select
+              :readonly="$props.readonly"
+              :loading="loading"
+              label="Occasion"
+              :items="occasions"
+              item-text="label"
+              item-value="id"
+              v-model="deliveryOccasion"
+              prepend-inner-icon="mdi-star-face"
+            ></v-select>
+          </v-col>
+        </v-row>
       </ValidationObserver>
     </v-container>
-    <orderNotes />
+    <orderNotes v-if="!hideNotes" />
   </div>
 </template>
 
@@ -208,6 +203,11 @@ import { mapState, mapMutations, mapActions } from "vuex";
 import { EventBus } from "../../../plugins/event-bus";
 
 export default {
+  props: {
+    hideNotes: Boolean,
+    readonly: Boolean
+  },
+
   mounted() {
     this.validate();
 
@@ -218,6 +218,10 @@ export default {
     }
     if (this.order_delivery_address) {
       this.deliveryAddress = this.order_delivery_address;
+    }
+
+    if (this.deliveryTime) {
+      this.time_slots.push(this.deliveryTime);
     }
   },
 
@@ -390,6 +394,10 @@ export default {
 
       EventBus.$on("billing-address-edit", event => {
         if (event.payload) {
+          const index = _.findIndex(this.addresses, address => {
+            return address.id === event.payload.id;
+          });
+          this.addresses[index] = event.payload;
           this.billingAddress = event.payload;
         }
       });
@@ -403,6 +411,10 @@ export default {
 
       EventBus.$on("delivery-address-edit", event => {
         if (event.payload) {
+          const index = _.findIndex(this.addresses, address => {
+            return address.id === event.payload.id;
+          });
+          this.addresses[index] = event.payload;
           this.deliveryAddress = event.payload;
         }
       });

@@ -1,24 +1,25 @@
 <template>
-  <v-container>
-    <v-row dense align="center" justify="center">
-      <v-col :cols="12" :lg="6">
-        <v-textarea
-          label="Notes"
-          prepend-icon="mdi-card-text-outline"
-          v-model="delivery.notes"
-          counter
-          clearable
-          no-resize
-          outlined
-        ></v-textarea>
-      </v-col>
-    </v-row>
-  </v-container>
+  <v-col :cols="12">
+    <v-textarea
+      :readonly="$props.readonly"
+      label="Notes"
+      prepend-icon="mdi-card-text-outline"
+      v-model="delivery.notes"
+      counter
+      clearable
+      no-resize
+      outlined
+    ></v-textarea>
+  </v-col>
 </template>
 
 <script>
 import { mapState, mapMutations } from "vuex";
 export default {
+  props: {
+    readOnly: Boolean
+  },
+
   computed: {
     ...mapState("cart", ["delivery"]),
 

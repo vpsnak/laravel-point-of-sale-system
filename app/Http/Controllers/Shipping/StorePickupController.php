@@ -41,7 +41,7 @@ class StorePickupController extends Controller
 
     public function all()
     {
-        return response(StorePickup::with('region')->paginate());
+        return response(StorePickup::with('region')->get());
     }
 
     //@TODO FIX SEARCH?

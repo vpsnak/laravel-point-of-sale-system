@@ -42,15 +42,10 @@
                 <b class="primary--text">({{ cart_products.length }})</b>
               </span>
             </v-tab>
-            <v-tab>
-              <v-icon left>mdi-file-document-outline</v-icon>
-              <span>View options</span>
-            </v-tab>
 
             <v-tabs-items v-model="selected_tab">
               <OrderSummaryTabItem />
               <OrderItemsTabItem />
-              <OrderDeliveryOptionsTabItem />
             </v-tabs-items>
           </v-tabs>
           <v-tooltip bottom v-if="order_id" color="primary">

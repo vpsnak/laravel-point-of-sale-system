@@ -80,7 +80,11 @@
             @click:append="showPassword = !showPassword"
           ></v-text-field>
         </ValidationProvider>
-        <v-checkbox v-model="formFields.active" label="Active"></v-checkbox>
+        <v-checkbox
+          v-model="formFields.active"
+          label="Active"
+          :readonly="$props.readonly"
+        ></v-checkbox>
       </v-container>
       <v-container>
         <v-row v-if="!$props.readonly">
