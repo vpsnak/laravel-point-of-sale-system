@@ -169,7 +169,7 @@ export default {
   },
 
   beforeDestroy() {
-    EventBus.$off();
+    EventBus.$off("top-menu-generate-z");
   },
 
   data() {

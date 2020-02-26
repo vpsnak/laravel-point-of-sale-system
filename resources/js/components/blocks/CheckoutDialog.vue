@@ -84,7 +84,7 @@ export default {
 
   beforeDestroy() {
     this.$off("close");
-    EventBus.$off();
+    EventBus.$off("checkout-cancel-order");
   },
 
   computed: {

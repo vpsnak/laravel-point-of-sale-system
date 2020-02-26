@@ -4,8 +4,7 @@
       <v-subheader>
         <v-icon left>mdi-receipt</v-icon>
         <h3>
-          Order Number
-          <i class="cyan--text">#{{ order_id }}</i>
+          Order <i class="cyan--text">#{{ order_id }}</i>
         </h3>
       </v-subheader>
       <v-divider></v-divider>

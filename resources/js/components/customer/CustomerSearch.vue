@@ -94,7 +94,7 @@ export default {
   },
 
   beforeDestroy() {
-    EventBus.$off();
+    EventBus.$off("customer-search");
   },
 
   props: {

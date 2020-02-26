@@ -1,5 +1,9 @@
 <template>
-  <component :is="template" />
+  <v-row justify="center" align="center">
+    <v-col :xl="8" :md="10" :cols="12">
+      <component :is="template" />
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -11,14 +15,13 @@ export default {
 
     template() {
       switch (this.method) {
-        case "delivery":
-          return "deliveryOption";
-        case "pickup":
-          return "inStorePickupOption";
+        default:
         case "retail":
           return "orderNotes";
-        default:
-          return "orderNotes";
+        case "pickup":
+          return "inStorePickupOption";
+        case "delivery":
+          return "deliveryOption";
       }
     }
   }

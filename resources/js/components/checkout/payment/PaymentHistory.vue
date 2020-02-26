@@ -66,7 +66,7 @@ export default {
   },
 
   beforeDestroy() {
-    EventBus.$off();
+    EventBus.$off("payment-history-refund");
   },
 
   data() {

@@ -5,8 +5,14 @@ const actions = {
     return new Promise((resolve, reject) => {
       const noSuccessNotification = payload.no_success_notification;
       const noErrorNotification = payload.no_error_notification;
-      const mutations = payload.mutations;
       const console_out = process.env.NODE_ENV === "development" ? true : false;
+
+      if (console_out) {
+        console.info({
+          request: `${payload.method} request to: ${context.rootState.config.base_url}/${payload.url}`,
+          payload: payload
+        });
+      }
 
       axios({
         method: payload.method,
@@ -17,12 +23,6 @@ const actions = {
           if (!noSuccessNotification && _.has(response.data, "notification")) {
             context.commit("setNotification", response.data.notification, {
               root: true
-            });
-          }
-
-          if (mutations) {
-            mutationss.forEach(mutation => {
-              context.commit(mutation, response.data);
             });
           }
 

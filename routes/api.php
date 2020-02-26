@@ -66,7 +66,7 @@ Route::delete('/addresses/{model}', 'AddressController@delete')->middleware('sco
 
 // orders
 Route::get('/orders', 'OrderController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/orders/get/{model}', 'OrderController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/orders/get/{model}', 'OrderController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::get('/orders/{model}/mas-status', 'MasOrderController@getOrderDetails');
 Route::post('/orders/create', 'OrderController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/orders/update-items', 'OrderController@updateItems')->middleware('scope:admin,store_manager,cashier');

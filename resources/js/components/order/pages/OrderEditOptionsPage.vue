@@ -29,10 +29,8 @@
             </v-row>
           </v-container>
           <v-container style="height:60vh;overflow-y:auto;">
-            <v-row justify="center">
-              <v-col>
-                <shipping />
-              </v-col>
+            <v-row justify="center" align="center">
+              <shipping />
             </v-row>
           </v-container>
           <v-container>

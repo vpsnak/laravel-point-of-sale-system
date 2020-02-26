@@ -120,7 +120,8 @@ export default {
   },
 
   beforeDestroy() {
-    EventBus.$off();
+    EventBus.$off("order-edit-cancel-order");
+    EventBus.$off("order-edit-refund-confirmation");
   },
 
   data() {

@@ -25,8 +25,9 @@
               </v-icon>
               <span class="title">{{ checkoutStep.name }}</span>
             </v-col>
-
-            <component :is="checkoutStep.component" />
+            <v-col :cols="12">
+              <component :is="checkoutStep.component" />
+            </v-col>
           </v-stepper-content>
         </v-stepper-items>
       </v-stepper>

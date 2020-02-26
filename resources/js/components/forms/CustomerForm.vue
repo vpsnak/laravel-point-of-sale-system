@@ -12,6 +12,7 @@
             label="First name"
             :error-messages="errors"
             :success="valid"
+            :readonly="$props.readonly"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
@@ -24,6 +25,7 @@
             label="Last name"
             :error-messages="errors"
             :success="valid"
+            :readonly="$props.readonly"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
@@ -36,6 +38,7 @@
             label="Email"
             :error-messages="errors"
             :success="valid"
+            :readonly="$props.readonly"
           ></v-text-field>
         </ValidationProvider>
 
@@ -55,18 +58,24 @@
             :disabled="loading"
             :error-messages="errors"
             :success="valid"
+            :readonly="$props.readonly"
           ></v-text-field>
         </ValidationProvider>
 
         <v-row justify="space-around">
           <ValidationProvider vid="house_account_status">
-            <v-switch
+            <v-checkbox
               v-model="formFields.house_account_status"
-              label="Has house account"
-            ></v-switch>
+              label="House account"
+              :readonly="$props.readonly"
+            ></v-checkbox>
           </ValidationProvider>
           <ValidationProvider vid="no_tax">
-            <v-switch v-model="formFields.no_tax" label="Zero tax"></v-switch>
+            <v-checkbox
+              v-model="formFields.no_tax"
+              label="Zero tax"
+              :readonly="$props.readonly"
+            ></v-checkbox>
           </ValidationProvider>
         </v-row>
 
@@ -82,6 +91,7 @@
                 label="House account number"
                 :error-messages="errors"
                 :success="valid"
+                :readonly="$props.readonly"
               ></v-text-field>
             </ValidationProvider>
             <ValidationProvider
@@ -99,6 +109,7 @@
                 label="House account limit"
                 :error-messages="errors"
                 :success="valid"
+                :readonly="$props.readonly"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
@@ -118,6 +129,7 @@
                 clearable
                 :error-messages="errors"
                 :success="valid"
+                :readonly="$props.readonly"
               ></v-file-input>
             </ValidationProvider>
           </v-col>
@@ -128,8 +140,9 @@
               v-if="formFields.no_tax_file"
               :href="formFields.no_tax_file"
               target="_blank"
-              >View uploaded file</v-btn
             >
+              View uploaded file
+            </v-btn>
           </v-col>
         </v-row>
         <ValidationProvider
@@ -138,15 +151,17 @@
           name="Comment"
         >
           <v-textarea
+            no-resize
             rows="3"
             v-model="formFields.comment"
             label="Comments"
             :error-messages="errors"
             :success="valid"
+            :readonly="$props.readonly"
           ></v-textarea>
         </ValidationProvider>
       </v-container>
-      <v-container>
+      <v-container v-if="!$props.readonly">
         <v-row>
           <v-col cols="12" align="center" justify="center">
             <v-btn
@@ -155,8 +170,8 @@
               type="submit"
               :loading="loading"
               :disabled="invalid || loading"
-              >SAVE CHANGES</v-btn
-            >
+              >save changes
+            </v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -168,7 +183,8 @@ import { mapActions, mapState, mapGetters } from "vuex";
 
 export default {
   props: {
-    model: Object
+    model: Object,
+    readonly: Boolean
   },
   data() {
     return {

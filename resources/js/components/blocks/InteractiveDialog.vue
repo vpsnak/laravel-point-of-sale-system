@@ -93,9 +93,6 @@ import { EventBus } from "../../plugins/event-bus";
 import { mapMutations, mapState } from "vuex";
 
 export default {
-  mounted() {
-    console.log(this.dialog.component_props);
-  },
   beforeDestroy() {
     if (this.dialog.eventChannel) {
       EventBus.$off(this.dialog.eventChannel);

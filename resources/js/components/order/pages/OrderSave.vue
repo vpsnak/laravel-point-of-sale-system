@@ -39,7 +39,7 @@ export default {
   },
 
   beforeDestroy() {
-    EventBus.$off();
+    EventBus.$off("order-save-confirmation");
   },
 
   data() {

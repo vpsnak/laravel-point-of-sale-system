@@ -87,7 +87,7 @@ class AddressController extends Controller
             return response([
                 'address' => $address->load('region'),
                 'notification' => [
-                    'msg' => ["Address with id: $address->id successfully updated!"],
+                    'msg' => ['Address successfully updated!'],
                     'type' => 'success'
                 ]
             ]);
