@@ -68,6 +68,7 @@ class ReceiptController extends Controller
         $receipt['content'] = $content;
 
         $receipt = Receipt::create($receipt);
+
         return response(['data' => $receipt], 201);
     }
 
