@@ -33,7 +33,7 @@ Route::post('/auth/password', 'UserController@changeSelfPwd')->middleware('scope
 
 // users
 Route::get('/users', 'UserController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/users/get/{model}', 'UserController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/users/get/{model}', 'UserController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::post('/users/create', 'UserController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/users/search', 'UserController@search')->middleware('scope:admin,store_manager,cashier');
 Route::post('/users/password', 'UserController@changeUserPwd')->middleware('scope:admin');
@@ -42,7 +42,7 @@ Route::delete('/users/{model}', 'UserController@delete')->middleware('scope:admi
 
 // payments
 Route::get('/payments', 'PaymentController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/payments/get/{payment}', 'PaymentController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/payments/get/{payment}', 'PaymentController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::post('/payments/create', 'PaymentController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/payments/search', 'PaymentController@search')->middleware('scope:admin,store_manager,cashier');
 Route::post('payments/unlinked-refund', 'PaymentController@createUnlinkedRefund')->middleware('scope:admin,store_manager');
@@ -50,7 +50,7 @@ Route::delete('/payments/{payment}', 'PaymentController@refundPayment')->middlew
 
 // customers
 Route::get('/customers', 'CustomerController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/customers/get/{model}', 'CustomerController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/customers/get/{model}', 'CustomerController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::post('/customers/create', 'CustomerController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/customers/update', 'CustomerController@update')->middleware('scope:admin,store_manager,cashier');
 Route::post('/customers/search', 'CustomerController@search')->middleware('scope:admin,store_manager,cashier');
@@ -58,7 +58,7 @@ Route::delete('/customers/{model}', 'CustomerController@delete')->middleware('sc
 
 // addresses
 Route::get('/addresses', 'AddressController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/addresses/get/{model}', 'AddressController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/addresses/get/{model}', 'AddressController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::post('/addresses/create', 'AddressController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/addresses/update', 'AddressController@update')->middleware('scope:admin,store_manager,cashier');
 Route::post('/addresses/search', 'AddressController@search')->middleware('scope:admin,store_manager,cashier');
@@ -76,14 +76,14 @@ Route::delete('/orders/{model}', 'OrderController@rollbackOrder')->middleware('s
 
 // stores
 Route::get('/stores', 'StoreController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/stores/get/{model}', 'StoreController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/stores/get/{model}', 'StoreController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::post('/stores/create', 'StoreController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/stores/search', 'StoreController@search')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/stores/{model}', 'StoreController@delete')->middleware('scope:admin,store_manager,cashier');
 
 // taxes
 Route::get('/taxes', 'TaxController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/taxes/get/{model}', 'TaxController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/taxes/get/{model}', 'TaxController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::post('/taxes/create', 'TaxController@create')->middleware('scope:admin,store_manager,cashier');
 Route::patch('/taxes/update', 'TaxController@update')->middleware('scope:admin,store_manager,cashier');
 Route::post('/taxes/search', 'TaxController@search')->middleware('scope:admin,store_manager,cashier');
@@ -95,13 +95,13 @@ Route::get('/refund-types', 'PaymentTypeController@refundTypes')->middleware('sc
 
 // cash-registers
 Route::get('/cash-registers', 'CashRegisterController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/cash-registers/get/{model}', 'CashRegisterController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/cash-registers/get/{model}', 'CashRegisterController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::post('/cash-registers/create', 'CashRegisterController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/cash-registers/search', 'CashRegisterController@search')->middleware('scope:admin,store_manager,cashier');
 
 // cash-register-reports
 Route::get('/cash-register-reports', 'CashRegisterReportController@all')->middleware('scope:admin,store_manager,cashier');;
-Route::get('/cash-register-reports/get/{model}', 'CashRegisterReportController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/cash-register-reports/get/{model}', 'CashRegisterReportController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::get('/cash-register-reports/check/get/{model}', "CashRegisterReportController@checkCurrent")->middleware('scope:admin,store_manager,cashier');
 Route::post('/cash-register-reports/create', 'CashRegisterReportController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/cash-register-reports/search', 'CashRegisterReportController@search')->middleware('scope:admin,store_manager,cashier');
@@ -109,7 +109,7 @@ Route::delete('/cash-register-reports/{model}', 'CashRegisterReportController@de
 
 // gift-cards
 Route::get('/gift-cards', 'GiftcardController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/gift-cards/get/{model}', 'GiftcardController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/gift-cards/get/{model}', 'GiftcardController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::post('/gift-cards/create', 'GiftcardController@create')->middleware('scope:admin,store_manager,cashier');
 Route::patch('/gift-cards/update', 'GiftcardController@update')->middleware('scope:admin,store_manager,cashier');
 Route::post('/gift-cards/search', 'GiftcardController@search')->middleware('scope:admin,store_manager,cashier');
@@ -117,7 +117,7 @@ Route::delete('/gift-cards/{model}', 'GiftcardController@delete')->middleware('s
 
 // coupons
 Route::get('/coupons', 'CouponController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/coupons/get/{model}', 'CouponController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/coupons/get/{model}', 'CouponController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::post('/coupons/create', 'CouponController@create')->middleware('scope:admin,store_manager,cashier');
 Route::patch('/coupons/update', 'CouponController@update')->middleware('scope:admin,store_manager,cashier');
 Route::post('/coupons/search', 'CouponController@search')->middleware('scope:admin,store_manager,cashier');
@@ -130,14 +130,14 @@ Route::get('/countries/{model}/regions', 'CountryController@regions')->middlewar
 
 // store-pickups
 Route::get('/store-pickups', 'StorePickupController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/store-pickups/get/{model}', 'StorePickupController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/store-pickups/get/{model}', 'StorePickupController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::post('/store-pickups/create', 'StorePickupController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/store-pickups/search', 'StorePickupController@search')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/store-pickups/{model}', 'StorePickupController@delete')->middleware('scope:admin,store_manager,cashier');
 
 // companies
 Route::get('/companies', 'CompanyController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/companies/get/{model}', 'CompanyController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/companies/get/{model}', 'CompanyController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::patch('/companies/update', 'CompanyController@update')->middleware('scope:admin,store_manager,cashier');
 Route::post('/companies/create', 'CompanyController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/companies/search', 'CompanyController@search')->middleware('scope:admin,store_manager,cashier');
@@ -154,7 +154,7 @@ Route::delete('/products/{model}', 'ProductController@delete')->middleware('scop
 
 //carts
 Route::get('/carts', 'CartController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/carts/get/{model}', 'CartController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/carts/get/{model}', 'CartController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::get('/carts/hold', 'CartController@getHold')->middleware('scope:admin,store_manager,cashier');
 Route::post('/carts/create', 'CartController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/carts/search', 'CartController@search')->middleware('scope:admin,store_manager,cashier');
@@ -162,7 +162,7 @@ Route::delete('/carts/{model}', 'CartController@delete')->middleware('scope:admi
 
 //categories
 Route::get('/categories', 'CategoryController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/categories/get/{model}', 'CategoryController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/categories/get/{model}', 'CategoryController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::get('/categories/{category}/products', 'CategoryController@productsByCategory')->middleware('scope:admin,store_manager,cashier');
 Route::post('/categories/create', 'CategoryController@create')->middleware('scope:admin,store_manager,cashier');
 Route::patch('/categories/update', 'CategoryController@update')->middleware('scope:admin,store_manager,cashier');
@@ -171,7 +171,7 @@ Route::delete('/categories/{model}', 'CategoryController@delete')->middleware('s
 
 //cash-register-logs
 Route::get('/cash-register-logs', 'CashRegisterLogsController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/cash-register-logs/get/{model}', 'CashRegisterLogsController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/cash-register-logs/get/{model}', 'CashRegisterLogsController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::get('/cash-register-logs/logout', 'CashRegisterLogsController@logout')->middleware('scope:admin,store_manager,cashier');
 Route::get('/cash-register-logs/retrieve', 'CashRegisterLogsController@retrieve')->middleware('scope:admin,store_manager,cashier');
 Route::get('/cash-register-logs/{model}/amount', 'CashRegisterLogsController@amount')->middleware('scope:admin,store_manager,cashier');
@@ -182,7 +182,7 @@ Route::post('/cash-register-logs/close', 'CashRegisterLogsController@close')->mi
 Route::delete('/cash-register-logs/{model}', 'CashRegisterLogsController@delete')->middleware('scope:admin');
 
 //receipts
-Route::get('/receipts/get/{model}', 'ReceiptController@get')->middleware('scope:admin,store_manager,cashier');
+Route::get('/receipts/get/{model}', 'ReceiptController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::get('/receipts/create/{model}', 'ReceiptController@create')->middleware('scope:admin,store_manager,cashier');
 
 // categories to list in sales
