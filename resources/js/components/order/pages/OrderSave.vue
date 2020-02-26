@@ -30,7 +30,7 @@ export default {
     url: String
   },
 
-  created() {
+  mounted() {
     EventBus.$on("order-save-confirmation", event => {
       if (event.payload) {
         this.save();
