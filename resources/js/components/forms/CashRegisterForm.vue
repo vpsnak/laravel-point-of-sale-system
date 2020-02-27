@@ -33,7 +33,11 @@
             :success="valid"
           ></v-select>
         </ValidationProvider>
-        <v-checkbox v-model="formFields.active" label="Active"></v-checkbox>
+        <v-checkbox
+          :readonly="$props.readonly"
+          v-model="formFields.active"
+          label="Active"
+        ></v-checkbox>
       </v-container>
       <v-container>
         <v-row v-if="!$props.readonly">

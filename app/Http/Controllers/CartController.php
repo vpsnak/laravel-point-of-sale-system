@@ -47,8 +47,14 @@ class CartController extends Controller
         return response(Cart::where("cash_register_id", $validatedData['cash_register_id'])->get());
     }
 
-    public function delete($id)
+    // public function delete($id)
+    // {
+    //     return Cart::where('id', $id)->delete();
+    // }
+
+    public function delete(Cart $model)
     {
-        return Cart::where('id', $id)->delete();
+        $model->delete();
+        return response(["notification" => ["msg" => ["Cart deleted successfully"], "type" => "success"]]);
     }
 }
