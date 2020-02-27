@@ -249,7 +249,7 @@ export default {
     },
     parseDate(d) {
       if (d.length) {
-        let [year, month, day] = d.split("-");
+        const [year, month, day] = d.split("-");
         return `${month}/${day}/${year}`;
       } else {
         return null;
@@ -258,7 +258,7 @@ export default {
     getStores() {
       const payload = { method: "get", url: "store-pickups" };
       this.request(payload).then(response => {
-        this.store_pickups = response;
+        this.store_pickups = response.data;
       });
     },
     setCost(item) {

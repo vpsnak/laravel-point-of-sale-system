@@ -263,20 +263,7 @@ export default {
         titleCloseBtn: true,
         icon: "mdi-package-variant",
         component: "product",
-        model: product,
-        persistent: true
-      });
-    },
-    viewProductDialog(product) {
-      this.setDialog({
-        show: true,
-        width: 1000,
-        title: "Cart item",
-        titleCloseBtn: true,
-        icon: "mdi-package-variant",
-        component: "product",
-        model: product,
-        persistent: true
+        model: product
       });
     },
     parsedPrice(product) {
