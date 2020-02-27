@@ -9,7 +9,7 @@ class StoreController extends Controller
 {
     public function all()
     {
-        return response(Store::with(['cash_registers'])->get());
+        return response(Store::with(['cash_registers'])->paginate());
     }
 
     public function getOne(Store $model)

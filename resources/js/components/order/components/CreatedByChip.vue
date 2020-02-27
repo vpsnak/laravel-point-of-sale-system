@@ -13,7 +13,7 @@
         {{ $props.created_by.name }}
       </v-chip>
     </template>
-    <v-card width="450" class="pa-5" outlined>
+    <v-card width="450" class="pa-5" outlined shaped>
       <userForm :model="$props.created_by" :readonly="true" />
     </v-card>
   </v-menu>

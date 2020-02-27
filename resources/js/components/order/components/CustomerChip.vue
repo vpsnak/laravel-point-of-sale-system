@@ -17,7 +17,7 @@
         {{ $props.customer ? $props.customer.full_name : "Guest" }}
       </v-chip>
     </template>
-    <v-card width="450" class="pa-5" outlined>
+    <v-card width="450" class="pa-5" outlined shaped>
       <customerForm :model="$props.customer" :readonly="true" />
     </v-card>
   </v-menu>

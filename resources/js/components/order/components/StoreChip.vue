@@ -13,7 +13,7 @@
         {{ $props.store.name }}
       </v-chip>
     </template>
-    <v-card class="pa-5" outlined width="450">
+    <v-card class="pa-5" width="450" outlined shaped>
       <storeForm :model="$props.store" :readonly="true" />
     </v-card>
   </v-menu>

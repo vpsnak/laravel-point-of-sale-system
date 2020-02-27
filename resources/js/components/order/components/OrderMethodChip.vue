@@ -17,7 +17,7 @@
         {{ parseMethod.name }}
       </v-chip>
     </template>
-    <v-card class="pa-5" outlined width="600">
+    <v-card class="pa-5" outlined width="600" shaped>
       <component
         :is="parseMethod.component"
         :model="parseMethod.model"
