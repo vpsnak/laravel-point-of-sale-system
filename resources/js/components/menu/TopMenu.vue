@@ -104,7 +104,7 @@
         <v-list-item-group>
           <v-list-item inactive two-line @click.stop :ripple="false">
             <v-list-item-avatar color="orange">
-              {{ user.name.charAt(0) }}
+              {{ nameInitials }}
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
@@ -214,6 +214,14 @@ export default {
       },
       set(value) {
         this.setVisibility(value);
+      }
+    },
+    nameInitials() {
+      const initials = _.split(this.user.name, " ", 2);
+      if (initials.length === 2) {
+        return `${initials[0].charAt(0)}${initials[1].charAt(0)}`;
+      } else {
+        return this.user.name.charAt(0);
       }
     }
   },

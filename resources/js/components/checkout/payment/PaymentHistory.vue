@@ -137,22 +137,10 @@ export default {
     ...mapActions("requests", ["request"]),
 
     enableRefund(item) {
-      if (this.$props.editOrder) {
-        if (
-          item.status === "approved" &&
-          !item.refunded &&
-          item.payment_type.type !== "cash"
-        ) {
-          return true;
-        } else {
-          return false;
-        }
+      if (item.status === "approved" && !item.refunded) {
+        return true;
       } else {
-        if (item.status === "approved" && !item.refunded) {
-          return true;
-        } else {
-          return false;
-        }
+        return false;
       }
     },
     parseStatus(status) {

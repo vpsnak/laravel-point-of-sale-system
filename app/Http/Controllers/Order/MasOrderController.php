@@ -46,7 +46,7 @@ class MasOrderController extends Controller
             $payload['Payments'] = $payments;
         }
 
-        $payload['MdseAmount'] = $this->order->total_without_tax;
+        $payload['MdseAmount'] = $this->order->total_item_cost;
         $payload['TaxAmount'] = $this->order->total_tax;
         $payload['TotalAmount'] = $this->order->total;
 
@@ -331,7 +331,7 @@ class MasOrderController extends Controller
         }
 
         MasOrderLog::create([
-            'mas_order_id' => $this->order->id,
+            'order_id' => $this->order->id,
             'payload' => $payload,
             'response' => $response,
             'status' => $status,
