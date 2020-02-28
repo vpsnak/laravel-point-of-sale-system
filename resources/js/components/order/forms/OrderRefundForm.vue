@@ -31,6 +31,11 @@
       </v-row>
       <v-row justify="center" align="center" v-show="!payment_types_loading">
         <v-col cols="auto">
+          <h4 class="amber--text">Max amount: ${{}}</h4>
+        </v-col>
+      </v-row>
+      <v-row justify="center" align="center" v-show="!payment_types_loading">
+        <v-col cols="auto">
           <v-text-field
             v-model="refund.amount"
             type="number"

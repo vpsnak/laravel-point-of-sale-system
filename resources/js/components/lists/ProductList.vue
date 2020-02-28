@@ -138,36 +138,26 @@
                     <span>SKU: {{ product.sku }}</span>
                   </v-chip>
                   <v-chip small class="secondary mt-2 ml-1 elevation-12">
-                    <span
-                      >Price:
-                      {{ parseFloat(product.final_price).toFixed(2) }}
-                      $</span
-                    >
+                    <span>
+                      Price: $
+                      {{ product.final_price }}
+                    </span>
                   </v-chip>
                   <v-chip
                     small
                     v-if="product.final_price != product.price.amount"
                     class="mt-2 ml-1 elevation-12"
                   >
-                    <span
-                      >Net Price:
-                      {{ parseFloat(product.final_price).toFixed(2) }}
-                      $</span
-                    >
+                    <span>
+                      Net Price: $
+                      {{ product.final_price }}
+                    </span>
                   </v-chip>
                   <v-chip
+                    v-if="stockColor(product)"
                     small
-                    v-if="product.stock <= 10 && product.stock > 0"
-                    color="orange"
                     class="mt-2 ml-1 elevation-12"
-                  >
-                    <span>Stock: {{ product.stock }}</span>
-                  </v-chip>
-                  <v-chip
-                    small
-                    v-else-if="product.stock <= 0"
-                    color="red"
-                    class="mt-2 ml-1 elevation-12"
+                    :color="stockColor(product)"
                   >
                     <span>Stock: {{ product.stock }}</span>
                   </v-chip>
@@ -302,6 +292,13 @@ export default {
     ...mapMutations("cart", ["addProduct"]),
     ...mapMutations("dialog", ["viewItem", "setDialog"]),
 
+    stockColor(product) {
+      if (product.stock <= 10 && product.stock > 0) {
+        return "orange";
+      } else if (product.stock <= 0) {
+        return "red";
+      }
+    },
     truncate(string) {
       return _.truncate(string);
     },
