@@ -18,7 +18,7 @@ class CashRegisterReportController extends Controller
         return response(CashRegisterReport::paginate());
     }
 
-    public function get($model)
+    public function getOne($model)
     {
         return response(CashRegisterReport::findOrFail($model));
     }
