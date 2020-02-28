@@ -165,7 +165,8 @@ export default {
       "setCheckoutDialog",
       "cart_products"
     ]),
-    ...mapActions(["getAll", "create"]),
+    ...mapActions("requests", ["request"]),
+    ...mapActions(["create"]),
     ...mapActions("cart", ["submitOrder"]),
 
     holdCart() {
@@ -201,10 +202,11 @@ export default {
     },
     getCartsOnHoldSize() {
       let payload = {
-        model: "carts"
+        method: "get",
+        url: "carts"
       };
-      this.getAll(payload).then(response => {
-        this.cartsOnHoldSize = _.size(response);
+      this.request(payload).then(response => {
+        this.cartsOnHoldSize = _.size(response.data);
       });
     }
   }

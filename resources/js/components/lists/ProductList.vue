@@ -351,11 +351,12 @@ export default {
       this.initiateLoadingSearchResults(true);
 
       let payload = {
-        model: "product-listing/categories"
+        method: "get",
+        url: "product-listing/categories"
       };
-      this.getAll(payload)
+      this.request(payload)
         .then(response => {
-          this.categories = response;
+          this.categories = response.data;
         })
         .finally(() => {
           this.initiateLoadingSearchResults(false);

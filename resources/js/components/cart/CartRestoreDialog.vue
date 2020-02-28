@@ -74,10 +74,11 @@ export default {
     },
     getCartsOnHold() {
       let payload = {
-        model: "carts"
+        method: "get",
+        url: "carts"
       };
-      this.$store.dispatch("getAll", payload).then(response => {
-        this.cartsOnHold = response;
+      this.request(payload).then(response => {
+        this.cartsOnHold = response.data;
       });
     },
     close() {
