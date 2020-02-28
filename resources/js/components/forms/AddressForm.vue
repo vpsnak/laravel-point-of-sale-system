@@ -125,7 +125,7 @@
                 :disabled="loading"
                 :readonly="$props.readonly"
                 :loading="loading"
-                v-model="formFields.region.country_id"
+                v-model="formFields.country_id"
                 :items="countries"
                 label="Countries"
                 :error-messages="errors"
@@ -266,6 +266,7 @@ export default {
     return {
       loading: false,
       defaultValues: {},
+      regions: [],
       countries: [],
       formFields: {
         first_name: null,
@@ -306,7 +307,8 @@ export default {
   },
 
   methods: {
-    ...mapActions(["getAll", "create"]),
+    ...mapActions(["create"]),
+    ...mapActions("requests", ["request"]),
 
     submit() {
       this.loading = true;
@@ -340,21 +342,23 @@ export default {
 
     getAllRegions() {
       this.loading = true;
-      this.getAll({
-        model: "regions"
+      this.request({
+        method: "get",
+        url: "regions"
       })
-        .then(regions => {
-          this.regions = regions;
+        .then(response => {
+          this.regions = response;
         })
         .finally(() => {
           this.loading = false;
         });
     },
     getAllCountries() {
-      this.getAll({
-        model: "countries"
-      }).then(countries => {
-        this.countries = countries;
+      this.request({
+        method: "get",
+        url: "countries"
+      }).then(response => {
+        this.countries = response;
       });
     }
   }

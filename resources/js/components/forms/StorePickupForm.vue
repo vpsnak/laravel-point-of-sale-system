@@ -137,10 +137,8 @@ export default {
     this.$off("submit");
   },
   methods: {
-    ...mapActions({
-      getAll: "getAll",
-      create: "create"
-    }),
+    ...mapActions(["create"]),
+    ...mapActions("requests", ["request"]),
 
     submit() {
       this.loading = true;
@@ -168,21 +166,23 @@ export default {
     },
     getAllRegions() {
       this.loading = true;
-      this.getAll({
-        model: "regions"
+      this.request({
+        method: "get",
+        url: "regions"
       })
-        .then(regions => {
-          this.regions = regions;
+        .then(response => {
+          this.regions = response;
         })
         .finally(() => {
           this.loading = false;
         });
     },
     getAllCountries() {
-      this.getAll({
-        model: "countries"
-      }).then(countries => {
-        this.countries = countries;
+      this.request({
+        method: "get",
+        url: "countries"
+      }).then(response => {
+        this.countries = response;
       });
     }
   }

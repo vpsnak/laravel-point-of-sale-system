@@ -193,6 +193,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(["create"]),
     ...mapActions("requests", ["request"]),
 
     submit() {
@@ -252,39 +253,37 @@ export default {
     },
     getAllCategories() {
       this.loading = true;
-      this.getAll({
-        model: "categories"
+      this.request({
+        method: "get",
+        url: "categories"
       })
-        .then(categories => {
-          this.categories = categories;
+        .then(response => {
+          this.categories = response.data;
         })
         .finally(() => {
           this.loading = false;
         });
     },
     getAllStores() {
-      this.getAll({
-        model: "stores"
-      }).then(stores => {
+      this.request({
+        method: "get",
+        url: "stores"
+      }).then(response => {
         // india gia na exoume default value sto qty twn stores
         // @TODO fix object assign on product edit
-        stores = stores.map(item => {
+        response = response.data.map(item => {
           return (item = { ...item, ...{ pivot: { qty: 0 } } });
         });
         if (
           this.formFields.stores === undefined ||
           this.formFields.stores.length == 0
         ) {
-          this.formFields.stores = stores;
+          this.formFields.stores = response;
         }
         // reset default values after getting and setting the stores
         this.defaultValues = { ...this.formFields };
       });
-    },
-    ...mapActions({
-      getAll: "getAll",
-      create: "create"
-    })
+    }
   },
   beforeDestroy() {
     this.$off("submit");

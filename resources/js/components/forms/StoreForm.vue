@@ -191,10 +191,8 @@ export default {
     }
   },
   methods: {
-    ...mapActions({
-      getAll: "getAll",
-      create: "create"
-    }),
+    ...mapActions(["create"]),
+    ...mapActions("requests", ["request"]),
 
     submit() {
       this.loading = true;
@@ -222,11 +220,12 @@ export default {
     },
     getAllTaxes() {
       this.loading = true;
-      this.getAll({
-        model: "taxes"
+      this.request({
+        method: "get",
+        url: "taxes"
       })
         .then(response => {
-          this.taxes = response;
+          this.taxes = response.data;
         })
         .finally(() => {
           this.loading = false;
@@ -234,11 +233,12 @@ export default {
     },
     getAllCompanies() {
       this.loading = true;
-      this.getAll({
-        model: "companies"
+      this.request({
+        method: "get",
+        url: "companies"
       })
         .then(response => {
-          this.companies = response;
+          this.companies = response.data;
         })
         .finally(() => {
           this.loading = false;

@@ -88,9 +88,10 @@ export default {
   },
   methods: {
     ...mapActions({
-      getAll: "getAll",
       create: "create"
     }),
+    ...mapActions("requests", ["request"]),
+
     submit() {
       this.loading = true;
       let payload = {
@@ -117,8 +118,9 @@ export default {
     },
     getAllStores() {
       this.loading = true;
-      this.getAll({
-        model: "stores"
+      this.request({
+        method: "get",
+        url: "stores"
       })
         .then(response => {
           this.stores = response;
