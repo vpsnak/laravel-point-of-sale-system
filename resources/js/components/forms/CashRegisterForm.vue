@@ -123,7 +123,7 @@ export default {
         url: "stores"
       })
         .then(response => {
-          this.stores = response;
+          this.stores = response.data;
         })
         .finally(() => {
           this.loading = false;
