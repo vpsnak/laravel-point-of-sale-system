@@ -300,7 +300,7 @@ export default {
   },
   methods: {
     ...mapActions("requests", ["request"]),
-    ...mapActions(["getAll", "search"]),
+    ...mapActions(["search"]),
     ...mapMutations(["setProductList"]),
     ...mapMutations("cart", ["addProduct"]),
     ...mapMutations("dialog", ["viewItem", "setDialog"]),
@@ -333,13 +333,13 @@ export default {
       this.selected_category = null;
 
       let payload = {
-        model: "products",
-        mutation: "setProductList",
-        page: this.current_page,
-        dataTable: true
+        method: "get",
+        url: "products" + "?page=" + this.current_page
+        // dataTable: true
       };
-      this.getAll(payload)
+      this.request(payload)
         .then(response => {
+          this.setProductList(response.data);
           this.currentPage = response.current_page;
           this.lastPage = response.last_page;
         })
