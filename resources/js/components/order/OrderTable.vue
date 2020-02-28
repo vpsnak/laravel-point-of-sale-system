@@ -2,23 +2,26 @@
   <div>
     <data-table v-if="render">
       <template v-slot:item.customer="{ item }">
-        {{ item.customer ? item.customer.email : "Guest" }}
+        <customerChip :menu="true" :customer="item.customer" />
+      </template>
+      <template v-slot:item.store="{ item }">
+        <storeChip :menu="true" :store="item.store" />
+      </template>
+      <template v-slot:item.method="{ item }">
+        <orderMethodChip :method="item.method" />
+      </template>
+      <template v-slot:item.status="{ item }">
+        <orderStatusChip :status="item.status" />
+      </template>
+      <template v-slot:item.mas_order="{ item }">
+        <masStatusChip :mas_order="item.mas_order" />
+      </template>
+      <template v-slot:item.created_by="{ item }">
+        <createdByChip :menu="true" :created_by="item.created_by" />
       </template>
       <template v-slot:item.total="{ item }"> $ {{ item.total }} </template>
       <template v-slot:item.total_paid="{ item }">
         $ {{ item.total_paid }}
-      </template>
-
-      <template v-slot:item.status="{ item }">
-        <span :class="statusColor(item.status)">
-          <b>{{ parseStatus(item) }}</b>
-        </span>
-      </template>
-
-      <template v-slot:item.mas_order.status="{ item }">
-        <span :class="masStatusColor(item.mas_order)">
-          <b>{{ parseMasStatus(item) }}</b>
-        </span>
       </template>
 
       <template v-slot:item.actions="{ item }">
@@ -117,7 +120,6 @@ import { mapMutations, mapActions, mapState } from "vuex";
 
 export default {
   mounted() {
-    this.render = false;
     this.resetDataTable();
 
     this.setDataTable({
@@ -172,45 +174,6 @@ export default {
     ...mapActions("requests", ["request"]),
     ...mapActions("cart", ["loadOrder"]),
 
-    parseStatus(item) {
-      if (item.status) {
-        return _.upperFirst(item.status.replace("_", " "));
-      }
-    },
-    statusColor(status) {
-      switch (status) {
-        case "canceled":
-          return "red--text";
-        case "pending":
-          return "amber--text";
-        case "pending_payment":
-          return "amber--text";
-        case "paid":
-          return "cyan--text";
-        case "completed":
-          return "green--text";
-        default:
-          return "";
-      }
-    },
-    masStatusColor(mas_order) {
-      if (mas_order) {
-        switch (mas_order.status) {
-          case "submitted":
-            return "cyan--text";
-          case "printed":
-            return "cyan--text";
-          case "released":
-            return "cyan--text";
-          case "completed":
-            return "green--text";
-          default:
-            return "amber--text";
-        }
-      } else {
-        return "amber--text";
-      }
-    },
     disableIfStatus(item) {
       switch (item.status) {
         case "completed":
@@ -218,13 +181,6 @@ export default {
           return false;
         default:
           return true;
-      }
-    },
-    parseMasStatus(item) {
-      if (item.mas_order && _.has(item.mas_order, "status")) {
-        return _.upperFirst(item.mas_order.status.replace("_", " "));
-      } else {
-        return "In queue";
       }
     },
     reorder(id) {

@@ -58,6 +58,14 @@
           <slot :name="slot" v-bind="scope" />
         </template>
 
+        <!-- <template v-slot:item.created_at="{ item }">
+          <timestampChip :timestamp="item.created_at" />
+        </template>
+
+        <template v-slot:item.created_at="{ item }">
+          <timestampChip :timestamp="item.updated_at" />
+        </template> -->
+
         <v-alert :value="true" color="error" icon="warning" slot="no-results">
           Your search for "{{ keyword }}" found no results.
         </v-alert>
@@ -83,7 +91,6 @@ export default {
 
   mounted() {
     EventBus.$on("data-table", event => {
-      console.info({ component: "data-table", event });
       if (_.has(event, "payload.action")) {
         switch (event.payload.action) {
           case "paginate":

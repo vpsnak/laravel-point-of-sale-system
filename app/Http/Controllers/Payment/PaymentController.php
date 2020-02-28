@@ -185,7 +185,7 @@ class PaymentController extends Controller
 
     private function houseAccPay($validatedData, Payment $payment)
     {
-        $customer = Customer::getFirst('house_account_number', $validatedData['house_account_number']);
+        $customer = Customer::where('house_account_number', $validatedData['house_account_number'])->first();
         if (empty($customer)) {
             return ['errors' => ['House Account' => ['House account does not exist.']]];
         } else if ($validatedData['amount'] > $customer->house_account_limit) {

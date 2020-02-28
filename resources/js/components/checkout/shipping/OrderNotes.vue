@@ -17,7 +17,7 @@
 import { mapState, mapMutations } from "vuex";
 export default {
   props: {
-    readOnly: Boolean
+    readonly: Boolean
   },
 
   computed: {

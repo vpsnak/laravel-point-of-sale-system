@@ -40,11 +40,14 @@ class ProductSync
                 break;
             }
             foreach ($products as $product) {
-                $storedProduct = \App\Product::getFirst('sku', $product->sku);
+                $storedProduct = \App\Product::where('sku', $product->sku)->first();
                 $productUpdateAt = Carbon::parse($product->updated_at);
                 if ($force || empty($storedProduct) || $productUpdateAt->greaterThan($storedProduct->updated_at)) {
-                    $parsedProduct = Helper::getParsedData($product, self::productFieldsToParse,
-                        self::productFieldsToRename);
+                    $parsedProduct = Helper::getParsedData(
+                        $product,
+                        self::productFieldsToParse,
+                        self::productFieldsToRename
+                    );
                     $storedProduct = \App\Product::updateOrCreate(
                         ['sku' => $product->sku],
                         $parsedProduct
@@ -81,7 +84,7 @@ class ProductSync
         $snapshot_stock = $product->magento_stock;
         $current_stock = $product->laravel_stock;
         $stock_data = $inventory_api->getStockData($product->stock_id);
-        $live_stock = (int)$stock_data->qty;
+        $live_stock = (int) $stock_data->qty;
 
         if (
             is_null($snapshot_stock) ||

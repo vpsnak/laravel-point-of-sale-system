@@ -66,6 +66,8 @@ export default {
     ]),
 
     costSections() {
+      this.sections = [];
+
       this.payments.forEach(payment => {
         if (payment.status === "approved" && !payment.refunded) {
           switch (payment.payment_type.type) {

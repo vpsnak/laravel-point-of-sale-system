@@ -15,9 +15,9 @@ class CartController extends Controller
         return response(Cart::paginate());
     }
 
-    public function getOne($model)
+    public function getOne(Cart $model)
     {
-        return response(Cart::findOrFail($model));
+        return response($model);
     }
 
     public function create(Request $request)
@@ -47,14 +47,12 @@ class CartController extends Controller
         return response(Cart::where("cash_register_id", $validatedData['cash_register_id'])->get());
     }
 
-    // public function delete($id)
-    // {
-    //     return Cart::where('id', $id)->delete();
-    // }
-
     public function delete(Cart $model)
     {
         $model->delete();
-        return response(["notification" => ["msg" => ["Cart deleted successfully"], "type" => "success"]]);
+        return response(['notification' => [
+            'msg' => 'Cart deleted successfully',
+            'type' => 'success'
+        ]]);
     }
 }

@@ -24,9 +24,9 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer />
-              <v-btn type="submit" :loading="loading" color="secondary"
-                >Login</v-btn
-              >
+              <v-btn type="submit" :loading="loading" color="secondary">
+                Login
+              </v-btn>
               <v-spacer />
             </v-card-actions>
           </v-form>
@@ -63,6 +63,7 @@ export default {
         .then(() => {
           this.$router.replace({ name: "landingPage" });
         })
+        .catch()
         .finally(() => {
           this.loading = false;
         });
