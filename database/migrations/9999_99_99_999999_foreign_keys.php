@@ -13,6 +13,12 @@ class ForeignKeys extends Migration
      */
     public function up()
     {
+        Schema::table('order_status', function (Blueprint $table) {
+            $table->foreign('order_id')->references('id')->on('orders');
+            $table->foreign('status_id')->references('id')->on('statuses');
+            $table->foreign('user_id')->references('id')->on('users');
+        });
+
         Schema::table('regions', function (Blueprint $table) {
             $table->foreign('country_id')->references('id')->on('countries');
         });
@@ -75,6 +81,12 @@ class ForeignKeys extends Migration
      */
     public function down()
     {
+        Schema::table('order_status', function (Blueprint $table) {
+            $table->dropForeign(['order_id']);
+            $table->dropForeign(['status_id']);
+            $table->dropForeign(['user_id']);
+        });
+
         Schema::table('regions', function (Blueprint $table) {
             $table->dropForeign(['country_id']);
         });

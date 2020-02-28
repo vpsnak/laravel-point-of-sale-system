@@ -173,7 +173,7 @@ const state = {
     ]
   },
   data_table: {
-    rows: [],
+    items: [],
     icon: "",
     title: "",
     headers: [],
@@ -188,7 +188,7 @@ const state = {
 // mutations
 const mutations = {
   resetDataTable(state) {
-    state.data_table.rows = [];
+    state.data_table.items = [];
     state.data_table.icon = "";
     state.data_table.title = "";
     state.data_table.headers = [];
@@ -201,12 +201,8 @@ const mutations = {
   setDataTable(state, value) {
     state.data_table = { ...state.data_table, ...value };
   },
-  setRows(state, value) {
-    if (_.has(value, "data")) {
-      state.data_table.rows = value.data;
-    } else {
-      state.data_table.rows = value;
-    }
+  setItems(state, value) {
+    state.data_table.items = value;
   },
   setLoading(state, value) {
     state.data_table.loading = value;

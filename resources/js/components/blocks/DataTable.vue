@@ -10,19 +10,24 @@
         <v-spacer />
 
         <v-text-field
+          ref="searchInput"
           :disabled="data_table.loading"
-          :search="search"
           prepend-icon="search"
           hide-details
           label="Search"
           single-line
-          v-model="keyword"
-          append-icon="mdi-close"
-          @click:append="
-            (keyword = null), (search_action = null), paginate($event)
+          v-model="searchValue"
+          clearable
+          @click:clear="
+            (page = 1),
+              (keyword = searchValue = null),
+              (search = false),
+              getItems(search)
           "
-          @click:prepend="search"
-          @keyup.enter="search"
+          @click:prepend="getItems(search)"
+          @keyup.enter="
+            (keyword = searchValue), (search = true), getItems(search)
+          "
         ></v-text-field>
         <v-divider
           class="mx-4"
@@ -44,15 +49,12 @@
         fixed-header
         disable-sort
         dense
-        :disable-filtering="true"
+        disable-filtering
         :headers="getHeaders"
-        :items="data_table.rows"
+        :items="data_table.items"
         :loading="data_table.loading"
-        :items-per-page="15"
-        :page.sync="currentPage"
-        :server-items-length="totalItems"
-        @pagination="paginate"
-        :footer-props="footerProps"
+        disable-pagination
+        hide-default-footer
       >
         <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
           <slot :name="slot" v-bind="scope" />
@@ -70,6 +72,15 @@
           Your search for "{{ keyword }}" found no results.
         </v-alert>
       </v-data-table>
+      <v-card-actions>
+        <v-pagination
+          v-model="page"
+          :length="pageCount"
+          @input="getItems(search)"
+          @next="page++"
+          @previous="page--"
+        ></v-pagination>
+      </v-card-actions>
     </v-card>
   </v-container>
 </template>
@@ -81,42 +92,18 @@ import { EventBus } from "../../plugins/event-bus";
 export default {
   data() {
     return {
-      current_page: 1,
-      total_items: null,
+      page: 1,
+      pageCount: null,
       action: "",
-      keyword: "",
-      search_action: false
+      searchValue: "",
+      search: false,
+      keyword: null
     };
   },
 
   mounted() {
-    EventBus.$on("data-table", event => {
-      if (_.has(event, "payload.action")) {
-        switch (event.payload.action) {
-          case "paginate":
-            this.paginate();
-            break;
-          case "search":
-            this.keyword = event.keyword || null;
-            this.search();
-            break;
-          default:
-            if (_.isBoolean(event.payload) && event.payload) {
-              this.paginate();
-            }
-            break;
-        }
-      } else if (event.payload) {
-        console.warn(["Unknown event", { component: "data-table", event }]);
-      }
-    });
-
-    if (this.data_table.newForm === "productForm") {
-      this.$root.$on("barcodeScan", sku => {
-        this.keyword = sku;
-        this.search();
-      });
-    }
+    this.initEvents();
+    this.getItems();
   },
 
   beforeDestroy() {
@@ -129,99 +116,70 @@ export default {
 
   computed: {
     ...mapGetters("datatable", ["getHeaders"]),
-    ...mapState("datatable", ["data_table"]),
-
-    footerProps() {
-      return {
-        "disable-pagination": this.data_table.loading,
-        "disable-items-per-page": true,
-        options: { itemsPerPage: 15, page: this.currentPage }
-      };
-    },
-    totalItems: {
-      get() {
-        return this.total_items;
-      },
-      set(value) {
-        this.total_items = value;
-      }
-    },
-    currentPage: {
-      get() {
-        return this.current_page;
-      },
-      set(value) {
-        this.current_page = value;
-      }
-    }
+    ...mapState("datatable", ["data_table"])
   },
 
   methods: {
     ...mapMutations("dialog", ["setDialog"]),
-    ...mapMutations("datatable", ["setRows", "setLoading", "resetDataTable"]),
-    ...mapActions(["getAll", "search"]),
+    ...mapMutations("datatable", ["setItems", "setLoading", "resetDataTable"]),
     ...mapActions("requests", ["request"]),
 
-    search(e, page = false) {
-      if (this.keyword.length > 2 || this.search_action) {
-        this.setLoading(true);
-
-        if (!page) {
-          this.search_action = this.keyword;
-        } else {
-          if (!this.keyword) {
-            this.keyword = this.search_action;
+    initEvents() {
+      EventBus.$on("data-table", event => {
+        if (_.has(event, "payload.action")) {
+          switch (event.payload.action) {
+            case "paginate":
+              this.getItems();
+              break;
+            case "search":
+              this.keyword = event.keyword || null;
+              this.search();
+              break;
+            default:
+              if (_.isBoolean(event.payload) && event.payload) {
+                this.getItems();
+              }
+              break;
           }
+        } else if (event.payload) {
+          console.warn(["Unknown event", { component: "data-table", event }]);
         }
-        const page = page ? `?page=${page}` : "";
+      });
 
-        const payload = {
-          method: "get",
-          url: `${this.data_table.model}${page}`,
-          data: { keyword: this.keyword }
-        };
-
-        this.request(payload)
-          .then(response => {
-            this.setRows(response);
-
-            if (response.total !== this.totalItems) {
-              this.totalItems = response.total;
-            } else {
-              this.totalItems = response.length;
-            }
-          })
-          .finally(() => {
-            this.setLoading(false);
-          });
+      if (this.data_table.newForm === "productForm") {
+        this.$root.$on("barcodeScan", sku => {
+          this.keyword = sku;
+          this.getItems();
+        });
       }
     },
-    paginate(event) {
-      this.setRows([]);
+    getItems(search = false) {
+      this.setLoading(true);
+      this.setItems([]);
+      this.pageCount = null;
+      this.searchValue = this.keyword;
 
-      if (this.search_action) {
-        this.search(null, event.page);
+      let payload = {};
+
+      if (search && this.keyword) {
+        payload.method = "post";
+        payload.url = `${this.data_table.model}/search?page=${this.page}`;
+        payload.data = { keyword: this.keyword };
       } else {
-        this.search_action = false;
-
-        this.setLoading(true);
-        const page = event && event.page ? `?page=${event.page}` : "";
-        const payload = {
-          method: "get",
-          url: `${this.data_table.model}${page}`
-        };
-        this.request(payload)
-          .then(response => {
-            this.setRows(response.data);
-
-            if (response.total !== this.totalItems) {
-              this.totalItems = response.total;
-            }
-          })
-          .finally(() => {
-            this.setLoading(false);
-          });
+        payload.method = "get";
+        payload.url = `${this.data_table.model}?page=${this.page}`;
       }
+
+      this.request(payload)
+        .then(response => {
+          this.setItems(response.data);
+
+          this.pageCount = response.last_page;
+        })
+        .catch()
+        .finally(() => {
+          this.setLoading(false);
+        });
     },
     createItemDialog() {
       this.setDialog({
