@@ -55,4 +55,9 @@ class StorePickupController extends Controller
 
         return response($query->paginate());
     }
+
+    public function getOne($model)
+    {
+        return response(StorePickup::findOrFail($model));
+    }
 }

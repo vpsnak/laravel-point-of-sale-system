@@ -69,7 +69,7 @@ import { mapActions } from "vuex";
 
 export default {
   props: {
-    model: Number
+    model: Object
   },
   data() {
     return {
@@ -77,25 +77,22 @@ export default {
     };
   },
   mounted() {
-    if (this.model)
-      this.getOne({
-        model: "coupons",
-        data: {
-          id: this.model.id
-        }
+    if (this.$props.model)
+      this.request({
+        method: "get",
+        url: `coupons/get/${this.$props.model.id}`
       }).then(result => {
         this.coupon = result;
       });
   },
+
   computed: {
     couponData() {
       return this.coupon;
     }
   },
   methods: {
-    ...mapActions({
-      getOne: "getOne"
-    })
+    ...mapActions("requests", ["request"])
   }
 };
 </script>

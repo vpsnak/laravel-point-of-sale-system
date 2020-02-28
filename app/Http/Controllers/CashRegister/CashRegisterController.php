@@ -12,7 +12,7 @@ class CashRegisterController extends Controller
         return response(CashRegister::all());
     }
 
-    public function get(CashRegister $model)
+    public function getOne(CashRegister $model)
     {
         return response($model);
     }

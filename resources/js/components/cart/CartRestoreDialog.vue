@@ -63,7 +63,6 @@ export default {
   },
 
   methods: {
-    ...mapActions(["getOne"]),
     ...mapActions("requests", ["request"]),
 
     confirmation(event) {
@@ -101,11 +100,9 @@ export default {
       this.$store.state.cart.discount_type = cart.discount_type;
       this.$store.state.cart.discount_amount = cart.discount_amount;
 
-      this.getOne({
-        model: "customers",
-        data: {
-          id: JSON.parse(this.selectedCart.cart).customer_id
-        },
+      this.request({
+        method: "get",
+        url: `customers/get/${JSON.parse(this.selectedCart.cart).customer_id}`,
         mutation: "cart/setCustomer"
       }).then(response => {
         this.removeCart();
