@@ -249,7 +249,7 @@ export default {
   methods: {
     ...mapMutations("cart", ["setPaymentLoading"]),
     ...mapActions("cart", ["submitOrder"]),
-    ...mapActions(["getAll"]),
+    ...mapActions("requests", ["request"]),
 
     doublePrecision(num) {
       num = _.toString(num);
@@ -267,7 +267,10 @@ export default {
     },
 
     getPaymentTypes() {
-      this.getAll({ model: "payment-types" }).then(response => {
+      this.request({
+        method: "get",
+        url: "payment-types"
+      }).then(response => {
         this.paymentTypes = response;
       });
     },
