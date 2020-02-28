@@ -13,21 +13,18 @@
           clearable
           @click:clear="(currentPage = 1), getAllProducts()"
         ></v-text-field>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              class="mx-2"
-              @click="btnactive = !btnactive"
-              :color="btnactive ? 'red' : ''"
-              v-on="on"
-            >
-              <v-icon left>mdi-barcode-scan</v-icon>
-              Barcode<br />Scan
-            </v-btn>
-          </template>
-          <span v-if="btnactive">Disable scan mode</span>
-          <span v-else>Enable scan mode</span>
-        </v-tooltip>
+
+        <v-btn
+          class="mx-2"
+          @click="btnactive = !btnactive"
+          :color="btnactive ? 'primary' : 'secondary'"
+        >
+          <v-icon left>mdi-barcode-scan</v-icon>
+          <v-icon right>
+            {{ btnactive ? "mdi-cart-arrow-down" : "mdi-eye" }}
+          </v-icon>
+        </v-btn>
+
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn class="mx-2 my-2" @click="addDummyProductDialog()" v-on="on">

@@ -18,6 +18,8 @@ class CreateStatusesTable extends Migration
             $table->string('text');
             $table->string('value');
             $table->boolean('lock_order');
+            $table->string('color')->nullable(); // @TODO Remove nullable
+            $table->string('icon')->nullable();  // @TODO Remove nullable
         });
     }
 

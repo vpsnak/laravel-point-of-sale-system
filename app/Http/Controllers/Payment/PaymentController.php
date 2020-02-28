@@ -328,7 +328,7 @@ class PaymentController extends Controller
         $refund->save();
         $refund = $refund->load(['created_by', 'paymentType', 'order']);
 
-        $orderController = new OrderController($payment->order);
+        $orderController = new OrderController($refund->order);
         $orderStatus = $orderController->updateOrderStatus($refund, true);
         $orderStatus['notification'] = [
             'msg' => ['Refund completed successfully!'],
