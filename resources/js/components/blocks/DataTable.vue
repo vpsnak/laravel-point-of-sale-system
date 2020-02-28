@@ -159,7 +159,7 @@ export default {
   methods: {
     ...mapMutations("dialog", ["setDialog"]),
     ...mapMutations("datatable", ["setRows", "setLoading", "resetDataTable"]),
-    ...mapActions(["getAll", "search"]),
+    ...mapActions(["search"]),
     ...mapActions("requests", ["request"]),
 
     search(e, page = false) {
