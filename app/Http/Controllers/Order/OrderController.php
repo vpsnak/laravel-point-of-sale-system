@@ -10,6 +10,7 @@ use App\Helper\Price;
 use App\Jobs\ProcessOrder;
 use App\MasOrder;
 use App\Order;
+use App\Status;
 use App\StorePickup;
 use Illuminate\Http\Request;
 
@@ -67,8 +68,6 @@ class OrderController extends Controller
 
         $this->order = Order::findOrFail($this->order_data['order_id']);
         $this->order->fill($this->order_data);
-
-
 
         $this->order->save();
 
@@ -167,8 +166,9 @@ class OrderController extends Controller
         $this->parseProducts();
 
         $this->order = Order::create($this->order_data);
-
-        ProcessOrder::dispatchNow($this->order);
+        $submittedStatusId = Status::where('value', 'submitted')->firstOrFail('id');
+        $this->order->statuses()->attach($submittedStatusId, ['user_id' => $this->user->id, 'processed_on' => now()]);
+        // ProcessOrder::dispatchNow($this->order);
 
         return response([
             'order_id' => $this->order->id,

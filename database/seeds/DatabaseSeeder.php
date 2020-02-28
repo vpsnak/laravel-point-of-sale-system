@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         $this->call(MenuItemSeeder::class);
         $this->call(PaymentType::class);
         $this->call(StorePickupSeeder::class);
+        $this->call(StatusSeeder::class);
 
         $this->call(CompanySeeder::class);
         $this->call(TaxSeeder::class);

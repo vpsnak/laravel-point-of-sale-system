@@ -11,7 +11,7 @@ class StatusSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('stores')->insert([
+        DB::table('statuses')->insert([
             [
                 'text' => 'Submitted',
                 'value' => 'submitted',

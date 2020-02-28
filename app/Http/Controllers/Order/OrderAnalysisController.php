@@ -131,10 +131,12 @@ class OrderAnalysisController extends Controller
             'house-account' => $this->house_account,
             'coupon' => $this->coupon,
             'giftcard' => $this->giftcard,
-            'card_totals' => [
-                $this->card_totals,
-            ]
+            'card_totals' => [$this->card_totals]
         ];
+
+        foreach ($model->statuses as $status) {
+            return response($status->pivot->processedBy()->without('roles')->first());
+        }
 
         return $response;
     }

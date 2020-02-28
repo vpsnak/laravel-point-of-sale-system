@@ -14,7 +14,7 @@ class User extends Authenticatable
 
     protected $guard_name = 'api';
 
-    protected $with = ['roles'];
+    // protected $with = ['roles'];
     /**
      * The attributes that are mass assignable.
      *
@@ -75,6 +75,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Payment::class);
     }
+
+    // public function orderStatus()
+    // {
+    //     return $this->hasMany(OrderStatus::class);
+    // }
 
     public function openRegister()
     {

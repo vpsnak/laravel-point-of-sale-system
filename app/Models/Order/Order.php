@@ -221,6 +221,8 @@ class Order extends Model
 
     public function statuses()
     {
-        return $this->belongsToMany(Status::class);
+        return $this->belongsToMany(Status::class)
+            ->withPivot('processed_on', 'user_id')
+            ->using(OrderStatus::class);
     }
 }
