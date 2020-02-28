@@ -83,7 +83,6 @@ export default {
 
   mounted() {
     EventBus.$on("data-table", event => {
-      console.info({ component: "data-table", event });
       if (_.has(event, "payload.action")) {
         switch (event.payload.action) {
           case "paginate":

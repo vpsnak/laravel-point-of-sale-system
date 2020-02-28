@@ -117,7 +117,6 @@ import { mapMutations, mapActions, mapState } from "vuex";
 
 export default {
   mounted() {
-    this.render = false;
     this.resetDataTable();
 
     this.setDataTable({
