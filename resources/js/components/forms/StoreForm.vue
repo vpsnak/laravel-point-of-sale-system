@@ -112,10 +112,15 @@
             :success="valid"
           ></v-select>
         </ValidationProvider>
-        <v-checkbox v-model="formFields.active" label="Active"></v-checkbox>
+        <v-checkbox
+          v-model="formFields.active"
+          label="Active"
+          :readonly="$props.readonly"
+        ></v-checkbox>
         <v-checkbox
           v-model="formFields.is_phone_center"
           label="Phone center"
+          :readonly="$props.readonly"
         ></v-checkbox>
       </v-container>
       <v-container>

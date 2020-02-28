@@ -77,12 +77,13 @@ const state = {
     orders: [
       { text: "#", value: "id" },
       { text: "Customer", value: "customer" },
-      { text: "Store", value: "store.name" },
+      { text: "Store", value: "store" },
+      { text: "Type", value: "method" },
       { text: "Status", value: "status" },
-      { text: "MAS Status", value: "mas_order.status" },
+      { text: "MAS Status", value: "mas_order" },
       { text: "Total", value: "total" },
       { text: "Total paid", value: "total_paid" },
-      { text: "Created by", value: "created_by.name" },
+      { text: "Created by", value: "created_by" },
       { text: "Created at", value: "created_at" },
       { text: "Actions", value: "actions" }
     ],

@@ -127,7 +127,8 @@ export default new Vuex.Store({
           .dispatch("requests/request", {
             method: "post",
             url: "auth/login",
-            data: payload
+            data: payload,
+            no_error_notification: true
           })
           .then(response => {
             window.axios.defaults.headers.common["Authorization"] =
@@ -137,20 +138,30 @@ export default new Vuex.Store({
             context.commit("setUser", response.user);
 
             resolve(response);
+          })
+          .catch(error => {
+            context.commit("setNotification", {
+              msg: "Invalid credentials",
+              type: "error"
+            });
+
+            reject(error);
           });
       });
     },
     logout(context) {
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         const payload = {
           method: "get",
           url: "auth/logout"
         };
         context
           .dispatch("requests/request", payload)
-          .get(`${context.state.config.base_url}/auth/logout`)
           .then(() => {
             resolve(true);
+          })
+          .catch(error => {
+            reject(error);
           })
           .finally(() => {
             context.commit("config/resetLoad");
@@ -294,19 +305,24 @@ export default new Vuex.Store({
       });
     },
     closeCashRegister(context, payload) {
-      return new Promise(resolve => {
+      return new Promise((resolve, reject) => {
         payload.method = "post";
         payload.url = "cash-register-logs/close";
-        context.dispatch("requests/request", payload).then(response => {
-          if (["sales", "orders"].indexOf(router.currentRoute.name) >= 0) {
-            router.push({ name: "dashboard" });
-          }
+        context
+          .dispatch("requests/request", payload)
+          .then(response => {
+            if (["sales", "orders"].indexOf(router.currentRoute.name) >= 0) {
+              router.push({ name: "dashboard" });
+            }
 
-          context.commit("setCashRegister", null);
-          context.commit("menu/setStoreName", null);
+            context.commit("setCashRegister", null);
+            context.commit("menu/setStoreName", null);
 
-          resolve(response.data);
-        });
+            resolve(response.data);
+          })
+          .catch(error => {
+            reject(error);
+          });
       });
     },
 

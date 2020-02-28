@@ -104,14 +104,16 @@ export default {
     billing_address_id: null,
 
     order_id: null,
+    order_store: null,
     order_status: null,
+    order_mas_order: null,
     order_total: 0,
     order_total_without_tax: 0,
     order_total_tax: 0,
     order_total_item_cost: 0,
     order_change: 0,
     order_remaining: 0,
-    order_notes: "",
+    order_notes: null,
     order_billing_address: null,
     order_delivery_address: null,
     order_delivery_store_pickup: null,
@@ -138,6 +140,9 @@ export default {
     },
     setOrderTotalItemCost(state, value) {
       state.order_total_item_cost = value;
+    },
+    setOrderStore(state, value) {
+      state.order_store = value;
     },
     setOrderCreatedBy(state, value) {
       state.order_created_by = value;
@@ -183,6 +188,9 @@ export default {
     },
     setOrderStatus(state, value) {
       state.order_status = value;
+    },
+    setOrderMasOrderStatus(state, value) {
+      state.order_mas_order = value;
     },
     setOrderTotal(state, value) {
       state.order_total = value;
@@ -331,10 +339,13 @@ export default {
     },
     resetState(state) {
       state.order_id = null;
+      state.order_store_id = null;
 
       state.method = "retail";
 
       state.order_status = null;
+      state.order_mas_order = null;
+
       state.order_total = 0;
       state.order_total_tax = 0;
       state.order_total_without_tax = 0;
@@ -528,9 +539,12 @@ export default {
         context.commit("resetState");
 
         context.commit("setOrderId", order.id);
+        context.commit("setOrderStore", order.store);
         context.commit("setCartProducts", order.items);
         context.commit("setMethod", order.method);
         context.commit("setOrderStatus", order.status);
+        context.commit("setOrderMasOrderStatus", order.mas_order);
+
         context.commit("setOrderTotal", order.total);
         context.commit("setOrderTotalPaid", order.total_paid);
         context.commit("setOrderTotalWithoutTax", order.total_without_tax);

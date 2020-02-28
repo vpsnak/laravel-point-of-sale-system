@@ -66,7 +66,7 @@ class CustomerSync
                     self::customerFieldsToParse,
                     self::customerFieldsToRename
                 );
-                $storedCustomer = \App\Customer::getFirst('email', $customer->email);
+                $storedCustomer = \App\Customer::where('email', $customer->email)->first();
                 if ($force || Helper::hasDifferences($parsedCustomer, $storedCustomer)) {
                     self::log('Getting Customer: ' . $customer->email);
                     $storedCustomer = \App\Customer::updateOrCreate(

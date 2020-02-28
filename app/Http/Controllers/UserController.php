@@ -44,7 +44,7 @@ class UserController extends Controller
         return response([
             'notification' => [
                 'msg' => ["Welcome <b>{$user->name}</b>!"],
-                'type' => 'success'
+                'type' => 'info'
             ],
             'user' => $user,
             'token' => "Bearer $token"
@@ -125,7 +125,7 @@ class UserController extends Controller
 
         return response(['notification' => [
             'msg' => ['Goodbye...'],
-            'type' => "success"
+            'type' => "info"
         ]]);
     }
 

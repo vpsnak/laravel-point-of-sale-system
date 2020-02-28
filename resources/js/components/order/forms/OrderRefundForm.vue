@@ -1,95 +1,53 @@
 <template>
-  <v-container :key="method">
-    <ValidationObserver
-      ref="refund-form"
-      v-slot="{ valid }"
-      tag="v-form"
-      @submit.stop="confirmationDialog()"
-    >
-      <v-row align="center" justify="space-between">
-        <v-col md="4" :cols="12">
-          <v-switch
-            v-model="method"
-            class="mx-2"
-            label="New giftcard"
-            false-value="giftcard-existing"
-            true-value="giftcard-new"
-          ></v-switch>
-        </v-col>
-        <v-col :md="4" :cols="6" v-if="method === 'giftcard-new'">
-          <ValidationProvider
-            name="Gift card name"
-            rules="required"
-            v-slot="{ errors, valid }"
+  <ValidationObserver
+    ref="refund-form"
+    v-slot="{ valid }"
+    tag="v-form"
+    @submit.prevent="submitRefund()"
+  >
+    <v-container>
+      <v-row align="center" justify="center">
+        <v-progress-circular
+          v-if="payment_types_loading"
+          indeterminate
+          color="secondary"
+        ></v-progress-circular>
+        <v-col :cols="12" v-else>
+          <v-btn-toggle
+            v-model="refund.method"
+            mandatory
+            @change="clearState()"
           >
-            <v-text-field
-              outlined
-              dense
-              :error-messages="errors"
-              :success="valid"
-              autocomplete="off"
-              label="Gift card name"
-              prepend-inner-icon="mdi-wallet-giftcard"
-              v-model="gc_name"
-              :disabled="loading"
-            ></v-text-field>
-          </ValidationProvider>
-        </v-col>
-        <v-col :md="4" :cols="6">
-          <ValidationProvider
-            name="Gift card code"
-            rules="required"
-            v-slot="{ errors, valid }"
-          >
-            <v-text-field
-              outlined
-              dense
-              :error-messages="errors"
-              :success="valid"
-              autocomplete="off"
-              label="Gift card code"
-              prepend-inner-icon="mdi-numeric"
-              v-model="gc_code"
-              :disabled="loading"
-            ></v-text-field>
-          </ValidationProvider>
+            <v-btn
+              v-for="payment_type in payment_types"
+              :key="payment_type.id"
+              :value="payment_type.type"
+            >
+              <v-icon class="pr-2">{{ payment_type.icon }}</v-icon>
+              {{ payment_type.name }}
+            </v-btn>
+          </v-btn-toggle>
         </v-col>
       </v-row>
-      <v-row justify="center" align="center">
-        <v-col :lg="4" :md="6" :cols="12">
-          <ValidationProvider
-            name="Amount"
-            :rules="'required|between:1,' + maxRefund"
-            v-slot="{ errors, valid }"
-          >
-            <v-text-field
-              outlined
-              dense
-              :error-messages="errors"
-              :success="valid"
-              type="number"
-              label="Amount"
-              prefix="$"
-              v-model="amount"
-              :disabled="loading"
-            ></v-text-field>
-          </ValidationProvider>
-        </v-col>
-      </v-row>
-      <v-row justify="center" align="center">
+      <v-row justify="center" align="center" v-show="!payment_types_loading">
         <v-col cols="auto">
-          <v-btn
-            :disabled="!valid"
-            type="submit"
-            color="primary"
-            :loading="loading"
-          >
+          <v-text-field
+            v-model="refund.amount"
+            type="number"
+            label="Amount"
+            hint="Max refundable amount"
+          ></v-text-field>
+        </v-col>
+      </v-row>
+      <v-row justify="center" align="center" v-show="!payment_types_loading">
+        <v-col cols="auto">
+          <v-btn :disabled="!valid" type="submit" text>
             Refund
           </v-btn>
         </v-col>
       </v-row>
-    </ValidationObserver>
-  </v-container>
+    </v-container>
+  </ValidationObserver>
 </template>
 
 <script>
@@ -97,19 +55,22 @@ import { mapState, mapMutations, mapActions } from "vuex";
 import { EventBus } from "../../../plugins/event-bus";
 
 export default {
-  mounted() {},
+  mounted() {
+    this.getPaymentTypes();
+  },
 
   beforeDestroy() {
-    // EventBus.$off();
+    EventBus.$off("");
   },
 
   data() {
     return {
-      loading: false,
-      method: "giftcard-existing",
-      amount: null,
-      gc_code: null,
-      gc_name: null
+      payment_type: null,
+      payment_types: [],
+      payment_types_loading: false,
+      refund: {
+        amount: null
+      }
     };
   },
 
@@ -127,6 +88,9 @@ export default {
       } else {
         return this.order_total_paid;
       }
+    },
+    getIcon() {
+      return _.find(this.payment_types, ["type", this.payment_type]).icon;
     }
   },
 
@@ -168,7 +132,25 @@ export default {
         .finally(() => {
           this.loading = false;
         });
-    }
+    },
+
+    getPaymentTypes() {
+      this.payment_types_loading = true;
+      const payload = {
+        method: "get",
+        url: "refund-types"
+      };
+
+      this.request(payload)
+        .then(response => {
+          this.payment_types = response;
+        })
+        .catch()
+        .finally(() => {
+          this.payment_types_loading = false;
+        });
+    },
+    clearState() {}
   }
 };
 </script>

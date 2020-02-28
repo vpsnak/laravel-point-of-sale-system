@@ -9,16 +9,17 @@ class PaymentType extends Model
     public $timestamps = false;
 
     protected $casts = [
-        'status' => 'boolean'
+        'status' => 'boolean',
+        'hidden' => 'boolean'
     ];
 
     public static function getPaymentTypes()
     {
-        return self::whereStatus(true)->get();
+        return self::whereStatus(true)->whereHidden(false)->get();
     }
 
     public static function getRefundTypes()
     {
-        return self::whereStatus(false)->get();
+        return self::whereStatus(false)->whereHidden(false)->get();
     }
 }

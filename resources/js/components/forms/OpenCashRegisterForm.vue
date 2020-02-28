@@ -174,9 +174,9 @@ export default {
         url: "stores"
       })
         .then(response => {
-          this.stores = response;
+          this.stores = response.data;
 
-          if (this.role == "admin") {
+          if (this.role === "admin") {
             this.storeDisabled = false;
           }
         })
@@ -216,7 +216,7 @@ export default {
       });
     },
     cashierDisabled() {
-      if (this.role == "admin" || this.role == "store_manager") {
+      if (["admin", "store_manager"].indexOf(this.role) >= 0) {
         return false;
       } else {
         return true;
@@ -235,7 +235,7 @@ export default {
           this.selected_cash_register_id = cash_register.id;
           this.selected_store_id = cash_register.store.id;
           this.storeDisabled = true;
-          if (cash_register.is_open === false) {
+          if (!cash_register.is_open) {
             this.enableOpeningAmount();
           }
         }
