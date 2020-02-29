@@ -137,7 +137,7 @@ export default {
               break;
             case "search":
               this.keyword = event.keyword || null;
-              this.search();
+              this.getItems(true);
               break;
             default:
               if (_.isBoolean(event.payload) && event.payload) {
