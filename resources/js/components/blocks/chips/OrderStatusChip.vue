@@ -7,7 +7,7 @@
     :close-on-content-click="false"
   >
     <template v-slot:activator="{ on }">
-      <h5 v-if="$props.title">{{ Status }}</h5>
+      <h5 v-if="$props.title">Status</h5>
       <v-chip pill v-on="$props.menu ? on : null" :color="latestStatus.color">
         <v-icon left>{{ $props.latestStatus.icon }}</v-icon>
         {{ $props.latestStatus.text }}

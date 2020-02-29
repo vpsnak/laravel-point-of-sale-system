@@ -96,6 +96,7 @@
         <v-col :cols="12">
           <addressDeliveryForm
             v-if="deliveryAddress"
+            :key="deliveryAddress.id"
             :model="deliveryAddress"
             readonly
           ></addressDeliveryForm>
@@ -161,7 +162,7 @@
         </v-col>
         <v-col :cols="2">
           <ValidationProvider
-            rules="required"
+            rules="required|min_value:0"
             v-slot="{ errors, valid }"
             name="Fees"
           >
@@ -411,8 +412,8 @@ export default {
 
       EventBus.$on("delivery-address-edit", event => {
         if (event.payload) {
-          const index = _.findIndex(this.addresses, address => {
-            return address.id === event.payload.id;
+          const index = _.findIndex(this.addresses, {
+            id: event.payload.id
           });
           this.addresses[index] = event.payload;
           this.deliveryAddress = event.payload;
@@ -482,7 +483,7 @@ export default {
       if (_.has(item, "cost")) {
         this.shippingCost = item.cost;
       } else {
-        this.shippingCost = null;
+        this.shippingCost = 0;
       }
     },
     getTimeSlots() {

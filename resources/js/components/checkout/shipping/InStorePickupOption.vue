@@ -59,7 +59,7 @@
           </v-col>
           <v-col :md="2" :cols="4">
             <ValidationProvider
-              rules="required"
+              rules="required|min_value:0"
               v-slot="{ errors, valid }"
               name="Fees"
             >
@@ -266,6 +266,8 @@ export default {
     setCost(item) {
       if (_.has(item, "cost")) {
         this.shippingCost = item.cost;
+      } else {
+        this.shippingCost = 0;
       }
     }
   }

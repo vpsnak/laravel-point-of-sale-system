@@ -2,6 +2,7 @@
   <v-container fluid>
     <v-row align="center" justify="center" no-gutters>
       <v-combobox
+        ref="searchfield"
         :no-filter="true"
         v-if="editable"
         v-model="cartCustomer"
@@ -129,7 +130,7 @@ export default {
       },
       set(value) {
         if (!this.order_id) {
-          if (value !== this.cartCustomer) {
+          if (value !== this.customer) {
             this.resetShipping(true);
           }
         }
@@ -219,6 +220,11 @@ export default {
           this.searchCustomer(keyword);
           return;
         }
+      }
+    },
+    customer(value) {
+      if (!value) {
+        this.$refs.searchfield.lazySearch = this.$refs.searchfield.lazyValue = null;
       }
     }
   }
