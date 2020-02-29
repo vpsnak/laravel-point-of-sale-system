@@ -1,121 +1,116 @@
 <template>
-  <div>
-    <data-table v-if="render">
-      <template v-slot:item.customer="{ item }">
-        <customerChip :menu="true" :customer="item.customer" />
-      </template>
-      <template v-slot:item.store="{ item }">
-        <storeChip :menu="true" :store="item.store" />
-      </template>
-      <template v-slot:item.method="{ item }">
-        <orderMethodChip :method="item.method" />
-      </template>
-      <template v-slot:item.status="{ item }">
-        <orderStatusChip
-          :latestStatus="item.status"
-          :orderId="item.id"
-          :menu="true"
-        />
-      </template>
-      <template v-slot:item.mas_order="{ item }">
-        <masStatusChip :mas_order="item.mas_order" />
-      </template>
-      <template v-slot:item.created_by="{ item }">
-        <createdByChip :menu="true" :created_by="item.created_by" />
-      </template>
-      <template v-slot:item.total="{ item }"> $ {{ item.total }} </template>
-      <template v-slot:item.total_paid="{ item }">
-        $ {{ item.total_paid }}
-      </template>
+  <data-table v-if="render">
+    <template v-slot:item.customer="{ item }">
+      <customerChip :menu="true" :customer="item.customer" />
+    </template>
+    <template v-slot:item.store="{ item }">
+      <storeChip :menu="true" :store="item.store" />
+    </template>
+    <template v-slot:item.method="{ item }">
+      <orderMethodChip :method="item.method" />
+    </template>
+    <template v-slot:item.status="{ item }">
+      <orderStatusChip
+        :latestStatus="item.status"
+        :orderId="item.id"
+        :menu="true"
+      />
+    </template>
+    <template v-slot:item.created_by="{ item }">
+      <createdByChip :menu="true" :created_by="item.created_by" />
+    </template>
+    <template v-slot:item.total="{ item }"> $ {{ item.total }} </template>
+    <template v-slot:item.total_paid="{ item }">
+      $ {{ item.total_paid }}
+    </template>
 
-      <template v-slot:item.actions="{ item }">
-        <v-tooltip
-          v-if="['pending', 'pending_payment'].indexOf(item.status) >= 0"
-          bottom
-        >
-          <template v-slot:activator="{ on }">
-            <v-btn
-              small
-              :disabled="data_table.loading"
-              @click.stop="checkout(item.id)"
-              class="my-2"
-              icon
-              v-on="on"
-            >
-              <v-icon small>mdi-currency-usd</v-icon>
-            </v-btn>
-          </template>
-          <span>Continue checkout</span>
-        </v-tooltip>
+    <template v-slot:item.actions="{ item }">
+      <v-tooltip
+        v-if="['pending', 'pending_payment'].indexOf(item.status) >= 0"
+        bottom
+      >
+        <template v-slot:activator="{ on }">
+          <v-btn
+            small
+            :disabled="data_table.loading"
+            @click.stop="checkout(item.id)"
+            class="my-2"
+            icon
+            v-on="on"
+          >
+            <v-icon small>mdi-currency-usd</v-icon>
+          </v-btn>
+        </template>
+        <span>Continue checkout</span>
+      </v-tooltip>
 
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              small
-              :disabled="data_table.loading"
-              @click.stop="reorder(item.id)"
-              class="my-2"
-              icon
-              v-on="on"
-            >
-              <v-icon small>mdi-cart-arrow-down</v-icon>
-            </v-btn>
-          </template>
-          <span>Reorder</span>
-        </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            small
+            :disabled="data_table.loading"
+            @click.stop="reorder(item.id)"
+            class="my-2"
+            icon
+            v-on="on"
+          >
+            <v-icon small>mdi-cart-arrow-down</v-icon>
+          </v-btn>
+        </template>
+        <span>Reorder</span>
+      </v-tooltip>
 
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              small
-              :disabled="data_table.loading"
-              :to="{ name: 'viewOrderDetails', params: { id: item.id } }"
-              class="my-2"
-              v-on="on"
-              icon
-            >
-              <v-icon small>mdi-eye</v-icon>
-            </v-btn>
-          </template>
-          <span>View</span>
-        </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            small
+            :disabled="data_table.loading"
+            :to="{ name: 'viewOrderDetails', params: { id: item.id } }"
+            class="my-2"
+            v-on="on"
+            icon
+          >
+            <v-icon small>mdi-eye</v-icon>
+          </v-btn>
+        </template>
+        <span>View</span>
+      </v-tooltip>
 
-        <v-tooltip bottom v-if="['paid', 'complete'].indexOf(item.status) >= 0">
-          <template v-slot:activator="{ on }">
-            <v-btn
-              :ref="item.id"
-              small
-              :disabled="data_table.loading"
-              @click.stop="receipt(item.id)"
-              class="my-2"
-              icon
-              v-on="on"
-            >
-              <v-icon small>mdi-receipt</v-icon>
-            </v-btn>
-          </template>
-          <span>Receipt</span>
-        </v-tooltip>
+      <v-tooltip bottom v-if="['paid', 'complete'].indexOf(item.status) >= 0">
+        <template v-slot:activator="{ on }">
+          <v-btn
+            :ref="item.id"
+            small
+            :disabled="data_table.loading"
+            @click.stop="receipt(item.id)"
+            class="my-2"
+            icon
+            v-on="on"
+          >
+            <v-icon small>mdi-receipt</v-icon>
+          </v-btn>
+        </template>
+        <span>Receipt</span>
+      </v-tooltip>
 
-        <v-tooltip bottom v-if="disableIfStatus(item)" color="red">
-          <template v-slot:activator="{ on }">
-            <v-btn
-              icon
-              small
-              color="red"
-              :disabled="data_table.loading"
-              @click.stop="cancelOrderDialog(item)"
-              class="my-2"
-              v-on="on"
-            >
-              <v-icon small>mdi-cancel</v-icon>
-            </v-btn>
-          </template>
-          <span>Cancel order</span>
-        </v-tooltip>
-      </template>
-    </data-table>
-  </div>
+      <v-tooltip bottom v-if="disableIfStatus(item)" color="red">
+        <template v-slot:activator="{ on }">
+          <v-btn
+            icon
+            small
+            color="red"
+            :disabled="data_table.loading"
+            @click.stop="cancelOrderDialog(item)"
+            class="my-2"
+            v-on="on"
+          >
+            <v-icon small>mdi-cancel</v-icon>
+          </v-btn>
+        </template>
+        <span>Cancel order</span>
+      </v-tooltip>
+    </template>
+  </data-table>
 </template>
 
 <script>
@@ -126,13 +121,7 @@ export default {
   mounted() {
     this.resetDataTable();
 
-    this.setDataTable({
-      icon: "mdi-buffer",
-      title: "Orders",
-      model: "orders",
-      disableNewBtn: true,
-      loading: true
-    });
+    this.setDataTable(this.table);
 
     EventBus.$on("order-table-cancel-order", event => {
       if (event.payload && this.selectedItem) {
@@ -159,7 +148,15 @@ export default {
     return {
       render: false,
       viewForm: "order",
-      selectedItem: null
+      selectedItem: null,
+      table: {
+        icon: "mdi-buffer",
+        title: "Orders",
+        model: "orders",
+        disableNewBtn: true,
+        loading: true,
+        filters: true
+      }
     };
   },
 
@@ -218,6 +215,9 @@ export default {
             persistent: true,
             eventChannel: "orders-table-receipt"
           });
+        })
+        .catch(error => {
+          console.log(error);
         })
         .finally(() => {
           this.setLoading(false);

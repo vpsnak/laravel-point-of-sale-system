@@ -2,47 +2,51 @@
   <v-container fluid>
     <v-card>
       <v-card-title>
-        <v-icon v-if="data_table.icon" class="mr-2">
-          {{ data_table.icon }}
-        </v-icon>
-        {{ data_table.title }}
+        <v-row justify="center" align="center">
+          <v-icon v-if="data_table.icon" class="mr-2">
+            {{ data_table.icon }}
+          </v-icon>
+          {{ data_table.title }}
 
-        <v-spacer />
+          <v-spacer />
 
-        <v-text-field
-          ref="searchInput"
-          :disabled="data_table.loading"
-          prepend-icon="search"
-          hide-details
-          label="Search"
-          single-line
-          v-model="searchValue"
-          clearable
-          @click:clear="
-            (page = 1),
-              (keyword = searchValue = null),
-              (search = false),
-              getItems(search)
-          "
-          @click:prepend="getItems(search)"
-          @keyup.enter="
-            (keyword = searchValue), (search = true), getItems(search)
-          "
-        ></v-text-field>
-        <v-divider
-          class="mx-4"
-          v-if="data_table.newForm && data_table.btnTxt"
-          inset
-          vertical
-        ></v-divider>
-        <v-btn
-          v-if="data_table.newForm && data_table.btnTxt"
-          :disabled="data_table.disableNewBtn || data_table.loading"
-          color="primary"
-          @click="createItemDialog()"
-        >
-          {{ data_table.btnTxt }}
-        </v-btn>
+          <dataTableFilters v-if="data_table.filters" />
+
+          <v-text-field
+            ref="searchInput"
+            :disabled="data_table.loading"
+            prepend-icon="search"
+            hide-details
+            label="Search"
+            single-line
+            v-model="searchValue"
+            clearable
+            @click:clear="
+              (page = 1),
+                (keyword = searchValue = null),
+                (search = false),
+                getItems(search)
+            "
+            @click:prepend="getItems(search)"
+            @keyup.enter="
+              (keyword = searchValue), (search = true), getItems(search)
+            "
+          ></v-text-field>
+          <v-divider
+            class="mx-4"
+            v-if="data_table.newForm && data_table.btnTxt"
+            inset
+            vertical
+          ></v-divider>
+          <v-btn
+            v-if="data_table.newForm && data_table.btnTxt"
+            :disabled="data_table.disableNewBtn || data_table.loading"
+            color="primary"
+            @click="createItemDialog()"
+          >
+            {{ data_table.btnTxt }}
+          </v-btn>
+        </v-row>
       </v-card-title>
 
       <v-data-table

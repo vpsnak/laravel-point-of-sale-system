@@ -80,7 +80,6 @@ const state = {
       { text: "Store", value: "store" },
       { text: "Type", value: "method" },
       { text: "Status", value: "status" },
-      { text: "MAS Status", value: "mas_order" },
       { text: "Total", value: "total" },
       { text: "Total paid", value: "total_paid" },
       { text: "Created by", value: "created_by" },
@@ -181,7 +180,8 @@ const state = {
     btnTxt: "",
     newForm: "",
     disableNewBtn: false,
-    loading: false
+    loading: false,
+    filters: false
   }
 };
 
@@ -197,6 +197,7 @@ const mutations = {
     state.data_table.newForm = "";
     state.data_table.disableNewBtn = false;
     state.data_table.loading = false;
+    state.data_table.filters = false;
   },
   setDataTable(state, value) {
     state.data_table = { ...state.data_table, ...value };

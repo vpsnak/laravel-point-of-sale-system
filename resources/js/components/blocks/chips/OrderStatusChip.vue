@@ -36,10 +36,6 @@
             :headers="headers"
             :items="statuses"
           >
-            <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
-              <slot :name="slot" v-bind="scope" />
-            </template>
-
             <template v-slot:item.text="{ item }">
               <v-chip pill :color="item.color">
                 <v-icon left>{{ item.icon }}</v-icon>
