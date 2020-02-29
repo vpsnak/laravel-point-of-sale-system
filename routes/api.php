@@ -60,7 +60,7 @@ Route::delete('/customers/{model}', 'CustomerController@delete')->middleware('sc
 Route::get('/addresses', 'AddressController@all')->middleware('scope:admin,store_manager,cashier');
 Route::get('/addresses/get/{model}', 'AddressController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::post('/addresses/create', 'AddressController@create')->middleware('scope:admin,store_manager,cashier');
-Route::post('/addresses/update', 'AddressController@update')->middleware('scope:admin,store_manager,cashier');
+Route::patch('/addresses/update', 'AddressController@update')->middleware('scope:admin,store_manager,cashier');
 Route::post('/addresses/search', 'AddressController@search')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/addresses/{model}', 'AddressController@delete')->middleware('scope:admin,store_manager,cashier');
 
