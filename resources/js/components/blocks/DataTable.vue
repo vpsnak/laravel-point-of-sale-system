@@ -1,17 +1,36 @@
 <template>
-  <v-container fluid>
-    <v-card>
-      <v-card-title>
-        <v-row justify="center" align="center">
+  <v-card>
+    <v-container>
+      <v-row justify="center" align="center">
+        <v-col cols="auto">
           <v-icon v-if="data_table.icon" class="mr-2">
             {{ data_table.icon }}
           </v-icon>
           {{ data_table.title }}
+        </v-col>
 
-          <v-spacer />
+        <v-col cols="auto">
+          <v-tooltip bottom color="green" v-if="data_table.refreshBtn">
+            <template v-slot:activator="{ on }">
+              <v-btn
+                :loading="data_table.loading"
+                :disabled="data_table.loading"
+                @click.stop="getItems()"
+                icon
+                v-on="on"
+                color="green"
+              >
+                <v-icon>
+                  mdi-refresh
+                </v-icon>
+              </v-btn>
+            </template>
+            <span>Refresh</span>
+          </v-tooltip>
+        </v-col>
 
-          <dataTableFilters v-if="data_table.filters" />
-
+        <v-spacer />
+        <v-col cols="auto">
           <v-text-field
             ref="searchInput"
             :disabled="data_table.loading"
@@ -32,12 +51,20 @@
               (keyword = searchValue), (search = true), getItems(search)
             "
           ></v-text-field>
-          <v-divider
-            class="mx-4"
-            v-if="data_table.newForm && data_table.btnTxt"
-            inset
-            vertical
-          ></v-divider>
+        </v-col>
+        <v-spacer />
+
+        <v-col cols="auto">
+          <dataTableFilters v-if="data_table.filters" />
+        </v-col>
+
+        <v-divider
+          class="mx-4"
+          v-if="data_table.newForm && data_table.btnTxt"
+          inset
+          vertical
+        />
+        <v-col cols="auto">
           <v-btn
             v-if="data_table.newForm && data_table.btnTxt"
             :disabled="data_table.disableNewBtn || data_table.loading"
@@ -46,25 +73,26 @@
           >
             {{ data_table.btnTxt }}
           </v-btn>
-        </v-row>
-      </v-card-title>
+        </v-col>
+      </v-row>
+      <v-row no-gutters>
+        <v-col :cols="12">
+          <v-data-table
+            fixed-header
+            disable-sort
+            dense
+            disable-filtering
+            :headers="getHeaders"
+            :items="data_table.items"
+            :loading="data_table.loading"
+            disable-pagination
+            hide-default-footer
+          >
+            <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
+              <slot :name="slot" v-bind="scope" />
+            </template>
 
-      <v-data-table
-        fixed-header
-        disable-sort
-        dense
-        disable-filtering
-        :headers="getHeaders"
-        :items="data_table.items"
-        :loading="data_table.loading"
-        disable-pagination
-        hide-default-footer
-      >
-        <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
-          <slot :name="slot" v-bind="scope" />
-        </template>
-
-        <!-- <template v-slot:item.created_at="{ item }">
+            <!-- <template v-slot:item.created_at="{ item }">
           <timestampChip :timestamp="item.created_at" />
         </template>
 
@@ -72,21 +100,28 @@
           <timestampChip :timestamp="item.updated_at" />
         </template> -->
 
-        <v-alert :value="true" color="error" icon="warning" slot="no-results">
-          Your search for "{{ keyword }}" found no results.
-        </v-alert>
-      </v-data-table>
-      <v-card-actions>
-        <v-pagination
-          v-model="page"
-          :length="pageCount"
-          @input="getItems(search)"
-          @next="page++"
-          @previous="page--"
-        ></v-pagination>
-      </v-card-actions>
-    </v-card>
-  </v-container>
+            <v-alert
+              :value="true"
+              color="error"
+              icon="warning"
+              slot="no-results"
+            >
+              Your search for "{{ keyword }}" found no results.
+            </v-alert>
+          </v-data-table>
+          <v-card-actions>
+            <v-pagination
+              v-model="page"
+              :length="pageCount"
+              @input="getItems(search)"
+              @next="page++"
+              @previous="page--"
+            ></v-pagination>
+          </v-card-actions>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-card>
 </template>
 
 <script>

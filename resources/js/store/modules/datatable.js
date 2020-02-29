@@ -182,7 +182,8 @@ const state = {
     newForm: "",
     disableNewBtn: false,
     loading: false,
-    filters: false
+    filters: false,
+    refreshBtn: true
   }
 };
 
@@ -199,6 +200,7 @@ const mutations = {
     state.data_table.disableNewBtn = false;
     state.data_table.loading = false;
     state.data_table.filters = false;
+    state.data_table.refreshBtn = true;
   },
   setDataTable(state, value) {
     state.data_table = { ...state.data_table, ...value };
