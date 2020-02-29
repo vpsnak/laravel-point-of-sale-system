@@ -73,7 +73,11 @@
               </v-chip>
             </template>
             <v-card width="450" class="pa-5" outlined>
-              <orderNotes :readonly="true" />
+              <v-container fluid>
+                <v-row>
+                  <orderNotes :readonly="true" />
+                </v-row>
+              </v-container>
             </v-card>
           </v-menu>
         </v-col>

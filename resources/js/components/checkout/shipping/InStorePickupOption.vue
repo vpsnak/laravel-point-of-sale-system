@@ -102,7 +102,9 @@
         </v-row>
       </v-form>
     </ValidationObserver>
-    <orderNotes v-if="!hideNotes" />
+    <v-row>
+      <orderNotes v-if="!hideNotes" />
+    </v-row>
   </v-container>
 </template>
 

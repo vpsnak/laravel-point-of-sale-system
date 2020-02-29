@@ -74,7 +74,7 @@ class OrderStatusController extends Controller
         return [
             'remaining' => $remaining,
             'change' =>  $change,
-            'order_status' => $this->order->status
+            'order_status' => $this->order->status->value
         ];
     }
 }

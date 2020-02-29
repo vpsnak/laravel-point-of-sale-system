@@ -196,6 +196,7 @@ export default {
 
       regions: [],
       countries: [],
+      selected_location: null,
       address: {
         customer_id: null,
         first_name: "",
@@ -229,10 +230,11 @@ export default {
 
     location: {
       get() {
-        _.find(this.locations, { id: this.address.location });
+        this.selected_location;
       },
       set(value) {
-        this.address.location = value.id;
+        this.selected_location = value;
+        this.address.location = this.selected_location.id;
       }
     },
 

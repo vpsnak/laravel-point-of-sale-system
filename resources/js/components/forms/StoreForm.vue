@@ -112,16 +112,18 @@
             :success="valid"
           ></v-select>
         </ValidationProvider>
-        <v-checkbox
-          v-model="formFields.active"
-          label="Active"
-          :readonly="$props.readonly"
-        ></v-checkbox>
-        <v-checkbox
-          v-model="formFields.is_phone_center"
-          label="Phone center"
-          :readonly="$props.readonly"
-        ></v-checkbox>
+        <v-row justify="space-between">
+          <v-checkbox
+            v-model="formFields.active"
+            label="Active"
+            :readonly="$props.readonly"
+          ></v-checkbox>
+          <v-checkbox
+            v-model="formFields.is_phone_center"
+            label="Phone center"
+            :readonly="$props.readonly"
+          ></v-checkbox>
+        </v-row>
       </v-container>
       <v-container>
         <v-row v-if="!$props.readonly">
@@ -132,8 +134,8 @@
               :loading="loading"
               :disabled="invalid || loading"
               color="secondary"
-              >submit</v-btn
-            >
+              >submit
+            </v-btn>
             <v-btn v-if="!model" @click="clear" color="orange">clear</v-btn>
           </v-col>
         </v-row>

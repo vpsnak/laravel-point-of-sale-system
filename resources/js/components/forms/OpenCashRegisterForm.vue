@@ -69,7 +69,7 @@
             color="secondary"
             type="submit"
             :loading="loading"
-            :disabled="disableOpenCashRegister || invalid"
+            :disabled="disableOpenCashRegister || invalid || loading"
             >Start session
           </v-btn>
         </v-row>
