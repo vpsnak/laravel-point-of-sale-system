@@ -35,13 +35,10 @@ class StoreController extends Controller
 
         $store = Store::create($validatedData);
 
-        return response([
-            'data' => $store,
-            'notification' => [
-                'msg' => "Store {$store->name} created successfully!",
-                'type' => 'success'
-            ]
-        ], 201);
+        return response(['notification' => [
+            'msg' => ["Store {$store->name} created successfully!"],
+            'type' => 'success'
+        ]]);
     }
 
     public function update(Request $request)
@@ -62,14 +59,11 @@ class StoreController extends Controller
         $store = Store::findOrFail($validatedData['id']);
         $store->fill($validatedData);
         $store->save();
-
-        return response([
-            'data' => $store,
-            'notification' => [
-                'msg' => "Store {$store->name} updated successfully!",
-                'type' => 'success'
-            ]
-        ]);
+        
+        return response(['notification' => [
+            'msg' => ["Store {$store->name} updated successfully!"],
+            'type' => 'success'
+        ]]);
     }
 
     public function search(Request $request)

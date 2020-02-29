@@ -80,6 +80,7 @@ Route::delete('/orders/{model}', 'OrderController@rollbackOrder')->middleware('s
 Route::get('/stores', 'StoreController@all')->middleware('scope:admin,store_manager,cashier');
 Route::get('/stores/get/{model}', 'StoreController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::post('/stores/create', 'StoreController@create')->middleware('scope:admin,store_manager,cashier');
+Route::patch('/stores/update', 'StoreController@update')->middleware('scope:admin,store_manager,cashier');
 Route::post('/stores/search', 'StoreController@search')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/stores/{model}', 'StoreController@delete')->middleware('scope:admin,store_manager,cashier');
 
