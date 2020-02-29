@@ -54,13 +54,14 @@ export default {
       "setOrderStatus"
     ]),
     ...mapMutations(["setNotification"]),
-    ...mapActions(["create"]),
+    ...mapActions("requests", ["request"]),
 
     sendPayment(event) {
       this.paymentActionsLoading = true;
 
       let payload = {
-        model: "payments",
+        method: "post",
+        url: "payments/create",
         data: {
           payment_type: event.paymentType,
           amount: event.paymentAmount || null,
@@ -84,7 +85,7 @@ export default {
           break;
       }
 
-      this.create(payload)
+      this.request(payload)
         .then(response => {
           this.setOrderChange(response.change);
           this.setOrderRemaining(response.remaining);
