@@ -51,7 +51,7 @@ class CartController extends Controller
     {
         $model->delete();
         return response(['notification' => [
-            'msg' => 'Success!',
+            'msg' => 'Cart deleted successfully',
             'type' => 'success'
         ]]);
     }

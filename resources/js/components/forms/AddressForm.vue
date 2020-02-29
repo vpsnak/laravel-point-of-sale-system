@@ -18,11 +18,7 @@
                 :success="valid"
               ></v-text-field>
             </ValidationProvider>
-            <ValidationProvider
-              rules="required|max:100"
-              v-slot="{ errors, valid }"
-              name="Address"
-            >
+            <ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Address">
               <v-text-field
                 :readonly="$props.readonly"
                 v-model="formFields.street"
@@ -48,11 +44,7 @@
                 :success="valid"
               ></v-text-field>
             </ValidationProvider>
-            <ValidationProvider
-              rules="max:100"
-              v-slot="{ errors, valid }"
-              name="Second Address"
-            >
+            <ValidationProvider rules="max:100" v-slot="{ errors, valid }" name="Second Address">
               <v-text-field
                 :readonly="$props.readonly"
                 v-model="formFields.street2"
@@ -64,11 +56,7 @@
             </ValidationProvider>
           </v-col>
           <v-col cols="3">
-            <ValidationProvider
-              rules="required|max:100"
-              v-slot="{ errors, valid }"
-              name="City"
-            >
+            <ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="City">
               <v-text-field
                 :readonly="$props.readonly"
                 v-model="formFields.city"
@@ -80,11 +68,7 @@
             </ValidationProvider>
           </v-col>
           <v-col cols="3">
-            <ValidationProvider
-              rules="required|max:100"
-              v-slot="{ errors, valid }"
-              name="Zip Code"
-            >
+            <ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Zip Code">
               <v-text-field
                 :readonly="$props.readonly"
                 v-model="formFields.postcode"
@@ -96,11 +80,7 @@
             </ValidationProvider>
           </v-col>
           <v-col cols="3">
-            <ValidationProvider
-              rules="required|max:100"
-              v-slot="{ errors, valid }"
-              name="State"
-            >
+            <ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="State">
               <v-select
                 :disabled="loading"
                 :readonly="$props.readonly"
@@ -125,7 +105,7 @@
                 :disabled="loading"
                 :readonly="$props.readonly"
                 :loading="loading"
-                v-model="formFields.region.country_id"
+                v-model="formFields.country_id"
                 :items="countries"
                 label="Countries"
                 :error-messages="errors"
@@ -136,17 +116,13 @@
             </ValidationProvider>
           </v-col>
           <v-col cols="4">
-            <ValidationProvider
-              rules="max:100"
-              v-slot="{ errors, valid }"
-              name="Location"
-            >
+            <ValidationProvider rules="max:100" v-slot="{ errors, valid }" name="Location">
               <v-select
                 v-model="formFields.location"
                 label="Locations"
                 :items="locations"
                 item-text="label"
-                item-value="label"
+                item-value="id"
                 :disabled="loading"
                 :error-messages="errors"
                 :success="valid"
@@ -154,11 +130,7 @@
             </ValidationProvider>
           </v-col>
           <v-col cols="4">
-            <ValidationProvider
-              rules="max:100"
-              v-slot="{ errors, valid }"
-              name="Location name"
-            >
+            <ValidationProvider rules="max:100" v-slot="{ errors, valid }" name="Location name">
               <v-text-field
                 v-model="formFields.location_name"
                 label="Location name"
@@ -191,11 +163,7 @@
             </ValidationProvider>
           </v-col>
           <v-col cols="6">
-            <ValidationProvider
-              rules="max:100"
-              v-slot="{ errors, valid }"
-              name="Company"
-            >
+            <ValidationProvider rules="max:100" v-slot="{ errors, valid }" name="Company">
               <v-text-field
                 :readonly="$props.readonly"
                 v-model="formFields.company"
@@ -207,11 +175,7 @@
             </ValidationProvider>
           </v-col>
           <v-col cols="6">
-            <ValidationProvider
-              rules="max:100"
-              v-slot="{ errors, valid }"
-              name="Vat id"
-            >
+            <ValidationProvider rules="max:100" v-slot="{ errors, valid }" name="Vat id">
               <v-text-field
                 :readonly="$props.readonly"
                 v-model="formFields.vat_id"
@@ -245,8 +209,7 @@
               :loading="loading"
               :disabled="invalid || loading"
               color="secondary"
-              >SAVE CHANGES</v-btn
-            >
+            >SAVE CHANGES</v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -266,6 +229,7 @@ export default {
     return {
       loading: false,
       defaultValues: {},
+      regions: [],
       countries: [],
       formFields: {
         first_name: null,
@@ -274,7 +238,6 @@ export default {
         street2: null,
         city: null,
         country_id: null,
-        region: null,
         region_id: null,
         postcode: null,
         phone: null,
@@ -306,33 +269,42 @@ export default {
   },
 
   methods: {
-    ...mapActions(["getAll", "create"]),
+    ...mapActions("requests", ["request"]),
 
     submit() {
       this.loading = true;
-      if (_.isObject(this.formFields.region_id)) {
-        this.formFields.region = this.formFields.region_id.region_id;
-      } else {
-        this.formFields.region = this.formFields.region_id;
-      }
-      let payload = {
-        model: "addresses",
-        data: { ...this.formFields }
-      };
-      this.create(payload)
-        .then(() => {
-          this.$emit("submit", {
-            action: "paginate",
-            notification: {
-              msg: "Address added successfully!",
-              type: "success"
-            }
-          });
-          // this.clear();
+
+      if (this.$props.model) {
+        this.request({
+          method: "patch",
+          url: "addresses/update",
+          data: { ...this.formFields }
         })
-        .finally(() => {
-          this.loading = false;
-        });
+          .then(() => {
+            this.clear();
+            this.$emit("submit", {
+              action: "paginate"
+            });
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      } else {
+        this.request({
+          method: "post",
+          url: "addresses/create",
+          data: { ...this.formFields }
+        })
+          .then(() => {
+            this.clear();
+            this.$emit("submit", {
+              action: "paginate"
+            });
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      }
     },
     clear() {
       this.formFields = { ...this.defaultValues };
@@ -340,21 +312,23 @@ export default {
 
     getAllRegions() {
       this.loading = true;
-      this.getAll({
-        model: "regions"
+      this.request({
+        method: "get",
+        url: "regions"
       })
-        .then(regions => {
-          this.regions = regions;
+        .then(response => {
+          this.regions = response;
         })
         .finally(() => {
           this.loading = false;
         });
     },
     getAllCountries() {
-      this.getAll({
-        model: "countries"
-      }).then(countries => {
-        this.countries = countries;
+      this.request({
+        method: "get",
+        url: "countries"
+      }).then(response => {
+        this.countries = response;
       });
     }
   }

@@ -16,43 +16,6 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <!-- <v-col cols="12" md="8" v-if="storeData.cash_registers">
-				<v-card>
-					<v-card-title>Cash Registers</v-card-title>
-					<v-card-text>
-						<v-simple-table dense>
-							<template v-slot:default>
-								<thead>
-									<tr>
-										<th class="text-left">Name</th>
-										<th class="text-left">Barcode</th>
-										<th class="text-left">Pos terminal</th>
-										<th class="text-left">Printer</th>
-										<th class="text-left">Created by</th>
-										<th class="text-left">Created at</th>
-										<th class="text-left">Updated at</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr v-for="cash_register in storeData.cash_registers" :key="cash_register.id">
-										<td>{{ cash_register.name }}</td>
-										<td>{{ cash_register.barcode }}</td>
-										<td>{{ cash_register.pos_terminal }}</td>
-										<td>{{ cash_register.printer }}</td>
-										<td>{{ cash_register.user_id }}</td>
-										<td>{{ cash_register.created_at }}</td>
-										<td>{{ cash_register.updated_at }}</td>
-									</tr>
-								</tbody>
-							</template>
-						</v-simple-table>
-					</v-card-text>
-				</v-card>
-			</v-col>
-			<v-col cols="12" md="8" v-else>
-				<v-card-title>Cash Registers</v-card-title>
-				<v-card-text>There are no cash register assigned to this store</v-card-text>
-			</v-col>-->
     </v-row>
     <v-row v-else>
       <v-col cols="12" align="center" justify="center">
@@ -70,7 +33,7 @@ import { mapActions } from "vuex";
 
 export default {
   props: {
-    model: Number
+    model: Object
   },
   data() {
     return {
@@ -79,19 +42,15 @@ export default {
     };
   },
   mounted() {
-    if (this.model)
-      this.getOne({
-        model: "stores",
-        data: {
-          id: this.model.id
-        }
+    if (this.$props.model)
+      this.request({
+        method: "get",
+        url: `stores/get/${this.$props.model.id}`
       }).then(result => {
         this.store = result;
-        this.getOne({
-          model: "users",
-          data: {
-            id: this.storeData.user_id
-          }
+        this.request({
+          method: "get",
+          url: `users/get/${this.storeData.user_id}`
         }).then(response => {
           this.user = response;
         });
@@ -103,9 +62,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions({
-      getOne: "getOne"
-    })
+    ...mapActions("requests", ["request"])
   }
 };
 </script>

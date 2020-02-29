@@ -2,11 +2,7 @@
   <ValidationObserver v-slot="{ invalid }">
     <v-form @submit="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
-        <ValidationProvider
-          rules="required|max:191"
-          v-slot="{ errors, valid }"
-          name="Name"
-        >
+        <ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Name">
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.name"
@@ -36,11 +32,7 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider
-          rules="required|max:191"
-          v-slot="{ errors, valid }"
-          name="Street"
-        >
+        <ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Street">
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.street"
@@ -50,11 +42,7 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider
-          rules="required|max:191"
-          v-slot="{ errors, valid }"
-          name="Postal code"
-        >
+        <ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Postal code">
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.postcode"
@@ -64,11 +52,7 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider
-          rules="required|max:191"
-          v-slot="{ errors, valid }"
-          name="City"
-        >
+        <ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="City">
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.city"
@@ -78,11 +62,7 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
-          name="Companies"
-        >
+        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Companies">
           <v-select
             :readonly="$props.readonly"
             v-model="formFields.company_id"
@@ -95,11 +75,7 @@
             :success="valid"
           ></v-select>
         </ValidationProvider>
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
-          name="Taxes"
-        >
+        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Taxes">
           <v-select
             :readonly="$props.readonly"
             v-model="formFields.tax_id"
@@ -113,11 +89,7 @@
           ></v-select>
         </ValidationProvider>
         <v-row justify="space-between">
-          <v-checkbox
-            v-model="formFields.active"
-            label="Active"
-            :readonly="$props.readonly"
-          ></v-checkbox>
+          <v-checkbox v-model="formFields.active" label="Active" :readonly="$props.readonly"></v-checkbox>
           <v-checkbox
             v-model="formFields.is_phone_center"
             label="Phone center"
@@ -134,8 +106,7 @@
               :loading="loading"
               :disabled="invalid || loading"
               color="secondary"
-              >submit
-            </v-btn>
+            >submit</v-btn>
             <v-btn v-if="!model" @click="clear" color="orange">clear</v-btn>
           </v-col>
         </v-row>
@@ -193,42 +164,54 @@ export default {
     }
   },
   methods: {
-    ...mapActions({
-      getAll: "getAll",
-      create: "create"
-    }),
+    ...mapActions("requests", ["request"]),
 
     submit() {
       this.loading = true;
-      let payload = {
-        model: "stores",
-        data: { ...this.formFields }
-      };
-      this.create(payload)
-        .then(() => {
-          this.$emit("submit", {
-            action: "paginate",
-            notification: {
-              msg: "Store added successfully",
-              type: "success"
-            }
-          });
+
+      if (this.$props.model) {
+        this.request({
+          method: "patch",
+          url: "stores/update",
+          data: { ...this.formFields }
         })
-        .finally(() => {
-          this.clear();
-          this.loading = false;
-        });
+          .then(() => {
+            this.clear();
+            this.$emit("submit", {
+              action: "paginate"
+            });
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      } else {
+        this.request({
+          method: "post",
+          url: "stores/create",
+          data: { ...this.formFields }
+        })
+          .then(() => {
+            this.clear();
+            this.$emit("submit", {
+              action: "paginate"
+            });
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      }
     },
     clear() {
       this.formFields = this.defaultValues;
     },
     getAllTaxes() {
       this.loading = true;
-      this.getAll({
-        model: "taxes"
+      this.request({
+        method: "get",
+        url: "taxes"
       })
         .then(response => {
-          this.taxes = response;
+          this.taxes = response.data;
         })
         .finally(() => {
           this.loading = false;
@@ -236,11 +219,12 @@ export default {
     },
     getAllCompanies() {
       this.loading = true;
-      this.getAll({
-        model: "companies"
+      this.request({
+        method: "get",
+        url: "companies"
       })
         .then(response => {
-          this.companies = response;
+          this.companies = response.data;
         })
         .finally(() => {
           this.loading = false;

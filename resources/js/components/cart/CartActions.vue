@@ -9,8 +9,7 @@
       class="my-2"
       @click.stop="setCheckoutDialog(true)"
       :disabled="disabled || !isValidCheckout"
-      >Checkout
-    </v-btn>
+    >Checkout</v-btn>
 
     <v-divider />
 
@@ -31,8 +30,7 @@
               :value="cartsOnHoldSize > 0 ? true : false"
               color="deep-orange"
               :content="cartsOnHoldSize"
-            >
-            </v-badge>
+            ></v-badge>
           </v-btn>
         </template>
         <span>
@@ -165,12 +163,13 @@ export default {
       "setCheckoutDialog",
       "cart_products"
     ]),
-    ...mapActions(["getAll", "create"]),
+    ...mapActions("requests", ["request"]),
     ...mapActions("cart", ["submitOrder"]),
 
     holdCart() {
       let payload = {
-        model: "carts",
+        method: "post",
+        url: "carts/create",
         data: {
           cash_register_id: this.$store.state.cashRegister.id,
           cart: {
@@ -186,7 +185,7 @@ export default {
           total_price: this.order_total
         }
       };
-      this.create(payload).then(() => {
+      this.request(payload).then(() => {
         this.getCartsOnHoldSize();
         this.resetState();
         // @TODO move notification to backend
@@ -201,10 +200,11 @@ export default {
     },
     getCartsOnHoldSize() {
       let payload = {
-        model: "carts"
+        method: "get",
+        url: "carts"
       };
-      this.getAll(payload).then(response => {
-        this.cartsOnHoldSize = _.size(response);
+      this.request(payload).then(response => {
+        this.cartsOnHoldSize = _.size(response.data);
       });
     }
   }

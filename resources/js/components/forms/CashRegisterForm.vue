@@ -2,11 +2,7 @@
   <ValidationObserver v-slot="{ invalid }">
     <v-form @submit.prevent="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
-        <ValidationProvider
-          rules="required|max:191"
-          v-slot="{ errors, valid }"
-          name="Name"
-        >
+        <ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Name">
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.name"
@@ -16,11 +12,7 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
-          name="Stores"
-        >
+        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Stores">
           <v-select
             :readonly="$props.readonly"
             v-model="formFields.store_id"
@@ -33,7 +25,41 @@
             :success="valid"
           ></v-select>
         </ValidationProvider>
-        <v-checkbox v-model="formFields.active" label="Active"></v-checkbox>
+        <ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Barcode">
+          <v-text-field
+            :readonly="$props.readonly"
+            v-model="formFields.barcode"
+            label="Barcode"
+            :disabled="loading"
+            :error-messages="errors"
+            :success="valid"
+          ></v-text-field>
+        </ValidationProvider>
+        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Pos Terminal IP">
+          <v-text-field
+            :readonly="$props.readonly"
+            v-model="formFields.pos_terminal_ip"
+            label="Pos Terminal IP"
+            :disabled="loading"
+            :error-messages="errors"
+            :success="valid"
+          ></v-text-field>
+        </ValidationProvider>
+        <ValidationProvider
+          rules="required|max:191"
+          v-slot="{ errors, valid }"
+          name="Pos terminal port"
+        >
+          <v-text-field
+            :readonly="$props.readonly"
+            v-model="formFields.pos_terminal_port"
+            label="Pos terminal port"
+            :disabled="loading"
+            :error-messages="errors"
+            :success="valid"
+          ></v-text-field>
+        </ValidationProvider>
+        <v-checkbox :readonly="$props.readonly" v-model="formFields.active" label="Active"></v-checkbox>
       </v-container>
       <v-container>
         <v-row v-if="!$props.readonly">
@@ -44,8 +70,7 @@
               :loading="loading"
               :disabled="invalid || loading"
               color="secondary"
-              >submit</v-btn
-            >
+            >submit</v-btn>
             <v-btn v-if="!model" @click="clear" color="orange">clear</v-btn>
           </v-col>
         </v-row>
@@ -68,7 +93,10 @@ export default {
       formFields: {
         name: null,
         store_id: null,
-        active: true
+        active: true,
+        barcode: null,
+        pos_terminal_ip: null,
+        pos_terminal_port: null
       },
       stores: []
     };
@@ -83,41 +111,54 @@ export default {
     }
   },
   methods: {
-    ...mapActions({
-      getAll: "getAll",
-      create: "create"
-    }),
+    ...mapActions("requests", ["request"]),
+
     submit() {
       this.loading = true;
-      let payload = {
-        model: "cash-registers",
-        data: { ...this.formFields }
-      };
-      this.create(payload)
-        .then(() => {
-          this.$emit("submit", {
-            action: "paginate",
-            notification: {
-              msg: "Cash Register added successfully",
-              type: "success"
-            }
-          });
+
+      if (this.$props.model) {
+        this.request({
+          method: "patch",
+          url: "cash-registers/update",
+          data: { ...this.formFields }
         })
-        .finally(() => {
-          this.clear();
-          this.loading = false;
-        });
+          .then(() => {
+            this.clear();
+            this.$emit("submit", {
+              action: "paginate"
+            });
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      } else {
+        this.request({
+          method: "post",
+          url: "cash-registers/create",
+          data: { ...this.formFields }
+        })
+          .then(() => {
+            this.clear();
+            this.$emit("submit", {
+              action: "paginate"
+            });
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      }
     },
     clear() {
       this.formFields = { ...this.defaultValues };
     },
     getAllStores() {
       this.loading = true;
-      this.getAll({
-        model: "stores"
+      this.request({
+        method: "get",
+        url: "stores"
       })
         .then(response => {
-          this.stores = response;
+          this.stores = response.data;
         })
         .finally(() => {
           this.loading = false;

@@ -63,7 +63,6 @@ export default {
   },
 
   methods: {
-    ...mapActions(["getOne"]),
     ...mapActions("requests", ["request"]),
 
     confirmation(event) {
@@ -75,10 +74,11 @@ export default {
     },
     getCartsOnHold() {
       let payload = {
-        model: "carts"
+        method: "get",
+        url: "carts"
       };
-      this.$store.dispatch("getAll", payload).then(response => {
-        this.cartsOnHold = response;
+      this.request(payload).then(response => {
+        this.cartsOnHold = response.data;
       });
     },
     close() {
@@ -101,11 +101,9 @@ export default {
       this.$store.state.cart.discount_type = cart.discount_type;
       this.$store.state.cart.discount_amount = cart.discount_amount;
 
-      this.getOne({
-        model: "customers",
-        data: {
-          id: JSON.parse(this.selectedCart.cart).customer_id
-        },
+      this.request({
+        method: "get",
+        url: `customers/get/${JSON.parse(this.selectedCart.cart).customer_id}`,
         mutation: "cart/setCustomer"
       }).then(response => {
         this.removeCart();

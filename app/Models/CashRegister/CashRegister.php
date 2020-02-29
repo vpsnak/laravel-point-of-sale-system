@@ -15,8 +15,8 @@ class CashRegister extends Model
         'store_id',
         'user_id',
         'barcode',
-        'pos_terminal',
-        'printer',
+        'pos_terminal_ip',
+        'pos_terminal_port',
     ];
 
     protected $casts = [

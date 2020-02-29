@@ -102,12 +102,10 @@ export default {
     };
   },
   mounted() {
-    if (this.model)
-      this.getOne({
-        model: "cash-registers",
-        data: {
-          id: this.model.id
-        }
+    if (this.$props.model)
+      this.request({
+        method: "get",
+        url: `cash-registers/get/${this.$props.model.id}`
       }).then(result => {
         this.cashRegister = result;
       });
@@ -118,9 +116,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions({
-      getOne: "getOne"
-    })
+    ...mapActions("requests", ["request"])
   }
 };
 </script>

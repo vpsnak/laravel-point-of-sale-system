@@ -74,9 +74,7 @@
             </div>
             <div class="subtitle-1">
               Change Total:
-              {{
-                parseFloat(cashRegisterReportsData.change_total).toFixed(2)
-              }}
+              {{ parseFloat(cashRegisterReportsData.change_total).toFixed(2) }}
               $
             </div>
             <div class="subtitle-1">
@@ -85,9 +83,7 @@
             </div>
             <div class="subtitle-1">
               Gift Card tax:
-              {{
-                parseFloat(cashRegisterReportsData.gift_card_tax).toFixed(2)
-              }}
+              {{ parseFloat(cashRegisterReportsData.gift_card_tax).toFixed(2) }}
               $
             </div>
             <div class="subtitle-1">
@@ -185,53 +181,42 @@ export default {
       user: null
     };
   },
+
   mounted() {
     if (this.$props.model) {
-      this.getOne({
-        model: "cash-register-reports",
-        data: {
-          id: this.$props.model.id
-        }
+      this.request({
+        method: "get",
+        url: `cash-register-reports/get/${this.$props.model.id}`
       }).then(result => {
         this.cashRegisterReports = result;
-        this.getOne({
-          model: "users",
-          data: {
-            id: this.cashRegisterReportsData.user_id
-          }
+        this.request({
+          method: "get",
+          url: `users/get/${this.cashRegisterReportsData.user_id}`
         }).then(response => {
           this.user = response;
         });
-        this.getOne({
-          model: "cash-registers",
-          data: {
-            id: this.cashRegisterReportsData.cash_register_id
-          }
+        this.request({
+          method: "get",
+          url: `cash-registers/get/${this.cashRegisterReportsData.cash_register_id}`
         }).then(response => {
           this.cash_register = response;
         });
       });
     } else {
-      this.getOne({
-        model: "cash-register-reports/check",
-        data: {
-          id: this.$store.state.cashRegister.id
-        }
+      this.request({
+        method: "get",
+        url: `cash-register-reports/check/get/${this.$store.state.cashRegister.id}`
       }).then(result => {
         this.cashRegisterReports = result;
-        this.getOne({
-          model: "users",
-          data: {
-            id: this.cashRegisterReportsData.user_id
-          }
+        this.request({
+          method: "get",
+          url: `users/get/${this.cashRegisterReportsData.user_id}`
         }).then(response => {
           this.user = response;
         });
-        this.getOne({
-          model: "cash-registers",
-          data: {
-            id: this.cashRegisterReportsData.cash_register_id
-          }
+        this.request({
+          method: "get",
+          url: `cash-registers/get/${this.cashRegisterReportsData.cash_register_id}`
         }).then(response => {
           this.cash_register = response;
         });
@@ -244,9 +229,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions({
-      getOne: "getOne"
-    })
+    ...mapActions("requests", ["request"])
   }
 };
 </script>

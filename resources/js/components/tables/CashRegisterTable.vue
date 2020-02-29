@@ -1,14 +1,10 @@
 <template>
   <data-table v-if="render">
-    <template v-slot:item.active="{ item }">
-      {{ item.active ? "Yes" : "No" }}
-    </template>
-    <template v-slot:item.is_open="{ item }">
-      {{ item.is_open ? "Yes" : "No" }}
-    </template>
-    <template v-slot:open_session_user.name="{ item }">
-      {{ item.open_session_user ? item.open_session_user.name : "" }}
-    </template>
+    <template v-slot:item.active="{ item }">{{ item.active ? "Yes" : "No" }}</template>
+    <template v-slot:item.is_open="{ item }">{{ item.is_open ? "Yes" : "No" }}</template>
+    <template
+      v-slot:open_session_user.name="{ item }"
+    >{{ item.open_session_user ? item.open_session_user.name : "" }}</template>
 
     <template v-slot:item.actions="{ item }">
       <v-tooltip bottom>

@@ -36,8 +36,8 @@ class CustomerController extends Controller
             'comment' => 'nullable|string',
             'phone' => 'nullable|string'
         ]);
-
-        $customer = Customer::firstOrFail($validatedData['id']);
+        
+        $customer = Customer::findOrFail($validatedData['id']);
 
         if ($validatedData['no_tax'] && empty($validatedData['file'])) {
 
@@ -45,6 +45,15 @@ class CustomerController extends Controller
                 return response(['errors' => ['Zero Tax' => 'Certification file is required when zero tax is enabled']], 422);
             }
         }
+
+        $customer->fill($validatedData);
+        $customer->save();
+        
+        return response(['notification' => [
+            'msg' => ["Customer {$customer->name} updated successfully!"],
+            'type' => 'success'
+        ]]);
+
     }
 
     public function create(Request $request)
@@ -68,8 +77,8 @@ class CustomerController extends Controller
             'address.street' => 'required|string',
             'address.street2' => 'nullable|string',
             'address.city' => 'required|string',
-            'address.country_id' => 'required|exists:countries,country_id',
-            'address.region' => 'required|exists:regions,region_id',
+            'address.country_id' => 'required|exists:countries,id',
+            'address.region_id' => 'required|exists:regions,id',
             'address.postcode' => 'required|string',
             'address.phone' => 'required|string',
             'address.company' => 'nullable|string',

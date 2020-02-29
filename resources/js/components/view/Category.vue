@@ -35,7 +35,7 @@ import { mapActions } from "vuex";
 
 export default {
   props: {
-    model: Number
+    model: Object
   },
   data() {
     return {
@@ -43,12 +43,10 @@ export default {
     };
   },
   mounted() {
-    if (this.model)
-      this.getOne({
-        model: "categories",
-        data: {
-          id: this.model.id
-        }
+    if (this.$props.model)
+      this.request({
+        method: "get",
+        url: `categories/get/${this.$props.model.id}`
       }).then(result => {
         this.category = result;
       });
@@ -59,9 +57,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions({
-      getOne: "getOne"
-    })
+    ...mapActions("requests", ["request"])
   }
 };
 </script>

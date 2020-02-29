@@ -15,8 +15,13 @@ class StorePickupController extends Controller
             'street1' => 'nullable|string',
             'region_id' => 'required|exists:regions,id',
         ]);
+        
+        $storePickup = StorePickup::create($validatedData);
 
-        return response($this->model::store($validatedData), 201);
+        return response(['notification' => [
+            'msg' => ["Store pickup {$storePickup->name} created successfully!"],
+            'type' => 'success'
+        ]]);
     }
 
     public function update(Request $request)
@@ -54,5 +59,10 @@ class StorePickupController extends Controller
         $query = StorePickup::query()->search($columns, $validatedData['keyword']);
 
         return response($query->paginate());
+    }
+
+    public function getOne($model)
+    {
+        return response(StorePickup::findOrFail($model));
     }
 }

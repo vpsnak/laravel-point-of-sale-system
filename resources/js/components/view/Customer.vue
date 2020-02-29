@@ -52,7 +52,7 @@ import { mapActions } from "vuex";
 
 export default {
   props: {
-    model: Number
+    model: Object
   },
   data() {
     return {
@@ -60,12 +60,10 @@ export default {
     };
   },
   mounted() {
-    if (this.model)
-      this.getOne({
-        model: "customers",
-        data: {
-          id: this.model.id
-        }
+    if (this.$props.model)
+      this.request({
+        method: "get",
+        url: `customers/get/${this.$props.model.id}`
       }).then(result => {
         this.customer = result;
       });
@@ -85,9 +83,7 @@ export default {
         }
       });
     },
-    ...mapActions({
-      getOne: "getOne"
-    })
+    ...mapActions("requests", ["request"])
   },
   beforeDestroy() {
     this.$off("submit");

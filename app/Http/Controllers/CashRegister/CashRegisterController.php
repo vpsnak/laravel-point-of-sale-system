@@ -12,7 +12,7 @@ class CashRegisterController extends Controller
         return response(CashRegister::paginate());
     }
 
-    public function get(CashRegister $model)
+    public function getOne(CashRegister $model)
     {
         return response($model);
     }
@@ -22,12 +22,18 @@ class CashRegisterController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string',
             'store_id' => 'required|exists:stores,id',
-            'active' => 'required|boolean'
+            'active' => 'required|boolean',
+            'barcode' => 'string',
+            'pos_terminal_ip' => 'required|ip',
+            'pos_terminal_port' => 'required|string'
+
         ]);
         $validatedData['user_id'] = auth()->user()->id;
-
-        return response(CashRegister::create($validatedData), 201);
-    }
+        
+        return response(['notification' => [
+            'msg' => ["Cash register {$cashRegister->name} created successfully!"],
+            'type' => 'success'
+        ]]);    }
 
     public function update(Request $request)
     {
@@ -35,16 +41,32 @@ class CashRegisterController extends Controller
             'id' => 'nullable|exists:cash_registers,id',
             'name' => 'required|string',
             'store_id' => 'required|exists:stores,id',
-            'active' => 'required|boolean'
+            'active' => 'required|boolean',
+            'barcode' => 'string',
+            'pos_terminal_ip' => 'required|ip',
+            'pos_terminal_port' => 'required|string'
         ]);
         $validatedData['user_id'] = auth()->user()->id;
         $cashRegister = CashRegister::findOrFail($validatedData['id']);
+        
+        $cashRegister->fill($validatedData);
+        $cashRegister->save();
+        
+        return response(['notification' => [
+            'msg' => ["Cash register {$cashRegister->name} updated successfully!"],
+            'type' => 'success'
+        ]]);
+    }
 
-        return response([
-            'data' => $cashRegister,
-            'notification' => [
-                'msg' => "Cash register: {$cashRegister->name} updated successfully!"
-            ]
+      public function search(Request $request)
+    {
+        $validatedData = $request->validate([
+            'keyword' => 'required|string'
         ]);
+
+        $columns = ['name', 'barcode'];
+        $query = CashRegister::query()->search($columns, $validatedData['keyword']);
+
+        return response($query->paginate());
     }
 }

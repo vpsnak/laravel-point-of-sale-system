@@ -13,9 +13,6 @@
               Country id: {{ storePickupData.country_id }}
             </div>
             <div class="subtitle-1">
-              Region : {{ storePickupData.region.name }}
-            </div>
-            <div class="subtitle-1">
               Created at: {{ storePickupData.created_at }}
             </div>
             <div class="subtitle-1">
@@ -49,12 +46,10 @@ export default {
     };
   },
   mounted() {
-    if (this.model)
-      this.getOne({
-        model: "store-pickups",
-        data: {
-          id: this.model.id
-        }
+    if (this.$props.model)
+      this.request({
+        method: "get",
+        url: `store-pickups/get/${this.$props.model.id}`
       }).then(result => {
         this.storePickup = result;
       });
@@ -65,9 +60,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions({
-      getOne: "getOne"
-    })
+    ...mapActions("requests", ["request"])
   }
 };
 </script>
