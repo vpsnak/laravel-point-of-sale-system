@@ -98,6 +98,7 @@ Route::get('/refund-types', 'PaymentTypeController@refundTypes')->middleware('sc
 // cash-registers
 Route::get('/cash-registers', 'CashRegisterController@all')->middleware('scope:admin,store_manager,cashier');
 Route::get('/cash-registers/get/{model}', 'CashRegisterController@getOne')->middleware('scope:admin,store_manager,cashier');
+Route::patch('/cash-registers/update', 'CashRegisterController@update')->middleware('scope:admin,store_manager,cashier');
 Route::post('/cash-registers/create', 'CashRegisterController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/cash-registers/search', 'CashRegisterController@search')->middleware('scope:admin,store_manager,cashier');
 
