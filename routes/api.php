@@ -134,6 +134,7 @@ Route::get('/countries/{model}/regions', 'CountryController@regions')->middlewar
 // store-pickups
 Route::get('/store-pickups', 'StorePickupController@all')->middleware('scope:admin,store_manager,cashier');
 Route::get('/store-pickups/get/{model}', 'StorePickupController@getOne')->middleware('scope:admin,store_manager,cashier');
+Route::patch('/store-pickups/update', 'StorePickupController@update')->middleware('scope:admin,store_manager,cashier');
 Route::post('/store-pickups/create', 'StorePickupController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/store-pickups/search', 'StorePickupController@search')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/store-pickups/{model}', 'StorePickupController@delete')->middleware('scope:admin,store_manager,cashier');
