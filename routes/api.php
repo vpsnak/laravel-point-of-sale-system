@@ -52,7 +52,7 @@ Route::delete('/payments/{payment}', 'PaymentController@refundPayment')->middlew
 Route::get('/customers', 'CustomerController@all')->middleware('scope:admin,store_manager,cashier');
 Route::get('/customers/get/{model}', 'CustomerController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::post('/customers/create', 'CustomerController@create')->middleware('scope:admin,store_manager,cashier');
-Route::post('/customers/update', 'CustomerController@update')->middleware('scope:admin,store_manager,cashier');
+Route::patch('/customers/update', 'CustomerController@update')->middleware('scope:admin,store_manager,cashier');
 Route::post('/customers/search', 'CustomerController@search')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/customers/{model}', 'CustomerController@delete')->middleware('scope:admin,store_manager,cashier');
 

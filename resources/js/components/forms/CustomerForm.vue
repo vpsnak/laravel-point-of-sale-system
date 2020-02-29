@@ -2,11 +2,7 @@
   <ValidationObserver v-slot="{ invalid }">
     <v-form @submit.prevent="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
-        <ValidationProvider
-          rules="required|max:100"
-          v-slot="{ errors, valid }"
-          name="First name"
-        >
+        <ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="First name">
           <v-text-field
             v-model="formFields.first_name"
             label="First name"
@@ -15,11 +11,7 @@
             :readonly="$props.readonly"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider
-          rules="required|max:100"
-          v-slot="{ errors, valid }"
-          name="Last Name"
-        >
+        <ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Last Name">
           <v-text-field
             v-model="formFields.last_name"
             label="Last name"
@@ -28,11 +20,7 @@
             :readonly="$props.readonly"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider
-          rules="required|email|max:191"
-          v-slot="{ errors, valid }"
-          name="Email"
-        >
+        <ValidationProvider rules="required|email|max:191" v-slot="{ errors, valid }" name="Email">
           <v-text-field
             v-model="formFields.email"
             label="Email"
@@ -71,11 +59,7 @@
             ></v-checkbox>
           </ValidationProvider>
           <ValidationProvider vid="no_tax">
-            <v-checkbox
-              v-model="formFields.no_tax"
-              label="Zero tax"
-              :readonly="$props.readonly"
-            ></v-checkbox>
+            <v-checkbox v-model="formFields.no_tax" label="Zero tax" :readonly="$props.readonly"></v-checkbox>
           </ValidationProvider>
         </v-row>
 
@@ -140,16 +124,10 @@
               v-if="formFields.no_tax_file"
               :href="formFields.no_tax_file"
               target="_blank"
-            >
-              View uploaded file
-            </v-btn>
+            >View uploaded file</v-btn>
           </v-col>
         </v-row>
-        <ValidationProvider
-          rules="max:65535"
-          v-slot="{ errors, valid }"
-          name="Comment"
-        >
+        <ValidationProvider rules="max:65535" v-slot="{ errors, valid }" name="Comment">
           <v-textarea
             no-resize
             rows="3"
@@ -170,8 +148,7 @@
               type="submit"
               :loading="loading"
               :disabled="invalid || loading"
-              >save changes
-            </v-btn>
+            >save changes</v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -213,6 +190,8 @@ export default {
     }
   },
   methods: {
+    ...mapActions("requests", ["request"]),
+
     makeFormData() {
       let data = new FormData();
       data.append("id", this.model.id);
@@ -248,21 +227,37 @@ export default {
       if (payload.data.file && payload.data.no_tax) {
         payload.data = this.makeFormData();
       }
-
-      this.create(payload)
-        .then(response => {
-          this.$emit("submit", {
-            data: { customer: response },
-            action: "paginate",
-            notification: {
-              msg: "Customer added successfully",
-              type: "success"
-            }
-          });
+      if (this.$props.model) {
+        this.request({
+          method: "patch",
+          url: "customers/update",
+          data: { ...this.formFields }
         })
-        .finally(() => {
-          this.loading = false;
-        });
+          .then(() => {
+            this.clear();
+            this.$emit("submit", {
+              action: "paginate"
+            });
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      } else {
+        this.request({
+          method: "post",
+          url: "customers/create",
+          data: { ...this.formFields }
+        })
+          .then(() => {
+            this.clear();
+            this.$emit("submit", {
+              action: "paginate"
+            });
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      }
     },
     clear() {
       this.formFields = { ...this.defaultValues };

@@ -2,11 +2,7 @@
   <ValidationObserver v-slot="{ invalid }">
     <v-form @submit.prevent="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
-        <ValidationProvider
-          rules="required|max:191"
-          v-slot="{ errors, valid }"
-          name="Name"
-        >
+        <ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Name">
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.name"
@@ -15,11 +11,7 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider
-          rules="required|max:191"
-          v-slot="{ errors, valid }"
-          name="Sku"
-        >
+        <ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Sku">
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.sku"
@@ -28,11 +20,7 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider
-          rules="max:191"
-          v-slot="{ errors, valid }"
-          name="Url"
-        >
+        <ValidationProvider rules="max:191" v-slot="{ errors, valid }" name="Url">
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.url"
@@ -41,11 +29,7 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider
-          rules="max:191"
-          v-slot="{ errors, valid }"
-          name="Photo url"
-        >
+        <ValidationProvider rules="max:191" v-slot="{ errors, valid }" name="Photo url">
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.photo_url"
@@ -55,11 +39,7 @@
           ></v-text-field>
         </ValidationProvider>
 
-        <ValidationProvider
-          rules="max:65535"
-          v-slot="{ errors, valid }"
-          name="Description"
-        >
+        <ValidationProvider rules="max:65535" v-slot="{ errors, valid }" name="Description">
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.description"
@@ -115,11 +95,7 @@
               <v-card-title class="blue-grey pa-0" @click.stop>
                 <h6 class="px-2">{{ store.name }}</h6>
               </v-card-title>
-              <ValidationProvider
-                rules="max:10"
-                v-slot="{ errors, valid }"
-                name="Qty"
-              >
+              <ValidationProvider rules="max:10" v-slot="{ errors, valid }" name="Qty">
                 <v-text-field
                   :readonly="$props.readonly"
                   type="number"
@@ -144,8 +120,7 @@
               :loading="loading"
               :disabled="invalid || loading"
               color="secondary"
-              >submit</v-btn
-            >
+            >submit</v-btn>
             <v-btn v-if="!model" @click="clear" color="orange">clear</v-btn>
           </v-col>
         </v-row>
@@ -193,7 +168,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["create"]),
     ...mapActions("requests", ["request"]),
 
     submit() {
