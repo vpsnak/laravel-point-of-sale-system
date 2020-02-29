@@ -6,7 +6,7 @@ use App\Coupon;
 use App\Customer;
 use App\ElavonApiPayment;
 use App\Http\Controllers\ElavonSdkPaymentController;
-use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderStatusController;
 use App\Giftcard;
 use App\Helper\Price;
 use App\Order;
@@ -86,8 +86,8 @@ class PaymentController extends Controller
         $payment->status = 'approved';
         $payment->save();
         $payment->load(['created_by', 'paymentType', 'order']);
-        $orderController = new OrderController($payment->order);
-        $orderStatus = $orderController->updateOrderStatus($payment);
+        $orderStatusController = new OrderStatusController($payment->order);
+        $orderStatus = $orderStatusController->updateOrderStatus($payment);
         $orderStatus['payment'] = $payment;
 
         return response($orderStatus, 201);
@@ -328,8 +328,8 @@ class PaymentController extends Controller
         $refund->save();
         $refund = $refund->load(['created_by', 'paymentType', 'order']);
 
-        $orderController = new OrderController($refund->order);
-        $orderStatus = $orderController->updateOrderStatus($refund, true);
+        $orderStatusController = new OrderStatusController($refund->order);
+        $orderStatus = $orderStatusController->updateOrderStatus($refund, true);
         $orderStatus['notification'] = [
             'msg' => ['Refund completed successfully!'],
             'type' => 'success'
@@ -389,12 +389,13 @@ class PaymentController extends Controller
         }
 
         if ($setOrderStatus) {
+            $orderStatusController = new OrderStatusController($payment->order);
+
             if (is_array($result) && array_key_exists('errors', $result)) {
                 $refund = $this->createLinkedRefund($payment, false);
                 $refund->load(['created_by', 'paymentType', 'order']);
 
-                $orderController = new OrderController($payment->order);
-                $orderStatus = $orderController->updateOrderStatus($refund, true);
+                $orderStatus = $orderStatusController->updateOrderStatus($refund, true);
                 $orderStatus['errors'] = $result['errors'];
                 $orderStatus['refund'] = $refund->refresh();
 
@@ -403,8 +404,7 @@ class PaymentController extends Controller
                 $refund = $this->createLinkedRefund($payment, true);
                 $refund->load(['created_by', 'paymentType', 'order']);
 
-                $orderController = new OrderController($payment->order);
-                $orderStatus = $orderController->updateOrderStatus($refund, true);
+                $orderStatus = $orderStatusController->updateOrderStatus($refund, true);
                 $orderStatus['refunded_payment_id'] = $payment->id;
                 $orderStatus['notification'] = [
                     'msg' => ['Refund completed successfully!'],

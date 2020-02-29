@@ -20,7 +20,7 @@ class CreateOrderStatusTable extends Migration
             $table->unsignedTinyInteger('status_id');
             $table->unsignedBigInteger('user_id')->nullable();
 
-            $table->timestampTz('processed_on');
+            $table->timestampTz('created_at');
         });
     }
 

@@ -11,7 +11,11 @@
         <orderMethodChip :method="item.method" />
       </template>
       <template v-slot:item.status="{ item }">
-        <orderStatusChip :status="item.status" />
+        <orderStatusChip
+          :latestStatus="item.status"
+          :orderId="item.id"
+          :menu="true"
+        />
       </template>
       <template v-slot:item.mas_order="{ item }">
         <masStatusChip :mas_order="item.mas_order" />

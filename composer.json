@@ -10,6 +10,7 @@
   "require": {
     "php": "^7.2",
     "ext-json": "*",
+    "ajcastro/eager-load-pivot-relations": "^0.2.2",
     "codeitnowin/barcode": "^3.0",
     "fideloper/proxy": "^4.0",
     "giberti/ext-oauth-shim": "^1.0",

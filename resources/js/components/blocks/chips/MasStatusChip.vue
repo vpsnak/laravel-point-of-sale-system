@@ -19,37 +19,45 @@ export default {
 
   computed: {
     parseMasStatus() {
-      switch (this.$props.mas_order.status) {
-        case "canceled":
-          return {
-            name: "Canceled",
-            icon: "mdi-cancel",
-            color: "red"
-          };
-        case "queued":
-          return {
-            name: "In queue",
-            icon: "",
-            color: "deep-orange"
-          };
-        case "submitted":
-          return {
-            name: "Submitted",
-            icon: "",
-            color: "deep-orange"
-          };
-        case "complete":
-          return {
-            name: "Complete",
-            icon: "mdi-cancel",
-            color: "green"
-          };
-        default:
-          return {
-            name: "huh?",
-            icon: "mdi-file-question-outline",
-            color: null
-          };
+      if (this.$props.mas_order) {
+        switch (this.$props.mas_order.status) {
+          case "canceled":
+            return {
+              name: "Canceled",
+              icon: "mdi-cancel",
+              color: "red"
+            };
+          case "queued":
+            return {
+              name: "In queue",
+              icon: "",
+              color: "deep-orange"
+            };
+          case "submitted":
+            return {
+              name: "Submitted",
+              icon: "",
+              color: "deep-orange"
+            };
+          case "complete":
+            return {
+              name: "Complete",
+              icon: "mdi-cancel",
+              color: "green"
+            };
+          default:
+            return {
+              name: "huh?",
+              icon: "mdi-file-question-outline",
+              color: null
+            };
+        }
+      } else {
+        return {
+          name: "huh?",
+          icon: "mdi-file-question-outline",
+          color: null
+        };
       }
     }
   }

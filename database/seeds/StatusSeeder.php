@@ -70,7 +70,7 @@ class StatusSeeder extends Seeder
             ],
             [
                 'text' => 'Canceled',
-                'value' => 'cancel',
+                'value' => 'canceled',
                 'lock_order' => true,
                 'color' => 'error',
                 'icon' => 'mdi-close-circle-outline'

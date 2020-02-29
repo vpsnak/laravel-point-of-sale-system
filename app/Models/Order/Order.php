@@ -4,10 +4,14 @@ namespace App;
 
 use App\Helper\Price;
 use Illuminate\Database\Eloquent\Model;
+use AjCastro\EagerLoadPivotRelations\EagerLoadPivotTrait;
 
 class Order extends Model
 {
+    use EagerLoadPivotTrait;
+
     protected $appends = [
+        'status',
         'total',
         'total_without_tax',
         'total_paid',
@@ -21,7 +25,6 @@ class Order extends Model
         'customer_id',
         'store_id',
         'user_id',
-        'status',
         'items',
         'discount_type',
         'discount_amount',
@@ -222,7 +225,18 @@ class Order extends Model
     public function statuses()
     {
         return $this->belongsToMany(Status::class)
-            ->withPivot('processed_on', 'user_id')
-            ->using(OrderStatus::class);
+            ->using(OrderStatus::class)
+            ->withPivot('user_id')
+            ->withTimestamps(['created_at']);
+    }
+
+    public function processedBy()
+    {
+        return $this->hasOneThrough(User::class, OrderStatus::class);
+    }
+
+    public function getStatusAttribute()
+    {
+        return  $this->statuses()->latest()->first();
     }
 }

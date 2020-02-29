@@ -6,10 +6,14 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class OrderStatus extends Pivot
 {
-    // public $timestamps = ['processed_on'];
+    public $timestamps = ['created_at'];
 
     protected $with = [
         'processedBy'
+    ];
+
+    protected $casts = [
+        'created_at' => "datetime:m/d/Y H:i:s",
     ];
 
     public function processedBy()

@@ -35,11 +35,11 @@ class FetchMagentoOrder implements ShouldQueue
      */
     public function handle()
     {
+        // @TODO spase to create me to update se functions karkinos
         Order::unsetEventDispatcher();
         if (Order::where('magento_id', $this->order->entity_id)->exists()) {
             Order::where('magento_id', $this->order->entity_id)->update([
                 'customer_id' => Customer::where('magento_id', $this->order->customer_id)->first()->id ?? null,
-                'status' => $this->getOrderStatus($this->order->status),
                 'tax' => $this->order->tax_rate ?? 0,
                 'subtotal' => $this->order->subtotal,
                 'shipping_type' => 'eshop',
@@ -82,7 +82,6 @@ class FetchMagentoOrder implements ShouldQueue
             'customer_id' => Customer::where('magento_id', $this->order->customer_id)->first()->id ?? null,
             'store_id' => 1,
             'user_id' => 1,
-            'status' => $this->getOrderStatus($this->order->status),
             'tax' => $this->order->tax_rate ?? 0,
             'subtotal' => $this->order->subtotal,
             'change' => 0,

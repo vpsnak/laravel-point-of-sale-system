@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Address;
-use App\Payment;
 use App\Customer;
 use App\Giftcard;
 use App\Helper\Price;
 use App\Jobs\ProcessOrder;
-use App\MasOrder;
 use App\Order;
 use App\Status;
 use App\StorePickup;
@@ -67,13 +65,13 @@ class OrderController extends Controller
         $this->parseProducts();
 
         $this->order = Order::findOrFail($this->order_data['order_id']);
+
         $this->order->fill($this->order_data);
 
-        $this->order->save();
+        $orderStatusController = new OrderStatusController($this->order);
+        $orderStatusController->updateOrderStatus(null, true);
 
-        $this->updateOrderStatus(null, true);
-
-        ProcessOrder::dispatchNow($this->order);
+        // ProcessOrder::dispatchNow($this->order);
 
         return response(['notification' => [
             'msg' => ['Your changes in order items saved successfully!'],
@@ -111,11 +109,11 @@ class OrderController extends Controller
 
         $this->order = Order::findOrFail($this->order_data['order_id']);
         $this->order->fill($this->order_data);
-        $this->order->save();
 
-        $this->updateOrderStatus(null, true);
+        $orderStatusController = new OrderStatusController($this->order);
+        $orderStatusController->updateOrderStatus(null, true);
 
-        ProcessOrder::dispatchNow($this->order);
+        // ProcessOrder::dispatchNow($this->order);
 
         return response(['notification' => [
             'msg' => ['Your changes in order options saved successfully!'],
@@ -167,7 +165,7 @@ class OrderController extends Controller
 
         $this->order = Order::create($this->order_data);
         $submittedStatusId = Status::where('value', 'submitted')->firstOrFail('id');
-        $this->order->statuses()->attach($submittedStatusId, ['user_id' => $this->user->id, 'processed_on' => now()]);
+        $this->order->statuses()->attach($submittedStatusId, ['user_id' => $this->user->id]);
         // ProcessOrder::dispatchNow($this->order);
 
         return response([
@@ -358,56 +356,6 @@ class OrderController extends Controller
             ->orWhere('occasion', 'LIKE', "%{$this->order_data['keyword']}%")
             ->orWhere('location', 'LIKE', "%{$this->order_data['keyword']}%")
             ->paginate();
-    }
-
-    public function updateOrderStatus(Payment $payment = null, bool $refund = false)
-    {
-        $remaining = Price::numberPrecision($this->order->total - $this->order->total_paid);
-        $change = Price::numberPrecision($this->order->total_paid - $this->order->total);
-
-        if ($change < 0) {
-            $change = 0;
-        }
-
-        if ($remaining < 0) {
-            $remaining = 0;
-        }
-
-        if ($remaining > 0) {
-            if ($this->order->status !== 'pending_payment') {
-                $this->order->change = 0;
-                $this->order->status = 'pending_payment';
-            }
-        } else {
-            if (!$refund) {
-                $payment->amount = Price::numberPrecision($payment->amount - $change);
-                $payment->save();
-
-                if ($this->order->status !== 'paid') {
-                    $this->order->change = $change;
-                    $this->order->status = 'paid';
-                    MasOrder::create([
-                        'order_id' => $this->order->id,
-                        'status' => 'queued'
-                    ]);
-                }
-            } else {
-                if (empty($payment)) {
-                    $this->order->status = 'paid';
-                }
-                $this->order->change = $change;
-                $this->order->save();
-            }
-        }
-
-        $this->order->save();
-
-        $this->order = $this->order->refresh();
-        return [
-            'remaining' => $remaining,
-            'change' =>  $change,
-            'order_status' => $this->order->status
-        ];
     }
 
     public function rollbackPayments(Order $order)

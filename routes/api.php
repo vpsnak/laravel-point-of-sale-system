@@ -68,7 +68,8 @@ Route::delete('/addresses/{model}', 'AddressController@delete')->middleware('sco
 Route::get('/orders', 'OrderController@all')->middleware('scope:admin,store_manager,cashier');
 Route::get('/orders/get/{model}', 'OrderController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::get('/orders/{model}/payment-details', 'OrderAnalysisController@getPaymentDetails'); // @TODO ADD AUTH!!
-Route::get('/orders/{model}/mas-status', 'MasOrderController@getOrderDetails');
+Route::get('/orders/{model}/statuses', 'OrderStatusController@getOrderStatuses')->middleware('scope:admin,store_manager,cashier');
+Route::get('/orders/{model}/mas-status', 'MasOrderController@getOrderDetails'); // @TODO ADD AUTH!!
 Route::post('/orders/create', 'OrderController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/orders/update-items', 'OrderController@updateItems')->middleware('scope:admin,store_manager,cashier');
 Route::post('/orders/update-options', 'OrderController@updateOptions')->middleware('scope:admin,store_manager,cashier');

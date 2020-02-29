@@ -39,14 +39,14 @@ class ProcessOrder implements ShouldQueue
      */
     public function handle()
     {
-        if ($this->order->status === 'pending') {
+        if ($this->order->status->value === 'submitted') {
             foreach ($this->order->items as $item) {
                 $this->handleStock($item, 'remove');
             }
-        } else if ($this->order->status === 'paid') {
+        } else if ($this->order->status->value === 'paid') {
             $masOrderController = new MasOrderController();
             // $masOrderController->submitToMas($this->order);
-        } else if ($this->order->status === 'canceled') {
+        } else if ($this->order->status->value === 'canceled') {
             foreach ($this->order->items as $item) {
                 $this->handleStock($item, 'add');
             }
@@ -56,11 +56,7 @@ class ProcessOrder implements ShouldQueue
     public static function handleStock($item, $action)
     {
 
-        $product = Product::find($item['id']);
-        if (empty($product)) {
-            self::log('Empty Product');
-            return;
-        }
+        $product = Product::findOrFail($item['id']);
         switch ($action) {
             case 'remove':
                 $qty = $product->laravel_stock - $item['qty'];

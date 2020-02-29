@@ -33,7 +33,12 @@
           <storeChip :title="true" :menu="true" :store="order_store" />
         </v-col>
         <v-col :lg="4" :md="6" :cols="12" class="text-center">
-          <orderStatusChip :title="true" :status="order_status" />
+          <orderStatusChip
+            :menu="true"
+            :title="true"
+            :latestStatus="order_status"
+            :orderId="order_id"
+          />
         </v-col>
         <v-col :lg="4" :md="6" :cols="12" class="text-center">
           <masStatusChip :title="true" :mas_order="order_mas_order" />
@@ -87,6 +92,7 @@ export default {
   },
   computed: {
     ...mapState("cart", [
+      "order_id",
       "order_store",
       "order_created_by",
       "order_timestamp",
