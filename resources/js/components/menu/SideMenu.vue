@@ -6,6 +6,7 @@
         :key="menu_item.id"
         :to="menuAction(menu_item)"
         exact
+        :disabled="data_table.loading"
       >
         <v-list-item-icon>
           <v-icon>{{ menu_item.icon }}</v-icon>
@@ -28,6 +29,7 @@ import { mapState, mapMutations } from "vuex";
 export default {
   computed: {
     ...mapState("menu", ["visibility", "side_menu"]),
+    ...mapState("datatable", ["data_table"]),
 
     menuVisibility: {
       get() {

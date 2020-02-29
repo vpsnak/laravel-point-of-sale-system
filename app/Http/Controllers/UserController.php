@@ -10,12 +10,12 @@ class UserController extends Controller
 {
     public function all()
     {
-        return response(User::paginate());
+        return response(User::with('roles')->paginate());
     }
 
     public function getOne($model)
     {
-        return response(User::findOrFail($model));
+        return response(User::with('roles')->findOrFail($model));
     }
 
     public function login(Request $request)
@@ -46,7 +46,7 @@ class UserController extends Controller
                 'msg' => ["Welcome <b>{$user->name}</b>!"],
                 'type' => 'info'
             ],
-            'user' => $user,
+            'user' => $user->load('roles'),
             'token' => "Bearer $token"
         ]);
     }

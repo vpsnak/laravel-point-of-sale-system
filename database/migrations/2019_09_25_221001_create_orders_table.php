@@ -16,7 +16,6 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            $table->string('status')->nullable()->default('created');
             $table->enum('discount_type', ['none', 'flat', 'percentage'])->nullable()->default('none');
             $table->decimal('discount_amount', 10, 2)->nullable()->default(0);
             $table->decimal('tax')->unsigned();

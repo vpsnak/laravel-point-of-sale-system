@@ -9,7 +9,7 @@ class CashRegisterController extends Controller
 {
     public function all()
     {
-        return response(CashRegister::all());
+        return response(CashRegister::paginate());
     }
 
     public function getOne(CashRegister $model)

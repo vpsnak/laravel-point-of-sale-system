@@ -70,7 +70,7 @@
           <v-list-item-title>Upload to MAS</v-list-item-title>
         </v-list-item>
         <v-list-item
-          @click.stop="refund()"
+          @click.stop="setRefundDialog()"
           v-if="canRefund"
           :disabled="loading"
           :loading="refund_loading"
@@ -236,26 +236,10 @@ export default {
     editOrderOptions() {
       this.$router.push({ name: "editOrderOptionsPage" });
     },
-    refund() {
-      // this.refund_loading = true;
-      // const payload = {
-      //   title: "Verify your password to issue a refund",
-      //   eventChannel: "order-edit-refund-confirmation"
-      // };
-      // this.confirmationDialog(payload);
-
-      this.setDialog({
-        show: true,
-        width: 700,
-        title: `Issue a refund for order #${this.order_id}`,
-        titleCloseBtn: true,
-        icon: "mdi-credit-card-refund-outline",
-        component: "orderRefundForm",
-        persistent: true,
-        eventChannel: "order-edit-refund"
-      });
-    },
+    refund() {},
     setRefundDialog() {
+      this.refund_loading = true;
+
       this.setDialog({
         show: true,
         width: 700,

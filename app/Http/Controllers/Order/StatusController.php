@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class OrderAnalysisController extends Controller
+class StatusController extends Controller
 {
-    //
 }
