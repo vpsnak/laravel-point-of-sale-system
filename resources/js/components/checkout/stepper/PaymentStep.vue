@@ -17,9 +17,7 @@
             :loading="loading"
             :disabled="loading"
             text
-          >
-            Complete order
-          </v-btn>
+          >Complete order</v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -66,7 +64,6 @@ export default {
 
   methods: {
     ...mapMutations("cart", ["setCompleteOrderLoading"]),
-    ...mapActions(["create"]),
     ...mapActions("cart", ["createReceipt", "completeStep"]),
 
     complete() {
