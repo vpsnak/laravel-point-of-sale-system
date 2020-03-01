@@ -16,9 +16,9 @@ class ProductController extends Controller
         return response(Product::paginate());
     }
 
-    public function getOne($model)
+    public function getOne(Product $model)
     {
-        return response(Product::findOrFail($model));
+        return response($model);
     }
 
     public function create(Request $request)

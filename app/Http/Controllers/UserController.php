@@ -13,9 +13,9 @@ class UserController extends Controller
         return response(User::with('roles')->paginate());
     }
 
-    public function getOne($model)
+    public function getOne(User $model)
     {
-        return response(User::with('roles')->findOrFail($model));
+        return response($model->load('roles'));
     }
 
     public function login(Request $request)

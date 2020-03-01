@@ -2,14 +2,19 @@
   <div class="text-center">
     <v-menu offset-y :close-on-content-click="false">
       <template v-slot:activator="{ on }">
-        <v-chip color="primary" dark v-on="on">
-          <v-icon left>
-            mdi-table-search
+        <v-btn icon v-on="on" :disabled="data_table.loading">
+          <v-icon>
+            mdi-filter-outline
           </v-icon>
-          Apply filters
-        </v-chip>
+        </v-btn>
       </template>
-      <v-card width="450" class="pa-5" outlined :ripple="false">
+      <v-card
+        width="450"
+        class="pa-5"
+        outlined
+        :ripple="false"
+        :disabled="data_table.loading"
+      >
         <v-form @submit.prevent="submit">
           <v-container fluid>
             <v-row justify="space-between" align="center" no-gutters>
@@ -98,31 +103,33 @@
             </v-row>
             <v-row no-gutters justify="center" align="center">
               <v-col :cols="12">
-                <v-icon left>mdi-file-tree</v-icon>
+                <v-icon left>mdi-account-outline</v-icon>
                 Customer
               </v-col>
               <v-col :cols="2">
                 <v-checkbox v-model="customer"> </v-checkbox>
               </v-col>
               <v-col :cols="10">
-                <v-select
-                  multiple
-                  :items="order_statuses"
-                  v-model="filters.statuses"
-                  :loading="order_statuses_loading"
-                  chips
+                <v-combobox
+                  ref="searchfield"
+                  :no-filter="true"
+                  v-model="filters.customer_id"
                   clearable
-                  deletable-chips
-                  full-width
-                  item-color
-                  small-chips
-                >
-                </v-select>
+                  :items="customer_results"
+                  :loading="customer_search_loading"
+                  :search-input.sync="search"
+                  hide-no-data
+                  hide-selected
+                  :item-text="getCustomerFullname"
+                  placeholder="Start typing to search"
+                  item-value="id"
+                  @blur="checkIfObjectEvent"
+                ></v-combobox>
               </v-col>
             </v-row>
             <v-row justify="space-around" align="center">
-              <v-btn @click.stop="reset" text color="red">Clear</v-btn>
-              <v-btn type="submit" text color="green">Apply</v-btn>
+              <v-btn @click.stop="reset" text color="red">Clear </v-btn>
+              <v-btn type="submit" text color="green">Apply </v-btn>
             </v-row>
           </v-container>
         </v-form>
@@ -132,7 +139,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 export default {
   mounted() {
     this.getStatuses();
@@ -141,9 +148,11 @@ export default {
   data() {
     return {
       order_statuses_loading: false,
+      customer_search_loading: false,
 
       timestamps: false,
       statuses: false,
+      customer: false,
 
       datePickerFrom: false,
       datePickerTo: false,
@@ -153,12 +162,21 @@ export default {
       filters: {
         timestamp_from: null,
         timestamp_to: null,
-        statuses: null
-      }
+        statuses: null,
+        customer_id: null
+      },
+
+      customer_results: [],
+      search: null
     };
   },
 
   computed: {
+    ...mapState("datatable", ["data_table"]),
+
+    selectedCustomer() {
+      return this.filters.customer_id;
+    },
     selectedStatuses() {
       return this.filters.statuses;
     },
@@ -179,6 +197,13 @@ export default {
   },
 
   watch: {
+    selectedCustomer(value) {
+      if (!value) {
+        this.customer = false;
+      } else {
+        this.customer = true;
+      }
+    },
     selectedStatuses(value) {
       if (!value || !value.length) {
         this.statuses = false;
@@ -202,6 +227,21 @@ export default {
         if (!this.toTimestampFormatted) {
           this.timestamps = false;
         }
+      }
+    },
+    search(keyword) {
+      if (keyword && keyword.length >= 3) {
+        if (this.customer_search_loading) {
+          return;
+        } else {
+          this.searchCustomer(keyword);
+          return;
+        }
+      }
+    },
+    customer(value) {
+      if (!value) {
+        this.$refs.searchfield.lazySearch = this.$refs.searchfield.lazyValue = null;
       }
     }
   },
@@ -243,6 +283,37 @@ export default {
       this.filters.timestamp_from = null;
       this.filters.timestamp_to = null;
       this.filters.statuses = null;
+    },
+    checkIfObjectEvent() {
+      if (!this.selectedCustomer) {
+        this.search = null;
+      }
+    },
+    getCustomerFullname(item) {
+      if (_.has(item, "full_name")) {
+        return `${item.full_name}`;
+      } else {
+        return "Guest";
+      }
+    },
+    searchCustomer(keyword) {
+      this.customer_search_loading = true;
+
+      const payload = {
+        method: "post",
+        url: "customers/search",
+        data: { keyword: keyword }
+      };
+      this.request(payload)
+        .then(result => {
+          this.customer_results = result;
+        })
+        .catch(error => {
+          console.error(error);
+        })
+        .finally(() => {
+          this.customer_search_loading = false;
+        });
     }
   }
 };

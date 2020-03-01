@@ -13,9 +13,9 @@ class CouponController extends Controller
         return response(Coupon::paginate());
     }
 
-    public function getOne($model)
+    public function getOne(Coupon $model)
     {
-        return response(Coupon::findOrFail($model));
+        return response();
     }
 
     public function create(Request $request)

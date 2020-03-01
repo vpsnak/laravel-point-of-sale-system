@@ -29,7 +29,12 @@
           </v-tooltip>
         </v-col>
 
+        <v-col cols="auto" v-if="data_table.filters">
+          <dataTableFilters />
+        </v-col>
+
         <v-spacer />
+
         <v-col cols="auto">
           <v-text-field
             ref="searchInput"
@@ -37,6 +42,7 @@
             prepend-icon="search"
             hide-details
             label="Search"
+            dense
             single-line
             v-model="searchValue"
             clearable
@@ -53,10 +59,6 @@
           ></v-text-field>
         </v-col>
         <v-spacer />
-
-        <v-col cols="auto">
-          <dataTableFilters v-if="data_table.filters" />
-        </v-col>
 
         <v-divider
           class="mx-4"

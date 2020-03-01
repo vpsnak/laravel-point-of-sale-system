@@ -90,11 +90,11 @@ class ReceiptController extends Controller
 
     public function all()
     {
-        return response(Receipt::paginate(), 200);
+        return response(Receipt::paginate());
     }
 
     public function getOne(Receipt $model)
     {
-        return response($model, 200);
+        return response($model);
     }
 }

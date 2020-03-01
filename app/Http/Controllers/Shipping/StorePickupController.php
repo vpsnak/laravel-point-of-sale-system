@@ -15,7 +15,7 @@ class StorePickupController extends Controller
             'street1' => 'nullable|string',
             'region_id' => 'required|exists:regions,id',
         ]);
-        
+
         $storePickup = StorePickup::create($validatedData);
 
         return response(['notification' => [
@@ -61,8 +61,8 @@ class StorePickupController extends Controller
         return response($query->paginate());
     }
 
-    public function getOne($model)
+    public function getOne(StorePickup $model)
     {
-        return response(StorePickup::findOrFail($model));
+        return response($model);
     }
 }
