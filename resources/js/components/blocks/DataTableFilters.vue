@@ -79,30 +79,6 @@
             </v-row>
             <v-row no-gutters justify="center" align="center">
               <v-col :cols="12">
-                <v-icon left>mdi-file-tree</v-icon>
-                Statuses
-              </v-col>
-              <v-col :cols="2">
-                <v-checkbox v-model="statuses"> </v-checkbox>
-              </v-col>
-              <v-col :cols="10">
-                <v-select
-                  multiple
-                  :items="order_statuses"
-                  v-model="filters.statuses"
-                  :loading="order_statuses_loading"
-                  chips
-                  clearable
-                  deletable-chips
-                  full-width
-                  item-color
-                  small-chips
-                >
-                </v-select>
-              </v-col>
-            </v-row>
-            <v-row no-gutters justify="center" align="center">
-              <v-col :cols="12">
                 <v-icon left>mdi-account-outline</v-icon>
                 Customer
               </v-col>
@@ -125,6 +101,32 @@
                   item-value="id"
                   @blur="checkIfObjectEvent"
                 ></v-combobox>
+              </v-col>
+            </v-row>
+            <v-row no-gutters justify="center" align="center">
+              <v-col :cols="12">
+                <v-icon left>mdi-file-tree</v-icon>
+                Statuses
+              </v-col>
+              <v-col :cols="2">
+                <v-simple-checkbox v-model="statuses" dense>
+                </v-simple-checkbox>
+              </v-col>
+              <v-col :cols="10" align-self="center">
+                <v-select
+                  multiple
+                  dense
+                  single-line
+                  :items="order_statuses"
+                  v-model="filters.statuses"
+                  :loading="order_statuses_loading"
+                  chips
+                  clearable
+                  deletable-chips
+                  full-width
+                  small-chips
+                >
+                </v-select>
               </v-col>
             </v-row>
             <v-row justify="space-around" align="center">
