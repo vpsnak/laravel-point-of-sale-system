@@ -1,6 +1,10 @@
 <template>
   <div class="text-center">
-    <v-menu offset-y :close-on-content-click="false">
+    <v-menu
+      offset-y
+      :close-on-content-click="false"
+      :close-on-click="interactive_dialog.show ? false : true"
+    >
       <template v-slot:activator="{ on }">
         <v-btn icon v-on="on" :disabled="data_table.loading">
           <v-icon>
@@ -46,6 +50,7 @@
                   <v-date-picker
                     v-model="filters.timestamp_from"
                     @change="filters.timestamp_to = null"
+                    :max="new Date().toJSON()"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
@@ -89,7 +94,7 @@
                 <v-combobox
                   ref="searchfield"
                   :no-filter="true"
-                  v-model="filters.customer_id"
+                  v-model="selectedCustomer"
                   clearable
                   :items="customer_results"
                   :loading="customer_search_loading"
@@ -98,9 +103,21 @@
                   hide-selected
                   :item-text="getCustomerFullname"
                   placeholder="Start typing to search"
-                  item-value="id"
+                  return-object
                   @blur="checkIfObjectEvent"
-                ></v-combobox>
+                >
+                  <template slot="append-outer">
+                    <v-btn
+                      @click.stop="viewCustomer()"
+                      :disabled="!selectedCustomer"
+                      icon
+                    >
+                      <v-icon>
+                        mdi-eye
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                </v-combobox>
               </v-col>
             </v-row>
             <v-row no-gutters justify="center" align="center">
@@ -109,8 +126,7 @@
                 Statuses
               </v-col>
               <v-col :cols="2">
-                <v-simple-checkbox v-model="statuses" dense>
-                </v-simple-checkbox>
+                <v-checkbox v-model="statuses" />
               </v-col>
               <v-col :cols="10" align-self="center">
                 <v-select
@@ -130,7 +146,7 @@
               </v-col>
             </v-row>
             <v-row justify="space-around" align="center">
-              <v-btn @click.stop="reset" text color="red">Clear </v-btn>
+              <v-btn @click.stop="clear()" text color="red">Clear </v-btn>
               <v-btn type="submit" text color="green">Apply </v-btn>
             </v-row>
           </v-container>
@@ -141,7 +157,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 export default {
   mounted() {
     this.getStatuses();
@@ -169,15 +185,25 @@ export default {
       },
 
       customer_results: [],
+      selected_customer: null,
       search: null
     };
   },
 
   computed: {
     ...mapState("datatable", ["data_table"]),
+    ...mapState("dialog", ["interactive_dialog"]),
 
-    selectedCustomer() {
-      return this.filters.customer_id;
+    selectedCustomer: {
+      get() {
+        return this.selected_customer;
+      },
+      set(value) {
+        this.selected_customer = value;
+        if (_.has(value, "id")) {
+          this.filters.customer_id = value.id;
+        }
+      }
     },
     selectedStatuses() {
       return this.filters.statuses;
@@ -200,7 +226,7 @@ export default {
 
   watch: {
     selectedCustomer(value) {
-      if (!value) {
+      if (!_.has(value, "id")) {
         this.customer = false;
       } else {
         this.customer = true;
@@ -249,9 +275,24 @@ export default {
   },
 
   methods: {
+    ...mapMutations("dialog", ["setDialog"]),
     ...mapActions("requests", ["request"]),
 
     submit() {},
+    viewCustomer() {
+      const dialog = {
+        show: true,
+        width: 600,
+        fullscreen: false,
+        icon: "mdi-account-outline",
+        title: `View customer #${this.selectedCustomer.full_name}`,
+        titleCloseBtn: true,
+        component: "customerForm",
+        model: this.selectedCustomer,
+        persistent: false
+      };
+      this.setDialog(dialog);
+    },
     getStatuses() {
       this.order_statuses_loading = true;
       const payload = {
@@ -278,12 +319,18 @@ export default {
         return null;
       }
     },
-    reset() {
+    clear() {
       this.timestamps = false;
       this.statuses = false;
+      this.customer = null;
+
+      this.search = null;
+      this.customer_results = [];
+      this.selected_customer = null;
 
       this.filters.timestamp_from = null;
       this.filters.timestamp_to = null;
+      this.filters.customer_id = null;
       this.filters.statuses = null;
     },
     checkIfObjectEvent() {
