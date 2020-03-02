@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\PaymentType;
-use Illuminate\Http\Request;
 
 class PaymentTypeController extends Controller
 {
-    public function paymentTypes()
+    public function all()
     {
         $paymentTypes = PaymentType::getPaymentTypes();
 
@@ -21,10 +20,5 @@ class PaymentTypeController extends Controller
         } else {
             return response($paymentTypes);
         }
-    }
-
-    public function refundTypes()
-    {
-        return response(PaymentType::getRefundTypes());
     }
 }

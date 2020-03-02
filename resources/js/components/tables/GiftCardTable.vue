@@ -1,8 +1,8 @@
 <template>
   <div>
     <data-table v-if="render">
-      <template v-slot:item.enabled="{ item }">
-        {{ item.enabled ? "Yes" : "No" }}
+      <template v-slot:item.is_enabled="{ item }">
+        {{ item.is_enabled ? "Yes" : "No" }}
       </template>
 
       <template v-slot:item.actions="{ item }">

@@ -6,13 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Coupon extends Model
 {
-    protected $with = ['discount'];
-
     protected $fillable = [
         'name',
         'code',
         'uses',
-        'discount_id',
         'from',
         'to',
     ];
@@ -25,9 +22,4 @@ class Coupon extends Model
     ];
 
     protected $dates = ['from', 'to'];
-
-    public function discount()
-    {
-        return $this->belongsTo(Discount::class);
-    }
 }

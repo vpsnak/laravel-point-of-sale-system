@@ -20,7 +20,7 @@ class CreateMenuItemsTable extends Migration
             $table->string('icon');
             $table->json('action');
             $table->string('location');
-            $table->timestamps();
+            $table->timestampsTz();
         });
     }
 

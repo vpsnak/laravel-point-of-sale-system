@@ -27,7 +27,7 @@ class CreateElavonSdkPaymentsTable extends Migration
 
             $table->foreign('payment_id')->references('id')->on('payments')->onDelete('cascade');
 
-            $table->timestamps();
+            $table->timestampsTz();
         });
     }
 

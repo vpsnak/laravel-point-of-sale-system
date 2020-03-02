@@ -17,8 +17,8 @@ class ElavonApiPayment extends Model
     ];
 
     protected $casts = [
-        'created_at' => "datetime:m/d/Y H:i:s",
-        'updated_at' => "datetime:m/d/Y H:i:s"
+        'created_at' => 'datetime:m/d/Y H:i:s',
+        'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
 
     public function payment()

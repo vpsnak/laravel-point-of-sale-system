@@ -23,7 +23,7 @@ class CreateMasOrdersTable extends Migration
 
             $table->text('notes')->nullable();
 
-            $table->timestamps();
+            $table->timestampsTz();
         });
     }
 

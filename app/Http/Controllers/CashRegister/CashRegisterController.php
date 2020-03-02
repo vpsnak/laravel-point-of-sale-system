@@ -28,12 +28,13 @@ class CashRegisterController extends Controller
             'pos_terminal_port' => 'required|string'
 
         ]);
-        $validatedData['user_id'] = auth()->user()->id;
-        
+        $cashRegister = CashRegister::create($validatedData);
+
         return response(['notification' => [
             'msg' => ["Cash register {$cashRegister->name} created successfully!"],
             'type' => 'success'
-        ]]);    }
+        ]]);
+    }
 
     public function update(Request $request)
     {
@@ -46,19 +47,18 @@ class CashRegisterController extends Controller
             'pos_terminal_ip' => 'required|ip',
             'pos_terminal_port' => 'required|string'
         ]);
-        $validatedData['user_id'] = auth()->user()->id;
         $cashRegister = CashRegister::findOrFail($validatedData['id']);
-        
+
         $cashRegister->fill($validatedData);
         $cashRegister->save();
-        
+
         return response(['notification' => [
             'msg' => ["Cash register {$cashRegister->name} updated successfully!"],
             'type' => 'success'
         ]]);
     }
 
-      public function search(Request $request)
+    public function search(Request $request)
     {
         $validatedData = $request->validate([
             'keyword' => 'required|string'

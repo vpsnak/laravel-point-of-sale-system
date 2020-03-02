@@ -16,7 +16,7 @@ class CreateAddressesTable extends Migration
         Schema::create('addresses', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('customer_id');
-            $table->unsignedBigInteger('magento_id')->default(0);
+            $table->unsignedBigInteger('magento_id')->nullable();
 
             $table->string('first_name');
             $table->string('last_name');
@@ -28,12 +28,12 @@ class CreateAddressesTable extends Migration
             $table->string('phone', 20)->index();
             $table->string('company')->nullable();
             $table->string('vat_id', 20)->nullable();
-            $table->boolean('is_default_billing')->nullable()->default(0);
-            $table->boolean('is_default_shipping')->nullable()->default(0);
+            $table->boolean('is_default_billing')->nullable();
+            $table->boolean('is_default_shipping')->nullable();
             $table->string('location')->nullable();
             $table->string('location_name')->nullable();
 
-            $table->timestamps();
+            $table->timestampsTz();
         });
     }
 

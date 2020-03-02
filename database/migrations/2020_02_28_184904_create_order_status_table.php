@@ -18,7 +18,7 @@ class CreateOrderStatusTable extends Migration
 
             $table->unsignedBigInteger('order_id');
             $table->unsignedTinyInteger('status_id');
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedSmallInteger('user_id')->nullable();
             $table->text('notes')->nullable();
             $table->json('attributes')->nullable();
 

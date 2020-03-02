@@ -15,7 +15,7 @@ class CategoryProduct extends Migration
     {
         Schema::create('category_product', function (Blueprint $table) {
             $table->unsignedBigInteger('product_id');
-            $table->unsignedBigInteger('category_id');
+            $table->unsignedSmallInteger('category_id');
         });
     }
 

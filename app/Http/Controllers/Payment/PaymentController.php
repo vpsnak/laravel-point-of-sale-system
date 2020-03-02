@@ -172,7 +172,7 @@ class PaymentController extends Controller
 
         $giftcard = Giftcard::where('code', $validatedData['code'])->first();
 
-        if (!$giftcard->enabled) {
+        if (!$giftcard->is_enabled) {
             return ['errors' => ['Gift card' => ['This gift card is inactive']]];
         } else if ($giftcard->amount < $validatedData['amount']) {
             return ['errors' => ['Gift card' => ['This gift card has insufficient balance to complete the transaction']]];
@@ -309,7 +309,7 @@ class PaymentController extends Controller
                     'code' => $validatedData['giftcard']['code'],
                     'name' => $validatedData['giftcard']['name'],
                     'amount' => $validatedData['amount'],
-                    'enabled' => true,
+                    'is_enabled' => true,
                 ]);
                 break;
         }

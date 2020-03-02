@@ -107,7 +107,7 @@ Route::post('/cash-registers/create', 'CashRegisterController@create')->middlewa
 Route::post('/cash-registers/search', 'CashRegisterController@search')->middleware('scope:admin,store_manager,cashier');
 
 // cash-register-reports
-Route::get('/cash-register-reports', 'CashRegisterReportController@all')->middleware('scope:admin,store_manager,cashier');;
+Route::get('/cash-register-reports', 'CashRegisterReportController@all')->middleware('scope:admin,store_manager,cashier');
 Route::get('/cash-register-reports/get/{model}', 'CashRegisterReportController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::get('/cash-register-reports/check/get/{model}', "CashRegisterReportController@checkCurrent")->middleware('scope:admin,store_manager,cashier');
 Route::post('/cash-register-reports/create', 'CashRegisterReportController@create')->middleware('scope:admin,store_manager,cashier');

@@ -17,7 +17,7 @@ class CreateSettingsTable extends Migration
             $table->bigIncrements('id');
             $table->string('key');
             $table->string('value')->nullable();
-            $table->timestamps();
+            $table->timestampsTz();
         });
     }
 

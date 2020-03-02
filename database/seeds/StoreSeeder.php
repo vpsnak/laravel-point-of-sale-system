@@ -23,7 +23,6 @@ class StoreSeeder extends Seeder
                 'active' => true,
                 'is_phone_center' => false,
                 'tax_id' => 1,
-                'user_id' => 1,
             ],
             [
                 'company_id' => 2,
@@ -35,7 +34,6 @@ class StoreSeeder extends Seeder
                 'active' => true,
                 'is_phone_center' => true,
                 'tax_id' => 1,
-                'user_id' => 1,
             ],
             [
                 'company_id' => 2,
@@ -47,7 +45,6 @@ class StoreSeeder extends Seeder
                 'active' => true,
                 'is_phone_center' => false,
                 'tax_id' => 1,
-                'user_id' => 1,
             ]
         ]);
     }

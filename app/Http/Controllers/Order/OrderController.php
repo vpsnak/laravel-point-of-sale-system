@@ -125,9 +125,9 @@ class OrderController extends Controller
     {
         $this->order_data = $request->validate([
             'customer_id' => 'nullable|required_if:method,pickup,delivery|exists:customers,id',
-            'discount_type' => 'string|nullable',
-            'discount_amount' => 'numeric|nullable',
-            'shipping_cost' => 'numeric|nullable',
+            'discount_type' => 'nullable|string',
+            'discount_amount' => 'nullable|numeric',
+            'shipping_cost' => 'nullable|integer',
             'method' => 'required|in:retail,pickup,delivery',
             'notes' => 'string|nullable',
             // items (products)
@@ -135,7 +135,7 @@ class OrderController extends Controller
             'products.*.id' => 'nullable|numeric',
             'products.*.name' => 'required|string',
             'products.*.sku' => 'required|string',
-            'products.*.final_price' => 'required|numeric',
+            'products.*.final_price' => 'required|integer',
             'products.*.qty' => 'required|numeric',
             'products.*.discount_type' => 'nullable|string',
             'products.*.discount_amount' => 'nullable|numeric',

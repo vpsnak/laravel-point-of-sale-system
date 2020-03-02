@@ -15,21 +15,16 @@ class CreatePaymentsTable extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedTinyInteger('payment_type');
-            $table->decimal('amount', 10, 2)->nullable();
+
+            $table->unsignedTinyInteger('payment_type_id');
+            $table->json('price');
             $table->unsignedBigInteger('order_id');
-            $table->unsignedBigInteger('cash_register_id')->nullable();
+            $table->unsignedSmallInteger('cash_register_id');
             $table->string('code')->nullable();
             $table->string('status');
-            $table->boolean('refunded')->default(0);
 
-            $table->unsignedBigInteger('user_id');
-            $table->timestamps();
-
-            $table->foreign('payment_type')->references('id')->on('payment_types')->onDelete('restrict');
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('restrict');
-            $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('restrict');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
+            $table->unsignedSmallInteger('user_id');
+            $table->timestampsTz();
         });
     }
 

@@ -15,10 +15,6 @@ class ProductSeeder extends Seeder
     {
         factory(Product::class, 30)->make()->each(function ($product) {
             $product->save();
-            factory(Price::class)->create([
-                'priceable_id' => $product->id,
-                'priceable_type' => Product::class
-            ]);
             $product->stores()->attach(1, ['qty' => rand(-100, 200)]);
         });
     }

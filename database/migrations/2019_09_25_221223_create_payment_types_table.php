@@ -18,8 +18,7 @@ class CreatePaymentTypesTable extends Migration
             $table->string('name');
             $table->string('type');
             $table->string('icon')->nullable();
-            $table->boolean('status');
-            $table->boolean('hidden');
+            $table->boolean('is_enabled');
         });
     }
 

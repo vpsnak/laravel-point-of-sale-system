@@ -16,17 +16,13 @@ class CreateReceiptsTable extends Migration
         Schema::create('receipts', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            $table->unsignedBigInteger('issued_by');
+            $table->unsignedSmallInteger('issued_by');
             $table->json('content');
             $table->unsignedBigInteger('order_id');
-            $table->unsignedBigInteger('cash_register_id');
-            $table->integer('print_count');
-            $table->integer('email_count');
-            $table->timestamps();
-
-            $table->foreign('issued_by')->references('id')->on('users')->onDelete('restrict');
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
-            $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('cascade');
+            $table->unsignedSmallInteger('cash_register_id');
+            $table->unsignedTinyInteger('print_count');
+            $table->unsignedTinyInteger('email_count');
+            $table->timestampsTz();
         });
     }
 

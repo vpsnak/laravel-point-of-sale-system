@@ -18,6 +18,7 @@
     "laravel/framework": "^6.0",
     "laravel/passport": "^8.0",
     "laravel/tinker": "^2.0",
+    "moneyphp/money": "^3.3",
     "pusher/pusher-php-server": "^4.1",
     "rodenastyle/stream-parser": "^1.2",
     "spatie/laravel-permission": "^3.2"

@@ -22,7 +22,7 @@ class CreateMasOrderLogsTable extends Migration
             $table->string('status');
             $table->string('environment');
 
-            $table->timestamps();
+            $table->timestampsTz();
         });
     }
 

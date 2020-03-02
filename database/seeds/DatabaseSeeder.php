@@ -18,7 +18,8 @@ class DatabaseSeeder extends Seeder
         $this->call(UserSeeder::class);
         $this->call(MasAccountSeeder::class);
         $this->call(MenuItemSeeder::class);
-        $this->call(PaymentType::class);
+        $this->call(PaymentTypeSeeder::class);
+        $this->call(RefundTypeSeeder::class);
         $this->call(StorePickupSeeder::class);
         $this->call(StatusSeeder::class);
 

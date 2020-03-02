@@ -9,11 +9,21 @@ class Tax extends Model
     protected $fillable = [
         'name',
         'percentage',
-        'is_default',
+        'user_id'
     ];
 
     protected $casts = [
-        'created_at' => "datetime:m/d/Y H:i:s",
-        'updated_at' => "datetime:m/d/Y H:i:s"
+        'created_at' => 'datetime:m/d/Y H:i:s',
+        'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
+
+    public function stores()
+    {
+        return $this->hasMany(Store::class);
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

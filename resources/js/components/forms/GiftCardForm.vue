@@ -56,7 +56,7 @@
           </ValidationProvider>
           <v-switch
             :readonly="$props.readonly"
-            v-model="formFields.enabled"
+            v-model="formFields.is_enabled"
             label="Enabled"
           ></v-switch>
         </v-row>
@@ -111,7 +111,7 @@ export default {
       formFields: {
         name: null,
         code: null,
-        enabled: false,
+        is_enabled: false,
         amount: null
       }
     };

@@ -12,12 +12,10 @@ class Order extends Model
 
     protected $appends = [
         'status',
-        'total',
-        'total_without_tax',
-        'total_paid',
-        'total_tax',
-        'total_item_cost',
         'remaining'
+        // total_items_cost,
+        // total_tax_price,
+        // total_price,
     ];
 
     protected $fillable = [
@@ -26,16 +24,18 @@ class Order extends Model
         'store_id',
         'user_id',
         'items',
-        'discount_type',
-        'discount_amount',
-        'tax',
-        'subtotal',
-        'change',
-        'shipping_cost',
+
+
         'billing_address',
         'delivery',
         'method',
         'notes',
+
+        'discount',
+        'delivery_fees_price',
+        'total_items_cost',
+        'total_tax_price',
+        'total_price',
 
         'magento_id',
         'magento_shipping_address_id',
@@ -51,12 +51,55 @@ class Order extends Model
     ];
 
     protected $casts = [
-        'delivery' => 'array',
-        'items' => 'array',
-        'shipping_cost' => 'float',
-        'created_at' => "datetime:m/d/Y H:i:s",
-        'updated_at' => "datetime:m/d/Y H:i:s"
+        'discount' => 'array',
+        'delivery_fees_price' => 'array',
+        'total_tax_price' => 'array',
+        'mdse_price' => 'array',
+        'delivery_fees_price' => 'array',
+        'created_at' => 'datetime:m/d/Y H:i:s',
+        'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
+
+    public function totalTaxPriceAttribute($value)
+    {
+        if (is_array($value)) {
+            $value = json_encode($value);
+        }
+        $this->attributes['total_tax_price'] = $value;
+    }
+
+    public function setMdsePriceAttribute($value)
+    {
+        if (is_array($value)) {
+            $value = json_encode($value);
+        }
+        $this->attributes['mdse_price'] = $value;
+    }
+
+    public function setDeliveryFeesPriceAttribute($value)
+    {
+        if (is_array($value)) {
+            $value = json_encode($value);
+        }
+        $this->attributes['delivery_fees_price'] = $value;
+    }
+
+    public function setTotalTaxPriceAttribute($value)
+    {
+        if (is_array($value)) {
+            $value = json_encode($value);
+        }
+        $this->attributes['total_tax_price'] = $value;
+    }
+
+    public function setDiscountAttribute($value)
+    {
+        if (is_array($value)) {
+            $value = json_encode($value);
+        }
+        $this->attributes['total_tax_price'] = $value;
+    }
+    //
 
     public function getRemainingAttribute()
     {
@@ -77,10 +120,9 @@ class Order extends Model
     public function setDeliveryAddressAttribute($value)
     {
         if (is_array($value)) {
-            $this->attributes['delivery']['address'] = json_encode($value);
-        } else {
-            $this->attributes['delivery']['address'] = $value;
+            $value = json_encode($value);
         }
+        $this->attributes['delivery']['address'] = $value;
     }
 
     public function getStorePickupAttribute()
@@ -91,28 +133,25 @@ class Order extends Model
     public function setPickupPointAttribute($value)
     {
         if (is_array($value)) {
-            $this->attributes['delivery']['store_pickup'] = json_encode($value);
-        } else {
-            $this->attributes['delivery']['store_pickup'] = $value;
+            $value = json_encode($value);
         }
+        $this->attributes['delivery']['store_pickup'] = $value;
     }
 
     public function setDeliveryAttribute($value)
     {
         if (is_array($value)) {
-            $this->attributes['delivery'] = json_encode($value);
-        } else {
-            $this->attributes['delivery'] = $value;
+            $value = json_encode($value);
         }
+        $this->attributes['delivery'] = $value;
     }
 
     public function setItemsAttribute($value)
     {
         if (is_array($value)) {
-            $this->attributes['items'] = json_encode($value);
-        } else {
-            $this->attributes['items'] = $value;
+            $value = json_encode($value);
         }
+        $this->attributes['items'] = $value;
     }
 
     public function getBillingAddressAttribute($value)
@@ -123,10 +162,9 @@ class Order extends Model
     public function setBillingAddressAttribute($value)
     {
         if (is_array($value)) {
-            $this->attributes['billing_address'] = json_encode($value);
-        } else {
-            $this->attributes['billing_address'] = $value;
+            $value = json_encode($value);
         }
+        $this->attributes['billing_address'] = $value;
     }
 
     public function getShippingAddressAttribute($value)
@@ -137,54 +175,15 @@ class Order extends Model
     public function setShippingAddressAttribute($value)
     {
         if (is_array($value)) {
-            $this->attributes['shipping_address'] = json_encode($value);
-        } else {
-            $this->attributes['shipping_address'] = $value;
+            $value = json_encode($value);
         }
+        $this->attributes['shipping_address'] = $value;
     }
 
     public function getTotalItemCostAttribute()
     {
         $totalItemCost = $this->total_without_tax - $this->shipping_cost;
         return Price::numberPrecision(abs($totalItemCost));
-    }
-
-    public function getTotalAttribute()
-    {
-        $total = $this->total_without_tax;
-        $total = Price::calculateTax($total, $this->tax);
-
-        return Price::numberPrecision(($total * 100) / 100);
-    }
-
-    public function getTotalWithoutTaxAttribute()
-    {
-        $total = 0;
-        foreach ($this->items as $item) {
-            $price = $item['price'] * (int) $item['qty'];
-            $total += Price::calculateDiscount($price, $item['discount_type'], $item['discount_amount']);
-        };
-
-        $total = Price::calculateDiscount($total, $this->discount_type, $this->discount_amount);
-        $total += $this->shipping_cost;
-
-        return Price::numberPrecision($total);
-    }
-
-    public function getTotalPaidAttribute()
-    {
-        $total_paid = 0;
-        foreach ($this->payments as $payment) {
-            if ($payment->status !== 'failed' && !$payment->status !== 'pending') {
-                $total_paid += $payment->amount;
-            }
-        };
-        return Price::numberPrecision($total_paid + $this->change);
-    }
-
-    public function getTotalTaxAttribute()
-    {
-        return Price::numberPrecision($this->total - $this->total_without_tax);
     }
 
     public function masOrder()
@@ -207,7 +206,7 @@ class Order extends Model
         return $this->belongsTo(Store::class);
     }
 
-    public function created_by()
+    public function createdBy()
     {
         return $this->belongsTo(User::class, 'user_id');
     }

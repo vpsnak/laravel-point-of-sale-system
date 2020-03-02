@@ -16,11 +16,11 @@ class CreateBankAccountsTable extends Migration
         Schema::create('bank_accounts', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            $table->unsignedBigInteger('company_id');
+            $table->unsignedTinyInteger('company_id');
             $table->string('type');
             $table->text('account');
 
-            $table->timestamps();
+            $table->timestampsTz();
         });
     }
 

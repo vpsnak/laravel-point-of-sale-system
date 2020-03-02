@@ -31,8 +31,8 @@ class Address extends Model
         'is_default_billing' => 'boolean',
         'is_default_shipping' => 'boolean',
         'location' => 'integer',
-        'created_at' => "datetime:m/d/Y H:i:s",
-        'updated_at' => "datetime:m/d/Y H:i:s"
+        'created_at' => 'datetime:m/d/Y H:i:s',
+        'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
 
     protected $hidden = [

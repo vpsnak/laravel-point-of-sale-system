@@ -19,7 +19,7 @@ class CreateStorePickupsTable extends Migration
             $table->string('street');
             $table->string('street1')->nullable();
             $table->unsignedInteger('region_id');
-            $table->timestamps();
+            $table->timestampsTz();
         });
     }
 

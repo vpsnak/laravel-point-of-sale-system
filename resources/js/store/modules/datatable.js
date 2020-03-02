@@ -53,7 +53,7 @@ const state = {
     categories: [
       { text: "#", value: "id" },
       { text: "Name", value: "name" },
-      { text: "In product listing", value: "in_product_listing" },
+      { text: "In product listing", value: "is_enabled" },
       { text: "Actions", value: "actions" }
     ],
     companies: [
@@ -84,7 +84,7 @@ const state = {
       { text: "#", value: "id" },
       { text: "Name", value: "name" },
       { text: "Code", value: "code" },
-      { text: "Enabled", value: "enabled" },
+      { text: "Enabled", value: "is_enabled" },
       { text: "Amount", value: "amount" },
       { text: "Actions", value: "actions" }
     ],
