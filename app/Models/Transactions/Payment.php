@@ -56,6 +56,7 @@ class Payment extends Model
         return $this->belongsTo(CashRegister::class);
     }
 
+    // @TODO rework to polymorphic
     // public function elavonApiPayments()
     // {
     //     return $this->hasMany(ElavonApiPayment::class);
