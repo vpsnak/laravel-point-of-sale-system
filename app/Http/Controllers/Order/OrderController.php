@@ -366,14 +366,16 @@ class OrderController extends Controller
     {
         $this->order_data = $request->validate([
             'keyword' => 'nullable|required_without:filters|string',
-            'cb_timestamps' => 'nullable|boolean',
-            'cb_statuses' => 'nullable|boolean',
-            'cb_customer' => 'nullable|boolean',
+
             'filters' => 'nullable|array',
+            'filters.cb_timestamps' => 'nullable|boolean',
+            'filters.cb_statuses' => 'nullable|boolean',
+            'filters.cb_customer' => 'nullable|boolean',
+
             'filters.timestamp_from' => 'nullable|before_or_equal:today',
             'filters.timestamp_to' => 'nullable|before_or_equal:today',
-            'filters.statuses.*.id' => 'nullable|required_if:cb_statuses,1|exists:statuses,id',
-            'filters.customer_id' => 'nullable|required_if:cb_customer,1|exists:customers,id',
+            'filters.statuses.*.id' => 'nullable|exists:statuses,id',
+            'filters.customer_id' => 'nullable|exists:customers,id',
         ]);
 
         $query = Order::without([
@@ -396,7 +398,7 @@ class OrderController extends Controller
 
     private function applyFilters($query)
     {
-        if (isset($this->order_data['cb_timestamps']) && $this->order_data['cb_timestamps']) {
+        if (isset($this->order_data['filters']['cb_timestamps']) && $this->order_data['filters']['cb_timestamps']) {
             if (isset($this->order_data['filters']['timestamp_from'])) {
                 $query =
                     $query->whereBetween(
@@ -411,11 +413,11 @@ class OrderController extends Controller
             }
         }
 
-        if (isset($this->order_data['cb_customer']) && $this->order_data['cb_customer']  && isset($this->order_data['filters']['customer_id'])) {
+        if (isset($this->order_data['filters']['cb_customer']) && $this->order_data['filters']['cb_customer']  && isset($this->order_data['filters']['customer_id'])) {
             $query = $query->where('customer_id', $this->order_data['filters']['customer_id']);
         }
 
-        if (isset($this->order_data['cb_statuses']) && $this->order_data['cb_statuses']  && isset($this->order_data['filters']['statuses'])) {
+        if (isset($this->order_data['filters']['cb_statuses']) && $this->order_data['filters']['cb_statuses']  && isset($this->order_data['filters']['statuses'])) {
             $statuses = $this->order_data['filters']['statuses'];
             $query = $query->with('statuses')->whereHas('statuses', function (Builder $query) use ($statuses) {
                 $query->latest()->whereIn('status_id', $statuses);
