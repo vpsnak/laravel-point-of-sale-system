@@ -1,6 +1,7 @@
 <template>
   <div class="text-center">
     <v-menu
+      v-model="filters_menu"
       offset-y
       :close-on-content-click="false"
       :close-on-click="interactive_dialog.show ? false : true"
@@ -21,7 +22,7 @@
       >
         <v-form @submit.prevent="submit">
           <v-container fluid>
-            <v-row justify="space-between" align="center" no-gutters>
+            <v-row justify="space-between" align="center" dense>
               <v-col :cols="12">
                 <v-icon left>mdi-calendar-plus</v-icon>
                 Submitted
@@ -29,7 +30,7 @@
               <v-col :cols="2">
                 <v-checkbox v-model="timestamps"> </v-checkbox>
               </v-col>
-              <v-col :cols="5" class="pr-2">
+              <v-col :cols="5">
                 <v-menu
                   v-model="datePickerFrom"
                   transition="scale-transition"
@@ -54,7 +55,7 @@
                   ></v-date-picker>
                 </v-menu>
               </v-col>
-              <v-col :cols="5" class="pl-2">
+              <v-col :cols="5">
                 <v-menu
                   v-model="datePickerTo"
                   transition="scale-transition"
@@ -82,7 +83,7 @@
                 </v-menu>
               </v-col>
             </v-row>
-            <v-row no-gutters justify="center" align="center">
+            <v-row justify="center" align="center" dense>
               <v-col :cols="12">
                 <v-icon left>mdi-account-outline</v-icon>
                 Customer
@@ -112,15 +113,13 @@
                       :disabled="!selectedCustomer"
                       icon
                     >
-                      <v-icon>
-                        mdi-eye
-                      </v-icon>
+                      <v-icon>mdi-eye</v-icon>
                     </v-btn>
                   </template>
                 </v-combobox>
               </v-col>
             </v-row>
-            <v-row no-gutters justify="center" align="center">
+            <v-row dense justify="center" align="center">
               <v-col :cols="12">
                 <v-icon left>mdi-file-tree</v-icon>
                 Statuses
@@ -146,8 +145,8 @@
               </v-col>
             </v-row>
             <v-row justify="space-around" align="center">
-              <v-btn @click.stop="clear()" text color="red">Clear </v-btn>
-              <v-btn type="submit" text color="green">Apply </v-btn>
+              <v-btn type="submit" text color="green">Apply</v-btn>
+              <v-btn @click.stop="clear()" text color="red">Clear</v-btn>
             </v-row>
           </v-container>
         </v-form>
@@ -159,12 +158,18 @@
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
 export default {
+  beforeDestroy() {
+    this.$off("applyFilters");
+  },
+
   mounted() {
     this.getStatuses();
   },
 
   data() {
     return {
+      filters_menu: false,
+
       order_statuses_loading: false,
       customer_search_loading: false,
 
@@ -202,6 +207,9 @@ export default {
         this.selected_customer = value;
         if (_.has(value, "id")) {
           this.filters.customer_id = value.id;
+          this.customer = true;
+        } else {
+          this.customer = false;
         }
       }
     },
@@ -225,13 +233,6 @@ export default {
   },
 
   watch: {
-    selectedCustomer(value) {
-      if (!_.has(value, "id")) {
-        this.customer = false;
-      } else {
-        this.customer = true;
-      }
-    },
     selectedStatuses(value) {
       if (!value || !value.length) {
         this.statuses = false;
@@ -278,7 +279,10 @@ export default {
     ...mapMutations("dialog", ["setDialog"]),
     ...mapActions("requests", ["request"]),
 
-    submit() {},
+    submit() {
+      this.$emit("applyFilters", this.filters);
+      this.filters_menu = false;
+    },
     viewCustomer() {
       const dialog = {
         show: true,

@@ -230,13 +230,13 @@ class Order extends Model
             ->withTimestamps(['created_at']);
     }
 
-    public function processedBy()
+    public function lastStatus()
     {
-        return $this->hasOneThrough(User::class, OrderStatus::class);
+        return  $this->statuses()->latest();
     }
 
     public function getStatusAttribute()
     {
-        return  $this->statuses()->latest()->first();
+        return  $this->lastStatus()->first();
     }
 }

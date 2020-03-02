@@ -30,7 +30,7 @@
         </v-col>
 
         <v-col cols="auto" v-if="data_table.filters">
-          <dataTableFilters />
+          <dataTableFilters @applyFilters="getItems(true, $event)" />
         </v-col>
 
         <v-spacer />
@@ -194,7 +194,7 @@ export default {
         });
       }
     },
-    getItems(search = false) {
+    getItems(search = false, filters = false) {
       this.setLoading(true);
       this.setItems([]);
       this.pageCount = null;
@@ -202,10 +202,13 @@ export default {
 
       let payload = {};
 
-      if (search && this.keyword) {
+      if (search && (this.keyword || filters)) {
         payload.method = "post";
         payload.url = `${this.data_table.model}/search?page=${this.page}`;
-        payload.data = { keyword: this.keyword };
+        payload.data = {
+          keyword: this.keyword ? this.keyword : "",
+          filters: filters ? filters : []
+        };
       } else {
         payload.method = "get";
         payload.url = `${this.data_table.model}?page=${this.page}`;
@@ -217,7 +220,9 @@ export default {
 
           this.pageCount = response.last_page;
         })
-        .catch()
+        .catch(error => {
+          console.error(error);
+        })
         .finally(() => {
           this.setLoading(false);
         });
