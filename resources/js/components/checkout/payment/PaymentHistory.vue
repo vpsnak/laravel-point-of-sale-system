@@ -49,7 +49,7 @@
 
 <script>
 import { mapActions, mapState, mapMutations } from "vuex";
-import { EventBus } from "../../../plugins/event-bus";
+import { EventBus } from "../../../plugins/eventBus";
 
 export default {
   props: {

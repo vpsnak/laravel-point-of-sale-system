@@ -15,7 +15,7 @@
               <v-btn
                 :loading="data_table.loading"
                 :disabled="data_table.loading"
-                @click.stop="getItems()"
+                @click.stop="getItems(true)"
                 icon
                 v-on="on"
                 color="green"
@@ -30,7 +30,10 @@
         </v-col>
 
         <v-col cols="auto" v-if="data_table.filters">
-          <dataTableFilters @applyFilters="getItems(true, $event)" />
+          <component
+            :is="data_table.filters"
+            @applyFilters="(applied_filters = $event), getItems(true)"
+          />
         </v-col>
 
         <v-spacer />
@@ -128,7 +131,7 @@
 
 <script>
 import { mapActions, mapMutations, mapState, mapGetters } from "vuex";
-import { EventBus } from "../../plugins/event-bus";
+import { EventBus } from "../../plugins/eventBus";
 
 export default {
   data() {
@@ -139,7 +142,7 @@ export default {
       searchValue: "",
       search: false,
       keyword: null,
-      applied_filters: []
+      applied_filters: null
     };
   },
 
@@ -195,7 +198,7 @@ export default {
         });
       }
     },
-    getItems(search = false, filters = false) {
+    getItems(search = false) {
       this.setLoading(true);
       this.setItems([]);
       this.pageCount = null;
@@ -203,13 +206,13 @@ export default {
 
       let payload = {};
 
-      if (search && (this.keyword || filters)) {
+      if (search && (this.keyword || this.applied_filters)) {
         payload.method = "post";
         payload.url = `${this.data_table.model}/search?page=${this.page}`;
         payload.data = {
           keyword: this.keyword ? this.keyword : ""
         };
-        payload.data.filters = filters;
+        payload.data.filters = this.applied_filters;
       } else {
         payload.method = "get";
         payload.url = `${this.data_table.model}?page=${this.page}`;

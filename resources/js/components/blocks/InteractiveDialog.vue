@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import { EventBus } from "../../plugins/event-bus";
+import { EventBus } from "../../plugins/eventBus";
 import { mapMutations, mapState } from "vuex";
 
 export default {

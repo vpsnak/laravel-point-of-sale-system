@@ -114,7 +114,7 @@
 </template>
 
 <script>
-import { EventBus } from "../../plugins/event-bus";
+import { EventBus } from "../../../plugins/eventBus";
 import { mapMutations, mapActions, mapState } from "vuex";
 
 export default {
@@ -155,7 +155,7 @@ export default {
         model: "orders",
         disableNewBtn: true,
         loading: true,
-        filters: true
+        filters: "orderTableFilters"
       }
     };
   },

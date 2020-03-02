@@ -23,7 +23,7 @@
 
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
-import { EventBus } from "../../../plugins/event-bus";
+import { EventBus } from "../../../plugins/eventBus";
 
 export default {
   props: {
