@@ -133,7 +133,7 @@
                   dense
                   single-line
                   :items="order_statuses"
-                  v-model="filters.statuses"
+                  v-model="selectedStatuses"
                   :loading="order_statuses_loading"
                   chips
                   clearable
@@ -214,8 +214,19 @@ export default {
         }
       }
     },
-    selectedStatuses() {
-      return this.filters.statuses;
+    selectedStatuses: {
+      get() {
+        return this.filters.statuses;
+      },
+      set(value) {
+        this.filters.statuses = value;
+
+        if (!value || !value.length) {
+          this.filters.cb_statuses = false;
+        } else {
+          this.filters.cb_statuses = true;
+        }
+      }
     },
     fromTimestampFormatted() {
       if (this.filters.timestamp_from) {
@@ -234,13 +245,6 @@ export default {
   },
 
   watch: {
-    selectedStatuses(value) {
-      if (!value || !value.length) {
-        this.filters.cb_statuses = false;
-      } else {
-        this.filters.cb_statuses = true;
-      }
-    },
     toTimestampFormatted(value) {
       if (value) {
         this.filters.cb_timestamps = true;
@@ -327,18 +331,13 @@ export default {
       }
     },
     clear() {
-      this.filters.timestamps = false;
-      this.filters.statuses = false;
-      this.filters.customer = false;
-
       this.search = null;
       this.customer_results = [];
-      this.selected_customer = null;
 
       this.filters.timestamp_from = null;
       this.filters.timestamp_to = null;
-      this.filters.customer_id = null;
-      this.filters.statuses = null;
+      this.selectedCustomer = null;
+      this.selectedStatuses = null;
     },
     checkIfObjectEvent() {
       if (!this.selectedCustomer) {
