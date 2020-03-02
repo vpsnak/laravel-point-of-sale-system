@@ -138,7 +138,8 @@ export default {
       action: "",
       searchValue: "",
       search: false,
-      keyword: null
+      keyword: null,
+      applied_filters: []
     };
   },
 
@@ -206,9 +207,9 @@ export default {
         payload.method = "post";
         payload.url = `${this.data_table.model}/search?page=${this.page}`;
         payload.data = {
-          keyword: this.keyword ? this.keyword : "",
-          filters: filters ? filters : []
+          keyword: this.keyword ? this.keyword : ""
         };
+        payload.data.filters = filters;
       } else {
         payload.method = "get";
         payload.url = `${this.data_table.model}?page=${this.page}`;

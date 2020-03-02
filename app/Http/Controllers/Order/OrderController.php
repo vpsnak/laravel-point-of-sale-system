@@ -10,6 +10,7 @@ use App\Jobs\ProcessOrder;
 use App\Order;
 use App\Status;
 use App\StorePickup;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -162,7 +163,7 @@ class OrderController extends Controller
         $this->parseTax();
         $this->parseProducts();
 
-        $this->order = Order::create($this->order_data);
+        $this->order = Order::createWithoutEvents($this->order_data);
         $submittedStatusId = Status::where('value', 'submitted')->firstOrFail('id');
         $this->order->statuses()->attach($submittedStatusId, ['user_id' => $this->user->id]);
         // ProcessOrder::dispatchNow($this->order);
@@ -340,35 +341,6 @@ class OrderController extends Controller
         ]);
     }
 
-    public function search(Request $request)
-    {
-        $this->order_data = $request->validate([
-            'keyword' => 'nullable|required_without:filters|string',
-            'filters' => 'nullable|array',
-            'filters.timestamp_from' => 'nullable|before_or_equal:today',
-            'filters.timestamp_to' => 'nullable|before_or_equal:today',
-            'filters.statuses.*.id' => 'nullable|exists:statuses,id',
-            'filters.customer_id' => 'nullable|exists:customers,id',
-        ]);
-
-        $query = Order::without([
-            'items',
-            'payments',
-            'store_pickup'
-        ]);
-
-        if (isset($this->order_data['keyword'])) {
-            $query = $query
-                ->orWhere('location', 'LIKE', "%{$this->order_data['keyword']}%");
-        }
-
-        if (isset($this->order_data['filters'])) {
-            $query = $this->applyFilters($query);
-        }
-
-        return response($query->paginate());
-    }
-
     public function rollbackPayments(Order $order)
     {
         $paymentController = new PaymentController();
@@ -390,26 +362,64 @@ class OrderController extends Controller
         return $results ? $results : true;
     }
 
-    private function applyFilters($query)
+    public function search(Request $request)
     {
-        if (isset($this->order_data['filters']['timestamp_from'])) {
-            $query =
-                $query->whereBetween(
-                    'created_at',
-                    [
-                        $this->order_data['filters']['timestamp_from'],
-                        $this->order_data['filters']['timestamp_to'] ?? now()
-                    ]
-                );
-        } else if ($this->order_data['filters']['timestamp_to']) {
-            $query = $query->whereBetween('created_at', [$this->order_data['filters']['timestamp_to'], now()]);
+        $this->order_data = $request->validate([
+            'keyword' => 'nullable|required_without:filters|string',
+            'cb_timestamps' => 'nullable|boolean',
+            'cb_statuses' => 'nullable|boolean',
+            'cb_customer' => 'nullable|boolean',
+            'filters' => 'nullable|array',
+            'filters.timestamp_from' => 'nullable|before_or_equal:today',
+            'filters.timestamp_to' => 'nullable|before_or_equal:today',
+            'filters.statuses.*.id' => 'nullable|required_if:cb_statuses,1|exists:statuses,id',
+            'filters.customer_id' => 'nullable|required_if:cb_customer,1|exists:customers,id',
+        ]);
+
+        $query = Order::without([
+            'items',
+            'payments',
+            'store_pickup'
+        ]);
+
+        if (isset($this->order_data['keyword'])) {
+            $query = $query
+                ->orWhere('location', 'LIKE', "%{$this->order_data['keyword']}%");
         }
 
-        if (isset($this->order_data['filters']['statuses'])) {
-            $query = $query->whereIn('statuses', $this->order_data['filters']['statuses']);
+        if (isset($this->order_data['filters'])) {
+            $query = $this->applyFilters($query);
         }
-        if (isset($this->order_data['filters']['customer_id'])) {
-            $query = $query->whereIn('customer_id', $this->order_data['filters']['customer_id']);
+
+        return response($query->paginate());
+    }
+
+    private function applyFilters($query)
+    {
+        if (isset($this->order_data['cb_timestamps']) && $this->order_data['cb_timestamps']) {
+            if (isset($this->order_data['filters']['timestamp_from'])) {
+                $query =
+                    $query->whereBetween(
+                        'created_at',
+                        [
+                            $this->order_data['filters']['timestamp_from'],
+                            $this->order_data['filters']['timestamp_to'] ?? now()
+                        ]
+                    );
+            } else if ($this->order_data['filters']['timestamp_to']) {
+                $query = $query->whereBetween('created_at', [$this->order_data['filters']['timestamp_to'], now()]);
+            }
+        }
+
+        if (isset($this->order_data['cb_customer']) && $this->order_data['cb_customer']  && isset($this->order_data['filters']['customer_id'])) {
+            $query = $query->where('customer_id', $this->order_data['filters']['customer_id']);
+        }
+
+        if (isset($this->order_data['cb_statuses']) && $this->order_data['cb_statuses']  && isset($this->order_data['filters']['statuses'])) {
+            $statuses = $this->order_data['filters']['statuses'];
+            $query = $query->with('statuses')->whereHas('statuses', function (Builder $query) use ($statuses) {
+                $query->latest()->whereIn('status_id', $statuses);
+            });
         }
 
         return $query;
