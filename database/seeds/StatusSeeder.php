@@ -48,6 +48,13 @@ class StatusSeeder extends Seeder
                 'icon' => 'mdi-printer-check'
             ],
             [
+                'text' => 'Reprinted',
+                'value' => 'reprinted',
+                'lock_order' => false,
+                'color' => '',
+                'icon' => 'mdi-printer-alert'
+            ],
+            [
                 'text' => 'Beign processed',
                 'value' => 'being_processed',
                 'lock_order' => false,

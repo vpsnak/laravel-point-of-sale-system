@@ -17,7 +17,6 @@ class CustomerController extends Controller
 
     public function getOne(Customer $model)
     {
-        // $customer = ;
         return response($model->load('addresses'));
     }
 
@@ -36,7 +35,7 @@ class CustomerController extends Controller
             'comment' => 'nullable|string',
             'phone' => 'nullable|string'
         ]);
-        
+
         $customer = Customer::findOrFail($validatedData['id']);
 
         if ($validatedData['no_tax'] && empty($validatedData['file'])) {
@@ -48,12 +47,11 @@ class CustomerController extends Controller
 
         $customer->fill($validatedData);
         $customer->save();
-        
+
         return response(['notification' => [
             'msg' => ["Customer {$customer->name} updated successfully!"],
             'type' => 'success'
         ]]);
-
     }
 
     public function create(Request $request)

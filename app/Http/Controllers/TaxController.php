@@ -12,9 +12,9 @@ class TaxController extends Controller
         return response(Tax::paginate());
     }
 
-    public function getOne($model)
+    public function getOne(Tax $model)
     {
-        return response(Tax::findOrFail($model));
+        return response($model);
     }
 
     public function create(Request $request)

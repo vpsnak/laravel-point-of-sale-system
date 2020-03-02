@@ -202,68 +202,6 @@ export default new Vuex.Store({
           });
       });
     },
-    getOne(context, payload) {
-      return new Promise((resolve, reject) => {
-        axios
-          .get(
-            `${context.state.config.base_url}/${payload.model}/get/${payload.data.id}`
-          )
-          .then(response => {
-            if (_.has(payload, "mutation")) {
-              context.commit(payload.mutation, response.data, {
-                root: true
-              });
-            }
-            resolve(response.data.data || response.data);
-          })
-          .catch(error => {
-            if (_.has(error, "response.data.errors")) {
-              context.commit("setNotification", {
-                msg: error.response.data.errors,
-                type: "error"
-              });
-            } else {
-              console.error(error);
-            }
-            reject(error);
-          });
-      });
-    },
-    search(context, payload) {
-      return new Promise((resolve, reject) => {
-        let page = payload.page ? "?page=" + payload.page : "";
-
-        axios
-          .post(
-            `${context.state.config.base_url}/${payload.model}/search${page}`,
-            payload
-          )
-          .then(response => {
-            if (_.has(payload, "mutation")) {
-              context.commit(
-                payload.mutation,
-                response.data.data || response.data
-              );
-            }
-            if (payload.dataTable) {
-              resolve(response.data);
-            } else {
-              resolve(response.data.data || response.data);
-            }
-          })
-          .catch(error => {
-            if (_.has(error, "response.data.errors")) {
-              context.commit("setNotification", {
-                msg: error.response.data.errors,
-                type: "error"
-              });
-            } else {
-              console.error(error);
-            }
-            reject(error);
-          });
-      });
-    },
     openCashRegister(context, payload) {
       return new Promise((resolve, reject) => {
         payload.method = "post";
@@ -328,14 +266,6 @@ export default new Vuex.Store({
 
     create(context, payload) {
       return new Promise((resolve, reject) => {
-        let options;
-        if (payload.data instanceof FormData) {
-          options = {
-            headers: {
-              "Content-Type": "multipart/form-data"
-            }
-          };
-        }
         axios
           .post(
             `${context.state.config.base_url}/${payload.model}/create`,

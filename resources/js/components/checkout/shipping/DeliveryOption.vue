@@ -182,7 +182,6 @@
         <v-col :cols="4">
           <v-select
             :readonly="$props.readonly"
-            :loading="loading"
             label="Occasion"
             :items="occasions"
             item-text="label"

@@ -95,7 +95,7 @@ import { mapMutations, mapState } from "vuex";
 export default {
   beforeDestroy() {
     if (this.dialog.eventChannel) {
-      EventBus.$off(this.dialog.eventChannel);
+      this.$off(this.dialog.eventChannel);
     }
   },
 
@@ -128,7 +128,7 @@ export default {
     closeEvent(payload, close) {
       if (!this.dialog.persistent || close) {
         if (this.dialog.eventChannel) {
-          EventBus.$emit(this.dialog.eventChannel, {
+          this.$emit(this.dialog.eventChannel, {
             payload
           });
 

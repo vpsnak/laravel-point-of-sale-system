@@ -70,7 +70,7 @@ class ForeignKeys extends Migration
         });
 
         Schema::table('mas_order_logs', function (Blueprint $table) {
-            $table->foreign('order_id')->references('id')->on('mas_orders')->onDelete('restrict');
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('restrict');
         });
     }
 

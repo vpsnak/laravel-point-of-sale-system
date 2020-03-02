@@ -76,6 +76,9 @@ Route::post('/orders/update-options', 'OrderController@updateOptions')->middlewa
 Route::post('/orders/search', 'OrderController@search')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/orders/{model}', 'OrderController@rollbackOrder')->middleware('scope:admin,store_manager,cashier');
 
+// statuses
+Route::get('/statuses', 'StatusController@all')->middleware('scope:admin,store_manager,cashier');
+
 // stores
 Route::get('/stores', 'StoreController@all')->middleware('scope:admin,store_manager,cashier');
 Route::get('/stores/get/{model}', 'StoreController@getOne')->middleware('scope:admin,store_manager,cashier');
