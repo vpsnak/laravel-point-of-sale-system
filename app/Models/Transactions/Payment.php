@@ -30,10 +30,15 @@ class Payment extends Model
 
     public function setPriceAttribute($value)
     {
-        if (is_array($value)) {
-            $value = json_encode($value);
+        if (is_string($value)) {
+            $value = json_decode($value, true);
         }
-        $this->attributes['price'] = $value;
+
+        if (isset($value['amount'])) {
+            $value['amount'] = (int) $value['amount'];
+        }
+
+        $this->attributes['price'] = json_encode($value);
     }
 
     public function paymentType()
