@@ -251,36 +251,6 @@ $code = $barcode->generate();
             <br>
             <p style="text-align:end;">Net Invoice Total: ${{ $order->total}}</p>
             <br>
-            @if($order->shipping_address)
-            <table style="font-size:14px;">
-                <tr>
-                    <td style="text-align: end;">Delv on:</td>
-                    <td>{{ Carbon\Carbon::parse($order->delivery_date)->format('m/d/Y') }}</td>
-                </tr>
-                <tr>
-                    <td style="text-align: end;">Delv to:</td>
-                    <td>{{$order->shipping_address->first_name}}
-                        {{ $order->shipping_address->last_name }}
-                    </td>
-                </tr>
-                <tr>
-                    <td style="text-align: end;">C/O:</td>
-                    <td>{{ $order->customer->first_name }} {{ $order->customer->last_name }}</td>
-                </tr>
-                <tr>
-                    <td style="text-align: end;">Address:</td>
-                    <td>{{ $order->shipping_address->street }}</td>
-                </tr>
-                <tr>
-                    <td style="text-align: end;">Address:</td>
-                    <td>{{ $order->shipping_address->street2 }}</td>
-                </tr>
-                <tr>
-                    <td style="text-align: end;">City, St:</td>
-                    <td>{{ $order->shipping_address->city }}</td>
-                </tr>
-            </table>
-            @endif
             <span>Signed By:___________________</span>
         </div>
     </body>
