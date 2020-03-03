@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Product;
 use CodeItNow\BarcodeBundle\Utils\BarcodeGenerator;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class ProductController extends Controller
 {

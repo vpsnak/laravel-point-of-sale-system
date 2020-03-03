@@ -35,8 +35,10 @@
                   :outlined="editPrice(index)"
                   :solo="!editPrice(index)"
                   :color="editPrice(index) ? 'yellow' : ''"
-                  :value="parsedPrice(product)"
-                  :hint="'Original price: $' + originalPrice(index)"
+                  :value="displayPriceNoSign(product.price)"
+                  :hint="
+                    'Original price: ' + displayPrice(product.original_price)
+                  "
                   dense
                 ></v-text-field>
               </div>
@@ -148,7 +150,7 @@
         <v-expansion-panel-content>
           <cartDiscount
             :product_index="index"
-            :product_price="parsedPrice(product) * product.qty"
+            :product_price="multiplyPrice(product.price, product.qty)"
             :editable="editable"
           ></cartDiscount>
           <v-row>
@@ -172,7 +174,8 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from "vuex";
+import Dinero from "dinero.js";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
   props: {
@@ -180,6 +183,12 @@ export default {
   },
   computed: {
     ...mapState("cart", ["discountTypes", "cart_products"]),
+    ...mapGetters("price", [
+      "parsePrice",
+      "displayPrice",
+      "displayPriceNoSign",
+      "multiplyPrice"
+    ]),
 
     products: {
       get() {
@@ -208,19 +217,17 @@ export default {
     },
     setPrice(index, price = null, toggleEdit = false) {
       if (!this.getSelectedInput(index).lazyValue) {
-        this.getSelectedInput(index).lazyValue = this.originalPrice(index);
+        this.getSelectedInput(index).lazyValue = this.originalPrice(
+          index
+        ).toFormat("0,0.00");
       }
       if (price) {
-        this.products[index].final_price = price;
+        this.products[index].price.amount = _.toInteger(price * 100);
       } else {
-        this.products[index].final_price = this.getSelectedInput(
-          index
-        ).lazyValue;
+        this.products[index].price.amount = _.toInteger(
+          this.getSelectedInput(index).lazyValue * 100
+        );
       }
-      if (_.has(this.products[index], "price.amount")) {
-        this.products[index].price.amount = this.products[index].final_price;
-      }
-
       if (toggleEdit) {
         this.toggleEdit(index);
       }
@@ -231,7 +238,7 @@ export default {
       this.getSelectedInput(index).blur();
     },
     originalPrice(index) {
-      return this.products[index].original_price;
+      return this.parsePrice(this.products[index].original_price);
     },
     editPrice(index) {
       if (_.has(this.products[index], "editPrice")) {
@@ -265,12 +272,6 @@ export default {
         component: "product",
         model: product
       });
-    },
-    parsedPrice(product) {
-      return (
-        parseFloat(product.final_price).toFixed(2) ||
-        parseFloat(product.price.toFixed(2))
-      );
     },
     limits(product) {
       if (product.qty < 1) {

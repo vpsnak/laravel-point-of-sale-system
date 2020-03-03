@@ -96,8 +96,8 @@ Route::post('/taxes/search', 'TaxController@search')->middleware('scope:admin,st
 Route::delete('/taxes/{model}', 'TaxController@delete')->middleware('scope:admin,store_manager,cashier');
 
 // payment-types
-Route::get('/payment-types', 'PaymentTypeController@paymentTypes')->middleware('scope:admin,store_manager,cashier');
-Route::get('/refund-types', 'PaymentTypeController@refundTypes')->middleware('scope:admin,store_manager');
+Route::get('/payment-types', 'PaymentTypeController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/refund-types', 'RefundTypeController@all')->middleware('scope:admin,store_manager');
 
 // cash-registers
 Route::get('/cash-registers', 'CashRegisterController@all')->middleware('scope:admin,store_manager,cashier');

@@ -183,8 +183,7 @@
 </template>
 
 <script>
-import Dinero from "dinero.js";
-import { mapMutations, mapState, mapActions } from "vuex";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
   data() {
@@ -218,6 +217,7 @@ export default {
   computed: {
     ...mapState(["productList"]),
     ...mapState("dialog", ["interactive_dialog"]),
+    ...mapGetters("price", ["displayPrice"]),
 
     keyword: {
       get() {
@@ -274,14 +274,11 @@ export default {
     }
   },
   methods: {
-    ...mapActions("requests", ["request"]),
     ...mapMutations(["setProductList"]),
     ...mapMutations("cart", ["addProduct"]),
     ...mapMutations("dialog", ["viewItem", "setDialog"]),
+    ...mapActions("requests", ["request"]),
 
-    displayPrice(price) {
-      return Dinero(price).toFormat("$0,0.00");
-    },
     stockColor(product) {
       if (product.stock <= 10 && product.stock > 0) {
         return "orange";
@@ -326,6 +323,9 @@ export default {
           this.currentPage = response.current_page;
           this.lastPage = response.last_page;
         })
+        .catch(error => {
+          console.log(error);
+        })
         .finally(() => {
           this.initiateLoadingSearchResults();
         });
@@ -340,6 +340,9 @@ export default {
       this.request(payload)
         .then(response => {
           this.categories = response.data;
+        })
+        .catch(error => {
+          console.log(error);
         })
         .finally(() => {
           this.initiateLoadingSearchResults(false);
@@ -358,6 +361,9 @@ export default {
           this.setProductList(response.data);
           this.currentPage = response.current_page;
           this.lastPage = response.last_page;
+        })
+        .catch(error => {
+          console.log(error);
         })
         .finally(() => {
           this.initiateLoadingSearchResults();
@@ -386,6 +392,9 @@ export default {
             }
           }
         })
+        .catch(error => {
+          console.log(error);
+        })
         .finally(() => {
           this.initiateLoadingSearchResults();
         });
@@ -406,6 +415,9 @@ export default {
             this.setProductList(response.data);
             this.currentPage = response.current_page;
             this.lastPage = response.last_page;
+          })
+          .catch(error => {
+            console.log(error);
           })
           .finally(() => {
             this.initiateLoadingSearchResults();

@@ -9,8 +9,8 @@
       class="my-2"
       @click.stop="setCheckoutDialog(true)"
       :disabled="disabled || !isValidCheckout"
-      >Checkout</v-btn
-    >
+      >Checkout
+    </v-btn>
 
     <v-divider />
 

@@ -48,7 +48,7 @@ import { mapGetters } from "vuex";
 
 export default {
   props: {
-    product_price: Number,
+    product_price: Object,
     product_index: Number,
     editable: Boolean
   },
@@ -116,6 +116,7 @@ export default {
       "discount_amount",
       "discount_error"
     ]),
+    ...mapGetters("price", ["displayPriceNoSign"]),
 
     product() {
       return this.cart_products[this.$props.product_index];
@@ -131,7 +132,7 @@ export default {
 
             return parseFloat(max - 0.01);
           } else {
-            return parseFloat(this.$props.product_price);
+            return this.displayPriceNoSign(this.$props.product_price);
           }
         case "percentage":
         case "Percentage":

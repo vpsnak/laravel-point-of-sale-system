@@ -12,8 +12,8 @@ class PaymentType extends Model
         'is_enabled' => 'boolean',
     ];
 
-    public static function all()
+    public static function enabled()
     {
-        return static::where('enabled', true)->get();
+        return static::where('is_enabled', true)->get();
     }
 }

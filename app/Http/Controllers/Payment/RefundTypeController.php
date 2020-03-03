@@ -9,7 +9,7 @@ class RefundTypeController extends Controller
 {
     public function all()
     {
-        $refundTypes = RefundType::all();
+        $refundTypes = RefundType::enabled();
 
         // $this->store = auth()->user()->open_register->cash_register->store;
         // if ($this->store->is_phone_center) {

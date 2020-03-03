@@ -99,7 +99,6 @@ class Order extends Model
         }
         $this->attributes['total_tax_price'] = $value;
     }
-    //
 
     public function getRemainingAttribute()
     {
