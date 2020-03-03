@@ -2,41 +2,42 @@
   <div class="d-flex flex-column">
     <div class="d-flex justify-space-between pa-2" v-if="totalDiscount">
       <span>Total discount</span>
-      <span>$ {{ totalDiscount }}</span>
+      <span>{{ displayPrice(totalDiscount) }}</span>
     </div>
 
     <v-divider v-if="totalDiscount" />
 
     <div class="d-flex justify-space-between pa-2">
       <span>Sub total w/ discount</span>
-      <span>$ {{ subTotalwDiscount }}</span>
+      <span>{{ displayPrice(subTotalwDiscount) }}</span>
     </div>
 
     <v-divider />
 
-    <div class="d-flex justify-space-between pa-2" v-if="shippingCost">
+    <div class="d-flex justify-space-between pa-2" v-if="deliveryFeesPrice">
       <span>Delivery Fees</span>
-      <span>$ {{ shippingCost }}</span>
+      <span>{{ displayPrice(deliveryFeesPrice) }}</span>
     </div>
 
-    <v-divider v-if="shippingCost" />
+    <v-divider v-if="deliveryFeesPrice" />
 
     <div class="d-flex justify-space-between pa-2 bb-1">
       <span>Tax</span>
-      <span>$ {{ tax }}</span>
+      <span>{{ displayPrice(tax) }}</span>
     </div>
 
     <v-divider />
 
     <div class="d-flex justify-space-between pa-2">
       <span>Total</span>
-      <span>$ {{ order_total }}</span>
+      <span>{{ displayPrice(order_total) }}</span>
     </div>
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters, mapMutations } from "vuex";
+import "../../plugins/price";
 
 export default {
   computed: {
@@ -53,82 +54,74 @@ export default {
       "order_total_without_tax",
       "order_total_tax"
     ]),
-    ...mapGetters("price", [
-      "parsePrice",
-      "displayPrice",
-      "displayPriceNoSign",
-      "calcDiscount"
-    ]),
 
     deliveryFeesPrice() {
       if (this.delivery_fees) {
         return this.displayPriceNoSign(this.delivery_fees);
       } else {
-        return 0;
+        return this.newPrice();
       }
     },
     subTotalwDiscount() {
-      let subtotal = 0;
+      let subtotal = this.newPrice();
 
       this.cart_products.forEach(product => {
-        subtotal += this.calcDiscount(
-          product.price,
-          product.qty,
-          product.discount || null
+        subtotal = this.addPrice(
+          subtotal,
+          this.calcDiscount(
+            product.price,
+            product.qty,
+            product.discount || null
+          )
         );
       });
 
-      if (this.discount.type && this.discount_amount > 0) {
-        subtotal -= subtotal - this.calcDiscount(subtotal, this.discount);
-      }
-
-      return parseFloat(subtotal);
+      return this.subtractPrice(
+        subtotal,
+        this.calcDiscount(subtotal, this.discount)
+      );
     },
     tax() {
       if (this.customer && this.customer.no_tax) {
-        return 0;
+        return this.newPrice();
       } else {
-        return parseFloat(
-          ((this.subTotalwDiscount + this.deliveryFeesPrice) *
-            parseFloat(this.tax_percentage)) /
-            100
+        return this.calcTax(
+          this.addPrice(this.subTotalwDiscount, this.deliveryFeesPrice),
+          this.tax_percentage
         );
       }
     },
     totalDiscount() {
-      let subtotalNoDiscount = 0;
+      let subtotalNoDiscount = this.newPrice();
 
       this.cart_products.forEach(product => {
-        subtotalNoDiscount += product.final_price * product.qty;
+        subtotalNoDiscount = this.multiplyPrice(product.price, product.qty);
       });
 
-      this.setOrderTotal(
-        this.subTotalwDiscount + this.tax + this.deliveryFeesPrice
-      );
-
+      this.setOrderTotal(this.addPrice(this.subTotalwDiscount, this.tax));
       this.isValidDiscount();
 
-      return subtotalNoDiscount - this.subTotalwDiscount;
+      return this.subtractPrice(subtotalNoDiscount, this.subTotalwDiscount);
     }
   },
   methods: {
-    ...mapMutations("cart", ["setOrderTotal", "isValidDiscount"]),
+    ...mapMutations("cart", ["setOrderTotal", "isValidDiscount"])
 
-    calcDiscount(price, discount) {
-      if (discount && _.has(discount, "price") && _.has(discount, "type")) {
-        switch (_.lowerCase(type)) {
-          case "flat":
-            return parseFloat(price).toFixed(2) - parseFloat(amount).toFixed(2);
-          case "percentage":
-            return (
-              parseFloat(price) - (parseFloat(price) * parseFloat(amount)) / 100
-            );
-          default:
-            return parseFloat(price);
-        }
-      }
-      return parseFloat(price);
-    }
+    // calcDiscount(price, discount) {
+    //   if (discount && _.has(discount, "price") && _.has(discount, "type")) {
+    //     switch (_.lowerCase(type)) {
+    //       case "flat":
+    //         return parseFloat(price).toFixed(2) - parseFloat(amount).toFixed(2);
+    //       case "percentage":
+    //         return (
+    //           parseFloat(price) - (parseFloat(price) * parseFloat(amount)) / 100
+    //         );
+    //       default:
+    //         return parseFloat(price);
+    //     }
+    //   }
+    //   return parseFloat(price);
+    // }
   }
 };
 </script>

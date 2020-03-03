@@ -168,7 +168,7 @@ export default {
         Number(this.giftcard_total) +
         Number(this.refund_total);
 
-      return totals.toFixed(2);
+      return totals;
     }
   }
 };

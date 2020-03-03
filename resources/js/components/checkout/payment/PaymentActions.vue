@@ -233,7 +233,7 @@ export default {
     },
     remainingAmount() {
       // return this.order_remaining || this.toFixed(this.order_total, 2);
-      return this.order_remaining || this.order_total.toFixed(2);
+      return this.order_remaining || order_total;
     },
     amount: {
       get() {

@@ -10,7 +10,7 @@
           <v-card-text>
             <div class="subtitle-1">Sku: {{ productData.sku }}</div>
             <div class="subtitle-1">
-              Price: {{ parseFloat(product.final_price).toFixed(2) }} $
+              Price: {{ displayPrice(product.price) }}
             </div>
             <div class="subtitle-1">Stock: {{ productData.stock }}</div>
             <div class="subtitle-1">
@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   props: {
@@ -95,6 +95,8 @@ export default {
       });
   },
   computed: {
+    ...mapGetters("price", ["displayPrice"]),
+
     productData() {
       return this.product;
     }

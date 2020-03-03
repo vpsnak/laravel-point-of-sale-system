@@ -32,7 +32,7 @@
           type="number"
           label="Amount"
           :min="0"
-          :max="max.toFixed(2)"
+          :max="max"
           :error-messages="!valid ? 'Invalid amount' : undefined"
           :success="valid"
           :disabled="!editable"
@@ -85,7 +85,7 @@ export default {
         let digits = this.discountAmount.split(".");
 
         if (digits.length === 2 && digits[1].length > 2)
-          this.discountAmount = parseFloat(this.discountAmount).toFixed(2);
+          this.discountAmount = this.discountAmount;
       }
 
       this.validate();
@@ -126,9 +126,7 @@ export default {
         case "flat":
         case "Flat":
           if (this.$props.product_index === -1) {
-            let max = (
-              parseFloat(this.order_total) + parseFloat(this.discount_amount)
-            ).toFixed(2);
+            let max = this.order_total + this.discount_amount;
 
             return parseFloat(max - 0.01);
           } else {

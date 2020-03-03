@@ -106,7 +106,9 @@ export default {
         .then(response => {
           this.statuses = response;
         })
-        .catch()
+        .catch(error => {
+          console.log(error);
+        })
         .finally(() => {
           this.loading = false;
         });

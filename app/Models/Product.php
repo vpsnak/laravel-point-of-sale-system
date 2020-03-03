@@ -32,6 +32,7 @@ class Product extends Model
     protected $casts = [
         'price' => 'array',
         'discount' => 'array',
+        'editable_price' => 'boolean',
         'created_at' => 'datetime:m/d/Y H:i:s',
         'updated_at' => 'datetime:m/d/Y H:i:s'
     ];

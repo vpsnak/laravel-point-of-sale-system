@@ -150,7 +150,9 @@ export default {
         .then(response => {
           this.payment_types = response;
         })
-        .catch()
+        .catch(error => {
+          console.log(error);
+        })
         .finally(() => {
           this.payment_types_loading = false;
         });

@@ -5,7 +5,6 @@ import "es6-promise/auto";
 import Cookies from "js-cookie";
 import router from "../plugins/router";
 //modules
-import price from "./modules/price";
 import requests from "./modules/requests";
 import config from "./modules/config";
 import menu from "./modules/menu";
@@ -25,7 +24,6 @@ export default new Vuex.Store({
     cart,
     datatable,
     dialog,
-    price,
     icons
   },
   state: {
