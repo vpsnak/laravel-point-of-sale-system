@@ -57,10 +57,7 @@ export default {
       "parsePrice",
       "displayPrice",
       "displayPriceNoSign",
-      "addPrice",
-      "subtractPrice",
-      "multiplyPrice",
-      "percentagePrice"
+      "calcDiscount"
     ]),
 
     deliveryFeesPrice() {
@@ -75,7 +72,8 @@ export default {
 
       this.cart_products.forEach(product => {
         subtotal += this.calcDiscount(
-          this.multiplyPrice(product.price * product.qty),
+          product.price,
+          product.qty,
           product.discount || null
         );
       });
