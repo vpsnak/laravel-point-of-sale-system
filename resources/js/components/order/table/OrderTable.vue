@@ -26,7 +26,7 @@
 
     <template v-slot:item.actions="{ item }">
       <v-tooltip
-        v-if="['pending', 'pending_payment'].indexOf(item.status) >= 0"
+        v-if="['pending', 'pending_payment'].indexOf(item.status) !== -1"
         bottom
       >
         <template v-slot:activator="{ on }">
@@ -76,7 +76,7 @@
         <span>View</span>
       </v-tooltip>
 
-      <v-tooltip bottom v-if="['paid', 'complete'].indexOf(item.status) >= 0">
+      <v-tooltip bottom v-if="['paid', 'complete'].indexOf(item.status) !== 0">
         <template v-slot:activator="{ on }">
           <v-btn
             :ref="item.id"

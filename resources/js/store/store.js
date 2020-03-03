@@ -123,15 +123,16 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    login(context, payload) {
+    login(context, data) {
       return new Promise((resolve, reject) => {
+        const payload = {
+          method: "post",
+          url: "auth/login",
+          data: data,
+          no_error_notification: true
+        };
         context
-          .dispatch("requests/request", {
-            method: "post",
-            url: "auth/login",
-            data: payload,
-            no_error_notification: true
-          })
+          .dispatch("requests/request", payload)
           .then(response => {
             window.axios.defaults.headers.common["Authorization"] =
               response.token;
@@ -171,39 +172,6 @@ export default new Vuex.Store({
           });
       });
     },
-    getAll(context, payload) {
-      return new Promise((resolve, reject) => {
-        let page = payload.page ? "?page=" + payload.page : "";
-
-        axios
-          .get(`${context.state.config.base_url}/${payload.model}${page}`)
-          .then(response => {
-            if (_.has(payload, "mutation")) {
-              context.commit(
-                payload.mutation,
-                response.data.data || response.data
-              );
-            }
-
-            if (payload.dataTable) {
-              resolve(response.data);
-            } else {
-              resolve(response.data.data || response.data);
-            }
-          })
-          .catch(error => {
-            if (_.has(error, "response.data.errors")) {
-              context.commit("setNotification", {
-                msg: error.response.data.errors,
-                type: "error"
-              });
-            } else {
-              console.error(error);
-            }
-            reject(error);
-          });
-      });
-    },
     openCashRegister(context, payload) {
       return new Promise((resolve, reject) => {
         payload.method = "post";
@@ -230,7 +198,7 @@ export default new Vuex.Store({
             url: "cash-register-logs/logout"
           })
           .then(response => {
-            if (["sales", "orders"].indexOf(router.currentRoute.name) >= 0) {
+            if (["sales", "orders"].indexOf(router.currentRoute.name) !== 0) {
               router.replace({ name: "dashboard" });
             }
 
@@ -251,7 +219,7 @@ export default new Vuex.Store({
         context
           .dispatch("requests/request", payload)
           .then(response => {
-            if (["sales", "orders"].indexOf(router.currentRoute.name) >= 0) {
+            if (["sales", "orders"].indexOf(router.currentRoute.name) !== -1) {
               router.push({ name: "dashboard" });
             }
 
@@ -261,38 +229,6 @@ export default new Vuex.Store({
             resolve(response.data);
           })
           .catch(error => {
-            reject(error);
-          });
-      });
-    },
-
-    create(context, payload) {
-      return new Promise((resolve, reject) => {
-        axios
-          .post(
-            `${context.state.config.base_url}/${payload.model}/create`,
-            payload.data,
-            options
-          )
-          .then(response => {
-            if (_.has(payload, "mutation")) {
-              context.commit(
-                payload.mutation,
-                response.data.data || response.data
-              );
-            }
-            resolve(response.data.data || response.data);
-          })
-          .catch(error => {
-            if (_.has(error, "response.data.errors")) {
-              context.commit("setNotification", {
-                msg: error.response.data.errors,
-                type: "error"
-              });
-            } else {
-              console.error(error);
-            }
-
             reject(error);
           });
       });

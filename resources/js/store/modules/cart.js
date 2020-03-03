@@ -87,11 +87,10 @@ export default {
 
     customer: null,
     method: "retail",
-    shipping_cost: null,
+    delivery_fees_price: null,
     cart_products: [],
 
-    discount_type: "",
-    discount_amount: 0,
+    order_discount: null,
 
     delivery: {
       store_pickup_id: null,
@@ -129,9 +128,7 @@ export default {
       state.order_page_actions = value;
     },
     setReorder(state, items) {
-      let strippedItems = items.map(
-        ({ discount_type, discount_amount, ...attrs }) => attrs
-      );
+      let strippedItems = items.map(({ discount, ...attrs }) => attrs);
 
       state.cart_products = strippedItems;
     },
@@ -222,11 +219,8 @@ export default {
     setTaxPercentage(state, value) {
       state.tax_percentage = value;
     },
-    setCartDiscountType(state, value) {
-      state.discount_type = value;
-    },
-    setCartDiscountAmount(state, value) {
-      state.discount_amount = value;
+    setCartDiscount(state, value) {
+      state.order_discount = value;
     },
     setDiscountError(state, value) {
       state.discount_error = value;
@@ -273,8 +267,8 @@ export default {
 
       state.isValidCheckout = result;
     },
-    setShippingCost(state, value) {
-      state.shipping_cost = value;
+    setDeliveryFeesPrice(state, value) {
+      state.delivery_fees_price = value;
     },
     addProduct(state, newProduct) {
       let index = _.findIndex(state.cart_products, product => {
@@ -353,7 +347,7 @@ export default {
       state.order_change = 0;
       state.order_total_paid = 0;
       state.order_total_item_cost = 0;
-      state.shipping_cost = 0;
+      state.delivery_fees_price = 0;
 
       state.payments = [];
       state.order_notes = "";
@@ -364,8 +358,7 @@ export default {
       state.customer = null;
 
       state.cart_products = [];
-      state.discount_type = "";
-      state.discount_amount = 0;
+      state.order_discount = null;
 
       state.checkoutSteps[0].name = "Cash & Carry";
       state.checkoutSteps[0].icon = "mdi-cart-arrow-right";
@@ -499,8 +492,7 @@ export default {
             order_id: context.state.order_id || null,
             products: context.state.cart_products,
             method: context.state.method,
-            discount_type: context.state.discount_type,
-            discount_amount: context.state.discount_amount,
+            discount: context.state.order_discount,
             customer_id: context.state.customer
               ? context.state.customer.id
               : "",
@@ -511,7 +503,7 @@ export default {
 
         if (context.state.method !== "retail") {
           payload.data.delivery = context.state.delivery;
-          payload.data.shipping_cost = context.state.shipping_cost;
+          payload.data.delivery_fees_price = context.state.delivery_fees_price;
         }
 
         context
@@ -564,7 +556,7 @@ export default {
         });
 
         if (order.method !== "retail") {
-          context.commit("setShippingCost", order.shipping_cost);
+          context.commit("setDeliveryFeesPrice", order.delivery_fees_price);
           context.commit("setDeliveryDate", order.delivery.date);
           context.commit("setDeliveryTime", order.delivery.time);
 

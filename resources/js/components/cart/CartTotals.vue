@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapGetters, mapMutations } from "vuex";
 
 export default {
   computed: {
@@ -46,18 +46,26 @@ export default {
       "cart_products",
       "customer",
       "order_total",
-      "discount_type",
-      "discount_amount",
-      "shipping_cost",
+      "order_discount",
+      "delivery_fees_price",
       "order_status",
       "order_total",
       "order_total_without_tax",
       "order_total_tax"
     ]),
+    ...mapGetters("price", [
+      "parsePrice",
+      "displayPrice",
+      "displayPriceNoSign",
+      "addPrice",
+      "subtractPrice",
+      "multiplyPrice",
+      "percentagePrice"
+    ]),
 
-    shippingCost() {
-      if (this.shipping_cost) {
-        return parseFloat(this.shipping_cost);
+    deliveryFeesPrice() {
+      if (this.delivery_fees) {
+        return this.displayPriceNoSign(this.delivery_fees);
       } else {
         return 0;
       }
@@ -67,16 +75,13 @@ export default {
 
       this.cart_products.forEach(product => {
         subtotal += this.calcDiscount(
-          product.final_price * product.qty,
-          product.discount_type,
-          product.discount_amount
+          this.multiplyPrice(product.price * product.qty),
+          product.discount || null
         );
       });
 
-      if (this.discount_type && this.discount_amount > 0) {
-        subtotal -=
-          subtotal -
-          this.calcDiscount(subtotal, this.discount_type, this.discount_amount);
+      if (this.discount.type && this.discount_amount > 0) {
+        subtotal -= subtotal - this.calcDiscount(subtotal, this.discount);
       }
 
       return parseFloat(subtotal);
@@ -86,7 +91,7 @@ export default {
         return 0;
       } else {
         return parseFloat(
-          ((this.subTotalwDiscount + this.shippingCost) *
+          ((this.subTotalwDiscount + this.deliveryFeesPrice) *
             parseFloat(this.tax_percentage)) /
             100
         );
@@ -99,7 +104,9 @@ export default {
         subtotalNoDiscount += product.final_price * product.qty;
       });
 
-      this.setOrderTotal(this.subTotalwDiscount + this.tax + this.shippingCost);
+      this.setOrderTotal(
+        this.subTotalwDiscount + this.tax + this.deliveryFeesPrice
+      );
 
       this.isValidDiscount();
 
@@ -109,8 +116,8 @@ export default {
   methods: {
     ...mapMutations("cart", ["setOrderTotal", "isValidDiscount"]),
 
-    calcDiscount(price, type, amount) {
-      if (type && amount) {
+    calcDiscount(price, discount) {
+      if (discount && _.has(discount, "price") && _.has(discount, "type")) {
         switch (_.lowerCase(type)) {
           case "flat":
             return parseFloat(price).toFixed(2) - parseFloat(amount).toFixed(2);
