@@ -2,35 +2,35 @@
   <div class="d-flex flex-column">
     <div class="d-flex justify-space-between pa-2" v-if="totalDiscount">
       <span>Total discount</span>
-      <span>$ {{ totalDiscount.toFixed(2) }}</span>
+      <span>$ {{ totalDiscount }}</span>
     </div>
 
     <v-divider v-if="totalDiscount" />
 
     <div class="d-flex justify-space-between pa-2">
       <span>Sub total w/ discount</span>
-      <span>$ {{ subTotalwDiscount.toFixed(2) }}</span>
+      <span>$ {{ subTotalwDiscount }}</span>
     </div>
 
     <v-divider />
 
     <div class="d-flex justify-space-between pa-2" v-if="shippingCost">
       <span>Delivery Fees</span>
-      <span>$ {{ shippingCost.toFixed(2) }}</span>
+      <span>$ {{ shippingCost }}</span>
     </div>
 
     <v-divider v-if="shippingCost" />
 
     <div class="d-flex justify-space-between pa-2 bb-1">
       <span>Tax</span>
-      <span>$ {{ tax.toFixed(2) }}</span>
+      <span>$ {{ tax }}</span>
     </div>
 
     <v-divider />
 
     <div class="d-flex justify-space-between pa-2">
       <span>Total</span>
-      <span>$ {{ order_total.toFixed(2) }}</span>
+      <span>$ {{ order_total }}</span>
     </div>
   </div>
 </template>
