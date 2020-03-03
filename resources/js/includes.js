@@ -5,7 +5,6 @@ import Cookies from "js-cookie";
 
 window._ = require("lodash");
 window.Pusher = require("pusher-js");
-window.Dinero = require("dinero.js");
 
 Pusher.logToConsole = process.env.NODE_ENV === "production" ? false : true;
 /**

@@ -368,10 +368,11 @@ class OrderController extends Controller
             'keyword' => 'nullable|required_without:filters|string',
 
             'filters' => 'nullable|array',
+            // checkboxes
             'filters.cb_timestamps' => 'nullable|boolean',
             'filters.cb_statuses' => 'nullable|boolean',
             'filters.cb_customer' => 'nullable|boolean',
-
+            // filters
             'filters.timestamp_from' => 'nullable|before_or_equal:today',
             'filters.timestamp_to' => 'nullable|before_or_equal:today',
             'filters.statuses.*.id' => 'nullable|exists:statuses,id',
