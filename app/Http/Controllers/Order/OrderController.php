@@ -426,4 +426,14 @@ class OrderController extends Controller
 
         return $query;
     }
+
+    public function printOrder(Order $order)
+    {
+        $order = $order->load(['store']);
+
+        return view('order')->with([
+            'order' => $order,
+            'store' => $order->store,
+        ]);
+    }
 }
