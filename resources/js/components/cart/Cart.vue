@@ -32,10 +32,10 @@
           <v-label>Cart discount</v-label>
         </v-col>
         <v-col :cols="4" class="px-2 py-0">
-          <cartDiscount
+          <!-- <cartDiscount
             :product_index="-1"
             :editable="$props.editable"
-          ></cartDiscount>
+          ></cartDiscount> -->
         </v-col>
       </v-row>
 

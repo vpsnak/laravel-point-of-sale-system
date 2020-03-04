@@ -35,9 +35,10 @@
                   :outlined="editPrice(index)"
                   :solo="!editPrice(index)"
                   :color="editPrice(index) ? 'yellow' : ''"
-                  :value="displayPriceNoSign(product.price)"
+                  :value="$price(product.price).toFormat('0,0.00')"
                   :hint="
-                    'Original price: ' + displayPrice(product.original_price)
+                    'Original price: ' +
+                      $price(product.original_price).toFormat('$0,0.00')
                   "
                   dense
                 ></v-text-field>
@@ -148,11 +149,11 @@
           </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
-          <cartDiscount
+          <!-- <cartDiscount
             :product_index="index"
             :product_price="multiplyPrice(product.price, product.qty)"
             :editable="editable"
-          ></cartDiscount>
+          ></cartDiscount> -->
           <v-row>
             <v-col :cols="12">
               <v-textarea
@@ -217,7 +218,11 @@ export default {
 
       const price = this.getSelectedInput(index).lazyValue;
 
-      this.$set(this.products[index], price, this.newPrice(price * 100));
+      this.$set(
+        this.products[index],
+        price,
+        this.$price({ amount: Number.parseInt(price * 100) })
+      );
       if (toggleEdit) {
         this.toggleEdit(index);
       }
@@ -228,7 +233,7 @@ export default {
       this.getSelectedInput(index).blur();
     },
     originalPrice(index) {
-      return this.parsePrice(this.products[index].original_price);
+      return this.$price(this.products[index].original_price);
     },
     editPrice(index) {
       if (_.has(this.products[index], "editPrice")) {
@@ -238,7 +243,7 @@ export default {
       }
     },
     toggleEdit(index) {
-      Vue.set(
+      this.$set(
         this.products[index],
         "editPrice",
         !this.products[index].editPrice

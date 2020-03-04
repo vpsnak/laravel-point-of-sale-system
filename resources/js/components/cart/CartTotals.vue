@@ -1,36 +1,42 @@
 <template>
   <div class="d-flex flex-column">
-    <div class="d-flex justify-space-between pa-2" v-if="totalDiscount">
+    <div
+      class="d-flex justify-space-between pa-2"
+      v-if="!totalDiscount.isZero()"
+    >
       <span>Total discount</span>
-      <span>{{ displayPrice(totalDiscount) }}</span>
+      <span>{{ totalDiscount.toFormat("$0,0.00") }}</span>
     </div>
 
-    <v-divider v-if="totalDiscount" />
+    <v-divider v-if="!totalDiscount.isZero()" />
 
     <div class="d-flex justify-space-between pa-2">
       <span>Sub total w/ discount</span>
-      <span>{{ displayPrice(subTotalwDiscount) }}</span>
+      <span>{{ subTotalwDiscount.toFormat("$0,0.00") }}</span>
     </div>
 
     <v-divider />
 
-    <div class="d-flex justify-space-between pa-2" v-if="deliveryFeesPrice">
+    <div
+      class="d-flex justify-space-between pa-2"
+      v-if="!deliveryFeesPrice.isZero()"
+    >
       <span>Delivery Fees</span>
-      <span>{{ displayPrice(deliveryFeesPrice) }}</span>
+      <span>{{ deliveryFeesPrice.toFormat("$0,0.00") }}</span>
     </div>
 
-    <v-divider v-if="deliveryFeesPrice" />
+    <v-divider v-if="!deliveryFeesPrice.isZero()" />
 
     <div class="d-flex justify-space-between pa-2 bb-1">
       <span>Tax</span>
-      <span>{{ displayPrice(tax) }}</span>
+      <span>{{ tax.toFormat("$0,0.00") }}</span>
     </div>
 
     <v-divider />
 
     <div class="d-flex justify-space-between pa-2">
       <span>Total</span>
-      <span>{{ displayPrice(order_total) }}</span>
+      <span>{{ $price(order_total).toFormat("$0,0.00") }}</span>
     </div>
   </div>
 </template>
@@ -55,56 +61,53 @@ export default {
     ]),
 
     deliveryFeesPrice() {
-      if (this.delivery_fees) {
-        return this.displayPriceNoSign(this.delivery_fees);
+      if (this.delivery_fees_price) {
+        return this.delivery_fees_price.toFormat("0,0.00");
       } else {
-        return this.newPrice();
+        return this.$price();
       }
     },
     subTotalwDiscount() {
-      var subtotal = this.newPrice();
+      var subtotal = this.$price();
 
       this.cart_products.forEach(product => {
-        const productPrice = this.multiplyPrice(product.price, product.qty);
-        const result = this.calcDiscount(productPrice, product.discount);
-        subtotal = this.addPrice(subtotal, result);
+        const productPrice = this.$price(product.price).multiply(
+          Number(product.qty)
+        );
+        // const result = this.calcDiscount(productPrice, product.discount);
+        const result = productPrice;
+        subtotal = this.$price(subtotal).add(result);
         console.log(productPrice.toFormat("$0,0.00"));
         console.log(result.toFormat("$0,0.00"));
 
         console.log(subtotal.toFormat("$0,0.00"));
       });
+      // const cartDiscount = this.calcDiscount(subtotal, this.discount);
 
-      return this.subtractPrice(
-        subtotal,
-        this.calcDiscount(subtotal, this.discount)
-      );
+      return this.$price(subtotal).subtract(this.$price());
+      // return this.$price(subtotal).subtract(cartDiscount);
     },
     tax() {
       if (this.customer && this.customer.no_tax) {
-        return this.newPrice();
+        return this.$price();
       } else {
-        console.log(
-          this.addPrice(
-            this.subTotalwDiscount,
-            this.deliveryFeesPrice
-          ).toFormat("$0,0.00")
-        );
-        return this.percentagePrice(
-          this.addPrice(this.subTotalwDiscount, this.deliveryFeesPrice),
-          this.tax_percentage
+        return (
+          this.$price(this.subTotalwDiscount)
+            // .add(this.delivery_fees_price)
+            .percentage(this.tax_percentage)
         );
       }
     },
     totalDiscount() {
-      var subtotalNoDiscount = this.newPrice();
+      var subtotalNoDiscount = this.$price();
 
       this.cart_products.forEach(product => {
-        const result = this.multiplyPrice(product.price, product.qty);
-        subtotalNoDiscount = this.addPrice(subtotalNoDiscount, result);
+        const result = this.$price(product.price).multiply(Number(product.qty));
+        subtotalNoDiscount = this.$price(subtotalNoDiscount).add(result);
       });
       this.isValidDiscount();
 
-      return this.subtractPrice(subtotalNoDiscount, this.subTotalwDiscount);
+      return this.$price(subtotalNoDiscount).subtract(this.subTotalwDiscount);
     }
   },
   methods: {

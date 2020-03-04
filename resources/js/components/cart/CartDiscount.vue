@@ -127,7 +127,7 @@ export default {
 
             return parseFloat(max - 0.01);
           } else {
-            return this.displayPriceNoSign(this.$props.product_price);
+            return this.$props.product_price.toFormat("0,0.00");
           }
         case "percentage":
         case "Percentage":

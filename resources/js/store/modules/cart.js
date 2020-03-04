@@ -292,17 +292,16 @@ export default {
         return product.id === target_product.id;
       });
 
-      if (index != -1) {
+      if (index !== -1) {
         state.cart_products[index].qty++;
       }
     },
     decreaseProductQty(state, target_product) {
       const index = _.findIndex(state.cart_products, product => {
         return product.id === target_product.id;
-        setOrderTimestamp;
       });
 
-      if (index != -1 && state.cart_products[index].qty > 1) {
+      if (index !== -1 && state.cart_products[index].qty > 1) {
         state.cart_products[index].qty--;
       }
     },
