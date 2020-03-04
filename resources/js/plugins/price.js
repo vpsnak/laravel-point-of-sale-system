@@ -5,12 +5,21 @@ const Price = {
     Vue.mixin({
       methods: {
         newPrice(amount, currency) {
+          console.log("new price");
+          console.log(amount);
+          if (amount) {
+            amount = Number.parseInt(amount);
+          }
+
           return Dinero({
-            currency: currency || "USD",
-            amount: amount || 0
+            amount: amount || 0,
+            currency: currency || "USD"
           });
         },
         parsePrice(price) {
+          if (_.has(price, "amount")) {
+            price.amount = Number.parseInt(price.amount);
+          }
           return Dinero(price);
         },
         displayPrice(price) {
@@ -25,8 +34,8 @@ const Price = {
         subtractPrice(price, value) {
           return this.parsePrice(price).subtract(value);
         },
-        multiplyPrice(price, multi) {
-          return this.parsePrice(price).multiply(_.toInteger(multi));
+        multiplyPrice(price, value) {
+          return this.parsePrice(price).multiply(Number(value));
         },
         percentagePrice(price, value) {
           return this.parsePrice(price).percentage(value);
@@ -45,6 +54,9 @@ const Price = {
                 return this.parsePrice(price);
             }
           } else {
+            console.log("else");
+
+            console.log(this.parsePrice(price).toFormat("$0,0.00"));
             return this.parsePrice(price);
           }
         }

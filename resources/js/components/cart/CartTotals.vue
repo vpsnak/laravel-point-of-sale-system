@@ -65,16 +65,12 @@ export default {
       let subtotal = this.newPrice();
 
       this.cart_products.forEach(product => {
-        subtotal = this.addPrice(
-          subtotal,
-          this.calcDiscount(
-            product.price,
-            product.qty,
-            product.discount || null
-          )
-        );
-      });
+        const productPrice = this.multiplyPrice(product.price, product.qty);
+        const result = this.calcDiscount(productPrice, product.discount);
 
+        subtotal = this.addPrice(subtotal, result);
+        console.log(subtotal.toFormat("$0,0.00"));
+      });
       return this.subtractPrice(
         subtotal,
         this.calcDiscount(subtotal, this.discount)
@@ -84,6 +80,12 @@ export default {
       if (this.customer && this.customer.no_tax) {
         return this.newPrice();
       } else {
+        console.log(
+          this.addPrice(
+            this.subTotalwDiscount,
+            this.deliveryFeesPrice
+          ).toFormat("$0,0.00")
+        );
         return this.calcTax(
           this.addPrice(this.subTotalwDiscount, this.deliveryFeesPrice),
           this.tax_percentage
@@ -94,10 +96,10 @@ export default {
       let subtotalNoDiscount = this.newPrice();
 
       this.cart_products.forEach(product => {
-        subtotalNoDiscount = this.multiplyPrice(product.price, product.qty);
+        const result = this.multiplyPrice(product.price, product.qty);
+        subtotalNoDiscount = this.addPrice(subtotalNoDiscount, result);
       });
 
-      this.setOrderTotal(this.addPrice(this.subTotalwDiscount, this.tax));
       this.isValidDiscount();
 
       return this.subtractPrice(subtotalNoDiscount, this.subTotalwDiscount);

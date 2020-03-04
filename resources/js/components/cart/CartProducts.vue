@@ -26,7 +26,7 @@
                   @click.stop
                   single-line
                   @keyup.esc="revertPrice(index)"
-                  @keyup.enter="setPrice(index, null, true)"
+                  @keyup.enter="setPrice(index, true)"
                   :ref="'priceField' + index"
                   :min="0"
                   type="number"
@@ -174,7 +174,6 @@
 </template>
 
 <script>
-import Dinero from "dinero.js";
 import { mapState, mapMutations, mapActions } from "vuex";
 
 export default {
@@ -209,26 +208,23 @@ export default {
     getSelectedInput(index) {
       return this.$refs[`priceField${index}`][0];
     },
-    setPrice(index, price = null, toggleEdit = false) {
+    setPrice(index, toggleEdit = false) {
       if (!this.getSelectedInput(index).lazyValue) {
         this.getSelectedInput(index).lazyValue = this.originalPrice(
           index
         ).toFormat("0,0.00");
       }
-      if (price) {
-        this.products[index].price.amount = _.toInteger(price * 100);
-      } else {
-        this.products[index].price.amount = _.toInteger(
-          this.getSelectedInput(index).lazyValue * 100
-        );
-      }
+
+      const price = this.getSelectedInput(index).lazyValue;
+
+      this.$set(this.products[index], price, this.newPrice(price * 100));
       if (toggleEdit) {
         this.toggleEdit(index);
       }
     },
     revertPrice(index) {
       this.getSelectedInput(index).lazyValue = null;
-      this.setPrice(index, null, true);
+      this.setPrice(index, true);
       this.getSelectedInput(index).blur();
     },
     originalPrice(index) {
