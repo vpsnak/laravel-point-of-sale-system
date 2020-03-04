@@ -103,4 +103,9 @@ class Product extends Model
     {
         return $this->morphOne('App\Price', 'priceable');
     }
+
+      public function cards()
+    {
+        return $this->morphMany('App\Card','cardable');
+    }
 }

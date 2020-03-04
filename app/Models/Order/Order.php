@@ -222,6 +222,11 @@ class Order extends Model
         return $this->hasMany(MasOrderLog::class);
     }
 
+    public function cards()
+    {
+        return $this->morphMany('App\Card','cardable');
+    }
+
     public function statuses()
     {
         return $this->belongsToMany(Status::class)
