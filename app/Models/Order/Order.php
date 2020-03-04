@@ -232,11 +232,18 @@ class Order extends Model
 
     public function lastStatus()
     {
-        return  $this->statuses()->latest();
+        return $this->statuses()->latest();
     }
 
     public function getStatusAttribute()
     {
-        return  $this->lastStatus()->first();
+        return $this->lastStatus()->first();
+    }
+
+    public static function createWithoutEvents(array $options = [])
+    {
+        return static::withoutEvents(function () use ($options) {
+            return static::create($options);
+        });
     }
 }

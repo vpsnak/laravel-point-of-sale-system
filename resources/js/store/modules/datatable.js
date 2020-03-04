@@ -1,5 +1,18 @@
 // initial state
 const state = {
+  data_table: {
+    items: [],
+    icon: "",
+    title: "",
+    headers: [],
+    model: "",
+    btnTxt: "",
+    newForm: "",
+    disableNewBtn: false,
+    loading: false,
+    filters: null,
+    refreshBtn: true
+  },
   headers: {
     addresses: [
       { text: "#", value: "id" },
@@ -171,19 +184,6 @@ const state = {
         value: "actions"
       }
     ]
-  },
-  data_table: {
-    items: [],
-    icon: "",
-    title: "",
-    headers: [],
-    model: "",
-    btnTxt: "",
-    newForm: "",
-    disableNewBtn: false,
-    loading: false,
-    filters: false,
-    refreshBtn: true
   }
 };
 

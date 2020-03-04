@@ -166,7 +166,7 @@ return [
     |
     */
 
-    'secure' => config('app.env') !== 'local' ? true : false,
+    'secure' => config('app.env') !== 'local' ? true : null,
 
     /*
     |--------------------------------------------------------------------------

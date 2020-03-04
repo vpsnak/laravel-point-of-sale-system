@@ -9,7 +9,8 @@
       class="my-2"
       @click.stop="setCheckoutDialog(true)"
       :disabled="disabled || !isValidCheckout"
-    >Checkout</v-btn>
+      >Checkout</v-btn
+    >
 
     <v-divider />
 
@@ -81,7 +82,7 @@
 
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
-import { EventBus } from "../../plugins/event-bus";
+import { EventBus } from "../../plugins/eventBus";
 
 export default {
   props: {

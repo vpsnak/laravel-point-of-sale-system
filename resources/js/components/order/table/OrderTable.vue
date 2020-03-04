@@ -25,6 +25,22 @@
     </template>
 
     <template v-slot:item.actions="{ item }">
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            small
+            :disabled="data_table.loading"
+            @click.stop="printOrder(item.id)"
+            class="my-2"
+            icon
+            v-on="on"
+          >
+            <v-icon small>mdi-printer</v-icon>
+          </v-btn>
+        </template>
+        <span>Print</span>
+      </v-tooltip>
+
       <v-tooltip
         v-if="['pending', 'pending_payment'].indexOf(item.status) >= 0"
         bottom
@@ -114,7 +130,7 @@
 </template>
 
 <script>
-import { EventBus } from "../../plugins/event-bus";
+import { EventBus } from "../../../plugins/eventBus";
 import { mapMutations, mapActions, mapState } from "vuex";
 
 export default {
@@ -155,7 +171,7 @@ export default {
         model: "orders",
         disableNewBtn: true,
         loading: true,
-        filters: true
+        filters: "orderTableFilters"
       }
     };
   },
@@ -184,6 +200,11 @@ export default {
           return true;
       }
     },
+
+    printOrder(item) {
+      window.open(`/order/${item}`, "_blank");
+    },
+
     reorder(id) {
       this.setLoading(true);
       this.resetState();

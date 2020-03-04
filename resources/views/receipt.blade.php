@@ -263,16 +263,16 @@
                 </tr>
             </table>
             <br>
-            @if($order->shipping_address)
+            @if($order->delivery)
             <table style="font-size:14px;">
                 <tr>
                     <td style="text-align: end;">Delv on:</td>
-                    <td>{{ Carbon\Carbon::parse($order->delivery_date)->format('m/d/Y') }}</td>
+                    <td>{{ Carbon\Carbon::parse($order->delivery['date'])->format('m/d/Y') }}</td>
                 </tr>
                 <tr>
                     <td style="text-align: end;">Delv to:</td>
-                    <td>{{$order->shipping_address->first_name}}
-                        {{ $order->shipping_address->last_name }}
+                    <td>{{ $order->delivery['address']['first_name'] }}
+                        {{ $order->delivery['address']['last_name'] }}
                     </td>
                 </tr>
                 <tr>
@@ -281,15 +281,15 @@
                 </tr>
                 <tr>
                     <td style="text-align: end;">Address:</td>
-                    <td>{{ $order->shipping_address->street }}</td>
+                    <td>{{ $order->delivery['address']['street'] }}</td>
                 </tr>
                 <tr>
                     <td style="text-align: end;">Address:</td>
-                    <td>{{ $order->shipping_address->street2 }}</td>
+                    <td>{{ $order->delivery['address']['street2'] }}</td>
                 </tr>
                 <tr>
                     <td style="text-align: end;">City, St:</td>
-                    <td>{{ $order->shipping_address->city }}</td>
+                    <td>{{ $order->delivery['address']['city'] }}</td>
                 </tr>
             </table>
             @endif

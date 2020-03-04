@@ -10,7 +10,7 @@ import Sales from "../components/pages/Sales";
 import OpenCashRegister from "../components/pages/OpenCashRegister";
 
 // data tables
-import Orders from "../components/order/OrderTable";
+import Orders from "../components/order/table/OrderTable";
 import OrderViewPage from "../components/order/pages/OrderViewPage";
 import OrderEditOptionsPage from "../components/order/pages/OrderEditOptionsPage";
 import Customers from "../components/tables/CustomerTable";

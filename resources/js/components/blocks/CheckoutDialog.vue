@@ -65,7 +65,7 @@
 
 <script>
 import { mapMutations, mapActions, mapState } from "vuex";
-import { EventBus } from "../../plugins/event-bus";
+import { EventBus } from "../../plugins/eventBus";
 
 export default {
   mounted() {

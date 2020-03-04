@@ -10,6 +10,7 @@ use App\Jobs\ProcessOrder;
 use App\Order;
 use App\Status;
 use App\StorePickup;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -162,7 +163,7 @@ class OrderController extends Controller
         $this->parseTax();
         $this->parseProducts();
 
-        $this->order = Order::create($this->order_data);
+        $this->order = Order::createWithoutEvents($this->order_data);
         $submittedStatusId = Status::where('value', 'submitted')->firstOrFail('id');
         $this->order->statuses()->attach($submittedStatusId, ['user_id' => $this->user->id]);
         // ProcessOrder::dispatchNow($this->order);
@@ -340,11 +341,37 @@ class OrderController extends Controller
         ]);
     }
 
+    public function rollbackPayments(Order $order)
+    {
+        $paymentController = new PaymentController();
+        $results = [];
+
+        foreach ($order->payments as $payment) {
+            if ($payment->status === 'approved' && !$payment->refunded) {
+                $result = $paymentController->refundPayment($payment, false);
+
+                if (is_array($result) && array_key_exists('errors', $result)) {
+                    if (!array_key_exists('errors', $results)) {
+                        $results['errors'] = [];
+                    }
+                    array_push($results['errors'], $result['errors']);
+                }
+            }
+        }
+
+        return $results ? $results : true;
+    }
+
     public function search(Request $request)
     {
         $this->order_data = $request->validate([
             'keyword' => 'nullable|required_without:filters|string',
+
             'filters' => 'nullable|array',
+            'filters.cb_timestamps' => 'nullable|boolean',
+            'filters.cb_statuses' => 'nullable|boolean',
+            'filters.cb_customer' => 'nullable|boolean',
+
             'filters.timestamp_from' => 'nullable|before_or_equal:today',
             'filters.timestamp_to' => 'nullable|before_or_equal:today',
             'filters.statuses.*.id' => 'nullable|exists:statuses,id',
@@ -369,49 +396,44 @@ class OrderController extends Controller
         return response($query->paginate());
     }
 
-    public function rollbackPayments(Order $order)
+    private function applyFilters($query)
     {
-        $paymentController = new PaymentController();
-        $results = [];
-
-        foreach ($order->payments as $payment) {
-            if ($payment->status === 'approved' && !$payment->refunded) {
-                $result = $paymentController->refundPayment($payment, false);
-
-                if (is_array($result) && array_key_exists('errors', $result)) {
-                    if (!array_key_exists('errors', $results)) {
-                        $results['errors'] = [];
-                    }
-                    array_push($results['errors'], $result['errors']);
-                }
+        if (isset($this->order_data['filters']['cb_timestamps']) && $this->order_data['filters']['cb_timestamps']) {
+            if (isset($this->order_data['filters']['timestamp_from'])) {
+                $query =
+                    $query->whereBetween(
+                        'created_at',
+                        [
+                            $this->order_data['filters']['timestamp_from'],
+                            $this->order_data['filters']['timestamp_to'] ?? now()
+                        ]
+                    );
+            } else if ($this->order_data['filters']['timestamp_to']) {
+                $query = $query->whereBetween('created_at', [$this->order_data['filters']['timestamp_to'], now()]);
             }
         }
 
-        return $results ? $results : true;
-    }
-
-    private function applyFilters($query)
-    {
-        if (isset($this->order_data['filters']['timestamp_from'])) {
-            $query =
-                $query->whereBetween(
-                    'created_at',
-                    [
-                        $this->order_data['filters']['timestamp_from'],
-                        $this->order_data['filters']['timestamp_to'] ?? now()
-                    ]
-                );
-        } else if ($this->order_data['filters']['timestamp_to']) {
-            $query = $query->whereBetween('created_at', [$this->order_data['filters']['timestamp_to'], now()]);
+        if (isset($this->order_data['filters']['cb_customer']) && $this->order_data['filters']['cb_customer']  && isset($this->order_data['filters']['customer_id'])) {
+            $query = $query->where('customer_id', $this->order_data['filters']['customer_id']);
         }
 
-        if (isset($this->order_data['filters']['statuses'])) {
-            $query = $query->whereIn('statuses', $this->order_data['filters']['statuses']);
-        }
-        if (isset($this->order_data['filters']['customer_id'])) {
-            $query = $query->whereIn('customer_id', $this->order_data['filters']['customer_id']);
+        if (isset($this->order_data['filters']['cb_statuses']) && $this->order_data['filters']['cb_statuses']  && isset($this->order_data['filters']['statuses'])) {
+            $statuses = $this->order_data['filters']['statuses'];
+            $query = $query->with('statuses')->whereHas('statuses', function (Builder $query) use ($statuses) {
+                $query->latest()->whereIn('status_id', $statuses);
+            });
         }
 
         return $query;
+    }
+
+    public function printOrder(Order $order)
+    {
+        $order = $order->load(['store']);
+
+        return view('order')->with([
+            'order' => $order,
+            'store' => $order->store,
+        ]);
     }
 }

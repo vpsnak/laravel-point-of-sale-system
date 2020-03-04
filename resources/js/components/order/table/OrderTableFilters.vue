@@ -28,7 +28,7 @@
                 Submitted
               </v-col>
               <v-col :cols="2">
-                <v-checkbox v-model="timestamps"> </v-checkbox>
+                <v-checkbox v-model="filters.cb_timestamps"> </v-checkbox>
               </v-col>
               <v-col :cols="5">
                 <v-menu
@@ -89,7 +89,7 @@
                 Customer
               </v-col>
               <v-col :cols="2">
-                <v-checkbox v-model="customer"> </v-checkbox>
+                <v-checkbox v-model="filters.cb_customer"> </v-checkbox>
               </v-col>
               <v-col :cols="10">
                 <v-combobox
@@ -125,7 +125,7 @@
                 Statuses
               </v-col>
               <v-col :cols="2">
-                <v-checkbox v-model="statuses" />
+                <v-checkbox v-model="filters.cb_statuses" />
               </v-col>
               <v-col :cols="10" align-self="center">
                 <v-select
@@ -133,13 +133,14 @@
                   dense
                   single-line
                   :items="order_statuses"
-                  v-model="filters.statuses"
+                  v-model="selectedStatuses"
                   :loading="order_statuses_loading"
                   chips
                   clearable
                   deletable-chips
                   full-width
                   small-chips
+                  item-value="id"
                 >
                 </v-select>
               </v-col>
@@ -173,16 +174,16 @@ export default {
       order_statuses_loading: false,
       customer_search_loading: false,
 
-      timestamps: false,
-      statuses: false,
-      customer: false,
-
       datePickerFrom: false,
       datePickerTo: false,
 
       order_statuses: null,
 
       filters: {
+        cb_timestamps: false,
+        cb_statuses: false,
+        cb_customer: false,
+
         timestamp_from: null,
         timestamp_to: null,
         statuses: null,
@@ -207,14 +208,25 @@ export default {
         this.selected_customer = value;
         if (_.has(value, "id")) {
           this.filters.customer_id = value.id;
-          this.customer = true;
+          this.filters.cb_customer = true;
         } else {
-          this.customer = false;
+          this.filters.cb_customer = false;
         }
       }
     },
-    selectedStatuses() {
-      return this.filters.statuses;
+    selectedStatuses: {
+      get() {
+        return this.filters.statuses;
+      },
+      set(value) {
+        this.filters.statuses = value;
+
+        if (!value || !value.length) {
+          this.filters.cb_statuses = false;
+        } else {
+          this.filters.cb_statuses = true;
+        }
+      }
     },
     fromTimestampFormatted() {
       if (this.filters.timestamp_from) {
@@ -233,28 +245,23 @@ export default {
   },
 
   watch: {
-    selectedStatuses(value) {
-      if (!value || !value.length) {
-        this.statuses = false;
-      } else {
-        this.statuses = true;
-      }
-    },
     toTimestampFormatted(value) {
       if (value) {
-        this.timestamps = true;
+        this.filters.cb_timestamps = true;
       } else {
+        this.filters.timestamp_to = null;
         if (!this.fromTimestampFormatted) {
-          this.timestamps = false;
+          this.filters.cb_timestamps = false;
         }
       }
     },
     fromTimestampFormatted(value) {
       if (value) {
-        this.timestamps = true;
+        this.filters.cb_timestamps = true;
       } else {
+        this.filters.timestamp_from = null;
         if (!this.toTimestampFormatted) {
-          this.timestamps = false;
+          this.filters.cb_timestamps = false;
         }
       }
     },
@@ -324,18 +331,13 @@ export default {
       }
     },
     clear() {
-      this.timestamps = false;
-      this.statuses = false;
-      this.customer = null;
-
       this.search = null;
       this.customer_results = [];
-      this.selected_customer = null;
 
       this.filters.timestamp_from = null;
       this.filters.timestamp_to = null;
-      this.filters.customer_id = null;
-      this.filters.statuses = null;
+      this.selectedCustomer = null;
+      this.selectedStatuses = null;
     },
     checkIfObjectEvent() {
       if (!this.selectedCustomer) {

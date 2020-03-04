@@ -8,7 +8,7 @@
   ],
   "license": "MIT",
   "require": {
-    "php": "^7.2",
+    "php": "^7.2.5",
     "ext-json": "*",
     "ajcastro/eager-load-pivot-relations": "^0.2.2",
     "codeitnowin/barcode": "^3.0",
@@ -16,8 +16,8 @@
     "giberti/ext-oauth-shim": "^1.0",
     "guzzlehttp/guzzle": "^6.3",
     "laravel/framework": "^6.0",
-    "laravel/passport": "^7.5",
-    "laravel/tinker": "^1.0",
+    "laravel/passport": "^8.0",
+    "laravel/tinker": "^2.0",
     "pusher/pusher-php-server": "^4.1",
     "rodenastyle/stream-parser": "^1.2",
     "spatie/laravel-permission": "^3.2"
