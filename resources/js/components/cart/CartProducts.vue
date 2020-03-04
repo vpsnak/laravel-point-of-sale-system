@@ -149,11 +149,11 @@
           </div>
         </v-expansion-panel-header>
         <v-expansion-panel-content>
-          <!-- <cartDiscount
+          <cartDiscount
             :product_index="index"
-            :product_price="multiplyPrice(product.price, product.qty)"
+            :product_price="$price(product.price).multiply(product.qty)"
             :editable="editable"
-          ></cartDiscount> -->
+          />
           <v-row>
             <v-col :cols="12">
               <v-textarea
@@ -218,11 +218,9 @@ export default {
 
       const price = this.getSelectedInput(index).lazyValue;
 
-      this.$set(
-        this.products[index],
-        price,
-        this.$price({ amount: Number.parseInt(price * 100) })
-      );
+      this.$set(this.products[index], "price", {
+        amount: Number.parseInt(price * 100)
+      });
       if (toggleEdit) {
         this.toggleEdit(index);
       }

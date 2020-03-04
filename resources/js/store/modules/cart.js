@@ -87,10 +87,12 @@ export default {
 
     customer: null,
     method: "retail",
-    delivery_fees_price: null,
+    delivery_fees_price: {
+      amount: 0
+    },
     cart_products: [],
 
-    order_discount: null,
+    order_discount: { amount: 0 },
 
     delivery: {
       store_pickup_id: null,
@@ -346,8 +348,9 @@ export default {
       state.order_change = 0;
       state.order_total_paid = 0;
       state.order_total_item_cost = 0;
-      state.delivery_fees_price = 0;
-
+      state.delivery_fees_price = {
+        amount: 0
+      };
       state.payments = [];
       state.order_notes = "";
 
@@ -357,7 +360,9 @@ export default {
       state.customer = null;
 
       state.cart_products = [];
-      state.order_discount = null;
+      state.order_discount = {
+        amount: 0
+      };
 
       state.checkoutSteps[0].name = "Cash & Carry";
       state.checkoutSteps[0].icon = "mdi-cart-arrow-right";
