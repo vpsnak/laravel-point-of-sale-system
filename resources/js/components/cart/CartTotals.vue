@@ -62,15 +62,18 @@ export default {
       }
     },
     subTotalwDiscount() {
-      let subtotal = this.newPrice();
+      var subtotal = this.newPrice();
 
       this.cart_products.forEach(product => {
         const productPrice = this.multiplyPrice(product.price, product.qty);
         const result = this.calcDiscount(productPrice, product.discount);
-
         subtotal = this.addPrice(subtotal, result);
+        console.log(productPrice.toFormat("$0,0.00"));
+        console.log(result.toFormat("$0,0.00"));
+
         console.log(subtotal.toFormat("$0,0.00"));
       });
+
       return this.subtractPrice(
         subtotal,
         this.calcDiscount(subtotal, this.discount)
@@ -86,20 +89,19 @@ export default {
             this.deliveryFeesPrice
           ).toFormat("$0,0.00")
         );
-        return this.calcTax(
+        return this.percentagePrice(
           this.addPrice(this.subTotalwDiscount, this.deliveryFeesPrice),
           this.tax_percentage
         );
       }
     },
     totalDiscount() {
-      let subtotalNoDiscount = this.newPrice();
+      var subtotalNoDiscount = this.newPrice();
 
       this.cart_products.forEach(product => {
         const result = this.multiplyPrice(product.price, product.qty);
         subtotalNoDiscount = this.addPrice(subtotalNoDiscount, result);
       });
-
       this.isValidDiscount();
 
       return this.subtractPrice(subtotalNoDiscount, this.subTotalwDiscount);
@@ -108,7 +110,7 @@ export default {
   methods: {
     ...mapMutations("cart", ["setOrderTotal", "isValidDiscount"])
 
-    // calcDiscount(price, discount) {
+    // calcDiscountOld(price, discount) {
     //   if (discount && _.has(discount, "price") && _.has(discount, "type")) {
     //     switch (_.lowerCase(type)) {
     //       case "flat":

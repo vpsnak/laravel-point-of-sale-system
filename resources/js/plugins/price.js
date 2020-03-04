@@ -4,23 +4,22 @@ const Price = {
   install(Vue, options) {
     Vue.mixin({
       methods: {
+        parsePrice(price) {
+          if (price instanceof Dinero) {
+            return price;
+          } else {
+            return Dinero(price);
+          }
+        },
         newPrice(amount, currency) {
-          console.log("new price");
-          console.log(amount);
           if (amount) {
             amount = Number.parseInt(amount);
           }
-
-          return Dinero({
+          const price = {
             amount: amount || 0,
             currency: currency || "USD"
-          });
-        },
-        parsePrice(price) {
-          if (_.has(price, "amount")) {
-            price.amount = Number.parseInt(price.amount);
-          }
-          return Dinero(price);
+          };
+          return this.parsePrice(price);
         },
         displayPrice(price) {
           return this.parsePrice(price).toFormat("$0,0.00");
@@ -38,13 +37,10 @@ const Price = {
           return this.parsePrice(price).multiply(Number(value));
         },
         percentagePrice(price, value) {
-          return this.parsePrice(price).percentage(value);
-        },
-        calcTax(price) {
-          return this.parsePrice(price).percentage(8.875);
+          return this.parsePrice(price).percentage(Number(value));
         },
         calcDiscount(price, discount) {
-          if (_.has(discount, "price") && _.has(discount, "type")) {
+          if (discount && _.has(discount, "price") && _.has(discount, "type")) {
             switch (_.lowerCase(discount.type)) {
               case "flat":
                 return this.subtractPrice(price, discount.amount);
@@ -54,9 +50,6 @@ const Price = {
                 return this.parsePrice(price);
             }
           } else {
-            console.log("else");
-
-            console.log(this.parsePrice(price).toFormat("$0,0.00"));
             return this.parsePrice(price);
           }
         }
