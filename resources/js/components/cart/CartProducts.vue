@@ -175,7 +175,7 @@
 
 <script>
 import Dinero from "dinero.js";
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 
 export default {
   props: {
@@ -183,12 +183,6 @@ export default {
   },
   computed: {
     ...mapState("cart", ["discountTypes", "cart_products"]),
-    ...mapGetters("price", [
-      "parsePrice",
-      "displayPrice",
-      "displayPriceNoSign",
-      "multiplyPrice"
-    ]),
 
     products: {
       get() {

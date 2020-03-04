@@ -92,7 +92,6 @@ export default {
 
   computed: {
     ...mapState("datatable", ["data_table"]),
-    ...mapGetters("price", ["displayPrice"]),
     ...mapGetters(["role"])
   },
 

@@ -36,8 +36,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations } from "vuex";
-import "../../plugins/price";
+import { mapState, mapMutations } from "vuex";
 
 export default {
   computed: {

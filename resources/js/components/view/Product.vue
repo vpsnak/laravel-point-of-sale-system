@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapActions } from "vuex";
 
 export default {
   props: {
@@ -95,8 +95,6 @@ export default {
       });
   },
   computed: {
-    ...mapGetters("price", ["displayPrice"]),
-
     productData() {
       return this.product;
     }

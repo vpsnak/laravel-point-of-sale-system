@@ -183,7 +183,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 
 export default {
   data() {
@@ -217,7 +217,6 @@ export default {
   computed: {
     ...mapState(["productList"]),
     ...mapState("dialog", ["interactive_dialog"]),
-    ...mapGetters("price", ["displayPrice"]),
 
     keyword: {
       get() {

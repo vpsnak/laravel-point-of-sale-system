@@ -44,7 +44,6 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
-import { mapGetters } from "vuex";
 
 export default {
   props: {
@@ -112,11 +111,9 @@ export default {
       "discountTypes",
       "order_id",
       "cart_products",
-      "discount_type",
-      "discount_amount",
+      "discount",
       "discount_error"
     ]),
-    ...mapGetters("price", ["displayPriceNoSign"]),
 
     product() {
       return this.cart_products[this.$props.product_index];

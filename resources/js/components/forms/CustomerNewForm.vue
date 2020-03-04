@@ -3,7 +3,11 @@
     <v-form @submit.prevent="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         PERSONAL INFORMATION
-        <ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="First name">
+        <ValidationProvider
+          rules="required|max:100"
+          v-slot="{ errors, valid }"
+          name="First name"
+        >
           <v-text-field
             v-model="firstName"
             label="First name"
@@ -11,7 +15,11 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Last Name">
+        <ValidationProvider
+          rules="required|max:100"
+          v-slot="{ errors, valid }"
+          name="Last Name"
+        >
           <v-text-field
             v-model="lastName"
             label="Last name"
@@ -19,7 +27,11 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider rules="required|email|max:191" v-slot="{ errors, valid }" name="Email">
+        <ValidationProvider
+          rules="required|email|max:191"
+          v-slot="{ errors, valid }"
+          name="Email"
+        >
           <v-text-field
             v-model="formFields.email"
             label="Email"
@@ -48,7 +60,10 @@
 
         <v-row justify="space-around">
           <ValidationProvider vid="house_account_status">
-            <v-switch v-model="formFields.house_account_status" label="Has house account"></v-switch>
+            <v-switch
+              v-model="formFields.house_account_status"
+              label="Has house account"
+            ></v-switch>
           </ValidationProvider>
         </v-row>
         <v-row justify="space-around">
@@ -80,7 +95,11 @@
             </ValidationProvider>
           </v-col>
         </v-row>
-        <ValidationProvider rules="max:65535" v-slot="{ errors, valid }" name="Comment">
+        <ValidationProvider
+          rules="max:65535"
+          v-slot="{ errors, valid }"
+          name="Comment"
+        >
           <v-textarea
             rows="3"
             v-model="formFields.comment"
@@ -90,7 +109,11 @@
           ></v-textarea>
         </ValidationProvider>
 
-        <v-checkbox v-model="syncName" label="Use customer's name as default address name"></v-checkbox>BILLING INFORMATION
+        <v-checkbox
+          v-model="syncName"
+          label="Use customer's name as default address name"
+        ></v-checkbox
+        >BILLING INFORMATION
         <v-row>
           <v-col cols="6">
             <ValidationProvider
@@ -106,7 +129,11 @@
                 :success="valid"
               ></v-text-field>
             </ValidationProvider>
-            <ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Address">
+            <ValidationProvider
+              rules="required|max:100"
+              v-slot="{ errors, valid }"
+              name="Address"
+            >
               <v-text-field
                 v-model="formFields.address.street"
                 label="Address"
@@ -131,7 +158,11 @@
                 :success="valid"
               ></v-text-field>
             </ValidationProvider>
-            <ValidationProvider rules="max:100" v-slot="{ errors, valid }" name="Second Address">
+            <ValidationProvider
+              rules="max:100"
+              v-slot="{ errors, valid }"
+              name="Second Address"
+            >
               <v-text-field
                 v-model="formFields.address.street2"
                 label="Second Address"
@@ -142,7 +173,11 @@
             </ValidationProvider>
           </v-col>
           <v-col cols="3">
-            <ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="City">
+            <ValidationProvider
+              rules="required|max:100"
+              v-slot="{ errors, valid }"
+              name="City"
+            >
               <v-text-field
                 v-model="formFields.address.city"
                 label="City"
@@ -153,7 +188,11 @@
             </ValidationProvider>
           </v-col>
           <v-col cols="3">
-            <ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Zip code">
+            <ValidationProvider
+              rules="required|max:100"
+              v-slot="{ errors, valid }"
+              name="Zip code"
+            >
               <v-text-field
                 v-model="formFields.address.postcode"
                 label="Zip code"
@@ -164,7 +203,11 @@
             </ValidationProvider>
           </v-col>
           <v-col cols="3">
-            <ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="State">
+            <ValidationProvider
+              rules="required|max:100"
+              v-slot="{ errors, valid }"
+              name="State"
+            >
               <v-select
                 v-model="formFields.address.region_id"
                 :items="regions"
@@ -196,7 +239,11 @@
             </ValidationProvider>
           </v-col>
           <v-col cols="4">
-            <ValidationProvider rules="max:100" v-slot="{ errors, valid }" name="Location">
+            <ValidationProvider
+              rules="max:100"
+              v-slot="{ errors, valid }"
+              name="Location"
+            >
               <v-select
                 v-model="formFields.location"
                 label="Locations"
@@ -210,7 +257,11 @@
             </ValidationProvider>
           </v-col>
           <v-col cols="4">
-            <ValidationProvider rules="max:100" v-slot="{ errors, valid }" name="Location name">
+            <ValidationProvider
+              rules="max:100"
+              v-slot="{ errors, valid }"
+              name="Location name"
+            >
               <v-text-field
                 v-model="formFields.address.location_name"
                 label="Location name"
@@ -251,7 +302,8 @@
               type="submit"
               :loading="loading"
               :disabled="invalid || loading"
-            >submit</v-btn>
+              >submit</v-btn
+            >
             <v-btn color="orange" @click="clear">clear</v-btn>
           </v-col>
         </v-row>
@@ -260,7 +312,7 @@
   </ValidationObserver>
 </template>
 <script>
-import { mapActions, mapState, mapGetters } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
   data() {
