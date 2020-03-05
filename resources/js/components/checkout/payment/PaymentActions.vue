@@ -96,7 +96,7 @@
         <v-col :lg="2" :md="3">
           <v-text-field
             prepend-inner-icon="mdi-currency-usd"
-            :value="remainingAmount"
+            :value="remainingAmount.toFormat('0.00')"
             disabled
             label="Remaining Amount"
           ></v-text-field>
@@ -232,15 +232,13 @@ export default {
       return parseFloat(this.customer.house_account_limit);
     },
     remainingAmount() {
-      // return this.order_remaining || this.toFixed(this.order_total, 2);
-      return this.order_remaining || order_total;
+      return this.order_remaining || this.order_total;
     },
     amount: {
       get() {
         return this.paymentAmount;
       },
       set(value) {
-        // this.paymentAmount = this.toFixed(value, 2);
         this.paymentAmount = value;
       }
     }
@@ -250,21 +248,6 @@ export default {
     ...mapMutations("cart", ["setPaymentLoading"]),
     ...mapActions("cart", ["submitOrder"]),
     ...mapActions("requests", ["request"]),
-
-    doublePrecision(num) {
-      num = _.toString(num);
-
-      num = num.split(".");
-      if (num.length === 2 && num[1].length > 2) {
-        num[1] = num[1].slice(0, 2);
-      }
-
-      if (num[1] === undefined) {
-        num[1] = "00";
-      }
-
-      return parseFloat(`${num[0]}.${num[1]}`);
-    },
 
     getPaymentTypes() {
       this.request({

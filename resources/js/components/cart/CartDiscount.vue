@@ -115,11 +115,11 @@ export default {
       switch (this.discount.type) {
         case "flat":
           if (this.product) {
-            return this.$props.productPrice.toFormat("00.00");
+            return this.$props.productPrice.toFormat("0.00");
           } else {
             return this.$price(this.order_total)
               .add(this.$price({ amount: this.discount.amount || 0 }))
-              .toFormat("00.00");
+              .toFormat("0.00");
           }
         case "percentage":
           return 99;
