@@ -19,26 +19,22 @@ class Order extends Model
     ];
 
     protected $fillable = [
-        'mas_order_id',
-        'customer_id',
         'store_id',
-        'user_id',
+        'method',
         'items',
-
+        'notes',
+        'customer_id',
         'billing_address',
         'delivery',
-        'method',
-        'notes',
 
         'discount',
         'delivery_fees_price',
-        'total_items_cost',
-        'total_tax_price',
-        'total_price',
+
+        'mas_order_id',
 
         'magento_id',
         'magento_shipping_address_id',
-        'magento_billing_address_id',
+        'magento_billing_address_id'
     ];
 
     protected $with = [
@@ -47,6 +43,12 @@ class Order extends Model
         'customer',
         'store',
         'created_by'
+    ];
+
+    protected $hidden = [
+        'magento_id',
+        'magento_shipping_address_id',
+        'magento_billing_address_id'
     ];
 
     protected $casts = [

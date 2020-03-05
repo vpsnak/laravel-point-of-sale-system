@@ -26,9 +26,7 @@ class CreateOrdersTable extends Migration
             $table->json('delivery')->nullable();
 
             $table->json('discount')->nullable();
-            $table->json('mdse_price');
             $table->json('delivery_fees_price')->nullable();
-            $table->json('total_tax_price');
 
             $table->unsignedSmallInteger('user_id');
             $table->unsignedInteger('mas_order_id')->nullable();

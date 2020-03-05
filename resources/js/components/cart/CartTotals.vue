@@ -51,13 +51,9 @@ export default {
       "order_id",
       "cart_products",
       "customer",
-      "order_total",
       "order_discount",
       "delivery_fees_price",
-      "order_status",
-      "order_total",
-      "order_total_without_tax",
-      "order_total_tax"
+      "order_status"
     ]),
 
     deliveryFeesPrice() {
@@ -98,11 +94,16 @@ export default {
       return subtotalNoDiscount.subtract(this.subTotalwDiscount);
     },
     orderTotal() {
-      const orderTotal = this.subTotalwDiscount.add(this.tax);
-      this.setOrderTotal({ amount: orderTotal.getAmount() });
-      return orderTotal;
+      return this.subTotalwDiscount.add(this.tax);
     }
   },
+
+  watch: {
+    orderTotal(value) {
+      this.setOrderTotal(value.getAmount());
+    }
+  },
+
   methods: {
     ...mapMutations("cart", ["setOrderTotal"]),
 
