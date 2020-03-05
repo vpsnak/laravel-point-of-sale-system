@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Address;
 use App\Customer;
 use App\Giftcard;
-use App\Helper\Price;
 use App\Jobs\ProcessOrder;
 use App\Order;
 use App\Status;
@@ -258,18 +257,21 @@ class OrderController extends Controller
 
     private function setSubtotal()
     {
-        $subtotal = 0;
-        foreach ($this->order_data['products'] as $product) {
-            $total = $product['price'] * $product['qty'];
+        $currency = new Currency($this->store->default_currency);
+        $subtotal = new Money(0, $currency);
 
-            if (isset($product['discount_type']) && isset($product['discount_amount'])) {
-                $total = Price::calculateDiscount($total, $product['discount_type'], $product['discount_amount']);
+        foreach ($this->order_data['products'] as $product) {
+            $price = new Money($product['price']['amount'], $currency);
+            $total = $price->multiply($product['qty']);
+
+            if (isset($product['discount']['type']) && isset($product['discount']['amount'])) {
+                // $total = Price::calculateDiscount($total, $product['discount_type'], $product['discount_amount']);
             }
 
-            $subtotal += $total;
+            $subtotal = $subtotal->add($total);
         }
-        if (isset($this->order_data['discount_type']) && isset($this->order_data['discount_amount'])) {
-            $subtotal = Price::calculateDiscount($subtotal, $this->order_data['discount_type'], $this->order_data['discount_amount']);
+        if (isset($this->order_data['discount']['type']) && isset($this->order_data['discount']['amount'])) {
+            // $subtotal = Price::calculateDiscount($subtotal, $this->order_data['discount_type'], $this->order_data['discount_amount']);
         }
 
         return $subtotal;
@@ -277,8 +279,6 @@ class OrderController extends Controller
 
     private function parseProduct($product)
     {
-        $product['price'] = $product['final_price'];
-
         unset($product['stores']);
         unset($product['stock_id']);
         unset($product['categories']);
@@ -290,16 +290,14 @@ class OrderController extends Controller
         unset($product['plantcare_pdf']);
 
         if (
-            !array_key_exists('discount_type', $product) ||
-            !array_key_exists('discount_amount', $product)
+            isset($product['discount']['type']) &&
+            isset($product['discount']['amount'])
         ) {
-            $product['discount_type'] = $product['discount_amount'] = null;
-        } else if ($product['discount_type'] && $product['discount_amount']) {
-            $product['final_price'] = Price::calculateDiscount(
-                $product['price'],
-                $product['discount_type'],
-                $product['discount_amount']
-            );
+            // $product['price'] = Price::calculateDiscount(
+            //     $product['price'],
+            //     $product['discount_type'],
+            //     $product['discount_amount']
+            // );
         }
 
         return $product;
