@@ -12,15 +12,18 @@
 						:success="valid"
 					></v-text-field>
 				</ValidationProvider>
-				<ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Content">
-					<v-text-field
+				<ValidationProvider rules="required" v-slot="{ errors, valid }" name="Content">
+					<v-textarea
 						:readonly="$props.readonly"
 						v-model="formFields.content"
+						auto-grow
+						outlined
+						shaped
 						label="Content"
 						:disabled="loading"
 						:error-messages="errors"
 						:success="valid"
-					></v-text-field>
+					></v-textarea>
 				</ValidationProvider>
 				<ValidationProvider
 					v-if="!order_checkbox"
