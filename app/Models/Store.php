@@ -24,7 +24,8 @@ class Store extends Model
         'active',
         'is_phone_center',
         'company_id',
-        'tax_id'
+        'tax_id',
+        'default_currency'
     ];
 
     protected $casts = [

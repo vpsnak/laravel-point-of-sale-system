@@ -28,6 +28,7 @@ class StoreController extends Controller
             'postcode' => 'required|string',
             'city' => 'required|string',
             'active' => 'required|boolean',
+            'default_currency' => 'required|string|exists:countries,iso3_code',
             'is_phone_center' => 'required|boolean'
 
         ]);
@@ -50,7 +51,9 @@ class StoreController extends Controller
             'street' => 'required|string',
             'postcode' => 'required|string',
             'city' => 'required|string',
-            'active' => 'required|boolean'
+            'active' => 'required|boolean',
+            'default_currency' => 'required|string|exists:countries,iso3_code',
+            'is_phone_center' => 'required|boolean'
         ]);
         $validatedData['user_id'] = auth()->user()->id;
 

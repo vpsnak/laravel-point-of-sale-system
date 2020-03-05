@@ -30,13 +30,13 @@ class ProductController extends Controller
             'editable_price' => 'nullable|boolean',
             'price' => 'required|array',
             'price.amount' => 'required|integer',
-            'price.currency' => 'required|string|size:3'
+            'price.currency' => 'required|string|size:3',
+            'is_discountable' => 'required|boolean'
         ]);
 
         $validatedExtra = $request->validate([
             'categories' => 'nullable|array',
-            'stores' => 'required|array',
-            'final_price' => 'required|numeric',
+            'stores' => 'required|array'
         ]);
 
         $product = Product::create($validatedData);
@@ -72,7 +72,8 @@ class ProductController extends Controller
             'editable_price' => 'nullable|boolean',
             'price' => 'required|array',
             'price.amount' => 'required|integer',
-            'price.currency' => 'required|string|size:3'
+            'price.currency' => 'required|string|size:3',
+            'is_discountable' => 'required|boolean'
         ]);
 
         $validatedExtra = $request->validate([

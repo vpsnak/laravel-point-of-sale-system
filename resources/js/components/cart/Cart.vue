@@ -27,11 +27,11 @@
     <v-divider />
 
     <div class="d-flex flex-column">
-      <v-row class="d-flex justify-start align-center">
-        <v-col :cols="4" class="px-5 py-0">
+      <v-row align="center" justify="space-around" dense>
+        <v-col :cols="4">
           <v-label>Cart discount</v-label>
         </v-col>
-        <v-col :cols="4" class="px-2 py-0">
+        <v-col :cols="8">
           <cartDiscount :productIndex="-1" :editable="$props.editable" />
         </v-col>
       </v-row>

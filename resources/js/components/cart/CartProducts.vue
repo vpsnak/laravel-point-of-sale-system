@@ -150,6 +150,7 @@
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <cartDiscount
+            v-if="product.is_discountable"
             :productIndex="index"
             :productPrice="$price(product.price).multiply(product.qty)"
             :editable="editable"

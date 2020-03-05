@@ -98,7 +98,7 @@ export default {
               payload.data.amount;
           }
 
-          let notification = {
+          const notification = {
             msg: "Payment received",
             type: "success"
           };

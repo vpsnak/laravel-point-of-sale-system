@@ -39,6 +39,10 @@ $factory->define(App\Product::class, function (Faker $faker) {
         'price' => [
             'amount' => $faker->numberBetween(100, 100000),
             'currency' => 'USD'
+        ],
+        'discount' => [
+            'amount' => null,
+            'type' => null
         ]
     ];
 });

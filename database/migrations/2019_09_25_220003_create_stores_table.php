@@ -23,6 +23,7 @@ class CreateStoresTable extends Migration
             $table->string('city');
             $table->boolean('active');
             $table->boolean('is_phone_center');
+            $table->string('default_currency', 3);
             $table->unsignedTinyInteger('company_id');
             $table->unsignedTinyInteger('tax_id');
         });

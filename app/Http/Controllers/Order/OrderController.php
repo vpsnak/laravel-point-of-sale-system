@@ -10,6 +10,8 @@ use App\Jobs\ProcessOrder;
 use App\Order;
 use App\Status;
 use App\StorePickup;
+use Money\Money;
+use Money\Currency;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
@@ -51,10 +53,12 @@ class OrderController extends Controller
             'products.*.id' => 'nullable|numeric',
             'products.*.name' => 'required|string',
             'products.*.sku' => 'required|string',
-            'products.*.final_price' => 'required|numeric',
+            'products.*.price' => 'required|array',
+            'products.*.price.amount' => 'required|numeric|integer',
             'products.*.qty' => 'required|numeric',
-            'products.*.discount_type' => 'nullable|string',
-            'products.*.discount_amount' => 'nullable|numeric',
+            'products.*.discount' => 'required|array',
+            'products.*.discount.amount' => 'nullable|numeric|integer',
+            'products.*.discount.type' => 'nullable|string|in:none,flat,percentage',
             'products.*.notes' => 'nullable|string',
         ]);
 
@@ -135,10 +139,12 @@ class OrderController extends Controller
             'products.*.id' => 'nullable|numeric',
             'products.*.name' => 'required|string',
             'products.*.sku' => 'required|string',
-            'products.*.final_price' => 'required|integer',
+            'products.*.price' => 'required|array',
+            'products.*.price.amount' => 'required|numeric|integer',
             'products.*.qty' => 'required|numeric',
-            'products.*.discount_type' => 'nullable|string',
-            'products.*.discount_amount' => 'nullable|numeric',
+            'products.*.discount' => 'required|array',
+            'products.*.discount.amount' => 'nullable|numeric|integer',
+            'products.*.discount.type' => 'nullable|string|in:none,flat,percentage',
             'products.*.notes' => 'nullable|string',
             // billing
             'billing_address_id' => 'nullable|required_if:method,delivery|exists:addresses,id',
@@ -254,7 +260,7 @@ class OrderController extends Controller
     {
         $subtotal = 0;
         foreach ($this->order_data['products'] as $product) {
-            $total = $product['final_price'] * $product['qty'];
+            $total = $product['price'] * $product['qty'];
 
             if (isset($product['discount_type']) && isset($product['discount_amount'])) {
                 $total = Price::calculateDiscount($total, $product['discount_type'], $product['discount_amount']);

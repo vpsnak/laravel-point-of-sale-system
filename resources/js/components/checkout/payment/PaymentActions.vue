@@ -96,7 +96,7 @@
         <v-col :lg="2" :md="3">
           <v-text-field
             prepend-inner-icon="mdi-currency-usd"
-            :value="remainingAmount.toFormat('0.00')"
+            :value="$price(remainingAmount).toFormat('0.00')"
             disabled
             label="Remaining Amount"
           ></v-text-field>
@@ -120,7 +120,7 @@
     ​
     <v-container fluid>
       <v-row justify="center" align="center" class="my-3" dense>
-        <v-col lg="4" md="6">
+        <v-col :lg="4" :md="6">
           <v-btn
             dark
             block
@@ -236,7 +236,7 @@ export default {
     },
     amount: {
       get() {
-        return this.paymentAmount;
+        return this.$price(this.paymentAmount).toFormat("0.00");
       },
       set(value) {
         this.paymentAmount = value;
