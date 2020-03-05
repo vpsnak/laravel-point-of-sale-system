@@ -148,6 +148,16 @@ const state = {
       { text: "Updated at", value: "updated_at" },
       { text: "Actions", value: "actions" }
     ],
+    cards: [
+      { text: "#", value: "id" },
+      { text: "Title", value: "title" },
+      { text: "Content", value: "content" },
+      { text: "Created by", value: "created_by" },
+      { text: "Type", value: "cardable_type" },
+      { text: "Created at", value: "created_at" },
+      { text: "Updated at", value: "updated_at" },
+      { text: "Actions", value: "actions" }
+    ],
     paymentHistory: [
       {
         text: "Payment ID",

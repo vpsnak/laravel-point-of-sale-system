@@ -9,10 +9,13 @@ class Card extends Model
     protected $fillable = [
         'content',
         'title',
-        'created_by'
+        'created_by',
+        'cardable_id',
+        'cardable_type'
     ];
 
-    public function cardable() {
+    public function cardable()
+    {
         return $this->morphTo();
     }
 }

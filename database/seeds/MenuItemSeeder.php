@@ -107,6 +107,15 @@ class MenuItemSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
+        $cards = new MenuItem([
+            'title' => 'Cards',
+            'action' => ['link' => 'cards'],
+            'icon' =>  'mdi-credit-card',
+            'location' => 'side_menu',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
         $cashRegisters = new MenuItem([
             'title' => 'Cash registers',
             'action' => ['link' => 'cash-registers'],
@@ -198,6 +207,7 @@ class MenuItemSeeder extends Seeder
         $categories->save();
         $giftCards->save();
         $coupons->save();
+        $cards->save();
         $cashRegisters->save();
         $stores->save();
         $storePickups->save();
@@ -226,6 +236,7 @@ class MenuItemSeeder extends Seeder
         $storePickups->roles()->sync($admin);
         $companies->roles()->sync($admin);
         $taxes->roles()->sync($admin);
+        $cards->roles()->sync($admin);
 
         $reports->roles()->sync([$admin, $store_manager]);
 

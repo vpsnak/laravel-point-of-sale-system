@@ -193,6 +193,14 @@ Route::delete('/cash-register-logs/{model}', 'CashRegisterLogsController@delete'
 Route::get('/receipts/get/{model}', 'ReceiptController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::get('/receipts/create/{model}', 'ReceiptController@create')->middleware('scope:admin,store_manager,cashier');
 
+// cards
+Route::get('/cards', 'CardController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/cards/get/{model}', 'CardController@getOne')->middleware('scope:admin,store_manager,cashier');
+Route::post('/cards/create', 'CardController@create')->middleware('scope:admin,store_manager,cashier');
+Route::patch('/cards/update', 'CardController@update')->middleware('scope:admin,store_manager,cashier');
+Route::post('/cards/search', 'CardController@search')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/cards/{model}', 'CardController@delete')->middleware('scope:admin,store_manager,cashier');
+
 // categories to list in sales
 Route::get('/product-listing/categories', "CategoryController@productListingCategories")->middleware('scope:admin,store_manager,cashier');
 
