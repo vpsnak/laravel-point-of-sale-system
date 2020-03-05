@@ -14,11 +14,11 @@ class CreateStorePickupsTable extends Migration
     public function up()
     {
         Schema::create('store_pickups', function (Blueprint $table) {
-            $table->increments('id');
+            $table->mediumIncrements('id');
             $table->string('name');
             $table->string('street');
             $table->string('street1')->nullable();
-            $table->unsignedInteger('region_id');
+            $table->unsignedMediumInteger('region_id');
             $table->timestampsTz();
         });
     }

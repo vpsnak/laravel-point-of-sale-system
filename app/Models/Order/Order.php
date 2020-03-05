@@ -2,9 +2,11 @@
 
 namespace App;
 
-use App\Helper\Price;
 use Illuminate\Database\Eloquent\Model;
+use Money\Money;
+use Money\Currency;
 use AjCastro\EagerLoadPivotRelations\EagerLoadPivotTrait;
+
 
 class Order extends Model
 {
@@ -12,26 +14,27 @@ class Order extends Model
 
     protected $appends = [
         'status',
-        'remaining'
-        // total_items_cost,
-        // total_tax_price,
-        // total_price,
+        'mdse_amount',
+        'total_tax_price',
+        'total_amount'
     ];
 
     protected $fillable = [
-        'store_id',
+        // validation
         'method',
         'items',
         'notes',
         'customer_id',
         'billing_address',
         'delivery',
-
+        'delivery_fees_amount',
         'discount',
-        'delivery_fees_price',
-
+        // auto fill-handle
+        'store_id',
+        'currency',
+        'tax_percentage',
+        'user_id',
         'mas_order_id',
-
         'magento_id',
         'magento_shipping_address_id',
         'magento_billing_address_id'
@@ -42,10 +45,14 @@ class Order extends Model
         'payments',
         'customer',
         'store',
-        'created_by'
+        'createdBy'
     ];
 
     protected $hidden = [
+        'customer_id',
+        'store_id',
+        'user_id',
+        'mas_order_id',
         'magento_id',
         'magento_shipping_address_id',
         'magento_billing_address_id'
@@ -53,63 +60,20 @@ class Order extends Model
 
     protected $casts = [
         'discount' => 'array',
-        'delivery_fees_price' => 'array',
-        'total_tax_price' => 'array',
-        'mdse_price' => 'array',
-        'delivery_fees_price' => 'array',
         'created_at' => 'datetime:m/d/Y H:i:s',
         'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
 
-    public function totalTaxPriceAttribute($value)
-    {
-        if (is_array($value)) {
-            $value = json_encode($value);
-        }
-        $this->attributes['total_tax_price'] = $value;
-    }
-
-    public function setMdsePriceAttribute($value)
-    {
-        if (is_array($value)) {
-            $value = json_encode($value);
-        }
-        $this->attributes['mdse_price'] = $value;
-    }
-
-    public function setDeliveryFeesPriceAttribute($value)
-    {
-        if (is_array($value)) {
-            $value = json_encode($value);
-        }
-        $this->attributes['delivery_fees_price'] = $value;
-    }
-
-    public function setTotalTaxPriceAttribute($value)
-    {
-        if (is_array($value)) {
-            $value = json_encode($value);
-        }
-        $this->attributes['total_tax_price'] = $value;
-    }
-
     public function setDiscountAttribute($value)
     {
         if (is_array($value)) {
+            if (!isset($value['amount']) || !$value['amount']) {
+                $value['type'] = 'none';
+                $value['amount'] = null;
+            }
             $value = json_encode($value);
         }
-        $this->attributes['total_tax_price'] = $value;
-    }
-
-    public function getRemainingAttribute()
-    {
-        $remaining = Price::numberPrecision($this->total - $this->total_paid);
-
-        if ($remaining < 0) {
-            return 0;
-        } else {
-            return $remaining;
-        }
+        $this->attributes['discount'] = $value;
     }
 
     public function getDeliveryAddressAttribute()
@@ -146,6 +110,11 @@ class Order extends Model
         $this->attributes['delivery'] = $value;
     }
 
+    public function getItemsAttribute($value)
+    {
+        return json_decode($value, true);
+    }
+
     public function setItemsAttribute($value)
     {
         if (is_array($value)) {
@@ -167,23 +136,47 @@ class Order extends Model
         $this->attributes['billing_address'] = $value;
     }
 
-    public function getShippingAddressAttribute($value)
+    public function getMdseAmountAttribute()
     {
-        return json_decode($value, true);
-    }
-
-    public function setShippingAddressAttribute($value)
-    {
-        if (is_array($value)) {
-            $value = json_encode($value);
+        $mdseAmount = new Money(0, new Currency($this->currency));
+        foreach ($this->items as $item) {
+            $price = new Money($item['price']['amount'], new Currency($this->currency));
+            if (isset($item['discount']) && isset($item['discount']['type']) && isset($item['discount']['amount'])) {
+                switch ($item['discount']['type']) {
+                    case 'flat':
+                        $price = $price->subtract(new Money($item['discount']['amount'], new Currency($this->currency)));
+                        break;
+                    case 'percentage':
+                        $price = $price->multiply($item['discount']['amount'])->divide(100);
+                        break;
+                    default:
+                    case 'none':
+                        break;
+                }
+            }
+            $mdseAmount = $mdseAmount->add($price);
         }
-        $this->attributes['shipping_address'] = $value;
+        return $mdseAmount;
     }
 
-    public function getTotalItemCostAttribute()
+    public function getTotalTaxPriceAttribute()
     {
-        $totalItemCost = $this->total_without_tax - $this->shipping_cost;
-        return Price::numberPrecision(abs($totalItemCost));
+        return $this
+            ->mdse_amount
+            ->add(new Money($this->delivery_fees_amount, new Currency($this->currency)))
+            ->multiply($this->tax_percentage / 100);
+    }
+
+    public function getTotalAmountAttribute()
+    {
+        return $this
+            ->total_tax_price
+            ->add($this->mdse_amount)
+            ->add(new Money($this->delivery_fees_amount, new Currency($this->currency)));
+    }
+
+    public function getRemainingAmountAttribute()
+    {
     }
 
     public function masOrder()

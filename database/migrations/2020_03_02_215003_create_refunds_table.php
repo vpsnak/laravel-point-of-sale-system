@@ -14,10 +14,10 @@ class CreateRefundsTable extends Migration
     public function up()
     {
         Schema::create('refunds', function (Blueprint $table) {
-            $table->increments('id');
+            $table->mediumIncrements('id');
 
-            $table->unsignedInteger('payment_id')->nullable();
-            $table->unsignedInteger('order_id')->nullable();
+            $table->unsignedMediumInteger('payment_id')->nullable();
+            $table->unsignedMediumInteger('order_id')->nullable();
             $table->json('price');
             $table->unsignedSmallInteger('user_id')->nullable();
             $table->unsignedTinyInteger('refund_type_id')->nullable();

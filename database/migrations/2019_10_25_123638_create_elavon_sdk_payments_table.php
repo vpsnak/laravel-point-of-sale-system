@@ -14,8 +14,8 @@ class CreateElavonSdkPaymentsTable extends Migration
     public function up()
     {
         Schema::create('elavon_sdk_payments', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('payment_id')->nullable(); // @TODO: remove nullable
+            $table->mediumIncrements('id');
+            $table->unsignedMediumInteger('payment_id')->nullable(); // @TODO: remove nullable
 
             $table->string('test_case')->nullable();
             $table->string('transaction_id')->nullable();

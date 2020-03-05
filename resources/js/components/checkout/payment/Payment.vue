@@ -37,7 +37,7 @@ export default {
           default:
           case "paid":
             return false;
-          case "created":
+          case "submitted":
           case "pending":
           case "pending_payment":
             return true;
@@ -106,8 +106,8 @@ export default {
         })
         .catch(error => {
           console.error(error);
-          if (_.has(error.response.data, "payment")) {
-            this.setPayments(error.response.data.payment);
+          if (_.has(error, "payment")) {
+            this.setPayments(error.payment);
           }
         })
         .finally(() => {

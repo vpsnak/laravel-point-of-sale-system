@@ -14,8 +14,8 @@ class CreateMasOrderLogsTable extends Migration
     public function up()
     {
         Schema::create('mas_order_logs', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('order_id');
+            $table->mediumIncrements('id');
+            $table->unsignedMediumInteger('order_id');
 
             $table->json('payload');
             $table->string('response');

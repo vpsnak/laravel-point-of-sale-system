@@ -9,8 +9,6 @@ use App\Jobs\ProcessOrder;
 use App\Order;
 use App\Status;
 use App\StorePickup;
-use Money\Money;
-use Money\Currency;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
@@ -63,7 +61,7 @@ class OrderController extends Controller
         $this->user = auth()->user();
         $this->store = $this->user->open_register->cash_register->store;
 
-        $this->parseTax();
+        $this->parseStoreData();
         $this->parseProducts();
 
         $this->order = Order::findOrFail($this->order_data['order_id']);
@@ -126,15 +124,7 @@ class OrderController extends Controller
     public function create(Request $request)
     {
         $this->order_data = $request->validate([
-            'customer_id' => 'nullable|required_if:method,pickup,delivery|exists:customers,id',
-            'discount_type' => 'nullable|string',
-            'discount_amount' => 'nullable|numeric',
-            'shipping_cost' => 'nullable|integer',
             'method' => 'required|in:retail,pickup,delivery',
-            'notes' => 'string|nullable',
-            'discount' => 'nullable|array',
-            'discount.type' => 'nullable|string|in:none,flat,percentage',
-            'discount.amount' => 'nullable|numeric|integer',
             // items (products)
             'products' => 'required',
             'products.*.id' => 'nullable|numeric',
@@ -147,17 +137,24 @@ class OrderController extends Controller
             'products.*.discount.amount' => 'nullable|numeric|integer',
             'products.*.discount.type' => 'nullable|string|in:none,flat,percentage',
             'products.*.notes' => 'nullable|string',
-            // billing
+            'notes' => 'string|nullable',
+            // customer
+            'customer_id' => 'nullable|required_if:method,pickup,delivery|exists:customers,id',
             'billing_address_id' => 'nullable|required_if:method,delivery|exists:addresses,id',
             // delivery
             'delivery' => 'nullable|required_if:method,pickup,delivery|array',
             'delivery.date' => 'nullable|required_if:method,pickup,delivery|date',
             'delivery.time' => 'nullable|required_if:method,pickup,delivery|string',
             'delivery.occasion' => 'nullable|required_if:method,delivery|numeric',
-            // delivery address (shipping address)
+            // delivery address
             'delivery.address_id' => 'nullable|required_if:method,delivery|exists:addresses,id',
             // store_pickup
-            'delivery.store_pickup_id' => 'nullable|required_if:method,pickup|exists:store_pickups,id'
+            'delivery.store_pickup_id' => 'nullable|required_if:method,pickup|exists:store_pickups,id',
+            'delivery_fees_amount' => 'nullable|integer',
+            // discount
+            'discount' => 'required|array',
+            'discount.amount' => 'nullable|numeric|integer',
+            'discount.type' => 'nullable|string|in:none,flat,percentage',
         ]);
 
         $this->user = auth()->user();
@@ -167,7 +164,7 @@ class OrderController extends Controller
         $this->order_data['store_id'] = $this->store->id;
 
         $this->parseAddresses();
-        $this->parseTax();
+        $this->parseStoreData();
         $this->parseProducts();
 
         $this->order = Order::createWithoutEvents($this->order_data);
@@ -177,7 +174,7 @@ class OrderController extends Controller
 
         return response([
             'order_id' => $this->order->id,
-            'order_status' => 'created',
+            'order_status' => $this->order->status->value,
             'order_total' => $this->order->total,
             'order_total_without_tax' => $this->order->total_without_tax,
             'order_total_tax' => $this->order->total_tax,
@@ -205,7 +202,6 @@ class OrderController extends Controller
                 break;
         }
 
-        unset($this->order_data['delivery']);
         $this->order_data['delivery'] = $delivery;
     }
 
@@ -220,19 +216,20 @@ class OrderController extends Controller
         $this->order_data['items'] = $items;
     }
 
-    private function parseTax()
+    private function parseStoreData()
     {
+        $this->order_data['currency'] = $this->store->default_currency;
+
         $has_tax = true;
         if (isset($this->order_data['customer_id'])) {
             $customer = Customer::findOrFail($this->order_data['customer_id']);
             $has_tax = $customer->no_tax ? false : true;
         }
 
-        $this->order_data['subtotal'] = $this->setSubtotal($this->order_data);
         if ($has_tax) {
-            $this->order_data['tax'] = $this->store->tax->percentage;
+            $this->order_data['tax_percentage'] = $this->store->tax->percentage;
         } else {
-            $this->order_data['tax'] = 0;
+            $this->order_data['tax_percentage'] = 0;
         }
     }
 
@@ -257,30 +254,9 @@ class OrderController extends Controller
         $this->parseDelivery($addresses);
     }
 
-    private function setSubtotal()
-    {
-        $currency = new Currency($this->store->default_currency);
-        $subtotal = new Money(0, $currency);
-
-        foreach ($this->order_data['products'] as $product) {
-            $price = new Money($product['price']['amount'], $currency);
-            $total = $price->multiply($product['qty']);
-
-            if (isset($product['discount']['type']) && isset($product['discount']['amount'])) {
-                // $total = Price::calculateDiscount($total, $product['discount_type'], $product['discount_amount']);
-            }
-
-            $subtotal = $subtotal->add($total);
-        }
-        if (isset($this->order_data['discount']['type']) && isset($this->order_data['discount']['amount'])) {
-            // $subtotal = Price::calculateDiscount($subtotal, $this->order_data['discount_type'], $this->order_data['discount_amount']);
-        }
-
-        return $subtotal;
-    }
-
     private function parseProduct($product)
     {
+        // remove useless data
         unset($product['stores']);
         unset($product['stock_id']);
         unset($product['categories']);
@@ -290,17 +266,6 @@ class OrderController extends Controller
         unset($product['laravel_stock']);
         unset($product['magento_stock']);
         unset($product['plantcare_pdf']);
-
-        if (
-            isset($product['discount']['type']) &&
-            isset($product['discount']['amount'])
-        ) {
-            // $product['price'] = Price::calculateDiscount(
-            //     $product['price'],
-            //     $product['discount_type'],
-            //     $product['discount_amount']
-            // );
-        }
 
         return $product;
     }

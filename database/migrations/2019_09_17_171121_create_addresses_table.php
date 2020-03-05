@@ -14,8 +14,8 @@ class CreateAddressesTable extends Migration
     public function up()
     {
         Schema::create('addresses', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('customer_id');
+            $table->mediumIncrements('id');
+            $table->unsignedMediumInteger('customer_id');
 
             $table->string('first_name');
             $table->string('last_name');
@@ -32,7 +32,7 @@ class CreateAddressesTable extends Migration
             $table->unsignedTinyInteger('location')->nullable();
             $table->string('location_name')->nullable();
 
-            $table->unsignedInteger('magento_id')->nullable();
+            $table->unsignedMediumInteger('magento_id')->nullable();
 
             $table->timestampsTz();
         });

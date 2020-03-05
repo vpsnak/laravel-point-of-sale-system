@@ -100,12 +100,13 @@ export default {
 
   watch: {
     orderTotal(value) {
-      this.setOrderTotal(value.getAmount());
+      this.setOrderTotal(value);
+      this.setOrderRemaining(value);
     }
   },
 
   methods: {
-    ...mapMutations("cart", ["setOrderTotal"]),
+    ...mapMutations("cart", ["setOrderTotal", "setOrderRemaining"]),
 
     calcDiscount(price, discount) {
       if (

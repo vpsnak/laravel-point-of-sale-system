@@ -14,7 +14,7 @@ class CreateGiftcardsTable extends Migration
     public function up()
     {
         Schema::create('giftcards', function (Blueprint $table) {
-            $table->increments('id');
+            $table->mediumIncrements('id');
 
             $table->string('name');
             $table->string('code');

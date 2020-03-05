@@ -3,12 +3,12 @@
     <v-card-title>
       <v-icon left>mdi-currency-usd</v-icon>
       <span class="subheading">
-        Payment History
+        Transaction history
       </span>
     </v-card-title>
 
     <v-data-table
-      no-data-text="No payments have been made"
+      no-data-text="No transactions have been made"
       dense
       height="15vh"
       :headers="headers"
@@ -111,6 +111,7 @@ export default {
       ]
     };
   },
+
   computed: {
     ...mapState("cart", ["refund_loading", "payments"]),
 
@@ -123,6 +124,7 @@ export default {
       }
     }
   },
+
   methods: {
     ...mapMutations("cart", [
       "setRefundLoading",

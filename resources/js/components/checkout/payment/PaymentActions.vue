@@ -2,9 +2,13 @@
   <div>
     <v-container fluid>
       <v-row dense justify="center" align="center">
-        <v-col cols="12" justify="center" align="center">
+        <v-col :cols="12" justify="center" align="center">
           <h3 class="py-2">Methods</h3>
-          ​
+          ​<v-progress-circular
+            v-if="payment_types_loading"
+            indeterminate
+            color="secondary"
+          ></v-progress-circular>
           <v-btn-toggle v-model="paymentType" mandatory @change="clearState">
             <v-btn
               v-for="paymentType in paymentTypes"
@@ -96,7 +100,7 @@
         <v-col :lg="2" :md="3">
           <v-text-field
             prepend-inner-icon="mdi-currency-usd"
-            :value="$price(remainingAmount).toFormat('0.00')"
+            :value="order_remaining.toFormat('0.00')"
             disabled
             label="Remaining Amount"
           ></v-text-field>
@@ -110,9 +114,9 @@
             type="number"
             prepend-inner-icon="mdi-currency-usd"
             v-model="amount"
-            @keyup="limits"
+            @keyup="max"
             @keyup.enter="sendPayment"
-            @blur="limits"
+            @blur="max"
           ></v-text-field>
         </v-col>
       </v-row>
@@ -147,15 +151,18 @@ export default {
     loading: Boolean
   },
 
+  created() {
+    this.paymentAmount = this.order_remaining;
+  },
+
   mounted() {
     this.getPaymentTypes();
-    this.amount = this.remainingAmount;
   },
 
   watch: {
-    remainingAmount(value) {
+    order_remaining(value) {
       if (this.order_status === "pending_payment" || !this.order_status) {
-        this.amount = value;
+        this.paymentAmount = value;
       }
     }
   },
@@ -166,6 +173,7 @@ export default {
 
   data() {
     return {
+      payment_types_loading: false,
       payment_types: [],
       orderLoading: false,
       paymentAmount: null,
@@ -200,7 +208,7 @@ export default {
         if (this.houseAccount) {
           return this.payment_types;
         } else {
-          return _.filter(this.payment_types, function(o) {
+          return _.filter(this.payment_types, o => {
             return o.type !== "house-account";
           });
         }
@@ -231,15 +239,12 @@ export default {
     houseAccountLimit() {
       return parseFloat(this.customer.house_account_limit);
     },
-    remainingAmount() {
-      return this.order_remaining || this.order_total;
-    },
     amount: {
       get() {
-        return this.$price(this.paymentAmount).toFormat("0.00");
+        return this.paymentAmount.toFormat("0.00");
       },
       set(value) {
-        this.paymentAmount = value;
+        this.paymentAmount = this.$price(value);
       }
     }
   },
@@ -250,12 +255,20 @@ export default {
     ...mapActions("requests", ["request"]),
 
     getPaymentTypes() {
+      this.payment_types_loading = true;
       this.request({
         method: "get",
         url: "payment-types"
-      }).then(response => {
-        this.paymentTypes = response;
-      });
+      })
+        .then(response => {
+          this.paymentTypes = response;
+        })
+        .catch(error => {
+          console.error(error);
+        })
+        .finally(() => {
+          this.payment_types_loading = false;
+        });
     },
     pay() {
       let payload;
@@ -263,27 +276,27 @@ export default {
       switch (this.paymentType) {
         case "pos-terminal":
           payload = {
-            paymentAmount: this.amount,
+            paymentAmount: this.paymentAmount,
             paymentType: this.paymentType
           };
           break;
         case "cash":
           payload = {
-            paymentAmount: this.amount,
+            paymentAmount: this.paymentAmount,
             paymentType: this.paymentType
           };
           break;
         case "card":
           payload = {
             card: this.card,
-            paymentAmount: this.amount,
+            paymentAmount: this.paymentAmount,
             paymentType: this.paymentType
           };
           break;
         case "house-account":
           payload = {
             house_account_number: this.houseAccountNumber,
-            paymentAmount: this.amount,
+            paymentAmount: this.paymentAmount,
             paymentType: this.paymentType
           };
           break;
@@ -296,7 +309,7 @@ export default {
         case "giftcard":
           payload = {
             code: this.code,
-            paymentAmount: this.amount,
+            paymentAmount: this.paymentAmount,
             paymentType: this.paymentType
           };
           break;
@@ -305,27 +318,25 @@ export default {
       }
 
       this.$emit("sendPayment", payload);
-      this.limits();
+      this.max();
       this.orderLoading = false;
     },
-    limits() {
+    max() {
       if (this.paymentType !== "cash") {
         if (this.paymentType === "house-account") {
-          if (this.houseAccountLimit > parseFloat(this.remainingAmount)) {
-            this.amount = this.remainingAmount;
-          } else if (
-            parseFloat(this.amount) > parseFloat(this.houseAccountLimit)
-          ) {
-            this.amount = this.houseAccountLimit;
+          if (this.houseAccountLimit.greaterThan(this.order_remaining)) {
+            this.paymentAmount.equalsTo(this.order_remaining);
+          } else if (this.paymentAmount.greaterThan(this.houseAccountLimit)) {
+            this.paymentAmount.equalsTo(this.houseAccountLimit);
           }
         }
-        if (parseFloat(this.amount) > parseFloat(this.remainingAmount)) {
-          this.amount = this.remainingAmount;
+        if (this.paymentAmount.greaterThan(this.order_remaining)) {
+          this.paymentAmount.equalsTo(this.order_remaining);
         }
-      } else {
-        if (parseFloat(this.amount) > 9999) {
-          this.amount = 9999;
-        }
+      } else if (
+        this.paymentAmount.greaterThan(this.$price({ amount: 999900 }))
+      ) {
+        this.amount = 999900;
       }
     },
     clearState() {
@@ -337,7 +348,7 @@ export default {
         this.card.exp_date = null;
       }
 
-      this.limits();
+      this.max();
     },
     sendPayment() {
       this.orderLoading = true;
@@ -349,7 +360,6 @@ export default {
             this.pay();
           })
           .catch(error => {
-            // unhandled error
             console.error(error);
           })
           .finally(() => {

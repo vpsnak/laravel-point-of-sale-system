@@ -14,8 +14,8 @@ class CreateElavonApiPaymentsTable extends Migration
     public function up()
     {
         Schema::create('elavon_api_payments', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('payment_id');
+            $table->mediumIncrements('id');
+            $table->unsignedMediumInteger('payment_id');
 
             $table->string('txn_id')->nullable();
             $table->string('transaction')->nullable();
