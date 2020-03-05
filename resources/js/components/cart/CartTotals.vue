@@ -5,14 +5,14 @@
       v-if="!totalDiscount.isZero()"
     >
       <span>Total discount</span>
-      <span>{{ totalDiscount.toFormat("$0,0.00") }}</span>
+      <span>{{ totalDiscount.toFormat("$0.00") }}</span>
     </div>
 
     <v-divider v-if="!totalDiscount.isZero()" />
 
     <div class="d-flex justify-space-between pa-2">
       <span>Sub total w/ discount</span>
-      <span>{{ subTotalwDiscount.toFormat("$0,0.00") }}</span>
+      <span>{{ subTotalwDiscount.toFormat("$0.00") }}</span>
     </div>
 
     <v-divider />
@@ -22,21 +22,21 @@
       v-if="!deliveryFeesPrice.isZero()"
     >
       <span>Delivery Fees</span>
-      <span>{{ deliveryFeesPrice.toFormat("$0,0.00") }}</span>
+      <span>{{ deliveryFeesPrice.toFormat("$0.00") }}</span>
     </div>
 
     <v-divider v-if="!deliveryFeesPrice.isZero()" />
 
     <div class="d-flex justify-space-between pa-2 bb-1">
       <span>Tax</span>
-      <span>{{ tax.toFormat("$0,0.00") }}</span>
+      <span>{{ tax.toFormat("$0.00") }}</span>
     </div>
 
     <v-divider />
 
     <div class="d-flex justify-space-between pa-2">
       <span>Total</span>
-      <span>{{ orderTotal.toFormat("$0,0.00") }}</span>
+      <span>{{ orderTotal.toFormat("$0.00") }}</span>
     </div>
   </div>
 </template>
@@ -71,13 +71,11 @@ export default {
           Number(product.qty)
         );
         const result = this.calcDiscount(productPrice, product.discount);
-        if (result.isZero()) {
-          subtotal = subtotal.add(productPrice);
-        } else {
-          subtotal = subtotal.add(result);
-        }
+        subtotal = subtotal.add(productPrice).subtract(result);
       });
+
       const cartDiscount = this.calcDiscount(subtotal, this.order_discount);
+
       return subtotal.subtract(cartDiscount);
     },
     tax() {
@@ -96,29 +94,38 @@ export default {
         const result = this.$price(product.price).multiply(Number(product.qty));
         subtotalNoDiscount = subtotalNoDiscount.add(result);
       });
-      this.isValidDiscount();
 
       return subtotalNoDiscount.subtract(this.subTotalwDiscount);
     },
     orderTotal() {
-      return this.subTotalwDiscount.add(this.tax);
+      const orderTotal = this.subTotalwDiscount.add(this.tax);
+      this.setOrderTotal({ amount: orderTotal.getAmount() });
+      return orderTotal;
     }
   },
   methods: {
-    ...mapMutations("cart", ["setOrderTotal", "isValidDiscount"]),
+    ...mapMutations("cart", ["setOrderTotal"]),
 
     calcDiscount(price, discount) {
-      if (discount && _.has(discount, "price") && _.has(discount, "type")) {
-        switch (_.lowerCase(type)) {
+      if (
+        _.has(discount, "type") &&
+        _.has(discount, "amount") &&
+        discount.amount > 0
+      ) {
+        switch (discount.type) {
           case "flat":
-            return price.subtract(amount);
+            return this.$price({ amount: discount.amount });
           case "percentage":
-            return price.percentage(Number(amount)).subtract(price);
+            if (Number(discount.amount) > 100) {
+              return this.$price({ amount: 0 });
+            } else {
+              return price.percentage(Number(discount.amount));
+            }
           default:
-            return this.$price();
+            return this.$price({ amount: 0 });
         }
       } else {
-        return this.$price();
+        return this.$price({ amount: 0 });
       }
     }
   }

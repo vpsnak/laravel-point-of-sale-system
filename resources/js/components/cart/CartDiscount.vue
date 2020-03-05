@@ -2,32 +2,31 @@
   <ValidationObserver ref="checkoutObs" tag="v-row">
     <v-col :cols="6">
       <v-select
-        @change="validate"
-        v-if="editable"
-        v-model="discountType"
+        @change="setDiscountType($event)"
+        v-if="$props.editable"
+        :value="discount.type"
+        item-text="text"
+        item-value="value"
         :items="discountTypes"
         label="Discount"
-        item-text="label"
-        item-value="value"
       ></v-select>
       <v-text-field
-        v-else-if="!editable"
-        :value="discountType"
+        v-else
+        :value="discount.type"
         label="Discount"
         disabled
       ></v-text-field>
     </v-col>
 
-    <v-col :cols="6" v-if="discountType && discountType !== 'None'">
+    <v-col :cols="6" v-show="showAmount">
       <ValidationProvider
         v-slot="{ valid }"
         :rules="`between:${0},${max}`"
         name="Discount amount"
+        v-if="$props.editable"
       >
         <v-text-field
-          @blur="limits"
-          @change="validate"
-          @keyup="validate"
+          ref="amount"
           v-model="discountAmount"
           type="number"
           label="Amount"
@@ -35,9 +34,14 @@
           :max="max"
           :error-messages="!valid ? 'Invalid amount' : undefined"
           :success="valid"
-          :disabled="!editable"
         ></v-text-field>
       </ValidationProvider>
+      <v-text-field
+        v-else
+        :value="discountAmount"
+        label="Amount"
+        :disabled="true"
+      ></v-text-field>
     </v-col>
   </ValidationObserver>
 </template>
@@ -47,124 +51,139 @@ import { mapState, mapMutations } from "vuex";
 
 export default {
   props: {
-    product_price: Object,
-    product_index: Number,
+    productPrice: Object,
+    productIndex: Number,
     editable: Boolean
   },
 
+  data() {
+    return {
+      discount_amount: null
+    };
+  },
+
+  mounted() {
+    this.discount_amount = this.discount.amount;
+  },
+
   watch: {
-    product_price() {
-      this.validate();
+    productPrice() {
+      this.$nextTick(() => {
+        this.runValidation();
+      });
+    }
+  },
+
+  computed: {
+    ...mapState("cart", [
+      "productMap",
+      "order_total",
+      "discountTypes",
+      "order_id",
+      "cart_products",
+      "order_discount",
+      "discount_error"
+    ]),
+
+    discountAmount: {
+      get() {
+        return this.discount_amount;
+      },
+      set(value) {
+        this.discount_amount = value;
+        this.setDiscountAmount(value);
+      }
+    },
+    showAmount() {
+      if (this.discount.type !== "none") {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    discount() {
+      if (this.product) {
+        return this.product.discount;
+      } else {
+        return this.order_discount;
+      }
+    },
+    product() {
+      return this.cart_products[this.$props.productIndex];
+    },
+    max() {
+      switch (this.discount.type) {
+        case "flat":
+          if (this.product) {
+            return this.$props.productPrice.toFormat("00.00");
+          } else {
+            return this.$price(this.order_total)
+              .add(this.$price({ amount: this.discount.amount || 0 }))
+              .toFormat("00.00");
+          }
+        case "percentage":
+          return 99;
+        default:
+          return 0;
+      }
     }
   },
 
   methods: {
     ...mapMutations("cart", [
-      "setCartDiscountType",
-      "setCartDiscountAmount",
+      "setCartDiscount",
       "isValidDiscount",
       "setDiscountError"
     ]),
 
-    validate() {
-      this.setDiscount(this.discountAmount);
-      this.isValidDiscount();
-    },
-    limits() {
-      if (
-        this.discountType === "Percentage" ||
-        this.discountType === "percentage"
-      ) {
-        if (this.discountAmount > 99) {
-          this.discountAmount = "99";
-        }
-      }
-
-      if (this.discountAmount) {
-        let digits = this.discountAmount.split(".");
-
-        if (digits.length === 2 && digits[1].length > 2)
-          this.discountAmount = this.discountAmount;
-      }
-
-      this.validate();
-    },
-    setDiscount(value) {
-      if (this.$props.product_index === -1) {
-        this.setCartDiscountAmount(value);
-
-        this.$refs.checkoutObs.validate().then(result => {
+    runValidation() {
+      this.$refs.checkoutObs.validate().then(result => {
+        if (this.product) {
+          const index = _.findIndex(this.productMap, {
+            id: this.product.id
+          });
+          this.productMap[index].discount_error = !result;
+        } else {
           this.setDiscountError(!result);
-        });
+        }
+        this.isValidDiscount();
+      });
+    },
+    prepareDiscount(value) {
+      if (!value) {
+        return null;
       } else {
-        Vue.set(this.product, "discount_amount", value);
-
-        this.$refs.checkoutObs.validate().then(result => {
-          Vue.set(this.product, "discount_error", !result);
-        });
-      }
-    }
-  },
-  computed: {
-    ...mapState("cart", [
-      "order_total",
-      "discountTypes",
-      "order_id",
-      "cart_products",
-      "discount",
-      "discount_error"
-    ]),
-
-    product() {
-      return this.cart_products[this.$props.product_index];
-    },
-    max() {
-      switch (this.discountType) {
-        case "flat":
-        case "Flat":
-          if (this.$props.product_index === -1) {
-            let max = this.order_total + this.discount_amount;
-
-            return parseFloat(max - 0.01);
-          } else {
-            return this.$props.product_price.toFormat("0,0.00");
-          }
-        case "percentage":
-        case "Percentage":
-          return 99;
-        default:
-          return 0;
+        switch (this.discount.type) {
+          case "flat":
+            return Number.parseInt(value * 100);
+          case "percentage":
+            return Number(value);
+          case "none":
+            return null;
+          default:
+            return value;
+        }
       }
     },
-    discountType: {
-      get() {
-        if (this.$props.product_index === -1) {
-          return this.discount_type;
-        } else {
-          return this.product.discount_type;
-        }
-      },
-      set(value) {
-        if (this.$props.product_index === -1) {
-          this.setCartDiscountType(value);
-        } else {
-          Vue.set(this.product, "discount_type", value);
-        }
+    setDiscountType(value) {
+      this.discountAmount = null;
 
-        this.setDiscount(this.discountAmount);
+      if (this.product) {
+        this.$set(this.product.discount, "type", value);
+      } else {
+        this.setCartDiscount({ type: value });
       }
     },
-    discountAmount: {
-      get() {
-        if (this.$props.product_index === -1) {
-          return this.discount_amount;
-        } else {
-          return this.product.discount_amount;
-        }
-      },
-      set(value) {
-        this.setDiscount(value);
+    setDiscountAmount(value) {
+      value = this.prepareDiscount(value);
+      if (this.product) {
+        this.$set(this.product.discount, "amount", value);
+      } else {
+        this.setCartDiscount({ amount: value });
       }
+      this.$nextTick(() => {
+        this.runValidation();
+      });
     }
   }
 };

@@ -13,7 +13,7 @@ export default {
     isValidCheckout: false,
     discount_error: false,
 
-    discountErrors: [],
+    productMap: [],
 
     locations: [
       { id: 1, label: "Funeral Home" },
@@ -44,16 +44,16 @@ export default {
 
     discountTypes: [
       {
-        label: "None",
-        value: null
+        text: "None",
+        value: "none"
       },
       {
-        label: "Flat",
-        value: "Flat"
+        text: "Flat",
+        value: "flat"
       },
       {
-        label: "Percentage",
-        value: "Percentage"
+        text: "Percentage",
+        value: "percentage"
       }
     ],
 
@@ -92,7 +92,7 @@ export default {
     },
     cart_products: [],
 
-    order_discount: { amount: 0 },
+    order_discount: { type: "none", amount: null },
 
     delivery: {
       store_pickup_id: null,
@@ -108,7 +108,7 @@ export default {
     order_store: null,
     order_status: null,
     order_mas_order: null,
-    order_total: 0,
+    order_total: { amount: 0 },
     order_total_without_tax: 0,
     order_total_tax: 0,
     order_total_item_cost: 0,
@@ -222,7 +222,11 @@ export default {
       state.tax_percentage = value;
     },
     setCartDiscount(state, value) {
-      state.order_discount = value;
+      if (value.type) {
+        state.order_discount.type = value.type;
+      }
+
+      state.order_discount.amount = value.amount;
     },
     setDiscountError(state, value) {
       state.discount_error = value;
@@ -255,13 +259,13 @@ export default {
       state.isValidCheckout = value;
     },
     isValidDiscount(state) {
-      let result = true;
+      var result = true;
 
       if (state.discount_error) {
         result = false;
       }
 
-      state.cart_products.forEach(product => {
+      state.productMap.forEach(product => {
         if (product.discount_error) {
           result = false;
         }
@@ -280,14 +284,24 @@ export default {
       if (index !== -1) {
         state.cart_products[index].qty++;
       } else {
-        let clonedProduct = _.cloneDeep(newProduct);
+        const clonedProduct = _.cloneDeep(newProduct);
         Vue.set(clonedProduct, "qty", 1);
 
         state.cart_products.push(clonedProduct);
+        state.productMap.push({
+          id: clonedProduct.id,
+          discount_error: false
+        });
       }
     },
     removeProduct(state, index) {
+      const productId = state.cart_products[index].id;
+      const productMapindex = _.findIndex(state.productMap, {
+        id: productId
+      });
+
       state.cart_products.splice(index, 1);
+      state.productMap.splice(productMapindex, 1);
     },
     increaseProductQty(state, target_product) {
       const index = _.findIndex(state.cart_products, product => {
@@ -333,6 +347,8 @@ export default {
       }
     },
     resetState(state) {
+      state.productMap = [];
+
       state.order_id = null;
       state.order_store_id = null;
 
@@ -341,7 +357,7 @@ export default {
       state.order_status = null;
       state.order_mas_order = null;
 
-      state.order_total = 0;
+      state.order_total = { amount: 0 };
       state.order_total_tax = 0;
       state.order_total_without_tax = 0;
       state.order_remaining = 0;
@@ -360,9 +376,7 @@ export default {
       state.customer = null;
 
       state.cart_products = [];
-      state.order_discount = {
-        amount: 0
-      };
+      state.order_discount = { type: "none", amount: null };
 
       state.checkoutSteps[0].name = "Cash & Carry";
       state.checkoutSteps[0].icon = "mdi-cart-arrow-right";
@@ -404,6 +418,14 @@ export default {
     }
   },
   actions: {
+    addProduct(context, payload) {
+      context.commit("addProduct", payload);
+      context.commit("isValidDiscount");
+    },
+    removeProduct(context, index) {
+      context.commit("removeProduct", index);
+      context.commit("isValidDiscount");
+    },
     mailReceipt(context, payload) {
       return new Promise((resolve, reject) => {
         axios
@@ -549,8 +571,7 @@ export default {
         context.commit("setOrderChange", order.change);
         context.commit("setOrderRemaining", order.remaining);
         context.commit("setPayments", order.payments);
-        context.commit("setCartDiscountType", order.discount_type);
-        context.commit("setCartDiscountAmount", order.discount_amount);
+        context.commit("setCartDiscount", order.discount);
         context.commit("setCustomer", order.customer);
         context.commit("setOrderNotes", order.notes);
         context.commit("setOrderCreatedBy", order.created_by);

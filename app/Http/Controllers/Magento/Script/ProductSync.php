@@ -79,14 +79,14 @@ class ProductSync
             'amount' => $price * 100 ?? 0,
             'currency' => 'USD',
         ];
+        $discountAmount = ($price - $final_price) * 100;
 
-        if ((float) $price !== (float) $final_price) {
-            $parsedProduct['discount'] = [
-                'type' => 'flat',
-                'amount' => ($price - $final_price) * 100,
-                'currency' => 'USD',
-            ];
-        }
+        $parsedProduct['discount'] = [
+            'amount' => $discountAmount,
+            'currency' => 'USD',
+            'type' => $discountAmount > 0 ? 'flat' : 'none',
+
+        ];
 
         return $parsedProduct;
     }

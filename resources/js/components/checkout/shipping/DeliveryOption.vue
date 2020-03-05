@@ -394,8 +394,8 @@ export default {
 
       EventBus.$on("billing-address-edit", event => {
         if (event.payload) {
-          const index = _.findIndex(this.addresses, address => {
-            return address.id === event.payload.id;
+          const index = _.findIndex(this.addresses, {
+            id: event.payload.id
           });
           this.addresses[index] = event.payload;
           this.billingAddress = event.payload;

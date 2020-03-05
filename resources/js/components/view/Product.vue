@@ -10,7 +10,7 @@
           <v-card-text>
             <div class="subtitle-1">Sku: {{ productData.sku }}</div>
             <div class="subtitle-1">
-              Price: {{ $price(product.price).toFormat("$0,0.00") }}
+              Price: {{ $price(product.price).toFormat("$0.00") }}
             </div>
             <div class="subtitle-1">Stock: {{ productData.stock }}</div>
             <div class="subtitle-1">

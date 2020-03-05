@@ -196,7 +196,7 @@ export default new Vuex.Store({
             url: "cash-register-logs/logout"
           })
           .then(response => {
-            if (["sales", "orders"].indexOf(router.currentRoute.name) !== 0) {
+            if (["sales", "orders"].indexOf(router.currentRoute.name) !== -1) {
               router.replace({ name: "dashboard" });
             }
 

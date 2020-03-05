@@ -168,10 +168,9 @@ export default {
       this.request(payload)
         .then(response => {
           if (response.refunded_payment_id) {
-            const index = _.findIndex(this.payments, [
-              "id",
-              response.refunded_payment_id
-            ]);
+            const index = _.findIndex(this.payments, {
+              id: response.refunded_payment_id
+            });
 
             this.setPaymentRefundedStatus(index);
             this.setPayments(response.refund);

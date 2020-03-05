@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-grow-1" style="height:38vh; overflow-y:auto">
     <v-expansion-panels class="d-block" accordion>
-      <v-expansion-panel v-for="(product, index) in products" :key="index">
+      <v-expansion-panel v-for="(product, index) in products" :key="product.id">
         <v-expansion-panel-header class="pa-2" ripple @click.stop>
           <div class="d-flex flex-column" v-if="product.photo_url">
             <v-img
@@ -35,10 +35,10 @@
                   :outlined="editPrice(index)"
                   :solo="!editPrice(index)"
                   :color="editPrice(index) ? 'yellow' : ''"
-                  :value="$price(product.price).toFormat('0,0.00')"
+                  :value="$price(product.price).toFormat('0.00')"
                   :hint="
                     'Original price: ' +
-                      $price(product.original_price).toFormat('$0,0.00')
+                      $price(product.original_price).toFormat('$0.00')
                   "
                   dense
                 ></v-text-field>
@@ -136,7 +136,7 @@
                     class="mx-2"
                     v-if="editable"
                     icon
-                    @click.stop="removeItem(index)"
+                    @click.stop="removeProduct(index)"
                     color="red"
                     v-on="on"
                   >
@@ -150,8 +150,8 @@
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <cartDiscount
-            :product_index="index"
-            :product_price="$price(product.price).multiply(product.qty)"
+            :productIndex="index"
+            :productPrice="$price(product.price).multiply(product.qty)"
             :editable="editable"
           />
           <v-row>
@@ -181,6 +181,7 @@ export default {
   props: {
     editable: Boolean
   },
+
   computed: {
     ...mapState("cart", ["discountTypes", "cart_products"]),
 
@@ -200,6 +201,7 @@ export default {
       "increaseProductQty",
       "decreaseProductQty"
     ]),
+    ...mapActions("cart", ["removeProduct"]),
 
     cancelEvent(index, event) {
       if (!this.editPrice(index)) {
@@ -213,7 +215,7 @@ export default {
       if (!this.getSelectedInput(index).lazyValue) {
         this.getSelectedInput(index).lazyValue = this.originalPrice(
           index
-        ).toFormat("0,0.00");
+        ).toFormat("0.00");
       }
 
       const price = this.getSelectedInput(index).lazyValue;
@@ -270,9 +272,6 @@ export default {
       if (product.qty < 1) {
         product.qty = 1;
       }
-    },
-    removeItem(index) {
-      this.products.splice(index, 1);
     }
   }
 };

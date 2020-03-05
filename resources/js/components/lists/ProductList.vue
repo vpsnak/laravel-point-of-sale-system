@@ -136,7 +136,7 @@
                   <v-chip small class="secondary mt-2 ml-1 elevation-12">
                     <span>
                       Price:
-                      {{ $price(product.price).toFormat("$0,0.00") }}
+                      {{ $price(product.price).toFormat("$0.00") }}
                     </span>
                   </v-chip>
                   <v-chip
@@ -274,9 +274,9 @@ export default {
   },
   methods: {
     ...mapMutations(["setProductList"]),
-    ...mapMutations("cart", ["addProduct"]),
     ...mapMutations("dialog", ["viewItem", "setDialog"]),
     ...mapActions("requests", ["request"]),
+    ...mapActions("cart", ["addProduct"]),
 
     stockColor(product) {
       if (product.stock <= 10 && product.stock > 0) {
