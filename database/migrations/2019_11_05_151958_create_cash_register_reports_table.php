@@ -14,31 +14,31 @@ class CreateCashRegisterReportsTable extends Migration
     public function up()
     {
         Schema::create('cash_register_reports', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->string('report_name');
             $table->string('report_type');
             $table->unsignedSmallInteger('user_id');
             $table->unsignedSmallInteger('cash_register_id');
-            $table->unsignedBigInteger('opening_amount')->default(0);
-            $table->unsignedBigInteger('closing_amount')->default(0);
-            $table->unsignedBigInteger('subtotal')->default(0);
-            $table->unsignedBigInteger('tax')->default(0);
-            $table->unsignedBigInteger('total')->default(0);
-            $table->unsignedBigInteger('cash_total')->default(0);
-            $table->unsignedBigInteger('gift_card_total')->default(0);
-            $table->unsignedBigInteger('credit_card_total')->default(0);
-            $table->unsignedBigInteger('pos_terminal_total')->default(0);
-            $table->unsignedBigInteger('change_total')->default(0);
-            $table->unsignedBigInteger('cash_tax')->default(0);
-            $table->unsignedBigInteger('gift_card_tax')->default(0);
-            $table->unsignedBigInteger('credit_card_tax')->default(0);
-            $table->unsignedBigInteger('pos_terminal_tax')->default(0);
+            $table->unsignedInteger('opening_amount')->default(0);
+            $table->unsignedInteger('closing_amount')->default(0);
+            $table->unsignedInteger('subtotal')->default(0);
+            $table->unsignedInteger('tax')->default(0);
+            $table->unsignedInteger('total')->default(0);
+            $table->unsignedInteger('cash_total')->default(0);
+            $table->unsignedInteger('gift_card_total')->default(0);
+            $table->unsignedInteger('credit_card_total')->default(0);
+            $table->unsignedInteger('pos_terminal_total')->default(0);
+            $table->unsignedInteger('change_total')->default(0);
+            $table->unsignedInteger('cash_tax')->default(0);
+            $table->unsignedInteger('gift_card_tax')->default(0);
+            $table->unsignedInteger('credit_card_tax')->default(0);
+            $table->unsignedInteger('pos_terminal_tax')->default(0);
             $table->integer('order_count')->default(0);
             $table->integer('order_product_count')->default(0);
             $table->integer('order_refund_count')->default(0);
-            $table->unsignedBigInteger('order_refund_total')->default(0);
+            $table->unsignedInteger('order_refund_total')->default(0);
             $table->integer('order_complete_count')->default(0);
-            $table->unsignedBigInteger('order_complete_total')->default(0);
+            $table->unsignedInteger('order_complete_total')->default(0);
             $table->integer('order_retail_count')->default(0);
             $table->integer('order_in_store_count')->default(0);
             $table->integer('order_delivery_count')->default(0);

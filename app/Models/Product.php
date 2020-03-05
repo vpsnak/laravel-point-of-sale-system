@@ -15,8 +15,6 @@ class Product extends Model
     protected $with = ['stores', 'categories'];
 
     protected $fillable = [
-        'magento_id',
-        'stock_id',
         'sku',
         'name',
         'barcode',
@@ -27,7 +25,10 @@ class Product extends Model
         'editable_price',
         'price',
         'discount',
-        'is_discountable'
+        'is_discountable',
+
+        'magento_id',
+        'stock_id',
     ];
 
     protected $casts = [

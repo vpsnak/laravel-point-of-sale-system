@@ -20,7 +20,6 @@ class OrderController extends Controller
     private $order_data;
     private $user;
     private $store;
-    // payment methods - linked refunds
 
     public function __construct(Order $order)
     {
@@ -133,6 +132,9 @@ class OrderController extends Controller
             'shipping_cost' => 'nullable|integer',
             'method' => 'required|in:retail,pickup,delivery',
             'notes' => 'string|nullable',
+            'discount' => 'nullable|array',
+            'discount.type' => 'nullable|string|in:none,flat,percentage',
+            'discount.amount' => 'nullable|numeric|integer',
             // items (products)
             'products' => 'required',
             'products.*.id' => 'nullable|numeric',

@@ -25,7 +25,6 @@ class Order extends Model
         'user_id',
         'items',
 
-
         'billing_address',
         'delivery',
         'method',

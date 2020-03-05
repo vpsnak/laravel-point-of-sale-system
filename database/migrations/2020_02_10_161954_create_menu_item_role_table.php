@@ -17,7 +17,7 @@ class CreateMenuItemRoleTable extends Migration
             $table->increments('id');
 
             $table->unsignedInteger('menu_item_id');
-            $table->unsignedBigInteger('role_id');
+            $table->unsignedInteger('role_id');
         });
     }
 

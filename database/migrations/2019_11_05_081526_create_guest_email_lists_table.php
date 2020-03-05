@@ -14,9 +14,8 @@ class CreateGuestEmailListsTable extends Migration
     public function up()
     {
         Schema::create('guest_email_lists', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->string('email')->index();
-            $table->timestampsTz();
         });
     }
 
