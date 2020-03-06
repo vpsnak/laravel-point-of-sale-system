@@ -159,6 +159,21 @@ class Order extends Model
             }
             $mdsePrice = $mdsePrice->add($price);
         }
+
+        if (isset($this->discount) && isset($this->discount['type']) && isset($this->discount['amount'])) {
+            switch ($this->discount['type']) {
+                case 'flat':
+                    $amount = new Money($this->discount['amount'], new Currency($this->currency));
+                    $mdsePrice = $mdsePrice->subtract($amount);
+                    break;
+                case 'percentage':
+                    $amount = $this->discount['amount'];
+                    $mdsePrice = $mdsePrice->multiply($amount)->divide(100);
+                    break;
+                default:
+                    break;
+            }
+        }
         return $mdsePrice;
     }
 
@@ -236,7 +251,8 @@ class Order extends Model
             ->belongsToMany(Status::class)
             ->using(OrderStatus::class)
             ->withPivot('user_id')
-            ->withTimestamps(['created_at']);
+            ->withTimestamps(['created_at'])
+            ->orderBy('id', 'desc');
     }
 
     public function lastStatus()

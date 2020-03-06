@@ -94,7 +94,12 @@ export default {
       return subtotalNoDiscount.subtract(this.subTotalwDiscount);
     },
     orderTotal() {
-      return this.subTotalwDiscount.add(this.tax);
+      const total = this.subTotalwDiscount.add(this.tax);
+      // this.$nextTick(() => {
+      //   this.isValidDiscount();
+      // });
+
+      return total;
     }
   },
 
@@ -106,7 +111,11 @@ export default {
   },
 
   methods: {
-    ...mapMutations("cart", ["setOrderTotalPrice", "setOrderRemainingPrice"]),
+    ...mapMutations("cart", [
+      "setOrderTotalPrice",
+      "setOrderRemainingPrice",
+      "isValidDiscount"
+    ]),
 
     calcDiscount(price, discount) {
       if (

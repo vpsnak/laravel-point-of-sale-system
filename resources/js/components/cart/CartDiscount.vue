@@ -63,11 +63,21 @@ export default {
   },
 
   mounted() {
-    this.discount_amount = this.discount.amount;
+    console.log(this.discount.amount);
+    if (this.discount.amount) {
+      this.discountAmount = Number(this.discount.amount / 100);
+    } else {
+      this.discountAmount = null;
+    }
   },
 
   watch: {
     productPrice() {
+      this.$nextTick(() => {
+        this.runValidation();
+      });
+    },
+    order_total_price() {
       this.$nextTick(() => {
         this.runValidation();
       });
@@ -117,9 +127,14 @@ export default {
           if (this.product) {
             return this.$props.productPrice.toFormat("0.00");
           } else {
-            return this.$price(this.order_total_price)
-              .add(this.$price({ amount: this.discount.amount || 0 }))
-              .toFormat("0.00");
+            let max = this.order_total_price;
+            if (this.discount.amount) {
+              return max
+                .add(this.parsePrice(this.discount.amount))
+                .toFormat("0.00");
+            } else {
+              return 0;
+            }
           }
         case "percentage":
           return 99;

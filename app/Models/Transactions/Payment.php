@@ -44,7 +44,6 @@ class Payment extends Model
             $price = json_decode($this->attributes['change_price'], true);
             return new Money($price['amount'], new Currency($price['currency']));
         } else {
-
             return new Money(0, $this->price->getCurrency());
         }
     }
