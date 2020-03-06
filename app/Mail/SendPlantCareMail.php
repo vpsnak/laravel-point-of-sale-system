@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendMail extends Mailable
+class SendPlantCareMail extends Mailable
 {
     use Queueable, SerializesModels;
     public $data;
@@ -29,6 +29,6 @@ class SendMail extends Mailable
      */
     public function build()
     {
-        return $this->from('npapaioannou@webo2.gr')->subject('PlantShed New York Flowers')->view('dynamic_email_template')->with('data', $this->data);
+        return $this->from('npapaioannou@webo2.gr')->subject('PlantShed New York Flowers')->view('plantcare_email_template')->with('product', $this->data);
     }
 }
