@@ -1,5 +1,9 @@
 <template>
-  <div>
+  <ValidationObserver
+    tag="v-form"
+    @submit.prevent="sendPayment()"
+    v-slot="{ invalid }"
+  >
     <v-container fluid>
       <v-row dense justify="center" align="center">
         <v-col :cols="12" justify="center" align="center">
@@ -9,14 +13,20 @@
             indeterminate
             color="secondary"
           ></v-progress-circular>
-          <v-btn-toggle v-model="paymentType" mandatory @change="clearState">
+          <v-btn-toggle
+            v-model="paymentType"
+            mandatory
+            @change="clearState"
+            dense
+          >
             <v-btn
               v-for="paymentType in paymentTypes"
               :key="paymentType.id"
               :value="paymentType.type"
               :disabled="loading || orderLoading"
+              dense
             >
-              <v-icon class="pr-2">{{ paymentType.icon }}</v-icon>
+              <v-icon class="pr-2" small>{{ paymentType.icon }}</v-icon>
               {{ paymentType.name }}
             </v-btn>
           </v-btn-toggle>
@@ -84,7 +94,7 @@
       <v-row
         justify="center"
         align="center"
-        v-else-if="paymentType === 'coupon' || paymentType === 'giftcard'"
+        v-else-if="['giftcard', 'coupon'].indexOf(paymentType) !== -1"
       >
         <v-col :lg="3" :md="6">
           <v-text-field
@@ -106,18 +116,23 @@
           ></v-text-field>
         </v-col>
         <v-col :lg="2" :md="3">
-          <v-text-field
-            :disabled="loading || orderLoading"
-            :min="0.01"
-            :max="9999"
-            label="Payment"
-            type="number"
-            prepend-inner-icon="mdi-currency-usd"
-            v-model="amount"
-            @keyup="max"
-            @keyup.enter="sendPayment"
-            @blur="max"
-          ></v-text-field>
+          <ValidationProvider
+            :rules="`required|between:0.01,${amountRules}`"
+            v-slot="{ errors, valid }"
+            name="Payment amount"
+          >
+            <v-text-field
+              :disabled="loading || orderLoading"
+              :min="0.01"
+              :max="amountRules"
+              label="Payment amount"
+              type="number"
+              prepend-inner-icon="mdi-currency-usd"
+              v-model="amount"
+              :error-messages="errors"
+              :success="valid"
+            ></v-text-field>
+          </ValidationProvider>
         </v-col>
       </v-row>
     </v-container>
@@ -126,13 +141,16 @@
       <v-row justify="center" align="center" class="my-3" dense>
         <v-col :lg="4" :md="6">
           <v-btn
+            type="submit"
             dark
             block
             color="green darken-3"
-            @click="sendPayment"
             :loading="loading || orderLoading"
             :disabled="
-              loading || orderLoading || !$store.state.cart.isValidCheckout
+              invalid ||
+                loading ||
+                orderLoading ||
+                !$store.state.cart.isValidCheckout
             "
           >
             Make a payment
@@ -140,7 +158,7 @@
         </v-col>
       </v-row>
     </v-container>
-  </div>
+  </ValidationObserver>
 </template>
 ​
 <script>
@@ -152,11 +170,24 @@ export default {
   },
 
   created() {
-    this.paymentAmount = this.order_remaining_price;
+    this.amount = this.order_remaining_price.toFormat("0.00");
   },
 
   mounted() {
     this.getPaymentTypes();
+    this.fillDemoCard();
+    if (process.env.NODE_ENV === "development") {
+      this.card = {
+        card_holder: "John Longjohn",
+        number: "4000000000000002",
+        cvc: "123",
+        exp_date: "1224"
+      };
+    }
+  },
+
+  beforeDestroy() {
+    this.$off("sendPayment");
   },
 
   watch: {
@@ -167,12 +198,9 @@ export default {
     }
   },
 
-  beforeDestroy() {
-    this.$off("sendPayment");
-  },
-
   data() {
     return {
+      amount_value: null,
       payment_types_loading: false,
       payment_types: [],
       orderLoading: false,
@@ -181,12 +209,10 @@ export default {
       code: null,
 
       card: {
-        card_holder:
-          process.env.NODE_ENV === "development" ? "John Longjohn" : null,
-        number:
-          process.env.NODE_ENV === "development" ? "4000000000000002" : null,
-        cvc: process.env.NODE_ENV === "development" ? "123" : null,
-        exp_date: process.env.NODE_ENV === "development" ? "1224" : null
+        card_holder: null,
+        number: null,
+        cvc: null,
+        exp_date: null
       }
     };
   },
@@ -200,6 +226,26 @@ export default {
       "customer"
     ]),
 
+    amount: {
+      get() {
+        return this.amount_value;
+      },
+      set(value) {
+        this.amount_value = value;
+        this.paymentAmount = this.parsePrice(value);
+      }
+    },
+    amountRules() {
+      switch (this.paymentType) {
+        case "card":
+        case "house-account":
+        case "giftcard":
+        case "pos-terminal":
+          return this.order_remaining_price.toFormat("0.00");
+        case "cash":
+          return "10000.00";
+      }
+    },
     getIcon() {
       return _.find(this.paymentTypes, ["type", this.paymentType]).icon;
     },
@@ -238,14 +284,6 @@ export default {
     },
     houseAccountLimit() {
       return parseFloat(this.customer.house_account_limit);
-    },
-    amount: {
-      get() {
-        return this.paymentAmount.toFormat("0.00");
-      },
-      set(value) {
-        this.paymentAmount = this.$price(value);
-      }
     }
   },
 
@@ -271,50 +309,32 @@ export default {
         });
     },
     pay() {
-      let payload;
+      let payload = {
+        paymentType: this.paymentType
+      };
 
       switch (this.paymentType) {
         case "pos-terminal":
-          payload = {
-            paymentAmount: this.paymentAmount,
-            paymentType: this.paymentType
-          };
-          break;
         case "cash":
-          payload = {
-            paymentAmount: this.paymentAmount,
-            paymentType: this.paymentType
-          };
+          payload.paymentAmount = this.paymentAmount;
           break;
         case "card":
-          payload = {
-            card: this.card,
-            paymentAmount: this.paymentAmount,
-            paymentType: this.paymentType
-          };
+          payload.card = this.card;
+          paymentAmount = this.paymentAmount;
           break;
         case "house-account":
-          payload = {
-            house_account_number: this.houseAccountNumber,
-            paymentAmount: this.paymentAmount,
-            paymentType: this.paymentType
-          };
+          payload.house_account_number = this.houseAccountNumber;
+          payload.paymentAmount = this.paymentAmount;
           break;
         case "coupon":
-          payload = {
-            code: this.code,
-            paymentType: this.paymentType
-          };
+          payload.code = this.code;
           break;
         case "giftcard":
-          payload = {
-            code: this.code,
-            paymentAmount: this.paymentAmount,
-            paymentType: this.paymentType
-          };
+          payload.code = this.code;
+          payload.code = this.paymentAmount;
           break;
         default:
-          break;
+          return;
       }
 
       this.$emit("sendPayment", payload);
@@ -339,16 +359,18 @@ export default {
         this.amount = 999900;
       }
     },
-    clearState() {
-      if (process.env.NODE_ENV === "production") {
-        this.code = null;
-        this.card.number = null;
-        this.card.card_holder = null;
-        this.card.cvc = null;
-        this.card.exp_date = null;
+    fillDemoCard() {
+      if (process.env.NODE_ENV === "development") {
+        this.card = {
+          card_holder: "John Longjohn",
+          number: "4000000000000002",
+          cvc: "123",
+          exp_date: "1224"
+        };
       }
-
-      this.max();
+    },
+    clearState() {
+      this.fillDemoCard();
     },
     sendPayment() {
       this.orderLoading = true;

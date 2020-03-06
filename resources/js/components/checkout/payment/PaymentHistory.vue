@@ -162,7 +162,7 @@ export default {
     },
     refund() {
       this.setRefundLoading(true);
-      let payload = {
+      const payload = {
         method: "delete",
         url: `payments/${this.selected_payment.id}`
       };
@@ -185,6 +185,8 @@ export default {
           this.setRefundLoading(false);
         })
         .catch(error => {
+          console.log(error);
+          // @TODO fix payload object
           if (_.has(error, "response.data.refund")) {
             this.payments = error.response.data.refund;
             this.$emit("refund", error.response.data);
