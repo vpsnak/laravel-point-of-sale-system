@@ -143,6 +143,7 @@ class Order extends Model
         $mdsePrice = new Money(0, new Currency($this->currency));
         foreach ($this->items as $item) {
             $price = new Money($item['price']['amount'], new Currency($this->currency));
+            $price = $price->multiply($item['qty']);
             if (isset($item['discount']) && isset($item['discount']['type']) && isset($item['discount']['amount'])) {
                 switch ($item['discount']['type']) {
                     case 'flat':

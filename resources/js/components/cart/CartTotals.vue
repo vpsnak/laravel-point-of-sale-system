@@ -5,14 +5,14 @@
       v-if="!totalDiscount.isZero()"
     >
       <span>Total discount</span>
-      <span>{{ totalDiscount.toFormat("$0.00") }}</span>
+      <span>{{ totalDiscount.toFormat() }}</span>
     </div>
 
     <v-divider v-if="!totalDiscount.isZero()" />
 
     <div class="d-flex justify-space-between pa-2">
       <span>Sub total w/ discount</span>
-      <span>{{ subTotalwDiscount.toFormat("$0.00") }}</span>
+      <span>{{ subTotalwDiscount.toFormat() }}</span>
     </div>
 
     <v-divider />
@@ -22,21 +22,21 @@
       v-if="!deliveryFeesPrice.isZero()"
     >
       <span>Delivery Fees</span>
-      <span>{{ deliveryFeesPrice.toFormat("$0.00") }}</span>
+      <span>{{ deliveryFeesPrice.toFormat() }}</span>
     </div>
 
     <v-divider v-if="!deliveryFeesPrice.isZero()" />
 
     <div class="d-flex justify-space-between pa-2 bb-1">
       <span>Tax</span>
-      <span>{{ tax.toFormat("$0.00") }}</span>
+      <span>{{ tax.toFormat() }}</span>
     </div>
 
     <v-divider />
 
     <div class="d-flex justify-space-between pa-2">
       <span>Total</span>
-      <span>{{ orderTotal.toFormat("$0.00") }}</span>
+      <span>{{ orderTotal.toFormat() }}</span>
     </div>
   </div>
 </template>

@@ -15,7 +15,7 @@
             :sections="costSections"
             :size="150"
             :thickness="13"
-            :total="Number.parseInt(totalPrice.toFormat('0.00'))"
+            :total="Number(totalPrice.toFormat('0.00'))"
             :background="bgColor"
           >
             <h2>{{ totalPrice.toFormat() }}</h2>
@@ -58,29 +58,27 @@ export default {
     },
     costSections() {
       let sections = [];
-
       if (!this.mdsePrice.isZero()) {
         sections.push({
           label: `Items: ${this.mdsePrice.toFormat()}`,
-          value: Number.parseInt(this.mdsePrice.toFormat("0.00")),
+          value: Number(this.mdsePrice.toFormat("0.00")),
           color: "#003f5c"
         });
       }
       if (!this.deliveryFeesPrice.isZero()) {
         sections.push({
           label: `Shipping: ${this.deliveryFeesPrice.toFormat()}`,
-          value: Number.parseInt(this.deliveryFeesPrice.toFormat("0.00")),
+          value: Number(this.deliveryFeesPrice.toFormat("0.00")),
           color: "#bc5090"
         });
       }
       if (!this.taxPrice.isZero()) {
         sections.push({
           label: `Tax: ${this.taxPrice.toFormat()}`,
-          value: Number.parseInt(this.taxPrice.toFormat("0.00")),
+          value: Number(this.taxPrice.toFormat("0.00")),
           color: "#ffa600"
         });
       }
-
       return sections;
     }
   }

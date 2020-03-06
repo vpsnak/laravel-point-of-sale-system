@@ -136,7 +136,7 @@
                   <v-chip small class="secondary mt-2 ml-1 elevation-12">
                     <span>
                       Price:
-                      {{ $price(product.price).toFormat("$0.00") }}
+                      {{ $price(product.price).toFormat() }}
                     </span>
                   </v-chip>
                   <v-chip

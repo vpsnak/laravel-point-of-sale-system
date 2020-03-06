@@ -14,7 +14,7 @@
             :md="6"
             :cols="12"
             v-for="(product, index) in cart_products"
-            :key="index"
+            :key="product.id"
           >
             <v-card class="d-inline-block mx-auto" width="100%" outlined>
               <v-container>
@@ -35,7 +35,7 @@
                     <h4>
                       Original price:
                       <i :class="valueColors">
-                        ${{ product.original_price }}
+                        {{ originalPrice(product).toFormat() }}
                       </i>
                     </h4>
                   </v-col>
@@ -51,27 +51,27 @@
                           height="75"
                         />
                       </v-col>
-                      <v-col cols="auto" v-if="hasDiscount(product)">
-                        <h4 v-if="hasDiscount">
+                      <v-col cols="auto" v-if="productHasDiscount(product)">
+                        <h4>
                           Price w/o discount:
-                          <i :class="valueColors">${{ product.price }}</i>
+                          <i :class="valueColors">
+                            {{ parsePrice(product.price).toFormat() }}
+                          </i>
                         </h4>
                         <h4>
                           Discount type:
                           <i :class="valueColors">
-                            {{ product.discount_type }}
+                            {{ product.discount.type }}
                           </i>
                         </h4>
-                        <h4 v-if="product.discount_type === 'Flat'">
-                          Discount amount:
+                        <h4>
+                          <span
+                            v-if="product.discount.type === 'flat'"
+                            v-html="'Discount amount:'"
+                          />
+                          <span v-else v-html="'Discount %:'" />
                           <i :class="valueColors">
-                            ${{ product.discount_amount }}
-                          </i>
-                        </h4>
-                        <h4 v-else>
-                          Discount %:
-                          <i :class="valueColors">
-                            {{ product.discount_amount }}
+                            {{ discountAmount(product) }}
                           </i>
                         </h4>
                       </v-col>
@@ -82,22 +82,20 @@
                             {{ product.qty }}
                           </i>
                         </h4>
-                        <h4 v-if="hasDiscount(product)">
-                          Sale price w/ discount:
+                        <h4>
+                          <span
+                            v-if="productHasDiscount(product)"
+                            v-html="'Sale price w/ discount:'"
+                          />
+                          <span v-else v-html="'Sale price:'" />
                           <i :class="valueColors">
-                            ${{ product.final_price }}
-                          </i>
-                        </h4>
-                        <h4 v-else>
-                          Sale price:
-                          <i :class="valueColors">
-                            ${{ product.final_price }}
+                            {{ salePrice(product).toFormat() }}
                           </i>
                         </h4>
                         <h4>
                           Total:
                           <i :class="valueColors">
-                            ${{ product.qty * product.final_price }}
+                            {{ totalPrice(product).toFormat() }}
                           </i>
                         </h4>
                       </v-col>
@@ -191,22 +189,28 @@ export default {
       });
     },
     hasNotes(product) {
-      if (product.notes && product.notes.length > 0) {
+      if (product.notes && product.notes.length) {
         return true;
       } else {
         return false;
       }
     },
-    hasDiscount(product) {
-      if (
-        product.discount_amount > 0 &&
-        product.discount_type &&
-        _.lowerCase(product.discount_type) !== "none"
-      ) {
-        return true;
+
+    discountAmount(product) {
+      if (product.discount.type === "flat") {
+        return this.$price(product.discount).toFormat();
       } else {
-        return false;
+        return product.discount.amount;
       }
+    },
+    originalPrice(product) {
+      return this.parsePrice(product.original_price);
+    },
+    salePrice(product) {
+      return this.calcProductDiscount(product);
+    },
+    totalPrice(product) {
+      return this.salePrice(product).multiply(product.qty);
     }
   }
 };
