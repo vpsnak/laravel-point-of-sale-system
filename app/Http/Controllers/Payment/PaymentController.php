@@ -20,7 +20,7 @@ class PaymentController extends Controller
     {
         $validatedData = $request->validate([
             'payment_type' => 'required|exists:payment_types,type',
-            'amount' => 'nullable|required_unless:payment_type,coupon|numeric|min:0.01',
+            'price' => 'nullable|required_unless:payment_type,coupon|array',
             'order_id' => 'required|exists:orders,id',
             'card.number' => 'nullable|required_if:payment_type,card|numeric',
             'card.cvc' => 'nullable|required_if:payment_type,card|digits_between:3,4',
@@ -31,16 +31,24 @@ class PaymentController extends Controller
         ]);
         $validatedData['user_id'] = auth()->user()->id;
         $validatedData['cash_register_id'] = auth()->user()->open_register->cash_register->id;
+        $paymentType = $validatedData['payment_type'];
+        unset($validatedData['payment_type']);
 
         $newPayment = $validatedData;
-        $newPayment['payment_type'] = PaymentType::whereType($validatedData['payment_type'])->first()->id;
+        $newPayment['payment_type_id'] = PaymentType::whereType($paymentType)->firstOrFail()->id;
+
         $newPayment['status'] = 'pending';
 
         $payment = Payment::create($newPayment);
         $response = [];
 
-        switch ($validatedData['payment_type']) {
+        switch ($paymentType) {
             case 'cash':
+                $order = $payment->load('order')->order;
+                $change_price = $payment->price->subtract($order->total_price);
+                if ($payment->change_price->isPositive()) {
+                    $payment->change_price = $change_price;
+                }
                 break;
             case 'pos-terminal':
                 $response = $this->posPay($payment);
@@ -77,7 +85,7 @@ class PaymentController extends Controller
             if (array_key_exists('errors', $response)) {
                 $payment->status = 'failed';
                 $payment->save();
-                $response['payment'] = $payment->load(['created_by', 'paymentType']);
+                $response['payment'] = $payment->load(['createdBy', 'paymentType']);
 
                 return response($response, 422);
             }
@@ -85,7 +93,7 @@ class PaymentController extends Controller
 
         $payment->status = 'approved';
         $payment->save();
-        $payment->load(['created_by', 'paymentType', 'order']);
+        $payment->load(['createdBy', 'paymentType', 'order']);
         $orderStatusController = new OrderStatusController($payment->order);
         $orderStatus = $orderStatusController->updateOrderStatus($payment);
         $orderStatus['payment'] = $payment;
@@ -326,7 +334,7 @@ class PaymentController extends Controller
         ]);
 
         $refund->save();
-        $refund = $refund->load(['created_by', 'paymentType', 'order']);
+        $refund = $refund->load(['createdBy', 'paymentType', 'order']);
 
         $orderStatusController = new OrderStatusController($refund->order);
         $orderStatus = $orderStatusController->updateOrderStatus($refund, true);
@@ -393,7 +401,7 @@ class PaymentController extends Controller
 
             if (is_array($result) && array_key_exists('errors', $result)) {
                 $refund = $this->createLinkedRefund($payment, false);
-                $refund->load(['created_by', 'paymentType', 'order']);
+                $refund->load(['createdBy', 'paymentType', 'order']);
 
                 $orderStatus = $orderStatusController->updateOrderStatus($refund, true);
                 $orderStatus['errors'] = $result['errors'];
@@ -402,7 +410,7 @@ class PaymentController extends Controller
                 return response($orderStatus, 500);
             } else {
                 $refund = $this->createLinkedRefund($payment, true);
-                $refund->load(['created_by', 'paymentType', 'order']);
+                $refund->load(['createdBy', 'paymentType', 'order']);
 
                 $orderStatus = $orderStatusController->updateOrderStatus($refund, true);
                 $orderStatus['refunded_payment_id'] = $payment->id;

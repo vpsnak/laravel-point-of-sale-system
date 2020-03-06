@@ -14,20 +14,20 @@
             color="secondary"
           ></v-progress-circular>
           <v-btn-toggle
-            v-model="paymentType"
+            v-model="payment_type"
             mandatory
             @change="clearState"
             dense
           >
             <v-btn
-              v-for="paymentType in paymentTypes"
-              :key="paymentType.id"
-              :value="paymentType.type"
+              v-for="payment_type in paymentTypes"
+              :key="payment_type.id"
+              :value="payment_type.type"
               :disabled="loading || orderLoading"
               dense
             >
-              <v-icon class="pr-2" small>{{ paymentType.icon }}</v-icon>
-              {{ paymentType.name }}
+              <v-icon class="pr-2" small>{{ payment_type.icon }}</v-icon>
+              {{ payment_type.name }}
             </v-btn>
           </v-btn-toggle>
         </v-col>
@@ -37,7 +37,7 @@
       <v-row
         justify="center"
         align="center"
-        v-if="paymentType === 'card'"
+        v-if="payment_type === 'card'"
         dense
       >
         <v-col :lg="3" :md="6">
@@ -65,7 +65,7 @@
       <v-row
         justify="center"
         align="center"
-        v-if="paymentType === 'card'"
+        v-if="payment_type === 'card'"
         dense
       >
         <v-col :lg="3" :md="6">
@@ -94,7 +94,7 @@
       <v-row
         justify="center"
         align="center"
-        v-else-if="['giftcard', 'coupon'].indexOf(paymentType) !== -1"
+        v-else-if="['giftcard', 'coupon'].indexOf(payment_type) !== -1"
       >
         <v-col :lg="3" :md="6">
           <v-text-field
@@ -106,7 +106,7 @@
           ></v-text-field>
         </v-col>
       </v-row>
-      <v-row justify="center" align="center" v-if="paymentType !== 'coupon'">
+      <v-row justify="center" align="center" v-if="payment_type !== 'coupon'">
         <v-col :lg="2" :md="3">
           <v-text-field
             prepend-inner-icon="mdi-currency-usd"
@@ -186,14 +186,10 @@ export default {
     }
   },
 
-  beforeDestroy() {
-    this.$off("sendPayment");
-  },
-
   watch: {
     order_remaining_price(value) {
       if (this.order_status === "pending_payment" || !this.order_status) {
-        this.paymentAmount = value;
+        this.paymentPrice = this.parsePrice(value);
       }
     }
   },
@@ -204,8 +200,8 @@ export default {
       payment_types_loading: false,
       payment_types: [],
       orderLoading: false,
-      paymentAmount: null,
-      paymentType: null,
+      paymentPrice: null,
+      payment_type: null,
       code: null,
 
       card: {
@@ -232,11 +228,11 @@ export default {
       },
       set(value) {
         this.amount_value = value;
-        this.paymentAmount = this.parsePrice(value);
+        this.paymentPrice = this.parsePrice(Number.parseInt(value * 100));
       }
     },
     amountRules() {
-      switch (this.paymentType) {
+      switch (this.payment_type) {
         case "card":
         case "house-account":
         case "giftcard":
@@ -247,7 +243,7 @@ export default {
       }
     },
     getIcon() {
-      return _.find(this.paymentTypes, ["type", this.paymentType]).icon;
+      return _.find(this.paymentTypes, ["type", this.payment_type]).icon;
     },
     paymentTypes: {
       get() {
@@ -288,6 +284,7 @@ export default {
   },
 
   methods: {
+    ...mapMutations("cart", ["setOrderId", "setPayments"]),
     ...mapActions("cart", ["submitOrder"]),
     ...mapActions("requests", ["request"]),
 
@@ -308,52 +305,71 @@ export default {
         });
     },
     pay() {
-      let payload = {
-        paymentType: this.paymentType
+      let data = {
+        order_id: this.order_id,
+        payment_type: this.payment_type
       };
 
-      switch (this.paymentType) {
+      switch (this.payment_type) {
         case "pos-terminal":
         case "cash":
-          payload.paymentAmount = this.paymentAmount;
+          data.price = this.paymentPrice.toJSON();
           break;
         case "card":
-          payload.card = this.card;
-          paymentAmount = this.paymentAmount;
+          data.card = this.card;
+          data.price = this.paymentPrice.toJSON();
           break;
         case "house-account":
-          payload.house_account_number = this.houseAccountNumber;
-          payload.paymentAmount = this.paymentAmount;
+          data.house_account_number = this.houseAccountNumber;
+          data.price = this.paymentPrice.toJSON();
           break;
         case "coupon":
-          payload.code = this.code;
+          data.code = this.code;
           break;
         case "giftcard":
-          payload.code = this.code;
-          payload.code = this.paymentAmount;
+          data.code = this.code;
+          data.price = this.paymentPrice.toJSON();
           break;
         default:
           return;
       }
 
-      this.$emit("sendPayment", payload);
-      this.max();
-      this.orderLoading = false;
+      const payload = {
+        method: "post",
+        url: "payments/create",
+        data: data
+      };
+
+      this.request(payload)
+        .then(response => {
+          this.setOrderChange(response.change);
+          this.setOrderRemainingPrice(response.remaining);
+          this.setOrderStatus(response.status);
+
+          this.setPayments(response.payment);
+        })
+        .catch(error => {
+          console.error(error);
+          if (_.has(error, "payment")) {
+            this.setPayments(error.payment);
+          }
+        })
+        .finally(() => {});
     },
     max() {
-      if (this.paymentType !== "cash") {
-        if (this.paymentType === "house-account") {
+      if (this.payment_type !== "cash") {
+        if (this.payment_type === "house-account") {
           if (this.houseAccountLimit.greaterThan(this.order_remaining_price)) {
-            this.paymentAmount.equalsTo(this.order_remaining_price);
-          } else if (this.paymentAmount.greaterThan(this.houseAccountLimit)) {
-            this.paymentAmount.equalsTo(this.houseAccountLimit);
+            this.paymentPrice.equalsTo(this.order_remaining_price);
+          } else if (this.paymentPrice.greaterThan(this.houseAccountLimit)) {
+            this.paymentPrice.equalsTo(this.houseAccountLimit);
           }
         }
-        if (this.paymentAmount.greaterThan(this.order_remaining_price)) {
-          this.paymentAmount.equalsTo(this.order_remaining_price);
+        if (this.paymentPrice.greaterThan(this.order_remaining_price)) {
+          this.paymentPrice.equalsTo(this.order_remaining_price);
         }
       } else if (
-        this.paymentAmount.greaterThan(this.$price({ amount: 999900 }))
+        this.paymentPrice.greaterThan(this.$price({ amount: 999900 }))
       ) {
         this.amount = 999900;
       }
@@ -376,7 +392,9 @@ export default {
 
       if (!this.order_id) {
         this.submitOrder("create")
-          .then(() => {
+          .then(response => {
+            console.log(response);
+            this.setOrderId(response.id);
             this.pay();
           })
           .catch(error => {

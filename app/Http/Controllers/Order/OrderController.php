@@ -173,10 +173,10 @@ class OrderController extends Controller
         // ProcessOrder::dispatchNow($this->order);
 
         return response([
-            'order_id' => $this->order->id,
-            'order_status' => $this->order->status->value,
-            'order_total_price' => $this->order->total_price,
-            'order_tax_price' => $this->order->tax_price,
+            'id' => $this->order->id,
+            'status' => $this->order->status->value,
+            'total_price' => $this->order->total_price,
+            'tax_price' => $this->order->tax_price,
         ], 201);
     }
 

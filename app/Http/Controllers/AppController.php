@@ -23,12 +23,12 @@ class AppController extends Controller
 
     public function receipt(Order $order)
     {
-        $order = $order->load(['created_by', 'store']);
+        $order = $order->load(['createdBy', 'store']);
         return view('receipt')->with([
             'order' => $order,
-            'created_by' => $order->created_by,
+            'created_by' => $order->createdBy,
             'store' => $order->store,
-            'cash_register' => $order->created_by->open_register->cash_register,
+            'cash_register' => $order->createdBy->open_register->cash_register,
         ]);
     }
 

@@ -18,6 +18,7 @@ class CreatePaymentsTable extends Migration
 
             $table->unsignedTinyInteger('payment_type_id');
             $table->json('price');
+            $table->json('change_price')->nullable();
             $table->unsignedMediumInteger('order_id');
             $table->unsignedSmallInteger('cash_register_id');
             $table->string('code')->nullable();

@@ -68,7 +68,7 @@ class CashRegister extends Model
 
     public function getPaymentsAttribute()
     {
-        return $this->hasMany(Payment::class, 'cash_register_id', 'id')->without(['order', 'created_by'])->get();
+        return $this->hasMany(Payment::class, 'cash_register_id', 'id')->without(['order', 'createdBy'])->get();
     }
 
     public function logs()

@@ -180,7 +180,11 @@ class Order extends Model
 
     public function getPaidPriceAttribute()
     {
-        return $this->total_price;
+        $paidPrice = new Money($this->delivery_fees_amount, new Currency($this->currency));
+        foreach ($this->payments as $payment) {
+            $paidPrice = $paidPrice->add($payment->price);
+        }
+        return $paidPrice;
     }
 
     public function getRemainingPriceAttribute()
@@ -225,7 +229,8 @@ class Order extends Model
 
     public function statuses()
     {
-        return $this->belongsToMany(Status::class)
+        return $this
+            ->belongsToMany(Status::class)
             ->using(OrderStatus::class)
             ->withPivot('user_id')
             ->withTimestamps(['created_at']);

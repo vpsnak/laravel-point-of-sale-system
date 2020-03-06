@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Order;
 use App\Payment;
 use App\MasOrder;
-use App\Helper\Price;
 use App\Status;
 use App\OrderStatus;
+use Money\Money;
+use Money\Currency;
 
 class OrderStatusController extends Controller
 {
@@ -27,26 +28,26 @@ class OrderStatusController extends Controller
     {
         $this->user = auth()->user();
 
-        $remaining = Price::numberPrecision($this->order->total - $this->order->total_paid);
-        $change = Price::numberPrecision($this->order->total_paid - $this->order->total);
+        $remaining = $this->order->total_price->subtract($this->order->paid_price);
+        $change = $this->order->paid_price->subtract($this->order->total_price);
 
-        if ($change < 0) {
-            $change = 0;
+        if ($change->isNegative(0)) {
+            $change = new Money(0, new Currency($this->order->currency));
         }
 
-        if ($remaining < 0) {
-            $remaining = 0;
+        if ($remaining->isNegative(0)) {
+            $remaining = new Money(0, new Currency($this->order->currency));
         }
 
-        if ($remaining > 0) {
-            $this->order->change = 0;
+        if ($remaining->isPositive(0)) {
+            $this->order->change = new Money(0, new Currency($this->order->currency));
             if ($this->order->status->value !== 'pending_payment') {
                 $pendingPaymentStatusId = Status::where('value', 'pending_payment')->firstOrFail('id');
                 $this->order->statuses()->attach($pendingPaymentStatusId, ['user_id' => $this->user->id]);
             }
         } else {
             if (!$refund) {
-                $payment->amount = Price::numberPrecision($payment->amount - $change);
+                $payment->price = $payment->price->subtract($change);
                 $payment->save();
 
                 $this->order->change = $change;
@@ -65,11 +66,11 @@ class OrderStatusController extends Controller
                     $paidPaymentStatusId = Status::where('value', 'paid')->firstOrFail('id');
                     $this->order->statuses()->attach($paidPaymentStatusId, ['user_id' => $this->user->id]);
                 }
-                $this->order->change = $change;
+                // $this->order->change = $change;
             }
         }
 
-        $this->order->save();
+        // $this->order->save();
 
         return [
             'remaining' => $remaining,

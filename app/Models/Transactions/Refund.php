@@ -3,18 +3,20 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Money\Currencies\ISOCurrencies;
+use Money\MoneyParser;
+use Money\Parser\DecimalMoneyParser;
 
 class Refund extends Model
 {
     protected $casts = [
-        'price' => 'array',
         'created_at' => 'datetime:m/d/Y H:i:s',
         'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
 
     protected $with = [
         'refundType',
-        'created_by',
+        'createdBy',
         'elavonApiPayments',
         'elavonSdkPayments'
     ];
@@ -27,6 +29,11 @@ class Refund extends Model
         'order_id',
         'user_id',
     ];
+
+    public function getPriceAttribute()
+    {
+        return new MoneyParser($this->price);
+    }
 
     public function setPriceAttribute($value)
     {
