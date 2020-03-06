@@ -288,7 +288,6 @@ export default {
   },
 
   methods: {
-    ...mapMutations("cart", ["setPaymentLoading"]),
     ...mapActions("cart", ["submitOrder"]),
     ...mapActions("requests", ["request"]),
 
@@ -374,7 +373,6 @@ export default {
     },
     sendPayment() {
       this.orderLoading = true;
-      this.setPaymentLoading(true);
 
       if (!this.order_id) {
         this.submitOrder("create")

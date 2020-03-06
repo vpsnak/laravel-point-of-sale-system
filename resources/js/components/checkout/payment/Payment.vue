@@ -2,11 +2,7 @@
   <div>
     <paymentHistory />
 
-    <paymentActions
-      v-show="showPaymentActions"
-      :loading="paymentActionsLoading"
-      @sendPayment="sendPayment"
-    />
+    <paymentActions v-show="showPaymentActions" />
   </div>
 </template>
 
@@ -16,9 +12,6 @@ import { mapActions, mapMutations, mapState } from "vuex";
 export default {
   data() {
     return {
-      paymentHistoryLoading: false,
-      paymentActionsLoading: false,
-
       payment: {
         type: null,
         amount: null
@@ -30,18 +23,14 @@ export default {
     ...mapState("cart", ["order_id", "order_status"]),
 
     showPaymentActions() {
-      if (!this.order_status) {
-        return true;
-      } else {
-        switch (this.order_status) {
-          default:
-          case "paid":
-            return false;
-          case "submitted":
-          case "pending":
-          case "pending_payment":
-            return true;
-        }
+      switch (this.order_status) {
+        case null:
+        case "submitted":
+        case "pending":
+        case "pending_payment":
+          return true;
+        default:
+          return false;
       }
     }
   },
@@ -59,7 +48,7 @@ export default {
     sendPayment(event) {
       this.paymentActionsLoading = true;
 
-      let payload = {
+      const payload = {
         method: "post",
         url: "payments/create",
         data: {
@@ -97,12 +86,6 @@ export default {
             this.$store.state.cart.customer.house_account_limit -=
               payload.data.amount;
           }
-
-          const notification = {
-            msg: "Payment received",
-            type: "success"
-          };
-          this.setNotification(notification);
         })
         .catch(error => {
           console.error(error);
@@ -110,10 +93,7 @@ export default {
             this.setPayments(error.payment);
           }
         })
-        .finally(() => {
-          this.paymentActionsLoading = false;
-          this.$store.state.cart.paymentLoading = false;
-        });
+        .finally(() => {});
     }
   }
 };

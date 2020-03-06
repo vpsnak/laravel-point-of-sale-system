@@ -113,21 +113,15 @@ export default {
   },
 
   computed: {
-    ...mapState("cart", ["refund_loading", "payments"]),
+    ...mapState("cart", ["payments"]),
 
-    refundLoading: {
-      get() {
-        return this.refund_loading;
-      },
-      set(value) {
-        this.setRefundLoading(value);
-      }
+    refundLoading() {
+      return false;
     }
   },
 
   methods: {
     ...mapMutations("cart", [
-      "setRefundLoading",
       "setPaymentRefundedStatus",
       "setPayments",
       "setOrderChange",
@@ -161,7 +155,6 @@ export default {
       }
     },
     refund() {
-      this.setRefundLoading(true);
       const payload = {
         method: "delete",
         url: `payments/${this.selected_payment.id}`
@@ -181,8 +174,6 @@ export default {
           this.setOrderChange(response.change);
           this.setOrderRemainingPrice(response.remaining);
           this.setOrderStatus(response.order_status);
-
-          this.setRefundLoading(false);
         })
         .catch(error => {
           console.log(error);

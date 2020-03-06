@@ -4,9 +4,6 @@ export default {
   state: {
     tax_percentage: 0,
     checkoutDialog: false,
-    refund_loading: false,
-    payment_loading: false,
-    complete_order_loading: false,
     payments: [],
 
     is_valid: false,
@@ -202,15 +199,6 @@ export default {
     setOrderRemainingPrice(state, value) {
       state.order_remaining_price = value;
     },
-    setCompleteOrderLoading(state, value) {
-      state.complete_order_loading = value;
-    },
-    setPaymentLoading(state, value) {
-      state.payment_loading = value;
-    },
-    setRefundLoading(state, value) {
-      state.refund_loading = value;
-    },
     setTaxPercentage(state, value) {
       state.tax_percentage = value;
     },
@@ -383,7 +371,6 @@ export default {
         occasion: 9
       };
       state.billing_address_id = null;
-      state.complete_order_loading = false;
     },
     resetShipping(state, hard) {
       state.delivery = {

@@ -11,13 +11,14 @@
           </h3>
 
           <v-btn
-            v-if="completed && !refund_loading"
+            v-if="completed"
             color="success"
             @click="complete"
             :loading="loading"
             :disabled="loading"
             text
-          >Complete order</v-btn>
+            >Complete order
+          </v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -44,26 +45,14 @@ export default {
   },
 
   computed: {
-    ...mapState("cart", [
-      "order_id",
-      "order_status",
-      "order_change",
-      "refund_loading",
-      "complete_order_loading"
-    ]),
+    ...mapState("cart", ["order_id", "order_status", "order_change"]),
 
-    loading: {
-      get() {
-        return this.complete_order_loading;
-      },
-      set(value) {
-        this.setCompleteOrderLoading(value);
-      }
+    loading() {
+      return false;
     }
   },
 
   methods: {
-    ...mapMutations("cart", ["setCompleteOrderLoading"]),
     ...mapActions("cart", ["createReceipt", "completeStep"]),
 
     complete() {
