@@ -182,7 +182,10 @@ class Order extends Model
     {
         $paidPrice = new Money($this->delivery_fees_amount, new Currency($this->currency));
         foreach ($this->payments as $payment) {
-            $paidPrice = $paidPrice->add($payment->price);
+            if ($payment->status === 'approved') {
+                $paidPrice = $paidPrice->add($payment->price);
+                $paidPrice = $paidPrice->subtract($payment->change_price);
+            }
         }
         return $paidPrice;
     }

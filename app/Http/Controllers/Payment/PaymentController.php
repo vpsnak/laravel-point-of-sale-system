@@ -40,13 +40,15 @@ class PaymentController extends Controller
         $newPayment['status'] = 'pending';
 
         $payment = Payment::create($newPayment);
+        $order = $payment->order;
         $response = [];
 
         switch ($paymentType) {
             case 'cash':
-                $order = $payment->load('order')->order;
-                $change_price = $payment->price->subtract($order->total_price);
-                if ($payment->change_price->isPositive()) {
+
+                $change_price = $payment->price->subtract($order->remaining_price);
+
+                if ($change_price->isPositive()) {
                     $payment->change_price = $change_price;
                 }
                 break;
@@ -93,8 +95,7 @@ class PaymentController extends Controller
 
         $payment->status = 'approved';
         $payment->save();
-        $payment->load(['createdBy', 'paymentType', 'order']);
-        $orderStatusController = new OrderStatusController($payment->order);
+        $orderStatusController = new OrderStatusController($order);
         $orderStatus = $orderStatusController->updateOrderStatus($payment);
         $orderStatus['payment'] = $payment;
 

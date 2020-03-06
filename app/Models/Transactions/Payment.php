@@ -31,6 +31,13 @@ class Payment extends Model
         'user_id',
     ];
 
+    protected $hidden = [
+        'order_id',
+        'user_id',
+        'payment_type_id',
+        'cash_register_id'
+    ];
+
     public function getChangePriceAttribute()
     {
         if (isset($this->attributes['change_price'])) {
@@ -44,9 +51,7 @@ class Payment extends Model
 
     public function setChangePriceAttribute($value)
     {
-        if (is_array($value)) {
-            $value = json_encode($value);
-        } else if ($value instanceof Money) {
+        if (is_array($value) || $value instanceof Money) {
             $value = json_encode($value);
         }
 
@@ -86,7 +91,7 @@ class Payment extends Model
 
     public function createdBy()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function cashRegister()
