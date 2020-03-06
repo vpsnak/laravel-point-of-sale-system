@@ -52,12 +52,12 @@ export default {
       "cart_products",
       "customer",
       "order_discount",
-      "delivery_fees_price",
+      "delivery_fees_amount",
       "order_status"
     ]),
 
     deliveryFeesPrice() {
-      return this.$price(this.delivery_fees_price);
+      return this.$price(this.delivery_fees_amount);
     },
     subTotalwDiscount() {
       var subtotal = this.$price();
@@ -100,13 +100,13 @@ export default {
 
   watch: {
     orderTotal(value) {
-      this.setOrderTotal(value);
-      this.setOrderRemaining(value);
+      this.setOrderTotalPrice(value);
+      this.setOrderRemainingPrice(value);
     }
   },
 
   methods: {
-    ...mapMutations("cart", ["setOrderTotal", "setOrderRemaining"]),
+    ...mapMutations("cart", ["setOrderTotalPrice", "setOrderRemainingPrice"]),
 
     calcDiscount(price, discount) {
       if (

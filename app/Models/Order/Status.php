@@ -19,6 +19,12 @@ class Status extends Model
     }
 
     protected $casts = [
-        'lock_order' => 'boolean',
+        'can_checkout'  => 'boolean',
+        'can_edit_order_options' => 'boolean',
+        'can_receipt' => 'boolean',
+        'can_mas_upload' => 'boolean',
+        'can_mas_reupload' => 'boolean',
+        'can_refund' => 'boolean',
+        'can_cancel' => 'boolean',
     ];
 }

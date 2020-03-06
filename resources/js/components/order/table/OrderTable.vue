@@ -19,16 +19,15 @@
     <template v-slot:item.created_by="{ item }">
       <createdByChip :menu="true" :created_by="item.created_by" />
     </template>
-    <template v-slot:item.total="{ item }"> $ {{ item.total }} </template>
+    <template v-slot:item.total="{ item }">
+      {{ parsePrice(item.total_price).toFormat() }}
+    </template>
     <template v-slot:item.total_paid="{ item }">
-      $ {{ item.total_paid }}
+      {{ parsePrice(item.paid_price).toFormat() }}
     </template>
 
     <template v-slot:item.actions="{ item }">
-      <v-tooltip
-        v-if="['pending', 'pending_payment'].indexOf(item.status) !== -1"
-        bottom
-      >
+      <v-tooltip v-if="canCheckout(item)" bottom>
         <template v-slot:activator="{ on }">
           <v-btn
             small
@@ -175,6 +174,15 @@ export default {
     ...mapActions("requests", ["request"]),
     ...mapActions("cart", ["loadOrder"]),
 
+    canCheckout(item) {
+      if (
+        ["submitted", "pending", "pending_payment"].indexOf(item.status) !== -1
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     disableIfStatus(item) {
       switch (item.status) {
         case "completed":

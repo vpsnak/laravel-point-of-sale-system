@@ -82,16 +82,16 @@ export default {
   computed: {
     ...mapState("cart", [
       "order_id",
-      "order_total_paid",
-      "order_total",
+      "order_paid_price",
+      "order_total_price",
       "order_status"
     ]),
 
     maxRefund() {
       if (this.order_status === "paid") {
-        return this.order_total;
+        return this.order_total_price;
       } else {
-        return this.order_total_paid;
+        return this.order_paid_price;
       }
     },
     getIcon() {

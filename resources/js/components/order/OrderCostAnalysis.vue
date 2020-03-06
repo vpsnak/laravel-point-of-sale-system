@@ -12,13 +12,13 @@
           <vc-donut
             hasLegend
             legendPlacement="bottom"
-            :sections="costSections()"
+            :sections="costSections"
             :size="150"
             :thickness="13"
-            :total="order_total"
+            :total="Number.parseInt(totalPrice.toFormat('0.00'))"
             :background="bgColor"
           >
-            <h2>$ {{ order_total }}</h2>
+            <h2>{{ totalPrice.toFormat() }}</h2>
             <h2>total cost</h2>
           </vc-donut>
         </v-col>
@@ -32,62 +32,56 @@ import { mapState } from "vuex";
 export default {
   computed: {
     ...mapState("cart", [
-      "order_id",
-      "order_status",
-      "order_total",
-      "order_total_without_tax",
-      "order_total_tax",
-      "order_total_item_cost",
-      "order_change",
-      "order_remaining",
-      "order_notes",
-      "order_billing_address",
-      "order_delivery_address",
-      "order_delivery_store_pickup",
-      "order_delivery_store_pickup",
-      "shipping_cost",
-      "refresh_order"
+      "order_total_price",
+      "order_mdse_price",
+      "order_tax_price",
+      "delivery_fees_amount"
     ]),
 
     bgColor() {
       if (this.$vuetify.theme.dark) {
         return "#1e1e1e";
       }
-    }
-  },
-  methods: {
+    },
+
+    mdsePrice() {
+      return this.parsePrice(this.order_mdse_price);
+    },
+    taxPrice() {
+      return this.parsePrice(this.order_tax_price);
+    },
+    deliveryFeesPrice() {
+      return this.parsePrice(this.delivery_fees_amount);
+    },
+    totalPrice() {
+      return this.parsePrice(this.order_total_price);
+    },
     costSections() {
       let sections = [];
 
-      if (this.order_total_item_cost > 0) {
+      if (!this.mdsePrice.isZero()) {
         sections.push({
-          label: `Items: $${this.order_total_item_cost}`,
-          value: this.order_total_item_cost,
+          label: `Items: ${this.mdsePrice.toFormat()}`,
+          value: Number.parseInt(this.mdsePrice.toFormat("0.00")),
           color: "#003f5c"
         });
       }
-      if (this.shipping_cost > 0) {
+      if (!this.deliveryFeesPrice.isZero()) {
         sections.push({
-          label: `Shipping: $${this.shipping_cost}`,
-          value: this.shipping_cost,
+          label: `Shipping: ${this.deliveryFeesPrice.toFormat()}`,
+          value: Number.parseInt(this.deliveryFeesPrice.toFormat("0.00")),
           color: "#bc5090"
         });
       }
-      if (this.order_total_tax > 0) {
+      if (!this.taxPrice.isZero()) {
         sections.push({
-          label: `Tax: $${this.order_total_tax}`,
-          value: this.order_total_tax,
+          label: `Tax: ${this.taxPrice.toFormat()}`,
+          value: Number.parseInt(this.taxPrice.toFormat("0.00")),
           color: "#ffa600"
         });
       }
 
       return sections;
-    }
-  },
-
-  watch: {
-    order_total() {
-      this.costSections();
     }
   }
 };

@@ -50,7 +50,7 @@ export default {
     ...mapMutations("cart", [
       "setPayments",
       "setOrderChange",
-      "setOrderRemaining",
+      "setOrderRemainingPrice",
       "setOrderStatus"
     ]),
     ...mapMutations(["setNotification"]),
@@ -88,7 +88,7 @@ export default {
       this.request(payload)
         .then(response => {
           this.setOrderChange(response.change);
-          this.setOrderRemaining(response.remaining);
+          this.setOrderRemainingPrice(response.remaining);
           this.setOrderStatus(response.order_status);
 
           this.setPayments(response.payment);

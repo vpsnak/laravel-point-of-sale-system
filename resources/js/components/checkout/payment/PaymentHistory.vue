@@ -131,7 +131,7 @@ export default {
       "setPaymentRefundedStatus",
       "setPayments",
       "setOrderChange",
-      "setOrderRemaining",
+      "setOrderRemainingPrice",
       "setOrderStatus"
     ]),
     ...mapMutations(["setNotification"]),
@@ -179,7 +179,7 @@ export default {
           }
 
           this.setOrderChange(response.change);
-          this.setOrderRemaining(response.remaining);
+          this.setOrderRemainingPrice(response.remaining);
           this.setOrderStatus(response.order_status);
 
           this.setRefundLoading(false);

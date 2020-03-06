@@ -100,7 +100,7 @@
         <v-col :lg="2" :md="3">
           <v-text-field
             prepend-inner-icon="mdi-currency-usd"
-            :value="order_remaining.toFormat('0.00')"
+            :value="order_remaining_price.toFormat('0.00')"
             disabled
             label="Remaining Amount"
           ></v-text-field>
@@ -152,7 +152,7 @@ export default {
   },
 
   created() {
-    this.paymentAmount = this.order_remaining;
+    this.paymentAmount = this.order_remaining_price;
   },
 
   mounted() {
@@ -160,7 +160,7 @@ export default {
   },
 
   watch: {
-    order_remaining(value) {
+    order_remaining_price(value) {
       if (this.order_status === "pending_payment" || !this.order_status) {
         this.paymentAmount = value;
       }
@@ -193,9 +193,9 @@ export default {
 
   computed: {
     ...mapState("cart", [
-      "order_remaining",
+      "order_remaining_price",
       "order_id",
-      "order_total",
+      "order_total_price",
       "order_status",
       "customer"
     ]),
@@ -324,14 +324,14 @@ export default {
     max() {
       if (this.paymentType !== "cash") {
         if (this.paymentType === "house-account") {
-          if (this.houseAccountLimit.greaterThan(this.order_remaining)) {
-            this.paymentAmount.equalsTo(this.order_remaining);
+          if (this.houseAccountLimit.greaterThan(this.order_remaining_price)) {
+            this.paymentAmount.equalsTo(this.order_remaining_price);
           } else if (this.paymentAmount.greaterThan(this.houseAccountLimit)) {
             this.paymentAmount.equalsTo(this.houseAccountLimit);
           }
         }
-        if (this.paymentAmount.greaterThan(this.order_remaining)) {
-          this.paymentAmount.equalsTo(this.order_remaining);
+        if (this.paymentAmount.greaterThan(this.order_remaining_price)) {
+          this.paymentAmount.equalsTo(this.order_remaining_price);
         }
       } else if (
         this.paymentAmount.greaterThan(this.$price({ amount: 999900 }))

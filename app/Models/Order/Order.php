@@ -14,9 +14,11 @@ class Order extends Model
 
     protected $appends = [
         'status',
-        'mdse_amount',
-        'total_tax_price',
-        'total_amount'
+        'mdse_price',
+        'tax_price',
+        'total_price',
+        'paid_price',
+        'remaining_price',
     ];
 
     protected $fillable = [
@@ -136,9 +138,9 @@ class Order extends Model
         $this->attributes['billing_address'] = $value;
     }
 
-    public function getMdseAmountAttribute()
+    public function getMdsePriceAttribute()
     {
-        $mdseAmount = new Money(0, new Currency($this->currency));
+        $mdsePrice = new Money(0, new Currency($this->currency));
         foreach ($this->items as $item) {
             $price = new Money($item['price']['amount'], new Currency($this->currency));
             if (isset($item['discount']) && isset($item['discount']['type']) && isset($item['discount']['amount'])) {
@@ -154,29 +156,35 @@ class Order extends Model
                         break;
                 }
             }
-            $mdseAmount = $mdseAmount->add($price);
+            $mdsePrice = $mdsePrice->add($price);
         }
-        return $mdseAmount;
+        return $mdsePrice;
     }
 
-    public function getTotalTaxPriceAttribute()
+    public function getTaxPriceAttribute()
     {
         return $this
-            ->mdse_amount
+            ->mdse_price
             ->add(new Money($this->delivery_fees_amount, new Currency($this->currency)))
             ->multiply($this->tax_percentage / 100);
     }
 
-    public function getTotalAmountAttribute()
+    public function getTotalPriceAttribute()
     {
         return $this
-            ->total_tax_price
-            ->add($this->mdse_amount)
+            ->tax_price
+            ->add($this->mdse_price)
             ->add(new Money($this->delivery_fees_amount, new Currency($this->currency)));
     }
 
-    public function getRemainingAmountAttribute()
+    public function getPaidPriceAttribute()
     {
+        return $this->total_price;
+    }
+
+    public function getRemainingPriceAttribute()
+    {
+        return $this->total_price->subtract($this->paid_price);
     }
 
     public function masOrder()

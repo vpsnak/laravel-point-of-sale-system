@@ -87,9 +87,7 @@ export default {
 
     customer: null,
     method: "retail",
-    delivery_fees_price: {
-      amount: 0
-    },
+    delivery_fees_amount: { amount: 0 },
     cart_products: [],
 
     order_discount: { type: "none", amount: null },
@@ -108,12 +106,11 @@ export default {
     order_store: null,
     order_status: null,
     order_mas_order: null,
-    order_total: { amount: 0 },
-    order_total_without_tax: 0,
-    order_total_tax: 0,
-    order_total_item_cost: 0,
-    order_change: 0,
-    order_remaining: 0,
+    order_total_price: { amount: 0 },
+    order_mdse_price: { amount: 0 },
+    order_tax_price: { amount: 0 },
+    order_change: { amount: 0 },
+    order_remaining_price: { amount: 0 },
     order_notes: null,
     order_billing_address: null,
     order_delivery_address: null,
@@ -130,15 +127,11 @@ export default {
       state.order_page_actions = value;
     },
     setReorder(state, items) {
-      let strippedItems = items.map(({ discount, ...attrs }) => attrs);
-
+      const strippedItems = items.map(({ discount, ...attrs }) => attrs);
       state.cart_products = strippedItems;
     },
     setCartProduct(state, payload) {
       state.cart_products[payload.index] = payload.value;
-    },
-    setOrderTotalItemCost(state, value) {
-      state.order_total_item_cost = value;
     },
     setOrderStore(state, value) {
       state.order_store = value;
@@ -191,23 +184,23 @@ export default {
     setOrderMasOrderStatus(state, value) {
       state.order_mas_order = value;
     },
-    setOrderTotal(state, value) {
-      state.order_total = value;
+    setOrderTotalPrice(state, value) {
+      state.order_total_price = value;
     },
-    setOrderTotalPaid(state, value) {
-      state.order_total_paid = value;
+    setOrderPaidPrice(state, value) {
+      state.order_paid_price = value;
     },
-    setOrderTotalWithoutTax(state, value) {
-      state.order_total_without_tax = value;
+    setOrderTaxPrice(state, value) {
+      state.order_tax_price = value;
     },
-    setOrderTotalTax(state, value) {
-      state.order_total_tax = value;
+    setOrderMdsePrice(state, value) {
+      state.order_mdse_price = value;
     },
     setOrderChange(state, value) {
       state.order_change = value;
     },
-    setOrderRemaining(state, value) {
-      state.order_remaining = value;
+    setOrderRemainingPrice(state, value) {
+      state.order_remaining_price = value;
     },
     setCompleteOrderLoading(state, value) {
       state.complete_order_loading = value;
@@ -273,8 +266,8 @@ export default {
 
       state.isValidCheckout = result;
     },
-    setDeliveryFeesPrice(state, value) {
-      state.delivery_fees_price = value;
+    setDeliveryFeesAmount(state, value) {
+      state.delivery_fees_amount = value;
     },
     addProduct(state, newProduct) {
       let index = _.findIndex(state.cart_products, product => {
@@ -357,16 +350,13 @@ export default {
       state.order_status = null;
       state.order_mas_order = null;
 
-      state.order_total = { amount: 0 };
-      state.order_total_tax = 0;
-      state.order_total_without_tax = 0;
-      state.order_remaining = 0;
-      state.order_change = 0;
-      state.order_total_paid = 0;
-      state.order_total_item_cost = 0;
-      state.delivery_fees_price = {
-        amount: 0
-      };
+      state.order_total_price = { amount: 0 };
+      state.order_tax_price = { amount: 0 };
+      state.order_remaining_price = { amount: 0 };
+      state.order_change = { amount: 0 };
+      state.order_paid_price = { amount: 0 };
+      state.order_mdse_price = { amount: 0 };
+      state.delivery_fees_amount = { amount: 0 };
       state.payments = [];
       state.order_notes = "";
 
@@ -529,7 +519,8 @@ export default {
 
         if (context.state.method !== "retail") {
           payload.data.delivery = context.state.delivery;
-          payload.data.delivery_fees_price = context.state.delivery_fees_price;
+          payload.data.delivery_fees_amount =
+            context.state.delivery_fees_amount;
         }
 
         context
@@ -538,12 +529,8 @@ export default {
             if (url === "create") {
               context.commit("setOrderId", response.order_id);
               context.commit("setOrderStatus", response.order_status);
-              context.commit("setOrderTotal", response.order_total);
-              context.commit(
-                "setOrderTotalWithoutTax",
-                response.order_total_without_tax
-              );
-              context.commit("setOrderTotalTax", response.order_total_tax);
+              context.commit("setOrderTotalPrice", response.order_total_price);
+              context.commit("setOrderTaxPrice", response.order_tax_price);
             }
             resolve(response);
           })
@@ -563,13 +550,12 @@ export default {
         context.commit("setOrderStatus", order.status);
         context.commit("setOrderMasOrderStatus", order.mas_order);
 
-        context.commit("setOrderTotal", order.total);
-        context.commit("setOrderTotalPaid", order.total_paid);
-        context.commit("setOrderTotalWithoutTax", order.total_without_tax);
-        context.commit("setOrderTotalItemCost", order.total_item_cost);
-        context.commit("setOrderTotalTax", order.total_tax);
+        context.commit("setOrderTotalPrice", order.total_price);
+        context.commit("setOrderPaidPrice", order.paid_price);
+        context.commit("setOrderMdsePrice", order.mdse_price);
+        context.commit("setOrderTaxPrice", order.tax_price);
         context.commit("setOrderChange", order.change);
-        context.commit("setOrderRemaining", order.remaining);
+        context.commit("setOrderRemainingPrice", order.remaining_price);
         context.commit("setPayments", order.payments);
         context.commit("setCartDiscount", order.discount);
         context.commit("setCustomer", order.customer);
@@ -581,7 +567,7 @@ export default {
         });
 
         if (order.method !== "retail") {
-          context.commit("setDeliveryFeesPrice", order.delivery_fees_price);
+          context.commit("setDeliveryFeesAmount", order.delivery_fees_amount);
           context.commit("setDeliveryDate", order.delivery.date);
           context.commit("setDeliveryTime", order.delivery.time);
 

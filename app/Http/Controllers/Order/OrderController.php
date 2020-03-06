@@ -175,9 +175,8 @@ class OrderController extends Controller
         return response([
             'order_id' => $this->order->id,
             'order_status' => $this->order->status->value,
-            'order_total' => $this->order->total,
-            'order_total_without_tax' => $this->order->total_without_tax,
-            'order_total_tax' => $this->order->total_tax,
+            'order_total_price' => $this->order->total_price,
+            'order_tax_price' => $this->order->tax_price,
         ], 201);
     }
 

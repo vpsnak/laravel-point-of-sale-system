@@ -77,7 +77,7 @@ export default {
   computed: {
     ...mapState("cart", [
       "productMap",
-      "order_total",
+      "order_total_price",
       "discountTypes",
       "order_id",
       "cart_products",
@@ -117,7 +117,7 @@ export default {
           if (this.product) {
             return this.$props.productPrice.toFormat("0.00");
           } else {
-            return this.$price(this.order_total)
+            return this.$price(this.order_total_price)
               .add(this.$price({ amount: this.discount.amount || 0 }))
               .toFormat("0.00");
           }
