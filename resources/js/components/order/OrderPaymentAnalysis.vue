@@ -21,7 +21,7 @@
         </v-col>
         <v-col :lg="4" :cols="6">
           <h4>
-            <i :class="section.class">${{ section.value }}</i>
+            <i :class="section.class">{{ section.value }}</i>
           </h4>
         </v-col>
       </v-row>
@@ -53,7 +53,7 @@ export default {
       "order_total_price",
       "order_tax_price",
       "order_paid_price",
-      "order_change",
+      "order_change_price",
       "order_remaining_price",
       "order_notes",
       "order_billing_address",
@@ -158,7 +158,7 @@ export default {
       return this.sections;
     },
     sumTotals() {
-      let totals =
+      const totals =
         Number(this.card_total) +
         Number(this.pos_terminal_total) +
         Number(this.cash_total) +

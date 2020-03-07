@@ -62,15 +62,13 @@ class Payment extends Model
             $price = json_decode($this->attributes['price'], true);
             return new Money($price['amount'], new Currency($price['currency']));
         } else {
-            return new Money(0, $this->order()->first()->currency);
+            return new Money(0, new Currency($this->order()->first()->currency));
         }
     }
 
     public function setPriceAttribute($value)
     {
-        if (is_array($value)) {
-            $value = json_encode($value);
-        } else if ($value instanceof Money) {
+        if (is_array($value) || $value instanceof Money) {
             $value = json_encode($value);
         }
 

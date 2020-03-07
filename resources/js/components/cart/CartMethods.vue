@@ -3,7 +3,7 @@
     v-model="shippingMethod"
     mandatory
     group
-    @change="resetShipping()"
+    @change="resetDelivery()"
   >
     <v-tooltip bottom color="primary">
       <template v-slot:activator="{ on }">
@@ -94,7 +94,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations("cart", ["setMethod", "setMethodStep", "resetShipping"]),
+    ...mapMutations("cart", ["setMethod", "setMethodStep", "resetDelivery"]),
 
     setOrderOptions(value) {
       switch (value) {

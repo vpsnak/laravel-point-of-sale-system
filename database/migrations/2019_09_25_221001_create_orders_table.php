@@ -29,7 +29,7 @@ class CreateOrdersTable extends Migration
 
             $table->string('currency', 3);
             $table->json('discount')->nullable();
-            $table->unsignedMediumInteger('delivery_fees_amount')->nullable()->default(0);
+            $table->json('delivery_fees_price')->nullable();
 
             $table->unsignedSmallInteger('user_id');
             $table->unsignedMediumInteger('mas_order_id')->nullable();

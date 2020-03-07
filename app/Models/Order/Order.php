@@ -29,7 +29,7 @@ class Order extends Model
         'customer_id',
         'billing_address',
         'delivery',
-        'delivery_fees_amount',
+        'delivery_fees_price',
         'discount',
         // auto fill-handle
         'store_id',
@@ -165,7 +165,6 @@ class Order extends Model
                 case 'flat':
                     $amount = new Money($this->discount['amount'], new Currency($this->currency));
                     $mdsePrice = $mdsePrice->subtract($amount);
-
                     break;
                 case 'percentage':
                     $amount = $this->discount['amount'];
@@ -179,11 +178,31 @@ class Order extends Model
         return $mdsePrice;
     }
 
+    public function getDeliveryFeesPriceAttribute()
+    {
+        if (isset($this->attributes['delivery_fees_price'])) {
+            $price = json_decode($this->attributes['delivery_fees_price'], true);
+            $currency = $price['currency'] ?? $this->currency;
+            return new Money($price['amount'], new Currency($currency));
+        } else {
+            return new Money(0,  new Currency($this->currency));
+        }
+    }
+
+    public function setDeliveryFeesPriceAttribute($value)
+    {
+        if (is_array($value) || $value instanceof Money) {
+            $value = json_encode($value);
+        }
+
+        $this->attributes['delivery_fees_price'] = $value;
+    }
+
     public function getTaxPriceAttribute()
     {
         return $this
             ->mdse_price
-            ->add(new Money($this->delivery_fees_amount, new Currency($this->currency)))
+            ->add($this->delivery_fees_price)
             ->multiply($this->tax_percentage / 100);
     }
 
@@ -192,12 +211,12 @@ class Order extends Model
         return $this
             ->tax_price
             ->add($this->mdse_price)
-            ->add(new Money($this->delivery_fees_amount, new Currency($this->currency)));
+            ->add($this->delivery_fees_price);
     }
 
     public function getPaidPriceAttribute()
     {
-        $paidPrice = new Money($this->delivery_fees_amount, new Currency($this->currency));
+        $paidPrice = new Money(0, new Currency($this->currency));
         foreach ($this->payments as $payment) {
             if ($payment->status === 'approved') {
                 $paidPrice = $paidPrice->add($payment->price);

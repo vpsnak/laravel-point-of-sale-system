@@ -10,7 +10,7 @@
           >
             <v-select
               :readonly="$props.readonly"
-              @change="validate"
+              @change="validate()"
               :items="addresses"
               prepend-icon="mdi-receipt"
               label="Billing address"
@@ -56,7 +56,7 @@
             <v-select
               :readonly="$props.readonly"
               @input="getTimeSlots"
-              @change="validate"
+              @change="validate()"
               :items="addresses"
               prepend-icon="mdi-map-marker"
               label="Delivery address"
@@ -125,7 +125,7 @@
                   :success="valid"
                   v-on="on"
                   @input="getTimeSlots"
-                  @blur="parseDate, validate"
+                  @blur="parseDate, validate()"
                   readonly
                 ></v-text-field>
               </ValidationProvider>
@@ -156,7 +156,7 @@
               v-model="deliveryTime"
               @input="setCost"
               @click:append="$props.readonly ? null : addTimeSlotDialog()"
-              @change="validate"
+              @change="validate()"
             ></v-select>
           </ValidationProvider>
         </v-col>
@@ -171,11 +171,11 @@
               type="number"
               label="Fees"
               prefix="$"
-              :error="errors.length ? true : false"
+              :error-messages="errors"
               :success="valid"
               :min="0"
-              v-model="shippingCost"
-              @input="validate"
+              v-model="deliveryFeesPrice"
+              @input="validate()"
             ></v-text-field>
           </ValidationProvider>
         </v-col>
@@ -235,6 +235,7 @@ export default {
 
   data() {
     return {
+      delivery_amount: null,
       delivery_address: null,
       billing_address: null,
       loading: false,
@@ -259,6 +260,17 @@ export default {
       "shipping_cost"
     ]),
 
+    deliveryFeesPrice: {
+      get() {
+        return this.delivery_amount;
+      },
+      set(value) {
+        this.delivery_amount = value;
+        this.setDeliveryFeesPrice({
+          amount: Math.round(value * 10000) / 100
+        });
+      }
+    },
     deliveryTime: {
       get() {
         return this.delivery.time;
@@ -312,14 +324,6 @@ export default {
         }
       }
     },
-    shippingCost: {
-      get() {
-        return this.shipping_cost;
-      },
-      set(value) {
-        this.setShippingCost(value);
-      }
-    },
     deliveryDate: {
       get() {
         return this.delivery.date;
@@ -364,7 +368,7 @@ export default {
     ...mapMutations("cart", [
       "setDeliveryAddressId",
       "setDeliveryDate",
-      "setShippingCost",
+      "setDeliveryFeesPrice",
       "setDeliveryTime",
       "setDeliveryOccasion",
       "setBillingAddressId",

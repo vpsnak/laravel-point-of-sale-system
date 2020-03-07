@@ -3,9 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Money\Currencies\ISOCurrencies;
 use Money\MoneyParser;
-use Money\Parser\DecimalMoneyParser;
 
 class Refund extends Model
 {

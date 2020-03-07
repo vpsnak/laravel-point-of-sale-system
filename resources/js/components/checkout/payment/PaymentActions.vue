@@ -23,7 +23,7 @@
               v-for="payment_type in paymentTypes"
               :key="payment_type.id"
               :value="payment_type.type"
-              :disabled="loading || orderLoading"
+              :disabled="false"
               dense
             >
               <v-icon class="pr-2" small>{{ payment_type.icon }}</v-icon>
@@ -48,7 +48,7 @@
               label="Card number"
               prepend-inner-icon="mdi-credit-card"
               v-model="card.number"
-              :disabled="loading || orderLoading"
+              :disabled="false"
               :error-messages="errors"
               :success="valid"
             ></v-text-field>
@@ -66,7 +66,7 @@
               label="Card holder's name"
               prepend-inner-icon="mdi-account-box"
               v-model="card.card_holder"
-              :disabled="loading || orderLoading"
+              :disabled="false"
               :error-messages="errors"
               :success="valid"
             ></v-text-field>
@@ -84,7 +84,7 @@
               dense
               type="number"
               autocomplete="off"
-              :disabled="loading || orderLoading"
+              :disabled="false"
               label="Exp date"
               v-model="card.exp_date"
               prepend-inner-icon="mdi-calendar"
@@ -108,7 +108,7 @@
               type="number"
               prepend-inner-icon="mdi-lock"
               v-model="card.cvc"
-              :disabled="loading || orderLoading"
+              :disabled="false"
               :error-messages="errors"
               :success="valid"
             ></v-text-field>
@@ -130,7 +130,7 @@
               dense
               label="Code"
               :prepend-inner-icon="getIcon"
-              :disabled="loading || orderLoading"
+              :disabled="false"
               v-model="code"
               :error-messages="errors"
               :success="valid"
@@ -142,7 +142,7 @@
         <v-col :lg="2" :md="3">
           <v-text-field
             prepend-inner-icon="mdi-currency-usd"
-            :value="order_remaining_price.toFormat('0.00')"
+            :value="orderRemainingPrice.toFormat('0.00')"
             disabled
             label="Remaining Amount"
           ></v-text-field>
@@ -154,7 +154,7 @@
             name="Payment amount"
           >
             <v-text-field
-              :disabled="loading || orderLoading"
+              :disabled="false"
               :min="0.01"
               :max="amountRules"
               label="Payment amount"
@@ -177,13 +177,8 @@
             dark
             block
             color="green darken-3"
-            :loading="loading || orderLoading"
-            :disabled="
-              invalid ||
-                loading ||
-                orderLoading ||
-                !$store.state.cart.isValidCheckout
-            "
+            :loading="false"
+            :disabled="invalid || !$store.state.cart.isValidCheckout"
           >
             Make a payment
           </v-btn>
@@ -197,14 +192,6 @@
 import { mapActions, mapState, mapMutations } from "vuex";
 
 export default {
-  props: {
-    loading: Boolean
-  },
-
-  created() {
-    this.setAmount();
-  },
-
   mounted() {
     this.getPaymentTypes();
     this.fillDemoCard();
@@ -219,10 +206,13 @@ export default {
   },
 
   watch: {
-    order_remaining_price(value) {
-      if (this.order_status === "pending_payment" || !this.order_status) {
-        this.paymentPrice = this.parsePrice(value);
-        this.setAmount();
+    order_remaining_price: {
+      immediate: true,
+      handler(value) {
+        if (this.order_status === "pending_payment" || !this.order_status) {
+          this.paymentPrice = this.parsePrice(value);
+          this.setAmount();
+        }
       }
     }
   },
@@ -232,7 +222,6 @@ export default {
       amount_value: null,
       payment_types_loading: false,
       payment_types: [],
-      orderLoading: false,
       paymentPrice: null,
       payment_type: null,
       code: null,
@@ -267,7 +256,16 @@ export default {
       }
     },
     orderRemainingPrice() {
-      return this.order_remaining_price;
+      if (
+        this.order_remaining_price &&
+        _.has(this.order_remaining_price, "amount")
+      ) {
+        console.log(this.order_remaining_price);
+        return this.$price(this.order_remaining_price);
+      } else {
+        console.log(this.order_remaining_price);
+        return this.$price();
+      }
     },
     amountRules() {
       switch (this.payment_type) {
@@ -275,7 +273,7 @@ export default {
         case "house-account":
         case "giftcard":
         case "pos-terminal":
-          return this.order_remaining_price.toFormat("0.00");
+          return this.orderRemainingPrice.toFormat("0.00");
         case "cash":
           return "10000.00";
       }
@@ -325,7 +323,7 @@ export default {
     ...mapMutations("cart", [
       "setOrderId",
       "setPayments",
-      "setOrderChange",
+      "setOrderChangePrice",
       "setOrderRemainingPrice",
       "setOrderStatus"
     ]),
@@ -333,7 +331,8 @@ export default {
     ...mapActions("requests", ["request"]),
 
     setAmount() {
-      this.amount = this.order_remaining_price.toFormat("0.00");
+      console.log(this.orderRemainingPrice);
+      this.amount = this.orderRemainingPrice.toFormat("0.00");
     },
     getPaymentTypes() {
       this.payment_types_loading = true;
@@ -389,7 +388,7 @@ export default {
 
       this.request(payload)
         .then(response => {
-          this.setOrderChange(response.change);
+          this.setOrderChangePrice(response.payment.change_price);
           this.setOrderRemainingPrice(response.remaining);
           this.setOrderStatus(response.status);
 
@@ -406,14 +405,14 @@ export default {
     max() {
       if (this.payment_type !== "cash") {
         if (this.payment_type === "house-account") {
-          if (this.houseAccountLimit.greaterThan(this.order_remaining_price)) {
-            this.paymentPrice.equalsTo(this.order_remaining_price);
+          if (this.houseAccountLimit.greaterThan(this.orderRemainingPrice)) {
+            this.paymentPrice.equalsTo(this.orderRemainingPrice);
           } else if (this.paymentPrice.greaterThan(this.houseAccountLimit)) {
             this.paymentPrice.equalsTo(this.houseAccountLimit);
           }
         }
-        if (this.paymentPrice.greaterThan(this.order_remaining_price)) {
-          this.paymentPrice.equalsTo(this.order_remaining_price);
+        if (this.paymentPrice.greaterThan(this.orderRemainingPrice)) {
+          this.paymentPrice.equalsTo(this.orderRemainingPrice);
         }
       } else if (
         this.paymentPrice.greaterThan(this.$price({ amount: 999900 }))
@@ -435,8 +434,6 @@ export default {
       this.fillDemoCard();
     },
     sendPayment() {
-      this.orderLoading = true;
-
       if (!this.order_id) {
         this.submitOrder("create")
           .then(response => {
@@ -447,9 +444,7 @@ export default {
           .catch(error => {
             console.error(error);
           })
-          .finally(() => {
-            this.orderLoading = false;
-          });
+          .finally(() => {});
       } else {
         this.pay();
       }

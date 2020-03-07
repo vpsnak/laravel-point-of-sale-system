@@ -11,6 +11,7 @@
       no-data-text="No transactions have been made"
       dense
       height="15vh"
+      fixed-header
       :headers="headers"
       :items="payments"
       class="elevation-1"
@@ -20,15 +21,21 @@
       :loading="false"
     >
       <template v-slot:item.status="{ item }">
-        <span :class="statusColor(item.status)">
-          <b>{{ parseStatus(item.status) }}</b>
-        </span>
+        <b :class="statusColor(item.status)">
+          {{ parseStatus(item.status) }}
+        </b>
       </template>
 
       <template v-slot:item.price="{ item }">
-        <span>
+        <b :class="statusColor(item.status)">
           {{ parsePrice(item.price).toFormat() }}
-        </span>
+        </b>
+      </template>
+
+      <template v-slot:item.change_price="{ item }">
+        <b :class="changePriceColor">
+          {{ changePrice(item.change_price).toFormat() }}
+        </b>
       </template>
 
       <template v-slot:item.actions="{ item }">
@@ -90,13 +97,18 @@ export default {
           sortable: false
         },
         {
-          text: "Status",
-          value: "status",
+          text: "Amount",
+          value: "price",
           sortable: false
         },
         {
-          text: "Amount",
-          value: "price",
+          text: "Change",
+          value: "change_price",
+          sortable: false
+        },
+        {
+          text: "Status",
+          value: "status",
           sortable: false
         },
         {
@@ -115,13 +127,27 @@ export default {
     ...mapMutations("cart", [
       "setPaymentRefundedStatus",
       "setPayments",
-      "setOrderChange",
+      "setOrderChangePrice",
       "setOrderRemainingPrice",
       "setOrderStatus"
     ]),
     ...mapMutations("dialog", ["setDialog"]),
     ...mapActions("requests", ["request"]),
 
+    changePrice(change_price) {
+      if (change_price) {
+        return this.parsePrice(change_price);
+      } else {
+        return this.$price();
+      }
+    },
+    changePriceColor(change_price) {
+      if (!this.changePrice.isZero() && this.changePrice.isPositive()) {
+        return "amber--text";
+      } else {
+        return null;
+      }
+    },
     enableRefund(item) {
       if (item.status === "approved" && item.is_refundable) {
         return true;
@@ -138,8 +164,6 @@ export default {
           return "green--text";
         case "failed":
           return "red--text";
-        case "refunded":
-          return "orange--text";
         default:
           return null;
       }
@@ -161,7 +185,7 @@ export default {
             this.setPayments(response.refund);
           }
 
-          this.setOrderChange(response.change);
+          this.setOrderChangePrice(response.change);
           this.setOrderRemainingPrice(response.remaining);
           this.setOrderStatus(response.order_status);
         })
@@ -178,8 +202,7 @@ export default {
     },
     refundDialog(item) {
       this.selected_payment = item;
-
-      this.setDialog({
+      const payload = {
         show: true,
         width: 600,
         title: `Verify your password to rollback payment #${item.id}`,
@@ -189,7 +212,9 @@ export default {
         model: { action: "verify" },
         persistent: true,
         eventChannel: "payment-history-refund"
-      });
+      };
+
+      this.setDialog(payload);
     }
   }
 };

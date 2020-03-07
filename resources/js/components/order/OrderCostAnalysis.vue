@@ -35,7 +35,7 @@ export default {
       "order_total_price",
       "order_mdse_price",
       "order_tax_price",
-      "delivery_fees_amount"
+      "delivery_fees_price"
     ]),
 
     bgColor() {
@@ -51,7 +51,7 @@ export default {
       return this.parsePrice(this.order_tax_price);
     },
     deliveryFeesPrice() {
-      return this.parsePrice(this.delivery_fees_amount);
+      return this.parsePrice(this.delivery_fees_price);
     },
     totalPrice() {
       return this.parsePrice(this.order_total_price);
@@ -67,7 +67,7 @@ export default {
       }
       if (!this.deliveryFeesPrice.isZero()) {
         sections.push({
-          label: `Shipping: ${this.deliveryFeesPrice.toFormat()}`,
+          label: `Delivery: ${this.deliveryFeesPrice.toFormat()}`,
           value: Number(this.deliveryFeesPrice.toFormat("0.00")),
           color: "#bc5090"
         });

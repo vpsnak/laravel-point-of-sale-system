@@ -71,7 +71,7 @@
                 :error-messages="errors"
                 :success="valid"
                 :min="0"
-                v-model="shippingCost"
+                v-model="deliveryFeesPrice"
                 @input="validate()"
               ></v-text-field>
             </ValidationProvider>
@@ -130,7 +130,8 @@ export default {
       this.time_slots.push(this.deliveryTime);
     }
 
-    EventBus.$on("shipping-timeslot", event => {
+    EventBus.$on("delivery-timeslot", event => {
+      console.log(event);
       if (event.payload) {
         this.time_slots.push(event.payload);
         this.deliveryTime = event.payload.label;
@@ -139,7 +140,7 @@ export default {
   },
 
   beforeDestroy() {
-    EventBus.$off("shipping-timeslot");
+    EventBus.$off("delivery-timeslot");
   },
 
   data() {
@@ -149,6 +150,7 @@ export default {
       datePicker: false,
       store_pickups: [],
       selected_store_pickup: null,
+      delivery_amount: null,
 
       dialog: {
         show: false,
@@ -174,7 +176,7 @@ export default {
   computed: {
     ...mapState("cart", [
       "delivery",
-      "shipping_cost",
+      "delivery_fees_price",
       "order_delivery_store_pickup"
     ]),
 
@@ -203,12 +205,15 @@ export default {
         this.setDeliveryTime(value);
       }
     },
-    shippingCost: {
+    deliveryFeesPrice: {
       get() {
-        return this.shipping_cost;
+        return this.delivery_amount;
       },
       set(value) {
-        this.setShippingCost(value);
+        this.delivery_amount = value;
+        this.setDeliveryFeesPrice({
+          amount: Math.round(value * 10000) / 100
+        });
       }
     },
     dateFormatted() {
@@ -224,7 +229,7 @@ export default {
     ...mapActions("requests", ["request"]),
     ...mapMutations("dialog", ["setDialog"]),
     ...mapMutations("cart", [
-      "setShippingCost",
+      "setDeliveryFeesPrice",
       "setDeliveryStorePickupId",
       "setDeliveryDate",
       "setDeliveryTime",
@@ -232,15 +237,16 @@ export default {
     ]),
 
     addTimeSlotDialog() {
-      this.setDialog({
+      const payload = {
         show: true,
         title: "Add time slot",
         titleCloseBtn: true,
         icon: "mdi-clock",
         component: "timeSlotForm",
         persistent: true,
-        eventChannel: "shipping-timeslot"
-      });
+        eventChannel: "delivery-timeslot"
+      };
+      this.setDialog(payload);
     },
     validate() {
       this.$nextTick(() => {
@@ -265,9 +271,9 @@ export default {
     },
     setCost(item) {
       if (_.has(item, "cost")) {
-        this.shippingCost = item.cost;
+        this.deliveryFeesPrice = item.cost;
       } else {
-        this.shippingCost = 0;
+        this.deliveryFeesPrice = 0;
       }
     }
   }

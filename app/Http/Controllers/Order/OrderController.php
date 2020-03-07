@@ -150,7 +150,9 @@ class OrderController extends Controller
             'delivery.address_id' => 'nullable|required_if:method,delivery|exists:addresses,id',
             // store_pickup
             'delivery.store_pickup_id' => 'nullable|required_if:method,pickup|exists:store_pickups,id',
-            'delivery_fees_amount' => 'nullable|integer',
+            'delivery_fees_price' => 'nullable|array',
+            'delivery_fees_price.amount' => 'nullable|integer',
+            'delivery_fees_price.currency' => 'nullable|string|size:3',
             // discount
             'discount' => 'required|array',
             'discount.amount' => 'nullable|numeric|integer',

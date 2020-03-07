@@ -18,6 +18,8 @@ const Price = {
             }
           } else if (!Number.isInteger(value)) {
             return Dinero({ amount: Number.parseInt(value) });
+          } else if (!value) {
+            return Dinero();
           } else {
             return Dinero({ amount: value });
           }

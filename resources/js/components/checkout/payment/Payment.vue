@@ -24,6 +24,7 @@ export default {
 
     showPaymentActions() {
       switch (this.order_status) {
+        case undefined:
         case null:
         case "submitted":
         case "pending_payment":

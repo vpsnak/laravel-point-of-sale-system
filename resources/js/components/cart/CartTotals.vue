@@ -52,12 +52,12 @@ export default {
       "cart_products",
       "customer",
       "order_discount",
-      "delivery_fees_amount",
+      "delivery_fees_price",
       "order_status"
     ]),
 
     deliveryFeesPrice() {
-      return this.$price(this.delivery_fees_amount);
+      return this.parsePrice(this.delivery_fees_price);
     },
     subTotalwDiscount() {
       var subtotal = this.$price();
@@ -94,19 +94,14 @@ export default {
       return subtotalNoDiscount.subtract(this.subTotalwDiscount);
     },
     orderTotal() {
-      const total = this.subTotalwDiscount.add(this.tax);
-      // this.$nextTick(() => {
-      //   this.isValidDiscount();
-      // });
-
-      return total;
+      return this.subTotalwDiscount.add(this.tax).add(this.deliveryFeesPrice);
     }
   },
 
   watch: {
     orderTotal(value) {
-      this.setOrderTotalPrice(value);
-      this.setOrderRemainingPrice(value);
+      this.setOrderTotalPrice(value.toJSON());
+      this.setOrderRemainingPrice(value.toJSON());
     }
   },
 

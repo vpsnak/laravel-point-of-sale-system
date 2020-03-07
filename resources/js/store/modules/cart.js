@@ -84,7 +84,7 @@ export default {
 
     customer: null,
     method: "retail",
-    delivery_fees_amount: { amount: 0 },
+    delivery_fees_price: { amount: 0 },
     cart_products: [],
 
     order_discount: { type: "none", amount: null },
@@ -106,7 +106,7 @@ export default {
     order_total_price: { amount: 0 },
     order_mdse_price: { amount: 0 },
     order_tax_price: { amount: 0 },
-    order_change: { amount: 0 },
+    order_change_price: { amount: 0 },
     order_remaining_price: { amount: 0 },
     order_notes: null,
     order_billing_address: null,
@@ -193,8 +193,8 @@ export default {
     setOrderMdsePrice(state, value) {
       state.order_mdse_price = value;
     },
-    setOrderChange(state, value) {
-      state.order_change = value;
+    setOrderChangePrice(state, value) {
+      state.order_change_price = value;
     },
     setOrderRemainingPrice(state, value) {
       state.order_remaining_price = value;
@@ -254,8 +254,8 @@ export default {
 
       state.isValidCheckout = result;
     },
-    setDeliveryFeesAmount(state, value) {
-      state.delivery_fees_amount = value;
+    setDeliveryFeesPrice(state, value) {
+      state.delivery_fees_price = value;
     },
     addProduct(state, newProduct) {
       let index = _.findIndex(state.cart_products, product => {
@@ -341,10 +341,10 @@ export default {
       state.order_total_price = { amount: 0 };
       state.order_tax_price = { amount: 0 };
       state.order_remaining_price = { amount: 0 };
-      state.order_change = { amount: 0 };
+      state.order_change_price = { amount: 0 };
       state.order_paid_price = { amount: 0 };
       state.order_mdse_price = { amount: 0 };
-      state.delivery_fees_amount = { amount: 0 };
+      state.delivery_fees_price = { amount: 0 };
       state.payments = [];
       state.order_notes = "";
 
@@ -372,7 +372,7 @@ export default {
       };
       state.billing_address_id = null;
     },
-    resetShipping(state, hard) {
+    resetDelivery(state, hard) {
       state.delivery = {
         address_id: null,
         date: null,
@@ -492,7 +492,7 @@ export default {
           method: "post",
           url: `orders/${url}`,
           data: {
-            order_id: context.state.order_id || null,
+            order_id: context.state.order_id,
             products: context.state.cart_products,
             method: context.state.method,
             discount: context.state.order_discount,
@@ -506,8 +506,7 @@ export default {
 
         if (context.state.method !== "retail") {
           payload.data.delivery = context.state.delivery;
-          payload.data.delivery_fees_amount =
-            context.state.delivery_fees_amount;
+          payload.data.delivery_fees_price = context.state.delivery_fees_price;
         }
 
         context
@@ -541,7 +540,7 @@ export default {
         context.commit("setOrderPaidPrice", order.paid_price);
         context.commit("setOrderMdsePrice", order.mdse_price);
         context.commit("setOrderTaxPrice", order.tax_price);
-        context.commit("setOrderChange", order.change);
+        context.commit("setOrderChangePrice", order.change);
         context.commit("setOrderRemainingPrice", order.remaining_price);
         context.commit("setPayments", order.payments);
         context.commit("setCartDiscount", order.discount);
@@ -554,7 +553,7 @@ export default {
         });
 
         if (order.method !== "retail") {
-          context.commit("setDeliveryFeesAmount", order.delivery_fees_amount);
+          context.commit("setDeliveryFeesPrice", order.delivery_fees_price);
           context.commit("setDeliveryDate", order.delivery.date);
           context.commit("setDeliveryTime", order.delivery.time);
 
