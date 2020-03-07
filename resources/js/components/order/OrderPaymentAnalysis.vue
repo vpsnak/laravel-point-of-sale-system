@@ -7,7 +7,11 @@
       </span>
     </v-card-title>
     <v-container>
+      <v-row v-if="loading" justify="center" align="center">
+        <v-progress-circular indeterminate color="secondary" />
+      </v-row>
       <v-row
+        v-else
         justify="space-around"
         align="center"
         dense
@@ -30,144 +34,127 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 export default {
+  props: {
+    ord_id: Number
+  },
+
+  created() {
+    this.getPaymentAnalysis();
+  },
+
   data() {
     return {
       sections: [],
+      loading: false,
 
-      card_total: 0,
-      pos_terminal_total: 0,
-      cash_total: 0,
-      house_account_total: 0,
-      giftcard_total: 0,
-      coupon_total: 0,
-      refund_total: 0
+      card_pos: this.$price(),
+      card_keyed: this.$price(),
+      cash: this.$price(),
+      house_account: this.$price(),
+      giftcard: this.$price(),
+      coupon: this.$price(),
+      total_paid: this.$price()
     };
   },
 
   computed: {
-    ...mapState("cart", [
-      "order_id",
-      "order_status",
-      "order_total_price",
-      "order_tax_price",
-      "order_paid_price",
-      "order_change_price",
-      "order_remaining_price",
-      "order_notes",
-      "order_billing_address",
-      "order_delivery_address",
-      "order_delivery_store_pickup",
-      "order_delivery_store_pickup",
-      "shipping_cost",
-      "payments"
-    ]),
+    ...mapState("cart", ["order_id"]),
 
+    orderId() {
+      if (this.$props.order_id) {
+        return this.$props.order_id;
+      } else {
+        return this.order_id;
+      }
+    },
     costSections() {
       this.sections = [];
 
-      this.payments.forEach(payment => {
-        if (payment.status === "approved" && !payment.refunded) {
-          switch (payment.payment_type.type) {
-            case "pos-terminal":
-              this.pos_terminal_total =
-                Number(this.pos_terminal_total) + Number(payment.amount);
-              break;
-            case "card":
-              this.card_total =
-                Number(this.card_total) + Number(payment.amount);
-              break;
-            case "cash":
-              this.cash_total =
-                Number(this.cash_total) + Number(payment.amount);
-              break;
-            case "house-account":
-              this.house_account_total =
-                Number(this.house_account_total) + Number(payment.amount);
-              break;
-            case "coupon":
-              this.coupon_total =
-                Number(this.coupon_total) + Number(payment.amount);
-              break;
-            case "giftcard":
-              this.giftcard_total =
-                Number(this.giftcard_total) + Number(payment.amount);
-              break;
-          }
-        } else if (payment.status === "refunded") {
-          this.refund_total += Number(payment.amount);
-        }
-      });
-
-      if (this.card_total > 0) {
-        this.sections.push({
-          title: "Credit Card (keyed)",
-          value: this.card_total,
-          class: "primary--text"
-        });
-      }
-      if (this.pos_terminal_total > 0) {
+      if (this.card_pos.greaterThan(this.$price())) {
         this.sections.push({
           title: "Credit Card (POS)",
-          value: this.pos_terminal_total,
+          value: this.card_pos.toFormat(),
           class: "primary--text"
         });
       }
-      if (this.cash_total > 0) {
+      if (this.card_keyed.greaterThan(this.$price())) {
+        this.sections.push({
+          title: "Credit Card (keyed)",
+          value: this.card_keyed.toFormat(),
+          class: "primary--text"
+        });
+      }
+      if (this.cash.greaterThan(this.$price())) {
         this.sections.push({
           title: "Cash",
-          value: this.cash_total,
+          value: this.cash.toFormat(),
           class: "primary--text"
         });
       }
-      if (this.house_account_total > 0) {
+      if (this.house_account.greaterThan(this.$price())) {
         this.sections.push({
           title: "House account",
-          value: this.house_account_total,
+          value: this.house_account.toFormat(),
           class: "primary--text"
         });
       }
-      if (this.coupon_total > 0) {
-        this.sections.push({
-          title: "Coupons",
-          value: this.coupon_total,
-          class: "primary--text"
-        });
-      }
-      if (this.giftcard_total > 0) {
+      if (this.giftcard.greaterThan(this.$price())) {
         this.sections.push({
           title: "Giftcards",
-          value: this.giftcard_total,
+          value: this.giftcard.toFormat(),
           class: "primary--text"
         });
       }
-      if (this.refund_total < 0) {
+      if (this.coupon.greaterThan(this.$price())) {
         this.sections.push({
-          title: "Refunds",
-          value: this.refund_total * -1,
-          class: "amber--text"
+          title: "Coupons",
+          value: this.coupon.toFormat(),
+          class: "primary--text"
         });
       }
       this.sections.push({
         title: "Total paid",
-        value: this.sumTotals >= 0 ? this.sumTotals : 0,
+        value: this.total_paid.toFormat(),
         class: "success--text"
       });
 
       return this.sections;
-    },
-    sumTotals() {
-      const totals =
-        Number(this.card_total) +
-        Number(this.pos_terminal_total) +
-        Number(this.cash_total) +
-        Number(this.house_account_total) +
-        Number(this.coupon_total) +
-        Number(this.giftcard_total) +
-        Number(this.refund_total);
+    }
+  },
+  methods: {
+    ...mapActions("requests", ["request"]),
 
-      return totals;
+    getPaymentAnalysis() {
+      this.loading = true;
+      const payload = {
+        method: "get",
+        url: `orders/${this.orderId}/payment-details`
+      };
+
+      this.request(payload)
+        .then(response => {
+          this.card_pos = this.card_pos.add(this.$price(response.card_pos));
+          this.card_keyed = this.card_keyed.add(
+            this.$price(response.card_keyed)
+          );
+          this.cash = this.cash.add(this.$price(response.cash));
+          this.house_account = this.house_account.add(
+            this.$price(response.house_account)
+          );
+          this.giftcard = this.giftcard.add(this.$price(response.giftcard));
+          this.coupon = this.coupon.add(this.$price(response.coupon));
+          this.total_paid = this.total_paid.add(
+            this.$price(response.total_paid)
+          );
+        })
+        .catch(error => {
+          console.log(error);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     }
   }
 };
