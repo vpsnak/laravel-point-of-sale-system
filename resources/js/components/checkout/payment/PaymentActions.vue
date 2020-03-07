@@ -266,6 +266,9 @@ export default {
         });
       }
     },
+    orderRemainingPrice() {
+      return this.order_remaining_price;
+    },
     amountRules() {
       switch (this.payment_type) {
         case "card":

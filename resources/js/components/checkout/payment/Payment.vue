@@ -26,7 +26,6 @@ export default {
       switch (this.order_status) {
         case null:
         case "submitted":
-        case "pending":
         case "pending_payment":
           return true;
         default:
