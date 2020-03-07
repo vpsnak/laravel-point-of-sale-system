@@ -165,10 +165,12 @@ class Order extends Model
                 case 'flat':
                     $amount = new Money($this->discount['amount'], new Currency($this->currency));
                     $mdsePrice = $mdsePrice->subtract($amount);
+
                     break;
                 case 'percentage':
                     $amount = $this->discount['amount'];
-                    $mdsePrice = $mdsePrice->multiply($amount)->divide(100);
+                    $discount = $mdsePrice->multiply($amount)->divide(100);
+                    $mdsePrice = $mdsePrice->subtract($discount);
                     break;
                 default:
                     break;

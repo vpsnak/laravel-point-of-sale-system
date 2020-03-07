@@ -65,7 +65,17 @@ export default {
   mounted() {
     console.log(this.discount.amount);
     if (this.discount.amount) {
-      this.discountAmount = Number(this.discount.amount / 100);
+      switch (this.discount.type) {
+        case "flat":
+          this.discountAmount = Number.parseInt(this.discount.amount / 100);
+          break;
+        case "percentage":
+          this.discountAmount = this.discount.amount;
+          break;
+        default:
+          this.discountAmount = null;
+          break;
+      }
     } else {
       this.discountAmount = null;
     }
