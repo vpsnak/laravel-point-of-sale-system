@@ -202,7 +202,7 @@ export default {
   },
 
   created() {
-    this.amount = this.order_remaining_price.toFormat("0.00");
+    this.setAmount();
   },
 
   mounted() {
@@ -222,6 +222,7 @@ export default {
     order_remaining_price(value) {
       if (this.order_status === "pending_payment" || !this.order_status) {
         this.paymentPrice = this.parsePrice(value);
+        this.setAmount();
       }
     }
   },
@@ -328,6 +329,9 @@ export default {
     ...mapActions("cart", ["submitOrder"]),
     ...mapActions("requests", ["request"]),
 
+    setAmount() {
+      this.amount = this.order_remaining_price.toFormat("0.00");
+    },
     getPaymentTypes() {
       this.payment_types_loading = true;
       this.request({
