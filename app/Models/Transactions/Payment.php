@@ -13,13 +13,6 @@ class Payment extends Model
         'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
 
-    protected $with = [
-        'paymentType',
-        'createdBy',
-        'elavonApiPayments',
-        'elavonSdkPayments'
-    ];
-
     protected $fillable = [
         'payment_type_id',
         'price',
@@ -36,6 +29,12 @@ class Payment extends Model
         'user_id',
         'payment_type_id',
         'cash_register_id'
+    ];
+
+    protected $appends = [
+        'payment_type_name',
+        'created_by_name',
+        'is_refundable'
     ];
 
     public function getChangePriceAttribute()
@@ -76,6 +75,22 @@ class Payment extends Model
         }
 
         $this->attributes['price'] = $value;
+    }
+
+    public function getPaymentTypeNameAttribute()
+    {
+        return $this->paymentType()->first('name')->name;
+    }
+
+    public function getCreatedByNameAttribute()
+    {
+        return $this->createdBy()->first('name')->name;
+    }
+
+    public function getIsRefundableAttribute()
+    {
+        // @TODO calc if refundable using refund table
+        return true;
     }
 
     public function paymentType()

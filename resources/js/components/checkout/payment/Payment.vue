@@ -2,7 +2,7 @@
   <div>
     <paymentHistory />
 
-    <paymentActions v-show="showPaymentActions" />
+    <paymentActions v-if="showPaymentActions" />
   </div>
 </template>
 
@@ -33,15 +33,6 @@ export default {
           return false;
       }
     }
-  },
-
-  methods: {
-    ...mapMutations("cart", [
-      "setPayments",
-      "setOrderChange",
-      "setOrderRemainingPrice",
-      "setOrderStatus"
-    ])
   }
 };
 </script>

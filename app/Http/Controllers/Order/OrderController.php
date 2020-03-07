@@ -34,7 +34,7 @@ class OrderController extends Controller
 
     public function getOne(Order $model)
     {
-        return response($model->load('customer.addresses'));
+        return response($model->load(['customer.addresses', 'payments']));
     }
 
     public function updateItems(Request $request)

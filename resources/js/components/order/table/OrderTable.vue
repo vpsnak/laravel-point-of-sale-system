@@ -27,7 +27,7 @@
     </template>
 
     <template v-slot:item.actions="{ item }">
-      <v-tooltip v-if="canCheckout(item)" bottom>
+      <v-tooltip v-if="canCheckout(item.status)" bottom>
         <template v-slot:activator="{ on }">
           <v-btn
             small
@@ -75,7 +75,7 @@
         <span>View</span>
       </v-tooltip>
 
-      <v-tooltip bottom v-if="['paid', 'complete'].indexOf(item.status) !== -1">
+      <v-tooltip bottom v-if="canReceipt(item.status)">
         <template v-slot:activator="{ on }">
           <v-btn
             :ref="item.id"
@@ -92,7 +92,7 @@
         <span>Receipt</span>
       </v-tooltip>
 
-      <v-tooltip bottom v-if="disableIfStatus(item)" color="red">
+      <v-tooltip bottom v-if="canCancel(item.status)" color="red">
         <template v-slot:activator="{ on }">
           <v-btn
             icon
@@ -174,22 +174,46 @@ export default {
     ...mapActions("requests", ["request"]),
     ...mapActions("cart", ["loadOrder"]),
 
-    canCheckout(item) {
-      if (
-        ["submitted", "pending", "pending_payment"].indexOf(item.status) !== -1
-      ) {
+    canRefund(status) {
+      if (status && status.can_refund) {
         return true;
       } else {
         return false;
       }
     },
-    disableIfStatus(item) {
-      switch (item.status) {
-        case "completed":
-        case "canceled":
-          return false;
-        default:
-          return true;
+    canMasReupload(status) {
+      if (status && status.can_mas_reupload) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    canMasUpload(status) {
+      if (status && status.can_mas_upload) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    canReceipt(status) {
+      if (status && status.can_receipt) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    canCheckout(status) {
+      if (status && status.can_checkout) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    canCancel(status) {
+      if (status && status.can_cancel) {
+        return true;
+      } else {
+        return false;
       }
     },
     reorder(id) {

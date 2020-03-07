@@ -95,8 +95,9 @@ class PaymentController extends Controller
 
         $payment->status = 'approved';
         $payment->save();
-        $orderStatusController = new OrderStatusController($order);
+        $orderStatusController = new OrderStatusController($order->refresh());
         $orderStatus = $orderStatusController->updateOrderStatus($payment);
+        unset($payment->order);
         $orderStatus['payment'] = $payment;
 
         return response($orderStatus, 201);

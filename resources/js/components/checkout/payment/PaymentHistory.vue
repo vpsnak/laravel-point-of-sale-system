@@ -17,7 +17,7 @@
       disable-pagination
       disable-filtering
       hide-default-footer
-      :loading="loading || refundLoading || paymentHistoryLoading"
+      :loading="false"
     >
       <template v-slot:item.status="{ item }">
         <span :class="statusColor(item.status)">
@@ -25,16 +25,17 @@
         </span>
       </template>
 
+      <template v-slot:item.price="{ item }">
+        <span>
+          {{ parsePrice(item.price).toFormat() }}
+        </span>
+      </template>
+
       <template v-slot:item.actions="{ item }">
         <v-tooltip bottom v-if="enableRefund(item)">
           <template v-slot:activator="{ on }">
-            <v-btn
-              @click="refundDialog(item)"
-              icon
-              v-on="on"
-              :loading="loading || refundLoading || paymentHistoryLoading"
-            >
-              <v-icon v-if="item.payment_type.type === 'cash'">
+            <v-btn @click="refundDialog(item)" icon v-on="on" :loading="false">
+              <v-icon v-if="item.payment_type_name === 'cash'">
                 mdi-cash-refund
               </v-icon>
               <v-icon v-else>mdi-credit-card-refund</v-icon>
@@ -52,11 +53,6 @@ import { mapActions, mapState, mapMutations } from "vuex";
 import { EventBus } from "../../../plugins/eventBus";
 
 export default {
-  props: {
-    editOrder: Boolean,
-    loading: Boolean
-  },
-
   mounted() {
     EventBus.$on("payment-history-refund", event => {
       if (event.payload && this.selected_payment) {
@@ -71,7 +67,6 @@ export default {
 
   data() {
     return {
-      paymentHistoryLoading: false,
       selected_payment: null,
       headers: [
         {
@@ -81,7 +76,7 @@ export default {
         },
         {
           text: "Operator",
-          value: "created_by.name",
+          value: "created_by_name",
           sortable: false
         },
         {
@@ -91,7 +86,7 @@ export default {
         },
         {
           text: "Type",
-          value: "payment_type.name",
+          value: "payment_type_name",
           sortable: false
         },
         {
@@ -100,8 +95,8 @@ export default {
           sortable: false
         },
         {
-          text: "Amount (USD)",
-          value: "amount",
+          text: "Amount",
+          value: "price",
           sortable: false
         },
         {
@@ -113,11 +108,7 @@ export default {
   },
 
   computed: {
-    ...mapState("cart", ["payments"]),
-
-    refundLoading() {
-      return false;
-    }
+    ...mapState("cart", ["payments"])
   },
 
   methods: {
@@ -128,12 +119,11 @@ export default {
       "setOrderRemainingPrice",
       "setOrderStatus"
     ]),
-    ...mapMutations(["setNotification"]),
     ...mapMutations("dialog", ["setDialog"]),
     ...mapActions("requests", ["request"]),
 
     enableRefund(item) {
-      if (item.status === "approved" && !item.refunded) {
+      if (item.status === "approved" && item.is_refundable) {
         return true;
       } else {
         return false;

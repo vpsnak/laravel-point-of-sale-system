@@ -63,7 +63,6 @@ export default {
   },
 
   mounted() {
-    console.log(this.discount.amount);
     if (this.discount.amount) {
       switch (this.discount.type) {
         case "flat":

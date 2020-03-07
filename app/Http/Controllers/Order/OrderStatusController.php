@@ -28,18 +28,9 @@ class OrderStatusController extends Controller
     {
         $this->user = auth()->user();
 
-        $remaining = $this->order->total_price->subtract($this->order->paid_price);
-        $change = $this->order->paid_price->subtract($this->order->total_price);
+        $remaining = $this->order->remaining_price;
 
-        if ($change->isNegative(0)) {
-            $change = new Money(0, new Currency($this->order->currency));
-        }
-
-        if ($remaining->isNegative(0)) {
-            $remaining = new Money(0, new Currency($this->order->currency));
-        }
-
-        if ($remaining->isPositive(0)) {
+        if ($remaining->isPositive()) {
             $this->order->change = new Money(0, new Currency($this->order->currency));
             if ($this->order->status->value !== 'pending_payment') {
                 $pendingPaymentStatusId = Status::where('value', 'pending_payment')->firstOrFail('id');
@@ -47,11 +38,6 @@ class OrderStatusController extends Controller
             }
         } else {
             if (!$refund) {
-                $payment->price = $payment->price->subtract($change);
-                $payment->save();
-
-                $this->order->change = $change;
-
                 if ($this->order->status->value !== 'paid') {
                     $paidPaymentStatusId = Status::where('value', 'paid')->firstOrFail('id');
                     $this->order->statuses()->attach($paidPaymentStatusId, ['user_id' => $this->user->id]);
@@ -66,15 +52,11 @@ class OrderStatusController extends Controller
                     $paidPaymentStatusId = Status::where('value', 'paid')->firstOrFail('id');
                     $this->order->statuses()->attach($paidPaymentStatusId, ['user_id' => $this->user->id]);
                 }
-                // $this->order->change = $change;
             }
         }
 
-        // $this->order->save();
-
         return [
             'remaining' => $remaining,
-            'change' =>  $change,
             'order_status' => $this->order->status->value
         ];
     }

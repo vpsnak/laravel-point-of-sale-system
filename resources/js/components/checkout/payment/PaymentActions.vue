@@ -34,61 +34,85 @@
       </v-row>
     </v-container>
     <v-container fluid class="overflow-y-auto" style="max-height: 20vh">
-      <v-row
-        justify="center"
-        align="center"
-        v-if="payment_type === 'card'"
-        dense
-      >
+      <v-row justify="center" align="center" v-if="payment_type === 'card'">
         <v-col :lg="3" :md="6">
-          <v-text-field
-            dense
-            autocomplete="off"
-            label="Card number"
-            type="number"
-            prepend-inner-icon="mdi-credit-card"
-            v-model="card.number"
-            :disabled="loading || orderLoading"
-          ></v-text-field>
+          <ValidationProvider
+            rules="required"
+            v-slot="{ errors, valid }"
+            name="Card number"
+          >
+            <v-text-field
+              dense
+              type="number"
+              autocomplete="off"
+              label="Card number"
+              prepend-inner-icon="mdi-credit-card"
+              v-model="card.number"
+              :disabled="loading || orderLoading"
+              :error-messages="errors"
+              :success="valid"
+            ></v-text-field>
+          </ValidationProvider>
         </v-col>
         <v-col :lg="3" :md="6">
-          <v-text-field
-            dense
-            autocomplete="off"
-            label="Card holder's name"
-            prepend-inner-icon="mdi-account-box"
-            v-model="card.card_holder"
-            :disabled="loading || orderLoading"
-          ></v-text-field>
+          <ValidationProvider
+            rules="required"
+            v-slot="{ errors, valid }"
+            name="Card holder's name"
+          >
+            <v-text-field
+              dense
+              autocomplete="off"
+              label="Card holder's name"
+              prepend-inner-icon="mdi-account-box"
+              v-model="card.card_holder"
+              :disabled="loading || orderLoading"
+              :error-messages="errors"
+              :success="valid"
+            ></v-text-field>
+          </ValidationProvider>
         </v-col>
       </v-row>
-      <v-row
-        justify="center"
-        align="center"
-        v-if="payment_type === 'card'"
-        dense
-      >
+      <v-row justify="center" align="center" v-if="payment_type === 'card'">
         <v-col :lg="3" :md="6">
-          <v-text-field
-            dense
-            autocomplete="off"
-            :disabled="loading || orderLoading"
-            label="Exp date"
-            v-model="card.exp_date"
-            prepend-inner-icon="mdi-calendar"
-          ></v-text-field>
+          <ValidationProvider
+            rules="required|digits:4"
+            v-slot="{ errors, valid }"
+            name="Exp date"
+          >
+            <v-text-field
+              dense
+              type="number"
+              autocomplete="off"
+              :disabled="loading || orderLoading"
+              label="Exp date"
+              v-model="card.exp_date"
+              prepend-inner-icon="mdi-calendar"
+              :error-messages="errors[0] ? 'Format: MMYY' : null"
+              hint="Format: MMYY"
+              :success="valid"
+            ></v-text-field>
+          </ValidationProvider>
         </v-col>
         ​
         <v-col :lg="3" :md="6">
-          <v-text-field
-            dense
-            autocomplete="off"
-            label="CVC/CVV"
-            type="number"
-            prepend-inner-icon="mdi-lock"
-            v-model="card.cvc"
-            :disabled="loading || orderLoading"
-          ></v-text-field>
+          <ValidationProvider
+            rules="required|min:3|max:4"
+            v-slot="{ errors, valid }"
+            name="CVC/CVV"
+          >
+            <v-text-field
+              dense
+              autocomplete="off"
+              label="CVC/CVV"
+              type="number"
+              prepend-inner-icon="mdi-lock"
+              v-model="card.cvc"
+              :disabled="loading || orderLoading"
+              :error-messages="errors"
+              :success="valid"
+            ></v-text-field>
+          </ValidationProvider>
         </v-col>
       </v-row>
       <v-row
@@ -97,13 +121,21 @@
         v-else-if="['giftcard', 'coupon'].indexOf(payment_type) !== -1"
       >
         <v-col :lg="3" :md="6">
-          <v-text-field
-            dense
-            label="Code"
-            :prepend-inner-icon="getIcon"
-            :disabled="loading || orderLoading"
-            v-model="code"
-          ></v-text-field>
+          <ValidationProvider
+            rules="required"
+            v-slot="{ errors, valid }"
+            name="Code"
+          >
+            <v-text-field
+              dense
+              label="Code"
+              :prepend-inner-icon="getIcon"
+              :disabled="loading || orderLoading"
+              v-model="code"
+              :error-messages="errors"
+              :success="valid"
+            ></v-text-field>
+          </ValidationProvider>
         </v-col>
       </v-row>
       <v-row justify="center" align="center" v-if="payment_type !== 'coupon'">
@@ -286,7 +318,13 @@ export default {
   },
 
   methods: {
-    ...mapMutations("cart", ["setOrderId", "setPayments"]),
+    ...mapMutations("cart", [
+      "setOrderId",
+      "setPayments",
+      "setOrderChange",
+      "setOrderRemainingPrice",
+      "setOrderStatus"
+    ]),
     ...mapActions("cart", ["submitOrder"]),
     ...mapActions("requests", ["request"]),
 
