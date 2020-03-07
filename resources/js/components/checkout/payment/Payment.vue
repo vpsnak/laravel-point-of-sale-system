@@ -20,17 +20,22 @@ export default {
   },
 
   computed: {
-    ...mapState("cart", ["order_id", "order_status"]),
+    ...mapState("cart", ["order_status"]),
 
     showPaymentActions() {
-      switch (this.order_status) {
-        case undefined:
-        case null:
-        case "submitted":
-        case "pending_payment":
-          return true;
-        default:
-          return false;
+      console.log(this.order_status);
+      if (_.has(this.order_status, "value")) {
+        switch (this.order_status.value) {
+          case undefined:
+          case null:
+          case "submitted":
+          case "pending_payment":
+            return true;
+          default:
+            return false;
+        }
+      } else {
+        return true;
       }
     }
   }

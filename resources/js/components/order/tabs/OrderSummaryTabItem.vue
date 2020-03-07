@@ -8,7 +8,7 @@
         <orderCostAnalysis />
       </v-col>
       <v-col :md="3" :cols="12">
-        <orderPaymentAnalysis :order_id="$route.params.id" />
+        <orderPaymentAnalysis :orderId="$route.params.id" />
       </v-col>
     </v-row>
     <v-row no-gutters>
@@ -23,3 +23,11 @@
     </v-row>
   </v-tab-item>
 </template>
+
+<script>
+export default {
+  created() {
+    console.log(this.$route.params.id);
+  }
+};
+</script>

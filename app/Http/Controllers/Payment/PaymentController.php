@@ -45,9 +45,7 @@ class PaymentController extends Controller
 
         switch ($paymentType) {
             case 'cash':
-
                 $change_price = $payment->price->subtract($order->remaining_price);
-
                 if ($change_price->isPositive()) {
                     $payment->change_price = $change_price;
                 }

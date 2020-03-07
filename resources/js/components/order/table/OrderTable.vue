@@ -16,16 +16,27 @@
         :menu="true"
       />
     </template>
+
+    <template v-slot:item.total_price="{ item }">
+      <orderTotalChip
+        :menu="true"
+        :totalPrice="item.total_price"
+        :mdsePrice="item.mdse_price"
+        :taxPrice="item.tax_price"
+        :deliveryFeesPrice="item.delivery_fees_price"
+      />
+    </template>
+
+    <template v-slot:item.paid_price="{ item }">
+      <orderTotalPaidChip
+        :orderId="item.id"
+        :menu="true"
+        :paid_price="item.paid_price"
+      />
+    </template>
     <template v-slot:item.created_by="{ item }">
       <createdByChip :menu="true" :created_by="item.created_by" />
     </template>
-    <template v-slot:item.total="{ item }">
-      {{ parsePrice(item.total_price).toFormat() }}
-    </template>
-    <template v-slot:item.total_paid="{ item }">
-      {{ parsePrice(item.paid_price).toFormat() }}
-    </template>
-
     <template v-slot:item.actions="{ item }">
       <v-tooltip v-if="canCheckout(item.status)" bottom>
         <template v-slot:activator="{ on }">

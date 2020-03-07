@@ -38,11 +38,15 @@ export default {
   },
 
   watch: {
-    order_status(value) {
-      if (value === "paid") {
-        this.completed = true;
-      } else {
-        this.completed = false;
+    order_status: {
+      deep: true,
+      immediate: true,
+      handler(status) {
+        if (_.has(status, "value") && status.value === "paid") {
+          this.completed = true;
+        } else {
+          this.completed = false;
+        }
       }
     }
   },

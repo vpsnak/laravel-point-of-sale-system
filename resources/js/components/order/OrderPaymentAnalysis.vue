@@ -7,26 +7,25 @@
       </span>
     </v-card-title>
     <v-container>
-      <v-row v-if="loading" justify="center" align="center">
-        <v-progress-circular indeterminate color="secondary" />
-      </v-row>
-      <v-row
-        v-else
-        justify="space-around"
-        align="center"
-        dense
-        v-for="(section, index) in costSections"
-        :key="index"
-      >
-        <v-col :lg="4" :cols="6" class="text-right">
-          <h4>
-            {{ section.title }}
-          </h4>
+      <v-row justify="center" align="center">
+        <v-progress-circular v-if="loading" indeterminate color="secondary" />
+
+        <v-col v-else-if="total_paid.greaterThan($price({ amount: 0 }))">
+          <vc-donut
+            hasLegend
+            legendPlacement="left"
+            :sections="sections"
+            :size="150"
+            :thickness="13"
+            :total="Number(total_paid.toFormat('0.00'))"
+            :background="bgColor"
+          >
+            <h2>{{ total_paid.toFormat() }}</h2>
+            <h2>total paid</h2>
+          </vc-donut>
         </v-col>
-        <v-col :lg="4" :cols="6">
-          <h4>
-            <i :class="section.class">{{ section.value }}</i>
-          </h4>
+        <v-col v-else cols="auto">
+          No payments have been made
         </v-col>
       </v-row>
     </v-container>
@@ -37,7 +36,7 @@
 import { mapState, mapActions } from "vuex";
 export default {
   props: {
-    ord_id: Number
+    orderId: Number
   },
 
   created() {
@@ -60,77 +59,67 @@ export default {
   },
 
   computed: {
-    ...mapState("cart", ["order_id"]),
-
-    orderId() {
-      if (this.$props.order_id) {
-        return this.$props.order_id;
-      } else {
-        return this.order_id;
+    bgColor() {
+      if (this.$vuetify.theme.dark) {
+        return "#1e1e1e";
       }
-    },
-    costSections() {
-      this.sections = [];
-
-      if (this.card_pos.greaterThan(this.$price())) {
-        this.sections.push({
-          title: "Credit Card (POS)",
-          value: this.card_pos.toFormat(),
-          class: "primary--text"
-        });
-      }
-      if (this.card_keyed.greaterThan(this.$price())) {
-        this.sections.push({
-          title: "Credit Card (keyed)",
-          value: this.card_keyed.toFormat(),
-          class: "primary--text"
-        });
-      }
-      if (this.cash.greaterThan(this.$price())) {
-        this.sections.push({
-          title: "Cash",
-          value: this.cash.toFormat(),
-          class: "primary--text"
-        });
-      }
-      if (this.house_account.greaterThan(this.$price())) {
-        this.sections.push({
-          title: "House account",
-          value: this.house_account.toFormat(),
-          class: "primary--text"
-        });
-      }
-      if (this.giftcard.greaterThan(this.$price())) {
-        this.sections.push({
-          title: "Giftcards",
-          value: this.giftcard.toFormat(),
-          class: "primary--text"
-        });
-      }
-      if (this.coupon.greaterThan(this.$price())) {
-        this.sections.push({
-          title: "Coupons",
-          value: this.coupon.toFormat(),
-          class: "primary--text"
-        });
-      }
-      this.sections.push({
-        title: "Total paid",
-        value: this.total_paid.toFormat(),
-        class: "success--text"
-      });
-
-      return this.sections;
     }
   },
   methods: {
     ...mapActions("requests", ["request"]),
 
+    setSections() {
+      this.sections = [];
+      if (this.card_pos.greaterThan(this.$price())) {
+        this.sections.push({
+          label: "Credit Card (POS)",
+          value: Number(this.card_pos.toFormat("0.00")),
+          color: "#003f5c"
+        });
+      }
+      if (this.card_keyed.greaterThan(this.$price())) {
+        this.sections.push({
+          label: "Credit Card (keyed)",
+          value: Number(this.card_keyed.toFormat("0.00")),
+          color: "#444e86"
+        });
+      }
+      if (this.cash.greaterThan(this.$price())) {
+        this.sections.push({
+          label: "Cash",
+          value: Number(this.cash.toFormat("0.00")),
+          color: "#955196"
+        });
+      }
+      if (this.house_account.greaterThan(this.$price())) {
+        this.sections.push({
+          label: "House account",
+          value: Number(this.house_account.toFormat("0.00")),
+          color: "#dd5182"
+        });
+      }
+      if (this.giftcard.greaterThan(this.$price())) {
+        this.sections.push({
+          label: "Giftcards",
+          value: Number(this.giftcard.toFormat("0.00")),
+          color: "#ff6e54"
+        });
+      }
+      if (this.coupon.greaterThan(this.$price())) {
+        this.sections.push({
+          label: "Coupons",
+          value: Number(this.coupon.toFormat("0.00")),
+          color: "#ffa600"
+        });
+      }
+
+      return this.sections;
+    },
     getPaymentAnalysis() {
       this.loading = true;
       const payload = {
         method: "get",
-        url: `orders/${this.orderId}/payment-details`
+        url: `orders/${this.$props.orderId}/payment-details`
       };
 
       this.request(payload)
@@ -148,6 +137,8 @@ export default {
           this.total_paid = this.total_paid.add(
             this.$price(response.total_paid)
           );
+
+          this.setSections();
         })
         .catch(error => {
           console.log(error);

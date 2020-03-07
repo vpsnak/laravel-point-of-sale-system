@@ -34,7 +34,7 @@ class OrderController extends Controller
 
     public function getOne(Order $model)
     {
-        return response($model->load(['customer.addresses', 'payments']));
+        return response()->json($model->load(['customer.addresses', 'payments']), 200, [], JSON_NUMERIC_CHECK);
     }
 
     public function updateItems(Request $request)
@@ -176,7 +176,7 @@ class OrderController extends Controller
 
         return response([
             'id' => $this->order->id,
-            'status' => $this->order->status->value,
+            'status' => $this->order->status,
             'total_price' => $this->order->total_price,
             'tax_price' => $this->order->tax_price,
         ], 201);

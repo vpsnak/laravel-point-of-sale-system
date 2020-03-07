@@ -99,6 +99,7 @@ export default {
   },
 
   watch: {
+    immediate: true,
     orderTotal(value) {
       this.setOrderTotalPrice(value.toJSON());
       this.setOrderRemainingPrice(value.toJSON());

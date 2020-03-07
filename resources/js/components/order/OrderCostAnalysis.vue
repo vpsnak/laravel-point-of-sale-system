@@ -11,7 +11,7 @@
         <v-col>
           <vc-donut
             hasLegend
-            legendPlacement="bottom"
+            legendPlacement="right"
             :sections="costSections"
             :size="150"
             :thickness="13"
@@ -43,7 +43,6 @@ export default {
         return "#1e1e1e";
       }
     },
-
     mdsePrice() {
       return this.parsePrice(this.order_mdse_price);
     },
