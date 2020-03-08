@@ -12,6 +12,7 @@
         pill
         v-on="$props.method === 'retail' || !$props.menu ? '' : on"
         :color="parseMethod.color"
+        :small="small"
       >
         <v-icon left>{{ parseMethod.icon }}</v-icon>
         {{ parseMethod.name }}
@@ -30,6 +31,7 @@
 <script>
 export default {
   props: {
+    small: Boolean,
     title: Boolean,
     menu: Boolean,
     method: String

@@ -1,7 +1,7 @@
 <template>
   <div>
     <h5 v-if="$props.title">{{ $props.title }}</h5>
-    <v-chip pill>
+    <v-chip pill :small="small">
       <v-icon left>{{ $props.icon }}</v-icon>
       {{ $props.timestamp }}
     </v-chip>
@@ -10,6 +10,7 @@
 <script>
 export default {
   props: {
+    small: Boolean,
     title: String,
     icon: String,
     timestamp: String

@@ -6,7 +6,12 @@
     :close-on-content-click="false"
   >
     <template v-slot:activator="{ on }">
-      <v-chip pill v-on="$props.menu ? on : null" color="primary">
+      <v-chip
+        pill
+        v-on="$props.menu ? on : null"
+        color="primary"
+        :small="small"
+      >
         {{ parsePrice($props.paid_price).toFormat() }}
       </v-chip>
     </template>
@@ -18,6 +23,7 @@
 import { mapActions } from "vuex";
 export default {
   props: {
+    small: Boolean,
     menu: Boolean,
     orderId: Number,
     paid_price: Object

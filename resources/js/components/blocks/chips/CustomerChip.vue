@@ -12,6 +12,7 @@
         pill
         v-on="$props.customer && $props.menu ? on : null"
         :color="$props.customer ? 'primary' : null"
+        :small="small"
       >
         <v-icon left>mdi-account-outline</v-icon>
         {{ $props.customer ? $props.customer.full_name : "Guest" }}
@@ -26,6 +27,7 @@
 <script>
 export default {
   props: {
+    small: Boolean,
     title: Boolean,
     menu: Boolean,
     customer: Object

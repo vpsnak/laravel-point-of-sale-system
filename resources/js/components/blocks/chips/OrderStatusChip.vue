@@ -8,7 +8,12 @@
   >
     <template v-slot:activator="{ on }">
       <h5 v-if="$props.title">Status</h5>
-      <v-chip pill v-on="$props.menu ? on : null" :color="latestStatus.color">
+      <v-chip
+        pill
+        v-on="$props.menu ? on : null"
+        :color="latestStatus.color"
+        :small="small"
+      >
         <v-icon left>{{ $props.latestStatus.icon }}</v-icon>
         {{ $props.latestStatus.text }}
       </v-chip>
@@ -65,6 +70,7 @@
 import { mapActions } from "vuex";
 export default {
   props: {
+    small: Boolean,
     menu: Boolean,
     orderId: Number,
     title: Boolean,

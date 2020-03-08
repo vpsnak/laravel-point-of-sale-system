@@ -372,17 +372,20 @@ class OrderController extends Controller
     private function applyFilters($query)
     {
         if (isset($this->order_data['filters']['cb_timestamps']) && $this->order_data['filters']['cb_timestamps']) {
-            if (isset($this->order_data['filters']['timestamp_from'])) {
+            if (isset($this->order_data['filters']['timestamp_from']) && !isset($this->order_data['filters']['timestamp_to'])) {
+                $query =
+                    $query->where('created_at', '>=', $this->order_data['filters']['timestamp_from']);
+            } else if (isset($this->order_data['filters']['timestamp_to'])) {
+                $query = $query->where('created_at', '<=', [$this->order_data['filters']['timestamp_to']]);
+            } else if (isset($this->order_data['filters']['timestamp_from']) && isset($this->order_data['filters']['timestamp_to'])) {
                 $query =
                     $query->whereBetween(
                         'created_at',
                         [
                             $this->order_data['filters']['timestamp_from'],
-                            $this->order_data['filters']['timestamp_to'] ?? now()
+                            $this->order_data['filters']['timestamp_to']
                         ]
                     );
-            } else if ($this->order_data['filters']['timestamp_to']) {
-                $query = $query->whereBetween('created_at', [$this->order_data['filters']['timestamp_to'], now()]);
             }
         }
 

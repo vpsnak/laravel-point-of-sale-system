@@ -1,19 +1,24 @@
 <template>
   <data-table v-if="render">
     <template v-slot:item.customer="{ item }">
-      <customerChip :menu="true" :customer="item.customer" />
+      <customerChip
+        :menu="true"
+        :customer="item.customer"
+        :small="smallChips"
+      />
     </template>
     <template v-slot:item.store="{ item }">
-      <storeChip :menu="true" :store="item.store" />
+      <storeChip :menu="true" :store="item.store" :small="smallChips" />
     </template>
     <template v-slot:item.method="{ item }">
-      <orderMethodChip :method="item.method" />
+      <orderMethodChip :method="item.method" :small="smallChips" />
     </template>
     <template v-slot:item.status="{ item }">
       <orderStatusChip
         :latestStatus="item.status"
         :orderId="item.id"
         :menu="true"
+        :small="smallChips"
       />
     </template>
 
@@ -24,6 +29,7 @@
         :mdsePrice="item.mdse_price"
         :taxPrice="item.tax_price"
         :deliveryFeesPrice="item.delivery_fees_price"
+        :small="smallChips"
       />
     </template>
 
@@ -32,10 +38,15 @@
         :orderId="item.id"
         :menu="true"
         :paid_price="item.paid_price"
+        :small="smallChips"
       />
     </template>
     <template v-slot:item.created_by="{ item }">
-      <createdByChip :menu="true" :created_by="item.created_by" />
+      <createdByChip
+        :menu="true"
+        :created_by="item.created_by"
+        :small="smallChips"
+      />
     </template>
     <template v-slot:item.actions="{ item }">
       <v-tooltip v-if="canCheckout(item.status)" bottom>
@@ -157,6 +168,7 @@ export default {
   data() {
     return {
       render: false,
+      smallChips: true,
       viewForm: "order",
       selectedItem: null,
       table: {

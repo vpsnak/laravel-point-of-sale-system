@@ -6,7 +6,13 @@
     :close-on-content-click="false"
   >
     <template v-slot:activator="{ on }">
-      <v-chip pill v-on="$props.menu ? on : null" color="teal">
+      <v-chip
+        pill
+        v-on="$props.menu ? on : null"
+        color="teal"
+        :small="small"
+        dark
+      >
         {{ parsePrice($props.totalPrice).toFormat() }}
       </v-chip>
     </template>
@@ -18,6 +24,7 @@
 import { mapMutations } from "vuex";
 export default {
   props: {
+    small: Boolean,
     menu: Boolean,
     totalPrice: Object,
     mdsePrice: Object,

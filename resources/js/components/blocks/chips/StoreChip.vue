@@ -5,6 +5,7 @@
     right
     transition="scale-transition"
     :close-on-content-click="false"
+    :small="small"
   >
     <template v-slot:activator="{ on }">
       <h5 v-if="$props.title">Store</h5>
@@ -22,6 +23,7 @@
 <script>
 export default {
   props: {
+    small: Boolean,
     title: Boolean,
     menu: Boolean,
     store: Object

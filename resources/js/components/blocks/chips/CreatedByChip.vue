@@ -8,7 +8,12 @@
   >
     <template v-slot:activator="{ on }">
       <h5 v-if="$props.title">Created by</h5>
-      <v-chip pill v-on="$props.menu ? on : null" color="secondary">
+      <v-chip
+        pill
+        v-on="$props.menu ? on : null"
+        color="secondary"
+        :small="small"
+      >
         <v-icon left>mdi-account-circle</v-icon>
         {{ $props.created_by.name }}
       </v-chip>
@@ -21,6 +26,7 @@
 <script>
 export default {
   props: {
+    small: Boolean,
     title: Boolean,
     menu: Boolean,
     created_by: Object
