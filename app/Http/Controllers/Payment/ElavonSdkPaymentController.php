@@ -93,7 +93,7 @@ class ElavonSdkPaymentController extends Controller
 
         $this->selected_transaction = $validatedData['selected_transaction'];
 
-        array_key_exists('amount', $validatedData) ? $this->amount = 100 * $validatedData['amount'] : null;
+        array_key_exists('amount', $validatedData) ? $this->amount = $validatedData['amount'] : null;
         array_key_exists('originalTransId', $validatedData) ? $this->originalTransId = $validatedData['originalTransId'] : null;
         array_key_exists('test_case', $validatedData) ? $this->testCase = $validatedData['test_case'] : null;
         array_key_exists('keyed', $validatedData) ? $this->keyed = $validatedData['keyed'] : null;
@@ -308,7 +308,7 @@ class ElavonSdkPaymentController extends Controller
     private function sendRequest($payload, $verbose = true)
     {
         if (empty(auth()->user()->open_register)) {
-            return ['errors' => ['Cash Register' => ['Your session with cash register has exired']]];
+            return ['errors' => ['Cash Register' => ['Your session with cash register has expired']]];
         }
 
         $ip = auth()->user()->open_register->cash_register->pos_terminal_ip;
@@ -450,17 +450,14 @@ class ElavonSdkPaymentController extends Controller
 
         if (isset($paymentGateway['errors']) || isset($paymentGateway['fatal_error'])) {
             $this->saveToSdkLog('Payment gateway failed', 'error');
-
             return ['errors' => isset($paymentGateway['errors']) ? $paymentGateway['errors'] : $paymentGateway['fatal_error']];
         }
 
         if ($paymentGateway['data']['paymentGatewayCommand']['openPaymentGatewayData']['result'] !== 'SUCCESS') {
             $this->saveToSdkLog('Payment gateway failed', 'error');
-
             return ['errors' => 'Payment gateway failed'];
         } else {
             $this->paymentGatewayId = $paymentGateway['data']['paymentGatewayCommand']['openPaymentGatewayData']['paymentGatewayId'];
-
             return [];
         }
     }
@@ -485,7 +482,7 @@ class ElavonSdkPaymentController extends Controller
             $payload['parameters']['invoiceNumber'] = $this->invoiceNumber;
         }
 
-        if ($this->keyed != false) {
+        if ($this->keyed) {
             $payload['parameters']['cardEntryTypes'] = ['MANUALLY_ENTERED'];
 
             if ($this->CARDHOLDER_ADDRESS && $this->CARDHOLDER_ZIP) {
@@ -496,7 +493,7 @@ class ElavonSdkPaymentController extends Controller
             }
         }
 
-        if ($this->voiceReferral != false) {
+        if ($this->voiceReferral) {
             $payload['parameters']['forceTransaction'] = true;
         }
 

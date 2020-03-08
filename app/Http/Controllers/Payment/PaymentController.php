@@ -114,7 +114,7 @@ class PaymentController extends Controller
     {
         $elavonSdkPayment = new ElavonSdkPaymentController();
         $elavonSdkPayment->selected_transaction = 'SALE';
-        $elavonSdkPayment->amount = 100 * $payment->amount;
+        $elavonSdkPayment->amount = $payment->price->getAmount();
         $elavonSdkPayment->payment_id = $payment->id;
 
         $paymentResponse = $elavonSdkPayment->posPayment();
