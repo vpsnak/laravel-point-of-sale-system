@@ -13,6 +13,8 @@ use App\Order;
 use App\Payment;
 use App\PaymentType;
 use Illuminate\Http\Request;
+use Money\Currencies\ISOCurrencies;
+use Money\Formatter\DecimalMoneyFormatter;
 
 class PaymentController extends Controller
 {
@@ -124,12 +126,16 @@ class PaymentController extends Controller
 
     private function apiPay($validatedData, Payment $payment)
     {
+        $currencies = new ISOCurrencies();
+        $moneyFormatter = new DecimalMoneyFormatter($currencies);
+        $price = $payment->price;
+
         $paymentResponse = (new CreditCardController)->cardPayment(
             $validatedData['card']['number'],
             $validatedData['card']['exp_date'],
             $validatedData['card']['cvc'],
             $validatedData['card']['card_holder'] ?? '',
-            $validatedData['amount']
+            $moneyFormatter->format($price)
         );
 
         ElavonApiPayment::create([
