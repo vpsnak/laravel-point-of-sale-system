@@ -15,12 +15,7 @@
         ></v-text-field>
       </ValidationProvider>
       <ValidationProvider
-        :rules="{
-          required: true,
-          max_value: 99999,
-          min_value: 1,
-          regex: /^[\d]{1,8}(\.[\d]{1,2})?$/g
-        }"
+        rules="required|between:0.01,1000"
         v-slot="{ errors, valid }"
         name="Price Amount"
       >

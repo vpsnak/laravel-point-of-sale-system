@@ -5,7 +5,7 @@
         <ValidationProvider
           rules="required|max:191"
           v-slot="{ errors, valid }"
-          name="Names"
+          name="Name"
         >
           <v-text-field
             :readonly="$props.readonly"
