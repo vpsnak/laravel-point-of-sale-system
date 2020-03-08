@@ -29,6 +29,8 @@
   </v-menu>
 </template>
 <script>
+import { EventBus } from "../../../plugins/eventBus";
+
 export default {
   props: {
     small: Boolean,
@@ -37,10 +39,20 @@ export default {
     method: String
   },
 
+  beforeDestroy() {
+    EventBus.$off("overlay");
+  },
+
   data() {
     return {
       methodDetails: false
     };
+  },
+
+  watch: {
+    methodDetails(value) {
+      EventBus.$emit("overlay", value);
+    }
   },
 
   computed: {

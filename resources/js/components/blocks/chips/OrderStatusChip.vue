@@ -68,6 +68,8 @@
 
 <script>
 import { mapActions } from "vuex";
+import { EventBus } from "../../../plugins/eventBus";
+
 export default {
   props: {
     small: Boolean,
@@ -75,6 +77,10 @@ export default {
     orderId: Number,
     title: Boolean,
     latestStatus: Object
+  },
+
+  beforeDestroy() {
+    EventBus.$off("overlay");
   },
 
   data() {
@@ -92,6 +98,7 @@ export default {
 
   watch: {
     statusesDetails(value) {
+      EventBus.$emit("overlay", value);
       if (value && !this.statuses.length) {
         this.getOrderStatuses();
       }

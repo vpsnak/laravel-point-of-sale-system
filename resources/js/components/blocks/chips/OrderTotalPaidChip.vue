@@ -1,5 +1,6 @@
 <template>
   <v-menu
+    v-model="orderPaymentAnalysis"
     bottom
     right
     transition="scale-transition"
@@ -21,12 +22,30 @@
 
 <script>
 import { mapActions } from "vuex";
+import { EventBus } from "../../../plugins/eventBus";
+
 export default {
   props: {
     small: Boolean,
     menu: Boolean,
     orderId: Number,
     paid_price: Object
+  },
+
+  data() {
+    return {
+      orderPaymentAnalysis: false
+    };
+  },
+
+  beforeDestroy() {
+    EventBus.$off("overlay");
+  },
+
+  watch: {
+    orderPaymentAnalysis(value) {
+      EventBus.$emit("overlay", value);
+    }
   }
 };
 </script>

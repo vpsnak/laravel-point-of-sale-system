@@ -1,5 +1,6 @@
 <template>
   <v-menu
+    v-model="orderCostAnalysis"
     bottom
     right
     transition="scale-transition"
@@ -22,6 +23,8 @@
 
 <script>
 import { mapMutations } from "vuex";
+import { EventBus } from "../../../plugins/eventBus";
+
 export default {
   props: {
     small: Boolean,
@@ -37,6 +40,22 @@ export default {
     this.setOrderMdsePrice(this.$props.mdsePrice);
     this.setOrderTaxPrice(this.$props.taxPrice);
     this.setDeliveryFeesPrice(this.$props.deliveryFeesPrice);
+  },
+
+  beforeDestroy() {
+    EventBus.$off("overlay");
+  },
+
+  data() {
+    return {
+      orderCostAnalysis: false
+    };
+  },
+
+  watch: {
+    orderCostAnalysis(value) {
+      EventBus.$emit("overlay", value);
+    }
   },
 
   methods: {

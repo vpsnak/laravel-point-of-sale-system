@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import { EventBus } from "../../../plugins/eventBus";
 export default {
   props: {
     small: Boolean,
@@ -29,10 +30,20 @@ export default {
     store: Object
   },
 
+  beforeDestroy() {
+    EventBus.$off("overlay");
+  },
+
   data() {
     return {
       storeDetails: false
     };
+  },
+
+  watch: {
+    storeDetails(value) {
+      EventBus.$emit("overlay", value);
+    }
   }
 };
 </script>

@@ -125,6 +125,7 @@
           </v-card-actions>
         </v-col>
       </v-row>
+      <v-overlay :value="overlay" />
     </v-container>
   </v-card>
 </template>
@@ -136,6 +137,7 @@ import { EventBus } from "../../plugins/eventBus";
 export default {
   data() {
     return {
+      overlay: false,
       page: 1,
       pageCount: null,
       action: "",
@@ -170,6 +172,10 @@ export default {
     ...mapActions("requests", ["request"]),
 
     initEvents() {
+      EventBus.$on("overlay", event => {
+        this.overlay = event;
+      });
+
       EventBus.$on("data-table", event => {
         if (_.has(event, "payload.action")) {
           switch (event.payload.action) {
