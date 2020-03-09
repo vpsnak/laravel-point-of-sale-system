@@ -7,7 +7,6 @@ use App\Order;
 use App\CashRegisterReport;
 use App\Product;
 use App\Customer;
-use App\Helper\PhpHelper;
 use Illuminate\Http\Request;
 
 class AppController extends Controller

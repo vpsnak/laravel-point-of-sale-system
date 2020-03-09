@@ -72,42 +72,42 @@ export default {
       this.sections = [];
       if (this.card_pos.greaterThan(this.$price())) {
         this.sections.push({
-          label: "Credit Card (POS)",
+          label: `Credit Card (POS): ${this.card_pos.toFormat()}`,
           value: Number(this.card_pos.toFormat("0.00")),
           color: "#003f5c"
         });
       }
       if (this.card_keyed.greaterThan(this.$price())) {
         this.sections.push({
-          label: "Credit Card (keyed)",
+          label: `Credit Card (keyed): ${this.card_keyed.toFormat()}`,
           value: Number(this.card_keyed.toFormat("0.00")),
           color: "#444e86"
         });
       }
       if (this.cash.greaterThan(this.$price())) {
         this.sections.push({
-          label: "Cash",
+          label: `Cash: ${this.cash.toFormat()}`,
           value: Number(this.cash.toFormat("0.00")),
           color: "#955196"
         });
       }
       if (this.house_account.greaterThan(this.$price())) {
         this.sections.push({
-          label: "House account",
+          label: `House account: ${this.house_account.toFormat()}`,
           value: Number(this.house_account.toFormat("0.00")),
           color: "#dd5182"
         });
       }
       if (this.giftcard.greaterThan(this.$price())) {
         this.sections.push({
-          label: "Giftcards",
+          label: `Giftcards: ${this.giftcard.toFormat()}`,
           value: Number(this.giftcard.toFormat("0.00")),
           color: "#ff6e54"
         });
       }
       if (this.coupon.greaterThan(this.$price())) {
         this.sections.push({
-          label: "Coupons",
+          label: `Coupons: ${this.coupon.toFormat()}`,
           value: Number(this.coupon.toFormat("0.00")),
           color: "#ffa600"
         });
