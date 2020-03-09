@@ -216,8 +216,12 @@ class ElavonSdkPaymentController extends Controller
                     $msg = 'This transaction isn\'t settled';
                     $this->saveToSdkLog($msg, 'failed');
                     return ['errors' => $msg];
+                case 'ECLCommerceError ECLTransactionInvalidCardNumber':
+                    $msg = 'The credit card is invalid';
+                    $this->saveToSdkLog($msg, 'failed');
+                    return ['errors' => $msg];
                 default:
-                    $msg = 'Warning: Unhandled error occured. Please check log file entry above';
+                    $msg = 'Warning: Unhandled error occured. Please check log entry above';
                     $this->saveToSdkLog($msg, 'declined');
                     return ['errors' => $msg];
             }

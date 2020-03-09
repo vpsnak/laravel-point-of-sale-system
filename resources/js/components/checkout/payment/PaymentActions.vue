@@ -260,10 +260,8 @@ export default {
         this.order_remaining_price &&
         _.has(this.order_remaining_price, "amount")
       ) {
-        console.log(this.order_remaining_price);
         return this.$price(this.order_remaining_price);
       } else {
-        console.log(this.order_remaining_price);
         return this.$price();
       }
     },

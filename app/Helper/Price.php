@@ -2,30 +2,28 @@
 
 namespace App\Helper;
 
+use Money\Currency;
+use Money\Money;
+
 class Price
 {
-    public static function calculateDiscount($price, $type, $amount)
+    public static function calculateItemDiscount(array $item, string $currency)
     {
-        switch (strtolower($type)) {
-            case 'percentage':
-                $price = $price - ($price * ($amount / 100));
-                break;
-            case 'flat':
-                $price = $price - $amount;
-                break;
-            default:
-                break;
+        $price = new Money($item['price']['amount'], new Currency($currency));
+        if (isset($item['discount']) && isset($item['discount']['amount']) && isset($item['discount']['type'])) {
+            switch ($item['discount']['type']) {
+                case 'flat':
+                    $amount = new Money($item['discount']['amount'], new Currency($currency));
+                    $price = $price->subtract($amount);
+                    break;
+                case 'percentage':
+                    $percentage = $price->multiply($item['discount']['amount'] / 100);
+                    $price = $price->subtract($percentage);
+                    break;
+                default:
+                    break;
+            }
         }
         return $price;
-    }
-
-    public static function calculateTax($price, $tax)
-    {
-        return $price + ($price * ($tax / 100));
-    }
-
-    public static function numberPrecision($number, int $precision = 2)
-    {
-        return (float) bcdiv($number, 1, $precision);
     }
 }
