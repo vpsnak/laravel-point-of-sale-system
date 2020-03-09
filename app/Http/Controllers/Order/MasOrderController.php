@@ -8,6 +8,9 @@ use App\MasOrder;
 use App\MasOrderLog;
 use App\Order;
 use GuzzleHttp\Client;
+use Money\Currencies\ISOCurrencies;
+use Money\Formatter\DecimalMoneyFormatter;
+use Money\Money;
 
 class MasOrderController extends Controller
 {
@@ -23,6 +26,9 @@ class MasOrderController extends Controller
 
     public function submitToMas(Order $order)
     {
+        $currencies = new ISOCurrencies();
+        $moneyFormatter = new DecimalMoneyFormatter($currencies);
+
         $this->order = $order->load('store');
         $this->store = $order->store;
 
@@ -46,9 +52,9 @@ class MasOrderController extends Controller
             $payload['Payments'] = $payments;
         }
 
-        $payload['MdseAmount'] = $this->order->total_item_cost;
-        $payload['TaxAmount'] = $this->order->total_tax;
-        $payload['TotalAmount'] = $this->order->total;
+        $payload['MdseAmount'] = $moneyFormatter->format($this->order->mdse_price);
+        $payload['TaxAmount'] = $moneyFormatter->format($this->order->tax_price);
+        $payload['TotalAmount'] = $moneyFormatter->format($this->order->total_price);
 
         try {
             $client = new Client();

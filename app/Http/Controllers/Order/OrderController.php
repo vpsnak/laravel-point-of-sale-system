@@ -71,7 +71,7 @@ class OrderController extends Controller
         $orderStatusController = new OrderStatusController($this->order);
         $orderStatusController->updateOrderStatus(null, true);
 
-        // ProcessOrder::dispatchNow($this->order);
+        ProcessOrder::dispatchNow($this->order);
 
         return response(['notification' => [
             'msg' => ['Your changes in order items saved successfully!'],
@@ -113,7 +113,7 @@ class OrderController extends Controller
         $orderStatusController = new OrderStatusController($this->order);
         $orderStatusController->updateOrderStatus(null, true);
 
-        // ProcessOrder::dispatchNow($this->order);
+        ProcessOrder::dispatchNow($this->order);
 
         return response(['notification' => [
             'msg' => ['Your changes in order options saved successfully!'],
@@ -172,7 +172,7 @@ class OrderController extends Controller
         $this->order = Order::createWithoutEvents($this->order_data);
         $submittedStatusId = Status::where('value', 'submitted')->firstOrFail('id');
         $this->order->statuses()->attach($submittedStatusId, ['user_id' => $this->user->id]);
-        // ProcessOrder::dispatchNow($this->order);
+        ProcessOrder::dispatchNow($this->order);
 
         return response([
             'id' => $this->order->id,

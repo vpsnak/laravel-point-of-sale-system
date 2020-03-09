@@ -9,6 +9,7 @@ use App\Http\Controllers\ElavonSdkPaymentController;
 use App\Http\Controllers\OrderStatusController;
 use App\Giftcard;
 use App\Helper\Price;
+use App\Jobs\ProcessOrder;
 use App\Order;
 use App\Payment;
 use App\PaymentType;
@@ -97,8 +98,10 @@ class PaymentController extends Controller
         $payment->save();
         $orderStatusController = new OrderStatusController($order->refresh());
         $orderStatus = $orderStatusController->updateOrderStatus($payment);
+        ProcessOrder::dispatchNow($payment->order);
         unset($payment->order);
         $orderStatus['payment'] = $payment;
+
 
         return response($orderStatus, 201);
     }
