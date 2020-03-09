@@ -17,6 +17,7 @@ class ElavonApiPayment extends Model
     ];
 
     protected $casts = [
+        'log' => 'array',
         'created_at' => 'datetime:m/d/Y H:i:s',
         'updated_at' => 'datetime:m/d/Y H:i:s'
     ];

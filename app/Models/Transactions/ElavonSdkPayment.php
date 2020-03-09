@@ -38,7 +38,7 @@ class ElavonSdkPayment extends Model
         return json_decode($value, true);
     }
 
-    public function getPaymentTransactionData()
+    public function getPaymentTransactionDataAttribute()
     {
         return $this->log['data']['paymentGatewayCommand']['paymentTransactionData'];
     }

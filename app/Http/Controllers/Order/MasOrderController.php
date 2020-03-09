@@ -234,59 +234,63 @@ class MasOrderController extends Controller
         $i = 0;
         $response = [];
         foreach ($this->order->payments as $payment) {
-            if ($payment->status !== 'approved' || $payment->refunded) {
-                continue;
-            }
+            if ($payment->status === 'approved') {
+                switch ($payment->paymentType->type) {
+                    case 'cash':
+                        $response[$i]['BillingAccount'] = "";
+                        $response[$i]['BillingExpiration'] = "";
+                        $response[$i]['BillingCv2'] = "";
+                        $response[$i]['PaymentType'] = 7;
+                        $response[$i]['PNRefToken'] = null;
+                        $response[$i]['AuthCode'] = "";
+                        $response[$i]['BillingZip'] = "";
+                        $response[$i]['CheckNumber'] = null;
+                        $response[$i]['RoutingNumber'] = null;
+                        $response[$i]['CreditCardType'] = null;
+                        $response[$i]['GiftCardNumber'] = null;
+                        $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($payment->price);
+                        break;
+                    case 'card':
+                        $log = $payment->elavonApiPayments()->latest()->first();
 
-            switch ($payment->paymentType->type) {
-                case 'cash':
-                    $response[$i]['PaymentAmount'] = $payment->amount;
-                    $response[$i]['PaymentType'] = 7;
-                    $response[$i]['AuthCode'] = 'cash';
-                    break;
-                case 'card':
-                    $response[$i]['PaymentAmount'] = $payment->amount;
-                    $response[$i]['PaymentType'] = 1;
-                    $response[$i]['BillingAccount'] = '';
-                    $response[$i]['BillingExpiration'] = '';
-                    $response[$i]['BillingCv2'] = '';
-                    $response[$i]['PNRefToken'] = '';
-                    $response[$i]['AuthCode'] = $payment->code;
-                    $response[$i]['BillingZip'] = '';
-                    $response[$i]['CheckNumber'] = '';
-                    $response[$i]['RoutingNumber'] = '';
-                    $response[$i]['CreditCardType'] = '';
-                    break;
-                case 'pos-terminal':
-                    $log = $payment->elavonSdkPayments()->latest()->first();
+                        $response[$i]['PaymentType'] = 1;
+                        $response[$i]['PNRefToken'] = null;
+                        $response[$i]['AuthCode'] = $payment->code;
+                        $response[$i]['BillingZip'] = '';
+                        $response[$i]['CreditCardType'] = MasOrder::getCreditCardType($log->log['ssl_card_short_description']);
+                        $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($payment->price);
+                        break;
+                    case 'pos-terminal':
+                        $log = $payment->elavonSdkPayments()->latest()->first();
 
-                    $response[$i]['PaymentAmount'] = $payment->amount;
-                    $response[$i]['PaymentType'] = 1;
-                    $response[$i]['PNRefToken'] = null;
-                    $response[$i]['AuthCode'] = $payment->code;
-                    $response[$i]['BillingZip'] = '';
-                    $response[$i]['CreditCardType'] = MasOrder::getCreditCardType($log->getPaymentTransactionData()['cardScheme']);
-                    break;
-                case 'house-account':
-                    $response[$i]['PaymentAmount'] = $payment->amount;
-                    $response[$i]['BillingAccount'] = '';
-                    $response[$i]['BillingExpiration'] = '';
-                    $response[$i]['BillingCv2'] = '';
-                    $response[$i]['PaymentType'] = '';
-                    $response[$i]['PNRefToken'] = null;
-                    $response[$i]['AuthCode'] = 'house_account';
-                    break;
-                case 'giftcard':
-                    $response[$i]['PaymentAmount'] = $payment->amount;
-                    $response[$i]['PaymentType'] = 2;
-                    $response[$i]['GiftCardNumber'] = $payment->code;
-                    $response[$i]['PNRefToken'] = null;
-                    $response[$i]['AuthCode'] = 'giftcard';
-                    break;
-                default:
-                    break;
+                        $response[$i]['PaymentType'] = 1;
+                        $response[$i]['PNRefToken'] = null;
+                        $response[$i]['AuthCode'] = $payment->code;
+                        $response[$i]['BillingZip'] = '';
+                        $response[$i]['CreditCardType'] = MasOrder::getCreditCardType($log->payment_transaction_data['cardScheme']);
+                        $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($payment->price);
+                        break;
+                    case 'house-account':
+                        $response[$i]['BillingAccount'] = '';
+                        $response[$i]['BillingExpiration'] = '';
+                        $response[$i]['BillingCv2'] = '';
+                        $response[$i]['PaymentType'] = '';
+                        $response[$i]['PNRefToken'] = null;
+                        $response[$i]['AuthCode'] = 'house_account';
+                        $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($payment->price);
+                        break;
+                    case 'giftcard':
+                        $response[$i]['PaymentType'] = 2;
+                        $response[$i]['GiftCardNumber'] = $payment->code;
+                        $response[$i]['PNRefToken'] = null;
+                        $response[$i]['AuthCode'] = 'giftcard';
+                        $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($payment->price);
+                        break;
+                    default:
+                        break;
+                }
+                ++$i;
             }
-            $i++;
         }
         return array_values($response);
     }

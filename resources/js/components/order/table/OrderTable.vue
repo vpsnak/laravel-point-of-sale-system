@@ -21,7 +21,6 @@
         :small="smallChips"
       />
     </template>
-
     <template v-slot:item.total_price="{ item }">
       <orderTotalChip
         :menu="true"
@@ -32,7 +31,6 @@
         :small="smallChips"
       />
     </template>
-
     <template v-slot:item.paid_price="{ item }">
       <orderTotalPaidChip
         :orderId="item.id"
@@ -44,7 +42,7 @@
     <template v-slot:item.created_by="{ item }">
       <createdByChip
         :menu="true"
-        :created_by="item.created_by"
+        :createdBy="item.created_by"
         :small="smallChips"
       />
     </template>

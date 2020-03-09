@@ -36,20 +36,29 @@ class MagentoOAuthController extends Controller
         }
         try {
             if (!isset($oauth_token) && !$this->state->value) {
-                $request_token = $this->oauth_client->getRequestToken($this->request_token_url, $this->callback_url,
-                    OAUTH_HTTP_METHOD_GET);
+                $request_token = $this->oauth_client->getRequestToken(
+                    $this->request_token_url,
+                    $this->callback_url,
+                    OAUTH_HTTP_METHOD_GET
+                );
                 $this->secret->value = $request_token['oauth_token_secret'];
                 $this->secret->save();
                 $this->state->value = 1;
                 $this->state->save();
                 return redirect($this->admin_authorization_url . '?oauth_token=' . $request_token['oauth_token']);
             } else {
-                if ($this->state->value == 1) {
+                if ($this->state->value === 1) {
                     $this->oauth_client->setToken($oauth_token, $this->secret->value);
-                    $access_token = $this->oauth_client->getAccessToken($this->access_token_url, null, null,
-                        OAUTH_HTTP_METHOD_GET);
-                    if (array_key_exists('oauth_token', $access_token) || array_key_exists('oauth_token_secret',
-                            $access_token)) {
+                    $access_token = $this->oauth_client->getAccessToken(
+                        $this->access_token_url,
+                        null,
+                        null,
+                        OAUTH_HTTP_METHOD_GET
+                    );
+                    if (array_key_exists('oauth_token', $access_token) || array_key_exists(
+                        'oauth_token_secret',
+                        $access_token
+                    )) {
                         $this->state->value = 2;
                         $this->state->save();
                         $this->token->value = $access_token['oauth_token'];
@@ -68,9 +77,13 @@ class MagentoOAuthController extends Controller
                 } else {
                     // do request
                     $this->oauth_client->setToken($this->token->value, $this->secret->value);
-                    $this->oauth_client->fetch(config('magento.MAGENTO_URL') . '/api/rest/products', [], 'GET',
-                        ['Content-Type' => 'application/json', 'Accept' => '*/*']);
-                    if ($this->oauth_client->getLastResponseInfo()['http_code'] != 200) {
+                    $this->oauth_client->fetch(
+                        config('magento.MAGENTO_URL') . '/api/rest/products',
+                        [],
+                        'GET',
+                        ['Content-Type' => 'application/json', 'Accept' => '*/*']
+                    );
+                    if ($this->oauth_client->getLastResponseInfo()['http_code'] !== 200) {
                         return response()->json([
                             'status' => 'inactive',
                             'message' => 'There was an error. You can not access data over REST api.'
@@ -78,17 +91,7 @@ class MagentoOAuthController extends Controller
                     }
                     return response()->json([
                         'status' => 'active',
-                        'message' => "
-                         (         (
-                         )\ )      )\ )  *   )
-                        (()/( (   (()/(` )  /(      )        (
-                         /(_)))\   /(_))( )(_))  ( /(  `  )  )\
-                        (_)) ((_) (_)) (_(_())   )(_)) /(/( ((_)
-                        | _ \| __|/ __||_   _|  ((_)_ ((_)_\ (_)
-                        |   /| _| \__ \  | |    / _` || '_ \)| |
-                        |_|_\|___||___/  |_|    \__,_|| .__/ |_|
-                                                      |_|
-                        "
+                        'message' => "Authenticated!"
                     ]);
                 }
             }
@@ -125,15 +128,18 @@ class MagentoOAuthController extends Controller
         $this->token = Setting::getFirst('key', 'token');
         $this->secret = Setting::getFirst('key', 'secret');
 
-        $auth_type = ($this->state->value == 2) ? OAUTH_AUTH_TYPE_AUTHORIZATION : OAUTH_AUTH_TYPE_URI;
+        $auth_type = ($this->state->value === 2) ? OAUTH_AUTH_TYPE_AUTHORIZATION : OAUTH_AUTH_TYPE_URI;
         try {
-            $this->oauth_client = new OAuth($this->consumer_key, $this->consumer_secret, OAUTH_SIG_METHOD_HMACSHA1,
-                $auth_type);
+            $this->oauth_client = new OAuth(
+                $this->consumer_key,
+                $this->consumer_secret,
+                OAUTH_SIG_METHOD_HMACSHA1,
+                $auth_type
+            );
             $this->oauth_client->enableDebug();
             $this->oauth_client->setSSLChecks(OAUTH_SSLCHECK_NONE);
         } catch (OAuthException $e) {
             report($e);
         }
     }
-
 }

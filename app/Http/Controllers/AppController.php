@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\MasOrderController;
 use App\Order;
 use App\CashRegisterReport;
 use App\Product;
-use App\Customer;
 use Illuminate\Http\Request;
 
 class AppController extends Controller

@@ -15,11 +15,11 @@
         :small="small"
       >
         <v-icon left>mdi-account-circle</v-icon>
-        {{ $props.created_by.name }}
+        {{ $props.createdBy.name }}
       </v-chip>
     </template>
     <v-card width="450" class="pa-5" outlined shaped>
-      <userForm :model="$props.created_by" :readonly="true" />
+      <userForm :model="$props.createdBy" :readonly="true" />
     </v-card>
   </v-menu>
 </template>
@@ -32,7 +32,7 @@ export default {
     small: Boolean,
     title: Boolean,
     menu: Boolean,
-    created_by: Object
+    createdBy: Object
   },
 
   beforeDestroy() {
