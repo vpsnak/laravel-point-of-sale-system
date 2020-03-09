@@ -78,11 +78,6 @@ class Order extends Model
         $this->attributes['discount'] = $value;
     }
 
-    public function getDeliveryAddressAttribute()
-    {
-        return $this->delivery['address'];
-    }
-
     public function setDeliveryAddressAttribute($value)
     {
         if (is_array($value)) {
@@ -91,17 +86,9 @@ class Order extends Model
         $this->attributes['delivery']['address'] = $value;
     }
 
-    public function getStorePickupAttribute()
+    public function getDeliveryAttribute()
     {
-        return $this->delivery['store_pickup'];
-    }
-
-    public function setPickupPointAttribute($value)
-    {
-        if (is_array($value)) {
-            $value = json_encode($value);
-        }
-        $this->attributes['delivery']['store_pickup'] = $value;
+        return json_decode($this->attributes['delivery'], true);
     }
 
     public function setDeliveryAttribute($value)
