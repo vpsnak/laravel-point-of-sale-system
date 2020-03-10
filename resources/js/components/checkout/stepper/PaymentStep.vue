@@ -39,7 +39,6 @@ export default {
 
   watch: {
     order_status: {
-      deep: true,
       immediate: true,
       handler(status) {
         if (_.has(status, "value") && status.value === "paid") {

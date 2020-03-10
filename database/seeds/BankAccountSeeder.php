@@ -13,14 +13,77 @@ class BankAccountSeeder extends Seeder
      */
     public function run()
     {
-        $api = [
+        $green2greenCorpApiAcc = [
             'merchant_id' => '009710',
             'user_id' => 'convergeapi',
             'pin' => 'LWUY8K81466BXK4Y6I7FERJMOLDRM1XL37JPP4ATK3JORDUMAYDRICE9H7QVL6M8',
             'test_mode' => 'false'
         ];
 
-        $sdk = [
+        $green2greenCorpSdkAcc = [
+            'app' => 'VMM',
+            'email' => 'support@webo2.gr',
+            'pin' => 'H3192LKKOIBN3GIZ9FGXX01MYWGIYEJ2UJ8PW4PCHXRSNBZVFMF1PWNG0HR003MI',
+            'userId' => 'convergeapi',
+            'merchantId' => '009710',
+            'paymentGatewayEnvironment' => 'PROD',
+            'vendorId' => 'sc100028',
+            'vendorAppName' => 'Webo2',
+            'vendorAppVersion' => '2.1.4',
+            "retrieveAccountInfo" => true,
+            "handleDigitalSignature" => true,
+        ];
+
+        $plantshed87CorpApiAcc = [
+            'merchant_id' => '009710',
+            'user_id' => 'convergeapi',
+            'pin' => 'LWUY8K81466BXK4Y6I7FERJMOLDRM1XL37JPP4ATK3JORDUMAYDRICE9H7QVL6M8',
+            'test_mode' => 'false'
+        ];
+
+        $plantshed87CorpSdkAcc = [
+            'app' => 'VMM',
+            'email' => 'support@webo2.gr',
+            'pin' => '1KLFEJNFW8R2PSFWSYJ8NJEJ8A6UFJQADTEJOXO43PWO6R4I9GD34YTAVSAU2EQA',
+            'userId' => 'plantapi',
+            'merchantId' => '009710',
+            'paymentGatewayEnvironment' => 'PROD',
+            'vendorId' => 'sc100028',
+            'vendorAppName' => 'Webo2',
+            'vendorAppVersion' => '2.1.4',
+            "retrieveAccountInfo" => true,
+            "handleDigitalSignature" => true,
+        ];
+
+        $plantshedPrinceIncApiAcc = [
+            'merchant_id' => '009710',
+            'user_id' => 'plantapi',
+            'pin' => 'LWUY8K81466BXK4Y6I7FERJMOLDRM1XL37JPP4ATK3JORDUMAYDRICE9H7QVL6M8',
+            'test_mode' => 'false'
+        ];
+
+        $plantshedPrinceIncSdkAcc = [
+            'app' => 'VMM',
+            'email' => 'support@webo2.gr',
+            'pin' => 'H3192LKKOIBN3GIZ9FGXX01MYWGIYEJ2UJ8PW4PCHXRSNBZVFMF1PWNG0HR003MI',
+            'userId' => 'Plantshed',
+            'merchantId' => '009710',
+            'paymentGatewayEnvironment' => 'PROD',
+            'vendorId' => 'sc100028',
+            'vendorAppName' => 'Webo2',
+            'vendorAppVersion' => '2.1.4',
+            "retrieveAccountInfo" => true,
+            "handleDigitalSignature" => true,
+        ];
+
+        $demoApiAcc = [
+            'merchant_id' => '009710',
+            'user_id' => 'convergeapi',
+            'pin' => 'LWUY8K81466BXK4Y6I7FERJMOLDRM1XL37JPP4ATK3JORDUMAYDRICE9H7QVL6M8',
+            'test_mode' => 'false'
+        ];
+
+        $demoSdkAcc = [
             'app' => 'VMM',
             'email' => 'support@webo2.gr',
             'pin' => 'H3192LKKOIBN3GIZ9FGXX01MYWGIYEJ2UJ8PW4PCHXRSNBZVFMF1PWNG0HR003MI',
@@ -34,41 +97,58 @@ class BankAccountSeeder extends Seeder
             "handleDigitalSignature" => true,
         ];
 
-        $bankAcc1 = [
+        // Green 2 Green Corp
+        $green2greenCorpApi = [
             'company_id' => 1,
             'type' => 'api',
-            'account' => $api,
-            'created_at' => now(),
-            'updated_at' => now()
+            'account' => $green2greenCorpApiAcc
         ];
 
-        $bankAcc2 = [
+        $green2greenCorpSdk = [
             'company_id' => 1,
             'type' => 'sdk',
-            'account' => $sdk,
-            'created_at' => now(),
-            'updated_at' => now()
+            'account' => $green2greenCorpSdkAcc
         ];
-
-        $bankAcc3 = [
-            'company_id' => 2,
+        // Plantshed 87 Corp
+        $plantshed87CorpApi = [
+            'company_id' => 1,
             'type' => 'api',
-            'account' => $api,
-            'created_at' => now(),
-            'updated_at' => now()
+            'account' => $plantshed87CorpApiAcc
         ];
-
-        $bankAcc4 = [
-            'company_id' => 2,
+        $plantshed87CorpSdk = [
+            'company_id' => 1,
             'type' => 'sdk',
-            'account' => $sdk,
-            'created_at' => now(),
-            'updated_at' => now()
+            'account' => $plantshed87CorpSdkAcc
+        ];
+        // Plantshed Prince Inc
+        $plantshedPrinceIncApi = [
+            'company_id' => 1,
+            'type' => 'api',
+            'account' => $plantshedPrinceIncApiAcc
+        ];
+        $plantshedPrinceIncSdk = [
+            'company_id' => 1,
+            'type' => 'sdk',
+            'account' => $plantshedPrinceIncSdkAcc
         ];
 
-        BankAccount::create($bankAcc1);
-        BankAccount::create($bankAcc2);
+        // demo
+        $demoApi = [
+            'company_id' => 4,
+            'type' => 'api',
+            'account' => $demoApiAcc
+        ];
+
+        $demoSdk = [
+            'company_id' => 4,
+            'type' => 'sdk',
+            'account' => $demoSdkAcc
+        ];
+
         BankAccount::create($bankAcc3);
         BankAccount::create($bankAcc4);
+        // demo acc
+        BankAccount::create($demoApi);
+        BankAccount::create($demoSdk);
     }
 }

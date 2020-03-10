@@ -17,7 +17,7 @@ class CreateCompaniesTable extends Migration
             $table->tinyIncrements('id');
 
             $table->string('name');
-            $table->string('tax_number');
+            $table->string('tax_number')->nullable();
             $table->string('logo')->nullable();
         });
     }

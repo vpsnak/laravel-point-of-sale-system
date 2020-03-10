@@ -12,32 +12,15 @@
           <template v-slot:activator="{ on }">
             <v-btn
               :disabled="disableControls"
-              @click.stop="close"
+              @click.stop="close()"
               icon
               v-on="on"
               color="red"
             >
-              <v-icon>
-                {{ order_id ? "mdi-cancel" : "mdi-close" }}
-              </v-icon>
+              <v-icon>mdi-close</v-icon>
             </v-btn>
           </template>
-          <span>{{ closeBtnTxt }}</span>
-        </v-tooltip>
-
-        <v-tooltip bottom v-if="order_id" color="orange">
-          <template v-slot:activator="{ on }">
-            <v-btn
-              :disabled="disableControls"
-              @click="hold"
-              icon
-              v-on="on"
-              color="orange"
-            >
-              <v-icon>mdi-pause</v-icon>
-            </v-btn>
-          </template>
-          <span>Hold</span>
+          <span>Close</span>
         </v-tooltip>
 
         <v-toolbar-title>Checkout</v-toolbar-title>
@@ -89,6 +72,7 @@ export default {
 
   computed: {
     ...mapState("cart", [
+      "checkout_loading",
       "cart_products",
       "order_id",
       "order_status",
@@ -96,13 +80,13 @@ export default {
       "currentCheckoutStep",
       "completeOrderLoading"
     ]),
+
     disableControls() {
-      return false;
-    },
-    closeBtnTxt() {
-      return this.order_id && this.currentCheckoutStep !== 3
-        ? "Cancel order"
-        : "Close";
+      if (this.checkout_loading) {
+        return true;
+      } else {
+        return false;
+      }
     },
     state: {
       get() {
@@ -136,24 +120,9 @@ export default {
     ]),
     ...mapActions("requests", ["request"]),
 
-    hold() {
-      this.resetState();
-    },
     close() {
-      if (this.order_status === "complete") {
+      if (this.order_status === "complete" || this.order_id) {
         this.resetState();
-      } else if (this.order_id && this.order_status !== "complete") {
-        this.setDialog({
-          show: true,
-          action: "confirmation",
-          title: "Cancel order?",
-          content: "Are you sure you want to <b>cancel</b> the current order?",
-          action: "confirmation",
-          persistent: true,
-          cancelBtnTxt: "No",
-          confirmationBtnTxt: "Yes",
-          eventChannel: "checkout-cancel-order"
-        });
       } else {
         this.state = false;
       }

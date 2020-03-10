@@ -13,16 +13,21 @@ class CompanySeeder extends Seeder
     {
         DB::table('companies')->insert([
             [
-                'name' => 'CO1-PLANTSHED NY FLOWERS',
-                'tax_number' => '1312'
+                'name' => 'Green 2 Green Corp',
+                'tax_number' => ''
             ],
             [
-                'name' => 'CO2-PLANTSHED NY FLOWERS',
-                'tax_number' => '1213'
+                'name' => 'Plantshed 87 Corp',
+                'tax_number' => ''
             ],
             [
-                'name' => 'CO3-PLANTSHED NY FLOWERS',
-                'tax_number' => '1234'
+                'name' => 'Plantshed Prince Inc',
+                'tax_number' => ''
+            ],
+            // for elavon demo acc
+            [
+                'name' => 'Demo',
+                'tax_number' => ''
             ]
         ]);
     }
