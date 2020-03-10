@@ -136,7 +136,7 @@ export default {
           if (this.product) {
             return this.$props.productPrice.toFormat("0.00");
           } else {
-            let max = this.order_total_price;
+            let max = this.parsePrice(this.order_total_price);
             if (this.discount.amount) {
               return max
                 .add(this.parsePrice(this.discount.amount))

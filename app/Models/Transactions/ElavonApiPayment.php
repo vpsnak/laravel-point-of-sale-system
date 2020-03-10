@@ -17,7 +17,7 @@ class ElavonApiPayment extends Model
     ];
 
     protected $casts = [
-
+        'log' => 'array',
         'created_at' => 'datetime:m/d/Y H:i:s',
         'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
@@ -32,7 +32,7 @@ class ElavonApiPayment extends Model
         if (!is_string($value)) {
             $this->attributes['log'] = json_encode($value);
         } else {
-            $this->attributes['log'] = strip_tags($value);
+            $this->attributes['log'] = $value;
         }
     }
 

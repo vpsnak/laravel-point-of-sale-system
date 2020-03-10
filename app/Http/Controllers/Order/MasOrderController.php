@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\ElavonApiPayment;
 use App\Helper\Price;
 use App\MasAccount;
 use App\MasOrder;
@@ -253,10 +252,6 @@ class MasOrderController extends Controller
                         break;
                     case 'card':
                         $log = $payment->elavonApiPayments()->first('log');
-                        var_dump($log->log);
-
-                        die;
-                        var_dump(json_decode($log->log, true));
 
                         $response[$i]['PaymentType'] = 1;
                         $response[$i]['PNRefToken'] = null;
@@ -266,7 +261,7 @@ class MasOrderController extends Controller
                         $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($payment->price);
                         break;
                     case 'pos-terminal':
-                        $log = $payment->elavonSdkPayments()->latest()->first('payment_transaction_data');
+                        $log = $payment->elavonSdkPayments()->latest()->first();
 
                         $response[$i]['PaymentType'] = 1;
                         $response[$i]['PNRefToken'] = null;
