@@ -14,9 +14,9 @@ class CreateMasAccountsTable extends Migration
     public function up()
     {
         Schema::create('mas_accounts', function (Blueprint $table) {
-            $table->mediumIncrements('id');
+            $table->tinyIncrements('id');
 
-            $table->enum('environment', ['test', 'production']);
+            $table->enum('environment', ['test', 'production'])->unique();
             $table->string('endpoint');
             $table->string('direct_id');
             $table->string('fulfiller_md_number');
@@ -25,6 +25,8 @@ class CreateMasAccountsTable extends Migration
             $table->boolean('active');
             $table->json('default_recipient_account')->nullable();
             $table->json('default_online_partner_account')->nullable();
+            $table->string('coupon_code')->nullable();
+            $table->string('giftcard_code')->nullable();
         });
     }
 

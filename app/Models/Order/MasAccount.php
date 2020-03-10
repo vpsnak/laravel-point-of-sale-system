@@ -10,11 +10,15 @@ class MasAccount extends Model
 
     protected $fillable = [
         'default_recipient_account',
-        'default_online_partner_account'
+        'default_online_partner_account',
+        'coupon_code',
+        'giftcard_code'
     ];
 
     protected $casts = [
         'active' => 'boolean',
+        'default_recipient_account' => 'array',
+        'default_online_partner_account' => 'array',
     ];
 
     public static function getActive()

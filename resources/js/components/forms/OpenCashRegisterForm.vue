@@ -2,7 +2,7 @@
   <ValidationObserver v-slot="{ invalid }">
     <v-form @submit.prevent="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
-        <v-row align="center" justify="center" no-gutters>
+        <v-row align="center" justify="center">
           <v-col :cols="12">
             <ValidationProvider
               rules="required"
@@ -45,11 +45,11 @@
             </ValidationProvider>
           </v-col>
         </v-row>
-        <v-row align="center" justify="space-between" no-gutters>
+        <v-row align="center" justify="space-between">
           <v-col :cols="4" :lg="2" :md="3">
             <ValidationProvider
               v-if="fill_amount || !cashRegisterIsopen"
-              rules="required|between:1,9999"
+              rules="required|between:1,10000"
               v-slot="{ errors, valid }"
               name="Opening amount"
             >
@@ -225,7 +225,6 @@ export default {
     enableCashRegisters() {
       this.cashRegisterDisabled = false;
     },
-
     enableOpeningAmount() {
       this.openingAmountDisabled = false;
     },

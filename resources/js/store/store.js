@@ -184,11 +184,12 @@ export default new Vuex.Store({
     },
     cashRegisterLogout(context) {
       return new Promise((resolve, reject) => {
+        payload = {
+          method: "get",
+          url: "cash-register-logs/logout"
+        };
         context
-          .dispatch("requests/request", {
-            method: "get",
-            url: "cash-register-logs/logout"
-          })
+          .dispatch("requests/request", payload)
           .then(response => {
             if (["sales", "orders"].indexOf(router.currentRoute.name) !== -1) {
               router.replace({ name: "dashboard" });

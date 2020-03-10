@@ -2,6 +2,8 @@ export default {
   namespaced: true,
 
   state: {
+    checkout_loading: false,
+
     tax_percentage: 0,
     checkoutDialog: false,
     payments: [],
@@ -120,6 +122,9 @@ export default {
   },
 
   mutations: {
+    setCheckoutLoading(state, value) {
+      state.checkout_loading = value;
+    },
     setOrderPageActions(state, value) {
       state.order_page_actions = value;
     },
@@ -328,6 +333,7 @@ export default {
       }
     },
     resetState(state) {
+      state.checkout_loading = false;
       state.productMap = [];
 
       state.order_id = null;
