@@ -42,14 +42,18 @@ const actions = {
       : "";
 
     return new Promise((resolve, reject) => {
-      axios
-        .get(`${context.state.base_url}/menu-items`)
+      const payload = {
+        method: "get",
+        url: "menu-items"
+      };
+      context
+        .dispatch("requests/request", payload, { root: true })
         .then(response => {
-          context.commit("menu/setTopMenu", response.data.top_menu, {
+          context.commit("menu/setTopMenu", response.top_menu, {
             root: true
           });
 
-          context.commit("menu/setSideMenu", response.data.side_menu, {
+          context.commit("menu/setSideMenu", response.side_menu, {
             root: true
           });
 
@@ -71,7 +75,7 @@ const actions = {
                 message: "FAILED"
               })
             : "";
-          reject(error.response);
+          reject(error);
         });
     });
   },
@@ -85,8 +89,12 @@ const actions = {
       : "";
 
     return new Promise((resolve, reject) => {
-      axios
-        .get(`${context.state.base_url}/mas/env`)
+      const payload = {
+        method: "get",
+        url: "mas/env"
+      };
+      context
+        .dispatch("requests/request", payload, { root: true })
         .then(response => {
           context.state.verbose
             ? context.commit("setInitInfo", {
@@ -96,16 +104,7 @@ const actions = {
               })
             : "";
 
-          context.commit("setMasEnv", response.data);
-
-          context.commit(
-            "setNotification",
-            {
-              msg: response.data.info,
-              type: "info"
-            },
-            { root: true }
-          );
+          context.commit("setMasEnv", response);
 
           resolve(true);
         })
@@ -117,28 +116,24 @@ const actions = {
                 message: "FAILED"
               })
             : "";
-          reject(error.response);
+          reject(error);
         });
     });
   },
-  setMasEnv(context, payload) {
+  setMasEnv(context, env) {
     return new Promise((resolve, reject) => {
-      axios
-        .get(`${context.state.base_url}/mas/set/${payload}`)
+      const payload = {
+        method: "get",
+        url: `mas/set/${env}`
+      };
+      context
+        .dispatch("requests/request", payload, { root: true })
         .then(response => {
-          context.commit(
-            "setNotification",
-            {
-              msg: response.data.info,
-              type: "success"
-            },
-            { root: true }
-          );
-          context.commit("setMasEnv", response.data.payload);
+          context.commit("setMasEnv", response.payload);
           resolve(true);
         })
         .catch(error => {
-          reject(error.response);
+          reject(error);
         });
     });
   },

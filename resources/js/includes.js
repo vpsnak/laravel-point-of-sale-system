@@ -16,11 +16,6 @@ Pusher.logToConsole = process.env.NODE_ENV === "production" ? false : true;
 // axios config
 window.axios = require("axios");
 window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
-Cookies.get("token")
-  ? (window.axios.defaults.headers.common["Authorization"] = Cookies.get(
-      "token"
-    ))
-  : "";
 
 /**
  * Next we will register the CSRF Token as a common header with Axios so that

@@ -103,15 +103,12 @@ export default new Vuex.Store({
     setToken(state, token) {
       if (token) {
         state.token = token;
-
         Cookies.set("token", state.token, {
           secure: state.config.app_env !== "development" ? true : false,
           sameSite: "strict"
         });
       } else {
         state.token = null;
-        window.axios.defaults.headers.common["Authorization"] = null;
-
         Cookies.remove("token");
       }
     },
@@ -132,9 +129,6 @@ export default new Vuex.Store({
         context
           .dispatch("requests/request", payload)
           .then(response => {
-            window.axios.defaults.headers.common["Authorization"] =
-              response.token;
-
             context.commit("setToken", response.token);
             context.commit("setUser", response.user);
 

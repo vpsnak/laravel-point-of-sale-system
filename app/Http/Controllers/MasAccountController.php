@@ -27,7 +27,10 @@ class MasAccountController extends Controller
         }
 
         return response([
-            "info" => ["MAS" => ["MAS environment: $masAccount->environment"]],
+            "notification" => [
+                "msg" => ["MAS environment: $masAccount->environment"],
+                'type' => 'info'
+            ],
             "payload" => $masAccount->environment
         ]);
     }

@@ -3,13 +3,11 @@ import router from "../../plugins/router";
 const actions = {
   request(context, payload) {
     return new Promise((resolve, reject) => {
-      let options;
+      let headers = {
+        Authorization: context.rootState.token
+      };
       if (payload.data instanceof FormData) {
-        options = {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        };
+        options.headers["Content-Type"] = "multipart/form-data";
       }
       const noSuccessNotification = payload.no_success_notification;
       const noErrorNotification = payload.no_error_notification;
@@ -26,7 +24,7 @@ const actions = {
         method: payload.method,
         url: `${context.rootState.config.base_url}/${payload.url}`,
         data: payload.data,
-        options
+        headers
       })
         .then(response => {
           if (!noSuccessNotification && _.has(response.data, "notification")) {

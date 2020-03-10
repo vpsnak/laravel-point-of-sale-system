@@ -14,12 +14,6 @@ class MenuItemSeeder extends Seeder
 
     public function run()
     {
-        /*
-         * Roles map
-         * admin            id: 1
-         * cashier          id: 2
-         * store_manager    id: 3
-        */
         $admin = 1;
         $cashier = 2;
         $store_manager = 3;
@@ -62,15 +56,6 @@ class MenuItemSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        $addresses = new MenuItem([
-            'title' => 'Addresses',
-            'action' => ['link' => 'addresses'],
-            'icon' =>  'mdi-account-card-details',
-            'location' => 'side_menu',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
         $products = new MenuItem([
             'title' => 'Products',
             'action' => ['link' => 'products'],
@@ -107,15 +92,6 @@ class MenuItemSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        $cards = new MenuItem([
-            'title' => 'Cards',
-            'action' => ['link' => 'cards'],
-            'icon' =>  'mdi-credit-card',
-            'location' => 'side_menu',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
         $cashRegisters = new MenuItem([
             'title' => 'Cash registers',
             'action' => ['link' => 'cash-registers'],
@@ -138,15 +114,6 @@ class MenuItemSeeder extends Seeder
             'title' => 'Store pickups',
             'action' => ['link' => 'store-pickups'],
             'icon' =>  'mdi-storefront',
-            'location' => 'side_menu',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $companies = new MenuItem([
-            'title' => 'Companies',
-            'action' => ['link' => 'companies'],
-            'icon' =>  'mdi-domain',
             'location' => 'side_menu',
             'created_at' => now(),
             'updated_at' => now(),
@@ -202,47 +169,36 @@ class MenuItemSeeder extends Seeder
         $sales->save();
         $orders->save();
         $customers->save();
-        $addresses->save();
         $products->save();
         $categories->save();
         $giftCards->save();
         $coupons->save();
-        $cards->save();
         $cashRegisters->save();
         $stores->save();
         $storePickups->save();
-        $companies->save();
         $taxes->save();
         $reports->save();
         $users->save();
 
-        //top menu
-        $sign_out->save();
-        $change_password->save();
-
-        //side menu
         $dashboard->roles()->sync($all);
         $sales->roles()->sync($all);
         $orders->roles()->sync($all);
         $customers->roles()->sync($all);
-        $addresses->roles()->sync($all);
         $products->roles()->sync($all);
         $categories->roles()->sync($all);
-
         $giftCards->roles()->sync($admin);
         $coupons->roles()->sync($admin);
         $cashRegisters->roles()->sync($admin);
         $stores->roles()->sync($admin);
         $storePickups->roles()->sync($admin);
-        $companies->roles()->sync($admin);
         $taxes->roles()->sync($admin);
-        $cards->roles()->sync($admin);
-
         $reports->roles()->sync([$admin, $store_manager]);
-
         $users->roles()->sync($admin);
 
         //top menu
+        $sign_out->save();
+        $change_password->save();
+
         $sign_out->roles()->sync($all);
         $change_password->roles()->sync($all);
     }
