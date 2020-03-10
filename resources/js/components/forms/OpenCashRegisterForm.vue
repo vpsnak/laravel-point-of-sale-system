@@ -2,7 +2,7 @@
   <ValidationObserver v-slot="{ invalid }">
     <v-form @submit.prevent="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
-        <v-row align="center" justify="center">
+        <v-row align="center" justify="center" no-gutters>
           <v-col :cols="12">
             <ValidationProvider
               rules="required"
@@ -10,9 +10,9 @@
               name="Store"
             >
               <v-select
-                :loading="loading"
+                :loading="storesLoading"
                 v-model="selected_store_id"
-                :disabled="storeDisabled"
+                :disabled="storeDisabled || loading"
                 :items="stores"
                 label="Store"
                 item-text="name"
@@ -31,8 +31,7 @@
               name="Cash Register"
             >
               <v-select
-                :loading="loading"
-                :disabled="cashRegisterDisabled"
+                :disabled="loading || cashRegisterDisabled"
                 v-model="selected_cash_register_id"
                 :items="cash_registers"
                 label="Cash Register"
@@ -45,10 +44,9 @@
             </ValidationProvider>
           </v-col>
         </v-row>
-        <v-row align="center" justify="space-between">
-          <v-col :cols="4" :lg="2" :md="3">
+        <v-row align="center">
+          <v-col :cols="6" v-if="fill_amount || !cashRegisterIsopen">
             <ValidationProvider
-              v-if="fill_amount || !cashRegisterIsopen"
               rules="required|between:1,10000"
               v-slot="{ errors, valid }"
               name="Opening amount"
@@ -65,22 +63,10 @@
               ></v-text-field>
             </ValidationProvider>
           </v-col>
-          <v-btn
-            color="secondary"
-            type="submit"
-            :loading="loading"
-            :disabled="disableOpenCashRegister || invalid || loading"
-            >Start session
-          </v-btn>
         </v-row>
-        <v-row align="center" justify="center">
+        <v-row align="center" justify="center" v-if="cashRegisterIsopen">
           <v-col cols="auto">
-            <v-alert
-              text
-              prominent
-              :type="open_session_user ? 'warning' : 'info'"
-              v-if="cashRegisterIsopen"
-            >
+            <v-alert text :type="open_session_user ? 'warning' : 'info'">
               <span v-if="open_session_user">
                 {{ open_session_user.name }} has an active session with the
                 selected cash register
@@ -91,6 +77,15 @@
               </span>
             </v-alert>
           </v-col>
+        </v-row>
+        <v-row align="center" justify="center">
+          <v-btn
+            color="secondary"
+            type="submit"
+            :loading="submitLoading"
+            :disabled="disableOpenCashRegister || invalid || loading"
+            >Start session
+          </v-btn>
         </v-row>
       </v-container>
     </v-form>
@@ -104,7 +99,8 @@ export default {
     return {
       fill_amount: false,
       open_session_user: null,
-      loading: true,
+      storesLoading: false,
+      submitLoading: false,
       stores: [],
       cash_registers: [],
       storeDisabled: true,
@@ -128,6 +124,13 @@ export default {
   computed: {
     ...mapGetters(["role"]),
 
+    loading() {
+      if (this.storesLoading || this.submitLoading) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     cashRegisterIsopen() {
       if (this.selected_store_id && this.selected_cash_register_id) {
         const open_cash_register = _.find(this.cash_registers, {
@@ -169,10 +172,13 @@ export default {
     ...mapActions(["openCashRegister"]),
 
     getStores() {
-      this.request({
+      this.storesLoading = true;
+      const payload = {
         method: "get",
         url: "stores"
-      })
+      };
+
+      this.request(payload)
         .then(response => {
           this.stores = response.data;
 
@@ -180,12 +186,15 @@ export default {
             this.storeDisabled = false;
           }
         })
+        .catch(error => {
+          console.log(error);
+        })
         .finally(() => {
-          this.loading = false;
+          this.storesLoading = false;
         });
     },
     submit() {
-      this.loading = true;
+      this.submitLoading = true;
 
       let payload = {
         data: {
@@ -200,7 +209,7 @@ export default {
           this.$emit("submit", true);
         })
         .finally(() => {
-          this.loading = false;
+          this.submitLoading = false;
         });
     },
     changeCashRegisters() {

@@ -184,7 +184,7 @@ export default new Vuex.Store({
     },
     cashRegisterLogout(context) {
       return new Promise((resolve, reject) => {
-        payload = {
+        const payload = {
           method: "get",
           url: "cash-register-logs/logout"
         };
