@@ -64,6 +64,7 @@ class MasOrderController extends Controller
                 $url = 'messages';
             } else {
                 $url = 'messagesj';
+                return;
             }
 
             $response = $client->post("{$this->masAccount->endpoint}/{$url}", [

@@ -83,22 +83,25 @@ class OrderController extends Controller
     {
         $this->order_data = $request->validate([
             'order_id' => 'required|exists:orders,id',
-            'customer_id' => 'required',
-            'shipping_cost' => 'numeric|nullable',
             'method' => 'required|in:pickup,delivery',
+
             'notes' => 'string|nullable',
 
-            // billing
+            // customer
+            'customer_id' => 'nullable|required_if:method,pickup,delivery|exists:customers,id',
             'billing_address_id' => 'nullable|required_if:method,delivery|exists:addresses,id',
             // delivery
             'delivery' => 'nullable|required_if:method,pickup,delivery|array',
             'delivery.date' => 'nullable|required_if:method,pickup,delivery|date',
             'delivery.time' => 'nullable|required_if:method,pickup,delivery|string',
             'delivery.occasion' => 'nullable|required_if:method,delivery|numeric',
-            // delivery address (shipping address)
+            // delivery address
             'delivery.address_id' => 'nullable|required_if:method,delivery|exists:addresses,id',
             // store_pickup
-            'delivery.store_pickup_id' => 'nullable|required_if:method,pickup|exists:store_pickups,id'
+            'delivery.store_pickup_id' => 'nullable|required_if:method,pickup|exists:store_pickups,id',
+            'delivery_fees_price' => 'nullable|array',
+            'delivery_fees_price.amount' => 'nullable|integer',
+            'delivery_fees_price.currency' => 'nullable|string|size:3',
         ]);
 
         $this->user = auth()->user();
@@ -138,6 +141,10 @@ class OrderController extends Controller
             'products.*.discount.type' => 'nullable|string|in:none,flat,percentage',
             'products.*.notes' => 'nullable|string',
             'notes' => 'string|nullable',
+            // discount
+            'discount' => 'nullable|array',
+            'discount.amount' => 'nullable|numeric|integer',
+            'discount.type' => 'nullable|string|in:none,flat,percentage',
             // customer
             'customer_id' => 'nullable|required_if:method,pickup,delivery|exists:customers,id',
             'billing_address_id' => 'nullable|required_if:method,delivery|exists:addresses,id',
@@ -153,10 +160,6 @@ class OrderController extends Controller
             'delivery_fees_price' => 'nullable|array',
             'delivery_fees_price.amount' => 'nullable|integer',
             'delivery_fees_price.currency' => 'nullable|string|size:3',
-            // discount
-            'discount' => 'nullable|array',
-            'discount.amount' => 'nullable|numeric|integer',
-            'discount.type' => 'nullable|string|in:none,flat,percentage',
         ]);
 
         $this->user = auth()->user();

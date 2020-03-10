@@ -23,11 +23,3 @@
     </v-row>
   </v-tab-item>
 </template>
-
-<script>
-export default {
-  created() {
-    console.log(this.$route.params.id);
-  }
-};
-</script>
