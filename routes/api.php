@@ -66,7 +66,7 @@ Route::delete('/addresses/{model}', 'AddressController@delete')->middleware('sco
 
 // orders
 Route::get('/orders', 'OrderController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/orders/get/{model}', 'OrderController@getOne');
+Route::get('/orders/get/{model}', 'OrderController@getOne')->middleware('scope:admin,store_manager,cashier');;
 Route::get('/orders/{model}/payment-details', 'OrderAnalysisController@getPaymentDetails'); // @TODO ADD AUTH!!
 Route::get('/orders/{model}/statuses', 'OrderStatusController@getOrderStatuses')->middleware('scope:admin,store_manager,cashier');
 Route::get('/orders/{model}/mas-status', 'MasOrderController@getOrderDetails'); // @TODO ADD AUTH!!
@@ -152,7 +152,7 @@ Route::post('/companies/search', 'CompanyController@search')->middleware('scope:
 Route::delete('/companies/{model}', 'CompanyController@delete')->middleware('scope:admin,store_manager,cashier');
 
 // products
-Route::get('/products', 'ProductController@all');
+Route::get('/products', 'ProductController@all')->middleware('scope:admin,store_manager,cashier');;
 Route::get('/products/get/{model}', 'ProductController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::get('/products/barcode/{model}', 'ProductController@getBarcode')->middleware('scope:admin,store_manager,cashier');
 Route::post('/products/create', 'ProductController@create')->middleware('scope:admin,store_manager,cashier');
