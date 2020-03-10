@@ -26,6 +26,10 @@ class GiftcardController extends Controller
             'amount' => 'required|numeric',
         ]);
 
+        if ($validatedData['enabled']) {
+            $validatedData['enabled'] = now();
+        }
+
         $giftcard = Giftcard::create($validatedData);
 
         return response(['notification' => [
@@ -43,7 +47,12 @@ class GiftcardController extends Controller
             'enabled' => 'required|boolean',
             'amount' => 'required|numeric',
         ]);
+
         $giftcard = Giftcard::findOrFail($validatedData['id']);
+
+        if ($validatedData['enabled'] && !$giftcard['enabled']) {
+            $validatedData['enabled'] = now();
+        }
 
         $giftcard->fill($validatedData);
         $giftcard->save();

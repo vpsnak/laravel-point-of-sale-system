@@ -12,6 +12,7 @@
         pill
         v-on="$props.method === 'retail' || !$props.menu ? '' : on"
         :color="parseMethod.color"
+        :small="small"
       >
         <v-icon left>{{ parseMethod.icon }}</v-icon>
         {{ parseMethod.name }}
@@ -28,17 +29,30 @@
   </v-menu>
 </template>
 <script>
+import { EventBus } from "../../../plugins/eventBus";
+
 export default {
   props: {
+    small: Boolean,
     title: Boolean,
     menu: Boolean,
     method: String
+  },
+
+  beforeDestroy() {
+    EventBus.$off("overlay");
   },
 
   data() {
     return {
       methodDetails: false
     };
+  },
+
+  watch: {
+    methodDetails(value) {
+      EventBus.$emit("overlay", value);
+    }
   },
 
   computed: {

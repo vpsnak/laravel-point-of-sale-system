@@ -14,12 +14,14 @@ class CreateGiftcardsTable extends Migration
     public function up()
     {
         Schema::create('giftcards', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->mediumIncrements('id');
+
             $table->string('name');
             $table->string('code');
-            $table->boolean('enabled')->default(0);
-            $table->decimal('amount', 10, 2)->default(0);
-            $table->timestamps();
+            $table->timestampTz('enabled')->nullable();
+            $table->json('price');
+
+            $table->timestampsTz();
         });
     }
 

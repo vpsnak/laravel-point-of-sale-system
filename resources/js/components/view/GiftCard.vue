@@ -7,7 +7,7 @@
           <v-card-text>
             <div class="subtitle-1">Code: {{ giftCardData.code }}</div>
             <div class="subtitle-1">
-              Is enabled: {{ giftCardData.enabled ? "Yes" : "No" }}
+              Enabled: {{ giftCardData.is_enabled ? "Yes" : "No" }}
             </div>
             <div class="subtitle-1">Amount: {{ giftCardData.amount }} $</div>
             <div class="subtitle-1">

@@ -22,8 +22,8 @@ class StoreSeeder extends Seeder
                 'city' => 'New York NY',
                 'active' => true,
                 'is_phone_center' => false,
+                'default_currency' => 'USD',
                 'tax_id' => 1,
-                'user_id' => 1,
             ],
             [
                 'company_id' => 2,
@@ -34,8 +34,8 @@ class StoreSeeder extends Seeder
                 'city' => 'New York NY',
                 'active' => true,
                 'is_phone_center' => true,
+                'default_currency' => 'USD',
                 'tax_id' => 1,
-                'user_id' => 1,
             ],
             [
                 'company_id' => 2,
@@ -46,8 +46,8 @@ class StoreSeeder extends Seeder
                 'city' => 'New York NY',
                 'active' => true,
                 'is_phone_center' => false,
+                'default_currency' => 'USD',
                 'tax_id' => 1,
-                'user_id' => 1,
             ]
         ]);
     }

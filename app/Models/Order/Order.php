@@ -2,9 +2,11 @@
 
 namespace App;
 
-use App\Helper\Price;
 use Illuminate\Database\Eloquent\Model;
+use Money\Money;
+use Money\Currency;
 use AjCastro\EagerLoadPivotRelations\EagerLoadPivotTrait;
+
 
 class Order extends Model
 {
@@ -12,34 +14,32 @@ class Order extends Model
 
     protected $appends = [
         'status',
-        'total',
-        'total_without_tax',
-        'total_paid',
-        'total_tax',
-        'total_item_cost',
-        'remaining'
+        'mdse_price',
+        'tax_price',
+        'total_price',
+        'paid_price',
+        'remaining_price',
     ];
 
     protected $fillable = [
-        'mas_order_id',
-        'customer_id',
-        'store_id',
-        'user_id',
+        // validation
+        'method',
         'items',
-        'discount_type',
-        'discount_amount',
-        'tax',
-        'subtotal',
-        'change',
-        'shipping_cost',
+        'notes',
+        'customer_id',
         'billing_address',
         'delivery',
-        'method',
-        'notes',
-
+        'delivery_fees_price',
+        'discount',
+        // auto fill-handle
+        'store_id',
+        'currency',
+        'tax_percentage',
+        'user_id',
+        'mas_order_id',
         'magento_id',
         'magento_shipping_address_id',
-        'magento_billing_address_id',
+        'magento_billing_address_id'
     ];
 
     protected $with = [
@@ -47,72 +47,69 @@ class Order extends Model
         'payments',
         'customer',
         'store',
-        'created_by'
+        'createdBy'
+    ];
+
+    protected $hidden = [
+        'customer_id',
+        'store_id',
+        'user_id',
+        'mas_order_id',
+        'magento_id',
+        'magento_shipping_address_id',
+        'magento_billing_address_id'
     ];
 
     protected $casts = [
-        'delivery' => 'array',
-        'items' => 'array',
-        'shipping_cost' => 'float',
-        'created_at' => "datetime:m/d/Y H:i:s",
-        'updated_at' => "datetime:m/d/Y H:i:s"
+        'discount' => 'array',
+        'created_at' => 'datetime:m/d/Y H:i:s',
+        'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
 
-    public function getRemainingAttribute()
+    public function setDiscountAttribute($value)
     {
-        $remaining = Price::numberPrecision($this->total - $this->total_paid);
-
-        if ($remaining < 0) {
-            return 0;
-        } else {
-            return $remaining;
+        if (is_array($value)) {
+            if (!isset($value['amount']) || !$value['amount']) {
+                $value['type'] = 'none';
+                $value['amount'] = null;
+            }
+            $value = json_encode($value);
         }
-    }
-
-    public function getDeliveryAddressAttribute()
-    {
-        return $this->delivery['address'];
+        $this->attributes['discount'] = $value;
     }
 
     public function setDeliveryAddressAttribute($value)
     {
         if (is_array($value)) {
-            $this->attributes['delivery']['address'] = json_encode($value);
-        } else {
-            $this->attributes['delivery']['address'] = $value;
+            $value = json_encode($value);
         }
+        $this->attributes['delivery']['address'] = $value;
     }
 
-    public function getStorePickupAttribute()
+    public function getDeliveryAttribute()
     {
-        return $this->delivery['store_pickup'];
-    }
-
-    public function setPickupPointAttribute($value)
-    {
-        if (is_array($value)) {
-            $this->attributes['delivery']['store_pickup'] = json_encode($value);
-        } else {
-            $this->attributes['delivery']['store_pickup'] = $value;
-        }
+        return json_decode($this->attributes['delivery'], true);
     }
 
     public function setDeliveryAttribute($value)
     {
         if (is_array($value)) {
-            $this->attributes['delivery'] = json_encode($value);
-        } else {
-            $this->attributes['delivery'] = $value;
+            $value = json_encode($value);
         }
+        $this->attributes['delivery'] = $value;
+    }
+
+    public function getItemsAttribute($value)
+    {
+        return json_decode($value, true);
     }
 
     public function setItemsAttribute($value)
     {
         if (is_array($value)) {
-            $this->attributes['items'] = json_encode($value);
-        } else {
-            $this->attributes['items'] = $value;
+            $value = json_encode($value);
         }
+        $this->attributes['items'] = $value;
     }
 
     public function getBillingAddressAttribute($value)
@@ -123,68 +120,102 @@ class Order extends Model
     public function setBillingAddressAttribute($value)
     {
         if (is_array($value)) {
-            $this->attributes['billing_address'] = json_encode($value);
-        } else {
-            $this->attributes['billing_address'] = $value;
+            $value = json_encode($value);
         }
+        $this->attributes['billing_address'] = $value;
     }
 
-    public function getShippingAddressAttribute($value)
+    public function getMdsePriceAttribute()
     {
-        return json_decode($value, true);
-    }
-
-    public function setShippingAddressAttribute($value)
-    {
-        if (is_array($value)) {
-            $this->attributes['shipping_address'] = json_encode($value);
-        } else {
-            $this->attributes['shipping_address'] = $value;
-        }
-    }
-
-    public function getTotalItemCostAttribute()
-    {
-        $totalItemCost = $this->total_without_tax - $this->shipping_cost;
-        return Price::numberPrecision(abs($totalItemCost));
-    }
-
-    public function getTotalAttribute()
-    {
-        $total = $this->total_without_tax;
-        $total = Price::calculateTax($total, $this->tax);
-
-        return Price::numberPrecision(($total * 100) / 100);
-    }
-
-    public function getTotalWithoutTaxAttribute()
-    {
-        $total = 0;
+        $mdsePrice = new Money(0, new Currency($this->currency));
         foreach ($this->items as $item) {
-            $price = $item['price'] * (int) $item['qty'];
-            $total += Price::calculateDiscount($price, $item['discount_type'], $item['discount_amount']);
-        };
-
-        $total = Price::calculateDiscount($total, $this->discount_type, $this->discount_amount);
-        $total += $this->shipping_cost;
-
-        return Price::numberPrecision($total);
-    }
-
-    public function getTotalPaidAttribute()
-    {
-        $total_paid = 0;
-        foreach ($this->payments as $payment) {
-            if ($payment->status !== 'failed' && !$payment->status !== 'pending') {
-                $total_paid += $payment->amount;
+            $price = new Money($item['price']['amount'], new Currency($this->currency));
+            $price = $price->multiply($item['qty']);
+            if (isset($item['discount']) && isset($item['discount']['type']) && isset($item['discount']['amount'])) {
+                switch ($item['discount']['type']) {
+                    case 'flat':
+                        $price = $price->subtract(new Money($item['discount']['amount'], new Currency($this->currency)));
+                        break;
+                    case 'percentage':
+                        $price = $price->multiply($item['discount']['amount'])->divide(100);
+                        break;
+                    default:
+                    case 'none':
+                        break;
+                }
             }
-        };
-        return Price::numberPrecision($total_paid + $this->change);
+            $mdsePrice = $mdsePrice->add($price);
+        }
+
+        if (isset($this->discount) && isset($this->discount['type']) && isset($this->discount['amount'])) {
+            switch ($this->discount['type']) {
+                case 'flat':
+                    $amount = new Money($this->discount['amount'], new Currency($this->currency));
+                    $mdsePrice = $mdsePrice->subtract($amount);
+                    break;
+                case 'percentage':
+                    $amount = $this->discount['amount'];
+                    $discount = $mdsePrice->multiply($amount)->divide(100);
+                    $mdsePrice = $mdsePrice->subtract($discount);
+                    break;
+                default:
+                    break;
+            }
+        }
+        return $mdsePrice;
     }
 
-    public function getTotalTaxAttribute()
+    public function getDeliveryFeesPriceAttribute()
     {
-        return Price::numberPrecision($this->total - $this->total_without_tax);
+        if (isset($this->attributes['delivery_fees_price'])) {
+            $price = json_decode($this->attributes['delivery_fees_price'], true);
+            $currency = $price['currency'] ?? $this->currency;
+            return new Money($price['amount'], new Currency($currency));
+        } else {
+            return new Money(0,  new Currency($this->currency));
+        }
+    }
+
+    public function setDeliveryFeesPriceAttribute($value)
+    {
+        if (is_array($value) || $value instanceof Money) {
+            $value = json_encode($value);
+        }
+
+        $this->attributes['delivery_fees_price'] = $value;
+    }
+
+    public function getTaxPriceAttribute()
+    {
+        return $this
+            ->mdse_price
+            ->add($this->delivery_fees_price)
+            ->multiply($this->tax_percentage / 100);
+    }
+
+    public function getTotalPriceAttribute()
+    {
+        return $this
+            ->tax_price
+            ->add($this->mdse_price)
+            ->add($this->delivery_fees_price);
+    }
+
+    public function getPaidPriceAttribute()
+    {
+        $paidPrice = new Money(0, new Currency($this->currency));
+        foreach ($this->payments as $payment) {
+            if ($payment->status === 'approved') {
+                $paidPrice = $paidPrice->add($payment->price);
+                $paidPrice = $paidPrice->subtract($payment->change_price);
+            }
+        }
+        return $paidPrice;
+    }
+
+    public function getRemainingPriceAttribute()
+    {
+        return $this->total_price->subtract($this->paid_price);
     }
 
     public function masOrder()
@@ -207,7 +238,7 @@ class Order extends Model
         return $this->belongsTo(Store::class);
     }
 
-    public function created_by()
+    public function createdBy()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
@@ -229,10 +260,12 @@ class Order extends Model
 
     public function statuses()
     {
-        return $this->belongsToMany(Status::class)
+        return $this
+            ->belongsToMany(Status::class)
             ->using(OrderStatus::class)
             ->withPivot('user_id')
-            ->withTimestamps(['created_at']);
+            ->withTimestamps(['created_at'])
+            ->orderBy('id', 'desc');
     }
 
     public function lastStatus()

@@ -13,7 +13,7 @@ class OrderStatus extends Pivot
     ];
 
     protected $casts = [
-        'created_at' => "datetime:m/d/Y H:i:s",
+        'created_at' => 'datetime:m/d/Y H:i:s',
     ];
 
     public function processedBy()

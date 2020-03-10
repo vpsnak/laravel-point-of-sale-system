@@ -10,13 +10,11 @@ class Product extends Model
     const LARAVEL_STORE_ID = 1;
     const MAGENTO_STORE_ID = 2;
 
-    protected $appends = ['final_price', 'stock', 'magento_stock', 'laravel_stock', 'original_price'];
+    protected $appends = ['stock', 'magento_stock', 'laravel_stock', 'original_price'];
 
-    protected $with = ['stores', 'price', 'categories'];
+    protected $with = ['stores', 'categories'];
 
     protected $fillable = [
-        'magento_id',
-        'stock_id',
         'sku',
         'name',
         'barcode',
@@ -24,29 +22,49 @@ class Product extends Model
         'url',
         'plantcare_pdf',
         'description',
-        'editable_price'
+        'editable_price',
+        'price',
+        'discount',
+        'is_discountable',
+
+        'magento_id',
+        'stock_id',
     ];
 
     protected $casts = [
-        'created_at' => "datetime:m/d/Y H:i:s",
-        'updated_at' => "datetime:m/d/Y H:i:s"
+        'price' => 'array',
+        'discount' => 'array',
+        'is_discountable' => 'boolean',
+        'editable_price' => 'boolean',
+        'created_at' => 'datetime:m/d/Y H:i:s',
+        'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
+
+    public function setDiscountAttribute($value)
+    {
+        if (is_array($value)) {
+            $value = json_encode($value);
+        }
+
+        $this->attributes['discount'] = $value;
+    }
+
+    public function setPriceAttribute($value)
+    {
+        if (is_string($value)) {
+            $value = json_decode($value, true);
+        }
+
+        if (isset($value['amount'])) {
+            $value['amount'] = (int) $value['amount'];
+        }
+
+        $this->attributes['price'] = json_encode($value);
+    }
 
     public function getOriginalPriceAttribute()
     {
-        return $this->price->amount;
-    }
-
-    public function getFinalPriceAttribute()
-    {
-        if (!empty($this->price->discount)) {
-            return Price::calculateDiscount(
-                $this->price->amount,
-                $this->price->discount->type,
-                $this->price->discount->amount
-            );
-        }
-        return $this->price->amount;
+        return $this->price;
     }
 
     public function getStockAttribute()
@@ -99,13 +117,8 @@ class Product extends Model
         return $this->belongsToMany(Category::class);
     }
 
-    public function price()
+    public function cards()
     {
-        return $this->morphOne('App\Price', 'priceable');
-    }
-
-      public function cards()
-    {
-        return $this->morphMany('App\Card','cardable');
+        return $this->morphMany('App\Card', 'cardable');
     }
 }

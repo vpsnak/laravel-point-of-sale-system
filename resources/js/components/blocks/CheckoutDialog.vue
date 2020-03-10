@@ -94,20 +94,10 @@ export default {
       "order_status",
       "checkoutDialog",
       "currentCheckoutStep",
-      "paymentLoading",
-      "refundLoading",
       "completeOrderLoading"
     ]),
     disableControls() {
-      if (
-        this.paymentLoading ||
-        this.refundLoading ||
-        this.completeOrderLoading
-      ) {
-        return true;
-      } else {
-        return false;
-      }
+      return false;
     },
     closeBtnTxt() {
       return this.order_id && this.currentCheckoutStep !== 3

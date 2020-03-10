@@ -12,7 +12,7 @@
           <createdByChip
             :title="true"
             :menu="true"
-            :created_by="order_created_by"
+            :createdBy="order_created_by"
           />
         </v-col>
         <v-col :lg="4" :md="6" :cols="12" class="text-center">

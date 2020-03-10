@@ -16,19 +16,22 @@ $code = $barcode->generate();
 
 <html lang="en">
 ​
+
 <head>
     <meta charset="UTF-8">
     <title>Order</title>
 </head>
 <style>
     @page {
-   size: 7in 9.25in;
-   margin: 27mm 16mm 27mm 16mm;
-}
+        size: 7in 9.25in;
+        margin: 27mm 16mm 27mm 16mm;
+    }
+
     body {
         width: 700px;
         height: auto;
     }
+
     .products-table thead {
         margin-bottom: 3px;
     }
@@ -42,21 +45,23 @@ $code = $barcode->generate();
         border-collapse: collapse;
         width: 100%;
     }
-    .order_header{
+
+    .order_header {
         font-weight: bold;
     }
 
-    .store_name{
+    .store_name {
         text-transform: uppercase;
     }
-    
-    .store{
+
+    .store {
         display: flex;
         justify-content: space-between;
         text-transform: uppercase;
         font-weight: normal;
         font-style: italic;
     }
+
     .total {
         font-size: 13px;
         font-weight: bold;
@@ -74,6 +79,7 @@ $code = $barcode->generate();
         text-align: left;
         font-weight: normal;
     }
+
     .phone {
         text-align: center;
     }
@@ -102,37 +108,37 @@ $code = $barcode->generate();
         <div class="order">
             <div class="order_header">
                 <span class="store_name">
-                {{ $store->name }}
+                    {{ $store->name }}
                 </span>
                 <div class="space_between">
                     <p>
-                     Invoice: {{ $order->id }}
+                        Invoice: {{ $order->id }}
                     </p>
                     <p>
-                      Requested: {{ $order->created_at->format('m/d/Y l') }}
+                        Requested: {{ $order->created_at->format('m/d/Y l') }}
                     </p>
                 </div>
                 <div class="barcode">
                     <img src="data:image/png;base64,{{ $code }}">
                 </div>
-                  <div class="store">
+                <div class="store">
                     <p>
-                     {{ $order->created_at->format('m/d/Y H:i:s') }}
+                        {{ $order->created_at->format('m/d/Y H:i:s') }}
                     </p>
                     <p>
-                      {{ $store->street }}
+                        {{ $store->street }}
                     </p>
                     <p>
                         {{ $store->city }}
                         {{ $store->postcode }}
                     </p>
                     <p>
-                      {{ $store->phone }}
+                        {{ $store->phone }}
                     </p>
                 </div>
             </div>
             @if($order->billing_address && $order->delivery['address'] )
-             <table class="no-border">
+            <table class="no-border">
                 <tbody>
                     <tr>
                         <td class="small-header">Sold To:</td>
@@ -154,9 +160,12 @@ $code = $barcode->generate();
                     </tr>
                     <tr>
                         <td class="small-header"></td>
-                        <td>{{ $order->billing_address['city'] }} {{ $order->billing_address['region']['code'] }} {{ $order->billing_address['postcode'] }}</td>
+                        <td>{{ $order->billing_address['city'] }} {{ $order->billing_address['region']['code'] }}
+                            {{ $order->billing_address['postcode'] }}</td>
                         <td class="spaced-header"></td>
-                        <td>{{ $order->delivery['address']['city'] }} {{ $order->delivery['address']['region']['code'] }} {{ $order->delivery['address']['postcode'] }}</td>
+                        <td>{{ $order->delivery['address']['city'] }}
+                            {{ $order->delivery['address']['region']['code'] }}
+                            {{ $order->delivery['address']['postcode'] }}</td>
                     </tr>
                     <tr>
                         <td class="small-header"></td>
@@ -191,7 +200,7 @@ $code = $barcode->generate();
                     </tr>
                     <tr>
                         <td class="small-header">Sales Rep:</td>
-                        <td>{{ $order->created_by->name }}</td>
+                        <td>{{ $order->createdBy->name }} </td>
                         <td class="spaced-header">Inst2:</td>
                         <td></td>
                     </tr>
@@ -231,27 +240,28 @@ $code = $barcode->generate();
                     <tr>
                         <td></td>
                         <td>{{ $item['name'] }}</td>
-                    @if(array_key_exists('notes', $item))
+                        @if(array_key_exists('notes', $item))
                         <td colspan="2">{{  $item['notes']  }}</td>
-                    @else
-                    <td colspan="2"></td>
-                    @endif
+                        @else
+                        <td colspan="2"></td>
+                        @endif
                         <td style="text-align: center;">{{ $item['qty'] }}</td>
-                        <td>{{ $item['price'] }}</td>
-                        <td >{{ $item['price'] * $item['qty'] }}</td>
+                        <td>{{ $item['price']['amount'] }}</td>
+                        <td>{{ $item['price']['amount'] * $item['qty'] }}</td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
             <div class="total">
-            <span>Mdse Amount: ${{ $order->total_paid }}</span>
-            <span>Sales Tax: ${{ $order->total - $order->total_without_tax }}</span>
+                <span>Mdse Amount: ${{ $order->mdse_price->getAmount() }}</span>
+                <span>Sales Tax: ${{ $order->tax_price->getAmount() }}</span>
             </div>
-            <p style="text-align:end;">Invoice Total: ${{ $order->total }}</p>
+            <p style="text-align:end;">Invoice Total: ${{ $order->total_price->getAmount() }}</p>
             <br>
-            <p style="text-align:end;">Net Invoice Total: ${{ $order->total}}</p>
+            <p style="text-align:end;">Net Invoice Total: ${{ $order->total_price->getAmount() }}</p>
             <br>
             <span>Signed By:___________________</span>
         </div>
     </body>
+
 </html>

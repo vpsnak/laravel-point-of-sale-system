@@ -6,7 +6,7 @@
         <h4 class="title-2">{{ title }}</h4>
       </div>
 
-      <v-spacer></v-spacer>
+      <v-spacer />
 
       <cartMethods v-if="$props.showMethods" />
     </div>
@@ -18,24 +18,21 @@
       :editable="$props.editable"
       :keywordLength="3"
       class="pa-3"
-    ></customerSearch>
+    />
 
     <v-divider class="py-1" v-if="$props.showCustomer" />
 
-    <cartProducts :editable="$props.editable"></cartProducts>
+    <cartProducts :editable="$props.editable" />
 
     <v-divider />
 
     <div class="d-flex flex-column">
-      <v-row class="d-flex justify-start align-center">
-        <v-col :cols="4" class="px-5 py-0">
+      <v-row align="center" justify="space-around" dense>
+        <v-col :cols="4">
           <v-label>Cart discount</v-label>
         </v-col>
-        <v-col :cols="4" class="px-2 py-0">
-          <cartDiscount
-            :product_index="-1"
-            :editable="$props.editable"
-          ></cartDiscount>
+        <v-col :cols="8">
+          <cartDiscount :productIndex="-1" :editable="$props.editable" />
         </v-col>
       </v-row>
 
@@ -44,7 +41,7 @@
       <cartTotals />
 
       <cartActions v-if="$props.showActions" :disabled="totalProducts" />
-      <orderSave v-else-if="$props.showSave" url="update-items"></orderSave>
+      <orderSave v-else-if="$props.showSave" url="update-items" />
     </div>
   </v-card>
 </template>

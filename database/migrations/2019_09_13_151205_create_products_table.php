@@ -14,9 +14,7 @@ class CreateProductsTable extends Migration
     public function up()
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('magento_id')->default(0);
-            $table->unsignedBigInteger('stock_id')->default(0);
+            $table->mediumIncrements('id');
 
             $table->string('sku')->unique()->index();
             $table->string('name')->index();
@@ -25,10 +23,16 @@ class CreateProductsTable extends Migration
             $table->string('url')->nullable();
             $table->string('plantcare_pdf')->nullable();
             $table->boolean('editable_price')->nullable()->default(true);
+            $table->boolean('is_discountable')->nullable()->default(true);
+            $table->json('price');
+            $table->json('discount')->nullable();
 
             $table->text('description')->nullable();
 
-            $table->timestamps();
+            $table->unsignedMediumInteger('magento_id')->nullable();
+            $table->unsignedMediumInteger('stock_id')->nullable();
+
+            $table->timestampsTz();
         });
     }
 

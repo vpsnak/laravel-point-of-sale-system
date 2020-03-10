@@ -2,7 +2,7 @@ import "@mdi/font/css/materialdesignicons.css";
 import "material-design-icons-iconfont/dist/material-design-icons.css";
 import "velocity-animate";
 import Cookies from "js-cookie";
-// window.Velocity = require("velocity-animate");
+
 window._ = require("lodash");
 window.Pusher = require("pusher-js");
 

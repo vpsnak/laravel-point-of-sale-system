@@ -14,29 +14,31 @@ class CreateOrdersTable extends Migration
     public function up()
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->mediumIncrements('id');
 
-            $table->enum('discount_type', ['none', 'flat', 'percentage'])->nullable()->default('none');
-            $table->decimal('discount_amount', 10, 2)->nullable()->default(0);
-            $table->decimal('tax')->unsigned();
-            $table->decimal('shipping_cost', 10, 2)->nullable()->default(0);
-            $table->decimal('subtotal', 10, 2);
-            $table->decimal('change', 10, 2)->default(0);
-            $table->text('notes')->nullable();
+            $table->unsignedTinyInteger('store_id');
+            $table->enum('method', ['retail', 'pickup', 'delivery']);
             $table->json('items');
+            $table->text('notes')->nullable();
+
+            $table->unsignedMediumInteger('customer_id')->nullable();
             $table->json('billing_address')->nullable();
             $table->json('delivery')->nullable();
-            $table->enum('method', ['retail', 'pickup', 'delivery']);
 
-            $table->unsignedBigInteger('mas_order_id')->nullable();
-            $table->unsignedBigInteger('customer_id')->nullable();
-            $table->unsignedBigInteger('store_id');
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('magento_id')->nullable();
-            $table->unsignedBigInteger('magento_shipping_address_id')->nullable();
-            $table->unsignedBigInteger('magento_billing_address_id')->nullable();
+            $table->unsignedDecimal('tax_percentage', 6, 4);
 
-            $table->timestamps();
+            $table->string('currency', 3);
+            $table->json('discount')->nullable();
+            $table->json('delivery_fees_price')->nullable();
+
+            $table->unsignedSmallInteger('user_id');
+            $table->unsignedMediumInteger('mas_order_id')->nullable();
+
+            $table->unsignedMediumInteger('magento_id')->nullable();
+            $table->unsignedMediumInteger('magento_shipping_address_id')->nullable();
+            $table->unsignedMediumInteger('magento_billing_address_id')->nullable();
+
+            $table->timestampsTz();
         });
     }
 

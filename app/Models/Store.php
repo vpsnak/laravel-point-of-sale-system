@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Store extends Model
 {
+    public $timestamps = false;
+
     protected $with = [
         'company',
-        'tax'
+        'tax',
     ];
 
     protected $fillable = [
@@ -23,14 +25,12 @@ class Store extends Model
         'is_phone_center',
         'company_id',
         'tax_id',
-        'user_id',
+        'default_currency'
     ];
 
     protected $casts = [
         'is_phone_center' => 'boolean',
-        'active' => 'boolean',
-        'created_at' => "datetime:m/d/Y H:i:s",
-        'updated_at' => "datetime:m/d/Y H:i:s"
+        'active' => 'boolean'
     ];
 
     public function products()
@@ -38,7 +38,7 @@ class Store extends Model
         return $this->belongsToMany(Product::class);
     }
 
-    public function cash_registers()
+    public function cashRegisters()
     {
         return $this->hasMany(CashRegister::class);
     }

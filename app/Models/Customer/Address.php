@@ -9,7 +9,6 @@ class Address extends Model
     protected $with = ['region'];
 
     protected $fillable = [
-        'magento_id',
         'first_name',
         'last_name',
         'street',
@@ -24,15 +23,16 @@ class Address extends Model
         'is_default_shipping',
         'location',
         'location_name',
-        'customer_id'
+        'customer_id',
+
+        'magento_id'
     ];
 
     protected $casts = [
         'is_default_billing' => 'boolean',
         'is_default_shipping' => 'boolean',
-        'location' => 'integer',
-        'created_at' => "datetime:m/d/Y H:i:s",
-        'updated_at' => "datetime:m/d/Y H:i:s"
+        'created_at' => 'datetime:m/d/Y H:i:s',
+        'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
 
     protected $hidden = [

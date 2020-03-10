@@ -14,19 +14,19 @@ class CreateElavonApiPaymentsTable extends Migration
     public function up()
     {
         Schema::create('elavon_api_payments', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('payment_id');
+            $table->mediumIncrements('id');
+            $table->unsignedMediumInteger('payment_id');
 
             $table->string('txn_id')->nullable();
             $table->string('transaction')->nullable();
             $table->string('card_number')->nullable();
             $table->string('card_holder')->nullable();
             $table->string('status')->nullable();
-            $table->text('log');
+            $table->json('log');
 
             $table->foreign('payment_id')->references('id')->on('payments')->onDelete('cascade');
 
-            $table->timestamps();
+            $table->timestampsTz();
         });
     }
 

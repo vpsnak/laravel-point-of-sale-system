@@ -63,7 +63,9 @@ export default {
         .then(() => {
           this.$router.replace({ name: "landingPage" });
         })
-        .catch()
+        .catch(error => {
+          console.log(error);
+        })
         .finally(() => {
           this.loading = false;
         });

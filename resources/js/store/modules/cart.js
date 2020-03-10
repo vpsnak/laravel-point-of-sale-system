@@ -4,16 +4,13 @@ export default {
   state: {
     tax_percentage: 0,
     checkoutDialog: false,
-    refund_loading: false,
-    payment_loading: false,
-    complete_order_loading: false,
     payments: [],
 
     is_valid: false,
     isValidCheckout: false,
     discount_error: false,
 
-    discountErrors: [],
+    productMap: [],
 
     locations: [
       { id: 1, label: "Funeral Home" },
@@ -44,16 +41,16 @@ export default {
 
     discountTypes: [
       {
-        label: "None",
-        value: null
+        text: "None",
+        value: "none"
       },
       {
-        label: "Flat",
-        value: "Flat"
+        text: "Flat",
+        value: "flat"
       },
       {
-        label: "Percentage",
-        value: "Percentage"
+        text: "Percentage",
+        value: "percentage"
       }
     ],
 
@@ -87,11 +84,10 @@ export default {
 
     customer: null,
     method: "retail",
-    shipping_cost: null,
+    delivery_fees_price: { amount: 0 },
     cart_products: [],
 
-    discount_type: "",
-    discount_amount: 0,
+    order_discount: { type: "none", amount: null },
 
     delivery: {
       store_pickup_id: null,
@@ -107,12 +103,11 @@ export default {
     order_store: null,
     order_status: null,
     order_mas_order: null,
-    order_total: 0,
-    order_total_without_tax: 0,
-    order_total_tax: 0,
-    order_total_item_cost: 0,
-    order_change: 0,
-    order_remaining: 0,
+    order_total_price: { amount: 0 },
+    order_mdse_price: { amount: 0 },
+    order_tax_price: { amount: 0 },
+    order_change_price: { amount: 0 },
+    order_remaining_price: { amount: 0 },
     order_notes: null,
     order_billing_address: null,
     order_delivery_address: null,
@@ -129,17 +124,11 @@ export default {
       state.order_page_actions = value;
     },
     setReorder(state, items) {
-      let strippedItems = items.map(
-        ({ discount_type, discount_amount, ...attrs }) => attrs
-      );
-
+      const strippedItems = items.map(({ discount, ...attrs }) => attrs);
       state.cart_products = strippedItems;
     },
     setCartProduct(state, payload) {
       state.cart_products[payload.index] = payload.value;
-    },
-    setOrderTotalItemCost(state, value) {
-      state.order_total_item_cost = value;
     },
     setOrderStore(state, value) {
       state.order_store = value;
@@ -192,41 +181,33 @@ export default {
     setOrderMasOrderStatus(state, value) {
       state.order_mas_order = value;
     },
-    setOrderTotal(state, value) {
-      state.order_total = value;
+    setOrderTotalPrice(state, value) {
+      state.order_total_price = value;
     },
-    setOrderTotalPaid(state, value) {
-      state.order_total_paid = value;
+    setOrderPaidPrice(state, value) {
+      state.order_paid_price = value;
     },
-    setOrderTotalWithoutTax(state, value) {
-      state.order_total_without_tax = value;
+    setOrderTaxPrice(state, value) {
+      state.order_tax_price = value;
     },
-    setOrderTotalTax(state, value) {
-      state.order_total_tax = value;
+    setOrderMdsePrice(state, value) {
+      state.order_mdse_price = value;
     },
-    setOrderChange(state, value) {
-      state.order_change = value;
+    setOrderChangePrice(state, value) {
+      state.order_change_price = value;
     },
-    setOrderRemaining(state, value) {
-      state.order_remaining = value;
-    },
-    setCompleteOrderLoading(state, value) {
-      state.complete_order_loading = value;
-    },
-    setPaymentLoading(state, value) {
-      state.payment_loading = value;
-    },
-    setRefundLoading(state, value) {
-      state.refund_loading = value;
+    setOrderRemainingPrice(state, value) {
+      state.order_remaining_price = value;
     },
     setTaxPercentage(state, value) {
       state.tax_percentage = value;
     },
-    setCartDiscountType(state, value) {
-      state.discount_type = value;
-    },
-    setCartDiscountAmount(state, value) {
-      state.discount_amount = value;
+    setCartDiscount(state, value) {
+      if (value.type) {
+        state.order_discount.type = value.type;
+      }
+
+      state.order_discount.amount = value.amount;
     },
     setDiscountError(state, value) {
       state.discount_error = value;
@@ -259,13 +240,13 @@ export default {
       state.isValidCheckout = value;
     },
     isValidDiscount(state) {
-      let result = true;
+      var result = true;
 
       if (state.discount_error) {
         result = false;
       }
 
-      state.cart_products.forEach(product => {
+      state.productMap.forEach(product => {
         if (product.discount_error) {
           result = false;
         }
@@ -273,8 +254,8 @@ export default {
 
       state.isValidCheckout = result;
     },
-    setShippingCost(state, value) {
-      state.shipping_cost = value;
+    setDeliveryFeesPrice(state, value) {
+      state.delivery_fees_price = value;
     },
     addProduct(state, newProduct) {
       let index = _.findIndex(state.cart_products, product => {
@@ -284,31 +265,40 @@ export default {
       if (index !== -1) {
         state.cart_products[index].qty++;
       } else {
-        let clonedProduct = _.cloneDeep(newProduct);
+        const clonedProduct = _.cloneDeep(newProduct);
         Vue.set(clonedProduct, "qty", 1);
 
         state.cart_products.push(clonedProduct);
+        state.productMap.push({
+          id: clonedProduct.id,
+          discount_error: false
+        });
       }
     },
     removeProduct(state, index) {
+      const productId = state.cart_products[index].id;
+      const productMapindex = _.findIndex(state.productMap, {
+        id: productId
+      });
+
       state.cart_products.splice(index, 1);
+      state.productMap.splice(productMapindex, 1);
     },
     increaseProductQty(state, target_product) {
       const index = _.findIndex(state.cart_products, product => {
         return product.id === target_product.id;
       });
 
-      if (index != -1) {
+      if (index !== -1) {
         state.cart_products[index].qty++;
       }
     },
     decreaseProductQty(state, target_product) {
       const index = _.findIndex(state.cart_products, product => {
         return product.id === target_product.id;
-        setOrderTimestamp;
       });
 
-      if (index != -1 && state.cart_products[index].qty > 1) {
+      if (index !== -1 && state.cart_products[index].qty > 1) {
         state.cart_products[index].qty--;
       }
     },
@@ -338,6 +328,8 @@ export default {
       }
     },
     resetState(state) {
+      state.productMap = [];
+
       state.order_id = null;
       state.order_store_id = null;
 
@@ -346,15 +338,13 @@ export default {
       state.order_status = null;
       state.order_mas_order = null;
 
-      state.order_total = 0;
-      state.order_total_tax = 0;
-      state.order_total_without_tax = 0;
-      state.order_remaining = 0;
-      state.order_change = 0;
-      state.order_total_paid = 0;
-      state.order_total_item_cost = 0;
-      state.shipping_cost = 0;
-
+      state.order_total_price = { amount: 0 };
+      state.order_tax_price = { amount: 0 };
+      state.order_remaining_price = { amount: 0 };
+      state.order_change_price = { amount: 0 };
+      state.order_paid_price = { amount: 0 };
+      state.order_mdse_price = { amount: 0 };
+      state.delivery_fees_price = { amount: 0 };
       state.payments = [];
       state.order_notes = "";
 
@@ -364,8 +354,7 @@ export default {
       state.customer = null;
 
       state.cart_products = [];
-      state.discount_type = "";
-      state.discount_amount = 0;
+      state.order_discount = { type: "none", amount: null };
 
       state.checkoutSteps[0].name = "Cash & Carry";
       state.checkoutSteps[0].icon = "mdi-cart-arrow-right";
@@ -382,9 +371,8 @@ export default {
         occasion: 9
       };
       state.billing_address_id = null;
-      state.complete_order_loading = false;
     },
-    resetShipping(state, hard) {
+    resetDelivery(state, hard) {
       state.delivery = {
         address_id: null,
         date: null,
@@ -407,6 +395,14 @@ export default {
     }
   },
   actions: {
+    addProduct(context, payload) {
+      context.commit("addProduct", payload);
+      context.commit("isValidDiscount");
+    },
+    removeProduct(context, index) {
+      context.commit("removeProduct", index);
+      context.commit("isValidDiscount");
+    },
     mailReceipt(context, payload) {
       return new Promise((resolve, reject) => {
         axios
@@ -496,11 +492,10 @@ export default {
           method: "post",
           url: `orders/${url}`,
           data: {
-            order_id: context.state.order_id || null,
+            order_id: context.state.order_id,
             products: context.state.cart_products,
             method: context.state.method,
-            discount_type: context.state.discount_type,
-            discount_amount: context.state.discount_amount,
+            discount: context.state.order_discount,
             customer_id: context.state.customer
               ? context.state.customer.id
               : "",
@@ -511,7 +506,7 @@ export default {
 
         if (context.state.method !== "retail") {
           payload.data.delivery = context.state.delivery;
-          payload.data.shipping_cost = context.state.shipping_cost;
+          payload.data.delivery_fees_price = context.state.delivery_fees_price;
         }
 
         context
@@ -520,12 +515,8 @@ export default {
             if (url === "create") {
               context.commit("setOrderId", response.order_id);
               context.commit("setOrderStatus", response.order_status);
-              context.commit("setOrderTotal", response.order_total);
-              context.commit(
-                "setOrderTotalWithoutTax",
-                response.order_total_without_tax
-              );
-              context.commit("setOrderTotalTax", response.order_total_tax);
+              context.commit("setOrderTotalPrice", response.order_total_price);
+              context.commit("setOrderTaxPrice", response.order_tax_price);
             }
             resolve(response);
           })
@@ -545,16 +536,14 @@ export default {
         context.commit("setOrderStatus", order.status);
         context.commit("setOrderMasOrderStatus", order.mas_order);
 
-        context.commit("setOrderTotal", order.total);
-        context.commit("setOrderTotalPaid", order.total_paid);
-        context.commit("setOrderTotalWithoutTax", order.total_without_tax);
-        context.commit("setOrderTotalItemCost", order.total_item_cost);
-        context.commit("setOrderTotalTax", order.total_tax);
-        context.commit("setOrderChange", order.change);
-        context.commit("setOrderRemaining", order.remaining);
+        context.commit("setOrderTotalPrice", order.total_price);
+        context.commit("setOrderPaidPrice", order.paid_price);
+        context.commit("setOrderMdsePrice", order.mdse_price);
+        context.commit("setOrderTaxPrice", order.tax_price);
+        context.commit("setOrderChangePrice", order.change);
+        context.commit("setOrderRemainingPrice", order.remaining_price);
         context.commit("setPayments", order.payments);
-        context.commit("setCartDiscountType", order.discount_type);
-        context.commit("setCartDiscountAmount", order.discount_amount);
+        context.commit("setCartDiscount", order.discount);
         context.commit("setCustomer", order.customer);
         context.commit("setOrderNotes", order.notes);
         context.commit("setOrderCreatedBy", order.created_by);
@@ -564,7 +553,7 @@ export default {
         });
 
         if (order.method !== "retail") {
-          context.commit("setShippingCost", order.shipping_cost);
+          context.commit("setDeliveryFeesPrice", order.delivery_fees_price);
           context.commit("setDeliveryDate", order.delivery.date);
           context.commit("setDeliveryTime", order.delivery.time);
 

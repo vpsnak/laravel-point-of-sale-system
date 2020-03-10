@@ -1,27 +1,50 @@
 <template>
   <data-table v-if="render">
     <template v-slot:item.customer="{ item }">
-      <customerChip :menu="true" :customer="item.customer" />
+      <customerChip
+        :menu="true"
+        :customer="item.customer"
+        :small="smallChips"
+      />
     </template>
     <template v-slot:item.store="{ item }">
-      <storeChip :menu="true" :store="item.store" />
+      <storeChip :menu="true" :store="item.store" :small="smallChips" />
     </template>
     <template v-slot:item.method="{ item }">
-      <orderMethodChip :method="item.method" />
+      <orderMethodChip :method="item.method" :small="smallChips" />
     </template>
     <template v-slot:item.status="{ item }">
       <orderStatusChip
         :latestStatus="item.status"
         :orderId="item.id"
         :menu="true"
+        :small="smallChips"
+      />
+    </template>
+    <template v-slot:item.total_price="{ item }">
+      <orderTotalChip
+        :menu="true"
+        :totalPrice="item.total_price"
+        :mdsePrice="item.mdse_price"
+        :taxPrice="item.tax_price"
+        :deliveryFeesPrice="item.delivery_fees_price"
+        :small="smallChips"
+      />
+    </template>
+    <template v-slot:item.paid_price="{ item }">
+      <orderTotalPaidChip
+        :orderId="item.id"
+        :menu="true"
+        :paid_price="item.paid_price"
+        :small="smallChips"
       />
     </template>
     <template v-slot:item.created_by="{ item }">
-      <createdByChip :menu="true" :created_by="item.created_by" />
-    </template>
-    <template v-slot:item.total="{ item }"> $ {{ item.total }} </template>
-    <template v-slot:item.total_paid="{ item }">
-      $ {{ item.total_paid }}
+      <createdByChip
+        :menu="true"
+        :createdBy="item.created_by"
+        :small="smallChips"
+      />
     </template>
 
     <template v-slot:item.actions="{ item }">
@@ -41,10 +64,7 @@
         <span>Print</span>
       </v-tooltip>
 
-      <v-tooltip
-        v-if="['pending', 'pending_payment'].indexOf(item.status) >= 0"
-        bottom
-      >
+      <v-tooltip v-if="canCheckout(item.status)" bottom>
         <template v-slot:activator="{ on }">
           <v-btn
             small
@@ -92,7 +112,7 @@
         <span>View</span>
       </v-tooltip>
 
-      <v-tooltip bottom v-if="['paid', 'complete'].indexOf(item.status) >= 0">
+      <v-tooltip bottom v-if="canReceipt(item.status)">
         <template v-slot:activator="{ on }">
           <v-btn
             :ref="item.id"
@@ -109,7 +129,7 @@
         <span>Receipt</span>
       </v-tooltip>
 
-      <v-tooltip bottom v-if="disableIfStatus(item)" color="red">
+      <v-tooltip bottom v-if="canCancel(item.status)" color="red">
         <template v-slot:activator="{ on }">
           <v-btn
             icon
@@ -163,6 +183,7 @@ export default {
   data() {
     return {
       render: false,
+      smallChips: true,
       viewForm: "order",
       selectedItem: null,
       table: {
@@ -191,13 +212,46 @@ export default {
     ...mapActions("requests", ["request"]),
     ...mapActions("cart", ["loadOrder"]),
 
-    disableIfStatus(item) {
-      switch (item.status) {
-        case "completed":
-        case "canceled":
-          return false;
-        default:
-          return true;
+    canRefund(status) {
+      if (status && status.can_refund) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    canMasReupload(status) {
+      if (status && status.can_mas_reupload) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    canMasUpload(status) {
+      if (status && status.can_mas_upload) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    canReceipt(status) {
+      if (status && status.can_receipt) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    canCheckout(status) {
+      if (status && status.can_checkout) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    canCancel(status) {
+      if (status && status.can_cancel) {
+        return true;
+      } else {
+        return false;
       }
     },
 

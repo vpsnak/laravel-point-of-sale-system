@@ -9,8 +9,8 @@
       class="my-2"
       @click.stop="setCheckoutDialog(true)"
       :disabled="disabled || !isValidCheckout"
-      >Checkout</v-btn
-    >
+      >Checkout
+    </v-btn>
 
     <v-divider />
 
@@ -142,7 +142,7 @@ export default {
       "discount_type",
       "discount_amount",
       "notes",
-      "order_total"
+      "order_total_price"
     ]),
 
     checkoutColor() {
@@ -183,7 +183,7 @@ export default {
           discount_amount: this.discount_amount,
           shipping: { notes: this.notes },
           product_count: Object.keys(this.cart_products).length,
-          total_price: this.order_total
+          total_price: this.order_total_price
         }
       };
       this.request(payload).then(() => {

@@ -14,22 +14,18 @@ class CreateCashRegisterLogsTable extends Migration
     public function up()
     {
         Schema::create('cash_register_logs', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->unsignedBigInteger('cash_register_id');
+            $table->mediumIncrements('id');
+            $table->unsignedSmallInteger('user_id')->nullable();
+            $table->unsignedSmallInteger('cash_register_id');
             $table->double('opening_amount')->nullable();
             $table->double('closing_amount')->nullable();
-            $table->boolean('status')->default(0);
+            $table->boolean('status')->nullable();
             $table->dateTime('opening_time')->nullable();
             $table->dateTime('closing_time')->nullable();
-            $table->unsignedBigInteger('opened_by')->nullable();
-            $table->unsignedBigInteger('closed_by')->nullable();
+            $table->unsignedSmallInteger('opened_by')->nullable();
+            $table->unsignedSmallInteger('closed_by')->nullable();
             $table->text('note')->nullable();
-            $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
-            $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('cascade');
-            $table->foreign('opened_by')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('closed_by')->references('id')->on('users')->onDelete('cascade');
+            $table->timestampsTz();
         });
     }
 

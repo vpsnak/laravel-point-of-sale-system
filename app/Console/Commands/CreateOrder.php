@@ -110,7 +110,7 @@ class CreateOrder extends Command
                         array(
                             'id' => 10,
                             'name' => 'East Russell',
-                            'in_product_listing' => 1,
+                            'is_enabled' => true,
                             'created_at' => '2019-11-13 14:15:36',
                             'updated_at' => '2019-11-13 14:15:36',
                             'pivot' =>

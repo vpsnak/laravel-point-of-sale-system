@@ -5,6 +5,7 @@
     right
     transition="scale-transition"
     :close-on-content-click="false"
+    :small="small"
   >
     <template v-slot:activator="{ on }">
       <h5 v-if="$props.title">Store</h5>
@@ -20,17 +21,29 @@
 </template>
 
 <script>
+import { EventBus } from "../../../plugins/eventBus";
 export default {
   props: {
+    small: Boolean,
     title: Boolean,
     menu: Boolean,
     store: Object
+  },
+
+  beforeDestroy() {
+    EventBus.$off("overlay");
   },
 
   data() {
     return {
       storeDetails: false
     };
+  },
+
+  watch: {
+    storeDetails(value) {
+      EventBus.$emit("overlay", value);
+    }
   }
 };
 </script>

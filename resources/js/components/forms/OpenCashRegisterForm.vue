@@ -216,7 +216,7 @@ export default {
       });
     },
     cashierDisabled() {
-      if (["admin", "store_manager"].indexOf(this.role) >= 0) {
+      if (["admin", "store_manager"].indexOf(this.role) !== -1) {
         return false;
       } else {
         return true;

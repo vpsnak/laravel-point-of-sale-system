@@ -41,6 +41,7 @@
                     <v-text-field
                       readonly
                       clearable
+                      @click:clear="filters.timestamp_from = null"
                       :value="fromTimestampFormatted"
                       label="From"
                       prepend-inner-icon="mdi-calendar-import"
@@ -66,6 +67,7 @@
                     <v-text-field
                       readonly
                       clearable
+                      @click:clear="filters.timestamp_to = null"
                       :value="toTimestampFormatted"
                       label="To"
                       prepend-inner-icon="mdi-calendar-export"

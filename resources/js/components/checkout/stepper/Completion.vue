@@ -1,11 +1,14 @@
 <template>
-  <div class="my-5 d-flex align-center justify-space-around flex-column">
-    <h3 v-if="order_change > 0">
+  <div
+    class="my-5 d-flex align-center justify-space-around flex-column"
+    v-if="order_status === 'paid'"
+  >
+    <h3 v-if="!changePrice.isZero() && changePrice.isPositive()">
       Change:
-      <span class="amber--text" v-text="'$ ' + order_change" />
+      <span class="amber--text" v-text="changePrice.toFormat()" />
     </h3>
 
-    <orderReceipt v-if="order_status === 'paid'" />
+    <orderReceipt />
   </div>
 </template>
 
@@ -13,7 +16,15 @@
 import { mapState } from "vuex";
 export default {
   computed: {
-    ...mapState("cart", ["order_status", "order_change"])
+    ...mapState("cart", ["order_status", "order_change_price"]),
+
+    changePrice() {
+      if (this.order_change_price) {
+        return this.parsePrice(this.order_change_price);
+      } else {
+        return this.$price();
+      }
+    }
   }
 };
 </script>

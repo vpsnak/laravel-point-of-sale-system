@@ -11,10 +11,10 @@ class ReceiptController extends Controller
 {
     public function create(Order $model)
     {
-        $model = $model->load(['created_by', 'store']);
+        $model = $model->load(['createdBy', 'store']);
         $store = $model->store;
-        $cash_register = $model->created_by->open_register->cash_register;
-        $created_by = $model->created_by;
+        $cash_register = $model->createdBy->open_register->cash_register;
+        $createdBy = $model->createdBy;
         $payments = [];
 
         foreach (json_decode($model['payments'], true) as $payment) {
@@ -33,8 +33,8 @@ class ReceiptController extends Controller
             "trans" => $model->id,
             "store" => ["name" => $store->name, "phone" => $store->phone, "street" => $store->street, "city" => $store->city, "postcode" => $store->postcode],
             "reg" => $cash_register->name,
-            "clrk" => $created_by->name,
-            "oper" => $created_by->name,
+            "clrk" => $createdBy->name,
+            "oper" => $createdBy->name,
             "date" => $model->created_at->format('m/d/Y'),
             "time" => $model->created_at->format('h:m:s'),
             "items" => $model->items,
@@ -63,7 +63,7 @@ class ReceiptController extends Controller
         $receipt['order_id'] = $model->id;
         $receipt['print_count'] = 0;
         $receipt['email_count'] = 0;
-        $receipt['issued_by'] = $created_by->id;
+        $receipt['issued_by'] = $createdBy->id;
         $receipt['cash_register_id'] = $cash_register->id;
         $receipt['content'] = $content;
 

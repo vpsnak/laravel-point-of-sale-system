@@ -22,7 +22,7 @@ class CategoryController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string',
-            'in_product_listing' => 'required|boolean',
+            'is_enabled' => 'required|boolean',
         ]);
 
         $category = Category::create($validatedData);
@@ -38,7 +38,7 @@ class CategoryController extends Controller
         $validatedData = $request->validate([
             'id' => 'required|exists:categories,id',
             'name' => 'required|string',
-            'in_product_listing' => 'required|boolean',
+            'is_enabled' => 'required|boolean',
         ]);
         $category = Category::findOrFail($validatedData['id']);
 
@@ -71,7 +71,7 @@ class CategoryController extends Controller
             'keyword' => 'required|string'
         ]);
 
-        $columns = ['name', 'in_product_listing'];
+        $columns = ['name'];
         $query = Category::query()->search($columns, $validatedData['keyword']);
 
         return response($query->paginate());

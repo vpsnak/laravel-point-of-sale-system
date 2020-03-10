@@ -13,10 +13,59 @@ class ForeignKeys extends Migration
      */
     public function up()
     {
+        Schema::table('categories', function (Blueprint $table) {
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
+        });
+
+        Schema::table('cash_register_logs', function (Blueprint $table) {
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
+            $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('cascade');
+            $table->foreign('opened_by')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('closed_by')->references('id')->on('users')->onDelete('cascade');
+        });
+
+        Schema::table('refunds', function (Blueprint $table) {
+            $table->foreign('refund_type_id')->references('id')->on('refund_types')->onDelete('restrict');
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('restrict');
+            $table->foreign('payment_id')->references('id')->on('payments')->onDelete('restrict');
+            $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('restrict');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
+        });
+
+        Schema::table('payments', function (Blueprint $table) {
+            $table->foreign('payment_type_id')->references('id')->on('payment_types')->onDelete('restrict');
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('restrict');
+            $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('restrict');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
+        });
+
+        Schema::table('receipts', function (Blueprint $table) {
+            $table->foreign('issued_by')->references('id')->on('users')->onDelete('restrict');
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+            $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('cascade');
+        });
+
+        Schema::table('cash_registers', function (Blueprint $table) {
+            $table->foreign('store_id')->references('id')->on('stores')->onDelete('restrict');
+        });
+
+        Schema::table('stores', function (Blueprint $table) {
+            $table->foreign('tax_id')->references('id')->on('taxes')->onDelete('restrict');
+            $table->foreign('company_id')->references('id')->on('companies');
+        });
+
+        Schema::table('taxes', function (Blueprint $table) {
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
+        });
+
+        Schema::table('carts', function (Blueprint $table) {
+            $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('cascade');
+        });
+
         Schema::table('order_status', function (Blueprint $table) {
             $table->foreign('order_id')->references('id')->on('orders');
             $table->foreign('status_id')->references('id')->on('statuses');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
         });
 
         Schema::table('regions', function (Blueprint $table) {
@@ -46,15 +95,7 @@ class ForeignKeys extends Migration
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');
         });
 
-        Schema::table('prices', function (Blueprint $table) {
-            $table->foreign('discount_id')->references('id')->on('discounts')->onDelete('cascade');
-        });
-
         Schema::table('bank_accounts', function (Blueprint $table) {
-            $table->foreign('company_id')->references('id')->on('companies');
-        });
-
-        Schema::table('stores', function (Blueprint $table) {
             $table->foreign('company_id')->references('id')->on('companies');
         });
 
@@ -81,6 +122,50 @@ class ForeignKeys extends Migration
      */
     public function down()
     {
+        Schema::table('categories', function (Blueprint $table) {
+            $table->dropForeign(['user_id']);
+        });
+
+        Schema::table('cash_register_logs', function (Blueprint $table) {
+            $table->dropForeign(['user_id']);
+            $table->dropForeign(['cash_register_id']);
+            $table->dropForeign(['opened_by']);
+            $table->dropForeign(['closed_by']);
+        });
+
+        Schema::table('refunds', function (Blueprint $table) {
+            $table->dropForeign(['refund_type_id']);
+            $table->dropForeign(['order_id']);
+            $table->dropForeign(['payment_id']);
+            $table->dropForeign(['cash_register_id']);
+            $table->dropForeign(['user_id']);
+        });
+        Schema::table('payments', function (Blueprint $table) {
+            $table->dropForeign(['payment_type_id']);
+            $table->dropForeign(['order_id']);
+            $table->dropForeign(['cash_register_id']);
+            $table->dropForeign(['user_id']);
+        });
+
+        Schema::table('receipts', function (Blueprint $table) {
+            $table->dropForeign(['issued_by']);
+            $table->dropForeign(['order_id']);
+            $table->dropForeign(['cash_register_id']);
+        });
+
+        Schema::table('stores', function (Blueprint $table) {
+            $table->dropForeign(['tax_id']);
+            $table->dropForeign(['company_id']);
+        });
+
+        Schema::table('taxes', function (Blueprint $table) {
+            $table->dropForeign(['user_id']);
+        });
+
+        Schema::table('carts', function (Blueprint $table) {
+            $table->dropForeign(['cash_register_id']);
+        });
+
         Schema::table('order_status', function (Blueprint $table) {
             $table->dropForeign(['order_id']);
             $table->dropForeign(['status_id']);
@@ -114,15 +199,7 @@ class ForeignKeys extends Migration
             $table->dropForeign(['product_id']);
         });
 
-        Schema::table('prices', function (Blueprint $table) {
-            $table->dropForeign(['discount_id']);
-        });
-
         Schema::table('bank_accounts', function (Blueprint $table) {
-            $table->dropForeign(['company_id']);
-        });
-
-        Schema::table('stores', function (Blueprint $table) {
             $table->dropForeign(['company_id']);
         });
 
@@ -130,6 +207,7 @@ class ForeignKeys extends Migration
             $table->dropForeign(['customer_id']);
             $table->dropForeign(['store_id']);
             $table->dropForeign(['user_id']);
+            $table->dropForeign(['mas_order_id']);
         });
 
         Schema::table('mas_orders', function (Blueprint $table) {

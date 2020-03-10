@@ -15,11 +15,11 @@ class CreateCardsTable extends Migration
     {
         Schema::create('cards', function (Blueprint $table) {
             $table->bigIncrements('id');
-            
+
             $table->text('content');
             $table->string('title');
-            $table->unsignedBigInteger('created_by');
-            $table->unsignedBigInteger('cardable_id');
+            $table->unsignedSmallInteger('created_by');
+            $table->unsignedMediumInteger('cardable_id');
 
             $table->string('cardable_type'); // card is for order or for product
 

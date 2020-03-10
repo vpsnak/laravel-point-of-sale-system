@@ -13,7 +13,7 @@
             </div>
             <div class="subtitle-1">
               In product listing:
-              {{ categoryData.in_product_listing ? "Yes" : "No" }}
+              {{ categoryData.is_enabled ? "Yes" : "No" }}
             </div>
           </v-card-text>
         </v-card>

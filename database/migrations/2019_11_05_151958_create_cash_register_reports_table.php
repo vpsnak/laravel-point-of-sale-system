@@ -14,31 +14,31 @@ class CreateCashRegisterReportsTable extends Migration
     public function up()
     {
         Schema::create('cash_register_reports', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->mediumIncrements('id');
             $table->string('report_name');
             $table->string('report_type');
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('cash_register_id');
-            $table->decimal('opening_amount', 12, 2)->default(0);
-            $table->decimal('closing_amount', 12, 2)->default(0);
-            $table->decimal('subtotal', 12, 2)->default(0);
-            $table->decimal('tax', 12, 2)->default(0);
-            $table->decimal('total', 12, 2)->default(0);
-            $table->decimal('cash_total', 12, 2)->default(0);
-            $table->decimal('gift_card_total', 12, 2)->default(0);
-            $table->decimal('credit_card_total', 12, 2)->default(0);
-            $table->decimal('pos_terminal_total', 12, 2)->default(0);
-            $table->decimal('change_total', 12, 2)->default(0);
-            $table->decimal('cash_tax', 12, 2)->default(0);
-            $table->decimal('gift_card_tax', 12, 2)->default(0);
-            $table->decimal('credit_card_tax', 12, 2)->default(0);
-            $table->decimal('pos_terminal_tax', 12, 2)->default(0);
+            $table->unsignedSmallInteger('user_id');
+            $table->unsignedSmallInteger('cash_register_id');
+            $table->unsignedMediumInteger('opening_amount')->default(0);
+            $table->unsignedMediumInteger('closing_amount')->default(0);
+            $table->unsignedMediumInteger('subtotal')->default(0);
+            $table->unsignedMediumInteger('tax')->default(0);
+            $table->unsignedMediumInteger('total')->default(0);
+            $table->unsignedMediumInteger('cash_total')->default(0);
+            $table->unsignedMediumInteger('gift_card_total')->default(0);
+            $table->unsignedMediumInteger('credit_card_total')->default(0);
+            $table->unsignedMediumInteger('pos_terminal_total')->default(0);
+            $table->unsignedMediumInteger('change_total')->default(0);
+            $table->unsignedMediumInteger('cash_tax')->default(0);
+            $table->unsignedMediumInteger('gift_card_tax')->default(0);
+            $table->unsignedMediumInteger('credit_card_tax')->default(0);
+            $table->unsignedMediumInteger('pos_terminal_tax')->default(0);
             $table->integer('order_count')->default(0);
             $table->integer('order_product_count')->default(0);
             $table->integer('order_refund_count')->default(0);
-            $table->decimal('order_refund_total', 12, 2)->default(0);
+            $table->unsignedMediumInteger('order_refund_total')->default(0);
             $table->integer('order_complete_count')->default(0);
-            $table->decimal('order_complete_total', 12, 2)->default(0);
+            $table->unsignedMediumInteger('order_complete_total')->default(0);
             $table->integer('order_retail_count')->default(0);
             $table->integer('order_in_store_count')->default(0);
             $table->integer('order_delivery_count')->default(0);
@@ -46,7 +46,7 @@ class CreateCashRegisterReportsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
             $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('cascade');
 
-            $table->timestamps();
+            $table->timestampsTz();
         });
     }
 

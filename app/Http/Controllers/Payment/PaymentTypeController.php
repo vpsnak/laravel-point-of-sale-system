@@ -3,13 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\PaymentType;
-use Illuminate\Http\Request;
 
 class PaymentTypeController extends Controller
 {
-    public function paymentTypes()
+    public function all()
     {
-        $paymentTypes = PaymentType::getPaymentTypes();
+        $paymentTypes = PaymentType::enabled();
 
         $this->store = auth()->user()->open_register->cash_register->store;
         if ($this->store->is_phone_center) {
@@ -21,10 +20,5 @@ class PaymentTypeController extends Controller
         } else {
             return response($paymentTypes);
         }
-    }
-
-    public function refundTypes()
-    {
-        return response(PaymentType::getRefundTypes());
     }
 }

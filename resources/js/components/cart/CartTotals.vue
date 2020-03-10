@@ -1,36 +1,42 @@
 <template>
   <div class="d-flex flex-column">
-    <div class="d-flex justify-space-between pa-2" v-if="totalDiscount">
+    <div
+      class="d-flex justify-space-between pa-2"
+      v-if="!totalDiscount.isZero()"
+    >
       <span>Total discount</span>
-      <span>$ {{ totalDiscount.toFixed(2) }}</span>
+      <span>{{ totalDiscount.toFormat() }}</span>
     </div>
 
-    <v-divider v-if="totalDiscount" />
+    <v-divider v-if="!totalDiscount.isZero()" />
 
     <div class="d-flex justify-space-between pa-2">
       <span>Sub total w/ discount</span>
-      <span>$ {{ subTotalwDiscount.toFixed(2) }}</span>
+      <span>{{ subTotalwDiscount.toFormat() }}</span>
     </div>
 
     <v-divider />
 
-    <div class="d-flex justify-space-between pa-2" v-if="shippingCost">
+    <div
+      class="d-flex justify-space-between pa-2"
+      v-if="!deliveryFeesPrice.isZero()"
+    >
       <span>Delivery Fees</span>
-      <span>$ {{ shippingCost.toFixed(2) }}</span>
+      <span>{{ deliveryFeesPrice.toFormat() }}</span>
     </div>
 
-    <v-divider v-if="shippingCost" />
+    <v-divider v-if="!deliveryFeesPrice.isZero()" />
 
     <div class="d-flex justify-space-between pa-2 bb-1">
       <span>Tax</span>
-      <span>$ {{ tax.toFixed(2) }}</span>
+      <span>{{ tax.toFormat() }}</span>
     </div>
 
     <v-divider />
 
     <div class="d-flex justify-space-between pa-2">
       <span>Total</span>
-      <span>$ {{ order_total.toFixed(2) }}</span>
+      <span>{{ orderTotal.toFormat() }}</span>
     </div>
   </div>
 </template>
@@ -45,84 +51,89 @@ export default {
       "order_id",
       "cart_products",
       "customer",
-      "order_total",
-      "discount_type",
-      "discount_amount",
-      "shipping_cost",
-      "order_status",
-      "order_total",
-      "order_total_without_tax",
-      "order_total_tax"
+      "order_discount",
+      "delivery_fees_price",
+      "order_status"
     ]),
 
-    shippingCost() {
-      if (this.shipping_cost) {
-        return parseFloat(this.shipping_cost);
-      } else {
-        return 0;
-      }
+    deliveryFeesPrice() {
+      return this.parsePrice(this.delivery_fees_price);
     },
     subTotalwDiscount() {
-      let subtotal = 0;
+      var subtotal = this.$price();
 
       this.cart_products.forEach(product => {
-        subtotal += this.calcDiscount(
-          product.final_price * product.qty,
-          product.discount_type,
-          product.discount_amount
+        const productPrice = this.$price(product.price).multiply(
+          Number(product.qty)
         );
+        const result = this.calcDiscount(productPrice, product.discount);
+        subtotal = subtotal.add(productPrice).subtract(result);
       });
 
-      if (this.discount_type && this.discount_amount > 0) {
-        subtotal -=
-          subtotal -
-          this.calcDiscount(subtotal, this.discount_type, this.discount_amount);
-      }
+      const cartDiscount = this.calcDiscount(subtotal, this.order_discount);
 
-      return parseFloat(subtotal);
+      return subtotal.subtract(cartDiscount);
     },
     tax() {
       if (this.customer && this.customer.no_tax) {
-        return 0;
+        return this.$price();
       } else {
-        return parseFloat(
-          ((this.subTotalwDiscount + this.shippingCost) *
-            parseFloat(this.tax_percentage)) /
-            100
-        );
+        return this.subTotalwDiscount
+          .add(this.deliveryFeesPrice)
+          .percentage(this.tax_percentage);
       }
     },
     totalDiscount() {
-      let subtotalNoDiscount = 0;
+      var subtotalNoDiscount = this.$price();
 
       this.cart_products.forEach(product => {
-        subtotalNoDiscount += product.final_price * product.qty;
+        const result = this.$price(product.price).multiply(Number(product.qty));
+        subtotalNoDiscount = subtotalNoDiscount.add(result);
       });
 
-      this.setOrderTotal(this.subTotalwDiscount + this.tax + this.shippingCost);
-
-      this.isValidDiscount();
-
-      return subtotalNoDiscount - this.subTotalwDiscount;
+      return subtotalNoDiscount.subtract(this.subTotalwDiscount);
+    },
+    orderTotal() {
+      return this.subTotalwDiscount.add(this.tax).add(this.deliveryFeesPrice);
     }
   },
-  methods: {
-    ...mapMutations("cart", ["setOrderTotal", "isValidDiscount"]),
 
-    calcDiscount(price, type, amount) {
-      if (type && amount) {
-        switch (_.lowerCase(type)) {
+  watch: {
+    immediate: true,
+    orderTotal(value) {
+      this.setOrderTotalPrice(value.toJSON());
+      this.setOrderRemainingPrice(value.toJSON());
+    }
+  },
+
+  methods: {
+    ...mapMutations("cart", [
+      "setOrderTotalPrice",
+      "setOrderRemainingPrice",
+      "isValidDiscount"
+    ]),
+
+    calcDiscount(price, discount) {
+      if (
+        _.has(discount, "type") &&
+        _.has(discount, "amount") &&
+        discount.amount > 0
+      ) {
+        switch (discount.type) {
           case "flat":
-            return parseFloat(price).toFixed(2) - parseFloat(amount).toFixed(2);
+            return this.$price({ amount: discount.amount });
           case "percentage":
-            return (
-              parseFloat(price) - (parseFloat(price) * parseFloat(amount)) / 100
-            );
+            if (Number(discount.amount) > 100) {
+              return this.$price({ amount: 0 });
+            } else {
+              return price.percentage(Number(discount.amount));
+            }
           default:
-            return parseFloat(price);
+            return this.$price({ amount: 0 });
         }
+      } else {
+        return this.$price({ amount: 0 });
       }
-      return parseFloat(price);
     }
   }
 };

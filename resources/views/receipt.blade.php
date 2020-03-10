@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <title>Receipt</title>
 </head>
 <style>
     body {
@@ -33,9 +33,11 @@
     th {
         font-weight: normal;
     }
+
     .logo {
         text-align: center;
     }
+
     .logo img {
         height: auto;
         width: 65%;
@@ -107,13 +109,13 @@
                     </tr>
                     <tr>
                         <td class="small-header">Clrk:</td>
-                        <td>{{ $order->created_by->name }}</td>
+                        <td>{{ $order->createdBy->name }}</td>
                         <td class="spaced-header">Date:</td>
                         <td>{{ $order->created_at->format('m/d/Y') }}</td>
                     </tr>
                     <tr>
                         <td class="small-header">Oper:</td>
-                        <td>{{ $order->created_by->name }}</td>
+                        <td>{{ $order->createdBy->name }}</td>
                         <td class="spaced-header">Time:</td>
                         <td>{{ $order->created_at->format('h:m:s') }}</td>
                     </tr>
@@ -142,18 +144,18 @@
                     <tr>
                         <td colspan="2">{{ $item['name'] }}</td>
                         <td style="text-align: center;">{{ $item['qty'] }}</td>
-                        <td>${{ $item['price'] }}</td>
-                        <td style="text-align:end;">${{ $item['price'] * $item['qty'] }}</td>
+                        <td>${{ $item['price']['amount'] }}</td>
+                        <td style="text-align:end;">${{ $item['price']['amount'] * $item['qty'] }}</td>
                     </tr>
-                    @if($item['discount_type'])
+                    @if($item['discount']['type'])
                     <tr>
-                        @if($item['discount_type'] === 'percentage')
+                        @if($item['discount']['type'] === 'percentage')
                         <td style="text-align:start;">
-                            Discount: {{ $item['discount_amount'] }}%
+                            Discount: {{ $item['discount']['amount'] }}%
                         </td>
                         @else
                         <td>
-                            Discount: {{ $item['discount_amount'] }}-
+                            Discount: {{ $item['discount']['amount'] }}-
                         </td>
                         @endif
                         <td>
@@ -161,7 +163,7 @@
                         <td>
                         </td>
                         <td style="text-align:end; ">
-                            ${{ $item['price'] - $item['final_price'] }}-
+                            {{-- ${{ $item['price'] - $item['final_price'] }}- --}}
                         </td>
                     </tr>
                     @endif
@@ -184,25 +186,25 @@
                 @endif
                 <tr>
                     <td style="text-align: end;">Sales tax:</td>
-                    <td style="text-align: end;"> ${{ $order->total - $order->total_without_tax }}</td>
+                    <td style="text-align: end;"> ${{ $order->tax_price->getAmount() }}</td>
                 </tr>
                 <tr>
                     <td style="text-align: end;">Total Amt:</td>
-                    <td style="text-align: end;">${{ $order->total }}</td>
+                    <td style="text-align: end;">${{ $order->total_price->getAmount() }}</td>
                 </tr>
             </table>
             <p style="text-align: center; font-size:14px;">*** Tendering details ***</p>
             <table style="font-size:14px;">
                 <tr>
                     <td style="text-align: end;">Order Total is:</th>
-                    <td style="text-align: center;">${{ $order->total }}</td>
+                    <td style="text-align: center;">${{ $order->total_price->getAmount() }}</td>
                 </tr>
             </table>
             @foreach(json_decode($order['payments'] , true) as $payment)
 
             @php
-            if($payment['payment_type']['type'] === 'card' || $payment['payment_type']['type'] === 'pos-terminal')
-                $payment['payment_type']['name'] = 'Credit card';
+            if($payment['payment_type_name'] === 'card' || $payment['payment_type_name'] === 'pos-terminal')
+            $payment['payment_type_name'] = 'Credit card';
             @endphp
 
             <table style="font-size:14px;">
@@ -212,15 +214,15 @@
                     @if($payment['status'] === 'refunded')
                     <td>
                         Refunded
-                        {{ $payment['payment_type']['name']}}
+                        {{ $payment['payment_type_name']}}
                     </td>
-                    <td style="text-align: end;">${{$payment['amount']}}+</td>
+                    <td style="text-align: end;">${{$payment['price']['amount']}}+</td>
                     @else
-                    <td>{{ $payment['payment_type']['name'] }}</td>
-                    <td style="text-align: end;">${{ $payment['amount'] }}-</td>
+                    <td>{{ $payment['payment_type_name'] }}</td>
+                    <td style="text-align: end;">${{ $payment['price']['amount'] }}-</td>
                     @endif
                 </tr>
-                    @if($payment['payment_type']['type'] === 'card')
+                @if($payment['payment_type_name'] === 'card')
                 <tr>
                     <td style="text-align: end;">Cardholder's Name:</td>
                     <td style="text-align: end;">{{ $payment['elavon_api_payments'][0]['card_holder'] }}</td>
@@ -231,7 +233,7 @@
                 </tr>
                 <tr>
                     <td style="text-align: end;">Credit Card Tot:</td>
-                    <td style="text-align: end;">{{ $payment['amount'] }}</td>
+                    <td style="text-align: end;">{{ $payment['price']['amount'] }}</td>
                 </tr>
                 @endif
             </table>
@@ -255,11 +257,11 @@
             <table style="font-size:14px;">
                 <tr>
                     <th style="text-align: end;">Total Amt Tendered:</th>
-                    <td style="text-align: end;">${{$order->total_paid}}</td>
+                    <td style="text-align: end;">${{ $order->paid_price->getAmount() }}</td>
                 </tr>
                 <tr>
                     <th style="text-align: end;">Customer Change:</th>
-                    <td style="text-align: end;">${{$order->change}}</td>
+                    <td style="text-align: end;">${{ $order->remaining_price->getAmount() }}</td>
                 </tr>
             </table>
             <br>
@@ -316,4 +318,5 @@
             <p style="text-align: center;">PLEASE SEE POSTED POLICY REGARDING REFUNDS</p>
         </div>
     </body>
+
 </html>

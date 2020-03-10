@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Product;
 use CodeItNow\BarcodeBundle\Utils\BarcodeGenerator;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class ProductController extends Controller
 {
@@ -29,18 +27,20 @@ class ProductController extends Controller
             'url' => 'nullable|string',
             'photo_url' => 'nullable|string',
             'description' => 'nullable|string',
-            'editable_price' => 'nullable|boolean'
+            'editable_price' => 'nullable|boolean',
+            'price' => 'required|array',
+            'price.amount' => 'required|integer',
+            'price.currency' => 'required|string|size:3',
+            'is_discountable' => 'required|boolean'
         ]);
 
         $validatedExtra = $request->validate([
             'categories' => 'nullable|array',
-            'stores' => 'required|array',
-            'final_price' => 'required|numeric',
+            'stores' => 'required|array'
         ]);
 
         $product = Product::create($validatedData);
 
-        $product->price()->updateOrCreate(['amount' => $validatedExtra['final_price']]);
         $product->price->save();
 
         $product->categories()->sync($validatedExtra['categories']);
@@ -70,12 +70,15 @@ class ProductController extends Controller
             'photo_url' => 'nullable|string',
             'description' => 'nullable|string',
             'editable_price' => 'nullable|boolean',
+            'price' => 'required|array',
+            'price.amount' => 'required|integer',
+            'price.currency' => 'required|string|size:3',
+            'is_discountable' => 'required|boolean'
         ]);
 
         $validatedExtra = $request->validate([
             'categories' => 'nullable|array',
-            'stores' => 'required|array',
-            'final_price' => 'required|numeric',
+            'stores' => 'required|array'
         ]);
 
         $product = Product::findOrFail($validatedData['id']);
@@ -90,10 +93,7 @@ class ProductController extends Controller
             }
         }
 
-        $product->price->amount = $validatedExtra['final_price'];
-
         $product->fill($validatedData);
-        $product->price->save();
         $product->save();
 
         return response(['notification' => [
@@ -127,6 +127,6 @@ class ProductController extends Controller
         return response([
             'barcode' => $code,
             'type' => 'data:image/png;base64'
-        ], 200);
+        ]);
     }
 }

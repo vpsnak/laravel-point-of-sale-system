@@ -66,7 +66,7 @@ Route::delete('/addresses/{model}', 'AddressController@delete')->middleware('sco
 
 // orders
 Route::get('/orders', 'OrderController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/orders/get/{model}', 'OrderController@getOne')->middleware('scope:admin,store_manager,cashier');
+Route::get('/orders/get/{model}', 'OrderController@getOne');
 Route::get('/orders/{model}/payment-details', 'OrderAnalysisController@getPaymentDetails'); // @TODO ADD AUTH!!
 Route::get('/orders/{model}/statuses', 'OrderStatusController@getOrderStatuses')->middleware('scope:admin,store_manager,cashier');
 Route::get('/orders/{model}/mas-status', 'MasOrderController@getOrderDetails'); // @TODO ADD AUTH!!
@@ -96,8 +96,8 @@ Route::post('/taxes/search', 'TaxController@search')->middleware('scope:admin,st
 Route::delete('/taxes/{model}', 'TaxController@delete')->middleware('scope:admin,store_manager,cashier');
 
 // payment-types
-Route::get('/payment-types', 'PaymentTypeController@paymentTypes')->middleware('scope:admin,store_manager,cashier');
-Route::get('/refund-types', 'PaymentTypeController@refundTypes')->middleware('scope:admin,store_manager');
+Route::get('/payment-types', 'PaymentTypeController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/refund-types', 'RefundTypeController@all')->middleware('scope:admin,store_manager');
 
 // cash-registers
 Route::get('/cash-registers', 'CashRegisterController@all')->middleware('scope:admin,store_manager,cashier');
@@ -107,7 +107,7 @@ Route::post('/cash-registers/create', 'CashRegisterController@create')->middlewa
 Route::post('/cash-registers/search', 'CashRegisterController@search')->middleware('scope:admin,store_manager,cashier');
 
 // cash-register-reports
-Route::get('/cash-register-reports', 'CashRegisterReportController@all')->middleware('scope:admin,store_manager,cashier');;
+Route::get('/cash-register-reports', 'CashRegisterReportController@all')->middleware('scope:admin,store_manager,cashier');
 Route::get('/cash-register-reports/get/{model}', 'CashRegisterReportController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::get('/cash-register-reports/check/get/{model}', "CashRegisterReportController@checkCurrent")->middleware('scope:admin,store_manager,cashier');
 Route::post('/cash-register-reports/create', 'CashRegisterReportController@create')->middleware('scope:admin,store_manager,cashier');
@@ -152,7 +152,7 @@ Route::post('/companies/search', 'CompanyController@search')->middleware('scope:
 Route::delete('/companies/{model}', 'CompanyController@delete')->middleware('scope:admin,store_manager,cashier');
 
 // products
-Route::get('/products', 'ProductController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/products', 'ProductController@all');
 Route::get('/products/get/{model}', 'ProductController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::get('/products/barcode/{model}', 'ProductController@getBarcode')->middleware('scope:admin,store_manager,cashier');
 Route::post('/products/create', 'ProductController@create')->middleware('scope:admin,store_manager,cashier');

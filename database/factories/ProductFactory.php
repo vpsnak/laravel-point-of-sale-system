@@ -8,8 +8,6 @@ use Illuminate\Database\Eloquent\Factory;
 $factory->define(App\Product::class, function (Faker $faker) {
     return [
         'sku' => $faker->ean8,
-//        'name' => $faker->name,
-//        'photo_url' => $faker->imageUrl(640,480,'nature'),
         'name' => $faker->randomElement([
             'Sweet Season',
             'Make Me Blush',
@@ -38,5 +36,13 @@ $factory->define(App\Product::class, function (Faker $faker) {
             'https://www.plantshed.com//media/catalog/product/cache/1/image/551x/9df78eab33525d08d6e5fb8d27136e95/p/s/ps10223_sienna.jpg',
             'https://www.plantshed.com//media/catalog/product/cache/1/small_image/551x/9df78eab33525d08d6e5fb8d27136e95/p/s/ps10561_a_moody_magic.jpg',
         ]),
+        'price' => [
+            'amount' => $faker->numberBetween(100, 100000),
+            'currency' => 'USD'
+        ],
+        'discount' => [
+            'amount' => null,
+            'type' => null
+        ]
     ];
 });

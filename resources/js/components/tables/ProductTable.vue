@@ -1,7 +1,7 @@
 <template>
   <data-table v-if="render">
-    <template v-slot:item.final_price="{ item }">
-      ${{ parseFloat(item.final_price).toFixed(2) }}
+    <template v-slot:item.price="{ item }">
+      {{ item.price.amount }}
     </template>
 
     <template v-slot:item.photo_url="{ item }">
@@ -64,7 +64,7 @@
   </data-table>
 </template>
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapGetters, mapMutations } from "vuex";
 
 export default {
   mounted() {
@@ -82,18 +82,19 @@ export default {
 
     this.render = true;
   },
+
   data() {
     return {
       render: false,
       form: "productForm"
     };
   },
+
   computed: {
     ...mapState("datatable", ["data_table"]),
-    role() {
-      return this.$store.getters.role;
-    }
+    ...mapGetters(["role"])
   },
+
   methods: {
     ...mapMutations("dialog", ["editItem", "viewItem"]),
     ...mapMutations("datatable", [

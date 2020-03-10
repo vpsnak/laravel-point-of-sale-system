@@ -3,38 +3,46 @@
     <v-card-title>
       <v-icon left>mdi-currency-usd</v-icon>
       <span class="subheading">
-        Payment History
+        Transaction history
       </span>
     </v-card-title>
 
     <v-data-table
-      no-data-text="No payments have been made"
+      no-data-text="No transactions have been made"
       dense
       height="15vh"
+      fixed-header
       :headers="headers"
       :items="payments"
       class="elevation-1"
       disable-pagination
       disable-filtering
       hide-default-footer
-      :loading="loading || refundLoading || paymentHistoryLoading"
+      :loading="false"
     >
       <template v-slot:item.status="{ item }">
-        <span :class="statusColor(item.status)">
-          <b>{{ parseStatus(item.status) }}</b>
-        </span>
+        <b :class="statusColor(item.status)">
+          {{ parseStatus(item.status) }}
+        </b>
+      </template>
+
+      <template v-slot:item.price="{ item }">
+        <b :class="statusColor(item.status)">
+          {{ parsePrice(item.price).toFormat() }}
+        </b>
+      </template>
+
+      <template v-slot:item.change_price="{ item }">
+        <b :class="changePriceColor">
+          {{ changePrice(item.change_price).toFormat() }}
+        </b>
       </template>
 
       <template v-slot:item.actions="{ item }">
         <v-tooltip bottom v-if="enableRefund(item)">
           <template v-slot:activator="{ on }">
-            <v-btn
-              @click="refundDialog(item)"
-              icon
-              v-on="on"
-              :loading="loading || refundLoading || paymentHistoryLoading"
-            >
-              <v-icon v-if="item.payment_type.type === 'cash'">
+            <v-btn @click="refundDialog(item)" icon v-on="on" :loading="false">
+              <v-icon v-if="item.payment_type_name === 'cash'">
                 mdi-cash-refund
               </v-icon>
               <v-icon v-else>mdi-credit-card-refund</v-icon>
@@ -52,11 +60,6 @@ import { mapActions, mapState, mapMutations } from "vuex";
 import { EventBus } from "../../../plugins/eventBus";
 
 export default {
-  props: {
-    editOrder: Boolean,
-    loading: Boolean
-  },
-
   mounted() {
     EventBus.$on("payment-history-refund", event => {
       if (event.payload && this.selected_payment) {
@@ -71,7 +74,6 @@ export default {
 
   data() {
     return {
-      paymentHistoryLoading: false,
       selected_payment: null,
       headers: [
         {
@@ -81,7 +83,7 @@ export default {
         },
         {
           text: "Operator",
-          value: "created_by.name",
+          value: "created_by_name",
           sortable: false
         },
         {
@@ -91,17 +93,22 @@ export default {
         },
         {
           text: "Type",
-          value: "payment_type.name",
+          value: "payment_type_name",
+          sortable: false
+        },
+        {
+          text: "Amount",
+          value: "price",
+          sortable: false
+        },
+        {
+          text: "Change",
+          value: "change_price",
           sortable: false
         },
         {
           text: "Status",
           value: "status",
-          sortable: false
-        },
-        {
-          text: "Amount (USD)",
-          value: "amount",
           sortable: false
         },
         {
@@ -111,33 +118,38 @@ export default {
       ]
     };
   },
-  computed: {
-    ...mapState("cart", ["refund_loading", "payments"]),
 
-    refundLoading: {
-      get() {
-        return this.refund_loading;
-      },
-      set(value) {
-        this.setRefundLoading(value);
-      }
-    }
+  computed: {
+    ...mapState("cart", ["payments"])
   },
+
   methods: {
     ...mapMutations("cart", [
-      "setRefundLoading",
       "setPaymentRefundedStatus",
       "setPayments",
-      "setOrderChange",
-      "setOrderRemaining",
+      "setOrderChangePrice",
+      "setOrderRemainingPrice",
       "setOrderStatus"
     ]),
-    ...mapMutations(["setNotification"]),
     ...mapMutations("dialog", ["setDialog"]),
     ...mapActions("requests", ["request"]),
 
+    changePrice(change_price) {
+      if (change_price) {
+        return this.parsePrice(change_price);
+      } else {
+        return this.$price();
+      }
+    },
+    changePriceColor(change_price) {
+      if (!this.changePrice.isZero() && this.changePrice.isPositive()) {
+        return "amber--text";
+      } else {
+        return null;
+      }
+    },
     enableRefund(item) {
-      if (item.status === "approved" && !item.refunded) {
+      if (item.status === "approved" && item.is_refundable) {
         return true;
       } else {
         return false;
@@ -152,15 +164,12 @@ export default {
           return "green--text";
         case "failed":
           return "red--text";
-        case "refunded":
-          return "orange--text";
         default:
           return null;
       }
     },
     refund() {
-      this.setRefundLoading(true);
-      let payload = {
+      const payload = {
         method: "delete",
         url: `payments/${this.selected_payment.id}`
       };
@@ -168,22 +177,21 @@ export default {
       this.request(payload)
         .then(response => {
           if (response.refunded_payment_id) {
-            const index = _.findIndex(this.payments, [
-              "id",
-              response.refunded_payment_id
-            ]);
+            const index = _.findIndex(this.payments, {
+              id: response.refunded_payment_id
+            });
 
             this.setPaymentRefundedStatus(index);
             this.setPayments(response.refund);
           }
 
-          this.setOrderChange(response.change);
-          this.setOrderRemaining(response.remaining);
+          this.setOrderChangePrice(response.change);
+          this.setOrderRemainingPrice(response.remaining);
           this.setOrderStatus(response.order_status);
-
-          this.setRefundLoading(false);
         })
         .catch(error => {
+          console.log(error);
+          // @TODO fix payload object
           if (_.has(error, "response.data.refund")) {
             this.payments = error.response.data.refund;
             this.$emit("refund", error.response.data);
@@ -194,8 +202,7 @@ export default {
     },
     refundDialog(item) {
       this.selected_payment = item;
-
-      this.setDialog({
+      const payload = {
         show: true,
         width: 600,
         title: `Verify your password to rollback payment #${item.id}`,
@@ -205,7 +212,9 @@ export default {
         model: { action: "verify" },
         persistent: true,
         eventChannel: "payment-history-refund"
-      });
+      };
+
+      this.setDialog(payload);
     }
   }
 };

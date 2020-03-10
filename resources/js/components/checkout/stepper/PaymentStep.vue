@@ -5,19 +5,23 @@
     <v-container>
       <v-row justify="center" align="center">
         <v-col :lg="6" :md="12" justify="center" align="center">
-          <h3 v-if="order_change > 0" class="my-3">
+          <h3
+            v-if="!changePrice.isZero() && changePrice.isPositive()"
+            class="my-3"
+          >
             Change:
-            <span class="amber--text" v-text="'$ ' + order_change" />
+            <span class="amber--text" v-text="changePrice.toFormat()" />
           </h3>
 
           <v-btn
-            v-if="completed && !refund_loading"
+            v-if="completed"
             color="success"
             @click="complete"
-            :loading="loading"
-            :disabled="loading"
+            :loading="false"
+            :disabled="false"
             text
-          >Complete order</v-btn>
+            >Complete order
+          </v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -34,41 +38,35 @@ export default {
   },
 
   watch: {
-    order_status(value) {
-      if (value === "paid") {
-        this.completed = true;
-      } else {
-        this.completed = false;
+    order_status: {
+      deep: true,
+      immediate: true,
+      handler(status) {
+        if (_.has(status, "value") && status.value === "paid") {
+          this.completed = true;
+        } else {
+          this.completed = false;
+        }
       }
     }
   },
 
   computed: {
-    ...mapState("cart", [
-      "order_id",
-      "order_status",
-      "order_change",
-      "refund_loading",
-      "complete_order_loading"
-    ]),
+    ...mapState("cart", ["order_id", "order_status", "order_change_price"]),
 
-    loading: {
-      get() {
-        return this.complete_order_loading;
-      },
-      set(value) {
-        this.setCompleteOrderLoading(value);
+    changePrice() {
+      if (_.has(this.order_change_price, "amount")) {
+        return this.parsePrice(this.order_change_price);
+      } else {
+        return this.$price();
       }
     }
   },
 
   methods: {
-    ...mapMutations("cart", ["setCompleteOrderLoading"]),
     ...mapActions("cart", ["createReceipt", "completeStep"]),
 
     complete() {
-      this.loading = true;
-
       this.createReceipt(this.order_id)
         .then(() => {
           this.completeStep();
@@ -76,9 +74,7 @@ export default {
         .catch(error => {
           console.error(error);
         })
-        .finally(() => {
-          this.loading = false;
-        });
+        .finally(() => {});
     }
   }
 };

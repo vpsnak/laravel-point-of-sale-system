@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Customer extends Model
 {
     protected $fillable = [
-        'magento_id',
         'first_name',
         'last_name',
         'email',
@@ -17,12 +16,14 @@ class Customer extends Model
         'no_tax',
         'no_tax_file',
         'comment',
-        'phone'
+        'phone',
+
+        'magento_id'
     ];
 
     protected $casts = [
-        'created_at' => "datetime:m/d/Y H:i:s",
-        'updated_at' => "datetime:m/d/Y H:i:s"
+        'created_at' => 'datetime:m/d/Y H:i:s',
+        'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
 
     protected $appends = ['full_name'];

@@ -8,22 +8,29 @@ use App\MasOrder;
 use App\MasOrderLog;
 use App\Order;
 use GuzzleHttp\Client;
+use Money\Currencies\ISOCurrencies;
+use Money\Currency;
+use Money\Formatter\DecimalMoneyFormatter;
+use Money\Money;
 
 class MasOrderController extends Controller
 {
     private $masAccount;
     private $order;
     private $store;
-
+    private $currencies;
+    private $moneyFormatter;
 
     public function __construct()
     {
         $this->masAccount = MasAccount::getActive();
+        $this->currencies = new ISOCurrencies();
+        $this->moneyFormatter = new DecimalMoneyFormatter($this->currencies);
     }
 
     public function submitToMas(Order $order)
     {
-        $this->order = $order->load('store');
+        $this->order = $order;
         $this->store = $order->store;
 
         $payload = [];
@@ -46,9 +53,9 @@ class MasOrderController extends Controller
             $payload['Payments'] = $payments;
         }
 
-        $payload['MdseAmount'] = $this->order->total_item_cost;
-        $payload['TaxAmount'] = $this->order->total_tax;
-        $payload['TotalAmount'] = $this->order->total;
+        $payload['MdseAmount'] = $this->moneyFormatter->format($this->order->mdse_price);
+        $payload['TaxAmount'] = $this->moneyFormatter->format($this->order->tax_price);
+        $payload['TotalAmount'] = $this->moneyFormatter->format($this->order->total_price);
 
         try {
             $client = new Client();
@@ -162,36 +169,37 @@ class MasOrderController extends Controller
             'ResidenceType' => 11,
         ];
 
-        $customer = ($this->order->load('customer'))->customer;
+        $customer = $this->order->customer;
         if (empty($customer)) {
             return $response;
         }
 
-        $shipping_address = $this->order->delivery['address'] ?? null;
-        if (empty($shipping_address)) {
+        $delivery_address = $this->order->delivery['address'];
+
+        if (empty($delivery_address)) {
             return $response;
         }
-        if (!empty($shipping_address->company)) {
-            $shipping_notes .= 'Company: ' . $this->order->delivery['address']['company'];
+        if (!empty($delivery_address->company)) {
+            $shipping_notes .= "Company: {$this->order->delivery['address']['company']}";
         }
         // Delivery Time slots will be sent in SpecialInstructions , you can also put an abbreviated version in ShippingPriority (IE> 5P-9P for 5pm to 9pm)
-        $response['RecipientFirstName'] = $shipping_address['first_name'];
-        $response['RecipientLastName'] = $shipping_address['last_name'];
+        $response['RecipientFirstName'] = $delivery_address['first_name'];
+        $response['RecipientLastName'] = $delivery_address['last_name'];
         $response['RecipientAttention'] = $shipping_notes;
         $response['RecipientEmail'] = $customer['email'];
-        $response['RecipientAddress'] = $shipping_address['street'];
-        $response['RecipientAddress2'] = $shipping_address['street2'];
-        $response['RecipientCity'] = $shipping_address['city'];
-        $response['RecipientState'] = $shipping_address['region']['code'];
-        $response['RecipientCountry'] = $shipping_address['region']['country']['iso2_code']; //TODO EVALUATION
-        $response['RecipientZip'] = $shipping_address['postcode'];
-        $response['RecipientPhone'] = $shipping_address['phone'];
+        $response['RecipientAddress'] = $delivery_address['street'];
+        $response['RecipientAddress2'] = $delivery_address['street2'];
+        $response['RecipientCity'] = $delivery_address['city'];
+        $response['RecipientState'] = $delivery_address['region']['code'];
+        $response['RecipientCountry'] = $delivery_address['region']['country']['iso2_code']; //TODO EVALUATION
+        $response['RecipientZip'] = $delivery_address['postcode'];
+        $response['RecipientPhone'] = $delivery_address['phone'];
 
         if (!empty($this->order->delivery['occasion'])) {
             $response['OccasionType'] = $this->order->delivery['occasion'];
         }
         if (!empty($this->order->location)) {
-            $response['ResidenceType'] = $shipping_address['location'];
+            $response['ResidenceType'] = $delivery_address['location'];
         }
 
         if (!empty($this->order->delivery['time'])) {
@@ -205,19 +213,18 @@ class MasOrderController extends Controller
     {
         $response = [];
         foreach ($this->order->items as $item) {
+            $itemPrice = new Money($item['price']['amount'], new Currency($this->order->currency));
             $response[$item['id']] = [
                 'ItemCode' => $item['sku'],
                 'ItemName' => $item['name'],
                 'ItemDescription' => $item['notes'] ?? '-',
-                'ItemCost' => $item['price'],
+                'ItemCost' => $this->moneyFormatter->format($itemPrice),
                 'Quantity' => $item['qty']
             ];
-
-            if ($item['price'] > $item['final_price']) {
-                $response[$item['id']]['DiscountAmount'] = Price::numberPrecision($item['price'] - $item['final_price']);
-            } else {
-                $response[$item['id']]['DiscountAmount'] = "0";
-            }
+            $response[$item['id']]['DiscountAmount'] =
+                $this->moneyFormatter->format(
+                    $itemPrice->subtract(Price::calculateItemDiscount($item, $this->order->currency))
+                );
         }
         return array_values($response);
     }
@@ -227,59 +234,63 @@ class MasOrderController extends Controller
         $i = 0;
         $response = [];
         foreach ($this->order->payments as $payment) {
-            if ($payment->status !== 'approved' || $payment->refunded) {
-                continue;
-            }
+            if ($payment->status === 'approved') {
+                switch ($payment->paymentType->type) {
+                    case 'cash':
+                        $response[$i]['BillingAccount'] = "";
+                        $response[$i]['BillingExpiration'] = "";
+                        $response[$i]['BillingCv2'] = "";
+                        $response[$i]['PaymentType'] = 7;
+                        $response[$i]['PNRefToken'] = null;
+                        $response[$i]['AuthCode'] = "";
+                        $response[$i]['BillingZip'] = "";
+                        $response[$i]['CheckNumber'] = null;
+                        $response[$i]['RoutingNumber'] = null;
+                        $response[$i]['CreditCardType'] = null;
+                        $response[$i]['GiftCardNumber'] = null;
+                        $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($payment->price->subtract($payment->change_price));
+                        break;
+                    case 'card':
+                        $log = $payment->elavonApiPayments()->first('log');
 
-            switch ($payment->paymentType->type) {
-                case 'cash':
-                    $response[$i]['PaymentAmount'] = $payment->amount;
-                    $response[$i]['PaymentType'] = 7;
-                    $response[$i]['AuthCode'] = 'cash';
-                    break;
-                case 'card':
-                    $response[$i]['PaymentAmount'] = $payment->amount;
-                    $response[$i]['PaymentType'] = 1;
-                    $response[$i]['BillingAccount'] = '';
-                    $response[$i]['BillingExpiration'] = '';
-                    $response[$i]['BillingCv2'] = '';
-                    $response[$i]['PNRefToken'] = '';
-                    $response[$i]['AuthCode'] = $payment->code;
-                    $response[$i]['BillingZip'] = '';
-                    $response[$i]['CheckNumber'] = '';
-                    $response[$i]['RoutingNumber'] = '';
-                    $response[$i]['CreditCardType'] = '';
-                    break;
-                case 'pos-terminal':
-                    $log = $payment->elavonSdkPayments()->latest()->first();
+                        $response[$i]['PaymentType'] = 1;
+                        $response[$i]['PNRefToken'] = null;
+                        $response[$i]['AuthCode'] = $payment->code;
+                        $response[$i]['BillingZip'] = '';
+                        $response[$i]['CreditCardType'] = MasOrder::getCreditCardType($log->log['ssl_card_short_description']);
+                        $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($payment->price);
+                        break;
+                    case 'pos-terminal':
+                        $log = $payment->elavonSdkPayments()->latest()->first();
 
-                    $response[$i]['PaymentAmount'] = $payment->amount;
-                    $response[$i]['PaymentType'] = 1;
-                    $response[$i]['PNRefToken'] = null;
-                    $response[$i]['AuthCode'] = $payment->code;
-                    $response[$i]['BillingZip'] = '';
-                    $response[$i]['CreditCardType'] = MasOrder::getCreditCardType($log->getPaymentTransactionData()['cardScheme']);
-                    break;
-                case 'house-account':
-                    $response[$i]['PaymentAmount'] = $payment->amount;
-                    $response[$i]['BillingAccount'] = '';
-                    $response[$i]['BillingExpiration'] = '';
-                    $response[$i]['BillingCv2'] = '';
-                    $response[$i]['PaymentType'] = '';
-                    $response[$i]['PNRefToken'] = null;
-                    $response[$i]['AuthCode'] = 'house_account';
-                    break;
-                case 'giftcard':
-                    $response[$i]['PaymentAmount'] = $payment->amount;
-                    $response[$i]['PaymentType'] = 2;
-                    $response[$i]['GiftCardNumber'] = $payment->code;
-                    $response[$i]['PNRefToken'] = null;
-                    $response[$i]['AuthCode'] = 'giftcard';
-                    break;
-                default:
-                    break;
+                        $response[$i]['PaymentType'] = 1;
+                        $response[$i]['PNRefToken'] = null;
+                        $response[$i]['AuthCode'] = $payment->code;
+                        $response[$i]['BillingZip'] = '';
+                        $response[$i]['CreditCardType'] = MasOrder::getCreditCardType($log->payment_transaction_data['cardScheme']);
+                        $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($payment->price);
+                        break;
+                    case 'house-account':
+                        $response[$i]['BillingAccount'] = '';
+                        $response[$i]['BillingExpiration'] = '';
+                        $response[$i]['BillingCv2'] = '';
+                        $response[$i]['PaymentType'] = '';
+                        $response[$i]['PNRefToken'] = null;
+                        $response[$i]['AuthCode'] = 'house_account';
+                        $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($payment->price);
+                        break;
+                    case 'giftcard':
+                        $response[$i]['PaymentType'] = 2;
+                        $response[$i]['GiftCardNumber'] = $payment->code;
+                        $response[$i]['PNRefToken'] = null;
+                        $response[$i]['AuthCode'] = 'giftcard';
+                        $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($payment->price);
+                        break;
+                    default:
+                        break;
+                }
+                ++$i;
             }
-            $i++;
         }
         return array_values($response);
     }

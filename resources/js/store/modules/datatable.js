@@ -53,7 +53,7 @@ const state = {
     categories: [
       { text: "#", value: "id" },
       { text: "Name", value: "name" },
-      { text: "In product listing", value: "in_product_listing" },
+      { text: "In product listing", value: "is_enabled" },
       { text: "Actions", value: "actions" }
     ],
     companies: [
@@ -84,7 +84,7 @@ const state = {
       { text: "#", value: "id" },
       { text: "Name", value: "name" },
       { text: "Code", value: "code" },
-      { text: "Enabled", value: "enabled" },
+      { text: "Enabled", value: "is_enabled" },
       { text: "Amount", value: "amount" },
       { text: "Actions", value: "actions" }
     ],
@@ -94,8 +94,8 @@ const state = {
       { text: "Store", value: "store" },
       { text: "Type", value: "method" },
       { text: "Status", value: "status" },
-      { text: "Total", value: "total" },
-      { text: "Total paid", value: "total_paid" },
+      { text: "Total", value: "total_price" },
+      { text: "Total paid", value: "paid_price" },
       { text: "Created by", value: "created_by" },
       { text: "Created at", value: "created_at" },
       { text: "Actions", value: "actions" }
@@ -106,7 +106,7 @@ const state = {
       { text: "Name", value: "name" },
       { text: "Sku", value: "sku" },
       { text: "Stock", value: "stock" },
-      { text: "Price", value: "final_price" },
+      { text: "Price", value: "price" },
       { text: "Actions", value: "actions", shortable: false }
     ],
     storePickups: [

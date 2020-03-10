@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Address;
 use App\Customer;
 use App\Giftcard;
-use App\Helper\Price;
 use App\Jobs\ProcessOrder;
 use App\Order;
 use App\Status;
@@ -19,7 +18,6 @@ class OrderController extends Controller
     private $order_data;
     private $user;
     private $store;
-    // payment methods - linked refunds
 
     public function __construct(Order $order)
     {
@@ -36,7 +34,7 @@ class OrderController extends Controller
 
     public function getOne(Order $model)
     {
-        return response($model->load('customer.addresses'));
+        return response()->json($model->load(['customer.addresses', 'payments']), 200, [], JSON_NUMERIC_CHECK);
     }
 
     public function updateItems(Request $request)
@@ -51,17 +49,19 @@ class OrderController extends Controller
             'products.*.id' => 'nullable|numeric',
             'products.*.name' => 'required|string',
             'products.*.sku' => 'required|string',
-            'products.*.final_price' => 'required|numeric',
+            'products.*.price' => 'required|array',
+            'products.*.price.amount' => 'required|numeric|integer',
             'products.*.qty' => 'required|numeric',
-            'products.*.discount_type' => 'nullable|string',
-            'products.*.discount_amount' => 'nullable|numeric',
+            'products.*.discount' => 'required|array',
+            'products.*.discount.amount' => 'nullable|numeric|integer',
+            'products.*.discount.type' => 'nullable|string|in:none,flat,percentage',
             'products.*.notes' => 'nullable|string',
         ]);
 
         $this->user = auth()->user();
         $this->store = $this->user->open_register->cash_register->store;
 
-        $this->parseTax();
+        $this->parseStoreData();
         $this->parseProducts();
 
         $this->order = Order::findOrFail($this->order_data['order_id']);
@@ -71,7 +71,7 @@ class OrderController extends Controller
         $orderStatusController = new OrderStatusController($this->order);
         $orderStatusController->updateOrderStatus(null, true);
 
-        // ProcessOrder::dispatchNow($this->order);
+        ProcessOrder::dispatchNow($this->order);
 
         return response(['notification' => [
             'msg' => ['Your changes in order items saved successfully!'],
@@ -113,7 +113,7 @@ class OrderController extends Controller
         $orderStatusController = new OrderStatusController($this->order);
         $orderStatusController->updateOrderStatus(null, true);
 
-        // ProcessOrder::dispatchNow($this->order);
+        ProcessOrder::dispatchNow($this->order);
 
         return response(['notification' => [
             'msg' => ['Your changes in order options saved successfully!'],
@@ -124,33 +124,39 @@ class OrderController extends Controller
     public function create(Request $request)
     {
         $this->order_data = $request->validate([
-            'customer_id' => 'nullable|required_if:method,pickup,delivery|exists:customers,id',
-            'discount_type' => 'string|nullable',
-            'discount_amount' => 'numeric|nullable',
-            'shipping_cost' => 'numeric|nullable',
             'method' => 'required|in:retail,pickup,delivery',
-            'notes' => 'string|nullable',
             // items (products)
             'products' => 'required',
             'products.*.id' => 'nullable|numeric',
             'products.*.name' => 'required|string',
             'products.*.sku' => 'required|string',
-            'products.*.final_price' => 'required|numeric',
+            'products.*.price' => 'required|array',
+            'products.*.price.amount' => 'required|numeric|integer',
             'products.*.qty' => 'required|numeric',
-            'products.*.discount_type' => 'nullable|string',
-            'products.*.discount_amount' => 'nullable|numeric',
+            'products.*.discount' => 'required|array',
+            'products.*.discount.amount' => 'nullable|numeric|integer',
+            'products.*.discount.type' => 'nullable|string|in:none,flat,percentage',
             'products.*.notes' => 'nullable|string',
-            // billing
+            'notes' => 'string|nullable',
+            // customer
+            'customer_id' => 'nullable|required_if:method,pickup,delivery|exists:customers,id',
             'billing_address_id' => 'nullable|required_if:method,delivery|exists:addresses,id',
             // delivery
             'delivery' => 'nullable|required_if:method,pickup,delivery|array',
             'delivery.date' => 'nullable|required_if:method,pickup,delivery|date',
             'delivery.time' => 'nullable|required_if:method,pickup,delivery|string',
             'delivery.occasion' => 'nullable|required_if:method,delivery|numeric',
-            // delivery address (shipping address)
+            // delivery address
             'delivery.address_id' => 'nullable|required_if:method,delivery|exists:addresses,id',
             // store_pickup
-            'delivery.store_pickup_id' => 'nullable|required_if:method,pickup|exists:store_pickups,id'
+            'delivery.store_pickup_id' => 'nullable|required_if:method,pickup|exists:store_pickups,id',
+            'delivery_fees_price' => 'nullable|array',
+            'delivery_fees_price.amount' => 'nullable|integer',
+            'delivery_fees_price.currency' => 'nullable|string|size:3',
+            // discount
+            'discount' => 'nullable|array',
+            'discount.amount' => 'nullable|numeric|integer',
+            'discount.type' => 'nullable|string|in:none,flat,percentage',
         ]);
 
         $this->user = auth()->user();
@@ -160,20 +166,19 @@ class OrderController extends Controller
         $this->order_data['store_id'] = $this->store->id;
 
         $this->parseAddresses();
-        $this->parseTax();
+        $this->parseStoreData();
         $this->parseProducts();
 
         $this->order = Order::createWithoutEvents($this->order_data);
         $submittedStatusId = Status::where('value', 'submitted')->firstOrFail('id');
         $this->order->statuses()->attach($submittedStatusId, ['user_id' => $this->user->id]);
-        // ProcessOrder::dispatchNow($this->order);
+        ProcessOrder::dispatchNow($this->order);
 
         return response([
-            'order_id' => $this->order->id,
-            'order_status' => 'created',
-            'order_total' => $this->order->total,
-            'order_total_without_tax' => $this->order->total_without_tax,
-            'order_total_tax' => $this->order->total_tax,
+            'id' => $this->order->id,
+            'status' => $this->order->status,
+            'total_price' => $this->order->total_price,
+            'tax_price' => $this->order->tax_price,
         ], 201);
     }
 
@@ -198,7 +203,6 @@ class OrderController extends Controller
                 break;
         }
 
-        unset($this->order_data['delivery']);
         $this->order_data['delivery'] = $delivery;
     }
 
@@ -213,19 +217,20 @@ class OrderController extends Controller
         $this->order_data['items'] = $items;
     }
 
-    private function parseTax()
+    private function parseStoreData()
     {
+        $this->order_data['currency'] = $this->store->default_currency;
+
         $has_tax = true;
         if (isset($this->order_data['customer_id'])) {
             $customer = Customer::findOrFail($this->order_data['customer_id']);
             $has_tax = $customer->no_tax ? false : true;
         }
 
-        $this->order_data['subtotal'] = $this->setSubtotal($this->order_data);
         if ($has_tax) {
-            $this->order_data['tax'] = $this->store->tax->percentage;
+            $this->order_data['tax_percentage'] = $this->store->tax->percentage;
         } else {
-            $this->order_data['tax'] = 0;
+            $this->order_data['tax_percentage'] = 0;
         }
     }
 
@@ -250,29 +255,9 @@ class OrderController extends Controller
         $this->parseDelivery($addresses);
     }
 
-    private function setSubtotal()
-    {
-        $subtotal = 0;
-        foreach ($this->order_data['products'] as $product) {
-            $total = $product['final_price'] * $product['qty'];
-
-            if (isset($product['discount_type']) && isset($product['discount_amount'])) {
-                $total = Price::calculateDiscount($total, $product['discount_type'], $product['discount_amount']);
-            }
-
-            $subtotal += $total;
-        }
-        if (isset($this->order_data['discount_type']) && isset($this->order_data['discount_amount'])) {
-            $subtotal = Price::calculateDiscount($subtotal, $this->order_data['discount_type'], $this->order_data['discount_amount']);
-        }
-
-        return $subtotal;
-    }
-
     private function parseProduct($product)
     {
-        $product['price'] = $product['final_price'];
-
+        // remove useless data
         unset($product['stores']);
         unset($product['stock_id']);
         unset($product['categories']);
@@ -282,19 +267,6 @@ class OrderController extends Controller
         unset($product['laravel_stock']);
         unset($product['magento_stock']);
         unset($product['plantcare_pdf']);
-
-        if (
-            !array_key_exists('discount_type', $product) ||
-            !array_key_exists('discount_amount', $product)
-        ) {
-            $product['discount_type'] = $product['discount_amount'] = null;
-        } else if ($product['discount_type'] && $product['discount_amount']) {
-            $product['final_price'] = Price::calculateDiscount(
-                $product['price'],
-                $product['discount_type'],
-                $product['discount_amount']
-            );
-        }
 
         return $product;
     }
@@ -368,10 +340,11 @@ class OrderController extends Controller
             'keyword' => 'nullable|required_without:filters|string',
 
             'filters' => 'nullable|array',
+            // checkboxes
             'filters.cb_timestamps' => 'nullable|boolean',
             'filters.cb_statuses' => 'nullable|boolean',
             'filters.cb_customer' => 'nullable|boolean',
-
+            // filters
             'filters.timestamp_from' => 'nullable|before_or_equal:today',
             'filters.timestamp_to' => 'nullable|before_or_equal:today',
             'filters.statuses.*.id' => 'nullable|exists:statuses,id',
@@ -399,17 +372,20 @@ class OrderController extends Controller
     private function applyFilters($query)
     {
         if (isset($this->order_data['filters']['cb_timestamps']) && $this->order_data['filters']['cb_timestamps']) {
-            if (isset($this->order_data['filters']['timestamp_from'])) {
+            if (isset($this->order_data['filters']['timestamp_from']) && !isset($this->order_data['filters']['timestamp_to'])) {
+                $query =
+                    $query->where('created_at', '>=', $this->order_data['filters']['timestamp_from']);
+            } else if (isset($this->order_data['filters']['timestamp_to'])) {
+                $query = $query->where('created_at', '<=', [$this->order_data['filters']['timestamp_to']]);
+            } else if (isset($this->order_data['filters']['timestamp_from']) && isset($this->order_data['filters']['timestamp_to'])) {
                 $query =
                     $query->whereBetween(
                         'created_at',
                         [
                             $this->order_data['filters']['timestamp_from'],
-                            $this->order_data['filters']['timestamp_to'] ?? now()
+                            $this->order_data['filters']['timestamp_to']
                         ]
                     );
-            } else if ($this->order_data['filters']['timestamp_to']) {
-                $query = $query->whereBetween('created_at', [$this->order_data['filters']['timestamp_to'], now()]);
             }
         }
 

@@ -10,21 +10,21 @@
           <v-card-text>
             <div class="subtitle-1">Sku: {{ productData.sku }}</div>
             <div class="subtitle-1">
-              Price: {{ parseFloat(product.final_price).toFixed(2) }} $
+              Price: {{ $price(product.price).toFormat() }}
             </div>
             <div class="subtitle-1">Stock: {{ productData.stock }}</div>
             <div class="subtitle-1">
               Created at: {{ productData.created_at }}
             </div>
             <div class="subtitle-1" v-if="productData.barcode">
-              <barcode :value="productData.barcode" format="CODE39"
-                >The rendering fails.</barcode
+              <barcode
+                :value="
+                  productData.barcode ? productData.barcode : productData.sku
+                "
+                format="CODE39"
               >
-            </div>
-            <div class="subtitle-1" v-else-if="productData.sku">
-              <barcode :value="productData.sku" format="CODE39"
-                >The rendering fails.</barcode
-              >
+                Error displaying barcode
+              </barcode>
             </div>
           </v-card-text>
           <v-simple-table fixed-header>

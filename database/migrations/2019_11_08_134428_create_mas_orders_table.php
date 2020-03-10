@@ -14,8 +14,8 @@ class CreateMasOrdersTable extends Migration
     public function up()
     {
         Schema::create('mas_orders', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('order_id');
+            $table->mediumIncrements('id');
+            $table->unsignedMediumInteger('order_id');
 
             $table->string('mas_control_number')->nullable();
             $table->string('mas_message_number')->nullable();
@@ -23,7 +23,7 @@ class CreateMasOrdersTable extends Migration
 
             $table->text('notes')->nullable();
 
-            $table->timestamps();
+            $table->timestampsTz();
         });
     }
 

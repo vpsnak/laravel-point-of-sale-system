@@ -12,6 +12,7 @@
         pill
         v-on="$props.customer && $props.menu ? on : null"
         :color="$props.customer ? 'primary' : null"
+        :small="small"
       >
         <v-icon left>mdi-account-outline</v-icon>
         {{ $props.customer ? $props.customer.full_name : "Guest" }}
@@ -24,17 +25,29 @@
 </template>
 
 <script>
+import { EventBus } from "../../../plugins/eventBus";
 export default {
   props: {
+    small: Boolean,
     title: Boolean,
     menu: Boolean,
     customer: Object
+  },
+
+  beforeDestroy() {
+    EventBus.$off("overlay");
   },
 
   data() {
     return {
       customerDetails: false
     };
+  },
+
+  watch: {
+    customerDetails(value) {
+      EventBus.$emit("overlay", value);
+    }
   }
 };
 </script>

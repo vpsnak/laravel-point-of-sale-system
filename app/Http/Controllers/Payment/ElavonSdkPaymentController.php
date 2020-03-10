@@ -33,12 +33,6 @@ class ElavonSdkPaymentController extends Controller
         }
     }
 
-    public function deleteAll()
-    {
-        DB::table('elavon_sdk_payments')->truncate();
-        return response('SDK Logs truncated');
-    }
-
     public function lookup(Request $request)
     {
         $validatedData = $request->validate([
@@ -93,7 +87,7 @@ class ElavonSdkPaymentController extends Controller
 
         $this->selected_transaction = $validatedData['selected_transaction'];
 
-        array_key_exists('amount', $validatedData) ? $this->amount = 100 * $validatedData['amount'] : null;
+        array_key_exists('amount', $validatedData) ? $this->amount = $validatedData['amount'] : null;
         array_key_exists('originalTransId', $validatedData) ? $this->originalTransId = $validatedData['originalTransId'] : null;
         array_key_exists('test_case', $validatedData) ? $this->testCase = $validatedData['test_case'] : null;
         array_key_exists('keyed', $validatedData) ? $this->keyed = $validatedData['keyed'] : null;
@@ -107,7 +101,7 @@ class ElavonSdkPaymentController extends Controller
         return response($this->posPayment());
     }
 
-    private function saveToSdkLog($data, $status)
+    private function saveToSdkLog(array $data, $status)
     {
         $elavonSdkPayment = new ElavonSdkPayment();
 
@@ -118,7 +112,7 @@ class ElavonSdkPaymentController extends Controller
 
         $elavonSdkPayment->test_case = $this->testCase;
         $elavonSdkPayment->status = $status;
-        $elavonSdkPayment->log = is_Array($data) ? json_encode($data) : strip_tags($data);
+        $elavonSdkPayment->log = $data;
 
         $elavonSdkPayment->save();
     }
@@ -128,7 +122,7 @@ class ElavonSdkPaymentController extends Controller
         $id = $this->startCardReaderConfiguration();
 
         if ($id['statusDetails'] === 'TARGET_UNAVAILABLE') {
-            $msg = 'POS Terminal initialization failed.<br>Please restart Converge Service and try again.';
+            $msg = ['POS Terminal initialization failed.<br>Please restart Converge Service and try again.'];
             $this->saveToSdkLog($msg, 'error');
 
             return ['errors' => $msg];
@@ -146,7 +140,7 @@ class ElavonSdkPaymentController extends Controller
         $this->saveToSdkLog($response, 'success');
 
         if (!count($response['data']['cardReadersSearch']['cardReaders'])) {
-            $msg = 'POS Terminal failed to initialize properly<br>Please restart ConvergeConnect service and try again';
+            $msg = ['POS Terminal failed to initialize properly<br>Please restart ConvergeConnect service and try again'];
             $this->saveToSdkLog($response, 'error');
             $this->saveToSdkLog($msg, 'error');
             return ['errors' => $msg];
@@ -165,15 +159,14 @@ class ElavonSdkPaymentController extends Controller
         }
 
         if ($cardReaderInfo['data']['cardReaderInfo'] === null) {
-            $this->saveToSdkLog('POS Terminal is not initialized.', 'error');
+            $this->saveToSdkLog(['POS Terminal is not initialized'], 'error');
             if ($autoInit) {
-                $this->saveToSdkLog('Starting automatic initialization process...', 'info');
+                $this->saveToSdkLog(['Starting automatic initialization process...'], 'info');
                 return $this->initPosTerminal();
             } else {
                 return ['errors' => 'POS Terminal is not initialized'];
             }
         } else {
-            $this->saveToSdkLog('POS Terminal is already initialized', 'info');
             return [];
         }
     }
@@ -185,39 +178,43 @@ class ElavonSdkPaymentController extends Controller
 
             switch ($response['data']['paymentGatewayCommand']['paymentTransactionData']['errors'][0]) {
                 case 'ECLCommerceError ECLCardReaderCanceled':
-                    $msg = 'Transaction canceled';
+                    $msg = ['Transaction canceled'];
                     $this->saveToSdkLog($msg, 'declined');
                     return ['errors' => $msg];
                 case 'ECLCommerceError ECLTransactionCardNeedsRemoval':
-                    $msg = 'Remove the card and try again<br>Insert the card only when prompted by the POS Terminal';
+                    $msg = ['Remove the card and try again<br>Insert the card only when prompted by the POS Terminal'];
                     $this->saveToSdkLog($msg, 'declined');
                     return ['errors' => $msg];
                 case 'ECLCommerceError ECLTransactionCardRemoved':
-                    $msg = 'Card has been removed before the transaction completed';
+                    $msg = ['Card has been removed before the transaction completed'];
                     $this->saveToSdkLog($msg, 'declined');
                     return ['errors' => $msg];
                 case 'ECLCommerceError ECLCardReaderCannotConnect':
-                    $msg = 'POS Terminal disconnected<br>Please verify that POS Terminal is properly connected and try again';
+                    $msg = ['POS Terminal disconnected<br>Please verify that POS Terminal is properly connected and try again'];
                     $this->saveToSdkLog($msg, 'declined');
                     return ['errors' => $msg];
                 case 'ECLCommerceError ECLCardReaderCardDataInvalid':
-                    $msg = 'Invalid card';
+                    $msg = ['Invalid card'];
                     $this->saveToSdkLog($msg, 'declined');
                     return ['errors' => $msg];
                 case 'ECLCommerceError ECLTransactionCardReaderNoneAvailable':
-                    $msg = 'POS Terminal is not available<br>Please verify the POS Terminal is properly connected and try again';
+                    $msg = ['POS Terminal is not available<br>Please verify the POS Terminal is properly connected and try again'];
                     $this->saveToSdkLog($msg, 'declined');
                     return ['errors' => $msg];
                 case 'ECLCommerceError ECLTransactionInvalidTransactionRequest':
-                    $msg = 'This transaction is already settled';
+                    $msg = ['This transaction is already settled'];
                     $this->saveToSdkLog($msg, 'failed');
                     return ['errors' => $msg];
                 case 'ECLCommerceError ECLTransactionNotRefundable':
-                    $msg = 'This transaction isn\'t settled';
+                    $msg = ['This transaction isn\'t settled'];
+                    $this->saveToSdkLog($msg, 'failed');
+                    return ['errors' => $msg];
+                case 'ECLCommerceError ECLTransactionInvalidCardNumber':
+                    $msg = ['The credit card is invalid'];
                     $this->saveToSdkLog($msg, 'failed');
                     return ['errors' => $msg];
                 default:
-                    $msg = 'Warning: Unhandled error occured. Please check log file entry above';
+                    $msg = ['Warning: Unhandled error occured. Please check log entry above'];
                     $this->saveToSdkLog($msg, 'declined');
                     return ['errors' => $msg];
             }
@@ -253,7 +250,7 @@ class ElavonSdkPaymentController extends Controller
         }
 
         if (array_key_exists('errors', $this->startPaymentTransaction())) {
-            $msg = 'Error at starting transaction. Please try again.';
+            $msg = ['Error at starting transaction. Please try again.'];
             $this->saveToSdkLog($msg, 'error');
             return ['errors' => $msg];
         }
@@ -308,7 +305,7 @@ class ElavonSdkPaymentController extends Controller
     private function sendRequest($payload, $verbose = true)
     {
         if (empty(auth()->user()->open_register)) {
-            return ['errors' => ['Cash Register' => ['Your session with cash register has exired']]];
+            return ['errors' => ['Cash Register' => ['Your session with cash register has expired']]];
         }
 
         $ip = auth()->user()->open_register->cash_register->pos_terminal_ip;
@@ -341,7 +338,7 @@ class ElavonSdkPaymentController extends Controller
 
         $response = $response->getBody()->getContents();
         if ($verbose) {
-            $this->saveToSdkLog($response, 'success');
+            $this->saveToSdkLog(json_decode($response, true), 'success');
         }
 
         return json_decode($response, true);
@@ -450,17 +447,14 @@ class ElavonSdkPaymentController extends Controller
 
         if (isset($paymentGateway['errors']) || isset($paymentGateway['fatal_error'])) {
             $this->saveToSdkLog('Payment gateway failed', 'error');
-
             return ['errors' => isset($paymentGateway['errors']) ? $paymentGateway['errors'] : $paymentGateway['fatal_error']];
         }
 
         if ($paymentGateway['data']['paymentGatewayCommand']['openPaymentGatewayData']['result'] !== 'SUCCESS') {
             $this->saveToSdkLog('Payment gateway failed', 'error');
-
             return ['errors' => 'Payment gateway failed'];
         } else {
             $this->paymentGatewayId = $paymentGateway['data']['paymentGatewayCommand']['openPaymentGatewayData']['paymentGatewayId'];
-
             return [];
         }
     }
@@ -485,7 +479,7 @@ class ElavonSdkPaymentController extends Controller
             $payload['parameters']['invoiceNumber'] = $this->invoiceNumber;
         }
 
-        if ($this->keyed != false) {
+        if ($this->keyed) {
             $payload['parameters']['cardEntryTypes'] = ['MANUALLY_ENTERED'];
 
             if ($this->CARDHOLDER_ADDRESS && $this->CARDHOLDER_ZIP) {
@@ -496,7 +490,7 @@ class ElavonSdkPaymentController extends Controller
             }
         }
 
-        if ($this->voiceReferral != false) {
+        if ($this->voiceReferral) {
             $payload['parameters']['forceTransaction'] = true;
         }
 

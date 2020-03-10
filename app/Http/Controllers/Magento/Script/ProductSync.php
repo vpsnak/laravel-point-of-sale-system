@@ -48,19 +48,13 @@ class ProductSync
                         self::productFieldsToParse,
                         self::productFieldsToRename
                     );
+
+                    $parsedProduct = static::parsePrice($parsedProduct, $product);
+
                     $storedProduct = \App\Product::updateOrCreate(
                         ['sku' => $product->sku],
                         $parsedProduct
                     );
-                    $price = $storedProduct->price()->updateOrCreate([
-                        'amount' => $product->price ?? 0
-                    ]);
-                    $discount = $price->discount()->updateOrCreate([
-                        'type' => 'flat',
-                        'amount' => $product->price - $product->final_price
-                    ]);
-                    $price->discount_id = $discount->id;
-                    $price->save();
 
                     $storedProduct->stores()->syncWithoutDetaching(
                         [
@@ -71,6 +65,30 @@ class ProductSync
                 }
             }
         }
+    }
+
+    private static function parsePrice(array $parsedProduct, object $product)
+    {
+        $price = $product->price;
+        $final_price = $product->final_price;
+
+        unset($parsedProduct['price']);
+        unset($parsedProduct['final_price']);
+
+        $parsedProduct['price'] = [
+            'amount' => $price * 100 ?? 0,
+            'currency' => 'USD',
+        ];
+        $discountAmount = ($price - $final_price) * 100;
+
+        $parsedProduct['discount'] = [
+            'amount' => $discountAmount,
+            'currency' => 'USD',
+            'type' => $discountAmount > 0 ? 'flat' : 'none',
+
+        ];
+
+        return $parsedProduct;
     }
 
     /**

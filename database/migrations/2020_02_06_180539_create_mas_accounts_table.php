@@ -14,7 +14,7 @@ class CreateMasAccountsTable extends Migration
     public function up()
     {
         Schema::create('mas_accounts', function (Blueprint $table) {
-            $table->increments('id');
+            $table->mediumIncrements('id');
 
             $table->enum('environment', ['test', 'production']);
             $table->string('endpoint');

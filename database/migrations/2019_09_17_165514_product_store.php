@@ -14,8 +14,8 @@ class ProductStore extends Migration
     public function up()
     {
         Schema::create('product_store', function (Blueprint $table) {
-            $table->unsignedBigInteger('product_id');
-            $table->unsignedBigInteger('store_id');
+            $table->unsignedMediumInteger('product_id');
+            $table->unsignedTinyInteger('store_id');
             $table->integer('qty');
         });
     }

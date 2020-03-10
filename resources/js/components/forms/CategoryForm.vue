@@ -18,7 +18,7 @@
         </ValidationProvider>
         <v-switch
           :readonly="$props.readonly"
-          v-model="formFields.in_product_listing"
+          v-model="formFields.enabled"
           label="In Product listing"
         ></v-switch>
       </v-container>
@@ -56,7 +56,7 @@ export default {
       defaultValues: {},
       formFields: {
         name: "",
-        in_product_listing: false
+        enabled: false
       }
     };
   },

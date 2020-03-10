@@ -14,7 +14,7 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider rules="max:191" v-slot="{ errors }" name="Notes">
+        <ValidationProvider v-slot="{ errors }" name="Notes">
           <v-textarea
             :rows="3"
             v-model="dummyProduct.notes"
@@ -27,11 +27,7 @@
       </v-container>
       <v-container>
         <ValidationProvider
-          :rules="{
-            required: true,
-            max_value: 99999,
-            regex: /^[\d]{1,8}(\.[\d]{1,2})?$/g
-          }"
+          rules="required|between:0.01,1000"
           v-slot="{ errors, valid }"
           name="Price Amount"
         >
@@ -50,8 +46,8 @@
               class="mr-4"
               type="submit"
               :disabled="invalid"
-              >Add to cart</v-btn
-            >
+              >Add to cart
+            </v-btn>
           </v-col>
         </v-row>
       </v-container>

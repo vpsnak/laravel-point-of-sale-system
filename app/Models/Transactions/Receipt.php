@@ -17,8 +17,8 @@ class Receipt extends Model
 
     protected $casts = [
         'content' => 'array',
-        'created_at' => "datetime:m/d/Y H:i:s",
-        'updated_at' => "datetime:m/d/Y H:i:s"
+        'created_at' => 'datetime:m/d/Y H:i:s',
+        'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
 
     public function users()
@@ -31,7 +31,7 @@ class Receipt extends Model
         return $this->belongsTo(Order::class);
     }
 
-    public function cash_registers()
+    public function cashRegisters()
     {
         return $this->belongsTo(CashRegister::class);
     }

@@ -9,12 +9,12 @@ class StoreController extends Controller
 {
     public function all()
     {
-        return response(Store::with(['cash_registers'])->paginate());
+        return response(Store::with(['cashRegisters'])->paginate());
     }
 
     public function getOne(Store $model)
     {
-        return response($model->load('cash_registers'));
+        return response($model->load('cashRegisters'));
     }
 
     public function create(Request $request)
@@ -28,11 +28,10 @@ class StoreController extends Controller
             'postcode' => 'required|string',
             'city' => 'required|string',
             'active' => 'required|boolean',
+            'default_currency' => 'required|string|exists:countries,iso3_code',
             'is_phone_center' => 'required|boolean'
 
         ]);
-        $validatedData['user_id'] = auth()->user()->id;
-
         $store = Store::create($validatedData);
 
         return response(['notification' => [
@@ -52,14 +51,16 @@ class StoreController extends Controller
             'street' => 'required|string',
             'postcode' => 'required|string',
             'city' => 'required|string',
-            'active' => 'required|boolean'
+            'active' => 'required|boolean',
+            'default_currency' => 'required|string|exists:countries,iso3_code',
+            'is_phone_center' => 'required|boolean'
         ]);
         $validatedData['user_id'] = auth()->user()->id;
 
         $store = Store::findOrFail($validatedData['id']);
         $store->fill($validatedData);
         $store->save();
-        
+
         return response(['notification' => [
             'msg' => ["Store {$store->name} updated successfully!"],
             'type' => 'success'

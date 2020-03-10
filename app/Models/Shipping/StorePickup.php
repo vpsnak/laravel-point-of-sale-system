@@ -16,8 +16,8 @@ class StorePickup extends Model
     protected $casts = [
         'id' => 'integer',
         'region_id' => 'integer',
-        'created_at' => "datetime:m/d/Y H:i:s",
-        'updated_at' => "datetime:m/d/Y H:i:s"
+        'created_at' => 'datetime:m/d/Y H:i:s',
+        'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
 
     public function region()

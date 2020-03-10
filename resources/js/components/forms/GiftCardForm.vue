@@ -5,7 +5,7 @@
         <ValidationProvider
           rules="required|max:191"
           v-slot="{ errors, valid }"
-          name="Names"
+          name="Name"
         >
           <v-text-field
             :readonly="$props.readonly"
@@ -29,11 +29,7 @@
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
-          :rules="{
-            required: true,
-            regex: /^[\d]{1,8}(\.[\d]{1,2})?$/g,
-            max_value: 99999
-          }"
+          rules="required|between:0.01,1000"
           v-slot="{ errors, valid }"
           name="Amount"
         >
@@ -56,7 +52,7 @@
           </ValidationProvider>
           <v-switch
             :readonly="$props.readonly"
-            v-model="formFields.enabled"
+            v-model="formFields.is_enabled"
             label="Enabled"
           ></v-switch>
         </v-row>
@@ -111,7 +107,7 @@ export default {
       formFields: {
         name: null,
         code: null,
-        enabled: false,
+        is_enabled: false,
         amount: null
       }
     };

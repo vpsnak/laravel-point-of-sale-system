@@ -11,20 +11,23 @@ import vuetify from "./plugins/vuetify"; // path to vuetify export
 import BarcodeScanner from "simple-barcode-scanner";
 import VueBarcode from "vue-barcode";
 import Donut from "vue-css-donut-chart";
+import Price from "./plugins/price";
+import store from "./store/store";
 import "vue-css-donut-chart/dist/vcdonut.css";
 
 import {
   ValidationProvider,
   ValidationObserver
 } from "vee-validate/dist/vee-validate.full";
-import store from "./store/store";
 
 window.Vue = require("vue");
 
 Vue.component("ValidationProvider", ValidationProvider);
 Vue.component("ValidationObserver", ValidationObserver);
 Vue.component("barcode", VueBarcode);
+
 Vue.use(Donut);
+Vue.use(Price);
 
 const scanner = BarcodeScanner();
 

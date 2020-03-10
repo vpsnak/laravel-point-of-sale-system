@@ -1,7 +1,7 @@
 <template>
   <div>
     <h5 v-if="$props.title">MAS Status</h5>
-    <v-chip pill :color="parseMasStatus.color">
+    <v-chip pill :color="parseMasStatus.color" :small="small">
       <v-icon left>
         {{ parseMasStatus.icon }}
       </v-icon>
@@ -13,6 +13,7 @@
 <script>
 export default {
   props: {
+    small: Boolean,
     title: Boolean,
     mas_order: Object
   },

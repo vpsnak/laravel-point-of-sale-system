@@ -14,11 +14,12 @@ class CreateTaxesTable extends Migration
     public function up()
     {
         Schema::create('taxes', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->tinyIncrements('id');
             $table->string('name');
-            $table->double('percentage')->default(0);
-            $table->boolean('is_default')->default(0);
-            $table->timestamps();
+            $table->double('percentage');
+            $table->unsignedSmallInteger('user_id');
+
+            $table->timestampsTz();
         });
     }
 

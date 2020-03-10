@@ -8,7 +8,12 @@
   >
     <template v-slot:activator="{ on }">
       <h5 v-if="$props.title">Status</h5>
-      <v-chip pill v-on="$props.menu ? on : null" :color="latestStatus.color">
+      <v-chip
+        pill
+        v-on="$props.menu ? on : null"
+        :color="latestStatus.color"
+        :small="small"
+      >
         <v-icon left>{{ $props.latestStatus.icon }}</v-icon>
         {{ $props.latestStatus.text }}
       </v-chip>
@@ -51,7 +56,7 @@
             <template v-slot:item.processed_by="{ item }">
               <createdByChip
                 :menu="true"
-                :created_by="item.pivot.processed_by"
+                :createdBy="item.pivot.processed_by"
               ></createdByChip>
             </template>
           </v-data-table>
@@ -63,12 +68,19 @@
 
 <script>
 import { mapActions } from "vuex";
+import { EventBus } from "../../../plugins/eventBus";
+
 export default {
   props: {
+    small: Boolean,
     menu: Boolean,
     orderId: Number,
     title: Boolean,
     latestStatus: Object
+  },
+
+  beforeDestroy() {
+    EventBus.$off("overlay");
   },
 
   data() {
@@ -86,6 +98,7 @@ export default {
 
   watch: {
     statusesDetails(value) {
+      EventBus.$emit("overlay", value);
       if (value && !this.statuses.length) {
         this.getOrderStatuses();
       }
@@ -106,7 +119,9 @@ export default {
         .then(response => {
           this.statuses = response;
         })
-        .catch()
+        .catch(error => {
+          console.log(error);
+        })
         .finally(() => {
           this.loading = false;
         });

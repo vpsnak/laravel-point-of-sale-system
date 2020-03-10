@@ -7,22 +7,25 @@
       </span>
     </v-card-title>
     <v-container>
-      <v-row
-        justify="space-around"
-        align="center"
-        dense
-        v-for="(section, index) in costSections"
-        :key="index"
-      >
-        <v-col :lg="4" :cols="6" class="text-right">
-          <h4>
-            {{ section.title }}
-          </h4>
+      <v-row justify="center" align="center">
+        <v-progress-circular v-if="loading" indeterminate color="secondary" />
+
+        <v-col v-else-if="total_paid.greaterThan($price({ amount: 0 }))">
+          <vc-donut
+            hasLegend
+            legendPlacement="left"
+            :sections="sections"
+            :size="150"
+            :thickness="13"
+            :total="Number(total_paid.toFormat('0.00'))"
+            :background="bgColor"
+          >
+            <h2>{{ total_paid.toFormat() }}</h2>
+            <h2>total paid</h2>
+          </vc-donut>
         </v-col>
-        <v-col :lg="4" :cols="6">
-          <h4>
-            <i :class="section.class">${{ section.value }}</i>
-          </h4>
+        <v-col v-else cols="auto">
+          No payments have been made
         </v-col>
       </v-row>
     </v-container>
@@ -30,145 +33,119 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 export default {
+  props: {
+    orderId: Number
+  },
+
+  created() {
+    this.getPaymentAnalysis();
+  },
+
   data() {
     return {
       sections: [],
+      loading: false,
 
-      card_total: 0,
-      pos_terminal_total: 0,
-      cash_total: 0,
-      house_account_total: 0,
-      giftcard_total: 0,
-      coupon_total: 0,
-      refund_total: 0
+      card_pos: this.$price(),
+      card_keyed: this.$price(),
+      cash: this.$price(),
+      house_account: this.$price(),
+      giftcard: this.$price(),
+      coupon: this.$price(),
+      total_paid: this.$price()
     };
   },
 
   computed: {
-    ...mapState("cart", [
-      "order_id",
-      "order_status",
-      "order_total",
-      "order_total_without_tax",
-      "order_total_tax",
-      "order_total_paid",
-      "order_change",
-      "order_remaining",
-      "order_notes",
-      "order_billing_address",
-      "order_delivery_address",
-      "order_delivery_store_pickup",
-      "order_delivery_store_pickup",
-      "shipping_cost",
-      "payments"
-    ]),
+    bgColor() {
+      if (this.$vuetify.theme.dark) {
+        return "#1e1e1e";
+      }
+    }
+  },
+  methods: {
+    ...mapActions("requests", ["request"]),
 
-    costSections() {
+    setSections() {
       this.sections = [];
-
-      this.payments.forEach(payment => {
-        if (payment.status === "approved" && !payment.refunded) {
-          switch (payment.payment_type.type) {
-            case "pos-terminal":
-              this.pos_terminal_total =
-                Number(this.pos_terminal_total) + Number(payment.amount);
-              break;
-            case "card":
-              this.card_total =
-                Number(this.card_total) + Number(payment.amount);
-              break;
-            case "cash":
-              this.cash_total =
-                Number(this.cash_total) + Number(payment.amount);
-              break;
-            case "house-account":
-              this.house_account_total =
-                Number(this.house_account_total) + Number(payment.amount);
-              break;
-            case "coupon":
-              this.coupon_total =
-                Number(this.coupon_total) + Number(payment.amount);
-              break;
-            case "giftcard":
-              this.giftcard_total =
-                Number(this.giftcard_total) + Number(payment.amount);
-              break;
-          }
-        } else if (payment.status === "refunded") {
-          this.refund_total += Number(payment.amount);
-        }
-      });
-
-      if (this.card_total > 0) {
+      if (this.card_pos.greaterThan(this.$price())) {
         this.sections.push({
-          title: "Credit Card (keyed)",
-          value: this.card_total,
-          class: "primary--text"
+          label: `Credit Card (POS): ${this.card_pos.toFormat()}`,
+          value: Number(this.card_pos.toFormat("0.00")),
+          color: "#003f5c"
         });
       }
-      if (this.pos_terminal_total > 0) {
+      if (this.card_keyed.greaterThan(this.$price())) {
         this.sections.push({
-          title: "Credit Card (POS)",
-          value: this.pos_terminal_total,
-          class: "primary--text"
+          label: `Credit Card (keyed): ${this.card_keyed.toFormat()}`,
+          value: Number(this.card_keyed.toFormat("0.00")),
+          color: "#444e86"
         });
       }
-      if (this.cash_total > 0) {
+      if (this.cash.greaterThan(this.$price())) {
         this.sections.push({
-          title: "Cash",
-          value: this.cash_total,
-          class: "primary--text"
+          label: `Cash: ${this.cash.toFormat()}`,
+          value: Number(this.cash.toFormat("0.00")),
+          color: "#955196"
         });
       }
-      if (this.house_account_total > 0) {
+      if (this.house_account.greaterThan(this.$price())) {
         this.sections.push({
-          title: "House account",
-          value: this.house_account_total,
-          class: "primary--text"
+          label: `House account: ${this.house_account.toFormat()}`,
+          value: Number(this.house_account.toFormat("0.00")),
+          color: "#dd5182"
         });
       }
-      if (this.coupon_total > 0) {
+      if (this.giftcard.greaterThan(this.$price())) {
         this.sections.push({
-          title: "Coupons",
-          value: this.coupon_total,
-          class: "primary--text"
+          label: `Giftcards: ${this.giftcard.toFormat()}`,
+          value: Number(this.giftcard.toFormat("0.00")),
+          color: "#ff6e54"
         });
       }
-      if (this.giftcard_total > 0) {
+      if (this.coupon.greaterThan(this.$price())) {
         this.sections.push({
-          title: "Giftcards",
-          value: this.giftcard_total,
-          class: "primary--text"
+          label: `Coupons: ${this.coupon.toFormat()}`,
+          value: Number(this.coupon.toFormat("0.00")),
+          color: "#ffa600"
         });
       }
-      if (this.refund_total < 0) {
-        this.sections.push({
-          title: "Refunds",
-          value: this.refund_total * -1,
-          class: "amber--text"
-        });
-      }
-      this.sections.push({
-        title: "Total paid",
-        value: this.sumTotals >= 0 ? this.sumTotals : 0,
-        class: "success--text"
-      });
 
       return this.sections;
     },
-    sumTotals() {
-      let totals =
-        Number(this.card_total) +
-        Number(this.pos_terminal_total) +
-        Number(this.cash_total) +
-        Number(this.house_account_total) +
-        Number(this.coupon_total) +
-        Number(this.giftcard_total) +
-        Number(this.refund_total);
+    getPaymentAnalysis() {
+      this.loading = true;
+      const payload = {
+        method: "get",
+        url: `orders/${this.$props.orderId}/payment-details`
+      };
 
-      return totals.toFixed(2);
+      this.request(payload)
+        .then(response => {
+          this.card_pos = this.card_pos.add(this.$price(response.card_pos));
+          this.card_keyed = this.card_keyed.add(
+            this.$price(response.card_keyed)
+          );
+          this.cash = this.cash.add(this.$price(response.cash));
+          this.house_account = this.house_account.add(
+            this.$price(response.house_account)
+          );
+          this.giftcard = this.giftcard.add(this.$price(response.giftcard));
+          this.coupon = this.coupon.add(this.$price(response.coupon));
+          this.total_paid = this.total_paid.add(
+            this.$price(response.total_paid)
+          );
+
+          this.setSections();
+        })
+        .catch(error => {
+          console.log(error);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     }
   }
 };

@@ -28,8 +28,6 @@ class CashRegisterController extends Controller
             'pos_terminal_port' => 'required|string'
 
         ]);
-        $validatedData['user_id'] = auth()->user()->id;
-
         $cashRegister = CashRegister::create($validatedData);
 
         return response(['notification' => [
@@ -49,7 +47,6 @@ class CashRegisterController extends Controller
             'pos_terminal_ip' => 'required|ip',
             'pos_terminal_port' => 'required|string'
         ]);
-        $validatedData['user_id'] = auth()->user()->id;
         $cashRegister = CashRegister::findOrFail($validatedData['id']);
 
         $cashRegister->fill($validatedData);

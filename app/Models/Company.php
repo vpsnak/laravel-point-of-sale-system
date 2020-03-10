@@ -6,15 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Company extends Model
 {
+    public $timestamps = false;
+
     protected $fillable = [
         'name',
         'tax_number',
-        'logo',
-    ];
-
-    protected $casts = [
-        'created_at' => "datetime:m/d/Y H:i:s",
-        'updated_at' => "datetime:m/d/Y H:i:s"
+        'logo'
     ];
 
     public function stores()

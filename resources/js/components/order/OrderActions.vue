@@ -176,8 +176,9 @@ export default {
     },
     canCheckout() {
       if (
-        this.order_status ===
-        ["pending", "pending_payment"].indexOf(this.order_status) >= 0
+        (this.order_status ===
+          ["pending", "pending_payment"].indexOf(this.order_status)) !==
+        -1
       ) {
         return true;
       } else {
@@ -201,8 +202,9 @@ export default {
     canRefund() {
       if (
         this.payments.length > 0 &&
-        this.order_status !==
-          ["completed", "canceled"].indexOf(this.order_status) >= 0
+        (this.order_status !==
+          ["completed", "canceled"].indexOf(this.order_status)) !==
+          -1
       ) {
         return true;
       } else {
@@ -211,8 +213,9 @@ export default {
     },
     canCancel() {
       if (
-        this.order_status !==
-        ["canceled", "completed"].indexOf(this.order_status) >= 0
+        (this.order_status !==
+          ["canceled", "completed"].indexOf(this.order_status)) !==
+        -1
       ) {
         return true;
       } else {

@@ -14,20 +14,15 @@ class CouponSeeder extends Seeder
      */
     public function run()
     {
-        $flat = Discount::create([
-            'type' => 'flat',
-            'amount' => 10
-        ]);
-        $percentage = Discount::create([
-            'type' => 'percentage',
-            'amount' => 10
-        ]);
         DB::table('coupons')->insert([
             [
                 'name' => 'Zero Use Coupon',
                 'code' => 'zero',
                 'uses' => 0,
-                'discount_id' => $flat->id,
+                'discount' => json_encode([
+                    'type' => 'flat',
+                    'amount' => 10
+                ]),
                 'from' => Carbon::now(),
                 'to' => Carbon::now()->addMonth(),
             ],
@@ -35,7 +30,10 @@ class CouponSeeder extends Seeder
                 'name' => 'Dev Coupon',
                 'code' => 'dev',
                 'uses' => 10000,
-                'discount_id' => $flat->id,
+                'discount' => json_encode([
+                    'type' => 'flat',
+                    'amount' => 10
+                ]),
                 'from' => Carbon::now(),
                 'to' => Carbon::now()->addMonth(),
             ],
@@ -43,7 +41,10 @@ class CouponSeeder extends Seeder
                 'name' => 'Dev Coupon',
                 'code' => 'percentage',
                 'uses' => 10000,
-                'discount_id' => $percentage->id,
+                'discount' => json_encode([
+                    'type' => 'percentage',
+                    'amount' => 10
+                ]),
                 'from' => Carbon::now(),
                 'to' => Carbon::now()->addMonth(),
             ],
@@ -51,7 +52,10 @@ class CouponSeeder extends Seeder
                 'name' => 'Past Date Coupon',
                 'code' => 'past',
                 'uses' => 100000,
-                'discount_id' => $flat->id,
+                'discount' => json_encode([
+                    'type' => 'flat',
+                    'amount' => 10
+                ]),
                 'from' => Carbon::now(),
                 'to' => Carbon::now(),
             ],
@@ -59,7 +63,10 @@ class CouponSeeder extends Seeder
                 'name' => 'Future Date Coupon',
                 'code' => 'future',
                 'uses' => 100000,
-                'discount_id' => $flat->id,
+                'discount' => json_encode([
+                    'type' => 'flat',
+                    'amount' => 10
+                ]),
                 'from' => Carbon::now()->addYear(),
                 'to' => Carbon::now()->addYear(),
             ],

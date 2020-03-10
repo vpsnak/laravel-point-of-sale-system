@@ -15,14 +15,10 @@ class ElavonSdkPayment extends Model
     ];
 
     protected $casts = [
-        'created_at' => "datetime:m/d/Y H:i:s",
-        'updated_at' => "datetime:m/d/Y H:i:s"
+        'log' => 'array',
+        'created_at' => 'datetime:m/d/Y H:i:s',
+        'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
-
-    public function payment()
-    {
-        return $this->belongsTo(Payment::class);
-    }
 
     public function setLogAttribute($value)
     {
@@ -33,13 +29,13 @@ class ElavonSdkPayment extends Model
         }
     }
 
-    public function getLogAttribute($value)
-    {
-        return json_decode($value, true);
-    }
-
-    public function getPaymentTransactionData()
+    public function getPaymentTransactionDataAttribute()
     {
         return $this->log['data']['paymentGatewayCommand']['paymentTransactionData'];
+    }
+
+    public function payment()
+    {
+        return $this->belongsTo(Payment::class);
     }
 }

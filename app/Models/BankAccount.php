@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class BankAccount extends Model
 {
+    public $timestamps = false;
+
     protected $fillable = [
         'company_id',
         'type',
@@ -13,9 +15,7 @@ class BankAccount extends Model
     ];
 
     protected $casts = [
-        'account' => 'array',
-        'created_at' => "datetime:m/d/Y H:i:s",
-        'updated_at' => "datetime:m/d/Y H:i:s"
+        'account' => 'array'
     ];
 
     public function setAccountAttribute($value)

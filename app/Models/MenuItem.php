@@ -16,8 +16,8 @@ class MenuItem extends Model
 
     protected $casts = [
         'action' => 'array',
-        'created_at' => "datetime:m/d/Y H:i:s",
-        'updated_at' => "datetime:m/d/Y H:i:s"
+        'created_at' => 'datetime:m/d/Y H:i:s',
+        'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
 
     public function setActionAttribute($value)

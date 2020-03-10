@@ -131,7 +131,7 @@ export default {
       set(value) {
         if (!this.order_id) {
           if (value !== this.customer) {
-            this.resetShipping(true);
+            this.resetDelivery(true);
           }
         }
         this.setCustomer(value);
@@ -149,7 +149,7 @@ export default {
   methods: {
     ...mapActions("requests", ["request"]),
     ...mapMutations("dialog", ["setDialog"]),
-    ...mapMutations("cart", ["setCustomer", "resetShipping"]),
+    ...mapMutations("cart", ["setCustomer", "resetDelivery"]),
 
     customerForm(create) {
       this.setDialog({

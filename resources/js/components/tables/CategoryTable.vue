@@ -1,7 +1,7 @@
 <template>
   <data-table v-if="render">
-    <template v-slot:item.in_product_listing="{ item }">
-      {{ item.in_product_listing ? "Yes" : "No" }}
+    <template v-slot:item.is_enabled="{ item }">
+      {{ item.is_enabled ? "Yes" : "No" }}
     </template>
 
     <template v-slot:item.actions="{ item }">

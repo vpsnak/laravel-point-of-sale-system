@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-grow-1" style="height:38vh; overflow-y:auto">
     <v-expansion-panels class="d-block" accordion>
-      <v-expansion-panel v-for="(product, index) in products" :key="index">
+      <v-expansion-panel v-for="(product, index) in products" :key="product.id">
         <v-expansion-panel-header class="pa-2" ripple @click.stop>
           <div class="d-flex flex-column" v-if="product.photo_url">
             <v-img
@@ -26,7 +26,7 @@
                   @click.stop
                   single-line
                   @keyup.esc="revertPrice(index)"
-                  @keyup.enter="setPrice(index, null, true)"
+                  @keyup.enter="setPrice(index, true)"
                   :ref="'priceField' + index"
                   :min="0"
                   type="number"
@@ -35,8 +35,11 @@
                   :outlined="editPrice(index)"
                   :solo="!editPrice(index)"
                   :color="editPrice(index) ? 'yellow' : ''"
-                  :value="parsedPrice(product)"
-                  :hint="'Original price: $' + originalPrice(index)"
+                  :value="$price(product.price).toFormat('0.00')"
+                  :hint="
+                    'Original price: ' +
+                      $price(product.original_price).toFormat('$0.00')
+                  "
                   dense
                 ></v-text-field>
               </div>
@@ -133,7 +136,7 @@
                     class="mx-2"
                     v-if="editable"
                     icon
-                    @click.stop="removeItem(index)"
+                    @click.stop="removeProduct(index)"
                     color="red"
                     v-on="on"
                   >
@@ -147,10 +150,11 @@
         </v-expansion-panel-header>
         <v-expansion-panel-content>
           <cartDiscount
-            :product_index="index"
-            :product_price="parsedPrice(product) * product.qty"
+            v-if="product.is_discountable"
+            :productIndex="index"
+            :productPrice="$price(product.price).multiply(product.qty)"
             :editable="editable"
-          ></cartDiscount>
+          />
           <v-row>
             <v-col :cols="12">
               <v-textarea
@@ -178,6 +182,7 @@ export default {
   props: {
     editable: Boolean
   },
+
   computed: {
     ...mapState("cart", ["discountTypes", "cart_products"]),
 
@@ -197,6 +202,7 @@ export default {
       "increaseProductQty",
       "decreaseProductQty"
     ]),
+    ...mapActions("cart", ["removeProduct"]),
 
     cancelEvent(index, event) {
       if (!this.editPrice(index)) {
@@ -206,32 +212,29 @@ export default {
     getSelectedInput(index) {
       return this.$refs[`priceField${index}`][0];
     },
-    setPrice(index, price = null, toggleEdit = false) {
+    setPrice(index, toggleEdit = false) {
       if (!this.getSelectedInput(index).lazyValue) {
-        this.getSelectedInput(index).lazyValue = this.originalPrice(index);
-      }
-      if (price) {
-        this.products[index].final_price = price;
-      } else {
-        this.products[index].final_price = this.getSelectedInput(
+        this.getSelectedInput(index).lazyValue = this.originalPrice(
           index
-        ).lazyValue;
-      }
-      if (_.has(this.products[index], "price.amount")) {
-        this.products[index].price.amount = this.products[index].final_price;
+        ).toFormat("0.00");
       }
 
+      const price = this.getSelectedInput(index).lazyValue;
+
+      this.$set(this.products[index], "price", {
+        amount: Number.parseInt(price * 100)
+      });
       if (toggleEdit) {
         this.toggleEdit(index);
       }
     },
     revertPrice(index) {
       this.getSelectedInput(index).lazyValue = null;
-      this.setPrice(index, null, true);
+      this.setPrice(index, true);
       this.getSelectedInput(index).blur();
     },
     originalPrice(index) {
-      return this.products[index].original_price;
+      return this.$price(this.products[index].original_price);
     },
     editPrice(index) {
       if (_.has(this.products[index], "editPrice")) {
@@ -241,7 +244,7 @@ export default {
       }
     },
     toggleEdit(index) {
-      Vue.set(
+      this.$set(
         this.products[index],
         "editPrice",
         !this.products[index].editPrice
@@ -266,19 +269,10 @@ export default {
         model: product
       });
     },
-    parsedPrice(product) {
-      return (
-        parseFloat(product.final_price).toFixed(2) ||
-        parseFloat(product.price.toFixed(2))
-      );
-    },
     limits(product) {
       if (product.qty < 1) {
         product.qty = 1;
       }
-    },
-    removeItem(index) {
-      this.products.splice(index, 1);
     }
   }
 };
