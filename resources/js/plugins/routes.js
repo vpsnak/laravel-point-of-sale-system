@@ -9,10 +9,10 @@ import Dashboard from "../components/pages/Dashboard";
 import Sales from "../components/pages/Sales";
 import OpenCashRegister from "../components/pages/OpenCashRegister";
 
-// data tables
 import Orders from "../components/order/table/OrderTable";
 import OrderViewPage from "../components/order/pages/OrderViewPage";
 import OrderEditOptionsPage from "../components/order/pages/OrderEditOptionsPage";
+// data tables
 import Customers from "../components/tables/CustomerTable";
 import Products from "../components/tables/ProductTable";
 import Categories from "../components/tables/CategoryTable";
@@ -22,11 +22,8 @@ import Taxes from "../components/tables/TaxTable";
 import CashRegisters from "../components/tables/CashRegisterTable";
 import GiftCards from "../components/tables/GiftCardTable";
 import Coupons from "../components/tables/CouponTable";
-import Addresses from "../components/tables/AddressTable";
 import StorePickups from "../components/tables/StorePickupTable";
 import Reports from "../components/tables/CashRegisterReportsTable";
-import Companies from "../components/tables/CompanyTable";
-import Cards from "../components/tables/CardTable";
 
 export default [
   {
@@ -221,36 +218,6 @@ export default [
     path: "/coupons",
     components: {
       default: Coupons,
-      side_menu: SideMenu,
-      top_menu: TopMenu
-    },
-    meta: { requiresAuth: true }
-  },
-  {
-    name: "Cards",
-    path: "/cards",
-    components: {
-      default: Cards,
-      side_menu: SideMenu,
-      top_menu: TopMenu
-    },
-    meta: { requiresAuth: true }
-  },
-  {
-    name: "Addresses",
-    path: "/addresses",
-    components: {
-      default: Addresses,
-      side_menu: SideMenu,
-      top_menu: TopMenu
-    },
-    meta: { requiresAuth: true }
-  },
-  {
-    name: "Companies",
-    path: "/companies",
-    components: {
-      default: Companies,
       side_menu: SideMenu,
       top_menu: TopMenu
     },

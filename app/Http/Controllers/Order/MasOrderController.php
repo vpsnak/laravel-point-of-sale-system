@@ -328,10 +328,6 @@ class MasOrderController extends Controller
         }
     }
 
-    private function updateOrderStatus()
-    {
-    }
-
     private function log($payload, $response, $status)
     {
         if (!is_string($payload)) {

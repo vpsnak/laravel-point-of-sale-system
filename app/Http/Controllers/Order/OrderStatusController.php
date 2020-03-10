@@ -48,7 +48,7 @@ class OrderStatusController extends Controller
                     ]);
                 }
             } else {
-                if (empty($payment)) {
+                if (empty($payment) && $this->order->status->value !== 'paid') {
                     $paidPaymentStatusId = Status::where('value', 'paid')->firstOrFail('id');
                     $this->order->statuses()->attach($paidPaymentStatusId, ['user_id' => $this->user->id]);
                 }

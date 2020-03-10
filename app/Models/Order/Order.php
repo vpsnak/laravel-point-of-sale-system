@@ -265,7 +265,7 @@ class Order extends Model
             ->using(OrderStatus::class)
             ->withPivot('user_id')
             ->withTimestamps(['created_at'])
-            ->orderBy('id', 'desc');
+            ->orderBy('created_at', 'desc');
     }
 
     public function lastStatus()

@@ -61,12 +61,12 @@ class OrderController extends Controller
         $this->user = auth()->user();
         $this->store = $this->user->open_register->cash_register->store;
 
-        $this->parseStoreData();
         $this->parseProducts();
 
         $this->order = Order::findOrFail($this->order_data['order_id']);
 
         $this->order->fill($this->order_data);
+        $this->order->save();
 
         $orderStatusController = new OrderStatusController($this->order);
         $orderStatusController->updateOrderStatus(null, true);
@@ -107,11 +107,12 @@ class OrderController extends Controller
         $this->user = auth()->user();
         $this->store = $this->user->open_register->cash_register->store;
 
-        $this->order_data['user_id'] = $this->user->id;
         $this->parseAddresses();
+        $this->parseStoreData();
 
         $this->order = Order::findOrFail($this->order_data['order_id']);
         $this->order->fill($this->order_data);
+        $this->order->save();
 
         $orderStatusController = new OrderStatusController($this->order);
         $orderStatusController->updateOrderStatus(null, true);
