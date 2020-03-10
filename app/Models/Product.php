@@ -119,6 +119,6 @@ class Product extends Model
 
     public function cards()
     {
-        return $this->morphMany('App\Card', 'cardable');
+        return $this->morphMany(Card::class, 'cardable');
     }
 }
