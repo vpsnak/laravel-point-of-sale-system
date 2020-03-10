@@ -14,13 +14,12 @@ class CreateMenuItemsTable extends Migration
     public function up()
     {
         Schema::create('menu_items', function (Blueprint $table) {
-            $table->mediumIncrements('id');
+            $table->tinyIncrements('id');
 
             $table->string('title');
             $table->string('icon');
             $table->json('action');
             $table->string('location');
-            $table->timestampsTz();
         });
     }
 

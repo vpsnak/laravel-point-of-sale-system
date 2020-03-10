@@ -24,144 +24,112 @@ class MenuItemSeeder extends Seeder
             'title' => 'Dashboard',
             'action' => ['link' => '/'],
             'icon' =>  'dashboard',
-            'location' => 'side_menu',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'location' => 'side_menu'
         ]);
 
         $sales = new MenuItem([
             'title' => 'Sales',
             'action' => ['link' => 'sales'],
             'icon' =>  'mdi-cart',
-            'location' => 'side_menu',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'location' => 'side_menu'
         ]);
 
         $orders = new MenuItem([
             'title' => 'Orders',
             'action' => ['link' => 'orders'],
             'icon' =>  'mdi-buffer',
-            'location' => 'side_menu',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'location' => 'side_menu'
         ]);
 
         $customers = new MenuItem([
             'title' => 'Customers',
             'action' => ['link' => 'customers'],
             'icon' =>  'mdi-account-group',
-            'location' => 'side_menu',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'location' => 'side_menu'
         ]);
 
         $products = new MenuItem([
             'title' => 'Products',
             'action' => ['link' => 'products'],
             'icon' =>  'mdi-package-variant',
-            'location' => 'side_menu',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'location' => 'side_menu'
         ]);
 
         $categories = new MenuItem([
             'title' => 'Categories',
             'action' => ['link' => 'categories'],
             'icon' =>  'mdi-inbox-multiple',
-            'location' => 'side_menu',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'location' => 'side_menu'
         ]);
 
         $giftCards = new MenuItem([
             'title' => 'Gift Cards',
             'action' => ['link' => 'gift-cards'],
             'icon' =>  'mdi-wallet-giftcard',
-            'location' => 'side_menu',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'location' => 'side_menu'
         ]);
 
         $coupons = new MenuItem([
             'title' => 'Coupons',
             'action' => ['link' => 'coupons'],
             'icon' =>  'mdi-ticket-percent',
-            'location' => 'side_menu',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'location' => 'side_menu'
         ]);
 
         $cashRegisters = new MenuItem([
             'title' => 'Cash registers',
             'action' => ['link' => 'cash-registers'],
             'icon' =>  'mdi-cash-register',
-            'location' => 'side_menu',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'location' => 'side_menu'
         ]);
 
         $stores = new MenuItem([
             'title' => 'Stores',
             'action' => ['link' => 'stores'],
             'icon' =>  'mdi-store',
-            'location' => 'side_menu',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'location' => 'side_menu'
         ]);
 
         $storePickups = new MenuItem([
             'title' => 'Store pickups',
             'action' => ['link' => 'store-pickups'],
             'icon' =>  'mdi-storefront',
-            'location' => 'side_menu',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'location' => 'side_menu'
         ]);
 
         $taxes = new MenuItem([
             'title' => 'Taxes',
             'action' => ['link' => 'taxes'],
             'icon' =>  'mdi-sack-percent',
-            'location' => 'side_menu',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'location' => 'side_menu'
         ]);
 
         $reports = new MenuItem([
             'title' => 'Reports',
             'action' => ['link' => 'reports'],
-            'icon' =>  'mdi-file-document-box',
-            'location' => 'side_menu',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'icon' =>  'mdi-chart-areaspline',
+            'location' => 'side_menu'
         ]);
 
         $users = new MenuItem([
             'title' => 'Users',
             'action' => ['link' => 'users'],
             'icon' =>  'mdi-account-multiple',
-            'location' => 'side_menu',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'location' => 'side_menu'
         ]);
 
         $sign_out = new MenuItem([
             'title' => 'Sign out',
             'action' => ['link' => '/logout'],
             'icon' =>  'mdi-logout-variant',
-            'location' => 'top_menu',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'location' => 'top_menu'
         ]);
 
         $change_password = new MenuItem([
             'title' => 'Change password',
             'action' => ['method' => 'changePasswordDialog'],
             'icon' =>  'mdi-key',
-            'location' => 'top_menu',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'location' => 'top_menu'
         ]);
 
         //side menu

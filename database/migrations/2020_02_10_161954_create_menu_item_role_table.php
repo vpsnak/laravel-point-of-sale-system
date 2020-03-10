@@ -16,7 +16,7 @@ class CreateMenuItemRoleTable extends Migration
         Schema::create('menu_item_role', function (Blueprint $table) {
             $table->mediumIncrements('id');
 
-            $table->unsignedMediumInteger('menu_item_id');
+            $table->unsignedTinyInteger('menu_item_id');
             $table->unsignedMediumInteger('role_id');
         });
     }

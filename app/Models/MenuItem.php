@@ -7,6 +7,8 @@ use App\Role;
 
 class MenuItem extends Model
 {
+    public $timestamps = false;
+
     protected $fillable = [
         'title',
         'icon',
@@ -15,9 +17,7 @@ class MenuItem extends Model
     ];
 
     protected $casts = [
-        'action' => 'array',
-        'created_at' => 'datetime:m/d/Y H:i:s',
-        'updated_at' => 'datetime:m/d/Y H:i:s'
+        'action' => 'array'
     ];
 
     public function setActionAttribute($value)
