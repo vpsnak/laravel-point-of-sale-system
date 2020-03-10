@@ -17,10 +17,24 @@ class ElavonApiPayment extends Model
     ];
 
     protected $casts = [
-        'log' => 'array',
+
         'created_at' => 'datetime:m/d/Y H:i:s',
         'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
+
+    public function getLogAttribute()
+    {
+        return json_decode($this->attributes['log'], true);
+    }
+
+    public function setLogAttribute($value)
+    {
+        if (!is_string($value)) {
+            $this->attributes['log'] = json_encode($value);
+        } else {
+            $this->attributes['log'] = strip_tags($value);
+        }
+    }
 
     public function payment()
     {

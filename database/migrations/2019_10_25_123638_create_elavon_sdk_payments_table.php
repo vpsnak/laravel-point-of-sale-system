@@ -23,7 +23,7 @@ class CreateElavonSdkPaymentsTable extends Migration
             $table->string('chan_id')->nullable();
 
             $table->string('status');
-            $table->text('log');
+            $table->json('log');
 
             $table->foreign('payment_id')->references('id')->on('payments')->onDelete('cascade');
 

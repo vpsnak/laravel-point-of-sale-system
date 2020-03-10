@@ -22,7 +22,7 @@ class CreateElavonApiPaymentsTable extends Migration
             $table->string('card_number')->nullable();
             $table->string('card_holder')->nullable();
             $table->string('status')->nullable();
-            $table->text('log');
+            $table->json('log');
 
             $table->foreign('payment_id')->references('id')->on('payments')->onDelete('cascade');
 

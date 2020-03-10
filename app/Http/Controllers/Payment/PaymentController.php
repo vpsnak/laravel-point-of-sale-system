@@ -103,7 +103,7 @@ class PaymentController extends Controller
         $orderStatus['payment'] = $payment;
 
 
-        return response($orderStatus, 201);
+        return response()->json($orderStatus, 201, [], JSON_NUMERIC_CHECK);
     }
 
     public function search(Request $request)
@@ -239,17 +239,13 @@ class PaymentController extends Controller
     public function apiRefund($payment)
     {
         $paymentResponse = (new CreditCardController)->cardRefund($payment->code);
-
         ElavonApiPayment::create([
             'txn_id' => $paymentResponse['response']['ssl_txn_id'] ?? '',
             'transaction' => $paymentResponse['response']['ssl_transaction_type'] ?? '',
             'card_number' => $paymentResponse['response']['ssl_card_number'] ?? '',
             'status' => $paymentResponse['response']['ssl_result_message'] ?? '',
-            'log' => array_key_exists(
-                'response',
-                $paymentResponse
-            ) ? json_encode($paymentResponse['response']) : '',
             'payment_id' => $payment->id,
+            'log' => $paymentResponse['response'] ?? null
         ]);
 
         return $paymentResponse;

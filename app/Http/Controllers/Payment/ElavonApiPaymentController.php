@@ -26,7 +26,7 @@ class ElavonApiPaymentController extends Controller
 
         $elavonApiPayment->txn_id = $this->txn_id;
         $elavonApiPayment->status = $status;
-        $elavonApiPayment->log = is_Array($data) ? json_encode($data) : strip_tags($data);
+        $elavonApiPayment->log = $data;
 
         $elavonApiPayment->save();
     }

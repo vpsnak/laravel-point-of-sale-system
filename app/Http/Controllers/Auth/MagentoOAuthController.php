@@ -30,7 +30,7 @@ class MagentoOAuthController extends Controller
             $this->initOAuth();
         }
         $oauth_token = $request->input('oauth_token');
-        if (!isset($oauth_token) && $this->state->value == 0) {
+        if (!isset($oauth_token) && $this->state->value === '0') {
             $this->state->value = 0;
             $this->state->save();
         }
@@ -47,7 +47,7 @@ class MagentoOAuthController extends Controller
                 $this->state->save();
                 return redirect($this->admin_authorization_url . '?oauth_token=' . $request_token['oauth_token']);
             } else {
-                if ($this->state->value === 1) {
+                if ($this->state->value === '1') {
                     $this->oauth_client->setToken($oauth_token, $this->secret->value);
                     $access_token = $this->oauth_client->getAccessToken(
                         $this->access_token_url,
@@ -83,12 +83,12 @@ class MagentoOAuthController extends Controller
                         'GET',
                         ['Content-Type' => 'application/json', 'Accept' => '*/*']
                     );
-                    if ($this->oauth_client->getLastResponseInfo()['http_code'] !== 200) {
-                        return response()->json([
-                            'status' => 'inactive',
-                            'message' => 'There was an error. You can not access data over REST api.'
-                        ]);
-                    }
+                    // if ($this->oauth_client->getLastResponseInfo()['http_code'] !== 200) {
+                    //     return response()->json([
+                    //         'status' => 'inactive',
+                    //         'message' => 'There was an error. You can not access data over REST api.'
+                    //     ]);
+                    // }
                     return response()->json([
                         'status' => 'active',
                         'message' => "Authenticated!"
@@ -97,10 +97,11 @@ class MagentoOAuthController extends Controller
             }
         } catch (OAuthException $e) {
             report($e);
+            Setting::truncate();
             return response()->json([
                 'status' => 'exception',
                 'message' => 'There was an error. You can not access data over REST api.'
-            ]);
+            ], $this->oauth_client->getLastResponseInfo()['http_code']);
         }
     }
 
@@ -128,7 +129,7 @@ class MagentoOAuthController extends Controller
         $this->token = Setting::getFirst('key', 'token');
         $this->secret = Setting::getFirst('key', 'secret');
 
-        $auth_type = ($this->state->value === 2) ? OAUTH_AUTH_TYPE_AUTHORIZATION : OAUTH_AUTH_TYPE_URI;
+        $auth_type = ($this->state->value === '2') ? OAUTH_AUTH_TYPE_AUTHORIZATION : OAUTH_AUTH_TYPE_URI;
         try {
             $this->oauth_client = new OAuth(
                 $this->consumer_key,
