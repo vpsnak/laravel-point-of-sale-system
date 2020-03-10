@@ -23,7 +23,6 @@ export default {
     ...mapState("cart", ["order_status"]),
 
     showPaymentActions() {
-      console.log(this.order_status);
       if (_.has(this.order_status, "value")) {
         switch (this.order_status.value) {
           case undefined:

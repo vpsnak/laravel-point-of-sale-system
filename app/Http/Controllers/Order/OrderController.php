@@ -186,7 +186,6 @@ class OrderController extends Controller
     {
         $delivery = [];
         switch ($this->order_data['method']) {
-            default:
             case 'retail':
                 unset($this->order_data['delivery']);
                 return;

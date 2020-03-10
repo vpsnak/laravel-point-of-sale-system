@@ -37,7 +37,7 @@ class MagentoClient
         $this->token = Setting::where('key', 'token')->first();
         $this->secret = Setting::where('key', 'secret')->first();
 
-        $auth_type = ($this->state->value == 2) ? OAUTH_AUTH_TYPE_AUTHORIZATION : OAUTH_AUTH_TYPE_URI;
+        $auth_type = ($this->state->value === '2') ? OAUTH_AUTH_TYPE_AUTHORIZATION : OAUTH_AUTH_TYPE_URI;
         try {
             $this->oauth_client = new OAuth(
                 $this->consumer_key,
@@ -62,7 +62,7 @@ class MagentoClient
     {
         $this->initClient();
         if (app()->runningInConsole()) {
-            echo $method . ' ' . $url . PHP_EOL;
+            echo "{$method} {$url}" . PHP_EOL;
         }
         try {
             $this->oauth_client->fetch(
