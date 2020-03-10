@@ -33,11 +33,9 @@ class MagentoClient
         $this->baseUrl = config('magento.MAGENTO_URL') . '/api/rest/';
         $this->consumer_key = config('magento.OAUTH_CONSUMER_KEY');
         $this->consumer_secret = config('magento.OAUTH_CONSUMER_SECRET');
-        $this->state = Setting::getFirst('key', 'state');
-        var_dump($this->state);
-        die;
-        $this->token = Setting::getFirst('key', 'token');
-        $this->secret = Setting::getFirst('key', 'secret');
+        $this->state = Setting::where('key', 'state')->first();
+        $this->token = Setting::where('key', 'token')->first();
+        $this->secret = Setting::where('key', 'secret')->first();
 
         $auth_type = ($this->state->value == 2) ? OAUTH_AUTH_TYPE_AUTHORIZATION : OAUTH_AUTH_TYPE_URI;
         try {
