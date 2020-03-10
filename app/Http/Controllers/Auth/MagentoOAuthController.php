@@ -116,18 +116,18 @@ class MagentoOAuthController extends Controller
         $this->admin_authorization_url = "$magento_url/$magento_admin/oauth_authorize";
         $this->access_token_url = $magento_url . '/oauth/token';
 
-        if (!Setting::checkExists('key', 'state')) {
-            Setting::store(['key' => 'state', 'value' => 0]);
+        if (!Setting::where('key', 'state')->exists()) {
+            Setting::create(['key' => 'state', 'value' => 0]);
         }
-        if (!Setting::checkExists('key', 'token')) {
-            Setting::store(['key' => 'token']);
+        if (!Setting::where('key', 'token')->exists()) {
+            Setting::create(['key' => 'token']);
         }
-        if (!Setting::checkExists('key', 'secret')) {
-            Setting::store(['key' => 'secret']);
+        if (!Setting::where('key', 'secret')->exists()) {
+            Setting::create(['key' => 'secret']);
         }
-        $this->state = Setting::getFirst('key', 'state');
-        $this->token = Setting::getFirst('key', 'token');
-        $this->secret = Setting::getFirst('key', 'secret');
+        $this->state = Setting::where('key', 'state')->first();
+        $this->token = Setting::where('key', 'token')->first();
+        $this->secret = Setting::where('key', 'secret')->first();
 
         $auth_type = ($this->state->value === '2') ? OAUTH_AUTH_TYPE_AUTHORIZATION : OAUTH_AUTH_TYPE_URI;
         try {

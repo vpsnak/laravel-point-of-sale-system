@@ -154,7 +154,7 @@ class OrderController extends Controller
             'delivery_fees_price.amount' => 'nullable|integer',
             'delivery_fees_price.currency' => 'nullable|string|size:3',
             // discount
-            'discount' => 'required|array',
+            'discount' => 'nullable|array',
             'discount.amount' => 'nullable|numeric|integer',
             'discount.type' => 'nullable|string|in:none,flat,percentage',
         ]);
