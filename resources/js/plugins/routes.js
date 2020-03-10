@@ -26,6 +26,7 @@ import Addresses from "../components/tables/AddressTable";
 import StorePickups from "../components/tables/StorePickupTable";
 import Reports from "../components/tables/CashRegisterReportsTable";
 import Companies from "../components/tables/CompanyTable";
+import Cards from "../components/tables/CardTable";
 
 export default [
   {
@@ -220,6 +221,16 @@ export default [
     path: "/coupons",
     components: {
       default: Coupons,
+      side_menu: SideMenu,
+      top_menu: TopMenu
+    },
+    meta: { requiresAuth: true }
+  },
+  {
+    name: "Cards",
+    path: "/cards",
+    components: {
+      default: Cards,
       side_menu: SideMenu,
       top_menu: TopMenu
     },

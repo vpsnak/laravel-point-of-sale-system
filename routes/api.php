@@ -66,7 +66,7 @@ Route::delete('/addresses/{model}', 'AddressController@delete')->middleware('sco
 
 // orders
 Route::get('/orders', 'OrderController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/orders/get/{model}', 'OrderController@getOne')->middleware('scope:admin,store_manager,cashier');
+Route::get('/orders/get/{model}', 'OrderController@getOne')->middleware('scope:admin,store_manager,cashier');;
 Route::get('/orders/{model}/payment-details', 'OrderAnalysisController@getPaymentDetails'); // @TODO ADD AUTH!!
 Route::get('/orders/{model}/statuses', 'OrderStatusController@getOrderStatuses')->middleware('scope:admin,store_manager,cashier');
 Route::get('/orders/{model}/mas-status', 'MasOrderController@getOrderDetails'); // @TODO ADD AUTH!!
@@ -152,7 +152,7 @@ Route::post('/companies/search', 'CompanyController@search')->middleware('scope:
 Route::delete('/companies/{model}', 'CompanyController@delete')->middleware('scope:admin,store_manager,cashier');
 
 // products
-Route::get('/products', 'ProductController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/products', 'ProductController@all')->middleware('scope:admin,store_manager,cashier');;
 Route::get('/products/get/{model}', 'ProductController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::get('/products/barcode/{model}', 'ProductController@getBarcode')->middleware('scope:admin,store_manager,cashier');
 Route::post('/products/create', 'ProductController@create')->middleware('scope:admin,store_manager,cashier');
@@ -193,6 +193,14 @@ Route::delete('/cash-register-logs/{model}', 'CashRegisterLogsController@delete'
 Route::get('/receipts/get/{model}', 'ReceiptController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::get('/receipts/create/{model}', 'ReceiptController@create')->middleware('scope:admin,store_manager,cashier');
 
+// cards
+Route::get('/cards', 'CardController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/cards/get/{model}', 'CardController@getOne')->middleware('scope:admin,store_manager,cashier');
+Route::post('/cards/create', 'CardController@create')->middleware('scope:admin,store_manager,cashier');
+Route::patch('/cards/update', 'CardController@update')->middleware('scope:admin,store_manager,cashier');
+Route::post('/cards/search', 'CardController@search')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/cards/{model}', 'CardController@delete')->middleware('scope:admin,store_manager,cashier');
+
 // categories to list in sales
 Route::get('/product-listing/categories', "CategoryController@productListingCategories")->middleware('scope:admin,store_manager,cashier');
 
@@ -204,6 +212,7 @@ Route::get('/magento/authorize', 'Auth\MagentoOAuthController@authorizeMagento')
 
 // e-mail
 Route::post('/mail-receipt/{order}', 'MailReceiptController@send')->middleware('scope:admin,store_manager,cashier');
+Route::post('/mail-plantcare/{product}', 'MailPlantCareController@send')->middleware('scope:admin,store_manager,cashier');
 
 // guest email list
 Route::get('/guest-email', 'GuestEmailListController@all')->middleware('scope:admin,store_manager,cashier');

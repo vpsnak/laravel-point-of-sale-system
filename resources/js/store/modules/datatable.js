@@ -106,7 +106,7 @@ const state = {
       { text: "Name", value: "name" },
       { text: "Sku", value: "sku" },
       { text: "Stock", value: "stock" },
-      { text: "Price", value: "final_price" },
+      { text: "Price", value: "price" },
       { text: "Actions", value: "actions", shortable: false }
     ],
     storePickups: [
@@ -144,6 +144,16 @@ const state = {
       { text: "Phone", value: "phone" },
       { text: "Role", value: "roles[0].name" },
       { text: "Active", value: "active" },
+      { text: "Created at", value: "created_at" },
+      { text: "Updated at", value: "updated_at" },
+      { text: "Actions", value: "actions" }
+    ],
+    cards: [
+      { text: "#", value: "id" },
+      { text: "Title", value: "title" },
+      { text: "Content", value: "content" },
+      { text: "Created by", value: "created_by" },
+      { text: "Type", value: "cardable_type" },
       { text: "Created at", value: "created_at" },
       { text: "Updated at", value: "updated_at" },
       { text: "Actions", value: "actions" }

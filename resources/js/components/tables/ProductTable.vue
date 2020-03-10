@@ -1,7 +1,7 @@
 <template>
   <data-table v-if="render">
-    <template v-slot:item.final_price="{ item }">
-      {{ item.price.toFormat() }}
+    <template v-slot:item.price="{ item }">
+      {{ item.price.amount }}
     </template>
 
     <template v-slot:item.photo_url="{ item }">

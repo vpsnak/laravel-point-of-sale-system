@@ -112,6 +112,13 @@
                       <h5>Plant care</h5>
                     </v-list-item>
                     <v-list-item
+                      :disabled="!product.plantcare_pdf"
+                      @click="mailPlantCareDialog(product)"
+                    >
+                      <v-icon class="pr-2">mdi-email-send</v-icon>
+                      <h5>Send plant care pdf</h5>
+                    </v-list-item>
+                    <v-list-item
                       :href="product.url"
                       target="_blank"
                       link
@@ -428,6 +435,15 @@ export default {
     viewProductDialog(product) {
       product.form = "product";
       this.viewItem(product);
+    },
+    mailPlantCareDialog(product) {
+      this.setDialog({
+        show: true,
+        component: "MailPlantCareDialog",
+        title: "Send plant care",
+        cancelBtnTxt: "Close",
+        model: product
+      });
     },
     giftcardDialog() {
       this.setDialog({

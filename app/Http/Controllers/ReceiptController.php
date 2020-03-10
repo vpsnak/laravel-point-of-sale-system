@@ -11,7 +11,7 @@ class ReceiptController extends Controller
 {
     public function create(Order $model)
     {
-        $model = $model->load('createdBy');
+        $model = $model->load(['createdBy', 'store']);
         $store = $model->store;
         $cash_register = $model->createdBy->open_register->cash_register;
         $createdBy = $model->createdBy;
@@ -47,17 +47,17 @@ class ReceiptController extends Controller
             'balance_remaining' => $model->total - $model->total_paid,
             'total_amt_tendered' =>  $model->total_paid,
             'customer_change' => $model->change,
-            'shipping_address' => $model->shipping_address,
-            'shipping_type' => $model->shipping_type,
+            'shipping_address' => $model->delivery,
+            'shipping_type' => $model->method,
             'shipping_cost' => $model->shipping_cost,
             'delivery_slot' => $model->delivery_slot,
             'notes' => $model->notes,
-            'dlvr_on' => Carbon::parse($model->delivery_date)->format('m/d/Y l'),
-            'dlvr_to' => $model->shipping_address ? $model->shipping_address->first_name . " " . $model->shipping_address->last_name : null,
-            'c_o' => $model->shipping_address ? $model->customer->first_name . " " . $model->customer->last_name : null,
-            'address' =>  $model->shipping_address ? $model->shipping_address->street : null,
-            'address_2' => $model->shipping_address ? $model->shipping_address->street2 : null,
-            'city' =>  $model->shipping_address ? $model->shipping_address->city : null
+            'dlvr_on' => $model->delivery ? Carbon::parse($model->delivery['date'])->format('m/d/Y l') : null,
+            'dlvr_to' => $model->delivery ? $model->delivery['address']['first_name'] . " " . $model->delivery['address']['last_name'] : null,
+            'c_o' => $model->delivery ? $model->customer->first_name . " " . $model->customer->last_name : null,
+            'address' =>  $model->delivery ? $model->delivery['address']['street'] : null,
+            'address_2' => $model->delivery ? $model->delivery['address']['street2'] : null,
+            'city' =>  $model->delivery ? $model->delivery['address']['city'] : null
         ];
 
         $receipt['order_id'] = $model->id;
@@ -77,7 +77,7 @@ class ReceiptController extends Controller
         $receipts = $model->load('receipts');
         // $receipt->print_count++;
         // $receipt->update();
-        // return view('test_print_receipt')->with($receipt->content);
+        // return view('test_print_receipt')->with($receipts->content);
     }
 
     public function emailReceipt(Order $model)

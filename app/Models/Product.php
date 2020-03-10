@@ -116,4 +116,9 @@ class Product extends Model
     {
         return $this->belongsToMany(Category::class);
     }
+
+    public function cards()
+    {
+        return $this->morphMany(Card::class, 'cardable');
+    }
 }
