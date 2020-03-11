@@ -217,20 +217,7 @@ export default {
   mounted() {
     if (this.$props.model) {
       this.getAllCountries(true);
-      console.log(this.$props.model);
-      this.address.id = this.$props.model.id;
-      this.address.customer_id = this.$props.model.customer_id;
-      this.address.first_name = this.$props.model.first_name;
-      this.address.last_name = this.$props.model.last_name;
-      this.address.street = this.$props.model.street;
-      this.address.street2 = this.$props.model.street2;
-      this.address.city = this.$props.model.city;
-      this.address.region = this.$props.model.region;
-      this.address.country = this.$props.model.region.country;
-      this.address.postcode = this.$props.model.postcode;
-      this.address.phone = this.$props.model.phone;
-      this.address.deliverydate = this.$props.model.deliverydate;
-      this.address.billing = this.$props.model.billing;
+      this.address = { ...this.address, ...this.$props.model };
 
       this.selected_location = _.find(this.locations, {
         id: this.$props.model.location
@@ -256,7 +243,6 @@ export default {
         }
       }
     },
-
     loading() {
       if (this.submit_loading || this.country_loading || this.region_loading) {
         return true;
@@ -315,9 +301,7 @@ export default {
           if (modelInit) {
             this.getRegionsByCountry(this.$props.model.region.country);
           }
-          console.log(this.address.country);
           if (!this.address.country) {
-            console.log("empty");
             this.address.country = _.find(this.countries, {
               iso3_code: "USA"
             });
