@@ -13,6 +13,7 @@
 
     body {
         height: auto;
+        font-size: 18px;
     }
 
     .products-table thead {
@@ -38,6 +39,7 @@
     }
 
     .store {
+        font-size: 15px;
         display: flex;
         justify-content: space-between;
         text-transform: uppercase;
@@ -126,7 +128,7 @@
                 </div>
             </div>
             @if($customer_billing_address)
-            <table class="no-border">
+            <table style="font-size: 16px;" class="no-border">
                 <tbody>
                     <tr>
                         <td class="small-header">Sold To:</td>
@@ -183,7 +185,7 @@
             @endif
             <hr>
             <table class="no-border">
-                <tbody>
+                <tbody style="font-size: 16px;">
                     <tr>
                         <td class="small-header">Type:</td>
                         <td>SO - Invoice</td>
@@ -239,7 +241,7 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody style="font-size:14px;">
+                <tbody>
                     @foreach($order->items as $item )
                     <tr>
                         <td></td>
@@ -260,11 +262,13 @@
                 <span>Mdse Amount: ${{ $moneyFormatter->format($order->mdse_price) }}</span>
                 <span>Sales Tax: ${{ $moneyFormatter->format($order->tax_price) }}</span>
             </div>
-            <p style="text-align:end;">Invoice Total: ${{ $moneyFormatter->format($order->total_price) }}</p>
+            <p style="text-align:end;">Invoice Total:
+                ${{ $moneyFormatter->format($order->total_price) }}</p>
             <br>
-            <p style="text-align:end;">Net Invoice Total: ${{ $moneyFormatter->format($order->total_price) }}</p>
+            <p style="text-align:end;">Net Invoice Total:
+                ${{ $moneyFormatter->format($order->total_price) }}</p>
             <br>
-            <span>Signed By:___________________</span>
+            <span style="font-size: 16px;">Signed By:__________________________________</span>
         </div>
     </body>
 
