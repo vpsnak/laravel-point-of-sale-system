@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-container>
-      <v-row justify="space-between">
+      <v-row>
         <v-btn
           class="ma-2"
           @click="btnactive = !btnactive"
@@ -84,7 +84,6 @@
           >
             <v-card
               dark
-              v-model="current_product"
               :img="product.photo_url"
               @click="addProduct(product)"
               height="170px"
@@ -184,7 +183,7 @@
           indeterminate
           color="secondary"
         ></v-progress-circular>
-        <h2 v-else-if="!productList.length">No products found</h2>
+        <h2 v-else-if="!products.length && !loader">No products found</h2>
       </v-row>
     </v-container>
   </v-card>
@@ -197,7 +196,6 @@ export default {
   data() {
     return {
       categories: [],
-      current_product: null,
       current_page: 1,
       last_page: null,
       viewId: null,
@@ -323,13 +321,13 @@ export default {
       this.initiateLoadingSearchResults(true);
       this.selected_category = null;
 
-      let payload = {
+      const payload = {
         method: "get",
         url: "products" + "?page=" + this.current_page
       };
       this.request(payload)
         .then(response => {
-          this.setProductList(response.data);
+          this.products = response.data;
           this.currentPage = response.current_page;
           this.lastPage = response.last_page;
         })
@@ -343,7 +341,7 @@ export default {
     getAllCategories() {
       this.initiateLoadingSearchResults(true);
 
-      let payload = {
+      const payload = {
         method: "get",
         url: "product-listing/categories"
       };
@@ -368,7 +366,7 @@ export default {
 
       this.request(payload)
         .then(response => {
-          this.setProductList(response.data);
+          this.products = response.data;
           this.currentPage = response.current_page;
           this.lastPage = response.last_page;
         })
@@ -382,7 +380,7 @@ export default {
     getSingleProduct(sku) {
       this.initiateLoadingSearchResults(true);
 
-      let payload = {
+      const payload = {
         method: "post",
         url: `products/search?page=${this.currentPage}`,
         data: { keyword: sku }
@@ -390,7 +388,7 @@ export default {
 
       this.request(payload)
         .then(response => {
-          this.setProductList(response.data);
+          this.products = response.data;
           this.currentPage = response.current_page;
           this.lastPage = response.last_page;
           if (_.isObjectLike(response[0])) {
@@ -422,7 +420,7 @@ export default {
 
         this.request(payload)
           .then(response => {
-            this.setProductList(response.data);
+            this.products = response.data;
             this.currentPage = response.current_page;
             this.lastPage = response.last_page;
           })
