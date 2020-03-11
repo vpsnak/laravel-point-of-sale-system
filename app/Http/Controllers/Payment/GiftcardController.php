@@ -23,15 +23,27 @@ class GiftcardController extends Controller
             'name' => 'required|string',
             'code' => 'required|string',
             'enabled' => 'required|boolean',
-            'amount' => 'required|numeric',
+            'price' => 'required|array',
+            'bulk_action' => 'boolean',
+            'qty' => 'numeric',
         ]);
 
         if ($validatedData['enabled']) {
             $validatedData['enabled'] = now();
+        } else {
+            $validatedData['enabled'] = null;
         }
 
-        $giftcard = Giftcard::create($validatedData);
-
+        if ($validatedData['bulk_action'] && $validatedData['qty'] != 0) {
+            for ($i = 1; $i <= $validatedData['qty']; $i++) {
+                if ($i != 1) {
+                    $validatedData['code']++;
+                }
+                $giftcard = Giftcard::create($validatedData);
+            }
+        } else {
+            $giftcard = Giftcard::create($validatedData);
+        }
         return response(['notification' => [
             'msg' => ["Gift card {$giftcard->name} created successfully!"],
             'type' => 'success'
@@ -44,11 +56,12 @@ class GiftcardController extends Controller
             'id' => 'required|exists:giftcards,id',
             'name' => 'required|string',
             'code' => 'required|string',
-            'enabled' => 'required|boolean',
-            'amount' => 'required|numeric',
+            'enabled' => 'required',
+            'price' => 'required|array'
         ]);
 
         $giftcard = Giftcard::findOrFail($validatedData['id']);
+        $validatedData['enabled'] = now();
 
         if ($validatedData['enabled'] && !$giftcard['enabled']) {
             $validatedData['enabled'] = now();

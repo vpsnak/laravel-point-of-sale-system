@@ -84,8 +84,8 @@ const state = {
       { text: "#", value: "id" },
       { text: "Name", value: "name" },
       { text: "Code", value: "code" },
-      { text: "Enabled", value: "is_enabled" },
-      { text: "Amount", value: "amount" },
+      { text: "Enabled", value: "enabled" },
+      { text: "Price amount", value: "price.amount" },
       { text: "Actions", value: "actions" }
     ],
     orders: [

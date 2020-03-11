@@ -11,12 +11,13 @@
             :readonly="$props.readonly"
             v-model="formFields.name"
             label="Name"
+            :disabled="loading"
             :error-messages="errors"
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
-          rules="required|max:191"
+          rules="required|max:191|numeric"
           v-slot="{ errors, valid }"
           name="Code"
         >
@@ -24,6 +25,7 @@
             :readonly="$props.readonly"
             v-model="formFields.code"
             label="Code"
+            :disabled="loading"
             :error-messages="errors"
             :success="valid"
           ></v-text-field>
@@ -31,13 +33,14 @@
         <ValidationProvider
           rules="required|between:0.01,1000"
           v-slot="{ errors, valid }"
-          name="Amount"
+          name="Price amount"
         >
           <v-text-field
             :readonly="$props.readonly"
-            v-model="formFields.amount"
+            v-model="formFields.price.amount"
             type="number"
-            label="Amount"
+            label="Price amount"
+            :disabled="loading"
             :error-messages="errors"
             :success="valid"
           ></v-text-field>
@@ -45,28 +48,31 @@
         <v-row justify="space-around">
           <ValidationProvider vid="bulk_action">
             <v-switch
+              :disabled="$props.model"
               :readonly="$props.readonly"
-              v-model="bulk_action"
+              v-model="formFields.bulk_action"
               label="Bulk Action"
             ></v-switch>
           </ValidationProvider>
           <v-switch
             :readonly="$props.readonly"
-            v-model="formFields.is_enabled"
+            v-model="formFields.enabled"
             label="Enabled"
+            :disabled="loading"
           ></v-switch>
         </v-row>
         <ValidationProvider
-          rules="required_if:bulk_action|max:5|numeric"
+          rules="required_if:bulk_action|max:5|min_value:1|numeric"
           v-slot="{ errors, valid }"
           name="Qty"
         >
           <v-text-field
             :readonly="$props.readonly"
-            v-if="bulk_action"
+            v-if="formFields.bulk_action"
             type="number"
-            v-model="qty"
+            v-model="formFields.qty"
             label="Qty"
+            :disabled="loading"
             :error-messages="errors"
             :success="valid"
           ></v-text-field>
@@ -99,15 +105,18 @@ export default {
   },
   data() {
     return {
-      bulk_action: false,
-      qty: null,
       loading: false,
       defaultValues: {},
       formFields: {
         name: null,
         code: null,
-        is_enabled: false,
-        amount: null
+        enabled: false,
+        price: {
+          type: null,
+          amount: null
+        },
+        bulk_action: false,
+        qty: 0
       }
     };
   },

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Coupon;
-use App\Discount;
 use Illuminate\Http\Request;
 
 class CouponController extends Controller
