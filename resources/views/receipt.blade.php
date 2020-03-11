@@ -186,18 +186,18 @@
                 @endif
                 <tr>
                     <td style="text-align: end;">Sales tax:</td>
-                    <td style="text-align: end;"> ${{ $order->tax_price->getAmount() }}</td>
+                    <td style="text-align: end;"> ${{ $moneyFormatter->format($order->tax_price) }}</td>
                 </tr>
                 <tr>
                     <td style="text-align: end;">Total Amt:</td>
-                    <td style="text-align: end;">${{ $order->total_price->getAmount() }}</td>
+                    <td style="text-align: end;">${{ $moneyFormatter->format($order->total_price) }}</td>
                 </tr>
             </table>
             <p style="text-align: center; font-size:14px;">*** Tendering details ***</p>
             <table style="font-size:14px;">
                 <tr>
                     <td style="text-align: end;">Order Total is:</th>
-                    <td style="text-align: center;">${{ $order->total_price->getAmount() }}</td>
+                    <td style="text-align: center;">${{ $moneyFormatter->format($order->total_price) }}</td>
                 </tr>
             </table>
             @foreach(json_decode($order['payments'] , true) as $payment)
@@ -257,11 +257,11 @@
             <table style="font-size:14px;">
                 <tr>
                     <th style="text-align: end;">Total Amt Tendered:</th>
-                    <td style="text-align: end;">${{ $order->paid_price->getAmount() }}</td>
+                    <td style="text-align: end;">${{ $moneyFormatter->format($order->paid_price) }}</td>
                 </tr>
                 <tr>
                     <th style="text-align: end;">Customer Change:</th>
-                    <td style="text-align: end;">${{ $order->remaining_price->getAmount() }}</td>
+                    <td style="text-align: end;">${{ $moneyFormatter->format($order->remaining_price) }}</td>
                 </tr>
             </table>
             <br>

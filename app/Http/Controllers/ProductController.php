@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Product;
 use CodeItNow\BarcodeBundle\Utils\BarcodeGenerator;
 use Illuminate\Http\Request;
+use Money\Currencies\ISOCurrencies;
+use Money\Formatter\DecimalMoneyFormatter;
 
 class ProductController extends Controller
 {
@@ -127,6 +129,13 @@ class ProductController extends Controller
         return response([
             'barcode' => $code,
             'type' => 'data:image/png;base64'
+        ]);
+    }
+
+    public function productBarcode(Product $product)
+    {
+        return view('product_barcode')->with([
+            'product' => $product,
         ]);
     }
 }

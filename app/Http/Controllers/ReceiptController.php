@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Receipt;
 use App\Order;
 use Illuminate\Support\Carbon;
+use Money\Currencies\ISOCurrencies;
+use Money\Formatter\DecimalMoneyFormatter;
 
 
 class ReceiptController extends Controller
@@ -86,6 +88,22 @@ class ReceiptController extends Controller
         // $receipt->email_count++;
         // $receipt->save();
         // return view('test_print_receipt')->with($receipt->content);
+    }
+
+    public function receipt(Order $order)
+    {
+        $order = $order->load(['createdBy', 'store']);
+
+        $currencies = new ISOCurrencies();
+        $moneyFormatter = new DecimalMoneyFormatter($currencies);
+
+        return view('receipt')->with([
+            'order' => $order,
+            'created_by' => $order->createdBy,
+            'store' => $order->store,
+            'cash_register' => $order->createdBy->open_register->cash_register,
+            'moneyFormatter' => $moneyFormatter
+        ]);
     }
 
     public function all()

@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use CodeItNow\BarcodeBundle\Utils\BarcodeGenerator;
 use Money\Currencies\ISOCurrencies;
-use Money\Currency;
 use Money\Formatter\DecimalMoneyFormatter;
 
 class OrderController extends Controller

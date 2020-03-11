@@ -14,11 +14,11 @@ $barcode->setScale(2);
 $barcode->setThickness(25);
 $barcode->setFontSize(12);
 $code = $barcode->generate();
-
 @endphp
 
 <html lang="en">
 ​
+
 <head>
     <meta charset="UTF-8">
     <title>Product Barcode</title>
@@ -31,22 +31,25 @@ $code = $barcode->generate();
         width: 100%;
         height: 100%;
     }
+
     .barcode {
         position: absolute;
-        top:0;
-        left:0;
+        top: 0;
+        left: 0;
         right: 0;
         bottom: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
     }
+
     img {
         width: 100%;
         height: auto;
         max-width: 100px;
     }
-    .product_price{
+
+    .product_price {
         font-size: 20px;
     }
 </style>
@@ -54,14 +57,15 @@ $code = $barcode->generate();
 @if (config('app.env') === 'local')
 
 <body>
-@else
+    @else
 
-<body onload="window.print()" onafterprint="window.close()">
-@endif
-    <div class="barcode">
-        <span>{{ $product->name }}</span>
-        <span class="product_price">${{ round($product->final_price, 2) }}</span>
-        <img src="data:image/png;base64,{{ $code }}">
-    </div>
-</body>
+    <body onload="window.print()" onafterprint="window.close()">
+        @endif
+        <div class="barcode">
+            <span>{{ $product->name }}</span>
+            <span class="product_price">${{ $product['price']['amount'] }}</span> <img
+                src="data:image/png;base64,{{ $code }}">
+        </div>
+    </body>
+
 </html>
