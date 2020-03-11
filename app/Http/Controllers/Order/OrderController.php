@@ -426,10 +426,15 @@ class OrderController extends Controller
         $currencies = new ISOCurrencies();
         $moneyFormatter = new DecimalMoneyFormatter($currencies);
 
+        $customer_billing_address = null;
+        if ($order->customer) {
+            $customer_billing_address = $order->customer->getDefaultBilling();
+        }
+
         return view('order')->with([
             'order' => $order,
             'store' => $order->store,
-            'customer_billing_address' => $order->customer->getDefaultBilling(),
+            'customer_billing_address' => $customer_billing_address,
             'code' => $code,
             'moneyFormatter' => $moneyFormatter
         ]);
