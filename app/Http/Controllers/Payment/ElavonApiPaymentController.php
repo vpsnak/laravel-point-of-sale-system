@@ -53,15 +53,13 @@ class ElavonApiPaymentController extends Controller
         $apiAcc = auth()->user()->open_register->cash_register->store->company->bankAccountApi()->account;
 
         $defaults = [
-            // 'ssl_merchant_id' => $apiAcc['merchant_id'],
-            // 'ssl_user_id' => $apiAcc['user_id'],
-            // 'ssl_pin' => $apiAcc['pin'],
+            'ssl_app_id' => 'VMM',
+            'ssl_vm_mobile_source' => 'WIN8',
+            'ssl_transaction_type' => 'terminalsetup',
+
             'ssl_merchant_id' => '2129225',
-            'ssl_user_id' => 'greenapi',
-            'ssl_pin' => 'CRMMKFB7LVU3LBNSD6A9DNX600UDQ9IOKWEWGWPGWM1RP2AGMXVQV0ZDRHZAOUW6',
-            'ssl_transaction_type' => $type,
-            'ssl_show_form' => 'false', // @TODO check this attribute when and if neeed
-            'ssl_test_mode' => 'false'
+            'ssl_user_id' => 'plantshedapi',
+            'ssl_pin' => '29T9DK6YJS29VNBOCLVR0YWZ0XLJXSL5366XMEGVILHGKBN2S6YZKGC27FTADR4N'
         ];
 
         $payload = array_merge($defaults, $data);
