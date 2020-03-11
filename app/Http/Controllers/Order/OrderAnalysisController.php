@@ -32,27 +32,31 @@ class OrderAnalysisController extends Controller
             new Money(0, new Currency($model->currency));
 
         foreach ($model->payments as $payment) {
-            $paidAmount = $payment->price;
-            switch ($payment->paymentType->type) {
-                case 'pos-terminal':
-                    $this->cc_pos = $this->cc_pos->add($paidAmount);
-                    break;
-                case 'cash':
-                    $paidAmount = $paidAmount->subtract($payment->change_price);
-                    $this->cash = $this->cash->add($paidAmount);
-                    break;
-                case 'card':
-                    $this->cc_api = $this->cc_api->add($paidAmount);
-                    break;
-                case 'house-account':
-                    $this->house_account = $this->house_account->add($paidAmount);
-                    break;
-                case 'coupon':
-                    $this->coupon = $this->coupon->add($paidAmount);
-                    break;
-                case 'giftcard':
-                    $this->giftcard = $this->giftcard->add($paidAmount);
-                    break;
+            if ($payment->status === 'approved') {
+
+
+                $paidAmount = $payment->price;
+                switch ($payment->paymentType->type) {
+                    case 'pos-terminal':
+                        $this->cc_pos = $this->cc_pos->add($paidAmount);
+                        break;
+                    case 'cash':
+                        $paidAmount = $paidAmount->subtract($payment->change_price);
+                        $this->cash = $this->cash->add($paidAmount);
+                        break;
+                    case 'card':
+                        $this->cc_api = $this->cc_api->add($paidAmount);
+                        break;
+                    case 'house-account':
+                        $this->house_account = $this->house_account->add($paidAmount);
+                        break;
+                    case 'coupon':
+                        $this->coupon = $this->coupon->add($paidAmount);
+                        break;
+                    case 'giftcard':
+                        $this->giftcard = $this->giftcard->add($paidAmount);
+                        break;
+                }
             }
         }
 
