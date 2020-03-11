@@ -92,7 +92,6 @@
               color="secondary"
               >submit
             </v-btn>
-            <v-btn v-if="!model" @click="clear" color="orange">clear</v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -149,7 +148,6 @@ export default {
           data: { ...this.formFields }
         })
           .then(() => {
-            this.clear();
             this.$emit("submit", {
               action: "paginate"
             });
@@ -164,7 +162,6 @@ export default {
           data: { ...this.formFields }
         })
           .then(() => {
-            this.clear();
             this.$emit("submit", {
               action: "paginate"
             });
@@ -173,9 +170,6 @@ export default {
             this.loading = false;
           });
       }
-    },
-    clear() {
-      this.formFields = { ...this.defaultValues };
     },
     getAllRegions() {
       this.loading = true;

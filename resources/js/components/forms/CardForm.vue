@@ -179,7 +179,6 @@ export default {
           data: { ...this.formFields }
         })
           .then(() => {
-            this.clear();
             this.$emit("submit", {
               action: "paginate"
             });
@@ -194,7 +193,6 @@ export default {
           data: { ...this.formFields }
         })
           .then(() => {
-            this.clear();
             this.$emit("submit", {
               action: "paginate"
             });
@@ -229,9 +227,6 @@ export default {
         .finally(() => {
           this.loading = false;
         });
-    },
-    clear() {
-      this.formFields = { ...this.defaultValues };
     }
   },
   beforeDestroy() {

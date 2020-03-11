@@ -2,7 +2,11 @@
   <ValidationObserver v-slot="{ invalid }">
     <v-form @submit.prevent="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
-        <ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Name">
+        <ValidationProvider
+          rules="required|max:191"
+          v-slot="{ errors, valid }"
+          name="Name"
+        >
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.name"
@@ -12,7 +16,11 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Stores">
+        <ValidationProvider
+          rules="required"
+          v-slot="{ errors, valid }"
+          name="Stores"
+        >
           <v-select
             :readonly="$props.readonly"
             v-model="formFields.store_id"
@@ -25,7 +33,11 @@
             :success="valid"
           ></v-select>
         </ValidationProvider>
-        <ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Barcode">
+        <ValidationProvider
+          rules="required|max:191"
+          v-slot="{ errors, valid }"
+          name="Barcode"
+        >
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.barcode"
@@ -35,7 +47,11 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Pos Terminal IP">
+        <ValidationProvider
+          rules="required"
+          v-slot="{ errors, valid }"
+          name="Pos Terminal IP"
+        >
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.pos_terminal_ip"
@@ -59,7 +75,11 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <v-checkbox :readonly="$props.readonly" v-model="formFields.active" label="Active"></v-checkbox>
+        <v-checkbox
+          :readonly="$props.readonly"
+          v-model="formFields.active"
+          label="Active"
+        ></v-checkbox>
       </v-container>
       <v-container>
         <v-row v-if="!$props.readonly">
@@ -70,8 +90,8 @@
               :loading="loading"
               :disabled="invalid || loading"
               color="secondary"
-            >submit</v-btn>
-            <v-btn v-if="!model" @click="clear" color="orange">clear</v-btn>
+              >submit</v-btn
+            >
           </v-col>
         </v-row>
       </v-container>
@@ -123,7 +143,6 @@ export default {
           data: { ...this.formFields }
         })
           .then(() => {
-            this.clear();
             this.$emit("submit", {
               action: "paginate"
             });
@@ -138,7 +157,6 @@ export default {
           data: { ...this.formFields }
         })
           .then(() => {
-            this.clear();
             this.$emit("submit", {
               action: "paginate"
             });
@@ -147,9 +165,6 @@ export default {
             this.loading = false;
           });
       }
-    },
-    clear() {
-      this.formFields = { ...this.defaultValues };
     },
     getAllStores() {
       this.loading = true;

@@ -40,7 +40,6 @@
               :disabled="invalid || loading"
               >submit</v-btn
             >
-            <v-btn color="orange" v-if="!model" @click="clear">clear</v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -87,7 +86,6 @@ export default {
           data: { ...this.formFields }
         })
           .then(() => {
-            this.clear();
             this.$emit("submit", {
               action: "paginate"
             });
@@ -102,7 +100,6 @@ export default {
           data: { ...this.formFields }
         })
           .then(() => {
-            this.clear();
             this.$emit("submit", {
               action: "paginate"
             });
@@ -111,9 +108,6 @@ export default {
             this.loading = false;
           });
       }
-    },
-    clear() {
-      this.formFields = { ...this.defaultValues };
     }
   },
   beforeDestroy() {

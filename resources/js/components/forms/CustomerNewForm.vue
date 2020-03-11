@@ -304,7 +304,6 @@
               :disabled="invalid || loading"
               >submit</v-btn
             >
-            <v-btn color="orange" @click="clear">clear</v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -427,14 +426,10 @@ export default {
               type: "success"
             }
           });
-          this.clear();
         })
         .finally(() => {
           this.loading = false;
         });
-    },
-    clear() {
-      this.formFields = { ...this.defaultValues };
     }
   },
   beforeDestroy() {
