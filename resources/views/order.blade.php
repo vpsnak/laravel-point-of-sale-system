@@ -1,21 +1,6 @@
 <!DOCTYPE html>
 
-@php
-use CodeItNow\BarcodeBundle\Utils\BarcodeGenerator;
-
-$barcode = new BarcodeGenerator();
-if ($order->id){
-$barcode->setText(strval($order->id));
-}
-$barcode->setType(BarcodeGenerator::Code128);
-$barcode->setScale(1);
-$barcode->setThickness(25);
-$barcode->setFontSize(10);
-$code = $barcode->generate();
-@endphp
-
 <html lang="en">
-​
 
 <head>
     <meta charset="UTF-8">
@@ -23,12 +8,10 @@ $code = $barcode->generate();
 </head>
 <style>
     @page {
-        size: 7in 9.25in;
-        margin: 27mm 16mm 27mm 16mm;
+        size: letter;
     }
 
     body {
-        width: 700px;
         height: auto;
     }
 
@@ -91,10 +74,15 @@ $code = $barcode->generate();
 
     .small-header {
         text-align: end;
+        width: 20%;
     }
 
     .spaced-header {
         text-align: end;
+    }
+
+    .spaced-fixed-width {
+        width: 30%;
     }
 </style>
 @if (config('app.env') === 'local')
@@ -137,41 +125,57 @@ $code = $barcode->generate();
                     </p>
                 </div>
             </div>
-            @if($order->billing_address && $order->delivery['address'] )
+            @if($customer_billing_address)
             <table class="no-border">
                 <tbody>
                     <tr>
                         <td class="small-header">Sold To:</td>
-                        <td>{{ $order->billing_address['customer_id'] }}</td>
+                        <td>{{ $customer_billing_address['customer_id'] }}</td>
                         <td class="spaced-header">Send To:</td>
                         <td></td>
                     </tr>
                     <tr>
                         <td class="small-header"></td>
-                        <td>{{ $order->billing_address['street'] }}</td>
+                        <td>{{ $customer_billing_address['street'] }}</td>
                         <td class="spaced-header"></td>
-                        <td>{{ $order->delivery['address']['street'] }}</td>
+                        @if( isset($order->delivery['address']) )
+                        <td class="spaced-fixed-width">{{ $order->delivery['address']['street'] }}</td>
+                        @elseif(isset($order->delivery['store_pickup']))
+                        <td class="spaced-fixed-width">{{ $order->delivery['store_pickup']['street'] }}</td>
+                        @else
+                        <td class="spaced-fixed-width"></td>
+                        @endif
                     </tr>
                     <tr>
                         <td class="small-header"></td>
-                        <td>{{ $order->billing_address['street2'] }}</td>
+                        <td>{{ $customer_billing_address['street2'] }}</td>
                         <td class="spaced-header"></td>
-                        <td>{{ $order->delivery['address']['street2'] }}</td>
+                        @if( isset($order->delivery['address']) )
+                        <td class="spaced-fixed-width">{{ $order->delivery['address']['street2'] }}</td>
+                        @elseif(isset($order->delivery['store_pickup']))
+                        <td class="spaced-fixed-width">{{ $order->delivery['store_pickup']['street1'] }}</td>
+                        @else
+                        <td class="spaced-fixed-width"></td>
+                        @endif
                     </tr>
                     <tr>
                         <td class="small-header"></td>
-                        <td>{{ $order->billing_address['city'] }} {{ $order->billing_address['region']['code'] }}
-                            {{ $order->billing_address['postcode'] }}</td>
+                        <td>{{ $customer_billing_address['city'] }} {{ $customer_billing_address['region']['code'] }}
+                            {{ $customer_billing_address['postcode'] }}</td>
                         <td class="spaced-header"></td>
-                        <td>{{ $order->delivery['address']['city'] }}
+                        @if( isset($order->delivery['address']) )
+                        <td class="spaced-fixed-width">{{ $order->delivery['address']['city'] }}
                             {{ $order->delivery['address']['region']['code'] }}
                             {{ $order->delivery['address']['postcode'] }}</td>
+                        @else
+                        <td class="spaced-fixed-width"></td>
+                        @endif
                     </tr>
                     <tr>
                         <td class="small-header"></td>
-                        <td>{{ $order->billing_address['phone'] }}</td>
+                        <td>{{ $customer_billing_address['phone'] }}</td>
                         <td class="spaced-header"></td>
-                        <td></td>
+                        <td class="spaced-fixed-width"></td>
                     </tr>
                 </tbody>
             </table>
@@ -253,12 +257,12 @@ $code = $barcode->generate();
                 </tbody>
             </table>
             <div class="total">
-                <span>Mdse Amount: ${{ $order->mdse_price->getAmount() }}</span>
-                <span>Sales Tax: ${{ $order->tax_price->getAmount() }}</span>
+                <span>Mdse Amount: ${{ $moneyFormatter->format($order->mdse_price) }}</span>
+                <span>Sales Tax: ${{ $moneyFormatter->format($order->tax_price) }}</span>
             </div>
-            <p style="text-align:end;">Invoice Total: ${{ $order->total_price->getAmount() }}</p>
+            <p style="text-align:end;">Invoice Total: ${{ $moneyFormatter->format($order->total_price) }}</p>
             <br>
-            <p style="text-align:end;">Net Invoice Total: ${{ $order->total_price->getAmount() }}</p>
+            <p style="text-align:end;">Net Invoice Total: ${{ $moneyFormatter->format($order->total_price) }}</p>
             <br>
             <span>Signed By:___________________</span>
         </div>
