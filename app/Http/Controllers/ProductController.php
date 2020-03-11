@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Product;
 use CodeItNow\BarcodeBundle\Utils\BarcodeGenerator;
 use Illuminate\Http\Request;
-use Money\Currencies\ISOCurrencies;
-use Money\Formatter\DecimalMoneyFormatter;
 
 class ProductController extends Controller
 {
