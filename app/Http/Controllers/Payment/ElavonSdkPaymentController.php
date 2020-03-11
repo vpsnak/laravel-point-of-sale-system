@@ -291,11 +291,11 @@ class ElavonSdkPaymentController extends Controller
             ]
         ];
 
-        if ($this->keyed != false) {
+        if ($this->keyed) {
             $payload['parameters']['CardPresent'] = false;
         }
 
-        if ($this->voiceReferral != false) {
+        if ($this->voiceReferral) {
             $payload['parameters']['VoiceReferral'] = $this->voiceReferral;
         }
 
@@ -328,11 +328,11 @@ class ElavonSdkPaymentController extends Controller
             ]);
         } catch (\Exception $e) {
             if ($e->hasResponse()) {
-                $this->saveToSdkLog($e->getResponse(), 'error');
-                return ['errors' => $e->getResponse()];
+                $this->saveToSdkLog([$e->getResponse()], 'error');
+                return ['errors' => [var_dump($e)]];
             } else {
                 $this->saveToSdkLog([$e->getMessage()], 'error');
-                return ['fatal_error' => ['SDK connection' => 'Connection refused<br>Please verify the server running converge sdk is configured correctly']];
+                return ['fatal_error' => ['Connection refused<br>Please verify the server running converge sdk is configured correctly']];
             }
         }
 
@@ -355,8 +355,8 @@ class ElavonSdkPaymentController extends Controller
                 'cardReaderConnection' => [
                     'connectionMethod' => 'INET',
                     'inetAddress' => [
-                        "host" => config('elavon.posTerminal.host'),
-                        "port" => config('elavon.posTerminal.port'),
+                        "host" => auth()->user()->open_register->cash_register->pos_terminal_ip,
+                        "port" => auth()->user()->open_register->cash_register->pos_terminal_port,
                         "encryptionScheme" => config('elavon.posTerminal.encr')
                     ]
                 ]
@@ -440,8 +440,7 @@ class ElavonSdkPaymentController extends Controller
             "requestId" => idate("U"),
             "targetType" => "paymentGatewayConverge",
             "version" => "1.0",
-            // "parameters" => $sdkAcc->account
-            "parameters" => []
+            "parameters" => $sdkAcc->account
         ];
 
         $paymentGateway = $this->sendRequest($payload);
@@ -504,7 +503,7 @@ class ElavonSdkPaymentController extends Controller
 
         if ($this->amount) {
             $payload['parameters']['baseTransactionAmount'] = [
-                "value" => $this->amount,
+                "value" => (int) $this->amount,
                 "currencyCode" => "USD"
             ];
         }

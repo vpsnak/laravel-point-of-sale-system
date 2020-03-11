@@ -182,7 +182,10 @@ class MasOrderController extends Controller
                 $customer = $this->order->customer;
                 $delivery_address = $this->order->delivery['address'];
                 $response['RecipientFirstName'] = $delivery_address['first_name'];
-                $response['RecipientLastName'] = $delivery_address['last_name'];
+                $response['RecipientLastName'] = $customer['last_name'];
+                $response['DeliveryDate'] = $this->order->delivery['date'];
+                $response['DeliveryEndDate'] = $this->order->delivery['date'];
+                $response['ResidenceType'] = $delivery_address['location'] ?? 11;
                 break;
         }
 

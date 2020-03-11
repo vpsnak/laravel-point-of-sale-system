@@ -28,8 +28,9 @@ class CreditCardController extends Controller
             $card_holder,
             $amount
         );
+        $elavonApiPaymentController = new ElavonApiPaymentController();
 
-        $response = ElavonApiPaymentController::doTransaction($type, $payload);
+        $response = $elavonApiPaymentController->doTransaction($type, $payload);
         return $this->prepareResponse($response);
     }
 
@@ -92,7 +93,7 @@ class CreditCardController extends Controller
             ];
         }
         if (array_key_exists('ssl_result_message', $response)) {
-            if ($response['ssl_result_message'] == 'APPROVAL') {
+            if ($response['ssl_result_message'] === 'APPROVAL') {
                 return [
                     'success' => [$response['ssl_result_message']],
                     'id' => $response['ssl_txn_id'],
@@ -100,14 +101,14 @@ class CreditCardController extends Controller
                 ];
             } else {
                 return [
-                    'errors' => ['Unknown Error' => $response['ssl_result_message']],
+                    'errors' => [$response['ssl_result_message']],
                     'id' => $response['ssl_txn_id'],
                     'response' => $response
                 ];
             }
         } else {
             return [
-                'errors' => ['API Transaction' => 'Undocumented Error'],
+                'errors' => ['Undocumented Error'],
                 'response' => $response
             ];
         }
@@ -120,23 +121,23 @@ class CreditCardController extends Controller
 
         $data = [
             'ssl_merchant_id' => ($store->company->bankAccountApi()->account)['merchant_id'],
-            'ssl_user_id' => ($store->company->bankAccountApi()->account)['user_id'],
-            'ssl_pin' => ($store->company->bankAccountApi()->account)['pin'],
+            'ssl_user_id' => ($store->company->bankAccountApi()->account)['ssl_user_id'],
+            'ssl_pin' => ($store->company->bankAccountApi()->account)['ssl_pin'],
             'ssl_txn_id' => $transaction_id
         ];
-
-        $response = ElavonApiPaymentController::doTransaction('txnquery', $data);
+        $elavonApiPaymentController = new ElavonApiPaymentController();
+        $response = $elavonApiPaymentController->doTransaction('txnquery', $data);
         $parsedResponse = $this->prepareResponse($response);
         if (array_key_exists('errors', $parsedResponse)) {
             return $parsedResponse;
         } else if (array_key_exists('ssl_is_voidable', $response)) {
             $transaction = null;
-            if ($response['ssl_is_voidable'] == 'TRUE') {
+            if ($response['ssl_is_voidable'] === 'TRUE') {
                 $transaction = 'ccvoid';
             } else {
                 $transaction = 'ccreturn';
             }
-            $response = ElavonApiPaymentController::doTransaction($transaction, ['ssl_txn_id' => $transaction_id]);
+            $response = $elavonApiPaymentController->doTransaction($transaction, ['ssl_txn_id' => $transaction_id]);
             return $this->prepareResponse($response);
         }
         return ['errors' => ['Cannot refund!']];
