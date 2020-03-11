@@ -149,47 +149,52 @@ class MasOrderController extends Controller
         if (!empty($this->order->notes)) {
             $shipping_notes .= "Notes: {$this->order->notes}";
         }
-        $response = [
-            'ExtensionData' => null,
-            'RecipientFirstName' => 'Guest',
-            'RecipientLastName' => 'Customer',
-            'RecipientAttention' => $shipping_notes,
-            'RecipientEmail' => 'vpallis@webo2.gr',
-            'RecipientAddress' => '555 Columbus Ave',
-            'RecipientAddress2' => null,
-            'RecipientCity' => 'Manhattan',
-            'RecipientState' => 'NY',
-            'RecipientCountry' => 'US',
-            'RecipientZip' => '10024',
-            'RecipientPhone' => '+6974526666',
-            'SpecialInstructions' => $this->order->delivery_slot,
-            'DeliveryDate' => $this->order->updated_at,
-            'DeliveryEndDate' => $this->order->updated_at,
-            'CardMessage' => '',
-            'OccasionType' => 9,
-            'ResidenceType' => 11,
-        ];
 
-        $customer = $this->order->customer;
-        if (empty($customer)) {
-            return $response;
+        switch ($this->order->method) {
+            case 'retail':
+                return [
+                    'ExtensionData' => null,
+                    'RecipientFirstName' => 'Guest',
+                    'RecipientLastName' => 'Customer',
+                    'RecipientAttention' => $shipping_notes,
+                    'RecipientEmail' => 'vpallis@webo2.gr',
+                    'RecipientAddress' => '555 Columbus Ave',
+                    'RecipientAddress2' => null,
+                    'RecipientCity' => 'Manhattan',
+                    'RecipientState' => 'NY',
+                    'RecipientCountry' => 'US',
+                    'RecipientZip' => '10024',
+                    'RecipientPhone' => '+6974526666',
+                    'SpecialInstructions' => $this->order->delivery_slot,
+                    'DeliveryDate' => $this->order->updated_at,
+                    'DeliveryEndDate' => $this->order->updated_at,
+                    'CardMessage' => '',
+                    'OccasionType' => 9,
+                    'ResidenceType' => 11,
+                ];
+            case 'pickup':
+                $customer = $this->order->customer;
+                $delivery_address = $this->order->delivery['store_pickup'];
+                $response['RecipientFirstName'] = $customer['first_name'];
+                $response['RecipientLastName'] = $customer['last_name'];
+                break;
+            case 'delivery':
+                $customer = $this->order->customer;
+                $delivery_address = $this->order->delivery['address'];
+                $response['RecipientFirstName'] = $delivery_address['first_name'];
+                $response['RecipientLastName'] = $delivery_address['last_name'];
+                break;
         }
 
-        $delivery_address = $this->order->delivery['address'];
-
-        if (empty($delivery_address)) {
-            return $response;
-        }
         if (!empty($delivery_address->company)) {
             $shipping_notes .= "Company: {$this->order->delivery['address']['company']}";
         }
         // Delivery Time slots will be sent in SpecialInstructions , you can also put an abbreviated version in ShippingPriority (IE> 5P-9P for 5pm to 9pm)
-        $response['RecipientFirstName'] = $delivery_address['first_name'];
-        $response['RecipientLastName'] = $delivery_address['last_name'];
         $response['RecipientAttention'] = $shipping_notes;
         $response['RecipientEmail'] = $customer['email'];
         $response['RecipientAddress'] = $delivery_address['street'];
-        $response['RecipientAddress2'] = $delivery_address['street2'];
+        $response['RecipientAddress2'] = $delivery_address['street2'] ?? null;
+        // @TODO Fix pickup method
         $response['RecipientCity'] = $delivery_address['city'];
         $response['RecipientState'] = $delivery_address['region']['code'];
         $response['RecipientCountry'] = $delivery_address['region']['country']['iso2_code']; //TODO EVALUATION
