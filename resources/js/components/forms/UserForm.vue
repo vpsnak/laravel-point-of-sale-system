@@ -3,7 +3,7 @@
     <v-form @submit.prevent="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         <ValidationProvider
-          rules="required|max:191"
+          rules="required|max:255"
           v-slot="{ errors, valid }"
           name="Name"
         >
@@ -17,7 +17,7 @@
         </ValidationProvider>
 
         <ValidationProvider
-          rules="required|email|max:191"
+          rules="required|email|max:255"
           v-slot="{ errors, valid }"
           name="Email"
         >
@@ -48,7 +48,7 @@
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
-          rules="required|max:191"
+          rules="required|max:255"
           v-slot="{ errors, valid }"
           name="Username"
         >
@@ -62,7 +62,7 @@
         </ValidationProvider>
         <ValidationProvider
           v-if="!model"
-          rules="required|min:8|max:191"
+          rules="required|min:8|max:255"
           v-slot="{ errors, valid }"
           name="Password"
         >

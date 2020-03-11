@@ -2,7 +2,7 @@
   <ValidationObserver v-slot="{ invalid }" tag="form" @submit.prevent="submit">
     <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
       <ValidationProvider
-        rules="required|max:191"
+        rules="required|max:255"
         v-slot="{ errors, valid }"
         name="Name"
       >
@@ -29,7 +29,7 @@
       </ValidationProvider>
 
       <ValidationProvider
-        rules="required|max:191"
+        rules="required|max:255"
         v-slot="{ errors, valid }"
         name="Code"
       >
@@ -42,7 +42,7 @@
         ></v-text-field>
       </ValidationProvider>
 
-      <ValidationProvider rules="max:191" v-slot="{ errors }" name="Notes">
+      <ValidationProvider rules="max:255" v-slot="{ errors }" name="Notes">
         <v-textarea
           :rows="3"
           v-model="giftCard.notes"

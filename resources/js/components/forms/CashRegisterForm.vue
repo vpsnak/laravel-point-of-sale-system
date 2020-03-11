@@ -3,7 +3,7 @@
     <v-form @submit.prevent="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         <ValidationProvider
-          rules="required|max:191"
+          rules="required|max:255"
           v-slot="{ errors, valid }"
           name="Name"
         >
@@ -17,7 +17,7 @@
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
-          rules="required"
+          rules="required|max:3"
           v-slot="{ errors, valid }"
           name="Stores"
         >
@@ -34,7 +34,7 @@
           ></v-select>
         </ValidationProvider>
         <ValidationProvider
-          rules="required|max:191"
+          rules="required|max:255"
           v-slot="{ errors, valid }"
           name="Barcode"
         >
@@ -48,7 +48,7 @@
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
-          rules="required"
+          rules="required|max:45"
           v-slot="{ errors, valid }"
           name="Pos Terminal IP"
         >
@@ -62,7 +62,7 @@
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
-          rules="required|max:191"
+          rules="required|max:255"
           v-slot="{ errors, valid }"
           name="Pos terminal port"
         >

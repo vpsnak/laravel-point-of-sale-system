@@ -3,7 +3,7 @@
     <v-form @submit="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         <ValidationProvider
-          rules="required|max:191"
+          rules="required|max:255"
           v-slot="{ errors, valid }"
           name="Name"
         >
@@ -20,7 +20,7 @@
           :rules="{
             required: true,
             min: 8,
-            max: 100,
+            max: 255,
             regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
           }"
           v-slot="{ errors, valid }"
@@ -37,7 +37,7 @@
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
-          rules="required|max:191"
+          rules="required|max:255"
           v-slot="{ errors, valid }"
           name="Street"
         >
@@ -51,7 +51,7 @@
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
-          rules="required|max:191"
+          rules="required|max:255"
           v-slot="{ errors, valid }"
           name="Postal code"
         >
@@ -65,7 +65,7 @@
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
-          rules="required|max:191"
+          rules="required|max:255"
           v-slot="{ errors, valid }"
           name="City"
         >

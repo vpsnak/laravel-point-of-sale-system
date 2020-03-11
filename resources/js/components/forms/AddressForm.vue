@@ -5,7 +5,7 @@
         <v-row>
           <v-col cols="6">
             <ValidationProvider
-              rules="required|max:100"
+              rules="required|max:255"
               v-slot="{ errors, valid }"
               name="First Name"
             >
@@ -19,7 +19,7 @@
               ></v-text-field>
             </ValidationProvider>
             <ValidationProvider
-              rules="required|max:100"
+              rules="required|max:255"
               v-slot="{ errors, valid }"
               name="Address"
             >
@@ -35,7 +35,7 @@
           </v-col>
           <v-col cols="6">
             <ValidationProvider
-              rules="required|max:100"
+              rules="required|max:255"
               v-slot="{ errors, valid }"
               name="Last Name"
             >
@@ -65,7 +65,7 @@
           </v-col>
           <v-col cols="3">
             <ValidationProvider
-              rules="required|max:100"
+              rules="required|max:255"
               v-slot="{ errors, valid }"
               name="City"
             >
@@ -81,7 +81,7 @@
           </v-col>
           <v-col cols="3">
             <ValidationProvider
-              rules="required|max:100"
+              rules="required|max:10"
               v-slot="{ errors, valid }"
               name="Zip Code"
             >
@@ -97,7 +97,7 @@
           </v-col>
           <v-col cols="3">
             <ValidationProvider
-              rules="required|max:100"
+              rules="required|max:5"
               v-slot="{ errors, valid }"
               name="State"
             >
@@ -117,7 +117,7 @@
           </v-col>
           <v-col cols="3">
             <ValidationProvider
-              rules="required|max:100"
+              rules="required|max:5"
               v-slot="{ errors, valid }"
               name="Countries"
             >
@@ -155,7 +155,7 @@
           </v-col>
           <v-col cols="4">
             <ValidationProvider
-              rules="max:100"
+              rules="max:255"
               v-slot="{ errors, valid }"
               name="Location name"
             >
@@ -173,7 +173,7 @@
               :rules="{
                 required: true,
                 min: 8,
-                max: 100,
+                max: 20,
                 regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
               }"
               v-slot="{ errors, valid }"
@@ -192,7 +192,7 @@
           </v-col>
           <v-col cols="6">
             <ValidationProvider
-              rules="max:100"
+              rules="max:255"
               v-slot="{ errors, valid }"
               name="Company"
             >
@@ -208,7 +208,7 @@
           </v-col>
           <v-col cols="6">
             <ValidationProvider
-              rules="max:100"
+              rules="max:20"
               v-slot="{ errors, valid }"
               name="Vat id"
             >
