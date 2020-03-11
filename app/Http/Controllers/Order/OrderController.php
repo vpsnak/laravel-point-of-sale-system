@@ -11,6 +11,9 @@ use App\Status;
 use App\StorePickup;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use CodeItNow\BarcodeBundle\Utils\BarcodeGenerator;
+use Money\Currencies\ISOCurrencies;
+use Money\Formatter\DecimalMoneyFormatter;
 
 class OrderController extends Controller
 {
@@ -410,9 +413,30 @@ class OrderController extends Controller
     {
         $order = $order->load(['store']);
 
+        $barcode = new BarcodeGenerator();
+        if ($order->id) {
+            $barcode->setText(strval($order->id));
+        }
+        $barcode->setType(BarcodeGenerator::Code128);
+        $barcode->setScale(2);
+        $barcode->setThickness(25);
+        $barcode->setFontSize(10);
+        $code = $barcode->generate();
+
+        $currencies = new ISOCurrencies();
+        $moneyFormatter = new DecimalMoneyFormatter($currencies);
+
+        $customer_billing_address = null;
+        if ($order->customer) {
+            $customer_billing_address = $order->customer->getDefaultBilling();
+        }
+
         return view('order')->with([
             'order' => $order,
             'store' => $order->store,
+            'customer_billing_address' => $customer_billing_address,
+            'code' => $code,
+            'moneyFormatter' => $moneyFormatter
         ]);
     }
 }

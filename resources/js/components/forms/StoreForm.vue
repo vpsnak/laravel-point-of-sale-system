@@ -2,7 +2,11 @@
   <ValidationObserver v-slot="{ invalid }">
     <v-form @submit="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
-        <ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Name">
+        <ValidationProvider
+          rules="required|max:255"
+          v-slot="{ errors, valid }"
+          name="Name"
+        >
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.name"
@@ -16,7 +20,7 @@
           :rules="{
             required: true,
             min: 8,
-            max: 100,
+            max: 255,
             regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
           }"
           v-slot="{ errors, valid }"
@@ -32,7 +36,11 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Street">
+        <ValidationProvider
+          rules="required|max:255"
+          v-slot="{ errors, valid }"
+          name="Street"
+        >
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.street"
@@ -42,7 +50,11 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="Postal code">
+        <ValidationProvider
+          rules="required|max:255"
+          v-slot="{ errors, valid }"
+          name="Postal code"
+        >
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.postcode"
@@ -52,7 +64,11 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider rules="required|max:191" v-slot="{ errors, valid }" name="City">
+        <ValidationProvider
+          rules="required|max:255"
+          v-slot="{ errors, valid }"
+          name="City"
+        >
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.city"
@@ -62,7 +78,11 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Companies">
+        <ValidationProvider
+          rules="required"
+          v-slot="{ errors, valid }"
+          name="Companies"
+        >
           <v-select
             :readonly="$props.readonly"
             v-model="formFields.company_id"
@@ -75,7 +95,11 @@
             :success="valid"
           ></v-select>
         </ValidationProvider>
-        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Taxes">
+        <ValidationProvider
+          rules="required"
+          v-slot="{ errors, valid }"
+          name="Taxes"
+        >
           <v-select
             :readonly="$props.readonly"
             v-model="formFields.tax_id"
@@ -89,7 +113,11 @@
           ></v-select>
         </ValidationProvider>
         <v-row justify="space-between">
-          <v-checkbox v-model="formFields.active" label="Active" :readonly="$props.readonly"></v-checkbox>
+          <v-checkbox
+            v-model="formFields.active"
+            label="Active"
+            :readonly="$props.readonly"
+          ></v-checkbox>
           <v-checkbox
             v-model="formFields.is_phone_center"
             label="Phone center"
@@ -106,8 +134,8 @@
               :loading="loading"
               :disabled="invalid || loading"
               color="secondary"
-            >submit</v-btn>
-            <v-btn v-if="!model" @click="clear" color="orange">clear</v-btn>
+              >submit</v-btn
+            >
           </v-col>
         </v-row>
       </v-container>
@@ -176,7 +204,6 @@ export default {
           data: { ...this.formFields }
         })
           .then(() => {
-            this.clear();
             this.$emit("submit", {
               action: "paginate"
             });
@@ -191,7 +218,6 @@ export default {
           data: { ...this.formFields }
         })
           .then(() => {
-            this.clear();
             this.$emit("submit", {
               action: "paginate"
             });
@@ -200,9 +226,6 @@ export default {
             this.loading = false;
           });
       }
-    },
-    clear() {
-      this.formFields = this.defaultValues;
     },
     getAllTaxes() {
       this.loading = true;

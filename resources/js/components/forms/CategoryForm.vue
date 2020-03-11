@@ -3,7 +3,7 @@
     <v-form @submit.prevent="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         <ValidationProvider
-          rules="required|min:3|max:191"
+          rules="required|max:255"
           v-slot="{ errors, valid }"
           name="Name"
         >
@@ -34,7 +34,6 @@
               color="secondary"
               >submit</v-btn
             >
-            <v-btn v-if="!model" @click="clear" color="orange">clear</v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -81,7 +80,6 @@ export default {
           data: { ...this.formFields }
         })
           .then(() => {
-            this.clear();
             this.$emit("submit", {
               action: "paginate"
             });
@@ -96,7 +94,6 @@ export default {
           data: { ...this.formFields }
         })
           .then(() => {
-            this.clear();
             this.$emit("submit", {
               action: "paginate"
             });
@@ -105,9 +102,6 @@ export default {
             this.loading = false;
           });
       }
-    },
-    clear() {
-      this.formFields = { ...this.defaultValues };
     }
   },
   beforeDestroy() {

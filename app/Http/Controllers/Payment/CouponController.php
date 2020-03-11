@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Coupon;
-use App\Discount;
 use Illuminate\Http\Request;
 
 class CouponController extends Controller
@@ -26,19 +25,10 @@ class CouponController extends Controller
             'uses' => 'required|numeric',
             'from' => 'nullable|date',
             'to' => 'nullable|date',
+            'discount' => 'required|array',
         ]);
 
-        $discountData = $request->validate([
-            'discount.type' => 'required|in:flat,percentage',
-            'discount.amount' => 'required|numeric',
-        ]);
-
-        $discount = Discount::create([
-            'type' => $discountData['discount']['type'],
-            'amount' => $discountData['discount']['amount'],
-        ]);
-
-        $coupon = $discount->coupon()->create($validatedData);
+        $coupon = Coupon::create($validatedData);
 
         return response(['notification' => [
             'msg' => ["Coupon {$coupon->name} created successfully!"],
@@ -55,19 +45,10 @@ class CouponController extends Controller
             'uses' => 'required|numeric',
             'from' => 'nullable|date',
             'to' => 'nullable|date',
-        ]);
-
-        $discountData = $request->validate([
-            'discount.type' => 'required|in:flat,percentage',
-            'discount.amount' => 'required|numeric',
+            'discount' => 'required|array',
         ]);
 
         $coupon = Coupon::findOrFail($validatedData['id']);
-
-        $coupon->discount->type = $discountData['discount']['type'];
-        $coupon->discount->amount = $discountData['discount']['amount'];
-
-        $coupon->discount->save();
 
         $coupon->fill($validatedData);
         $coupon->save();

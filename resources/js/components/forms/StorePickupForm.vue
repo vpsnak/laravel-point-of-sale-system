@@ -3,7 +3,7 @@
     <v-form @submit.prevent="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         <ValidationProvider
-          rules="required|max:191"
+          rules="required|max:255"
           v-slot="{ errors, valid }"
           name="Name"
         >
@@ -53,7 +53,7 @@
           ></v-select>
         </ValidationProvider>
         <ValidationProvider
-          rules="required|max:191"
+          rules="required|max:255"
           v-slot="{ errors, valid }"
           name="Street"
         >
@@ -67,7 +67,7 @@
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
-          rules="max:191"
+          rules="max:255"
           v-slot="{ errors, valid }"
           name="Second Street"
         >
@@ -92,7 +92,6 @@
               color="secondary"
               >submit
             </v-btn>
-            <v-btn v-if="!model" @click="clear" color="orange">clear</v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -149,7 +148,6 @@ export default {
           data: { ...this.formFields }
         })
           .then(() => {
-            this.clear();
             this.$emit("submit", {
               action: "paginate"
             });
@@ -164,7 +162,6 @@ export default {
           data: { ...this.formFields }
         })
           .then(() => {
-            this.clear();
             this.$emit("submit", {
               action: "paginate"
             });
@@ -173,9 +170,6 @@ export default {
             this.loading = false;
           });
       }
-    },
-    clear() {
-      this.formFields = { ...this.defaultValues };
     },
     getAllRegions() {
       this.loading = true;

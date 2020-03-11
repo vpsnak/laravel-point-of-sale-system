@@ -129,4 +129,11 @@ class ProductController extends Controller
             'type' => 'data:image/png;base64'
         ]);
     }
+
+    public function productBarcode(Product $product)
+    {
+        return view('product_barcode')->with([
+            'product' => $product,
+        ]);
+    }
 }

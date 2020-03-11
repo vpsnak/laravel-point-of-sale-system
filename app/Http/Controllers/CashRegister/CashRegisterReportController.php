@@ -191,4 +191,11 @@ class CashRegisterReportController extends Controller
 
         return response($query->paginate());
     }
+
+    public function report(CashRegisterReport $report)
+    {
+        return view('report')->with([
+            'report' => $report
+        ]);
+    }
 }

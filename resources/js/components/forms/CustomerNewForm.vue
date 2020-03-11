@@ -4,7 +4,7 @@
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         PERSONAL INFORMATION
         <ValidationProvider
-          rules="required|max:100"
+          rules="required|max:255"
           v-slot="{ errors, valid }"
           name="First name"
         >
@@ -16,7 +16,7 @@
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
-          rules="required|max:100"
+          rules="required|max:255"
           v-slot="{ errors, valid }"
           name="Last Name"
         >
@@ -28,7 +28,7 @@
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
-          rules="required|email|max:191"
+          rules="required|email|max:255"
           v-slot="{ errors, valid }"
           name="Email"
         >
@@ -42,7 +42,7 @@
         <ValidationProvider
           :rules="{
             min: 8,
-            max: 100,
+            max: 255,
             regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
           }"
           v-slot="{ errors, valid }"
@@ -69,7 +69,7 @@
         <v-row justify="space-around">
           <v-col v-if="formFields.house_account_status">
             <ValidationProvider
-              rules="required_if:house_account_status|max:100"
+              rules="required_if:house_account_status|max:255"
               v-slot="{ errors, valid }"
               name="House account number"
             >
@@ -81,7 +81,7 @@
               ></v-text-field>
             </ValidationProvider>
             <ValidationProvider
-              rules="required_if:house_account_status|max:16|numeric"
+              rules="required_if:house_account_status|max:8|numeric"
               v-slot="{ errors, valid }"
               name="House account limit"
             >
@@ -304,7 +304,6 @@
               :disabled="invalid || loading"
               >submit</v-btn
             >
-            <v-btn color="orange" @click="clear">clear</v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -427,14 +426,10 @@ export default {
               type: "success"
             }
           });
-          this.clear();
         })
         .finally(() => {
           this.loading = false;
         });
-    },
-    clear() {
-      this.formFields = { ...this.defaultValues };
     }
   },
   beforeDestroy() {
