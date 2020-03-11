@@ -53,12 +53,15 @@ class ElavonApiPaymentController extends Controller
         $apiAcc = auth()->user()->open_register->cash_register->store->company->bankAccountApi()->account;
 
         $defaults = [
-            'ssl_merchant_id' => $apiAcc['merchant_id'],
-            'ssl_user_id' => $apiAcc['user_id'],
-            'ssl_pin' => $apiAcc['pin'],
-            'ssl_test_mode' => $apiAcc['test_mode'],
+            // 'ssl_merchant_id' => $apiAcc['merchant_id'],
+            // 'ssl_user_id' => $apiAcc['user_id'],
+            // 'ssl_pin' => $apiAcc['pin'],
+            'ssl_merchant_id' => '2129225',
+            'ssl_user_id' => 'greenapi',
+            'ssl_pin' => 'CRMMKFB7LVU3LBNSD6A9DNX600UDQ9IOKWEWGWPGWM1RP2AGMXVQV0ZDRHZAOUW6',
             'ssl_transaction_type' => $type,
-            'ssl_show_form' => 'false' // @TODO check this attribute when and if neeed
+            'ssl_show_form' => 'false', // @TODO check this attribute when and if neeed
+            'ssl_test_mode' => 'false'
         ];
 
         $payload = array_merge($defaults, $data);

@@ -331,7 +331,7 @@ class ElavonSdkPaymentController extends Controller
                 $this->saveToSdkLog($e->getResponse(), 'error');
                 return ['errors' => $e->getResponse()];
             } else {
-                $this->saveToSdkLog($e->getMessage(), 'error');
+                $this->saveToSdkLog([$e->getMessage()], 'error');
                 return ['fatal_error' => ['SDK connection' => 'Connection refused<br>Please verify the server running converge sdk is configured correctly']];
             }
         }
@@ -440,18 +440,19 @@ class ElavonSdkPaymentController extends Controller
             "requestId" => idate("U"),
             "targetType" => "paymentGatewayConverge",
             "version" => "1.0",
-            "parameters" => $sdkAcc->account
+            // "parameters" => $sdkAcc->account
+            "parameters" => []
         ];
 
         $paymentGateway = $this->sendRequest($payload);
 
         if (isset($paymentGateway['errors']) || isset($paymentGateway['fatal_error'])) {
-            $this->saveToSdkLog('Payment gateway failed', 'error');
+            $this->saveToSdkLog(['Payment gateway failed'], 'error');
             return ['errors' => isset($paymentGateway['errors']) ? $paymentGateway['errors'] : $paymentGateway['fatal_error']];
         }
 
         if ($paymentGateway['data']['paymentGatewayCommand']['openPaymentGatewayData']['result'] !== 'SUCCESS') {
-            $this->saveToSdkLog('Payment gateway failed', 'error');
+            $this->saveToSdkLog(['Payment gateway failed'], 'error');
             return ['errors' => 'Payment gateway failed'];
         } else {
             $this->paymentGatewayId = $paymentGateway['data']['paymentGatewayCommand']['openPaymentGatewayData']['paymentGatewayId'];
@@ -503,7 +504,7 @@ class ElavonSdkPaymentController extends Controller
 
         if ($this->amount) {
             $payload['parameters']['baseTransactionAmount'] = [
-                "value" => (int) round($this->amount, 0),
+                "value" => $this->amount,
                 "currencyCode" => "USD"
             ];
         }

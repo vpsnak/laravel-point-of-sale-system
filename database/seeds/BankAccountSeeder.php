@@ -13,6 +13,9 @@ class BankAccountSeeder extends Seeder
      */
     public function run()
     {
+        // converge = api
+        // commerce sdk = sdk
+
         $green2greenCorpApiAcc = [
             'merchant_id' => '009710',
             'user_id' => 'convergeapi',
@@ -35,10 +38,9 @@ class BankAccountSeeder extends Seeder
         ];
 
         $plantshed87CorpApiAcc = [
-            'merchant_id' => '009710',
-            'user_id' => 'convergeapi',
-            'pin' => 'LWUY8K81466BXK4Y6I7FERJMOLDRM1XL37JPP4ATK3JORDUMAYDRICE9H7QVL6M8',
-            'test_mode' => 'false'
+            'merchant_id' => '2129225',
+            'user_id' => 'Plantshed',
+            'pin' => '1KLFEJNFW8R2PSFWSYJ8NJEJ8A6UFJQADTEJOXO43PWO6R4I9GD34YTAVSAU2EQA',
         ];
 
         $plantshed87CorpSdkAcc = [
@@ -111,23 +113,23 @@ class BankAccountSeeder extends Seeder
         ];
         // Plantshed 87 Corp
         $plantshed87CorpApi = [
-            'company_id' => 1,
+            'company_id' => 2,
             'type' => 'api',
             'account' => $plantshed87CorpApiAcc
         ];
         $plantshed87CorpSdk = [
-            'company_id' => 1,
+            'company_id' => 2,
             'type' => 'sdk',
             'account' => $plantshed87CorpSdkAcc
         ];
         // Plantshed Prince Inc
         $plantshedPrinceIncApi = [
-            'company_id' => 1,
+            'company_id' => 3,
             'type' => 'api',
             'account' => $plantshedPrinceIncApiAcc
         ];
         $plantshedPrinceIncSdk = [
-            'company_id' => 1,
+            'company_id' => 3,
             'type' => 'sdk',
             'account' => $plantshedPrinceIncSdkAcc
         ];
@@ -145,8 +147,12 @@ class BankAccountSeeder extends Seeder
             'account' => $demoSdkAcc
         ];
 
-        BankAccount::create($bankAcc3);
-        BankAccount::create($bankAcc4);
+        BankAccount::create($green2greenCorpApi);
+        BankAccount::create($green2greenCorpSdk);
+        BankAccount::create($plantshed87CorpApi);
+        BankAccount::create($plantshed87CorpSdk);
+        BankAccount::create($plantshedPrinceIncApi);
+        BankAccount::create($plantshedPrinceIncSdk);
         // demo acc
         BankAccount::create($demoApi);
         BankAccount::create($demoSdk);
