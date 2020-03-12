@@ -9,12 +9,12 @@
         <v-col :cols="12" justify="center" align="center">
           <h3 class="py-2">Methods</h3>
           ​<v-progress-circular
-            v-if="payment_types_loading"
+            v-if="paymentTypesLoading"
             indeterminate
             color="secondary"
           ></v-progress-circular>
           <v-btn-toggle
-            v-model="payment_type"
+            v-model="paymentType"
             mandatory
             @change="clearState"
             dense
@@ -23,7 +23,7 @@
               v-for="payment_type in paymentTypes"
               :key="payment_type.id"
               :value="payment_type.type"
-              :disabled="false"
+              :disabled="loading"
               small
             >
               <v-icon class="pr-2" small>{{ payment_type.icon }}</v-icon>
@@ -34,7 +34,7 @@
       </v-row>
     </v-container>
     <v-container fluid class="overflow-y-auto" style="max-height: 20vh">
-      <v-row justify="center" align="center" v-if="payment_type === 'card'">
+      <v-row justify="center" align="center" v-if="paymentType === 'card'">
         <v-col :lg="3" :cols="6">
           <ValidationProvider
             rules="required"
@@ -49,7 +49,7 @@
               label="Card number"
               prepend-inner-icon="mdi-credit-card"
               v-model="card.number"
-              :disabled="false"
+              :disabled="loading"
               :error-messages="errors"
               :success="valid"
             ></v-text-field>
@@ -68,14 +68,14 @@
               label="Card holder's name"
               prepend-inner-icon="mdi-account-box"
               v-model="card.card_holder"
-              :disabled="false"
+              :disabled="loading"
               :error-messages="errors"
               :success="valid"
             ></v-text-field>
           </ValidationProvider>
         </v-col>
       </v-row>
-      <v-row justify="center" align="center" v-if="payment_type === 'card'">
+      <v-row justify="center" align="center" v-if="paymentType === 'card'">
         <v-col :lg="3" :cols="6">
           <ValidationProvider
             rules="required|digits:4"
@@ -87,7 +87,7 @@
               outlined
               type="number"
               autocomplete="off"
-              :disabled="false"
+              :disabled="loading"
               label="Exp date"
               v-model="card.exp_date"
               prepend-inner-icon="mdi-calendar"
@@ -112,7 +112,7 @@
               type="number"
               prepend-inner-icon="mdi-lock"
               v-model="card.cvc"
-              :disabled="false"
+              :disabled="loading"
               :error-messages="errors"
               :success="valid"
             ></v-text-field>
@@ -122,7 +122,7 @@
       <v-row
         justify="center"
         align="center"
-        v-else-if="['giftcard', 'coupon'].indexOf(payment_type) !== -1"
+        v-else-if="['giftcard', 'coupon'].indexOf(paymentType) !== -1"
       >
         <v-col :lg="3" :cols="6">
           <ValidationProvider
@@ -135,7 +135,7 @@
               outlined
               label="Code"
               :prepend-inner-icon="getIcon"
-              :disabled="false"
+              :disabled="loading"
               v-model="code"
               :error-messages="errors"
               :success="valid"
@@ -157,7 +157,7 @@
             label="Remaining Amount"
           ></v-text-field>
         </v-col>
-        <v-col :lg="2" :cols="3" v-if="payment_type !== 'coupon'">
+        <v-col :lg="2" :cols="3" v-if="paymentType !== 'coupon'">
           <ValidationProvider
             :rules="`required|between:0.01,${amountRules}`"
             v-slot="{ errors, valid }"
@@ -166,7 +166,7 @@
             <v-text-field
               dense
               outlined
-              :disabled="false"
+              :disabled="loading"
               :min="0.01"
               :max="amountRules"
               label="Payment amount"
@@ -186,8 +186,8 @@
             dark
             block
             color="green darken-3"
-            :loading="false"
-            :disabled="invalid || !$store.state.cart.isValidCheckout"
+            :loading="makePaymentLoading"
+            :disabled="invalid || !isValidCheckout || loading"
           >
             Make a payment
           </v-btn>
@@ -228,11 +228,12 @@ export default {
 
   data() {
     return {
+      makePaymentLoading: false,
       amount_value: null,
-      payment_types_loading: false,
+      paymentTypesLoading: false,
       payment_types: [],
       paymentPrice: null,
-      payment_type: null,
+      paymentType: null,
       code: null,
 
       card: {
@@ -250,9 +251,22 @@ export default {
       "order_id",
       "order_total_price",
       "order_status",
-      "customer"
+      "customer",
+      "checkout_loading",
+      "isValidCheckout"
     ]),
 
+    loading() {
+      if (
+        this.checkout_loading ||
+        this.makePaymentLoading ||
+        this.paymentTypesLoading
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     amount: {
       get() {
         return this.amount_value;
@@ -275,7 +289,7 @@ export default {
       }
     },
     amountRules() {
-      switch (this.payment_type) {
+      switch (this.paymentType) {
         case "card":
         case "house-account":
         case "giftcard":
@@ -286,20 +300,15 @@ export default {
       }
     },
     getIcon() {
-      return _.find(this.paymentTypes, ["type", this.payment_type]).icon;
+      return _.find(this.paymentTypes, ["type", this.paymentType]).icon;
     },
-    paymentTypes: {
-      get() {
-        if (this.houseAccount) {
-          return this.payment_types;
-        } else {
-          return _.filter(this.payment_types, o => {
-            return o.type !== "house-account";
-          });
-        }
-      },
-      set(value) {
-        this.payment_types = value;
+    paymentTypes() {
+      if (this.houseAccount) {
+        return this.payment_types;
+      } else {
+        return _.filter(this.payment_types, o => {
+          return o.type !== "house-account";
+        });
       }
     },
     houseAccountNumber() {
@@ -332,7 +341,8 @@ export default {
       "setPayments",
       "setOrderChangePrice",
       "setOrderRemainingPrice",
-      "setOrderStatus"
+      "setOrderStatus",
+      "setCheckoutLoading"
     ]),
     ...mapActions("cart", ["submitOrder"]),
     ...mapActions("requests", ["request"]),
@@ -342,28 +352,32 @@ export default {
       this.amount = this.orderRemainingPrice.toFormat("0.00");
     },
     getPaymentTypes() {
-      this.payment_types_loading = true;
+      this.paymentTypesLoading = true;
+      this.setCheckoutLoading(true);
       this.request({
         method: "get",
         url: "payment-types"
       })
         .then(response => {
-          this.paymentTypes = response;
+          this.payment_types = response;
         })
         .catch(error => {
           console.error(error);
         })
         .finally(() => {
-          this.payment_types_loading = false;
+          this.paymentTypesLoading = false;
+          this.setCheckoutLoading(false);
         });
     },
     pay() {
+      this.makePaymentLoading = true;
+      this.setCheckoutLoading(true);
       let data = {
         order_id: this.order_id,
-        payment_type: this.payment_type
+        payment_type: this.paymentType
       };
 
-      switch (this.payment_type) {
+      switch (this.paymentType) {
         case "pos-terminal":
         case "cash":
           data.price = this.paymentPrice.toJSON();
@@ -407,11 +421,14 @@ export default {
             this.setPayments(error.payment);
           }
         })
-        .finally(() => {});
+        .finally(() => {
+          this.makePaymentLoading = false;
+          this.setCheckoutLoading(false);
+        });
     },
     max() {
-      if (this.payment_type !== "cash") {
-        if (this.payment_type === "house-account") {
+      if (this.paymentType !== "cash") {
+        if (this.paymentType === "house-account") {
           if (this.houseAccountLimit.greaterThan(this.orderRemainingPrice)) {
             this.paymentPrice.equalsTo(this.orderRemainingPrice);
           } else if (this.paymentPrice.greaterThan(this.houseAccountLimit)) {
@@ -442,16 +459,18 @@ export default {
     },
     sendPayment() {
       if (!this.order_id) {
+        this.makePaymentLoading = true;
+        this.setCheckoutLoading(true);
         this.submitOrder("create")
           .then(response => {
-            console.log(response);
             this.setOrderId(response.id);
             this.pay();
           })
           .catch(error => {
             console.error(error);
-          })
-          .finally(() => {});
+            this.setCheckoutLoading(false);
+            this.makePaymentLoading = false;
+          });
       } else {
         this.pay();
       }
