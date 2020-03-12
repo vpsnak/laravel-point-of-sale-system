@@ -44,8 +44,8 @@
             </ValidationProvider>
           </v-col>
         </v-row>
-        <v-row align="center">
-          <v-col :cols="6" v-if="fill_amount || !cashRegisterIsopen">
+        <v-row align="center" justify="center">
+          <v-col :cols="4" v-if="fill_amount || !cashRegisterIsopen">
             <ValidationProvider
               rules="required|between:1,10000"
               v-slot="{ errors, valid }"
@@ -65,7 +65,7 @@
           </v-col>
         </v-row>
         <v-row align="center" justify="center" v-if="cashRegisterIsopen">
-          <v-col cols="auto">
+          <v-col :cols="12">
             <v-alert text :type="open_session_user ? 'warning' : 'info'">
               <span v-if="open_session_user">
                 {{ open_session_user.name }} has an active session with the
@@ -143,12 +143,15 @@ export default {
           } else {
             this.open_session_user = null;
           }
-
+          this.fill_amount = false;
           return true;
         } else {
           this.fill_amount = true;
           return false;
         }
+      } else {
+        this.fill_amount = true;
+        return false;
       }
     },
     disableOpenCashRegister() {

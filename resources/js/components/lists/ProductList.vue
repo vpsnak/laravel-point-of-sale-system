@@ -1,21 +1,9 @@
 <template>
-  <v-card class="pa-3 d-flex flex-column">
-    <v-card-text>
-      <v-row align="center" justify="center">
-        <v-btn icon @click="searchProduct" class="mx-2">
-          <v-icon>mdi-magnify</v-icon>
-        </v-btn>
-        <v-text-field
-          v-model="keyword"
-          placeholder="Search product"
-          class="mx-2"
-          @keyup.enter="searchProduct"
-          clearable
-          @click:clear="(currentPage = 1), getAllProducts()"
-        ></v-text-field>
-
+  <v-card>
+    <v-container>
+      <v-row>
         <v-btn
-          class="mx-2"
+          class="ma-2"
           @click="btnactive = !btnactive"
           :color="btnactive ? 'primary' : 'secondary'"
         >
@@ -25,9 +13,22 @@
           </v-icon>
         </v-btn>
 
+        <v-text-field
+          class="mx-2"
+          outlined
+          solo
+          v-model="keyword"
+          prepend-inner-icon="mdi-magnify"
+          @click:prepend-inner="searchProduct()"
+          placeholder="Search product"
+          @keyup.enter="searchProduct"
+          clearable
+          @click:clear="(currentPage = 1), getAllProducts()"
+        ></v-text-field>
+
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-btn class="mx-2 my-2" @click="addDummyProductDialog()" v-on="on">
+            <v-btn @click="addDummyProductDialog()" v-on="on" class="ma-2">
               <v-icon left>mdi-flower</v-icon>Custom <br />Product
             </v-btn>
           </template>
@@ -35,7 +36,7 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-btn class="mx-2 my-2" @click="giftcardDialog()" v-on="on">
+            <v-btn @click="giftcardDialog()" v-on="on" class="ma-2">
               <v-icon left>mdi-credit-card-plus</v-icon>Gift <br />Card
             </v-btn>
           </template>
@@ -83,7 +84,6 @@
           >
             <v-card
               dark
-              v-model="current_product"
               :img="product.photo_url"
               @click="addProduct(product)"
               height="170px"
@@ -183,9 +183,9 @@
           indeterminate
           color="secondary"
         ></v-progress-circular>
-        <h2 v-else-if="!productList.length">No products found</h2>
+        <h2 v-else-if="!products.length && !loader">No products found</h2>
       </v-row>
-    </v-card-text>
+    </v-container>
   </v-card>
 </template>
 
@@ -196,7 +196,6 @@ export default {
   data() {
     return {
       categories: [],
-      current_product: null,
       current_page: 1,
       last_page: null,
       viewId: null,
@@ -207,9 +206,12 @@ export default {
     };
   },
 
-  mounted() {
+  created() {
     this.getAllProducts();
     this.getAllCategories();
+  },
+
+  mounted() {
     this.$root.$on("barcodeScan", sku => {
       if (!this.interactive_dialog.show) {
         this.getSingleProduct(sku);
@@ -319,13 +321,13 @@ export default {
       this.initiateLoadingSearchResults(true);
       this.selected_category = null;
 
-      let payload = {
+      const payload = {
         method: "get",
         url: "products" + "?page=" + this.current_page
       };
       this.request(payload)
         .then(response => {
-          this.setProductList(response.data);
+          this.products = response.data;
           this.currentPage = response.current_page;
           this.lastPage = response.last_page;
         })
@@ -339,7 +341,7 @@ export default {
     getAllCategories() {
       this.initiateLoadingSearchResults(true);
 
-      let payload = {
+      const payload = {
         method: "get",
         url: "product-listing/categories"
       };
@@ -364,7 +366,7 @@ export default {
 
       this.request(payload)
         .then(response => {
-          this.setProductList(response.data);
+          this.products = response.data;
           this.currentPage = response.current_page;
           this.lastPage = response.last_page;
         })
@@ -378,7 +380,7 @@ export default {
     getSingleProduct(sku) {
       this.initiateLoadingSearchResults(true);
 
-      let payload = {
+      const payload = {
         method: "post",
         url: `products/search?page=${this.currentPage}`,
         data: { keyword: sku }
@@ -386,7 +388,7 @@ export default {
 
       this.request(payload)
         .then(response => {
-          this.setProductList(response.data);
+          this.products = response.data;
           this.currentPage = response.current_page;
           this.lastPage = response.last_page;
           if (_.isObjectLike(response[0])) {
@@ -418,7 +420,7 @@ export default {
 
         this.request(payload)
           .then(response => {
-            this.setProductList(response.data);
+            this.products = response.data;
             this.currentPage = response.current_page;
             this.lastPage = response.last_page;
           })

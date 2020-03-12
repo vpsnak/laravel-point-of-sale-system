@@ -133,7 +133,8 @@ class PaymentController extends Controller
         $moneyFormatter = new DecimalMoneyFormatter($currencies);
         $price = $payment->price;
 
-        $paymentResponse = (new CreditCardController)->cardPayment(
+        $paymentResponse = (new CreditCardController)->creditCardAction(
+            'ccsale',
             $validatedData['card']['number'],
             $validatedData['card']['exp_date'],
             $validatedData['card']['cvc'],

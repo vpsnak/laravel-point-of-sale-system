@@ -17,30 +17,31 @@ class BankAccountSeeder extends Seeder
         // commerce sdk = sdk
 
         $green2greenCorpApiAcc = [
-            'merchant_id' => '009710',
-            'user_id' => 'convergeapi',
-            'pin' => 'LWUY8K81466BXK4Y6I7FERJMOLDRM1XL37JPP4ATK3JORDUMAYDRICE9H7QVL6M8',
-            'test_mode' => 'false'
+            'endpoint' => 'https://api.convergepay.com/VirtualMerchant/processxml.do',
+            'ssl_merchant_id' => '2129225',
+            'ssl_user_id' => 'greenapi',
+            'ssl_pin' => 'VQHLWYVYB6HYFW9L2XB48H8AIT7B0XCROUNYLACC3B79B99GOO9HEPHDJOXXV7P0'
         ];
 
         $green2greenCorpSdkAcc = [
             'app' => 'VMM',
             'email' => 'support@webo2.gr',
-            'pin' => 'H3192LKKOIBN3GIZ9FGXX01MYWGIYEJ2UJ8PW4PCHXRSNBZVFMF1PWNG0HR003MI',
-            'userId' => 'convergeapi',
-            'merchantId' => '009710',
+            'pin' => 'VQHLWYVYB6HYFW9L2XB48H8AIT7B0XCROUNYLACC3B79B99GOO9HEPHDJOXXV7P0',
+            'userId' => 'greenapi',
+            'merchantId' => '2129225',
             'paymentGatewayEnvironment' => 'PROD',
             'vendorId' => 'sc100028',
             'vendorAppName' => 'Webo2',
             'vendorAppVersion' => '2.1.4',
             "retrieveAccountInfo" => true,
-            "handleDigitalSignature" => true,
+            "handleDigitalSignature" => true
         ];
 
         $plantshed87CorpApiAcc = [
-            'merchant_id' => '2129225',
-            'user_id' => 'Plantshed',
-            'pin' => '1KLFEJNFW8R2PSFWSYJ8NJEJ8A6UFJQADTEJOXO43PWO6R4I9GD34YTAVSAU2EQA',
+            'endpoint' => 'https://api.convergepay.com/VirtualMerchant/processxml.do',
+            'ssl_merchant_id' => '2129225',
+            'ssl_user_id' => 'plantapi',
+            'ssl_pin' => '1KLFEJNFW8R2PSFWSYJ8NJEJ8A6UFJQADTEJOXO43PWO6R4I9GD34YTAVSAU2EQA',
         ];
 
         $plantshed87CorpSdkAcc = [
@@ -48,7 +49,7 @@ class BankAccountSeeder extends Seeder
             'email' => 'support@webo2.gr',
             'pin' => '1KLFEJNFW8R2PSFWSYJ8NJEJ8A6UFJQADTEJOXO43PWO6R4I9GD34YTAVSAU2EQA',
             'userId' => 'plantapi',
-            'merchantId' => '009710',
+            'merchantId' => '2129225',
             'paymentGatewayEnvironment' => 'PROD',
             'vendorId' => 'sc100028',
             'vendorAppName' => 'Webo2',
@@ -58,18 +59,18 @@ class BankAccountSeeder extends Seeder
         ];
 
         $plantshedPrinceIncApiAcc = [
-            'merchant_id' => '009710',
-            'user_id' => 'plantapi',
-            'pin' => 'LWUY8K81466BXK4Y6I7FERJMOLDRM1XL37JPP4ATK3JORDUMAYDRICE9H7QVL6M8',
-            'test_mode' => 'false'
+            'endpoint' => 'https://api.convergepay.com/VirtualMerchant/processxml.do',
+            'ssl_merchant_id' => '2129225',
+            'ssl_user_id' => 'plantshedapi',
+            'ssl_pin' => '29T9DK6YJS29VNBOCLVR0YWZ0XLJXSL5366XMEGVILHGKBN2S6YZKGC27FTADR4N'
         ];
 
         $plantshedPrinceIncSdkAcc = [
             'app' => 'VMM',
             'email' => 'support@webo2.gr',
-            'pin' => 'H3192LKKOIBN3GIZ9FGXX01MYWGIYEJ2UJ8PW4PCHXRSNBZVFMF1PWNG0HR003MI',
-            'userId' => 'Plantshed',
-            'merchantId' => '009710',
+            'pin' => '29T9DK6YJS29VNBOCLVR0YWZ0XLJXSL5366XMEGVILHGKBN2S6YZKGC27FTADR4N',
+            'userId' => 'plantshedapi',
+            'merchantId' => '2129225',
             'paymentGatewayEnvironment' => 'PROD',
             'vendorId' => 'sc100028',
             'vendorAppName' => 'Webo2',
@@ -79,10 +80,10 @@ class BankAccountSeeder extends Seeder
         ];
 
         $demoApiAcc = [
-            'merchant_id' => '009710',
-            'user_id' => 'convergeapi',
-            'pin' => 'LWUY8K81466BXK4Y6I7FERJMOLDRM1XL37JPP4ATK3JORDUMAYDRICE9H7QVL6M8',
-            'test_mode' => 'false'
+            'endpoint' => 'https://api.demo.convergepay.com/VirtualMerchantDemo/processxml.do',
+            'ssl_merchant_id' => '009710',
+            'ssl_user_id' => 'convergeapi',
+            'ssl_pin' => 'LWUY8K81466BXK4Y6I7FERJMOLDRM1XL37JPP4ATK3JORDUMAYDRICE9H7QVL6M8'
         ];
 
         $demoSdkAcc = [
@@ -133,7 +134,6 @@ class BankAccountSeeder extends Seeder
             'type' => 'sdk',
             'account' => $plantshedPrinceIncSdkAcc
         ];
-
         // demo
         $demoApi = [
             'company_id' => 4,
@@ -147,10 +147,13 @@ class BankAccountSeeder extends Seeder
             'account' => $demoSdkAcc
         ];
 
+        // plantshed 96 (green2green)
         BankAccount::create($green2greenCorpApi);
         BankAccount::create($green2greenCorpSdk);
+        // plantshed 87
         BankAccount::create($plantshed87CorpApi);
         BankAccount::create($plantshed87CorpSdk);
+        // plantshed prince street
         BankAccount::create($plantshedPrinceIncApi);
         BankAccount::create($plantshedPrinceIncSdk);
         // demo acc
