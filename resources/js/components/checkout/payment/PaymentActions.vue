@@ -83,12 +83,14 @@
             name="Exp date"
           >
             <v-text-field
+              style="max-width:125px"
               dense
               outlined
               type="number"
               autocomplete="off"
               :disabled="loading"
               label="Exp date"
+              persistent-hint
               v-model="card.exp_date"
               prepend-inner-icon="mdi-calendar"
               :error-messages="errors[0] ? 'Format: MMYY' : null"
@@ -105,6 +107,7 @@
             name="CVC/CVV"
           >
             <v-text-field
+              style="max-width:125px"
               dense
               outlined
               autocomplete="off"
@@ -452,10 +455,16 @@ export default {
           cvc: "123",
           exp_date: "1224"
         };
+      } else {
+        this.card.card_holder = null;
+        this.card.number = null;
+        this.card.cvc = null;
+        this.card.exp_date = null;
       }
     },
     clearState() {
       this.fillDemoCard();
+      this.code = null;
     },
     sendPayment() {
       if (!this.order_id) {
