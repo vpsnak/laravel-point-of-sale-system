@@ -13,6 +13,7 @@
 
     body {
         height: auto;
+        margin: auto;
         font-size: 18px;
     }
 
@@ -47,15 +48,6 @@
         font-style: italic;
     }
 
-    .total {
-        font-size: 13px;
-        font-weight: bold;
-        padding-top: 1rem;
-        display: flex;
-        align-items: flex-end;
-        flex-direction: column;
-    }
-
     .barcode {
         text-align: center;
     }
@@ -85,6 +77,28 @@
 
     .spaced-fixed-width {
         width: 30%;
+    }
+
+    .footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 2.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding-bottom: 2rem;
+    }
+
+    .left-footer {
+        display: flex;
+        align-items: flex-end;
+        flex-direction: column;
+    }
+
+    .total {
+        font-size: 13px;
+        font-weight: bold;
     }
 </style>
 @if (config('app.env') === 'local')
@@ -258,18 +272,20 @@
                     @endforeach
                 </tbody>
             </table>
-            <div class="total">
-                <span>Mdse Amount: ${{ $moneyFormatter->format($order->mdse_price) }}</span>
-                <span>Sales Tax: ${{ $moneyFormatter->format($order->tax_price) }}</span>
+            <div class="footer">
+                <div>
+                    <p style="font-size: 16px;">Signed By:__________________________________ </p>
+                </div>
+                <div class="left-footer">
+                    <span class="total">Mdse Amount: ${{ $moneyFormatter->format($order->mdse_price) }}</span>
+                    <span class="total">Sales Tax: ${{ $moneyFormatter->format($order->tax_price) }}</span>
+                    <p>Invoice Total:
+                        ${{ $moneyFormatter->format($order->total_price) }}</p>
+                    <br>
+                    <p>Net Invoice Total:
+                        ${{ $moneyFormatter->format($order->total_price) }}</p>
+                </div>
             </div>
-            <p style="text-align:end;">Invoice Total:
-                ${{ $moneyFormatter->format($order->total_price) }}</p>
-            <br>
-            <p style="text-align:end;">Net Invoice Total:
-                ${{ $moneyFormatter->format($order->total_price) }}</p>
-            <br>
-            <span style="font-size: 16px;">Signed By:__________________________________</span>
-        </div>
     </body>
 
 </html>
