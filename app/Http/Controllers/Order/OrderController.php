@@ -37,7 +37,7 @@ class OrderController extends Controller
 
     public function getOne(Order $model)
     {
-        return response()->json($model->load(['customer.addresses', 'payments']), 200, [], JSON_NUMERIC_CHECK);
+        return response()->json($model->append('payments')->load(['customer.addresses']), 200, [], JSON_NUMERIC_CHECK);
     }
 
     public function updateItems(Request $request)
