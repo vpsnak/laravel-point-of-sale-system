@@ -420,7 +420,7 @@ class OrderController extends Controller
         $barcode->setType(BarcodeGenerator::Code128);
         $barcode->setScale(2);
         $barcode->setThickness(25);
-        $barcode->setFontSize(10);
+        $barcode->setFontSize(0);
         $code = $barcode->generate();
 
         $currencies = new ISOCurrencies();
