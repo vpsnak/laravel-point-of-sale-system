@@ -24,7 +24,7 @@
               :key="payment_type.id"
               :value="payment_type.type"
               :disabled="false"
-              dense
+              small
             >
               <v-icon class="pr-2" small>{{ payment_type.icon }}</v-icon>
               {{ payment_type.name }}
