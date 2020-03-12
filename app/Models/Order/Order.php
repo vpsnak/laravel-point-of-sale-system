@@ -44,7 +44,6 @@ class Order extends Model
 
     protected $with = [
         'masOrder',
-        'payments',
         'customer',
         'store',
         'createdBy'
@@ -185,6 +184,16 @@ class Order extends Model
         $this->attributes['delivery_fees_price'] = $value;
     }
 
+    public function getPaymentsAttribute()
+    {
+        return $this->transactions()->where('type', 'payment')->get();
+    }
+
+    public function getRefundsAttribute()
+    {
+        return $this->transactions()->where('type', 'refund')->get();
+    }
+
     public function getTaxPriceAttribute()
     {
         return $this
@@ -223,9 +232,9 @@ class Order extends Model
         return $this->hasOne(MasOrder::class);
     }
 
-    public function payments()
+    public function transactions()
     {
-        return $this->hasMany(Payment::class);
+        return $this->hasMany(Transaction::class);
     }
 
     public function customer()

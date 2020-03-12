@@ -4,16 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ElavonApiPayment extends Model
+class ElavonSdkTransaction extends Model
 {
     protected $fillable = [
-        'txn_id',
-        'card_number',
-        'card_holder',
-        'status',
-        'transaction',
+        'transaction_id',
+        'paymentGatewayId',
+        'chanId',
         'log',
-        'payment_id',
     ];
 
     protected $casts = [
@@ -22,22 +19,22 @@ class ElavonApiPayment extends Model
         'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
 
-    public function getLogAttribute()
-    {
-        return json_decode($this->attributes['log'], true);
-    }
-
     public function setLogAttribute($value)
     {
-        if (!is_string($value)) {
+        if (is_array($value)) {
             $this->attributes['log'] = json_encode($value);
         } else {
             $this->attributes['log'] = $value;
         }
     }
 
-    public function payment()
+    public function getTransactionDataAttribute()
     {
-        return $this->belongsTo(Payment::class);
+        return $this->log['data']['paymentGatewayCommand']['paymentTransactionData'];
+    }
+
+    public function transaction()
+    {
+        return $this->belongsTo(Transaction::class);
     }
 }

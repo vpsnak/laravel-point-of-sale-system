@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Money\Money;
 use Money\Currency;
 use App\Order;
-use App\Payment;
+use App\Transaction;
 use App\Helper\Price;
 
 class OrderAnalysisController extends Controller

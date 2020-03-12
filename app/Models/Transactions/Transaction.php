@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Money\Money;
 use Money\Currency;
 
-class Payment extends Model
+class Transaction extends Model
 {
     protected $casts = [
         'created_at' => 'datetime:m/d/Y H:i:s',
@@ -32,7 +32,7 @@ class Payment extends Model
     ];
 
     protected $appends = [
-        'payment_type_name',
+        'transaction_type_name',
         'created_by_name',
         'is_refundable'
     ];
@@ -75,7 +75,7 @@ class Payment extends Model
         $this->attributes['price'] = $value;
     }
 
-    public function getPaymentTypeNameAttribute()
+    public function getTransactionTypeNameAttribute()
     {
         return $this->paymentType()->first('name')->name;
     }
@@ -96,6 +96,11 @@ class Payment extends Model
         return $this->belongsTo(PaymentType::class);
     }
 
+    public function refundType()
+    {
+        return $this->belongsTo(RefundType::class);
+    }
+
     public function order()
     {
         return $this->belongsTo(Order::class);
@@ -111,14 +116,13 @@ class Payment extends Model
         return $this->belongsTo(CashRegister::class);
     }
 
-    // @TODO rework to polymorphic
-    public function elavonApiPayments()
+    public function elavonApiTransactions()
     {
-        return $this->hasMany(ElavonApiPayment::class);
+        return $this->hasMany(ElavonApiTransaction::class);
     }
 
-    public function elavonSdkPayments()
+    public function elavonSdkTransactions()
     {
-        return $this->hasMany(ElavonSdkPayment::class);
+        return $this->hasMany(ElavonSdkTransaction::class);
     }
 }

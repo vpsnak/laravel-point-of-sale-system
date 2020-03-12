@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Http\Controllers\Magento\Script\GetCustomers;
 use App\Http\Controllers\OrderMASController;
-use App\Payment;
+use App\Transaction;
 use Illuminate\Console\Command;
 
 class Test extends Command

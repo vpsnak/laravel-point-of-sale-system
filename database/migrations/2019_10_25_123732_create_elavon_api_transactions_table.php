@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateElavonApiPaymentsTable extends Migration
+class CreateElavonApiTransactionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateElavonApiPaymentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('elavon_api_payments', function (Blueprint $table) {
+        Schema::create('elavon_api_transactions', function (Blueprint $table) {
             $table->mediumIncrements('id');
-            $table->unsignedMediumInteger('payment_id');
+            $table->unsignedMediumInteger('transaction_id');
 
             $table->string('txn_id')->nullable();
             $table->string('transaction')->nullable();
@@ -24,7 +24,7 @@ class CreateElavonApiPaymentsTable extends Migration
             $table->string('status')->nullable();
             $table->json('log');
 
-            $table->foreign('payment_id')->references('id')->on('payments')->onDelete('cascade');
+            $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('cascade');
 
             $table->timestampsTz();
         });
@@ -37,6 +37,6 @@ class CreateElavonApiPaymentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('elavon_api_payments');
+        Schema::dropIfExists('elavon_api_transactions');
     }
 }

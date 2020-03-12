@@ -21,7 +21,7 @@
           <v-chip
             v-for="payment_type in paymentTypes"
             :key="payment_type.id"
-            :value="payment_type.type"
+            :value="payment_type"
             :disabled="loading"
             outlined
             active-class="success--text"
@@ -33,7 +33,7 @@
       </v-row>
     </v-container>
     <v-container fluid class="overflow-y-auto" style="max-height: 20vh">
-      <v-row justify="center" align="center" v-if="paymentType === 'card'">
+      <v-row justify="center" align="center" v-if="paymentType.type === 'card'">
         <v-col :lg="3" :cols="6">
           <ValidationProvider
             rules="required"
@@ -120,7 +120,7 @@
       <v-row
         justify="center"
         align="center"
-        v-else-if="['giftcard', 'coupon'].indexOf(paymentType) !== -1"
+        v-else-if="['giftcard', 'coupon'].indexOf(paymentType.type) !== -1"
       >
         <v-col :lg="2" :md="3" :cols="6">
           <ValidationProvider
@@ -132,7 +132,7 @@
               dense
               outlined
               label="Code"
-              :prepend-inner-icon="getIcon"
+              :prepend-inner-icon="paymentType.icon"
               :disabled="loading"
               v-model="code"
               :error-messages="errors"
@@ -155,7 +155,7 @@
             label="Remaining Amount"
           ></v-text-field>
         </v-col>
-        <v-col :lg="2" :md="3" :cols="6" v-if="paymentType !== 'coupon'">
+        <v-col :lg="2" :md="3" :cols="6" v-if="paymentType.type !== 'coupon'">
           <ValidationProvider
             :rules="`required|between:0.01,${amountRules}`"
             v-slot="{ errors, valid }"
@@ -199,7 +199,7 @@
 import { mapActions, mapState, mapMutations } from "vuex";
 
 export default {
-  mounted() {
+  created() {
     this.getPaymentTypes();
     this.fillDemoCard();
     if (process.env.NODE_ENV === "development") {
@@ -231,7 +231,7 @@ export default {
       paymentTypesLoading: false,
       payment_types: [],
       paymentPrice: null,
-      paymentType: null,
+      paymentType: {},
       code: null,
 
       card: {
@@ -287,7 +287,7 @@ export default {
       }
     },
     amountRules() {
-      switch (this.paymentType) {
+      switch (this.paymentType.type) {
         case "card":
         case "house-account":
         case "giftcard":
@@ -296,9 +296,6 @@ export default {
         case "cash":
           return "10000.00";
       }
-    },
-    getIcon() {
-      return _.find(this.paymentTypes, ["type", this.paymentType]).icon;
     },
     paymentTypes() {
       if (this.houseAccount) {
@@ -372,10 +369,11 @@ export default {
       this.setCheckoutLoading(true);
       let data = {
         order_id: this.order_id,
-        payment_type: this.paymentType
+        payment_type_id: this.paymentType.id,
+        payment_type: this.paymentType.type
       };
 
-      switch (this.paymentType) {
+      switch (this.paymentType.type) {
         case "pos-terminal":
         case "cash":
           data.price = this.paymentPrice.toJSON();
@@ -395,8 +393,6 @@ export default {
           data.code = this.code;
           data.price = this.paymentPrice.toJSON();
           break;
-        default:
-          return;
       }
 
       const payload = {

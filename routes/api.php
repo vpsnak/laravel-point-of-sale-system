@@ -41,12 +41,12 @@ Route::patch('/users/update', 'UserController@update')->middleware('scope:admin,
 Route::delete('/users/{model}', 'UserController@delete')->middleware('scope:admin');
 
 // payments
-Route::get('/payments', 'PaymentController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/payments/get/{payment}', 'PaymentController@getOne')->middleware('scope:admin,store_manager,cashier');
-Route::post('/payments/create', 'PaymentController@create')->middleware('scope:admin,store_manager,cashier');
-Route::post('/payments/search', 'PaymentController@search')->middleware('scope:admin,store_manager,cashier');
-Route::post('payments/unlinked-refund', 'PaymentController@createUnlinkedRefund')->middleware('scope:admin,store_manager');
-Route::delete('/payments/{payment}', 'PaymentController@refundPayment')->middleware('scope:admin,store_manager,cashier');
+Route::get('/payments', 'TransactionController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/payments/get/{payment}', 'TransactionController@getOne')->middleware('scope:admin,store_manager,cashier');
+Route::post('/payments/create', 'TransactionController@createPayment')->middleware('scope:admin,store_manager,cashier');
+Route::post('/payments/search', 'TransactionController@search')->middleware('scope:admin,store_manager,cashier');
+Route::post('payments/unlinked-refund', 'TransactionController@createUnlinkedRefund')->middleware('scope:admin,store_manager');
+Route::delete('/payments/{payment}', 'TransactionController@refundPayment')->middleware('scope:admin,store_manager,cashier');
 
 // customers
 Route::get('/customers', 'CustomerController@all')->middleware('scope:admin,store_manager,cashier');
@@ -189,7 +189,7 @@ Route::post('/cash-register-logs/open', 'CashRegisterLogsController@open')->midd
 Route::post('/cash-register-logs/close', 'CashRegisterLogsController@close')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/cash-register-logs/{model}', 'CashRegisterLogsController@delete')->middleware('scope:admin');
 
-//receipts
+// receipts
 Route::get('/receipts/get/{model}', 'ReceiptController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::get('/receipts/create/{model}', 'ReceiptController@create')->middleware('scope:admin,store_manager,cashier');
 
@@ -217,17 +217,3 @@ Route::post('/mail-plantcare/{product}', 'MailPlantCareController@send')->middle
 // guest email list
 Route::get('/guest-email', 'GuestEmailListController@all')->middleware('scope:admin,store_manager,cashier');
 Route::post('/guest-email/create', 'GuestEmailListController@create')->middleware('scope:admin,store_manager,cashier');
-
-// elavon sdk certification
-Route::post('/elavon/sdk', 'ElavonSdkPaymentController@index')->middleware('scope:admin,store_manager,cashier');
-Route::post('/elavon/sdk/lookup', 'ElavonSdkPaymentController@lookup')->middleware('scope:admin,store_manager,cashier');
-Route::get('/elavon/sdk/logs', 'ElavonSdkPaymentController@getLogs')->middleware('scope:admin,store_manager,cashier');
-Route::get('/elavon/sdk/logs/{test_case}', 'ElavonSdkPaymentController@getLogs')->middleware('scope:admin,store_manager,cashier');
-Route::delete('/elavon/sdk/logs/delete', 'ElavonSdkPaymentController@deleteAll')->middleware('scope:admin,store_manager,cashier');
-
-// elavon api certification
-Route::post('/elavon/api', 'ElavonApiPaymentController@index')->middleware('scope:admin,store_manager,cashier');
-Route::post('/elavon/api/lookup', 'ElavonApiPaymentController@lookup')->middleware('scope:admin,store_manager,cashier');
-Route::get('/elavon/api/logs', 'ElavonApiPaymentController@getLogs')->middleware('scope:admin,store_manager,cashier');
-Route::get('/elavon/api/logs/{test_case}', 'ElavonApiPaymentController@getLogs')->middleware('scope:admin,store_manager,cashier');
-Route::delete('/elavon/api/logs/delete', 'ElavonApiPaymentController@deleteAll')->middleware('scope:admin,store_manager,cashier');

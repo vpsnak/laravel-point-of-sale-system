@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\ElavonApiPayment;
+use App\ElavonApiTransaction;
 use DOMDocument;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class ElavonApiPaymentController extends Controller
+class ElavonApiTransactionController extends Controller
 {
     private $txn_id;
     private $bankAccountApi;
@@ -26,7 +26,7 @@ class ElavonApiPaymentController extends Controller
 
     private function saveToApiLog($data, $status)
     {
-        $elavonApiPayment = new ElavonApiPayment();
+        $elavonApiPayment = new ElavonApiTransaction();
 
         $elavonApiPayment->txn_id = $this->txn_id;
         $elavonApiPayment->status = $status;

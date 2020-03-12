@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\BankAccount;
-use App\ElavonSdkPayment;
-use DB;
+use App\ElavonSdkTransaction;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
-class ElavonSdkPaymentController extends Controller
+class ElavonSdkTransactionController extends Controller
 {
-    public $testCase;
     public $paymentGatewayId;
     public $chanId;
     public $selected_transaction;
@@ -20,17 +17,13 @@ class ElavonSdkPaymentController extends Controller
     public $keyed;
     public $voiceReferral;
     public $invoiceNumber;
-    public $payment_id;
+    public $transaction_id;
     public $CARDHOLDER_ADDRESS;
     public $CARDHOLDER_ZIP;
 
-    public function getLogs($test_case = null)
+    public function all()
     {
-        if ($test_case) {
-            return response(ElavonSdkPayment::whereTestCase($test_case)->get());
-        } else {
-            return response(ElavonSdkPayment::all());
-        }
+        return response(ElavonSdkTransaction::paginate());
     }
 
     public function lookup(Request $request)
@@ -89,7 +82,6 @@ class ElavonSdkPaymentController extends Controller
 
         array_key_exists('amount', $validatedData) ? $this->amount = $validatedData['amount'] : null;
         array_key_exists('originalTransId', $validatedData) ? $this->originalTransId = $validatedData['originalTransId'] : null;
-        array_key_exists('test_case', $validatedData) ? $this->testCase = $validatedData['test_case'] : null;
         array_key_exists('keyed', $validatedData) ? $this->keyed = $validatedData['keyed'] : null;
         array_key_exists('voiceReferral', $validatedData) && $this->voiceReferral == true ? $this->voiceReferral = '321zxc' : $this->voiceReferral = false;
         array_key_exists('invoiceNumber', $validatedData) ? $this->invoiceNumber =  $validatedData['invoiceNumber'] : $this->invoiceNumber = null;
@@ -103,18 +95,13 @@ class ElavonSdkPaymentController extends Controller
 
     private function saveToSdkLog(array $data, $status)
     {
-        $elavonSdkPayment = new ElavonSdkPayment();
-
-        $elavonSdkPayment->payment_id = $this->payment_id;
-
-        $elavonSdkPayment->payment_gateway_id = $this->paymentGatewayId;
-        $elavonSdkPayment->chan_id = $this->chanId;
-
-        $elavonSdkPayment->test_case = $this->testCase;
-        $elavonSdkPayment->status = $status;
-        $elavonSdkPayment->log = $data;
-
-        $elavonSdkPayment->save();
+        $elavonSdkTransaction = new ElavonSdkTransaction();
+        $elavonSdkTransaction->transaction_id = $this->transaction_id;
+        $elavonSdkTransaction->payment_gateway_id = $this->paymentGatewayId;
+        $elavonSdkTransaction->chan_id = $this->chanId;
+        $elavonSdkTransaction->status = $status;
+        $elavonSdkTransaction->log = $data;
+        $elavonSdkTransaction->save();
     }
 
     private function initPosTerminal()
@@ -329,7 +316,7 @@ class ElavonSdkPaymentController extends Controller
         } catch (\Exception $e) {
             if ($e->hasResponse()) {
                 $this->saveToSdkLog([$e->getResponse()], 'error');
-                return ['errors' => [var_dump($e)]];
+                return ['errors' => [$e]];
             } else {
                 $this->saveToSdkLog([$e->getMessage()], 'error');
                 return ['fatal_error' => ['Connection refused<br>Please verify the server running converge sdk is configured correctly']];

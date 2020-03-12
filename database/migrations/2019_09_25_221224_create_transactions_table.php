@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePaymentsTable extends Migration
+class CreateTransactionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,12 @@ class CreatePaymentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('transactions', function (Blueprint $table) {
             $table->mediumIncrements('id');
 
-            $table->unsignedTinyInteger('payment_type_id');
+            $table->enum('type', ['payment', 'refund']);
+            $table->unsignedTinyInteger('payment_type_id')->nullable();
+            $table->unsignedTinyInteger('refund_type_id')->nullable();
             $table->json('price');
             $table->json('change_price')->nullable();
             $table->unsignedMediumInteger('order_id');
@@ -36,6 +38,6 @@ class CreatePaymentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('transactions');
     }
 }

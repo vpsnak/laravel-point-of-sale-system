@@ -84,7 +84,7 @@ class CashRegisterReportController extends Controller
         $pos_terminal = 0;
         $pos_terminal_tax = 0;
         foreach ($complete_orders as $order) {
-            $payments = $order->payments()->where('cash_register_id', '=', $cash_register_log->cash_register->id)
+            $payments = $order->transactions()->where('cash_register_id', '=', $cash_register_log->cash_register->id)
                 ->whereStatus('approved')
                 ->where('created_at', '>=', $cash_register_log->opening_time)
                 ->where('updated_at', '<', $cash_register_log->closing_time ?? Carbon::now()->toDateTimeString())
