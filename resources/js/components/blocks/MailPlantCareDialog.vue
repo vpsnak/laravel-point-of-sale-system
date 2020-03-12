@@ -24,16 +24,18 @@ export default {
 		};
 	},
 	methods: {
-		...mapActions(["mailPlantCare"]),
+		...mapActions("requests", ["request"]),
 
 		plantCare() {
-			let payload = {
-				product: this.$props.model.id,
-				email: this.customer_email
-			};
 			this.loading = true;
 
-			this.mailPlantCare(payload).finally(() => {
+			this.request({
+				method: "post",
+				url: `mail-plantcare/${this.$props.model.id}`,
+				data: {
+					email: this.customer_email
+				}
+			}).finally(() => {
 				this.loading = false;
 			});
 		}

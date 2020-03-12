@@ -225,27 +225,6 @@ export default new Vuex.Store({
             reject(error);
           });
       });
-    },
-    mailPlantCare(context, payload) {
-      return new Promise((resolve, reject) => {
-        axios
-          .post(
-            `${context.rootState.config.base_url}/mail-plantcare/${payload.product}`,
-            payload
-          )
-          .then(response => {
-            context.commit("setNotification", response.data.notification);
-            resolve(response);
-          })
-          .catch(error => {
-            let notification = {
-              msg: error.response.data.errors,
-              type: "error"
-            };
-            context.commit("setNotification", notification);
-            reject(error);
-          });
-      });
     }
   }
 });

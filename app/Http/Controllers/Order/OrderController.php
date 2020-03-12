@@ -431,7 +431,7 @@ class OrderController extends Controller
             $customer_billing_address = $order->customer->getDefaultBilling();
         }
 
-        return view('order')->with([
+        return view('order2')->with([
             'order' => $order,
             'store' => $order->store,
             'customer_billing_address' => $customer_billing_address,
