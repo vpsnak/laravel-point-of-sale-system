@@ -26,7 +26,7 @@
     "vue-barcode": "^1.2.0",
     "vue-css-donut-chart": "^1.2.0",
     "vue-router": "^3.1.6",
-    "vuetify": "^2.2.15",
+    "vuetify": "^2.2.17",
     "vuex": "^3.1.3"
   },
   "devDependencies": {
@@ -36,7 +36,7 @@
     "browser-sync-webpack-plugin": "^2.2.2",
     "laravel-mix": "^5.0.1",
     "lodash": "^4.17.15",
-    "sass": "^1.26.2",
+    "sass": "^1.26.3",
     "sass-loader": "^8.0.2",
     "vue": "^2.6.11",
     "vue-cli-plugin-vuetify": "^2.0.5",
