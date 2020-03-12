@@ -196,8 +196,7 @@
                         {{ $order->delivery['address']['region']['code'] }}
                         {{ $order->delivery['address']['postcode'] }}</span>
                     @elseif(isset($order->delivery['store_pickup']))
-                    <h4> {{ $order->delivery['store_pickup']['first_name'] }}
-                        {{ $order->delivery['store_pickup']['last_name'] }}</h4>
+                    <h4> {{ $order->delivery['store_pickup']['name'] }}</h4>
                     <span>{{ $order->delivery['store_pickup']['street'] }}</span>
                     <span>{{ $order->delivery['store_pickup']['street1']}}</span>
                     @endif
