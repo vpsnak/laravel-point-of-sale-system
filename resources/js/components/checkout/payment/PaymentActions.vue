@@ -5,7 +5,7 @@
     v-slot="{ invalid }"
   >
     <v-container fluid>
-      <v-row dense justify="center" align="center">
+      <v-row no-gutters justify="center" align="center">
         <v-col :cols="12" justify="center" align="center">
           <h3 class="py-2">Methods</h3>
           ​<v-progress-circular
@@ -35,7 +35,7 @@
     </v-container>
     <v-container fluid class="overflow-y-auto" style="max-height: 20vh">
       <v-row justify="center" align="center" v-if="payment_type === 'card'">
-        <v-col :lg="3" :md="6">
+        <v-col :lg="3" :cols="6">
           <ValidationProvider
             rules="required"
             v-slot="{ errors, valid }"
@@ -43,6 +43,7 @@
           >
             <v-text-field
               dense
+              outlined
               type="number"
               autocomplete="off"
               label="Card number"
@@ -54,7 +55,7 @@
             ></v-text-field>
           </ValidationProvider>
         </v-col>
-        <v-col :lg="3" :md="6">
+        <v-col :lg="3" :cols="6">
           <ValidationProvider
             rules="required"
             v-slot="{ errors, valid }"
@@ -62,6 +63,7 @@
           >
             <v-text-field
               dense
+              outlined
               autocomplete="off"
               label="Card holder's name"
               prepend-inner-icon="mdi-account-box"
@@ -74,7 +76,7 @@
         </v-col>
       </v-row>
       <v-row justify="center" align="center" v-if="payment_type === 'card'">
-        <v-col :lg="3" :md="6">
+        <v-col :lg="3" :cols="6">
           <ValidationProvider
             rules="required|digits:4"
             v-slot="{ errors, valid }"
@@ -82,6 +84,7 @@
           >
             <v-text-field
               dense
+              outlined
               type="number"
               autocomplete="off"
               :disabled="false"
@@ -95,7 +98,7 @@
           </ValidationProvider>
         </v-col>
         ​
-        <v-col :lg="3" :md="6">
+        <v-col :lg="3" :cols="6">
           <ValidationProvider
             rules="required|min:3|max:4"
             v-slot="{ errors, valid }"
@@ -103,6 +106,7 @@
           >
             <v-text-field
               dense
+              outlined
               autocomplete="off"
               label="CVC/CVV"
               type="number"
@@ -120,7 +124,7 @@
         align="center"
         v-else-if="['giftcard', 'coupon'].indexOf(payment_type) !== -1"
       >
-        <v-col :lg="3" :md="6">
+        <v-col :lg="3" :cols="6">
           <ValidationProvider
             rules="required"
             v-slot="{ errors, valid }"
@@ -128,6 +132,7 @@
           >
             <v-text-field
               dense
+              outlined
               label="Code"
               :prepend-inner-icon="getIcon"
               :disabled="false"
@@ -138,22 +143,29 @@
           </ValidationProvider>
         </v-col>
       </v-row>
-      <v-row justify="center" align="center" v-if="payment_type !== 'coupon'">
-        <v-col :lg="2" :md="3">
+    </v-container>
+
+    <v-container fluid>
+      <v-row justify="center" align="center" dense>
+        <v-col :lg="2" :cols="3">
           <v-text-field
+            dense
+            outlined
             prepend-inner-icon="mdi-currency-usd"
             :value="orderRemainingPrice.toFormat('0.00')"
             disabled
             label="Remaining Amount"
           ></v-text-field>
         </v-col>
-        <v-col :lg="2" :md="3">
+        <v-col :lg="2" :cols="3" v-if="payment_type !== 'coupon'">
           <ValidationProvider
             :rules="`required|between:0.01,${amountRules}`"
             v-slot="{ errors, valid }"
             name="Payment amount"
           >
             <v-text-field
+              dense
+              outlined
               :disabled="false"
               :min="0.01"
               :max="amountRules"
@@ -167,11 +179,8 @@
           </ValidationProvider>
         </v-col>
       </v-row>
-    </v-container>
-    ​
-    <v-container fluid>
-      <v-row justify="center" align="center" class="my-3" dense>
-        <v-col :lg="4" :md="6">
+      <v-row justify="center" align="center" dense>
+        <v-col :lg="4" :cols="6">
           <v-btn
             type="submit"
             dark
