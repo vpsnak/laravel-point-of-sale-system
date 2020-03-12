@@ -33,9 +33,11 @@
     th {
         font-weight: normal;
     }
+
     .logo {
         text-align: center;
     }
+
     .logo img {
         height: auto;
         width: 65%;
@@ -142,18 +144,18 @@
                     <tr>
                         <td colspan="2">{{ $item['name'] }}</td>
                         <td style="text-align: center;">{{ $item['qty'] }}</td>
-                        <td>${{ $item['price'] }}</td>
-                        <td style="text-align:end;">${{ $item['price'] * $item['qty'] }}</td>
+                        <td>${{ $item['price']['amount'] }}</td>
+                        <td style="text-align:end;">${{ $item['price']['amount'] * $item['qty'] }}</td>
                     </tr>
-                    @if($item['discount_type'])
+                    @if($item['discount']['type'])
                     <tr>
-                        @if($item['discount_type'] === 'percentage')
+                        @if($item['discount']['type'] === 'percentage')
                         <td style="text-align:start;">
-                            Discount: {{ $item['discount_amount'] }}%
+                            Discount: {{ $item['discount']['amount'] }}%
                         </td>
                         @else
                         <td>
-                            Discount: {{ $item['discount_amount'] }}-
+                            Discount: {{ $item['discount']['amount'] }}-
                         </td>
                         @endif
                         <td>
@@ -161,11 +163,11 @@
                         <td>
                         </td>
                         <td style="text-align:end; ">
-                            ${{ $item['price'] - $item['final_price'] }}-
+                            {{-- ${{ $item['price'] - $item['final_price'] }}- --}}
                         </td>
                     </tr>
                     @endif
-                    @if($item['notes'])
+                    @if(array_key_exists('notes', $item))
                     <tr>
                         <td>
                             {{ $item['notes'] }}
@@ -207,15 +209,15 @@
                     @if($payment['status'] === 'refunded')
                     <td>
                         Refunded
-                        {{ $payment['payment_type']['name']}}
+                        {{ $payment['payment_type_name']}}
                     </td>
-                    <td style="text-align: end;">${{$payment['amount']}}+</td>
+                    <td style="text-align: end;">${{$payment['price']['amount']}}+</td>
                     @else
-                    <td>{{ $payment['payment_type']['name'] }}</td>
-                    <td style="text-align: end;">${{ $payment['amount'] }}-</td>
+                    <td>{{ $payment['payment_type_name'] }}</td>
+                    <td style="text-align: end;">${{ $payment['price']['amount'] }}-</td>
                     @endif
                 </tr>
-                    @if($payment['payment_type']['type'] === 'card')
+                @if($payment['payment_type_name'] === 'card')
                 <tr>
                     <td style="text-align: end;">Cardholder's Name:</td>
                     <td style="text-align: end;">{{ $payment['elavon_api_payments'][0]['card_holder'] }}</td>
@@ -226,7 +228,7 @@
                 </tr>
                 <tr>
                     <td style="text-align: end;">Credit Card Tot:</td>
-                    <td style="text-align: end;">{{ $payment['amount'] }}</td>
+                    <td style="text-align: end;">{{ $payment['price']['amount'] }}</td>
                 </tr>
                 @endif
             </table>
@@ -284,5 +286,6 @@
             <p style="text-align: end;">(Merchant's Copy)</p>
             <p style="text-align: center;">PLEASE SEE POSTED POLICY REGARDING REFUNDS</p>
         </div>
-        </body>
-    </html>
+    </body>
+
+</html>

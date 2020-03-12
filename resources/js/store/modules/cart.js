@@ -461,37 +461,6 @@ export default {
           });
       });
     },
-    createReceipt(context, payload) {
-      return new Promise((resolve, reject) => {
-        axios
-          .get(
-            `${context.rootState.config.base_url}/receipts/create/${payload}`
-          )
-          .then(response => {
-            resolve(response.data);
-          })
-          .catch(error => {
-            if (error.response) {
-              let notification = {
-                msg: error.response.data.errors,
-                type: "error"
-              };
-              context.commit("setNotification", notification, {
-                root: true
-              });
-            } else {
-              let notification = {
-                msg: "Unexpected error occured",
-                type: "error"
-              };
-              context.commit("setNotification", notification, {
-                root: true
-              });
-            }
-            reject(error);
-          });
-      });
-    },
     submitOrder(context, url) {
       return new Promise((resolve, reject) => {
         let payload = {

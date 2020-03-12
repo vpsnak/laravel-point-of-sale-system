@@ -18,12 +18,15 @@ class ReceiptController extends Controller
         $cash_register = $model->createdBy->open_register->cash_register;
         $createdBy = $model->createdBy;
         $payments = [];
+        $currencies = new ISOCurrencies();
+        $moneyFormatter = new DecimalMoneyFormatter($currencies);
 
         foreach (json_decode($model['payments'], true) as $payment) {
-            if ($payment['payment_type']['type'] === 'card' || $payment['payment_type']['type'] === 'pos-terminal') {
-                $payment['payment_type']['name'] = 'Credit card';
+            if ($payment['payment_type_name'] === 'card' || $payment['payment_type_name'] === 'pos-terminal') {
+                $payment['payment_type_name'] = 'Credit card';
             } else if ($payment['status'] === 'refunded') {
-                $payment['amount'] = abs($payment['amount']);
+                $payment['price']['amount']
+                    = abs($payment['amount']);
             }
             if (!($payment['status'] === 'failed')) {
                 array_push($payments, $payment);
@@ -40,19 +43,19 @@ class ReceiptController extends Controller
             "date" => $model->created_at->format('m/d/Y'),
             "time" => $model->created_at->format('h:m:s'),
             "items" => $model->items,
-            "sales_tax" => $model->total - $model->total_without_tax,
-            "total_without_tax" => $model->total_without_tax,
-            "subtotal" => $model->subtotal,
-            "total_ant" => $model->total,
-            "delivery_fees" => $model->shipping_cost,
+            "sales_tax" => $moneyFormatter->format($model->tax_price),
+            "total_without_tax" => $moneyFormatter->format($model->total_price) - $moneyFormatter->format($model->tax_price),
+            "subtotal" => $moneyFormatter->format($model->mdse_price),
+            "total_ant" => $moneyFormatter->format($model->total_price),
+            "delivery_fees" => $moneyFormatter->format($model->delivery_fees_price),
             'payments' => $payments,
-            'balance_remaining' => $model->total - $model->total_paid,
-            'total_amt_tendered' =>  $model->total_paid,
-            'customer_change' => $model->change,
+            'balance_remaining' => $moneyFormatter->format($model->remaining_price),
+            'total_amt_tendered' =>  $moneyFormatter->format($model->paid_price),
+            'customer_change' => $moneyFormatter->format($model->remaining_price),
             'shipping_address' => $model->delivery,
             'shipping_type' => $model->method,
-            'shipping_cost' => $model->shipping_cost,
-            'delivery_slot' => $model->delivery_slot,
+            'shipping_cost' => $moneyFormatter->format($model->delivery_fees_price),
+            'delivery_slot' => $model->delivery ? $model->delivery['time'] : null,
             'notes' => $model->notes,
             'dlvr_on' => $model->delivery ? Carbon::parse($model->delivery['date'])->format('m/d/Y l') : null,
             'dlvr_to' => $model->delivery ? $model->delivery['address']['first_name'] . " " . $model->delivery['address']['last_name'] : null,
@@ -71,7 +74,10 @@ class ReceiptController extends Controller
 
         $receipt = Receipt::create($receipt);
 
-        return response(['data' => $receipt], 201);
+        return response(['notification' => [
+            'msg' => ["Receipt #{$receipt->id} created successfully!"],
+            'type' => 'success'
+        ]]);
     }
 
     public function printReceipt(Order $model)

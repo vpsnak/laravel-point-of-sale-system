@@ -178,10 +178,10 @@
                 </tbody>
             </table>
             <table style="font-size:14px;">
-                @if($order->shipping_cost > 0)
+                @if($moneyFormatter->format($model->delivery_fees_price) > 0)
                 <tr>
                     <td style="text-align: end;">Delivery fees:</td>
-                    <td style="text-align: end;"> ${{$order->shipping_cost }}</td>
+                    <td style="text-align: end;"> ${{ $moneyFormatter->format($model->delivery_fees_price) }}</td>
                 </tr>
                 @endif
                 <tr>
@@ -250,7 +250,7 @@
             <table style="font-size:14px;">
                 <tr>
                     <td style="text-align: center;">*** Balance Remaining ***</th>
-                    <td style="text-align: end;">$0.00</td>
+                    <td style="text-align: end;">${{ $moneyFormatter->format($order->remaining_price) }}</td>
                 </tr>
             </table>
             <br>
