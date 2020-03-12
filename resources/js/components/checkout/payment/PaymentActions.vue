@@ -6,31 +6,30 @@
   >
     <v-container fluid>
       <v-row no-gutters justify="center" align="center">
-        <v-col :cols="12" justify="center" align="center">
-          <h3 class="py-2">Methods</h3>
-          ​<v-progress-circular
-            v-if="paymentTypesLoading"
-            indeterminate
-            color="secondary"
-          ></v-progress-circular>
-          <v-btn-toggle
-            v-model="paymentType"
-            mandatory
-            @change="clearState"
-            dense
+        ​<v-progress-circular
+          v-if="paymentTypesLoading"
+          indeterminate
+          color="secondary"
+        ></v-progress-circular>
+        <v-chip-group
+          v-else
+          mandatory
+          show-arrows
+          v-model="paymentType"
+          @change="clearState()"
+        >
+          <v-chip
+            v-for="payment_type in paymentTypes"
+            :key="payment_type.id"
+            :value="payment_type.type"
+            :disabled="loading"
+            outlined
+            active-class="success--text"
           >
-            <v-btn
-              v-for="payment_type in paymentTypes"
-              :key="payment_type.id"
-              :value="payment_type.type"
-              :disabled="loading"
-              small
-            >
-              <v-icon class="pr-2" small>{{ payment_type.icon }}</v-icon>
-              {{ payment_type.name }}
-            </v-btn>
-          </v-btn-toggle>
-        </v-col>
+            <v-icon left>{{ payment_type.icon }}</v-icon>
+            {{ payment_type.name }}
+          </v-chip>
+        </v-chip-group>
       </v-row>
     </v-container>
     <v-container fluid class="overflow-y-auto" style="max-height: 20vh">
@@ -74,16 +73,13 @@
             ></v-text-field>
           </ValidationProvider>
         </v-col>
-      </v-row>
-      <v-row justify="center" align="center" v-if="paymentType === 'card'">
-        <v-col :lg="3" :cols="6">
+        <v-col :lg="2" :cols="6">
           <ValidationProvider
             rules="required|digits:4"
             v-slot="{ errors, valid }"
             name="Exp date"
           >
             <v-text-field
-              style="max-width:125px"
               dense
               outlined
               type="number"
@@ -100,14 +96,13 @@
           </ValidationProvider>
         </v-col>
         ​
-        <v-col :lg="3" :cols="6">
+        <v-col :lg="2" :cols="6">
           <ValidationProvider
             rules="required|min:3|max:4"
             v-slot="{ errors, valid }"
             name="CVC/CVV"
           >
             <v-text-field
-              style="max-width:125px"
               dense
               outlined
               autocomplete="off"
@@ -127,7 +122,7 @@
         align="center"
         v-else-if="['giftcard', 'coupon'].indexOf(paymentType) !== -1"
       >
-        <v-col :lg="3" :cols="6">
+        <v-col :lg="2" :md="3" :cols="6">
           <ValidationProvider
             rules="required"
             v-slot="{ errors, valid }"
@@ -149,18 +144,18 @@
     </v-container>
 
     <v-container fluid>
-      <v-row justify="center" align="center" dense>
-        <v-col :lg="2" :cols="3">
+      <v-row justify="center" align="center">
+        <v-col :lg="2" :md="3" :cols="6">
           <v-text-field
             dense
             outlined
-            prepend-inner-icon="mdi-currency-usd"
+            prefix="$"
             :value="orderRemainingPrice.toFormat('0.00')"
             disabled
             label="Remaining Amount"
           ></v-text-field>
         </v-col>
-        <v-col :lg="2" :cols="3" v-if="paymentType !== 'coupon'">
+        <v-col :lg="2" :md="3" :cols="6" v-if="paymentType !== 'coupon'">
           <ValidationProvider
             :rules="`required|between:0.01,${amountRules}`"
             v-slot="{ errors, valid }"
@@ -174,9 +169,9 @@
               :max="amountRules"
               label="Payment amount"
               type="number"
-              prepend-inner-icon="mdi-currency-usd"
+              prefix="$"
               v-model="amount"
-              :error-messages="errors"
+              :error="errors[0] ? true : false"
               :success="valid"
             ></v-text-field>
           </ValidationProvider>
