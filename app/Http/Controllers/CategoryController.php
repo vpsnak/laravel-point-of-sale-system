@@ -24,13 +24,14 @@ class CategoryController extends Controller
             'name' => 'required|string',
             'is_enabled' => 'required|boolean',
         ]);
+        $validatedData['created_by_id'] = auth()->user()->id;
 
         $category = Category::create($validatedData);
 
         return response(['notification' => [
             'msg' => ["Category {$category->name} created successfully!"],
             'type' => 'success'
-        ]]);
+        ]], 201);
     }
 
     public function update(Request $request)
@@ -53,7 +54,7 @@ class CategoryController extends Controller
 
     public function productListingCategories()
     {
-        return response(Category::paginate(), 200);
+        return response(Category::paginate());
     }
 
     public function productsByCategory(Category $category)

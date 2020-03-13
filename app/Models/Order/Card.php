@@ -9,7 +9,7 @@ class Card extends Model
     protected $fillable = [
         'content',
         'title',
-        'created_by',
+        'created_by_id',
         'cardable_id',
         'cardable_type'
     ];

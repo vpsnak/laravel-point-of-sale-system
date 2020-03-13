@@ -9,13 +9,14 @@ class Giftcard extends Model
     protected $fillable = [
         'name',
         'code',
-        'enabled',
+        'enabled_at',
         'price',
+        'created_by_id'
     ];
 
     protected $casts = [
         'price' => 'array',
-        'enabled' => 'datetime:m/d/Y H:i:s',
+        'enabled_at' => 'datetime:m/d/Y H:i:s',
         'created_at' => 'datetime:m/d/Y H:i:s',
         'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
@@ -31,5 +32,10 @@ class Giftcard extends Model
         }
 
         $this->attributes['price'] = json_encode($value);
+    }
+
+    public function createdBy()
+    {
+        $this->belongsTo(User::class);
     }
 }

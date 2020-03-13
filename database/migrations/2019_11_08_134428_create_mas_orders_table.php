@@ -14,13 +14,12 @@ class CreateMasOrdersTable extends Migration
     public function up()
     {
         Schema::create('mas_orders', function (Blueprint $table) {
-            $table->mediumIncrements('id');
-            $table->unsignedMediumInteger('order_id');
+            $table->id();
 
+            $table->foreignId('order_id');
             $table->string('mas_control_number')->nullable();
             $table->string('mas_message_number')->nullable();
             $table->string('status');
-
             $table->text('notes')->nullable();
 
             $table->timestampsTz();

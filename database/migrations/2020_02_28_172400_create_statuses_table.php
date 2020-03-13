@@ -14,7 +14,7 @@ class CreateStatusesTable extends Migration
     public function up()
     {
         Schema::create('statuses', function (Blueprint $table) {
-            $table->tinyIncrements('id');
+            $table->id();
             $table->string('text');
             $table->string('value');
             $table->string('color')->nullable(); // @TODO Remove nullable

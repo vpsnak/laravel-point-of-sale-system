@@ -14,17 +14,19 @@ class CreateCashRegisterLogsTable extends Migration
     public function up()
     {
         Schema::create('cash_register_logs', function (Blueprint $table) {
-            $table->mediumIncrements('id');
-            $table->unsignedSmallInteger('user_id')->nullable();
-            $table->unsignedSmallInteger('cash_register_id');
+            $table->id();
+
+            $table->foreignId('user_id')->nullable();
+            $table->foreignId('cash_register_id');
             $table->double('opening_amount')->nullable();
             $table->double('closing_amount')->nullable();
             $table->boolean('status')->nullable();
             $table->dateTime('opening_time')->nullable();
             $table->dateTime('closing_time')->nullable();
-            $table->unsignedSmallInteger('opened_by')->nullable();
-            $table->unsignedSmallInteger('closed_by')->nullable();
+            $table->foreignId('opened_by_id')->nullable();
+            $table->foreignId('closed_by_id')->nullable();
             $table->text('note')->nullable();
+
             $table->timestampsTz();
         });
     }

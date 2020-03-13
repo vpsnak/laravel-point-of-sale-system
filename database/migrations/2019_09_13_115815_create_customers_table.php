@@ -14,20 +14,19 @@ class CreateCustomersTable extends Migration
     public function up()
     {
         Schema::create('customers', function (Blueprint $table) {
-            $table->mediumIncrements('id');
+            $table->id();
 
             $table->string('email')->unique()->index();
             $table->string('first_name')->index();
             $table->string('last_name')->index();
             $table->boolean('house_account_status')->nullable()->default(false);
             $table->string('house_account_number')->nullable();
-            $table->unsignedMediumInteger('house_account_limit')->nullable();
+            $table->unsignedInteger('house_account_limit')->nullable();
             $table->boolean('no_tax')->default(false)->nullable();
             $table->string('no_tax_file')->nullable();
             $table->text('comment')->nullable();
             $table->string('phone')->nullable();
-
-            $table->unsignedMediumInteger('magento_id')->nullable();
+            $table->foreignId('magento_id')->nullable();
 
             $table->timestampsTz();
         });

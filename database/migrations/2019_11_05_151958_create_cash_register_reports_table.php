@@ -14,11 +14,12 @@ class CreateCashRegisterReportsTable extends Migration
     public function up()
     {
         Schema::create('cash_register_reports', function (Blueprint $table) {
-            $table->mediumIncrements('id');
+            $table->id();
+
             $table->string('report_name');
             $table->string('report_type');
-            $table->unsignedSmallInteger('user_id');
-            $table->unsignedSmallInteger('cash_register_id');
+            $table->foreignId('created_by_id');
+            $table->foreignId('cash_register_id');
             $table->unsignedMediumInteger('opening_amount')->default(0);
             $table->unsignedMediumInteger('closing_amount')->default(0);
             $table->unsignedMediumInteger('subtotal')->default(0);
@@ -42,9 +43,6 @@ class CreateCashRegisterReportsTable extends Migration
             $table->integer('order_retail_count')->default(0);
             $table->integer('order_in_store_count')->default(0);
             $table->integer('order_delivery_count')->default(0);
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
-            $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('cascade');
 
             $table->timestampsTz();
         });

@@ -14,19 +14,19 @@ class CreateTransactionsTable extends Migration
     public function up()
     {
         Schema::create('transactions', function (Blueprint $table) {
-            $table->mediumIncrements('id');
+            $table->id();
 
             $table->enum('type', ['payment', 'refund']);
-            $table->unsignedTinyInteger('payment_type_id')->nullable();
-            $table->unsignedTinyInteger('refund_type_id')->nullable();
+            $table->foreignId('payment_type_id')->nullable();
+            $table->foreignId('refund_type_id')->nullable();
             $table->json('price');
             $table->json('change_price')->nullable();
-            $table->unsignedMediumInteger('order_id');
-            $table->unsignedSmallInteger('cash_register_id');
+            $table->foreignId('order_id');
+            $table->foreignId('cash_register_id');
             $table->string('code')->nullable();
             $table->string('status');
 
-            $table->unsignedSmallInteger('user_id');
+            $table->foreignId('created_by_id');
             $table->timestampsTz();
         });
     }

@@ -14,7 +14,7 @@ class CreateRefundTypesTable extends Migration
     public function up()
     {
         Schema::create('refund_types', function (Blueprint $table) {
-            $table->tinyIncrements('id');
+            $table->id();
             $table->string('name');
             $table->string('type');
             $table->string('icon')->nullable();

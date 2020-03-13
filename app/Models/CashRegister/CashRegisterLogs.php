@@ -14,8 +14,8 @@ class CashRegisterLogs extends Model
         'status',
         'opening_time',
         'closing_time',
-        'opened_by',
-        'closed_by',
+        'opened_by_id',
+        'closed_by_id',
         'note',
     ];
 
@@ -30,6 +30,16 @@ class CashRegisterLogs extends Model
     }
 
     public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function openedBy()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function closedBy()
     {
         return $this->belongsTo(User::class);
     }

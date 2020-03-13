@@ -40,13 +40,13 @@ Route::post('/users/password', 'UserController@changeUserPwd')->middleware('scop
 Route::patch('/users/update', 'UserController@update')->middleware('scope:admin,store_manager');
 Route::delete('/users/{model}', 'UserController@delete')->middleware('scope:admin');
 
-// payments
-Route::get('/payments', 'TransactionController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/payments/get/{payment}', 'TransactionController@getOne')->middleware('scope:admin,store_manager,cashier');
-Route::post('/payments/create', 'TransactionController@createPayment')->middleware('scope:admin,store_manager,cashier');
-Route::post('/payments/search', 'TransactionController@search')->middleware('scope:admin,store_manager,cashier');
-Route::post('payments/unlinked-refund', 'TransactionController@createUnlinkedRefund')->middleware('scope:admin,store_manager');
-Route::delete('/payments/{payment}', 'TransactionController@refundPayment')->middleware('scope:admin,store_manager,cashier');
+// transaction
+Route::get('/transactions', 'TransactionController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/transactions/get/{payment}', 'TransactionController@getOne')->middleware('scope:admin,store_manager,cashier');
+Route::post('/transactions/create', 'TransactionController@createPayment')->middleware('scope:admin,store_manager,cashier');
+Route::post('/transactions/search', 'TransactionController@search')->middleware('scope:admin,store_manager,cashier');
+Route::post('/transactions/unlinked-refund', 'TransactionController@createUnlinkedRefund')->middleware('scope:admin,store_manager');
+Route::delete('/transactions/{payment}', 'TransactionController@refundPayment')->middleware('scope:admin,store_manager,cashier');
 
 // customers
 Route::get('/customers', 'CustomerController@all')->middleware('scope:admin,store_manager,cashier');

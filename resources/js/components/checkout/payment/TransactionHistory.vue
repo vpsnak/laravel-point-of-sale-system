@@ -172,7 +172,7 @@ export default {
     refund() {
       const payload = {
         method: "delete",
-        url: `payments/${this.selected_payment.id}`
+        url: `transactions/${this.selected_payment.id}`
       };
 
       this.request(payload)

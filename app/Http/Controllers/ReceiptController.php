@@ -13,10 +13,9 @@ class ReceiptController extends Controller
 {
     public function create(Order $model)
     {
-        $model = $model->load(['createdBy', 'store']);
         $store = $model->store;
-        $cash_register = $model->createdBy->open_register->cash_register;
-        $createdBy = $model->createdBy;
+        $createdBy = auth()->user();
+        $cash_register = $createdBy->open_register->cash_register;
         $payments = [];
 
         foreach (json_decode($model['payments'], true) as $payment) {
@@ -65,7 +64,7 @@ class ReceiptController extends Controller
         $receipt['order_id'] = $model->id;
         $receipt['print_count'] = 0;
         $receipt['email_count'] = 0;
-        $receipt['issued_by'] = $createdBy->id;
+        $receipt['issued_by_id'] = $createdBy->id;
         $receipt['cash_register_id'] = $cash_register->id;
         $receipt['content'] = $content;
 

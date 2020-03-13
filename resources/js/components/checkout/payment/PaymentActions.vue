@@ -397,7 +397,7 @@ export default {
 
       const payload = {
         method: "post",
-        url: "payments/create",
+        url: "transactions/create",
         data: data
       };
 

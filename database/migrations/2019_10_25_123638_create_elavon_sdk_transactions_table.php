@@ -14,16 +14,13 @@ class CreateElavonSdkTransactionsTable extends Migration
     public function up()
     {
         Schema::create('elavon_sdk_transactions', function (Blueprint $table) {
-            $table->mediumIncrements('id');
-            $table->unsignedMediumInteger('transaction_id')->nullable(); // @TODO: remove nullable
+            $table->id();
 
+            $table->foreignId('transaction_id');
             $table->string('payment_gateway_id')->nullable();
             $table->string('chan_id')->nullable();
-
             $table->string('status');
             $table->json('log');
-
-            $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('cascade');
 
             $table->timestampsTz();
         });

@@ -13,7 +13,7 @@
     </v-row>
     <v-row no-gutters>
       <v-col :cols="12">
-        <paymentHistory />
+        <transactionHistory />
       </v-col>
     </v-row>
     <v-row no-gutters>

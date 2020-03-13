@@ -10,7 +10,7 @@ class Receipt extends Model
         'print_count',
         'email_count',
         'content',
-        'issued_by',
+        'issued_by_id',
         'order_id',
         'cash_register_id'
     ];
@@ -21,7 +21,7 @@ class Receipt extends Model
         'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
 
-    public function users()
+    public function issuedBy()
     {
         return $this->belongsTo(User::class);
     }

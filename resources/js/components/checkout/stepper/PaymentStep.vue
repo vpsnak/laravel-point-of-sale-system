@@ -20,6 +20,7 @@
             :loading="false"
             :disabled="false"
             text
+            outlined
             >Complete order
           </v-btn>
         </v-col>

@@ -14,11 +14,11 @@ class CreateOrderStatusTable extends Migration
     public function up()
     {
         Schema::create('order_status', function (Blueprint $table) {
-            $table->mediumIncrements('id');
+            $table->id();
 
-            $table->unsignedMediumInteger('order_id');
-            $table->unsignedTinyInteger('status_id');
-            $table->unsignedSmallInteger('user_id')->nullable();
+            $table->foreignId('order_id');
+            $table->foreignId('status_id');
+            $table->foreignId('processed_by_id')->nullable();
             $table->text('notes')->nullable();
             $table->json('attributes')->nullable();
 

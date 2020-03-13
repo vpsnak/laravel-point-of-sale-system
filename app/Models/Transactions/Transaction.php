@@ -21,12 +21,12 @@ class Transaction extends Model
         'status',
         'cash_register_id',
         'order_id',
-        'user_id',
+        'created_by_id',
     ];
 
     protected $hidden = [
         'order_id',
-        'user_id',
+        'created_by_id',
         'payment_type_id',
         'cash_register_id'
     ];
@@ -108,7 +108,7 @@ class Transaction extends Model
 
     public function createdBy()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
     public function cashRegister()

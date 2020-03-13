@@ -33,7 +33,7 @@ class TransactionController extends Controller
             'code' => 'required_if:payment_type,coupon|required_if:payment_type,giftcard',
             'house_account_number' => 'required_if:payment_type,house-account'
         ]);
-        $validatedData['user_id'] = auth()->user()->id;
+        $validatedData['created_by_id'] = auth()->user()->id;
         $validatedData['cash_register_id'] = auth()->user()->open_register->cash_register->id;
         $paymentType = $validatedData['payment_type'];
         $order = Order::findOrFail($validatedData['order_id']);
@@ -334,7 +334,7 @@ class TransactionController extends Controller
             'refunded' => false,
             'cash_register_id' => $cash_register_id,
             'order_id' => $order->id,
-            'user_id' => $user->id
+            'created_by_id' => $user->id
         ]);
 
         $refund->save();
@@ -357,7 +357,7 @@ class TransactionController extends Controller
         $refund = $payment->replicate();
         $refund->amount = abs($refund->amount) * -1;
         $refund->status = $succeed ? 'refunded' : 'failed';
-        $refund->user_id = $user->id;
+        $refund->created_by_id = $user->id;
         $refund->cash_register_id = $user->open_register->cash_register_id;
         $refund->save();
 

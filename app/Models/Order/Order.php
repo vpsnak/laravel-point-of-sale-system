@@ -35,7 +35,7 @@ class Order extends Model
         'store_id',
         'currency',
         'tax_percentage',
-        'user_id',
+        'created_by_id',
         'mas_order_id',
         'magento_id',
         'magento_shipping_address_id',
@@ -249,7 +249,7 @@ class Order extends Model
 
     public function createdBy()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
     public function receipts()
@@ -272,7 +272,7 @@ class Order extends Model
         return $this
             ->belongsToMany(Status::class)
             ->using(OrderStatus::class)
-            ->withPivot('user_id')
+            ->withPivot('processed_by_id')
             ->withTimestamps(['created_at'])
             ->orderBy('created_at', 'desc');
     }

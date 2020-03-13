@@ -14,7 +14,7 @@ class CreateStoresTable extends Migration
     public function up()
     {
         Schema::create('stores', function (Blueprint $table) {
-            $table->tinyIncrements('id');
+            $table->id();
 
             $table->string('name');
             $table->string('phone');
@@ -24,8 +24,8 @@ class CreateStoresTable extends Migration
             $table->boolean('active');
             $table->boolean('is_phone_center');
             $table->string('default_currency', 3);
-            $table->unsignedTinyInteger('company_id');
-            $table->unsignedTinyInteger('tax_id');
+            $table->foreignId('company_id');
+            $table->foreignId('tax_id');
         });
     }
 

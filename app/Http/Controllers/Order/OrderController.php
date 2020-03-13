@@ -169,7 +169,7 @@ class OrderController extends Controller
         $this->user = auth()->user();
         $this->store = $this->user->open_register->cash_register->store;
 
-        $this->order_data['user_id'] = $this->user->id;
+        $this->order_data['created_by_id'] = $this->user->id;
         $this->order_data['store_id'] = $this->store->id;
 
         $this->parseAddresses();
@@ -178,7 +178,7 @@ class OrderController extends Controller
 
         $this->order = Order::createWithoutEvents($this->order_data);
         $submittedStatusId = Status::where('value', 'submitted')->firstOrFail('id');
-        $this->order->statuses()->attach($submittedStatusId, ['user_id' => $this->user->id]);
+        $this->order->statuses()->attach($submittedStatusId, ['processed_by_id' => $this->user->id]);
         ProcessOrder::dispatchNow($this->order);
 
         return response([

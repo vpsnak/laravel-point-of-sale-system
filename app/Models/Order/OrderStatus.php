@@ -18,6 +18,6 @@ class OrderStatus extends Pivot
 
     public function processedBy()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 }

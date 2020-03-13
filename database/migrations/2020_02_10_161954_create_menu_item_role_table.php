@@ -14,10 +14,10 @@ class CreateMenuItemRoleTable extends Migration
     public function up()
     {
         Schema::create('menu_item_role', function (Blueprint $table) {
-            $table->mediumIncrements('id');
+            $table->id();
 
-            $table->unsignedTinyInteger('menu_item_id');
-            $table->unsignedMediumInteger('role_id');
+            $table->foreignId('menu_item_id');
+            $table->foreignId('role_id');
         });
     }
 

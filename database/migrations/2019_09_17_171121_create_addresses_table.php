@@ -14,25 +14,25 @@ class CreateAddressesTable extends Migration
     public function up()
     {
         Schema::create('addresses', function (Blueprint $table) {
-            $table->mediumIncrements('id');
-            $table->unsignedMediumInteger('customer_id');
+            $table->id();
+            $table->foreignId('customer_id');
 
             $table->string('first_name');
             $table->string('last_name');
             $table->string('street');
             $table->string('street2')->nullable();
             $table->string('city');
-            $table->unsignedSmallInteger('region_id');
+            $table->foreignId('region_id');
             $table->string('postcode', 10);
             $table->string('phone', 20)->index();
             $table->string('company')->nullable();
             $table->string('vat_id', 20)->nullable();
             $table->boolean('is_default_billing')->nullable();
             $table->boolean('is_default_shipping')->nullable();
-            $table->unsignedTinyInteger('location')->nullable();
+            $table->foreignId('location')->nullable();
             $table->string('location_name')->nullable();
 
-            $table->unsignedMediumInteger('magento_id')->nullable();
+            $table->foreignId('magento_id')->nullable();
 
             $table->timestampsTz();
         });

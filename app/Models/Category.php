@@ -8,7 +8,8 @@ class Category extends Model
 {
     protected $fillable = [
         'name',
-        'is_enabled'
+        'is_enabled',
+        'created_by_id'
     ];
 
     protected $casts = [
@@ -16,8 +17,14 @@ class Category extends Model
         'created_at' => 'datetime:m/d/Y H:i:s',
         'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
+
     public function products()
     {
         return $this->belongsToMany(Product::class);
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class);
     }
 }

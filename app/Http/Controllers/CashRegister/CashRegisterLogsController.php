@@ -21,7 +21,7 @@ class CashRegisterLogsController extends Controller
             'closing_time' => 'date',
             'note' => 'string',
         ]);
-        $validatedData['user_id'] = $validatedData['opened_by'] = auth()->user()->id;
+        $validatedData['user_id'] = $validatedData['opened_by_id'] = auth()->user()->id;
 
         $validatedID = $request->validate([
             'id' => 'nullable|exists:cash_register_logs,id'
@@ -41,7 +41,7 @@ class CashRegisterLogsController extends Controller
         ]);
 
         $validatedData['closing_amount'] = auth()->user()->open_register->cash_register->earnings()['cash_total'];
-        $validatedData['closed_by'] = auth()->user()->id;
+        $validatedData['closed_by_id'] = auth()->user()->id;
         $validatedData['status'] = 0;
         $validatedData['closing_time'] = Carbon::now();
 
@@ -119,7 +119,7 @@ class CashRegisterLogsController extends Controller
             $response = $this->handleOpenRegister($cash_register->getOpenLog());
         } else {
             $validatedData['user_id'] = $user->id;
-            $validatedData['opened_by'] = $user->id;
+            $validatedData['opened_by_id'] = $user->id;
             $validatedData['status'] = 1;
             $validatedData['opening_time'] = Carbon::now();
 
