@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\ElavonApiPayment;
+use App\ElavonApiTransaction;
 use DOMDocument;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class ElavonApiPaymentController extends Controller
+class ElavonApiTransactionController extends Controller
 {
     private $txn_id;
     private $bankAccountApi;
@@ -26,7 +26,7 @@ class ElavonApiPaymentController extends Controller
 
     private function saveToApiLog($data, $status)
     {
-        $elavonApiPayment = new ElavonApiPayment();
+        $elavonApiPayment = new ElavonApiTransaction();
 
         $elavonApiPayment->txn_id = $this->txn_id;
         $elavonApiPayment->status = $status;
@@ -45,11 +45,11 @@ class ElavonApiPaymentController extends Controller
             'ssl_cvv2cvc2' => 'nullable|numeric',
         ]);
 
-        $this->test_case = isset($validatedData['test_case']) ? $validatedData['test_case'] : null;
-        $this->ssl_card_number = isset($validatedData['ssl_card_number']) ? $validatedData['ssl_card_number'] : null;
-        $this->ssl_amount = isset($validatedData['ssl_amount']) ? $validatedData['ssl_amount'] : null;
-        $this->ssl_cvv2cvc2_indicator = isset($validatedData['ssl_cvv2cvc2_indicator']) ? $validatedData['ssl_cvv2cvc2_indicator'] : null;
-        $this->ssl_cvv2cvc2 = isset($validatedData['ssl_cvv2cvc2']) ? $validatedData['ssl_cvv2cvc2'] : null;
+        $this->test_case = $validatedData['test_case'] ?? null;
+        $this->ssl_card_number = $validatedData['ssl_card_number'] ?? null;
+        $this->ssl_amount = $validatedData['ssl_amount'] ?? null;
+        $this->ssl_cvv2cvc2_indicator = $validatedData['ssl_cvv2cvc2_indicator'] ?? null;
+        $this->ssl_cvv2cvc2 = $validatedData['ssl_cvv2cvc2'] ?? null;
     }
 
     public function doTransaction($type, array $data)

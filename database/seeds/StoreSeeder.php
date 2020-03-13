@@ -15,7 +15,7 @@ class StoreSeeder extends Seeder
         DB::table('stores')->insert([
             [
                 'company_id' => 1,
-                'name' => 'Plantshed store - 96th St',
+                'name' => 'Plantshed store - 96th st',
                 'phone' => '212-662-4400',
                 'street' => '209 W 96th st',
                 'postcode' => '10025',
@@ -27,7 +27,7 @@ class StoreSeeder extends Seeder
             ],
             [
                 'company_id' => 2,
-                'name' => 'Plantshed store - 87th St',
+                'name' => 'Plantshed store - 87th st',
                 'phone' => '212-662-4400',
                 'street' => '555 Columbus Ave',
                 'postcode' => '10024',
@@ -41,7 +41,7 @@ class StoreSeeder extends Seeder
                 'company_id' => 2,
                 'name' => 'Plantshed customer service',
                 'phone' => '212-662-4400',
-                'street' => '96th St',
+                'street' => '96th st',
                 'postcode' => '10025',
                 'city' => 'New York',
                 'active' => true,
@@ -51,9 +51,9 @@ class StoreSeeder extends Seeder
             ],
             [
                 'company_id' => 3,
-                'name' => 'Plantshed store - Prince St',
+                'name' => 'Plantshed store - Prince st',
                 'phone' => '212-662-4400',
-                'street' => '1 Prince St',
+                'street' => '1 Prince st',
                 'postcode' => '10012',
                 'city' => 'New York',
                 'active' => true,

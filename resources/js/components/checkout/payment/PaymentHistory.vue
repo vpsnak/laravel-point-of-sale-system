@@ -113,7 +113,8 @@ export default {
         },
         {
           text: "Actions",
-          value: "actions"
+          value: "actions",
+          sortable: false
         }
       ]
     };

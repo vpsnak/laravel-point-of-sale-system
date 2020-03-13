@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Order;
-use App\Payment;
+use App\Transaction;
 use App\MasOrder;
 use App\Status;
-use App\OrderStatus;
 use Money\Money;
 use Money\Currency;
 
@@ -24,7 +23,7 @@ class OrderStatusController extends Controller
         return response($model->statuses()->with('pivot.processedBy')->get());
     }
 
-    public function updateOrderStatus(Payment $payment = null, bool $refund = false)
+    public function updateOrderStatus(Transaction $payment = null, bool $refund = false)
     {
         $this->user = auth()->user();
 

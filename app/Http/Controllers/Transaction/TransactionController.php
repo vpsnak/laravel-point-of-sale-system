@@ -4,24 +4,25 @@ namespace App\Http\Controllers;
 
 use App\Coupon;
 use App\Customer;
-use App\ElavonApiPayment;
-use App\Http\Controllers\ElavonSdkPaymentController;
+use App\ElavonApiTransaction;
+use App\Http\Controllers\ElavonSdkTransactionController;
 use App\Http\Controllers\OrderStatusController;
 use App\Giftcard;
 use App\Helper\Price;
 use App\Jobs\ProcessOrder;
 use App\Order;
-use App\Payment;
+use App\Transaction;
 use App\PaymentType;
 use Illuminate\Http\Request;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\DecimalMoneyFormatter;
 
-class PaymentController extends Controller
+class TransactionController extends Controller
 {
-    public function create(Request $request)
+    public function createPayment(Request $request)
     {
         $validatedData = $request->validate([
+            'payment_type_id' => 'required|exists:payment_types,id',
             'payment_type' => 'required|exists:payment_types,type',
             'price' => 'nullable|required_unless:payment_type,coupon|array',
             'order_id' => 'required|exists:orders,id',
@@ -35,15 +36,14 @@ class PaymentController extends Controller
         $validatedData['user_id'] = auth()->user()->id;
         $validatedData['cash_register_id'] = auth()->user()->open_register->cash_register->id;
         $paymentType = $validatedData['payment_type'];
+        $order = Order::findOrFail($validatedData['order_id']);
         unset($validatedData['payment_type']);
 
         $newPayment = $validatedData;
-        $newPayment['payment_type_id'] = PaymentType::whereType($paymentType)->firstOrFail()->id;
-
         $newPayment['status'] = 'pending';
 
-        $payment = Payment::create($newPayment);
-        $order = $payment->order;
+        $payment = Transaction::create($newPayment);
+
         $response = [];
 
         switch ($paymentType) {
@@ -98,10 +98,8 @@ class PaymentController extends Controller
         $payment->save();
         $orderStatusController = new OrderStatusController($order->refresh());
         $orderStatus = $orderStatusController->updateOrderStatus($payment);
-        ProcessOrder::dispatchNow($payment->order);
-        unset($payment->order);
+        ProcessOrder::dispatchNow($order);
         $orderStatus['payment'] = $payment;
-
 
         return response()->json($orderStatus, 201, [], JSON_NUMERIC_CHECK);
     }
@@ -112,22 +110,22 @@ class PaymentController extends Controller
             'keyword' => 'required|exists:orders,id'
         ]);
 
-        return response(Payment::where('order_id', $validatedData['keyword'])->get());
+        return response(Transaction::where('order_id', $validatedData['keyword'])->get());
     }
 
-    private function posPay(Payment $payment)
+    private function posPay(Transaction $transaction)
     {
-        $elavonSdkPayment = new ElavonSdkPaymentController();
+        $elavonSdkPayment = new ElavonSdkTransactionController();
         $elavonSdkPayment->selected_transaction = 'SALE';
-        $elavonSdkPayment->amount = $payment->price->getAmount();
-        $elavonSdkPayment->payment_id = $payment->id;
+        $elavonSdkPayment->amount = $transaction->price->getAmount();
+        $elavonSdkPayment->transaction_id = $transaction->id;
 
-        $paymentResponse = $elavonSdkPayment->posPayment();
+        $transactionResponse = $elavonSdkPayment->posPayment();
 
-        return $paymentResponse;
+        return $transactionResponse;
     }
 
-    private function apiPay($validatedData, Payment $payment)
+    private function apiPay($validatedData, Transaction $payment)
     {
         $currencies = new ISOCurrencies();
         $moneyFormatter = new DecimalMoneyFormatter($currencies);
@@ -142,20 +140,20 @@ class PaymentController extends Controller
             $moneyFormatter->format($price)
         );
 
-        ElavonApiPayment::create([
+        ElavonApiTransaction::create([
             'txn_id' => $paymentResponse['response']['ssl_txn_id'] ?? '',
             'transaction' => $paymentResponse['response']['ssl_transaction_type'] ?? '',
             'card_number' => $paymentResponse['response']['ssl_card_number'] ?? '',
             'card_holder' => $validatedData['card']['card_holder'],
             'status' => $paymentResponse['response']['ssl_result_message'] ?? '',
             'log' => $paymentResponse['response'] ? json_encode($paymentResponse['response']) : '',
-            'payment_id' => $payment->id,
+            'transaction_id' => $payment->id,
         ]);
 
         return $paymentResponse;
     }
 
-    private function couponPay($validatedData, Payment $payment)
+    private function couponPay($validatedData, Transaction $payment)
     {
         $coupon = Coupon::where('code', $validatedData['code'])->first();
 
@@ -185,7 +183,7 @@ class PaymentController extends Controller
         }
     }
 
-    private function giftcardPay($validatedData, Payment $payment)
+    private function giftcardPay($validatedData, Transaction $payment)
     {
 
         $giftcard = Giftcard::where('code', $validatedData['code'])->first();
@@ -201,7 +199,7 @@ class PaymentController extends Controller
     }
 
 
-    private function houseAccPay($validatedData, Payment $payment)
+    private function houseAccPay($validatedData, Transaction $payment)
     {
         $customer = Customer::where('house_account_number', $validatedData['house_account_number'])->first();
         if (empty($customer)) {
@@ -220,9 +218,9 @@ class PaymentController extends Controller
         }
     }
 
-    public function posRefund(Payment $payment)
+    public function posRefund(Transaction $payment)
     {
-        $elavonSdkPaymentController = new ElavonSdkPaymentController;
+        $elavonSdkPaymentController = new ElavonSdkTransactionController;
 
         $elavonSdkPaymentController->selected_transaction = 'VOID';
         $elavonSdkPaymentController->originalTransId = $payment->code;
@@ -237,30 +235,30 @@ class PaymentController extends Controller
         }
     }
 
-    public function apiRefund($payment)
+    public function apiRefund(Transaction $transaction)
     {
-        $paymentResponse = (new CreditCardController)->cardRefund($payment->code);
-        ElavonApiPayment::create([
+        $paymentResponse = (new CreditCardController)->cardRefund($transaction->code);
+        ElavonApiTransaction::create([
             'txn_id' => $paymentResponse['response']['ssl_txn_id'] ?? '',
             'transaction' => $paymentResponse['response']['ssl_transaction_type'] ?? '',
             'card_number' => $paymentResponse['response']['ssl_card_number'] ?? '',
             'status' => $paymentResponse['response']['ssl_result_message'] ?? '',
-            'payment_id' => $payment->id,
+            'transaction_id' => $transaction->id,
             'log' => $paymentResponse['response'] ?? null
         ]);
 
         return $paymentResponse;
     }
 
-    public function houseAccRefund(Payment $payment)
+    public function houseAccRefund(Transaction $transaction)
     {
-        $customer = Customer::where('house_account_number', $payment->code)->firstOrFail();
-        $customer->increment('house_account_limit', $payment->amount);
+        $customer = Customer::where('house_account_number', $transaction->code)->firstOrFail();
+        $customer->increment('house_account_limit', $transaction->amount);
 
         return true;
     }
 
-    public function giftcardRefund(Payment $payment)
+    public function giftcardRefund(Transaction $payment)
     {
         $giftcard = Giftcard::whereCode($payment->code)->firstOrFail();
         $giftcard->increment('amount', $payment->amount);
@@ -268,7 +266,7 @@ class PaymentController extends Controller
         return true;
     }
 
-    public function couponRefund(Payment $payment)
+    public function couponRefund(Transaction $payment)
     {
         $coupon = Coupon::whereCode($payment->code)->firstOrFail();
         $coupon->increment('uses');
@@ -328,7 +326,7 @@ class PaymentController extends Controller
                 break;
         }
 
-        $refund = new Payment([
+        $refund = new Transaction([
             'payment_type' => $refundType->id,
             'amount' => abs($validatedData['amount']) * -1,
             'code' => $code,
@@ -353,7 +351,7 @@ class PaymentController extends Controller
         return response($orderStatus, 500); // 500 status for debug purposes only!
     }
 
-    private function createLinkedRefund(Payment $payment, bool $succeed)
+    private function createLinkedRefund(Transaction $payment, bool $succeed)
     {
         $user = auth()->user();
         $refund = $payment->replicate();
@@ -369,7 +367,7 @@ class PaymentController extends Controller
         return $refund;
     }
 
-    public function refundPayment(Payment $payment, bool $setOrderStatus = true)
+    public function refundPayment(Transaction $payment, bool $setOrderStatus = true)
     {
         if ($payment->refunded) {
             return response(['errors' => ['Refund' => 'This payment has already been refunded']], 422);

@@ -24,16 +24,9 @@ class ForeignKeys extends Migration
             $table->foreign('closed_by')->references('id')->on('users')->onDelete('cascade');
         });
 
-        Schema::table('refunds', function (Blueprint $table) {
-            $table->foreign('refund_type_id')->references('id')->on('refund_types')->onDelete('restrict');
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('restrict');
-            $table->foreign('payment_id')->references('id')->on('payments')->onDelete('restrict');
-            $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('restrict');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
-        });
-
-        Schema::table('payments', function (Blueprint $table) {
+        Schema::table('transactions', function (Blueprint $table) {
             $table->foreign('payment_type_id')->references('id')->on('payment_types')->onDelete('restrict');
+            $table->foreign('refund_type_id')->references('id')->on('payment_types')->onDelete('restrict');
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('restrict');
             $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('restrict');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
@@ -133,15 +126,9 @@ class ForeignKeys extends Migration
             $table->dropForeign(['closed_by']);
         });
 
-        Schema::table('refunds', function (Blueprint $table) {
-            $table->dropForeign(['refund_type_id']);
-            $table->dropForeign(['order_id']);
-            $table->dropForeign(['payment_id']);
-            $table->dropForeign(['cash_register_id']);
-            $table->dropForeign(['user_id']);
-        });
-        Schema::table('payments', function (Blueprint $table) {
+        Schema::table('transactions', function (Blueprint $table) {
             $table->dropForeign(['payment_type_id']);
+            $table->dropForeign(['refund_type_id']);
             $table->dropForeign(['order_id']);
             $table->dropForeign(['cash_register_id']);
             $table->dropForeign(['user_id']);

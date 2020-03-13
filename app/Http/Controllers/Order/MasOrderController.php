@@ -276,7 +276,7 @@ class MasOrderController extends Controller
                         $response[$i]['PNRefToken'] = null;
                         $response[$i]['AuthCode'] = $payment->code;
                         $response[$i]['BillingZip'] = '';
-                        $response[$i]['CreditCardType'] = MasOrder::getCreditCardType($log->payment_transaction_data['cardScheme']);
+                        $response[$i]['CreditCardType'] = MasOrder::getCreditCardType($log->transaction_data['cardScheme']);
                         $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($payment->price);
                         break;
                     case 'house-account':
