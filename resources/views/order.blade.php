@@ -79,15 +79,21 @@
         width: 30%;
     }
 
+    .column {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .column h4 {
+        margin-top: 0;
+        font-weight: 400;
+        text-transform: uppercase;
+    }
+
     .footer {
         position: absolute;
         bottom: 0;
         width: 100%;
-        height: 2.5rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        padding-bottom: 2rem;
     }
 
     .left-footer {
@@ -111,23 +117,15 @@
 
         <div class="order">
             <div class="order_header">
-                <span class="store_name">
-                    {{ $store->name }}
-                </span>
-                <div class="space_between">
-                    <p>
-                        Invoice: {{ $order->id }}
-                    </p>
-                    <p>
-                        Requested: {{ $order->created_at->format('m/d/Y l') }}
-                    </p>
-                </div>
                 <div class="barcode">
                     <img src="data:image/png;base64,{{ $code }}">
                 </div>
                 <div class="store">
                     <p>
                         {{ $order->created_at->format('m/d/Y H:i:s') }}
+                    </p>
+                    <p>
+                        {{ $store->name }}
                     </p>
                     <p>
                         {{ $store->street }}
@@ -140,109 +138,80 @@
                         {{ $store->phone }}
                     </p>
                 </div>
+                <div class="space_between">
+                    <p>
+                        ONL
+                    </p>
+                    <p>
+                        {{ $order->id }}
+                    </p>
+                    <p>
+                        AT {{ $order->created_at->format('H:m:s') }}
+                    </p>
+                </div>
+                <div class="space_between">
+                    <p>
+                        {{ $order->method }}
+                    </p>
+                    <p>
+                        {{ $order->created_at->format('m/d/Y l') }}
+                    </p>
+                    <p>
+                        LOC1
+                    </p>
+                </div>
             </div>
+            <hr>
+            <div class="space_between">
+                <span>
+                    UNPAID
+                </span>
+                <span>
+                    SW-Sales Walk
+                </span>
+                <span>
+                    Recipient" Rep:MAS
+                </span>
+            </div>
+            <hr>
             @if($customer_billing_address)
-            <table style="font-size: 16px;" class="no-border">
-                <tbody>
-                    <tr>
-                        <td class="small-header">Sold To:</td>
-                        <td>{{ $customer_billing_address['customer_id'] }}</td>
-                        <td class="spaced-header">Send To:</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td class="small-header"></td>
-                        <td>{{ $customer_billing_address['street'] }}</td>
-                        <td class="spaced-header"></td>
-                        @if( isset($order->delivery['address']) )
-                        <td class="spaced-fixed-width">{{ $order->delivery['address']['street'] }}</td>
-                        @elseif(isset($order->delivery['store_pickup']))
-                        <td class="spaced-fixed-width">{{ $order->delivery['store_pickup']['street'] }}</td>
-                        @else
-                        <td class="spaced-fixed-width"></td>
-                        @endif
-                    </tr>
-                    <tr>
-                        <td class="small-header"></td>
-                        <td>{{ $customer_billing_address['street2'] }}</td>
-                        <td class="spaced-header"></td>
-                        @if( isset($order->delivery['address']) )
-                        <td class="spaced-fixed-width">{{ $order->delivery['address']['street2'] }}</td>
-                        @elseif(isset($order->delivery['store_pickup']))
-                        <td class="spaced-fixed-width">{{ $order->delivery['store_pickup']['street1'] }}</td>
-                        @else
-                        <td class="spaced-fixed-width"></td>
-                        @endif
-                    </tr>
-                    <tr>
-                        <td class="small-header"></td>
-                        <td>{{ $customer_billing_address['city'] }} {{ $customer_billing_address['region']['code'] }}
-                            {{ $customer_billing_address['postcode'] }}</td>
-                        <td class="spaced-header"></td>
-                        @if( isset($order->delivery['address']) )
-                        <td class="spaced-fixed-width">{{ $order->delivery['address']['city'] }}
-                            {{ $order->delivery['address']['region']['code'] }}
-                            {{ $order->delivery['address']['postcode'] }}</td>
-                        @else
-                        <td class="spaced-fixed-width"></td>
-                        @endif
-                    </tr>
-                    <tr>
-                        <td class="small-header"></td>
-                        <td>{{ $customer_billing_address['phone'] }}</td>
-                        <td class="spaced-header"></td>
-                        <td class="spaced-fixed-width"></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="space_between">
+                <div class="column">
+                    <h4> {{ $customer_billing_address['first_name'] }} {{ $customer_billing_address['last_name'] }}</h4>
+                    <span>{{ $customer_billing_address['customer_id'] }}</span>
+                    <span>{{ $customer_billing_address['street'] }}</span>
+                    <span>{{ $customer_billing_address['street2'] }} </span>
+                    <span> Tel: {{ $customer_billing_address['phone'] }} </span>
+                    <span> {{ $customer_billing_address['city'] }}
+                        {{ $customer_billing_address['region']['code'] }}</span>
+                    <span>{{ $customer_billing_address['postcode'] }}</span>
+                </div>
+                <div class="column">
+                    @if( isset($order->delivery['address']) )
+                    <h4> {{ $order->delivery['address']['first_name'] }} {{ $order->delivery['address']['last_name'] }}
+                    </h4>
+                    <span>{{ $order->delivery['address']['street'] }}</span>
+                    <span>{{ $order->delivery['address']['street2'] }}</span>
+                    <span>{{ $order->delivery['address']['city'] }}
+                        {{ $order->delivery['address']['region']['code'] }}
+                        {{ $order->delivery['address']['postcode'] }}</span>
+                    @elseif(isset($order->delivery['store_pickup']))
+                    <h4> {{ $order->delivery['store_pickup']['name'] }}</h4>
+                    <span>{{ $order->delivery['store_pickup']['street'] }}</span>
+                    <span>{{ $order->delivery['store_pickup']['street1']}}</span>
+                    @endif
+                </div>
+            </div>
             <br>
             @endif
-            <hr>
-            <table class="no-border">
-                <tbody style="font-size: 16px;">
-                    <tr>
-                        <td class="small-header">Type:</td>
-                        <td>SO - Invoice</td>
-                        <td class="spaced-header">Del.Type:</td>
-                        <td>{{ $order->method }}</td>
-                    </tr>
-                    <tr>
-                        <td class="small-header">Order Placed:</td>
-                        <td>{{ $order->created_at->format('m/d/Y H:i:s') }}</td>
-                        <td class="spaced-header">Ship Via:</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td class="small-header">Ord Ref:</td>
-                        <td></td>
-                        <td class="spaced-header">Inst1:</td>
-                        <td>{{ "BILLING ONLY" }}</td>
-                    </tr>
-                    <tr>
-                        <td class="small-header">Sales Rep:</td>
-                        <td>{{ $order->createdBy->name }} </td>
-                        <td class="spaced-header">Inst2:</td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td class="small-header">Terms:</td>
-                        <td>{{ "Due Upon Recpt" }}</td>
-                        <td class="spaced-header">Reference:</td>
-                        <td>{{ "00995054 ST" }}</td>
-                    </tr>
-                </tbody>
-            </table>
             <table class="no-border products-table">
                 <thead>
                     <tr>
                         <th>
-                            Item
+                            Product Code
                         </th>
                         <th>
-                            Product
-                        </th>
-                        <th colspan="2">
-                            Description
+                            Product Description
                         </th>
                         <th style="text-align: center;">
                             Units
@@ -251,39 +220,47 @@
                             Price
                         </th>
                         <th>
-                            Extended
+                            Ext. Price
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($order->items as $item )
                     <tr>
-                        <td></td>
+                        <td>{{ $item['sku'] }}</td>
                         <td>{{ $item['name'] }}</td>
-                        @if(array_key_exists('notes', $item))
-                        <td colspan="2">{{  $item['notes']  }}</td>
-                        @else
-                        <td colspan="2"></td>
-                        @endif
                         <td style="text-align: center;">{{ $item['qty'] }}</td>
-                        <td>{{ $item['price']['amount'] }}</td>
-                        <td>{{ $item['price']['amount'] * $item['qty'] }}</td>
+                        <td>${{ $item['price']['amount'] }}</td>
+                        <td>${{ $item['price']['amount'] * $item['qty'] }}</td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
+            <br>
+            <div class="space_between">
+                <span>
+                    mdse: ${{ $moneyFormatter->format($order->mdse_price) }}
+                </span>
+                <span>
+                    delv: ${{ $moneyFormatter->format($order->delivery_fees_price) }}
+                </span>
+                <span>
+                    svc/rel: $ .00
+                </span>
+                <span>
+                    tax: ${{ $moneyFormatter->format($order->tax_price) }}
+                </span>
+                <span>
+                    TOTAL: ${{ $moneyFormatter->format($order->total_price) }}
+                </span>
+            </div>
+            <hr>
+            <h2>
+                Scan here if order filled form stock {{ $order->id }}
+            </h2>
             <div class="footer">
-                <div>
-                    <p style="font-size: 16px;">Signed By:__________________________________ </p>
-                </div>
-                <div class="left-footer">
-                    <span class="total">Mdse Amount: ${{ $moneyFormatter->format($order->mdse_price) }}</span>
-                    <span class="total">Sales Tax: ${{ $moneyFormatter->format($order->tax_price) }}</span>
-                    <p>Invoice Total:
-                        ${{ $moneyFormatter->format($order->total_price) }}</p>
-                    <br>
-                    <p>Net Invoice Total:
-                        ${{ $moneyFormatter->format($order->total_price) }}</p>
+                <div class="barcode">
+                    <img src="data:image/png;base64,{{ $code }}">
                 </div>
             </div>
     </body>

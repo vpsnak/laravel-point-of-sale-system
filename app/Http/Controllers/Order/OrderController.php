@@ -409,6 +409,37 @@ class OrderController extends Controller
         return $query;
     }
 
+    public function printCustomersOrder(Order $order)
+    {
+        $order = $order->load(['store']);
+
+        $barcode = new BarcodeGenerator();
+        if ($order->id) {
+            $barcode->setText(strval($order->id));
+        }
+        $barcode->setType(BarcodeGenerator::Code128);
+        $barcode->setScale(2);
+        $barcode->setThickness(25);
+        $barcode->setFontSize(0);
+        $code = $barcode->generate();
+
+        $currencies = new ISOCurrencies();
+        $moneyFormatter = new DecimalMoneyFormatter($currencies);
+
+        $customer_billing_address = null;
+        if ($order->customer) {
+            $customer_billing_address = $order->customer->getDefaultBilling();
+        }
+
+        return view('customers_order')->with([
+            'order' => $order,
+            'store' => $order->store,
+            'customer_billing_address' => $customer_billing_address,
+            'code' => $code,
+            'moneyFormatter' => $moneyFormatter
+        ]);
+    }
+
     public function printOrder(Order $order)
     {
         $order = $order->load(['store']);
