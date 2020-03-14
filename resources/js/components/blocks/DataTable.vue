@@ -119,8 +119,6 @@
               v-model="page"
               :length="pageCount"
               @input="getItems(search)"
-              @next="page++"
-              @previous="page--"
             ></v-pagination>
           </v-card-actions>
         </v-col>

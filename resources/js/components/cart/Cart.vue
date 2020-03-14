@@ -1,48 +1,29 @@
 <template>
   <v-card class="pa-3">
-    <div class="d-flex">
-      <div class="d-flex align-center justify-center">
-        <v-icon class="pr-2">{{ icon }}</v-icon>
-        <h4 class="title-2">{{ title }}</h4>
-      </div>
-
-      <v-spacer />
-
-      <cartMethods v-if="$props.showMethods" />
-    </div>
-
-    <v-divider class="py-1" v-if="$props.showMethods" />
-
-    <customerSearch
-      v-if="$props.showCustomer"
-      :editable="$props.editable"
-      :keywordLength="3"
-      class="pa-3"
-    />
-
-    <v-divider class="py-1" v-if="$props.showCustomer" />
-
-    <cartProducts :editable="$props.editable" />
-
-    <v-divider />
-
-    <div class="d-flex flex-column">
-      <v-row align="center" justify="space-around" dense>
-        <v-col :cols="4">
-          <v-label>Cart discount</v-label>
-        </v-col>
-        <v-col :cols="8">
-          <cartDiscount :productIndex="-1" :editable="$props.editable" />
-        </v-col>
+    <v-container>
+      <v-row dense align="center" justify="space-between">
+        <customerSearch
+          v-if="$props.showCustomer"
+          :editable="$props.editable"
+          :keywordLength="3"
+        />
+        <cartMethods v-if="$props.showMethods" />
       </v-row>
 
-      <v-divider />
+      <v-divider v-if="$props.showMethods" />
+
+      <v-divider v-if="$props.showCustomer" />
+
+      <cartProducts :editable="$props.editable" />
+
+      <cartDiscount :productIndex="-1" :editable="$props.editable" />
 
       <cartTotals />
 
-      <cartActions v-if="$props.showActions" :disabled="totalProducts" />
-      <orderSave v-else-if="$props.showSave" url="update-items" />
-    </div>
+      <cartActions :disabled="totalProducts" v-if="$props.showActions" />
+
+      <orderSave url="update-items" v-else-if="$props.showSave" />
+    </v-container>
   </v-card>
 </template>
 

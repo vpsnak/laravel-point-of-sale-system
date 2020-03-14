@@ -38,24 +38,24 @@
           <v-spacer />
 
           <v-btn
+            icon
+            fab
             @click="previousStep()"
             v-show="!order_id && currentCheckoutStep === 2"
-            text
             color="deep-orange"
             :disabled="checkout_loading"
           >
             <v-icon large>
               mdi-chevron-left
             </v-icon>
-            Back
           </v-btn>
 
           <v-spacer v-show="currentCheckoutStep !== 3" />
 
           <v-btn
             @click="resetState()"
-            color="success"
-            text
+            color="primary"
+            outlined
             v-show="currentCheckoutStep === 3 ? true : false"
             :disabled="checkout_loading"
           >
@@ -63,13 +63,13 @@
           </v-btn>
 
           <v-btn
+            icon
+            fab
             @click="completeStep()"
             :disabled="disableNext || checkout_loading"
-            color="green"
-            text
+            color="primary"
             v-show="currentCheckoutStep === 1 ? true : false"
           >
-            Next
             <v-icon large>
               mdi-chevron-right
             </v-icon>

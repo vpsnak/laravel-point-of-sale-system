@@ -51,7 +51,7 @@ class ForeignKeys extends Migration
 
         Schema::table('payments', function (Blueprint $table) {
             $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('restrict');
-            $table->foreign('payment_type_id')->references('id')->on('payments')->onDelete('restrict');
+            $table->foreign('payment_type_id')->references('id')->on('payment_types')->onDelete('restrict');
         });
 
         Schema::table('refunds', function (Blueprint $table) {

@@ -180,6 +180,7 @@
       <v-row justify="center" align="center" dense>
         <v-col :lg="4" :cols="6">
           <v-btn
+            outlined
             type="submit"
             dark
             block

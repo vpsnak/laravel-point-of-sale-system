@@ -1,80 +1,81 @@
 <template>
   <v-card>
-    <v-container>
-      <v-row>
-        <v-btn
-          class="ma-2"
-          @click="btnactive = !btnactive"
-          :color="btnactive ? 'primary' : 'secondary'"
-        >
-          <v-icon left>mdi-barcode-scan</v-icon>
-          <v-icon right>
-            {{ btnactive ? "mdi-cart-arrow-down" : "mdi-eye" }}
-          </v-icon>
-        </v-btn>
-
-        <v-text-field
-          class="mx-2"
-          outlined
-          solo
-          v-model="keyword"
-          prepend-inner-icon="mdi-magnify"
-          @click:prepend-inner="searchProduct()"
-          placeholder="Search product"
-          @keyup.enter="searchProduct"
-          clearable
-          @click:clear="(currentPage = 1), getAllProducts()"
-        ></v-text-field>
-
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-btn @click="addDummyProductDialog()" v-on="on" class="ma-2">
-              <v-icon left>mdi-flower</v-icon>Custom <br />Product
-            </v-btn>
-          </template>
-          <span>Add custom product</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-btn @click="giftcardDialog()" v-on="on" class="ma-2">
-              <v-icon left>mdi-credit-card-plus</v-icon>Gift <br />Card
-            </v-btn>
-          </template>
-          <span>Add gift card</span>
-        </v-tooltip>
-      </v-row>
-
-      <v-row align="center" justify="center">
-        <v-col>
-          <v-slide-group
-            show-arrows
-            v-model="selectedCategory"
-            @change="keyword = ''"
+    <v-card-text>
+      <v-container fluid>
+        <v-row>
+          <v-btn
+            class="mx-1"
+            @click="btnactive = !btnactive"
+            :color="btnactive ? 'primary' : 'secondary'"
           >
-            <v-slide-item
-              v-for="category in categories"
-              :key="category.id"
-              v-slot:default="{ active, toggle }"
-              :value="category.id"
-            >
-              <v-btn
-                :color="active ? 'secondary' : ''"
-                class="mx-1"
-                @click="toggle"
-                depressed
-                rounded
-                >{{ category.name }}
-              </v-btn>
-            </v-slide-item>
-          </v-slide-group>
-        </v-col>
-      </v-row>
+            <v-icon left>mdi-barcode-scan</v-icon>
+            <v-icon right>
+              {{ btnactive ? "mdi-cart-arrow-down" : "mdi-eye" }}
+            </v-icon>
+          </v-btn>
 
-      <v-row v-if="products.length">
-        <v-container
-          style="max-height:61vh;"
-          class="overflow-y-auto fill-height"
-        >
+          <v-text-field
+            dense
+            class="mx-1"
+            outlined
+            solo
+            v-model="keyword"
+            prepend-inner-icon="mdi-magnify"
+            @click:prepend-inner="searchProduct()"
+            placeholder="Search product"
+            @keyup.enter="searchProduct"
+            clearable
+            @click:clear="(currentPage = 1), getAllProducts()"
+          ></v-text-field>
+
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn @click="addDummyProductDialog()" v-on="on" class="mx-1">
+                <v-icon left>mdi-flower</v-icon>Custom <br />Product
+              </v-btn>
+            </template>
+            <span>Add custom product</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn @click="giftcardDialog()" v-on="on" class="mx-1">
+                <v-icon left>mdi-credit-card-plus</v-icon>Gift <br />Card
+              </v-btn>
+            </template>
+            <span>Add gift card</span>
+          </v-tooltip>
+        </v-row>
+
+        <v-row align="center" justify="center">
+          <v-col>
+            <v-slide-group
+              show-arrows
+              v-model="selectedCategory"
+              @change="keyword = ''"
+            >
+              <v-slide-item
+                v-for="category in categories"
+                :key="category.id"
+                v-slot:default="{ active, toggle }"
+                :value="category.id"
+              >
+                <v-btn
+                  :color="active ? 'secondary' : ''"
+                  class="mx-1"
+                  @click="toggle"
+                  depressed
+                  rounded
+                  >{{ category.name }}
+                </v-btn>
+              </v-slide-item>
+            </v-slide-group>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card-text>
+    <div v-if="products.length">
+      <v-container style="max-height:61vh;" class="overflow-y-auto fill-height">
+        <v-row justify="center" align="center">
           <v-col
             v-for="product in products"
             :key="product.id"
@@ -158,32 +159,32 @@
               </v-card-actions>
             </v-card>
           </v-col>
-        </v-container>
-
-        <v-col :cols="12">
-          <v-pagination
-            v-model="currentPage"
-            @input="paginate"
-            :length="lastPage"
-            color="secondary"
-            :disabled="loader"
-            @previous="currentPage -= 1"
-            @next="currentPage += 1"
-          ></v-pagination>
-        </v-col>
-      </v-row>
-      <v-row
-        v-else
-        align="center"
-        justify="center"
-        style="height: 58vh; overflow-y: auto;"
-      >
+        </v-row>
+      </v-container>
+      <v-container>
+        <v-row justify="center">
+          <v-col :cols="10">
+            <v-pagination
+              v-model="currentPage"
+              @input="paginate"
+              :length="lastPage"
+              color="primary"
+              :disabled="loader"
+            ></v-pagination>
+          </v-col>
+        </v-row>
+      </v-container>
+    </div>
+    <v-container v-else-if="!products.length">
+      <v-row align="center" justify="center" style="height:58vh;">
         <v-progress-circular
+          :size="100"
+          :width="10"
+          color="primary"
           v-if="loader"
           indeterminate
-          color="secondary"
         ></v-progress-circular>
-        <h2 v-else-if="!products.length && !loader">No products found</h2>
+        <h2 v-else>No products found</h2>
       </v-row>
     </v-container>
   </v-card>

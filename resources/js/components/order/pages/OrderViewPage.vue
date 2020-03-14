@@ -3,10 +3,10 @@
     <v-row justify="center" align="center" v-if="loading || !order_id">
       <div class="text-center ma-12">
         <v-progress-circular
-          :indeterminate="true"
+          indeterminate
           :size="100"
           :width="10"
-          color="light-blue"
+          color="primary"
         ></v-progress-circular>
       </div>
     </v-row>

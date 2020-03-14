@@ -1,48 +1,59 @@
 <template>
-  <ValidationObserver ref="checkoutObs" tag="v-row">
-    <v-col :cols="6">
-      <v-select
-        @change="setDiscountType($event)"
-        v-if="$props.editable"
-        :value="discount.type"
-        item-text="text"
-        item-value="value"
-        :items="discountTypes"
-        label="Discount"
-      ></v-select>
-      <v-text-field
-        v-else
-        :value="discount.type"
-        label="Discount"
-        disabled
-      ></v-text-field>
-    </v-col>
-
-    <v-col :cols="6" v-show="showAmount">
-      <ValidationProvider
-        v-slot="{ valid }"
-        :rules="`between:${0},${max}`"
-        name="Discount amount"
-        v-if="$props.editable"
-      >
+  <ValidationObserver ref="checkoutObs" slim>
+    <v-row dense align="center">
+      <v-col :cols="6">
+        <v-select
+          outlined
+          @change="setDiscountType($event)"
+          v-if="$props.editable"
+          :value="discount.type"
+          item-text="text"
+          item-value="value"
+          :items="discountTypes"
+          :label="discountLabel"
+          dense
+        ></v-select>
         <v-text-field
-          ref="amount"
-          v-model="discountAmount"
-          type="number"
-          label="Amount"
-          :min="0"
-          :max="max"
-          :error-messages="!valid ? 'Invalid amount' : undefined"
-          :success="valid"
+          v-else
+          outlined
+          :value="discount.type"
+          :label="discountLabel"
+          disabled
+          dense
         ></v-text-field>
-      </ValidationProvider>
-      <v-text-field
-        v-else
-        :value="discountAmount"
-        label="Amount"
-        :disabled="true"
-      ></v-text-field>
-    </v-col>
+      </v-col>
+
+      <v-col :cols="6">
+        <ValidationProvider
+          v-slot="{ valid }"
+          :rules="`between:${0},${max}`"
+          name="Discount amount"
+          v-if="$props.editable"
+        >
+          <v-text-field
+            ref="amount"
+            v-model="discountAmount"
+            type="number"
+            label="Amount"
+            :min="0"
+            :max="max"
+            :error-messages="!valid ? 'Invalid amount' : undefined"
+            :success="valid"
+            :disabled="enableAmount"
+            dense
+            outlined
+          ></v-text-field>
+        </ValidationProvider>
+        <v-text-field
+          v-else
+          :value="discountAmount"
+          label="Amount"
+          :disabled="true"
+          dense
+          outlined
+        ></v-text-field>
+      </v-col>
+    </v-row>
   </ValidationObserver>
 </template>
 
@@ -104,6 +115,9 @@ export default {
       "discount_error"
     ]),
 
+    discountLabel() {
+      return this.productIndex === -1 ? "Cart discount" : "Discount";
+    },
     discountAmount: {
       get() {
         return this.discount_amount;
@@ -113,11 +127,11 @@ export default {
         this.setDiscountAmount(value);
       }
     },
-    showAmount() {
+    enableAmount() {
       if (this.discount.type !== "none") {
-        return true;
-      } else {
         return false;
+      } else {
+        return true;
       }
     },
     discount() {

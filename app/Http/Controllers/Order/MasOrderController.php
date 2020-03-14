@@ -242,9 +242,9 @@ class MasOrderController extends Controller
     {
         $i = 0;
         $response = [];
-        foreach ($this->order->payments as $payment) {
-            if ($payment->status === 'approved') {
-                switch ($payment->paymentType->type) {
+        foreach ($this->order->transactions as $transaction) {
+            if (!empty($transaction->payment) && $transaction->status === 'approved') {
+                switch ($transaction->payment->paymentType->type) {
                     case 'cash':
                         $response[$i]['BillingAccount'] = "";
                         $response[$i]['BillingExpiration'] = "";
@@ -257,27 +257,27 @@ class MasOrderController extends Controller
                         $response[$i]['RoutingNumber'] = null;
                         $response[$i]['CreditCardType'] = null;
                         $response[$i]['GiftCardNumber'] = null;
-                        $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($payment->price->subtract($payment->change_price));
+                        $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($transaction->price->subtract($transaction->payment->change_price));
                         break;
                     case 'card':
-                        $log = $payment->elavonApiPayments()->first('log');
+                        $log = $transaction->elavonApiPayments()->first('log');
 
                         $response[$i]['PaymentType'] = 1;
                         $response[$i]['PNRefToken'] = null;
-                        $response[$i]['AuthCode'] = $payment->code;
+                        $response[$i]['AuthCode'] = $transaction->code;
                         $response[$i]['BillingZip'] = '';
                         $response[$i]['CreditCardType'] = MasOrder::getCreditCardType($log->log['ssl_card_short_description']);
-                        $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($payment->price);
+                        $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($transaction->price);
                         break;
                     case 'pos-terminal':
-                        $log = $payment->elavonSdkPayments()->latest()->first();
+                        $log = $transaction->elavonSdkPayments()->latest()->first();
 
                         $response[$i]['PaymentType'] = 1;
                         $response[$i]['PNRefToken'] = null;
-                        $response[$i]['AuthCode'] = $payment->code;
+                        $response[$i]['AuthCode'] = $transaction->code;
                         $response[$i]['BillingZip'] = '';
                         $response[$i]['CreditCardType'] = MasOrder::getCreditCardType($log->transaction_data['cardScheme']);
-                        $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($payment->price);
+                        $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($transaction->price);
                         break;
                     case 'house-account':
                         $response[$i]['BillingAccount'] = '';
@@ -286,14 +286,14 @@ class MasOrderController extends Controller
                         $response[$i]['PaymentType'] = '';
                         $response[$i]['PNRefToken'] = null;
                         $response[$i]['AuthCode'] = 'house_account';
-                        $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($payment->price);
+                        $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($transaction->price);
                         break;
                     case 'giftcard':
                         $response[$i]['PaymentType'] = 2;
-                        $response[$i]['GiftCardNumber'] = $payment->code;
+                        $response[$i]['GiftCardNumber'] = $transaction->code;
                         $response[$i]['PNRefToken'] = null;
                         $response[$i]['AuthCode'] = 'giftcard';
-                        $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($payment->price);
+                        $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($transaction->price);
                         break;
                     default:
                         break;

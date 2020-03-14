@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Money\Money;
 use Money\Currency;
 use AjCastro\EagerLoadPivotRelations\EagerLoadPivotTrait;
-
+use App\Helper\PhpHelper;
 
 class Order extends Model
 {
@@ -184,16 +184,6 @@ class Order extends Model
         $this->attributes['delivery_fees_price'] = $value;
     }
 
-    public function getPaymentsAttribute()
-    {
-        return $this->transactions()->where('payment_id', '!=', null)->get();
-    }
-
-    public function getRefundsAttribute()
-    {
-        return $this->transactions()->where('refund_id', '!=', null)->get();
-    }
-
     public function getTaxPriceAttribute()
     {
         return $this
@@ -213,10 +203,10 @@ class Order extends Model
     public function getPaidPriceAttribute()
     {
         $paidPrice = new Money(0, new Currency($this->currency));
-        foreach ($this->payments as $payment) {
-            if ($payment->status === 'approved') {
-                $paidPrice = $paidPrice->add($payment->price);
-                $paidPrice = $paidPrice->subtract($payment->change_price);
+        foreach ($this->transactions as $transaction) {
+            if (!empty($transaction->payment) && $transaction->status === 'approved') {
+                $paidPrice = $paidPrice->add($transaction->price);
+                $paidPrice = $paidPrice->subtract($transaction->payment->change_price);
             }
         }
         return $paidPrice;

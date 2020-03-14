@@ -56,17 +56,16 @@ class TransactionController extends Controller
 
         $this->transactionData['created_by_id'] = auth()->user()->id;
         $this->transactionData['cash_register_id'] = auth()->user()->open_register->cash_register->id;
-
-        $order = Order::findOrFail($this->transactionData['order_id']);
-
         $this->transactionData['status'] = 'pending';
-
         $this->transactionData = Transaction::create($this->transactionData);
+
         $this->paymentData['transaction_id'] = $this->transactionData->id;
 
         $payment = Payment::create($this->paymentData);
+        $this->transactionData->payment_id = $payment->id;
 
         $response = [];
+        $order = Order::findOrFail($this->transactionData['order_id']);
 
         switch ($paymentType) {
             case 'cash':
@@ -93,6 +92,8 @@ class TransactionController extends Controller
                 $response = $this->houseAccPay($this->transactionData);
                 break;
         }
+
+
 
         if (is_array($response)) {
             if (array_key_exists('transaction_id', $response)) {

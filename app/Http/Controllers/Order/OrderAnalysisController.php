@@ -31,17 +31,15 @@ class OrderAnalysisController extends Controller
             $this->giftcard =
             new Money(0, new Currency($model->currency));
 
-        foreach ($model->payments as $payment) {
-            if ($payment->status === 'approved') {
-
-
-                $paidAmount = $payment->price;
-                switch ($payment->paymentType->type) {
+        foreach ($model->transactions as $transaction) {
+            if ($transaction->status === 'approved') {
+                $paidAmount = $transaction->price;
+                switch ($transaction->payment->paymentType->type) {
                     case 'pos-terminal':
                         $this->cc_pos = $this->cc_pos->add($paidAmount);
                         break;
                     case 'cash':
-                        $paidAmount = $paidAmount->subtract($payment->change_price);
+                        $paidAmount = $paidAmount->subtract($transaction->payment->change_price);
                         $this->cash = $this->cash->add($paidAmount);
                         break;
                     case 'card':
