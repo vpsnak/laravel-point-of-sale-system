@@ -72,7 +72,7 @@ class OrderController extends Controller
         $this->order->save();
 
         $orderStatusController = new OrderStatusController($this->order);
-        $orderStatusController->updateOrderStatus(null, true);
+        $orderStatusController->updateOrderStatus(true);
 
         ProcessOrder::dispatchNow($this->order);
 
@@ -118,7 +118,7 @@ class OrderController extends Controller
         $this->order->save();
 
         $orderStatusController = new OrderStatusController($this->order);
-        $orderStatusController->updateOrderStatus(null, true);
+        $orderStatusController->updateOrderStatus(true);
 
         ProcessOrder::dispatchNow($this->order);
 
@@ -176,7 +176,7 @@ class OrderController extends Controller
         $this->parseStoreData();
         $this->parseProducts();
 
-        $this->order = Order::createWithoutEvents($this->order_data);
+        $this->order = Order::create($this->order_data);
         $submittedStatusId = Status::where('value', 'submitted')->firstOrFail('id');
         $this->order->statuses()->attach($submittedStatusId, ['processed_by_id' => $this->user->id]);
         ProcessOrder::dispatchNow($this->order);

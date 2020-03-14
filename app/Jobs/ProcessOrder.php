@@ -60,24 +60,24 @@ class ProcessOrder implements ShouldQueue
         switch ($action) {
             case 'remove':
                 $qty = $product->laravel_stock - $item['qty'];
-                self::log('Removing Stock ' . $product->sku . ' Qty: ' . $qty . ' from: ' . $product->laravel_stock);
+                self::log("Removing Stock {$product->sku} Qty: {$qty} from: {$product->laravel_stock}");
                 $product->stores()->syncWithoutDetaching(
                     [Product::LARAVEL_STORE_ID, ['qty' => $qty]]
                 );
                 break;
             case 'add':
                 $qty = $product->laravel_stock + $item['qty'];
-                self::log('Adding Stock ' . $product->sku . ' Qty: ' . $qty . ' from: ' . $product->laravel_stock);
+                self::log("Adding Stock {$product->sku} Qty: {$qty} from: {$product->laravel_stock}");
                 $product->stores()->syncWithoutDetaching(
                     [Product::LARAVEL_STORE_ID, ['qty' => $qty]]
                 );
                 break;
         }
-        if (empty($product->magento_id) || empty($product->stock_id)) {
-            return;
+
+        if (!empty($product->magento_id) || !empty($product->stock_id)) {
+            self::log("Try Sync Stock Magento {$product->sku}");
+            ProductSync::syncStock($product);
         }
-        self::log('Try Sync Stock Magento ' . $product->sku);
-        ProductSync::syncStock($product);
     }
 
     private static function log($message)

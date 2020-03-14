@@ -23,7 +23,7 @@ class OrderStatusController extends Controller
         return response($model->statuses()->with('pivot.processedBy')->get());
     }
 
-    public function updateOrderStatus(Transaction $payment = null, bool $refund = false)
+    public function updateOrderStatus(bool $refund = false)
     {
         $this->user = auth()->user();
 

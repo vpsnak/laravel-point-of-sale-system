@@ -333,7 +333,7 @@ export default {
   methods: {
     ...mapMutations("cart", [
       "setOrderId",
-      "setPayments",
+      "setTransactions",
       "setOrderChangePrice",
       "setOrderRemainingPrice",
       "setOrderStatus",
@@ -403,16 +403,16 @@ export default {
 
       this.request(payload)
         .then(response => {
-          this.setOrderChangePrice(response.payment.change_price);
+          this.setOrderChangePrice(response.transaction.payment.change_price);
           this.setOrderRemainingPrice(response.remaining);
           this.setOrderStatus(response.status);
 
-          this.setPayments(response.payment);
+          this.setTransactions(response.transaction);
         })
         .catch(error => {
           console.error(error);
-          if (_.has(error, "payment")) {
-            this.setPayments(error.payment);
+          if (_.has(error, "transaction")) {
+            this.setTransactions(error.transaction);
           }
         })
         .finally(() => {

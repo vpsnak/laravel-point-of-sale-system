@@ -15,6 +15,10 @@ class CreatePaymentsTable extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('transaction_id');
+            $table->foreignId('payment_type_id');
+            $table->json('change_price')->nullable();
         });
     }
 

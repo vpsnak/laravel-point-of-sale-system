@@ -15,6 +15,11 @@ class CreateRefundsTable extends Migration
     {
         Schema::create('refunds', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('transaction_id');
+            $table->foreignId('refund_type_id');
+            $table->foreignId('payment_id')->nullable();
+            $table->text('note');
         });
     }
 

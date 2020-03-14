@@ -42,11 +42,22 @@ class ForeignKeys extends Migration
         });
 
         Schema::table('transactions', function (Blueprint $table) {
-            $table->foreign('payment_type_id')->references('id')->on('payment_types')->onDelete('restrict');
-            $table->foreign('refund_type_id')->references('id')->on('payment_types')->onDelete('restrict');
+            $table->foreign('payment_id')->references('id')->on('payments')->onDelete('restrict');
+            $table->foreign('refund_id')->references('id')->on('refunds')->onDelete('restrict');
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('restrict');
             $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('restrict');
             $table->foreign('created_by_id')->references('id')->on('users')->onDelete('restrict');
+        });
+
+        Schema::table('payments', function (Blueprint $table) {
+            $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('restrict');
+            $table->foreign('payment_type_id')->references('id')->on('payments')->onDelete('restrict');
+        });
+
+        Schema::table('refunds', function (Blueprint $table) {
+            $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('restrict');
+            $table->foreign('refund_type_id')->references('id')->on('refunds')->onDelete('restrict');
+            $table->foreign('payment_id')->references('id')->on('payments')->onDelete('restrict');
         });
 
         Schema::table('receipts', function (Blueprint $table) {
@@ -161,11 +172,20 @@ class ForeignKeys extends Migration
         });
 
         Schema::table('transactions', function (Blueprint $table) {
-            $table->dropForeign(['payment_type_id']);
-            $table->dropForeign(['refund_type_id']);
             $table->dropForeign(['order_id']);
             $table->dropForeign(['cash_register_id']);
             $table->dropForeign(['created_by_id']);
+        });
+
+        Schema::table('payments', function (Blueprint $table) {
+            $table->dropForeign(['transaction_id']);
+            $table->dropForeign(['payment_type_id']);
+        });
+
+        Schema::table('refunds', function (Blueprint $table) {
+            $table->dropForeign(['transaction_id']);
+            $table->dropForeign(['refund_type_id']);
+            $table->dropForeign(['payment_id']);
         });
 
         Schema::table('receipts', function (Blueprint $table) {

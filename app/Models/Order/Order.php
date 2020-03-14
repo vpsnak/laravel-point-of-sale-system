@@ -186,12 +186,12 @@ class Order extends Model
 
     public function getPaymentsAttribute()
     {
-        return $this->transactions()->where('type', 'payment')->get();
+        return $this->transactions()->where('payment_id', '!=', null)->get();
     }
 
     public function getRefundsAttribute()
     {
-        return $this->transactions()->where('type', 'refund')->get();
+        return $this->transactions()->where('refund_id', '!=', null)->get();
     }
 
     public function getTaxPriceAttribute()
@@ -285,12 +285,5 @@ class Order extends Model
     public function getStatusAttribute()
     {
         return $this->lastStatus()->first();
-    }
-
-    public static function createWithoutEvents(array $options = [])
-    {
-        return static::withoutEvents(function () use ($options) {
-            return static::create($options);
-        });
     }
 }

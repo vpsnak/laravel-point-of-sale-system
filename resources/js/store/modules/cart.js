@@ -6,7 +6,7 @@ export default {
 
     tax_percentage: 0,
     checkoutDialog: false,
-    payments: [],
+    transactions: [],
 
     is_valid: false,
     isValidCheckout: false,
@@ -228,14 +228,11 @@ export default {
     setCheckoutDialog(state, value) {
       state.checkoutDialog = value;
     },
-    setPaymentRefundedStatus(state, index) {
-      state.payments[index].refunded = true;
-    },
-    setPayments(state, value) {
+    setTransactions(state, value) {
       if (Array.isArray(value)) {
-        state.payments = value;
+        state.transactions = value;
       } else {
-        state.payments.push(value);
+        state.transactions.push(value);
       }
     },
     setIsValid(state, value) {
@@ -351,7 +348,7 @@ export default {
       state.order_paid_price = { amount: 0 };
       state.order_mdse_price = { amount: 0 };
       state.delivery_fees_price = { amount: 0 };
-      state.payments = [];
+      state.transactions = [];
       state.order_notes = "";
 
       state.checkoutDialog = false;
@@ -548,7 +545,7 @@ export default {
         context.commit("setOrderTaxPrice", order.tax_price);
         context.commit("setOrderChangePrice", order.change);
         context.commit("setOrderRemainingPrice", order.remaining_price);
-        context.commit("setPayments", order.payments);
+        context.commit("setTransactions", order.transactions);
         context.commit("setCartDiscount", order.discount);
         context.commit("setCustomer", order.customer);
         context.commit("setOrderNotes", order.notes);
