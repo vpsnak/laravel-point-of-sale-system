@@ -84,12 +84,13 @@
             :lg="4"
           >
             <v-card
-              dark
+              outlined
               :img="product.photo_url"
               @click="addProduct(product)"
               height="170px"
+              dark
             >
-              <v-card-title class="secondary pa-0" @click.stop>
+              <v-card-title class="pa-0 grey darken-2" @click.stop>
                 <h6 class="px-2">{{ truncate(product.name) }}</h6>
                 <v-spacer />
                 <v-menu bottom left>

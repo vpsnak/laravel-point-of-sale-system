@@ -16,6 +16,15 @@ const opts = {
         info: "#2196F3",
         success: "#4CAF50",
         warning: "#FB8C00"
+      },
+      light: {
+        primary: "#2196F3",
+        secondary: "#546E7A",
+        accent: "#FF4081",
+        error: "#FF5252",
+        info: "#2196F3",
+        success: "#4CAF50",
+        warning: "#FB8C00"
       }
     }
   }

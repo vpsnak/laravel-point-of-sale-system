@@ -16,7 +16,11 @@
 
       <cartProducts :editable="$props.editable" />
 
-      <cartDiscount :productIndex="-1" :editable="$props.editable" />
+      <cartDiscount
+        class="mt-2"
+        :productIndex="-1"
+        :editable="$props.editable"
+      />
 
       <cartTotals />
 
