@@ -398,11 +398,17 @@ class OrderController extends Controller
             $query = $query->where('customer_id', $this->order_data['filters']['customer_id']);
         }
 
-        if (isset($this->order_data['filters']['cb_statuses']) && $this->order_data['filters']['cb_statuses']  && isset($this->order_data['filters']['statuses'])) {
+        if (
+            isset($this->order_data['filters']['cb_statuses'])
+            && $this->order_data['filters']['cb_statuses']
+            && isset($this->order_data['filters']['statuses'])
+        ) {
             $statuses = $this->order_data['filters']['statuses'];
-            $query = $query->with('statuses')->whereHas('statuses', function (Builder $query) use ($statuses) {
-                $query->latest()->whereIn('status_id', $statuses);
-            });
+            $query = $query
+                ->whereHas('lastStatus', function (Builder $query) use ($statuses) {
+                    $query
+                        ->whereIn('status_id', $statuses);
+                });
         }
 
         return $query;
