@@ -6,7 +6,7 @@
           <v-btn
             class="mx-1"
             @click="btnactive = !btnactive"
-            :color="btnactive ? 'primary' : 'secondary'"
+            :color="btnactive ? 'primary' : null"
           >
             <v-icon left>mdi-barcode-scan</v-icon>
             <v-icon right>
@@ -84,7 +84,6 @@
             :lg="4"
           >
             <v-card
-              outlined
               :img="product.photo_url"
               @click="addProduct(product)"
               height="170px"
