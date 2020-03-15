@@ -207,6 +207,8 @@ class Order extends Model
             if (!empty($transaction->payment) && $transaction->status === 'approved') {
                 $paidPrice = $paidPrice->add($transaction->price);
                 $paidPrice = $paidPrice->subtract($transaction->payment->change_price);
+            } else if (!empty($transaction->refund && $transaction->status === 'refund approved')) {
+                $paidPrice = $paidPrice->subtract($transaction->price);
             }
         }
         return $paidPrice;

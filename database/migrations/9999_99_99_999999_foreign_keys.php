@@ -56,7 +56,6 @@ class ForeignKeys extends Migration
 
         Schema::table('refunds', function (Blueprint $table) {
             $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('restrict');
-            $table->foreign('refund_type_id')->references('id')->on('refunds')->onDelete('restrict');
             $table->foreign('payment_id')->references('id')->on('payments')->onDelete('restrict');
         });
 
@@ -184,7 +183,6 @@ class ForeignKeys extends Migration
 
         Schema::table('refunds', function (Blueprint $table) {
             $table->dropForeign(['transaction_id']);
-            $table->dropForeign(['refund_type_id']);
             $table->dropForeign(['payment_id']);
         });
 

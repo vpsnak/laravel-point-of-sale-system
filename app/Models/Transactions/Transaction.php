@@ -50,7 +50,7 @@ class Transaction extends Model
 
     public function getTypeNameAttribute()
     {
-        return $this->payment->type_name ?? $this->payment->type_name;
+        return $this->payment->type_name ?? $this->refund->type;
     }
 
     public function getPriceAttribute()

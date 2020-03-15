@@ -149,7 +149,8 @@ export default {
       }
     },
     enableRefund(item) {
-      if (_.has(item, "payment") && item.payment.is_refundable) {
+      console.log(item);
+      if (_.has(item.payment, "is_refundable") && item.payment.is_refundable) {
         return true;
       } else {
         return false;
@@ -164,6 +165,8 @@ export default {
           return "green--text";
         case "failed":
           return "red--text";
+        case "refund approved":
+          return "amber--text";
         default:
           return null;
       }
@@ -177,7 +180,7 @@ export default {
       this.request(payload)
         .then(response => {
           if (response.refunded_payment_id) {
-            const index = _.findIndex(this.payments, {
+            const index = _.findIndex(this.transactions, {
               id: response.refunded_payment_id
             });
 
@@ -192,8 +195,8 @@ export default {
         .catch(error => {
           console.log(error);
           // @TODO fix payload object
-          if (_.has(error, "response.data.refund")) {
-            this.payments = error.response.data.refund;
+          if (_.has(error, "response.transaction")) {
+            this.transactions = error.response.data.refund;
             this.$emit("refund", error.response.data);
           } else {
             console.error(error);

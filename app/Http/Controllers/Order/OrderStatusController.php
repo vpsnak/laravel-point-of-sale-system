@@ -15,7 +15,7 @@ class OrderStatusController extends Controller
 
     public function __construct(Order $order)
     {
-        $this->order = $order;
+        $this->order = $order->refresh();
     }
 
     public function getOrderStatuses(Order $model)
@@ -28,6 +28,7 @@ class OrderStatusController extends Controller
         $this->user = auth()->user();
 
         $remaining = $this->order->remaining_price;
+
 
         if ($remaining->isPositive()) {
             $this->order->change = new Money(0, new Currency($this->order->currency));

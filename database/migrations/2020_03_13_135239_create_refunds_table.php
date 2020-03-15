@@ -17,9 +17,9 @@ class CreateRefundsTable extends Migration
             $table->id();
 
             $table->foreignId('transaction_id');
-            $table->foreignId('refund_type_id');
+            $table->string('type');
             $table->foreignId('payment_id')->nullable();
-            $table->text('note');
+            $table->text('note')->nullable();
         });
     }
 

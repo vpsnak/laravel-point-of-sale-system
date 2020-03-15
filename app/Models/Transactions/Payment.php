@@ -45,7 +45,7 @@ class Payment extends Model
 
     public function getTypeNameAttribute()
     {
-        return $this->paymentType()->first('name')->name;
+        return $this->paymentType->name;
     }
 
     public function getIsRefundableAttribute()

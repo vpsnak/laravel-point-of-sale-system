@@ -353,7 +353,7 @@ class TransactionController extends Controller
             'payment_type' => $refundType->id,
             'amount' => abs($validatedData['amount']) * -1,
             'code' => $code,
-            'status' => 'refunded',
+            'status' => 'refund approved',
             'refunded' => false,
             'cash_register_id' => $cash_register_id,
             'order_id' => $order->id,
@@ -377,29 +377,25 @@ class TransactionController extends Controller
     private function createLinkedRefund(Transaction $transaction, bool $succeed)
     {
         $user = auth()->user();
-        $refundTransaction = Refund::create([
+        $type = $transaction->payment['type_name'];
+
+        $refundTransaction = Transaction::create([
             'price' => $transaction->price,
-            'status' => 'approved',
+            'status' => $succeed ? 'refund approved' : 'refund failed',
             'cash_register_id' => $user->open_register->cash_register_id,
             'order_id' => $transaction->order->id,
             'created_by_id' => $user->id
         ]);
         $refund = Refund::create([
             'transaction_id' => $refundTransaction->id,
-            'payment_id',
-            'refund_type_id'
+            'payment_id' =>  $transaction->payment->id,
+            'type' => "{$type} refund"
         ]);
 
-        $refund->amount = $payment->price;
-        $refund->status = $succeed ? 'refunded' : 'failed';
-        $refund->created_by_id = $user->id;
-        $refund->cash_register_id = $user->open_register->cash_register_id;
-        $refund->save();
+        $refundTransaction->refund_id = $refund->id;
+        $refundTransaction->save();
 
-        $payment->refunded = $succeed;
-        $payment->save();
-
-        return $refund;
+        return $refundTransaction;
     }
 
     public function rollbackPayment(Payment $model, bool $setOrderStatus = true)
@@ -440,17 +436,15 @@ class TransactionController extends Controller
             $orderStatusController = new OrderStatusController($model->transaction->order);
 
             if (is_array($result) && array_key_exists('errors', $result)) {
-                $refund = $this->createLinkedRefund($transaction, false);
-                $refund->load(['createdBy', 'paymentType', 'order']);
+                $refundTransaction = $this->createLinkedRefund($transaction, false);
 
                 $orderStatus = $orderStatusController->updateOrderStatus(true);
                 $orderStatus['errors'] = $result['errors'];
-                $orderStatus['refund'] = $refund->refresh();
+                $orderStatus['transaction'] = $refundTransaction;
 
                 return response($orderStatus, 500);
             } else {
-                $refund = $this->createLinkedRefund($transaction, true);
-                $refund->load(['createdBy', 'paymentType', 'order']);
+                $refundTransaction = $this->createLinkedRefund($transaction, true);
 
                 $orderStatus = $orderStatusController->updateOrderStatus(true);
                 $orderStatus['refunded_payment_id'] = $transaction->id;
@@ -458,7 +452,7 @@ class TransactionController extends Controller
                     'msg' => ['Refund completed successfully!'],
                     'type' => 'success'
                 ];
-                $orderStatus['refund'] = $refund->refresh();
+                $orderStatus['transaction'] = $refundTransaction;
 
                 return response($orderStatus);
             }

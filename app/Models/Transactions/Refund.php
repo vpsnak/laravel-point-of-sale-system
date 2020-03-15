@@ -10,7 +10,7 @@ class Refund extends Model
 
     protected $fillable = [
         'transaction_id',
-        'refund_type_id',
+        'type',
         'payment_id',
         'note'
     ];
@@ -19,18 +19,8 @@ class Refund extends Model
         'refund_type_id',
     ];
 
-    public function getTypeNameAttribute()
-    {
-        return $this->paymentType()->first('name')->name;
-    }
-
     public function transaction()
     {
         return $this->belongsTo(Transaction::class);
-    }
-
-    public function refundType()
-    {
-        return $this->belongsTo(RefundType::class);
     }
 }
