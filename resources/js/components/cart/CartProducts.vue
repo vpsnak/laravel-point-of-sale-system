@@ -9,14 +9,14 @@
           >
             <v-expansion-panel-header @click.stop class="pa-1">
               <v-container fluid>
-                <v-row dense justify="space-between" align="center">
+                <v-row dense align="center">
                   <b class="primary--text">{{ 1 + index }}.</b>
                   <i class="mx-1">
                     <b>
                       {{ product.name }}
                     </b>
                   </i>
-
+                  <v-spacer />
                   <span class="mx-1">
                     Price:
                     <i :class="productPrice(product).class">
@@ -25,7 +25,7 @@
                       </b>
                     </i>
                   </span>
-
+                  <v-spacer />
                   <span class="mx-1">
                     Original price:
                     <i class="primary--text">
@@ -52,7 +52,7 @@
 
                   <v-text-field
                     v-if="product.editable_price && editable"
-                    class="mt-5 mx-1"
+                    class="mt-5 mx-1 pt-3"
                     style="max-width:125px;"
                     prefix="$"
                     @click.stop
@@ -63,15 +63,31 @@
                     type="number"
                     label="Edit price"
                     :readonly="!editPrice(index)"
-                    :flat="!editPrice(index)"
                     outlined
                     :color="editPrice(index) ? 'primary' : ''"
-                    :value="$price(product.price).toFormat('0.00')"
+                    :value="parsePrice(product.price).toFormat('0.00')"
                     dense
                     append-icon="mdi-pencil"
                     @click:append.stop="toggleEdit(index)"
-                    hint="Enter to submit
-                    ESC reverts price"
+                    persistent-hint
+                    :hint="editPriceHint(index)"
+                  ></v-text-field>
+
+                  <v-text-field
+                    v-else
+                    class="mt-5 mx-1 pt-3"
+                    style="max-width:125px;"
+                    prefix="$"
+                    :ref="'priceField' + index"
+                    :min="0"
+                    type="number"
+                    label="Unit price"
+                    :disabled="true"
+                    outlined
+                    :value="parsePrice(product.price).toFormat('0.00')"
+                    dense
+                    persistent-hint
+                    :hint="editPriceHint(index)"
                   ></v-text-field>
 
                   <v-spacer />
@@ -79,7 +95,7 @@
                   <v-text-field
                     dense
                     outlined
-                    class="mt-5"
+                    class="mt-5 pt-3"
                     style="max-width:110px;"
                     :disabled="!editable"
                     type="number"
@@ -93,6 +109,8 @@
                     @click:prepend-inner.stop="decreaseProductQty(product)"
                     :append-icon="editable ? 'add' : null"
                     @click:append.stop="increaseProductQty(product)"
+                    persistent-hint
+                    :hint="editPriceHint(null)"
                   ></v-text-field>
 
                   <v-spacer />
@@ -196,6 +214,14 @@ export default {
       "decreaseProductQty"
     ]),
     ...mapActions("cart", ["removeProduct"]),
+
+    editPriceHint(index) {
+      if (this.editPrice(index)) {
+        return "Enter to submit\nESC reverts price";
+      } else {
+        return `${_.repeat("\xa0", 15)}\n${_.repeat("\xa0", 18)}`;
+      }
+    },
 
     productPrice(product) {
       const label = this.calcProductDiscount(product);
