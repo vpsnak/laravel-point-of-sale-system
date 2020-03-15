@@ -38,7 +38,6 @@
             :min="0"
             :max="max"
             :error-messages="!valid ? 'Invalid amount' : undefined"
-            :success="valid"
             :disabled="enableAmount"
             dense
             outlined
