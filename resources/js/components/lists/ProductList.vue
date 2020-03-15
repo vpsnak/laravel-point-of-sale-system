@@ -28,20 +28,16 @@
             @click:clear="(currentPage = 1), getAllProducts()"
           ></v-text-field>
 
-          <v-menu offset-y>
+          <v-menu offset-y open-on-hover>
             <template v-slot:activator="{ on }">
               <v-btn icon v-on="on">
                 <v-icon>
-                  mdi-plus-box-outline
+                  plus
                 </v-icon>
               </v-btn>
             </template>
             <v-list>
-              <v-list-item
-                v-for="(item, index) in items"
-                :key="index"
-                @click=""
-              >
+              <v-list-item>
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-btn
@@ -55,11 +51,7 @@
                   <span>Add custom product</span>
                 </v-tooltip>
               </v-list-item>
-              <v-list-item
-                v-for="(item, index) in items"
-                :key="index"
-                @click=""
-              >
+              <v-list-item>
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-btn @click="giftcardDialog()" v-on="on" class="mx-1">
