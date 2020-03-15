@@ -359,7 +359,6 @@ class OrderController extends Controller
 
         $query = Order::without([
             'items',
-            'payments',
             'store_pickup'
         ]);
 
