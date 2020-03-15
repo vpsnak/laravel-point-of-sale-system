@@ -401,9 +401,9 @@ class TransactionController extends Controller
     public function rollbackPayment(Payment $model, bool $setOrderStatus = true)
     {
         $transaction = $model->transaction;
-        // if ($model->refunded) {
-        //     return response(['errors' => ['This payment has already been refunded']], 422);
-        // }
+        if (!$model->is_refundable) {
+            return response(['errors' => ['This payment cannot be refunded']], 422);
+        }
 
         switch ($model->paymentType->type) {
             case 'pos-terminal':

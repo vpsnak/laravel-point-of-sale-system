@@ -260,7 +260,7 @@ class MasOrderController extends Controller
                         $response[$i]['PaymentAmount'] = $this->moneyFormatter->format($transaction->price->subtract($transaction->payment->change_price));
                         break;
                     case 'card':
-                        $log = $transaction->elavonApiPayments()->first('log');
+                        $log = $transaction->elavonApiTransactions()->first('log');
 
                         $response[$i]['PaymentType'] = 1;
                         $response[$i]['PNRefToken'] = null;

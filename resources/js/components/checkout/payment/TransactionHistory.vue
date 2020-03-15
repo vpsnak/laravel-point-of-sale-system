@@ -41,7 +41,12 @@
       <template v-slot:item.actions="{ item }">
         <v-tooltip bottom v-if="enableRefund(item)">
           <template v-slot:activator="{ on }">
-            <v-btn @click="refundDialog(item)" icon v-on="on" :loading="false">
+            <v-btn
+              @click="refundDialog(item)"
+              icon
+              v-on="on"
+              :loading="rollbackLoading"
+            >
               <v-icon>
                 mdi-undo
               </v-icon>
@@ -60,7 +65,7 @@ import { EventBus } from "../../../plugins/eventBus";
 
 export default {
   mounted() {
-    EventBus.$on("payment-history-refund", event => {
+    EventBus.$on("transaction-history-refund", event => {
       if (event.payload && this.selected_payment) {
         this.rollbackPayment();
       }
@@ -68,11 +73,12 @@ export default {
   },
 
   beforeDestroy() {
-    EventBus.$off("payment-history-refund");
+    EventBus.$off("transaction-history-refund");
   },
 
   data() {
     return {
+      rollbackLoading: false,
       selected_payment: null,
       headers: [
         {
@@ -129,7 +135,8 @@ export default {
       "setTransactions",
       "setOrderChangePrice",
       "setOrderRemainingPrice",
-      "setOrderStatus"
+      "setOrderStatus",
+      "setCheckoutLoading"
     ]),
     ...mapMutations("dialog", ["setDialog"]),
     ...mapActions("requests", ["request"]),
@@ -172,6 +179,8 @@ export default {
       }
     },
     rollbackPayment() {
+      this.setCheckoutLoading(true);
+      this.rollbackLoading = true;
       const payload = {
         method: "post",
         url: `transactions/${this.selected_payment.id}/rollback`
@@ -197,10 +206,13 @@ export default {
           // @TODO fix payload object
           if (_.has(error, "response.transaction")) {
             this.transactions = error.response.data.refund;
-            this.$emit("refund", error.response.data);
           } else {
             console.error(error);
           }
+        })
+        .finally(() => {
+          this.setCheckoutLoading(false);
+          this.rollbackLoading = false;
         });
     },
     refundDialog(item) {
@@ -214,7 +226,7 @@ export default {
         component: "passwordForm",
         model: { action: "verify" },
         persistent: true,
-        eventChannel: "payment-history-refund"
+        eventChannel: "transaction-history-refund"
       };
 
       this.setDialog(payload);
