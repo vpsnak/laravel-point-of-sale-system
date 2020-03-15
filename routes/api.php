@@ -42,11 +42,10 @@ Route::delete('/users/{model}', 'UserController@delete')->middleware('scope:admi
 
 // transaction
 Route::get('/transactions', 'TransactionController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/transactions/get/{payment}', 'TransactionController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::post('/transactions/create', 'TransactionController@createPayment')->middleware('scope:admin,store_manager,cashier');
 Route::post('/transactions/search', 'TransactionController@search')->middleware('scope:admin,store_manager,cashier');
 Route::post('/transactions/unlinked-refund', 'TransactionController@createUnlinkedRefund')->middleware('scope:admin,store_manager');
-Route::delete('/transactions/{payment}', 'TransactionController@refundPayment')->middleware('scope:admin,store_manager,cashier');
+Route::post('/transactions/{model}/rollback', 'TransactionController@rollbackPayment')->middleware('scope:admin,store_manager,cashier');
 
 // customers
 Route::get('/customers', 'CustomerController@all')->middleware('scope:admin,store_manager,cashier');

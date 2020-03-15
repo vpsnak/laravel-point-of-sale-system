@@ -28,7 +28,7 @@
             @click:clear="(currentPage = 1), getAllProducts()"
           ></v-text-field>
 
-          <v-menu offset-y open-on-hover>
+          <v-menu offset-y>
             <template v-slot:activator="{ on }">
               <v-btn icon v-on="on">
                 <v-icon>

@@ -62,7 +62,7 @@ export default {
   mounted() {
     EventBus.$on("payment-history-refund", event => {
       if (event.payload && this.selected_payment) {
-        this.refund();
+        this.rollbackPayment();
       }
     });
   },
@@ -168,10 +168,10 @@ export default {
           return null;
       }
     },
-    refund() {
+    rollbackPayment() {
       const payload = {
-        method: "delete",
-        url: `transactions/${this.selected_payment.id}`
+        method: "post",
+        url: `transactions/${this.selected_payment.id}/rollback`
       };
 
       this.request(payload)
@@ -201,7 +201,7 @@ export default {
         });
     },
     refundDialog(item) {
-      this.selected_payment = item;
+      this.selected_payment = item.payment;
       const payload = {
         show: true,
         width: 600,

@@ -14,6 +14,7 @@ use App\Order;
 use App\Payment;
 use App\Transaction;
 use App\PaymentType;
+use App\Refund;
 use Illuminate\Http\Request;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\DecimalMoneyFormatter;
@@ -373,11 +374,23 @@ class TransactionController extends Controller
         return response($orderStatus, 500); // 500 status for debug purposes only!
     }
 
-    private function createLinkedRefund(Transaction $payment, bool $succeed)
+    private function createLinkedRefund(Transaction $transaction, bool $succeed)
     {
         $user = auth()->user();
-        $refund = $payment->replicate();
-        $refund->amount = abs($refund->amount) * -1;
+        $refundTransaction = Refund::create([
+            'price' => $transaction->price,
+            'status' => 'approved',
+            'cash_register_id' => $user->open_register->cash_register_id,
+            'order_id' => $transaction->order->id,
+            'created_by_id' => $user->id
+        ]);
+        $refund = Refund::create([
+            'transaction_id' => $refundTransaction->id,
+            'payment_id',
+            'refund_type_id'
+        ]);
+
+        $refund->amount = $payment->price;
         $refund->status = $succeed ? 'refunded' : 'failed';
         $refund->created_by_id = $user->id;
         $refund->cash_register_id = $user->open_register->cash_register_id;
@@ -389,44 +402,45 @@ class TransactionController extends Controller
         return $refund;
     }
 
-    public function refundPayment(Transaction $payment, bool $setOrderStatus = true)
+    public function rollbackPayment(Payment $model, bool $setOrderStatus = true)
     {
-        if ($payment->refunded) {
-            return response(['errors' => ['This payment has already been refunded']], 422);
-        }
+        $transaction = $model->transaction;
+        // if ($model->refunded) {
+        //     return response(['errors' => ['This payment has already been refunded']], 422);
+        // }
 
-        switch ($payment->paymentType->type) {
+        switch ($model->paymentType->type) {
             case 'pos-terminal':
-                $result = $this->posRefund($payment);
+                $result = $this->posRefund($transaction);
                 break;
             case 'card':
-                $result = $this->apiRefund($payment);
+                $result = $this->apiRefund($transaction);
                 break;
             case 'coupon':
-                $result = $this->couponRefund($payment);
+                $result = $this->couponRefund($transaction);
                 break;
             case 'giftcard':
-                $result = $this->giftcardRefund($payment);
+                $result = $this->giftcardRefund($transaction);
                 break;
             case 'house-account':
-                $result = $this->houseAccRefund($payment);
+                $result = $this->houseAccRefund($transaction);
                 break;
             case 'cash':
                 $result = true;
                 break;
             default:
                 if ($setOrderStatus) {
-                    return response(['errors' => ["Payment method: {$payment->paymentType->type} cannot be refunded"]], 500);
+                    return response(['errors' => ["Payment method: {$model->paymentType->type} cannot be refunded"]], 500);
                 } else {
-                    return ['errors' => ["Payment method: {$payment->paymentType->type} cannot be refunded"]];
+                    return ['errors' => ["Payment method: {$model->paymentType->type} cannot be refunded"]];
                 }
         }
 
         if ($setOrderStatus) {
-            $orderStatusController = new OrderStatusController($payment->order);
+            $orderStatusController = new OrderStatusController($model->transaction->order);
 
             if (is_array($result) && array_key_exists('errors', $result)) {
-                $refund = $this->createLinkedRefund($payment, false);
+                $refund = $this->createLinkedRefund($transaction, false);
                 $refund->load(['createdBy', 'paymentType', 'order']);
 
                 $orderStatus = $orderStatusController->updateOrderStatus(true);
@@ -435,11 +449,11 @@ class TransactionController extends Controller
 
                 return response($orderStatus, 500);
             } else {
-                $refund = $this->createLinkedRefund($payment, true);
+                $refund = $this->createLinkedRefund($transaction, true);
                 $refund->load(['createdBy', 'paymentType', 'order']);
 
                 $orderStatus = $orderStatusController->updateOrderStatus(true);
-                $orderStatus['refunded_payment_id'] = $payment->id;
+                $orderStatus['refunded_payment_id'] = $transaction->id;
                 $orderStatus['notification'] = [
                     'msg' => ['Refund completed successfully!'],
                     'type' => 'success'
@@ -452,7 +466,7 @@ class TransactionController extends Controller
             if (is_array($result) && array_key_exists('errors', $result)) {
                 return ['errors' => $result['errors']];
             } else {
-                $refund = $this->createLinkedRefund($payment, true);
+                $refund = $this->createLinkedRefund($transaction, true);
                 return $refund;
             }
         }
