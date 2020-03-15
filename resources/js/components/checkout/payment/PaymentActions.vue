@@ -24,7 +24,7 @@
             :value="payment_type"
             :disabled="loading"
             outlined
-            active-class="success--text"
+            active-class="primary--text"
           >
             <v-icon left>{{ payment_type.icon }}</v-icon>
             {{ payment_type.name }}
@@ -184,7 +184,7 @@
             type="submit"
             dark
             block
-            color="green darken-3"
+            color="primary"
             :loading="makePaymentLoading"
             :disabled="invalid || !isValidCheckout || loading"
           >
