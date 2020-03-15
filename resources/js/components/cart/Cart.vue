@@ -36,8 +36,6 @@ import { mapActions, mapState, mapMutations } from "vuex";
 
 export default {
   props: {
-    title: String,
-    icon: String,
     editable: Boolean,
     showMethods: Boolean,
     showCustomer: Boolean,
