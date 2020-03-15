@@ -18,11 +18,12 @@ class Price
         if (isset($discount['amount']) && isset($discount['type'])) {
             switch ($discount['type']) {
                 case 'flat':
-                    $amount = new Money($discount['discount']['amount'], new Currency($price->getCurrency()));
+
+                    $amount = new Money($discount['amount'], $price->getCurrency());
                     $price = $price->subtract($amount);
                     break;
                 case 'percentage':
-                    $percentage = $price->multiply($price['discount']['amount'] / 100);
+                    $percentage = $price->multiply($price['amount'] / 100);
                     $price = $price->subtract($percentage);
                     break;
                 default:

@@ -344,7 +344,6 @@ export default {
     ...mapActions("requests", ["request"]),
 
     setAmount() {
-      console.log(this.orderRemainingPrice);
       this.amount = this.orderRemainingPrice.toFormat("0.00");
     },
     getPaymentTypes() {

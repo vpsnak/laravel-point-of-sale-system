@@ -19,9 +19,9 @@
 
                   <span class="mx-1">
                     Price:
-                    <i class="primary--text">
+                    <i :class="productPrice(product).class">
                       <b>
-                        {{ productPrice(product, index).toFormat() }}
+                        {{ productPrice(product).label }}
                       </b>
                     </i>
                   </span>
@@ -101,13 +101,7 @@
                     <template v-slot:activator="{ on }">
                       <v-btn
                         class="mx-1"
-                        v-if="
-                          editable &&
-                            !(
-                              product.sku.startsWith('dummy') ||
-                              product.sku.startsWith('giftCard')
-                            )
-                        "
+                        v-if="editable"
                         @click.stop="viewProductDialog(product)"
                         v-on="on"
                         small
@@ -174,6 +168,7 @@
 </template>
 
 <script>
+import Dinero from "dinero.js";
 import { mapState, mapMutations, mapActions } from "vuex";
 
 export default {
@@ -202,8 +197,20 @@ export default {
     ]),
     ...mapActions("cart", ["removeProduct"]),
 
-    productPrice(product, index) {
-      return this.$price(product.original_price).multiply(product.qty);
+    productPrice(product) {
+      const label = this.calcProductDiscount(product);
+      const priceBeforeDiscount = this.parsePrice(product.price).multiply(
+        Number.parseInt(product.qty)
+      );
+
+      if (label.isNegative() || label.isZero()) {
+        return { class: "red--text", label: "Discount error" };
+      } else {
+        return {
+          class: "primary--text",
+          label: label.toFormat()
+        };
+      }
     },
     getSelectedInput(index) {
       return this.$refs[`priceField${index}`][0];

@@ -11,7 +11,7 @@ class ProductController extends Controller
 
     public function all()
     {
-        return response(Product::paginate());
+        return response()->json(Product::paginate(), 200, [], JSON_NUMERIC_CHECK);
     }
 
     public function getOne(Product $model)

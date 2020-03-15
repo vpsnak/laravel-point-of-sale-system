@@ -12,16 +12,16 @@ const Price = {
           if (_.isObjectLike(value)) {
             if (_.has(value, "amount")) {
               value.amount = Number.parseInt(value.amount);
-              return Dinero({ amount: value.amount });
-            } else {
               return Dinero(value);
+            } else {
+              return Dinero({ amount: 0 });
             }
-          } else if (!Number.isInteger(value)) {
-            return Dinero({ amount: Number.parseInt(value) });
           } else if (!value) {
-            return Dinero();
-          } else {
+            return Dinero({ amount: 0 });
+          } else if (_.isInteger(value)) {
             return Dinero({ amount: value });
+          } else {
+            return Dinero({ amount: Number.parseInt(value) });
           }
         },
         productHasDiscount(product) {
@@ -34,7 +34,7 @@ const Price = {
             const amount = product.discount.amount;
 
             if (["flat", "percentage"].indexOf(type) !== -1) {
-              if (this.parsePrice(amount).greaterThan(this.parsePrice(0))) {
+              if (!this.parsePrice(amount).isZero()) {
                 return true;
               }
             }
@@ -42,20 +42,23 @@ const Price = {
           return false;
         },
         calcProductDiscount(product) {
+          const price = this.parsePrice(product.price).multiply(product.qty);
           if (this.productHasDiscount(product)) {
-            const price = this.parsePrice(product.price).multiply(product.qty);
             switch (product.discount.type) {
               case "flat":
                 return price.subtract(this.parsePrice(product.discount));
               case "percentage":
-                return price.subtract(
-                  price.percentage(product.discount.amount)
-                );
+                const multiplier = Number.parseInt(product.discount.amount);
+                if (multiplier > 0) {
+                  return price.subtract(price.percentage(multiplier));
+                } else {
+                  return price;
+                }
               default:
-                return this.parsePrice(product.price);
+                return price;
             }
           } else {
-            return this.parsePrice(product.price);
+            return price;
           }
         }
       }

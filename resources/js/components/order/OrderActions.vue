@@ -140,7 +140,7 @@ export default {
       "order_id",
       "cart_products",
       "order_status",
-      "payments",
+      "transactions",
       "order_page_actions"
     ]),
 
@@ -201,7 +201,7 @@ export default {
     },
     canRefund() {
       if (
-        this.payments.length > 0 &&
+        this.transactions.length > 0 &&
         (this.order_status !==
           ["completed", "canceled"].indexOf(this.order_status)) !==
           -1
