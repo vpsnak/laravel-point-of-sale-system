@@ -32,34 +32,30 @@
             <template v-slot:activator="{ on }">
               <v-btn icon v-on="on">
                 <v-icon>
-                  plus
+                  mdi-plus
                 </v-icon>
               </v-btn>
             </template>
             <v-list>
-              <v-list-item>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <v-btn
-                      @click="addDummyProductDialog()"
-                      v-on="on"
-                      class="mx-1"
-                    >
-                      <v-icon left>mdi-flower</v-icon>Custom <br />Product
-                    </v-btn>
-                  </template>
-                  <span>Add custom product</span>
-                </v-tooltip>
+              <v-list-item @click="addCustomProductDialog()">
+                <v-list-item-icon>
+                  <v-icon>mdi-flower</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    Add custom product
+                  </v-list-item-title>
+                </v-list-item-content>
               </v-list-item>
-              <v-list-item>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <v-btn @click="giftcardDialog()" v-on="on" class="mx-1">
-                      <v-icon left>mdi-credit-card-plus</v-icon>Gift <br />Card
-                    </v-btn>
-                  </template>
-                  <span>Add gift card</span>
-                </v-tooltip>
+              <v-list-item @click="giftcardDialog()">
+                <v-list-item-icon>
+                  <v-icon>mdi-wallet-giftcard</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    Add giftcard
+                  </v-list-item-title>
+                </v-list-item-content>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -472,15 +468,19 @@ export default {
         show: true,
         component: "giftCardToCartForm",
         title: "Add a gift card",
-        cancelBtnTxt: "Close"
+        cancelBtnTxt: "Close",
+        icon: "mdi-wallet-giftcard",
+        titleCloseBtn: true
       });
     },
-    addDummyProductDialog() {
+    addCustomProductDialog() {
       this.setDialog({
         show: true,
-        component: "dummyProductForm",
+        component: "customProductForm",
         title: "Add a custom product",
-        cancelBtnTxt: "Close"
+        cancelBtnTxt: "Close",
+        icon: "mdi-flower",
+        titleCloseBtn: true
       });
     }
   }
