@@ -28,22 +28,49 @@
             @click:clear="(currentPage = 1), getAllProducts()"
           ></v-text-field>
 
-          <v-tooltip bottom>
+          <v-menu offset-y>
             <template v-slot:activator="{ on }">
-              <v-btn @click="addDummyProductDialog()" v-on="on" class="mx-1">
-                <v-icon left>mdi-flower</v-icon>Custom <br />Product
+              <v-btn icon v-on="on">
+                <v-icon>
+                  mdi-plus-box-outline
+                </v-icon>
               </v-btn>
             </template>
-            <span>Add custom product</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-btn @click="giftcardDialog()" v-on="on" class="mx-1">
-                <v-icon left>mdi-credit-card-plus</v-icon>Gift <br />Card
-              </v-btn>
-            </template>
-            <span>Add gift card</span>
-          </v-tooltip>
+            <v-list>
+              <v-list-item
+                v-for="(item, index) in items"
+                :key="index"
+                @click=""
+              >
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      @click="addDummyProductDialog()"
+                      v-on="on"
+                      class="mx-1"
+                    >
+                      <v-icon left>mdi-flower</v-icon>Custom <br />Product
+                    </v-btn>
+                  </template>
+                  <span>Add custom product</span>
+                </v-tooltip>
+              </v-list-item>
+              <v-list-item
+                v-for="(item, index) in items"
+                :key="index"
+                @click=""
+              >
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-btn @click="giftcardDialog()" v-on="on" class="mx-1">
+                      <v-icon left>mdi-credit-card-plus</v-icon>Gift <br />Card
+                    </v-btn>
+                  </template>
+                  <span>Add gift card</span>
+                </v-tooltip>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </v-row>
 
         <v-row align="center" justify="center">
