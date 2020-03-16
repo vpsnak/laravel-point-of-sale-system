@@ -158,7 +158,7 @@
         <v-col :lg="2" :md="3" :cols="6" v-if="paymentType.type !== 'coupon'">
           <ValidationProvider
             :rules="`required|between:0.01,${amountRules}`"
-            v-slot="{ errors, valid }"
+            v-slot="{ errors }"
             name="Payment amount"
           >
             <v-text-field
@@ -172,7 +172,6 @@
               prefix="$"
               v-model="amount"
               :error="errors[0] ? true : false"
-              :success="valid"
             ></v-text-field>
           </ValidationProvider>
         </v-col>
@@ -419,24 +418,6 @@ export default {
           this.makePaymentLoading = false;
           this.setCheckoutLoading(false);
         });
-    },
-    max() {
-      if (this.paymentType !== "cash") {
-        if (this.paymentType === "house-account") {
-          if (this.houseAccountLimit.greaterThan(this.orderRemainingPrice)) {
-            this.paymentPrice.equalsTo(this.orderRemainingPrice);
-          } else if (this.paymentPrice.greaterThan(this.houseAccountLimit)) {
-            this.paymentPrice.equalsTo(this.houseAccountLimit);
-          }
-        }
-        if (this.paymentPrice.greaterThan(this.orderRemainingPrice)) {
-          this.paymentPrice.equalsTo(this.orderRemainingPrice);
-        }
-      } else if (
-        this.paymentPrice.greaterThan(this.$price({ amount: 999900 }))
-      ) {
-        this.amount = 999900;
-      }
     },
     fillDemoCard() {
       if (process.env.NODE_ENV === "development") {

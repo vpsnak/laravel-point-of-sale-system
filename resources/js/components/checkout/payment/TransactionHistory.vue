@@ -21,20 +21,26 @@
       :loading="false"
     >
       <template v-slot:item.status="{ item }">
-        <b :class="statusColor(item.status)">
+        <b :class="statusColor(item.status, 'status')">
           {{ parseStatus(item.status) }}
         </b>
       </template>
 
       <template v-slot:item.price="{ item }">
-        <b :class="statusColor(item.status)">
+        <b :class="statusColor(item.status, 'amount')">
           {{ parsePrice(item.price).toFormat() }}
         </b>
       </template>
 
       <template v-slot:item.change_price="{ item }">
-        <b :class="changePriceColor">
-          {{ changePrice(item.change_price).toFormat() }}
+        <b :class="changePriceColor(item)" v-if="!changePrice(item).isZero()">
+          {{ changePrice(item).toFormat() }}
+        </b>
+      </template>
+
+      <template v-slot:item.earnings_price="{ item }">
+        <b :class="statusColor(item.status, 'earnings')">
+          {{ earningsPrice(item) }}
         </b>
       </template>
 
@@ -112,6 +118,11 @@ export default {
           sortable: false
         },
         {
+          text: "Earnings",
+          value: "earnings_price",
+          sortable: false
+        },
+        {
           text: "Status",
           value: "status",
           sortable: false
@@ -141,15 +152,33 @@ export default {
     ...mapMutations("dialog", ["setDialog"]),
     ...mapActions("requests", ["request"]),
 
-    changePrice(change_price) {
-      if (change_price) {
-        return this.parsePrice(change_price);
+    earningsPrice(transaction) {
+      if (_.isObjectLike(transaction.payment)) {
+        return this.parsePrice(transaction.price)
+          .subtract(this.changePrice(transaction))
+          .toFormat();
       } else {
-        return this.$price();
+        return this.parsePrice(transaction.price)
+          .subtract(this.changePrice(transaction))
+          .multiply(-1)
+          .toFormat();
       }
     },
-    changePriceColor(change_price) {
-      if (!this.changePrice.isZero() && this.changePrice.isPositive()) {
+    changePrice(transaction) {
+      if (
+        _.has(transaction.payment, "change_price") &&
+        this.parsePrice(transaction.payment.change_price).isPositive()
+      ) {
+        return this.parsePrice(transaction.payment.change_price);
+      } else {
+        return this.parsePrice();
+      }
+    },
+    changePriceColor(item) {
+      if (
+        !this.changePrice(item).isZero() &&
+        this.changePrice(item).isPositive()
+      ) {
         return "amber--text";
       } else {
         return null;
@@ -166,14 +195,36 @@ export default {
     parseStatus(status) {
       return _.upperFirst(status);
     },
-    statusColor(status) {
+    statusColor(status, column) {
       switch (status) {
         case "approved":
+          switch (column) {
+            case "status":
+              return "green--text";
+            case "amount":
+              return "primary--text";
+            case "earnings":
+              return "green--text";
+          }
           return "green--text";
         case "failed":
-          return "red--text";
+          switch (column) {
+            case "status":
+              return "red--text";
+            case "amount":
+              return "primary--text";
+            case "earnings":
+              return "amber--text";
+          }
         case "refund approved":
-          return "amber--text";
+          switch (column) {
+            case "status":
+              return "green--text";
+            case "amount":
+              return "primary--text";
+            case "earnings":
+              return "red--text";
+          }
         default:
           return null;
       }

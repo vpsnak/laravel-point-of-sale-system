@@ -23,7 +23,6 @@ class TransactionController extends Controller
 {
     private $transactionData;
     private $paymentData;
-    private $refundData;
 
     public function createPayment(Request $request)
     {
@@ -377,10 +376,11 @@ class TransactionController extends Controller
     private function createLinkedRefund(Transaction $transaction, bool $succeed)
     {
         $user = auth()->user();
-        $type = $transaction->payment['type_name'];
+        $payment  = $transaction->payment;
+        $type = $payment['type_name'];
 
         $refundTransaction = Transaction::create([
-            'price' => $transaction->price,
+            'price' => $transaction->price->subtract($payment->change_price),
             'status' => $succeed ? 'refund approved' : 'refund failed',
             'cash_register_id' => $user->open_register->cash_register_id,
             'order_id' => $transaction->order->id,
