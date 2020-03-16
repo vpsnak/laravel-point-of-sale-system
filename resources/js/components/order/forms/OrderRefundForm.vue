@@ -82,7 +82,7 @@ export default {
   computed: {
     ...mapState("cart", [
       "order_id",
-      "order_paid_price",
+      "order_income_price",
       "order_total_price",
       "order_status"
     ]),
@@ -91,7 +91,7 @@ export default {
       if (this.order_status === "paid") {
         return this.order_total_price;
       } else {
-        return this.order_paid_price;
+        return this.order_income_price;
       }
     },
     getIcon() {

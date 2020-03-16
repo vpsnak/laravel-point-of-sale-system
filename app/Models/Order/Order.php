@@ -17,7 +17,7 @@ class Order extends Model
         'mdse_price',
         'tax_price',
         'total_price',
-        'paid_price',
+        'income_price',
         'remaining_price',
     ];
 
@@ -200,23 +200,23 @@ class Order extends Model
             ->add($this->delivery_fees_price);
     }
 
-    public function getPaidPriceAttribute()
+    public function getIncomePriceAttribute()
     {
-        $paidPrice = new Money(0, new Currency($this->currency));
+        $incomePrice = new Money(0, new Currency($this->currency));
         foreach ($this->transactions as $transaction) {
             if (!empty($transaction->payment) && $transaction->status === 'approved') {
-                $paidPrice = $paidPrice->add($transaction->price);
-                $paidPrice = $paidPrice->subtract($transaction->payment->change_price);
+                $incomePrice = $incomePrice->add($transaction->price);
+                $incomePrice = $incomePrice->subtract($transaction->payment->change_price);
             } else if (!empty($transaction->refund && $transaction->status === 'refund approved')) {
-                $paidPrice = $paidPrice->subtract($transaction->price);
+                $incomePrice = $incomePrice->subtract($transaction->price);
             }
         }
-        return $paidPrice;
+        return $incomePrice;
     }
 
     public function getRemainingPriceAttribute()
     {
-        return $this->total_price->subtract($this->paid_price);
+        return $this->total_price->subtract($this->income_price);
     }
 
     public function masOrder()

@@ -81,9 +81,7 @@ export default {
   },
 
   created() {
-    this.getOrder(this.$route.params.id).then(() => {
-      this.loading = false;
-    });
+    this.getOrder(this.$route.params.id);
   },
 
   computed: {
@@ -112,19 +110,19 @@ export default {
       this.resetState();
     },
     getOrder(id) {
-      return new Promise((resolve, reject) => {
-        this.request({
-          method: "get",
-          url: `orders/get/${id}`
+      this.request({
+        method: "get",
+        url: `orders/get/${id}`
+      })
+        .then(response => {
+          this.loadOrder(response);
         })
-          .then(response => {
-            this.loadOrder(response);
-            resolve(true);
-          })
-          .catch(error => {
-            reject(error);
-          });
-      });
+        .catch(error => {
+          console.error(error);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     }
   }
 };

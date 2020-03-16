@@ -281,9 +281,9 @@ export default {
         this.order_remaining_price &&
         _.has(this.order_remaining_price, "amount")
       ) {
-        return this.$price(this.order_remaining_price);
+        return this.parsePrice(this.order_remaining_price);
       } else {
-        return this.$price();
+        return this.parsePrice();
       }
     },
     amountRules() {

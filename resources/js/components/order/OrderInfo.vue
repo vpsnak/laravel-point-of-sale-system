@@ -94,6 +94,7 @@ export default {
       noteDetails: false
     };
   },
+
   computed: {
     ...mapState("cart", [
       "order_id",

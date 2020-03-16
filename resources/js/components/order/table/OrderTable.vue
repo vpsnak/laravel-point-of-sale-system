@@ -16,26 +16,26 @@
     <template v-slot:item.status="{ item }">
       <orderStatusChip
         :latestStatus="item.status"
-        :orderId="item.id"
+        :orderId="Number(item.id)"
         :menu="true"
         :small="smallChips"
       />
     </template>
-    <template v-slot:item.total_price="{ item }">
+    <template v-slot:item.total_income="{ item }">
       <orderTotalChip
         :menu="true"
-        :totalPrice="item.total_price"
+        :totalPrice="item.total_income"
         :mdsePrice="item.mdse_price"
         :taxPrice="item.tax_price"
         :deliveryFeesPrice="item.delivery_fees_price"
         :small="smallChips"
       />
     </template>
-    <template v-slot:item.paid_price="{ item }">
+    <template v-slot:item.income_price="{ item }">
       <orderTotalPaidChip
         :orderId="item.id"
         :menu="true"
-        :paid_price="item.paid_price"
+        :income_price="item.income_price"
         :small="smallChips"
       />
     </template>

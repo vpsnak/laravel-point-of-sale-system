@@ -21,7 +21,7 @@
             :background="bgColor"
           >
             <h2>{{ total_paid.toFormat() }}</h2>
-            <h2>total paid</h2>
+            <h2>total income</h2>
           </vc-donut>
         </v-col>
         <v-col v-else cols="auto">
@@ -36,11 +36,11 @@
 import { mapState, mapActions } from "vuex";
 export default {
   props: {
-    orderId: String
+    orderId: Number
   },
 
   created() {
-    this.getPaymentAnalysis();
+    this.getEarningsAnalysis();
   },
 
   data() {
@@ -115,11 +115,11 @@ export default {
 
       return this.sections;
     },
-    getPaymentAnalysis() {
+    getEarningsAnalysis() {
       this.loading = true;
       const payload = {
         method: "get",
-        url: `orders/${this.$props.orderId}/payment-details`
+        url: `orders/${this.$props.orderId}/income-details`
       };
 
       this.request(payload)

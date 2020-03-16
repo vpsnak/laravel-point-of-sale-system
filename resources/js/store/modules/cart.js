@@ -181,7 +181,8 @@ export default {
       state.delivery.occasion = value;
     },
     setOrderId(state, value) {
-      state.order_id = value;
+      // patch, shouldn't be really needed
+      state.order_id = Number.parseInt(value);
     },
     setOrderStatus(state, value) {
       state.order_status = value;
@@ -192,8 +193,8 @@ export default {
     setOrderTotalPrice(state, value) {
       state.order_total_price = value;
     },
-    setOrderPaidPrice(state, value) {
-      state.order_paid_price = value;
+    setOrderIncomePrice(state, value) {
+      state.order_income_price = value;
     },
     setOrderTaxPrice(state, value) {
       state.order_tax_price = value;
@@ -348,7 +349,7 @@ export default {
       state.order_tax_price = { amount: 0 };
       state.order_remaining_price = { amount: 0 };
       state.order_change_price = { amount: 0 };
-      state.order_paid_price = { amount: 0 };
+      state.order_income_price = { amount: 0 };
       state.order_mdse_price = { amount: 0 };
       state.delivery_fees_price = { amount: 0 };
       state.transactions = [];
@@ -543,7 +544,7 @@ export default {
         context.commit("setOrderMasOrderStatus", order.mas_order);
 
         context.commit("setOrderTotalPrice", order.total_price);
-        context.commit("setOrderPaidPrice", order.paid_price);
+        context.commit("setOrderIncomePrice", order.income_price);
         context.commit("setOrderMdsePrice", order.mdse_price);
         context.commit("setOrderTaxPrice", order.tax_price);
         context.commit("setOrderChangePrice", order.change);

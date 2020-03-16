@@ -1,19 +1,15 @@
 <template>
-  <v-card class="pa-3">
-    <v-container>
-      <v-row dense align="center" justify="space-between">
-        <customerSearch
-          v-if="$props.showCustomer"
-          :editable="$props.editable"
-          :keywordLength="3"
-        />
-        <cartMethods v-if="$props.showMethods" />
-      </v-row>
-
-      <v-divider v-if="$props.showMethods" />
-
+  <v-card>
+    <v-container class="pa-0 ">
+      <customerSearch
+        v-if="$props.showCustomer"
+        :editable="$props.editable"
+        :showMethods="$props.showMethods"
+        :keywordLength="3"
+      />
       <v-divider v-if="$props.showCustomer" />
-
+    </v-container>
+    <v-container>
       <cartProducts :editable="$props.editable" />
 
       <cartDiscount

@@ -1,8 +1,10 @@
 <template>
-  <v-row align="center" justify="center" no-gutters>
+  <v-row align="center" class="mx-3">
     <v-combobox
+      style="max-width:43vw;"
+      solo
       loader-height="5"
-      class="pt-5"
+      class="pt-5 mt-2"
       ref="searchfield"
       :no-filter="true"
       v-if="editable"
@@ -16,8 +18,8 @@
       hide-no-data
       hide-selected
       :item-text="getCustomerFullname"
-      label="Select customer"
-      placeholder="Start typing to Search"
+      label="Search customer"
+      placeholder="Search customer"
       prepend-inner-icon="mdi-account-search"
       return-object
       @blur="checkIfObjectEvent"
@@ -78,6 +80,7 @@
       <span>Add a customer</span>
     </v-tooltip>
     <v-divider vertical class="mx-1"></v-divider>
+    <cartMethods v-if="$props.showMethods" />
   </v-row>
 </template>
 <script>
@@ -98,6 +101,7 @@ export default {
   },
 
   props: {
+    showMethods: Boolean,
     keywordLength: Number,
     editable: Boolean
   },

@@ -50,7 +50,7 @@ class Payment extends Model
 
     public function getIsRefundableAttribute()
     {
-        if ($this->status === 'approved') {
+        if ($this->transaction()->without('payment')->first()->status === 'approved') {
             // @TODO calc if refundable using refund table
             return true;
         } else {

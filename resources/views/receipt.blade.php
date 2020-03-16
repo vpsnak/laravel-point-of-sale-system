@@ -257,7 +257,7 @@
             <table style="font-size:14px;">
                 <tr>
                     <th style="text-align: end;">Total Amt Tendered:</th>
-                    <td style="text-align: end;">${{ $moneyFormatter->format($order->paid_price) }}</td>
+                    <td style="text-align: end;">${{ $moneyFormatter->format($order->income_price) }}</td>
                 </tr>
                 <tr>
                     <th style="text-align: end;">Customer Change:</th>

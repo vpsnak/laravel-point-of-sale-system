@@ -29,10 +29,7 @@ class OrderController extends Controller
 
     public function all()
     {
-        return response(Order::without([
-            'items',
-            'payments',
-        ])->paginate());
+        return response(Order::paginate());
     }
 
     public function getOne(Order $model)

@@ -8,7 +8,7 @@
         <orderCostAnalysis />
       </v-col>
       <v-col :md="3" :cols="12">
-        <orderPaymentAnalysis :orderId="$route.params.id" />
+        <orderIncomeAnalysis :orderId="$route.params.id" />
       </v-col>
     </v-row>
     <v-row no-gutters>
