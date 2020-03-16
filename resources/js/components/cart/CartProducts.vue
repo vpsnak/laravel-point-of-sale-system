@@ -105,9 +105,9 @@
                     @click.stop
                     @blur="limits(product)"
                     @keyup="limits(product)"
-                    :prepend-inner-icon="editable ? 'remove' : null"
+                    prepend-inner-icon="remove"
                     @click:prepend-inner.stop="decreaseProductQty(product)"
-                    :append-icon="editable ? 'add' : null"
+                    append-icon="add"
                     @click:append.stop="increaseProductQty(product)"
                     persistent-hint
                     :hint="editPriceHint(null)"
