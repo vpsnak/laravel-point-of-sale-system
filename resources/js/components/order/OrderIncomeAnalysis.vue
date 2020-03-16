@@ -8,7 +8,7 @@
     </v-card-title>
     <v-container>
       <v-row justify="center" align="center">
-        <v-progress-circular v-if="loading" indeterminate color="secondary" />
+        <v-progress-circular v-if="loading" indeterminate color="primary" />
 
         <v-col v-else-if="total_paid.greaterThan($price({ amount: 0 }))">
           <vc-donut

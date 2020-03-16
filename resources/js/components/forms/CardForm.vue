@@ -112,7 +112,7 @@
               type="submit"
               :loading="loading"
               :disabled="invalid || loading"
-              color="secondary"
+              color="primary"
               >submit</v-btn
             >
           </v-col>

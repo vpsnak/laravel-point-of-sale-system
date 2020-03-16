@@ -11,7 +11,7 @@
       <v-chip
         pill
         v-on="$props.menu ? on : null"
-        color="secondary"
+        color="primary"
         :small="small"
       >
         <v-icon left>mdi-account-circle</v-icon>

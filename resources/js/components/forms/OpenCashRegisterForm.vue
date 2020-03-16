@@ -80,7 +80,7 @@
         </v-row>
         <v-row align="center" justify="center">
           <v-btn
-            color="secondary"
+            color="primary"
             type="submit"
             :loading="submitLoading"
             :disabled="disableOpenCashRegister || invalid || loading"

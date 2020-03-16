@@ -8,7 +8,7 @@
     outlined
   ></v-textarea>
   <div v-else>
-    <v-progress-circular indeterminate color="secondary"></v-progress-circular>
+    <v-progress-circular indeterminate color="primary"></v-progress-circular>
   </div>
 </template>
 

@@ -22,7 +22,7 @@
         <v-row>
           <v-col cols="12" align="center" justify="center">
             <v-btn
-              color="secondary"
+              color="primary"
               class="mr-4"
               type="submit"
               :disabled="invalid || loading"

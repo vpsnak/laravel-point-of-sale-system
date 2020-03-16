@@ -21,7 +21,7 @@
     </ValidationProvider>
     <v-row>
       <v-col cols="12" align="center" justify="center">
-        <v-btn color="secondary" class="mr-4" type="submit" :disabled="invalid">
+        <v-btn color="primary" class="mr-4" type="submit" :disabled="invalid">
           Add to cart
         </v-btn>
       </v-col>

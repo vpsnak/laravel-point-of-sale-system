@@ -9,7 +9,7 @@
         ​<v-progress-circular
           v-if="paymentTypesLoading"
           indeterminate
-          color="secondary"
+          color="primary"
         ></v-progress-circular>
         <v-chip-group
           v-else

@@ -10,7 +10,7 @@
         <v-progress-circular
           v-if="payment_types_loading"
           indeterminate
-          color="secondary"
+          color="primary"
         ></v-progress-circular>
         <v-col :cols="12" v-else>
           <v-btn-toggle
