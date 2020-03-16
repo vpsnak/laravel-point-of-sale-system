@@ -8,9 +8,8 @@ class StorePickup extends Model
 {
     protected $fillable = [
         'name',
-        'street',
-        'street1',
         'region_id',
+        'address_id'
     ];
 
     protected $casts = [
@@ -18,6 +17,12 @@ class StorePickup extends Model
         'created_at' => 'datetime:m/d/Y H:i:s',
         'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
+
+
+    public function address()
+    {
+        return $this->hasOne(Address::class);
+    }
 
     public function region()
     {

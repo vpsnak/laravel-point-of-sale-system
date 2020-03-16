@@ -23,8 +23,9 @@ class Address extends Model
         'is_default_shipping',
         'location',
         'location_name',
-        'customer_id',
 
+        'customer_id',
+        'store_pickup_id',
         'magento_id'
     ];
 
@@ -65,6 +66,11 @@ class Address extends Model
             }
         }
         $this->attributes['is_default_billing'] = $value;
+    }
+
+    public function storePickup()
+    {
+        return $this->belongsTo(StorePickup::class);
     }
 
     public function customer()
