@@ -11,7 +11,7 @@
       <h5 v-if="$props.title">Store</h5>
       <v-chip :small="small" pill v-on="$props.menu ? on : false">
         <v-icon left>mdi-store</v-icon>
-        {{ $props.store.name }}
+        <b>{{ $props.store.name }}</b>
       </v-chip>
     </template>
     <v-card class="pa-5" width="450" outlined shaped>

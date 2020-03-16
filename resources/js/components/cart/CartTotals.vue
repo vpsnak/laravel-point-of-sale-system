@@ -98,10 +98,13 @@ export default {
   },
 
   watch: {
-    immediate: true,
-    orderTotal(value) {
-      this.setOrderTotalPrice(value.toJSON());
-      this.setOrderRemainingPrice(value.toJSON());
+    orderTotal: {
+      immediate: true,
+
+      handler(value) {
+        this.setOrderTotalPrice(value.toJSON());
+        this.setOrderRemainingPrice(value.toJSON());
+      }
     }
   },
 

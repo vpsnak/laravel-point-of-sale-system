@@ -21,10 +21,10 @@
         :small="smallChips"
       />
     </template>
-    <template v-slot:item.total_income="{ item }">
+    <template v-slot:item.total_price="{ item }">
       <orderTotalChip
         :menu="true"
-        :totalPrice="item.total_income"
+        :totalPrice="item.total_price"
         :mdsePrice="item.mdse_price"
         :taxPrice="item.tax_price"
         :deliveryFeesPrice="item.delivery_fees_price"

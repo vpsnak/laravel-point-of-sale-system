@@ -21,12 +21,14 @@ import { mapGetters, mapMutations, mapState } from "vuex";
 
 export default {
   created() {
+    this.applyUserTheme();
     if (this.auth && this.app_load <= 100) {
       this.$router.replace({ name: "landingPage" });
     }
   },
   computed: {
     ...mapGetters(["auth", "role"]),
+    ...mapState(["user"]),
     ...mapState("config", ["app_load"]),
     ...mapState("cart", ["checkoutDialog"]),
 
@@ -38,8 +40,33 @@ export default {
       }
     }
   },
+
+  watch: {
+    user: {
+      deep: true,
+      immediate: true,
+      handler() {
+        this.applyUserTheme();
+      }
+    }
+  },
+
   methods: {
-    ...mapMutations(["logout"])
+    ...mapMutations(["logout"]),
+
+    applyUserTheme() {
+      if (this.auth && _.has(this.user, "settings")) {
+        const theme_dark = _.find(this.user.settings, {
+          key: "theme_dark"
+        });
+
+        if (theme_dark.value === "0") {
+          this.$vuetify.theme.dark = false;
+        } else {
+          this.$vuetify.theme.dark = true;
+        }
+      }
+    }
   }
 };
 </script>

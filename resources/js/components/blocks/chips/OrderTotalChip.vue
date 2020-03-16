@@ -14,7 +14,7 @@
         :small="small"
         dark
       >
-        {{ parsePrice($props.totalPrice).toFormat() }}
+        <b>{{ parsePrice($props.totalPrice).toFormat() }}</b>
       </v-chip>
     </template>
     <orderCostAnalysis />

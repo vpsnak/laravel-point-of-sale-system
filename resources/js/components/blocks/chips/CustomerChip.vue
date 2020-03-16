@@ -15,7 +15,7 @@
         :small="small"
       >
         <v-icon left>mdi-account-outline</v-icon>
-        {{ $props.customer ? $props.customer.full_name : "Guest" }}
+        <b>{{ $props.customer ? $props.customer.full_name : "Guest" }}</b>
       </v-chip>
     </template>
     <v-card width="450" class="pa-5" outlined shaped>

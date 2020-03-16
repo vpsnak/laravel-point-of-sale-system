@@ -15,7 +15,7 @@
         :small="small"
       >
         <v-icon left>mdi-account-circle</v-icon>
-        {{ $props.createdBy.name }}
+        <b>{{ $props.createdBy.name }}</b>
       </v-chip>
     </template>
     <v-card width="450" class="pa-5" outlined shaped>

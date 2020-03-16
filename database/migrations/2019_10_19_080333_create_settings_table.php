@@ -18,6 +18,8 @@ class CreateSettingsTable extends Migration
 
             $table->string('key');
             $table->string('value')->nullable();
+            $table->json('data')->nullable();
+            $table->foreignId('user_id')->nullable();
 
             $table->timestampsTz();
         });

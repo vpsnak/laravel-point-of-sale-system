@@ -2,7 +2,7 @@
   <v-container style="height:41vh; overflow-y:auto">
     <v-row>
       <v-col>
-        <v-expansion-panels>
+        <v-expansion-panels accordion>
           <v-expansion-panel
             v-for="(product, index) in products"
             :key="product.id"

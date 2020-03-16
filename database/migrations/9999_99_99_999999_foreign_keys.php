@@ -13,6 +13,10 @@ class ForeignKeys extends Migration
      */
     public function up()
     {
+        Schema::table('settings', function (Blueprint $table) {
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('restrict');
+        });
+
         Schema::table('cards', function (Blueprint $table) {
             $table->foreign('created_by_id')->references('id')->on('users')->onDelete('restrict');
         });
@@ -142,6 +146,10 @@ class ForeignKeys extends Migration
      */
     public function down()
     {
+        Schema::table('settings', function (Blueprint $table) {
+            $table->dropForeign(['user_id']);
+        });
+
         Schema::table('cards', function (Blueprint $table) {
             $table->dropForeign(['created_by_id']);
         });

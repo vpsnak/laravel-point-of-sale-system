@@ -15,7 +15,7 @@
         :small="small"
       >
         <v-icon left>{{ parseMethod.icon }}</v-icon>
-        {{ parseMethod.name }}
+        <b>{{ parseMethod.name }}</b>
       </v-chip>
     </template>
     <v-card class="pa-5" outlined width="600" shaped>

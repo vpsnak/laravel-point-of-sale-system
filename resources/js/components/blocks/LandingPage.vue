@@ -58,7 +58,6 @@ export default {
 
   data() {
     return {
-      color: "white",
       error_txt: ""
     };
   },
@@ -67,6 +66,13 @@ export default {
     ...mapState(["token"]),
     ...mapState("config", ["app_load", "verbose", "init_info"]),
 
+    color() {
+      if (this.$vuetify.theme.dark) {
+        return "white";
+      } else {
+        return "black";
+      }
+    },
     loadPercent: {
       get() {
         return this.app_load;

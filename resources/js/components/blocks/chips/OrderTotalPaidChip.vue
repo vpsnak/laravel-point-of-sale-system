@@ -13,7 +13,7 @@
         color="primary"
         :small="small"
       >
-        {{ parsePrice($props.income_price).toFormat() }}
+        <b>{{ parsePrice($props.income_price).toFormat() }}</b>
       </v-chip>
     </template>
     <orderIncomeAnalysis :orderId="$props.orderId" />

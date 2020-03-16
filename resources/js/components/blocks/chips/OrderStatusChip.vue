@@ -15,7 +15,7 @@
         :small="small"
       >
         <v-icon left>{{ $props.latestStatus.icon }}</v-icon>
-        {{ $props.latestStatus.text }}
+        <b>{{ $props.latestStatus.text }}</b>
       </v-chip>
     </template>
     <v-card class="pa-5 fill-height" outlined width="750" shaped>
