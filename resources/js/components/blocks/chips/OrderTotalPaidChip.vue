@@ -16,7 +16,7 @@
         {{ parsePrice($props.paid_price).toFormat() }}
       </v-chip>
     </template>
-    <orderPaymentAnalysis :orderId="Number($props.orderId)" />
+    <orderPaymentAnalysis :orderId="$props.orderId" />
   </v-menu>
 </template>
 

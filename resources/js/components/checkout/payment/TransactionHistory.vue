@@ -20,12 +20,6 @@
       hide-default-footer
       :loading="false"
     >
-      <template v-slot:item.status="{ item }">
-        <b :class="statusColor(item.status, 'status')">
-          {{ parseStatus(item.status) }}
-        </b>
-      </template>
-
       <template v-slot:item.price="{ item }">
         <b :class="statusColor(item.status, 'amount')">
           {{ parsePrice(item.price).toFormat() }}
@@ -41,6 +35,12 @@
       <template v-slot:item.earnings_price="{ item }">
         <b :class="statusColor(item.status, 'earnings')">
           {{ earningsPrice(item) }}
+        </b>
+      </template>
+
+      <template v-slot:item.status="{ item }">
+        <b :class="statusColor(item.status, 'status')">
+          {{ parseStatus(item.status) }}
         </b>
       </template>
 
@@ -153,7 +153,12 @@ export default {
     ...mapActions("requests", ["request"]),
 
     earningsPrice(transaction) {
-      if (_.isObjectLike(transaction.payment)) {
+      if (
+        _.isObjectLike(transaction.payment) &&
+        transaction.status === "failed"
+      ) {
+        return this.parsePrice().toFormat();
+      } else if (_.isObjectLike(transaction.payment)) {
         return this.parsePrice(transaction.price)
           .subtract(this.changePrice(transaction))
           .toFormat();
@@ -185,7 +190,6 @@ export default {
       }
     },
     enableRefund(item) {
-      console.log(item);
       if (_.has(item.payment, "is_refundable") && item.payment.is_refundable) {
         return true;
       } else {

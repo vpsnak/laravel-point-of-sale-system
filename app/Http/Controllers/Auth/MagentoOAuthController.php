@@ -83,12 +83,6 @@ class MagentoOAuthController extends Controller
                         'GET',
                         ['Content-Type' => 'application/json', 'Accept' => '*/*']
                     );
-                    // if ($this->oauth_client->getLastResponseInfo()['http_code'] !== 200) {
-                    //     return response()->json([
-                    //         'status' => 'inactive',
-                    //         'message' => 'There was an error. You can not access data over REST api.'
-                    //     ]);
-                    // }
                     return response()->json([
                         'status' => 'active',
                         'message' => "Authenticated!"
