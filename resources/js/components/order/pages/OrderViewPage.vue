@@ -51,11 +51,11 @@
           <v-tooltip bottom v-if="order_id">
             <template v-slot:activator="{ on }">
               <v-btn
-                color="primary"
                 absolute
                 bottom
                 left
-                fab
+                icon
+                elevation="12"
                 v-on="on"
                 @click.stop="setOrderPageActions(true)"
               >
