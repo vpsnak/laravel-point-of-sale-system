@@ -17,9 +17,7 @@ class CreateStorePickupsTable extends Migration
             $table->id();
 
             $table->string('name');
-            $table->string('street');
-            $table->string('street1')->nullable();
-            $table->foreignId('region_id');
+            $table->foreignId('address_id');
 
             $table->timestampsTz();
         });

@@ -24,8 +24,9 @@ class AddressController extends Controller
     public function create(Request $request)
     {
         $this->address = $request->validate([
-            'customer_id' => 'required|exists:customers,id',
-            'store_pickup_id' => 'required|exists:customers,id',
+            'customer_id' => 'nullable|exists:customers,id',
+            'store_pickup_id' => 'nullable|exists:customers,id',
+            'name' => 'nullable|required_with:store_pickup_id',
             'first_name' => 'nullable|string|required_with:customer_id',
             'last_name' => 'nullable|string|required_with:customer_id',
             'street' => 'required|string',

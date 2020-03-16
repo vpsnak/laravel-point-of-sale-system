@@ -9,6 +9,7 @@ class Address extends Model
     protected $with = ['region'];
 
     protected $fillable = [
+        'name',
         'first_name',
         'last_name',
         'street',

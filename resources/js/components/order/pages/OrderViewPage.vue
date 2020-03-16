@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid :class="loading ? 'fill-height' : ''">
+  <v-container fluid class="fill-height">
     <v-row justify="center" align="center" v-if="loading || !order_id">
       <div class="text-center ma-12">
         <v-progress-circular
@@ -11,7 +11,7 @@
       </div>
     </v-row>
 
-    <v-row no-gutters v-else-if="order_id">
+    <v-row no-gutters v-else-if="order_id" class="fill-height">
       <v-col cols="12">
         <v-card class="fill-height">
           <v-card-title>

@@ -15,9 +15,10 @@ class CreateAddressesTable extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
+
             $table->foreignId('customer_id')->nullable();
             $table->foreignId('store_pickup_id')->nullable();
-
+            $table->string('name')->nullable();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('street');
@@ -32,7 +33,6 @@ class CreateAddressesTable extends Migration
             $table->boolean('is_default_shipping')->nullable();
             $table->foreignId('location')->nullable();
             $table->string('location_name')->nullable();
-
             $table->foreignId('magento_id')->nullable();
 
             $table->timestampsTz();

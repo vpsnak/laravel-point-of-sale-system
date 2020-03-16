@@ -96,6 +96,10 @@ class ForeignKeys extends Migration
             $table->foreign('country_id')->references('id')->on('countries');
         });
 
+        Schema::table('store_pickups', function (Blueprint $table) {
+            $table->foreign('address_id')->references('id')->on('addresses');
+        });
+
         Schema::table('addresses', function (Blueprint $table) {
             $table->foreign('region_id')->references('id')->on('regions');
             $table->foreign('customer_id')->references('id')->on('customers');
@@ -144,6 +148,10 @@ class ForeignKeys extends Migration
      */
     public function down()
     {
+        Schema::table('store_pickups', function (Blueprint $table) {
+            $table->dropForeign(['address_id'])->references('id')->on('addresses');
+        });
+
         Schema::table('settings', function (Blueprint $table) {
             $table->dropForeign(['user_id']);
         });

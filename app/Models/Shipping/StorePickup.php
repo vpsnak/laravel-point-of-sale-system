@@ -8,7 +8,6 @@ class StorePickup extends Model
 {
     protected $fillable = [
         'name',
-        'region_id',
         'address_id'
     ];
 
@@ -18,14 +17,8 @@ class StorePickup extends Model
         'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
 
-
     public function address()
     {
         return $this->hasOne(Address::class);
-    }
-
-    public function region()
-    {
-        return $this->belongsTo(Region::class);
     }
 }
