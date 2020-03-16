@@ -20,7 +20,7 @@ class ReceiptController extends Controller
         $currencies = new ISOCurrencies();
         $moneyFormatter = new DecimalMoneyFormatter($currencies);
 
-        foreach (json_decode($model['payments'], true) as $payment) {
+        foreach ($model->payments as $payment) {
             if ($payment['payment_type_name'] === 'card' || $payment['payment_type_name'] === 'pos-terminal') {
                 $payment['payment_type_name'] = 'Credit card';
             } else if ($payment['status'] === 'refunded') {
