@@ -26,15 +26,15 @@
         </b>
       </template>
 
-      <template v-slot:item.change_price="{ item }">
-        <b :class="changePriceColor(item)" v-if="!changePrice(item).isZero()">
-          {{ changePrice(item).toFormat() }}
-        </b>
-      </template>
-
       <template v-slot:item.earnings_price="{ item }">
         <b :class="statusColor(item.status, 'earnings')">
           {{ earningsPrice(item) }}
+        </b>
+      </template>
+
+      <template v-slot:item.change_price="{ item }">
+        <b :class="changePriceColor(item)" v-if="!changePrice(item).isZero()">
+          {{ changePrice(item).toFormat() }}
         </b>
       </template>
 
@@ -113,13 +113,13 @@ export default {
           sortable: false
         },
         {
-          text: "Change",
-          value: "change_price",
+          text: "Earnings",
+          value: "earnings_price",
           sortable: false
         },
         {
-          text: "Earnings",
-          value: "earnings_price",
+          text: "Change",
+          value: "change_price",
           sortable: false
         },
         {
