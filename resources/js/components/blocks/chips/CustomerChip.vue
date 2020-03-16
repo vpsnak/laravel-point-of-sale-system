@@ -5,6 +5,7 @@
     right
     transition="scale-transition"
     :close-on-content-click="false"
+    offset-y
   >
     <template v-slot:activator="{ on }">
       <h5 v-if="$props.title">Customer</h5>
@@ -18,7 +19,7 @@
         <b>{{ $props.customer ? $props.customer.full_name : "Guest" }}</b>
       </v-chip>
     </template>
-    <v-card width="450" class="pa-5" outlined shaped>
+    <v-card width="450" class="pa-5" outlined>
       <customerForm :model="$props.customer" :readonly="true" />
     </v-card>
   </v-menu>

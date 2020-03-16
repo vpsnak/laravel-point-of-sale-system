@@ -6,6 +6,7 @@
     transition="scale-transition"
     :close-on-content-click="false"
     :small="small"
+    offset-y
   >
     <template v-slot:activator="{ on }">
       <h5 v-if="$props.title">Store</h5>
@@ -14,7 +15,7 @@
         <b>{{ $props.store.name }}</b>
       </v-chip>
     </template>
-    <v-card class="pa-5" width="450" outlined shaped>
+    <v-card class="pa-5" width="450" outlined>
       <storeForm :model="$props.store" :readonly="true" />
     </v-card>
   </v-menu>
