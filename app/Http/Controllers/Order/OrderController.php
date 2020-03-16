@@ -29,15 +29,12 @@ class OrderController extends Controller
 
     public function all()
     {
-        return response(Order::without([
-            'items',
-            'payments',
-        ])->paginate());
+        return response(Order::paginate());
     }
 
     public function getOne(Order $model)
     {
-        return response()->json($model->append('payments')->load(['customer.addresses']), 200, [], JSON_NUMERIC_CHECK);
+        return response($model->load(['customer.addresses']));
     }
 
     public function updateItems(Request $request)
@@ -72,7 +69,7 @@ class OrderController extends Controller
         $this->order->save();
 
         $orderStatusController = new OrderStatusController($this->order);
-        $orderStatusController->updateOrderStatus(null, true);
+        $orderStatusController->updateOrderStatus(true);
 
         ProcessOrder::dispatchNow($this->order);
 
@@ -118,7 +115,7 @@ class OrderController extends Controller
         $this->order->save();
 
         $orderStatusController = new OrderStatusController($this->order);
-        $orderStatusController->updateOrderStatus(null, true);
+        $orderStatusController->updateOrderStatus(true);
 
         ProcessOrder::dispatchNow($this->order);
 
@@ -169,16 +166,16 @@ class OrderController extends Controller
         $this->user = auth()->user();
         $this->store = $this->user->open_register->cash_register->store;
 
-        $this->order_data['user_id'] = $this->user->id;
+        $this->order_data['created_by_id'] = $this->user->id;
         $this->order_data['store_id'] = $this->store->id;
 
         $this->parseAddresses();
         $this->parseStoreData();
         $this->parseProducts();
 
-        $this->order = Order::createWithoutEvents($this->order_data);
+        $this->order = Order::create($this->order_data);
         $submittedStatusId = Status::where('value', 'submitted')->firstOrFail('id');
-        $this->order->statuses()->attach($submittedStatusId, ['user_id' => $this->user->id]);
+        $this->order->statuses()->attach($submittedStatusId, ['processed_by_id' => $this->user->id]);
         ProcessOrder::dispatchNow($this->order);
 
         return response([
@@ -359,7 +356,6 @@ class OrderController extends Controller
 
         $query = Order::without([
             'items',
-            'payments',
             'store_pickup'
         ]);
 
@@ -399,11 +395,17 @@ class OrderController extends Controller
             $query = $query->where('customer_id', $this->order_data['filters']['customer_id']);
         }
 
-        if (isset($this->order_data['filters']['cb_statuses']) && $this->order_data['filters']['cb_statuses']  && isset($this->order_data['filters']['statuses'])) {
+        if (
+            isset($this->order_data['filters']['cb_statuses'])
+            && $this->order_data['filters']['cb_statuses']
+            && isset($this->order_data['filters']['statuses'])
+        ) {
             $statuses = $this->order_data['filters']['statuses'];
-            $query = $query->with('statuses')->whereHas('statuses', function (Builder $query) use ($statuses) {
-                $query->latest()->whereIn('status_id', $statuses);
-            });
+            $query = $query
+                ->whereHas('lastStatus', function (Builder $query) use ($statuses) {
+                    $query
+                        ->whereIn('status_id', $statuses);
+                });
         }
 
         return $query;

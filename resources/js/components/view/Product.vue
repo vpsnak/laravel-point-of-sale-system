@@ -2,7 +2,7 @@
   <v-container v-if="productData">
     <v-row>
       <v-col cols="12" md="6">
-        <v-card :img="productData.photo_url" height="100%"></v-card>
+        <v-img :src="productData.photo_url" height="100%"></v-img>
       </v-col>
       <v-col cols="12" md="6">
         <v-card>
@@ -62,7 +62,7 @@
       <v-col cols="12" align="center" justify="center">
         <v-progress-circular
           indeterminate
-          color="secondary"
+          color="primary"
         ></v-progress-circular>
       </v-col>
     </v-row>

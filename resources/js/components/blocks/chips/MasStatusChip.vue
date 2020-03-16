@@ -5,7 +5,7 @@
       <v-icon left>
         {{ parseMasStatus.icon }}
       </v-icon>
-      {{ parseMasStatus.name }}
+      <b>{{ parseMasStatus.name }}</b>
     </v-chip>
   </div>
 </template>

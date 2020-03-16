@@ -12,6 +12,7 @@ import OpenCashRegister from "../components/pages/OpenCashRegister";
 import Orders from "../components/order/table/OrderTable";
 import OrderViewPage from "../components/order/pages/OrderViewPage";
 import OrderEditOptionsPage from "../components/order/pages/OrderEditOptionsPage";
+import Settings from "../components/settings/SettingsPage";
 // data tables
 import Customers from "../components/tables/CustomerTable";
 import Products from "../components/tables/ProductTable";
@@ -218,6 +219,16 @@ export default [
     path: "/coupons",
     components: {
       default: Coupons,
+      side_menu: SideMenu,
+      top_menu: TopMenu
+    },
+    meta: { requiresAuth: true }
+  },
+  {
+    name: "Settings",
+    path: "/settings",
+    components: {
+      default: Settings,
       side_menu: SideMenu,
       top_menu: TopMenu
     },

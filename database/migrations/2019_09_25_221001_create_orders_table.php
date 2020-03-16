@@ -14,14 +14,14 @@ class CreateOrdersTable extends Migration
     public function up()
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->mediumIncrements('id');
+            $table->id();
 
-            $table->unsignedTinyInteger('store_id');
+            $table->foreignId('store_id');
             $table->enum('method', ['retail', 'pickup', 'delivery']);
             $table->json('items');
             $table->text('notes')->nullable();
 
-            $table->unsignedMediumInteger('customer_id')->nullable();
+            $table->foreignId('customer_id')->nullable();
             $table->json('billing_address')->nullable();
             $table->json('delivery')->nullable();
 
@@ -31,12 +31,12 @@ class CreateOrdersTable extends Migration
             $table->json('discount')->nullable();
             $table->json('delivery_fees_price')->nullable();
 
-            $table->unsignedSmallInteger('user_id');
-            $table->unsignedMediumInteger('mas_order_id')->nullable();
+            $table->foreignId('created_by_id');
+            $table->foreignId('mas_order_id')->nullable();
 
-            $table->unsignedMediumInteger('magento_id')->nullable();
-            $table->unsignedMediumInteger('magento_shipping_address_id')->nullable();
-            $table->unsignedMediumInteger('magento_billing_address_id')->nullable();
+            $table->foreignId('magento_id')->nullable();
+            $table->foreignId('magento_shipping_address_id')->nullable();
+            $table->foreignId('magento_billing_address_id')->nullable();
 
             $table->timestampsTz();
         });

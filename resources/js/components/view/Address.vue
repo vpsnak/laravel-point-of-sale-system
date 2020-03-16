@@ -42,7 +42,7 @@
       <v-col cols="12" align="center" justify="center">
         <v-progress-circular
           indeterminate
-          color="secondary"
+          color="primary"
         ></v-progress-circular>
       </v-col>
     </v-row>

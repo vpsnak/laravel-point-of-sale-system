@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Setting;
 use App\User;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
@@ -38,7 +39,9 @@ class UserController extends Controller
             ],
         ]);
 
-        $user = User::findForPassport($validatedData['username']);
+        $user =
+            User::findForPassport($validatedData['username'])
+            ->load('settings', 'roles');
         $token = (json_decode((string) $response->getBody(), true))['access_token'];
 
         return response([
@@ -46,7 +49,7 @@ class UserController extends Controller
                 'msg' => ["Welcome <b>{$user->name}</b>!"],
                 'type' => 'info'
             ],
-            'user' => $user->load('roles'),
+            'user' => $user,
             'token' => "Bearer $token"
         ]);
     }
@@ -154,6 +157,12 @@ class UserController extends Controller
         ]);
 
         $user = User::create($validatedData);
+
+        Setting::create([
+            'key' => 'dark_mode',
+            'value' => null,
+            'user_id' => $user->id
+        ]);
 
         return response(['notification' => [
             'msg' => ["User {$user->name} created successfully!"],

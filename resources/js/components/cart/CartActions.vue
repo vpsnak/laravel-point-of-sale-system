@@ -1,27 +1,24 @@
 <template>
-  <div>
-    <v-divider />
-
-    <v-btn
-      dark
-      :color="checkoutColor"
-      block
-      class="my-2"
-      @click.stop="setCheckoutDialog(true)"
-      :disabled="disabled || !isValidCheckout"
-      >Checkout
-    </v-btn>
-
-    <v-divider />
-
-    <div class="d-flex align-center justify-center pa-2">
-      <v-tooltip bottom color="green">
+  <v-container>
+    <v-row>
+      <v-btn
+        outlined
+        dark
+        :color="checkoutColor"
+        block
+        class="my-2"
+        @click.stop="setCheckoutDialog(true)"
+        :disabled="disabled || !isValidCheckout"
+        >Checkout
+      </v-btn>
+    </v-row>
+    <v-row align="center" justify="space-around">
+      <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
             icon
+            fab
             @click="setDialog(cartRestoreDialog)"
-            class="flex-grow-1"
-            tile
             color="green"
             v-on="on"
             :disabled="!cartsOnHoldSize"
@@ -39,14 +36,13 @@
         </span>
       </v-tooltip>
 
-      <v-tooltip bottom color="orange">
+      <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
             icon
+            fab
             :disabled="disabled"
             @click="holdCart"
-            class="flex-grow-1"
-            tile
             color="orange"
             v-on="on"
           >
@@ -58,26 +54,25 @@
         </span>
       </v-tooltip>
 
-      <v-tooltip bottom color="red">
+      <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
             icon
+            fab
             @click.stop="setDialog(emptyCartDialog)"
             :disabled="disabled"
-            class="flex-grow-1"
-            tile
             color="red"
             v-on="on"
           >
-            <v-icon>mdi-cart-remove</v-icon>
+            <v-icon>mdi-delete-outline</v-icon>
           </v-btn>
         </template>
         <span>
           <b>Empty current cart</b>
         </span>
       </v-tooltip>
-    </div>
-  </div>
+    </v-row>
+  </v-container>
 </template>
 
 <script>

@@ -17,7 +17,7 @@ class GiftcardSeeder extends Seeder
             [
                 'name' => 'Zero Giftcard',
                 'code' => 'zero',
-                'enabled' => now(),
+                'enabled_at' => now(),
                 'price' => json_encode([
                     'amount' => 0,
                     'currency' => 'USD'
@@ -26,7 +26,7 @@ class GiftcardSeeder extends Seeder
             [
                 'name' => 'Dev Giftcard',
                 'code' => 'dev',
-                'enabled' => now(),
+                'enabled_at' => now(),
                 'price' => json_encode([
                     'amount' => 9999999,
                     'currency' => 'USD'
@@ -35,7 +35,7 @@ class GiftcardSeeder extends Seeder
             [
                 'name' => 'Disabled Giftcard',
                 'code' => 'disabled',
-                'enabled' => false,
+                'enabled_at' => null,
                 'price' => json_encode([
                     'amount' => 100000,
                     'currency' => 'USD'
@@ -46,7 +46,7 @@ class GiftcardSeeder extends Seeder
             Giftcard::create([
                 'name' => 'Inactive Giftcard',
                 'code' => '@' . str_pad($giftcard_code, 10, '0', STR_PAD_LEFT),
-                'enabled' => false,
+                'enabled_at' => null,
                 'price' => json_encode([
                     'amount' => 0,
                     'currency' => 'USD'

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Money\Money;
 use Money\Currency;
 use AjCastro\EagerLoadPivotRelations\EagerLoadPivotTrait;
-
+use App\Helper\PhpHelper;
 
 class Order extends Model
 {
@@ -17,7 +17,7 @@ class Order extends Model
         'mdse_price',
         'tax_price',
         'total_price',
-        'paid_price',
+        'income_price',
         'remaining_price',
     ];
 
@@ -35,7 +35,7 @@ class Order extends Model
         'store_id',
         'currency',
         'tax_percentage',
-        'user_id',
+        'created_by_id',
         'mas_order_id',
         'magento_id',
         'magento_shipping_address_id',
@@ -184,16 +184,6 @@ class Order extends Model
         $this->attributes['delivery_fees_price'] = $value;
     }
 
-    public function getPaymentsAttribute()
-    {
-        return $this->transactions()->where('type', 'payment')->get();
-    }
-
-    public function getRefundsAttribute()
-    {
-        return $this->transactions()->where('type', 'refund')->get();
-    }
-
     public function getTaxPriceAttribute()
     {
         return $this
@@ -210,21 +200,23 @@ class Order extends Model
             ->add($this->delivery_fees_price);
     }
 
-    public function getPaidPriceAttribute()
+    public function getIncomePriceAttribute()
     {
-        $paidPrice = new Money(0, new Currency($this->currency));
-        foreach ($this->payments as $payment) {
-            if ($payment->status === 'approved') {
-                $paidPrice = $paidPrice->add($payment->price);
-                $paidPrice = $paidPrice->subtract($payment->change_price);
+        $incomePrice = new Money(0, new Currency($this->currency));
+        foreach ($this->transactions as $transaction) {
+            if (!empty($transaction->payment) && $transaction->status === 'approved') {
+                $incomePrice = $incomePrice->add($transaction->price);
+                $incomePrice = $incomePrice->subtract($transaction->payment->change_price);
+            } else if (!empty($transaction->refund && $transaction->status === 'refund approved')) {
+                $incomePrice = $incomePrice->subtract($transaction->price);
             }
         }
-        return $paidPrice;
+        return $incomePrice;
     }
 
     public function getRemainingPriceAttribute()
     {
-        return $this->total_price->subtract($this->paid_price);
+        return $this->total_price->subtract($this->income_price);
     }
 
     public function masOrder()
@@ -249,7 +241,7 @@ class Order extends Model
 
     public function createdBy()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
     public function receipts()
@@ -272,7 +264,7 @@ class Order extends Model
         return $this
             ->belongsToMany(Status::class)
             ->using(OrderStatus::class)
-            ->withPivot('user_id')
+            ->withPivot('processed_by_id')
             ->withTimestamps(['created_at'])
             ->orderBy('created_at', 'desc');
     }
@@ -285,12 +277,5 @@ class Order extends Model
     public function getStatusAttribute()
     {
         return $this->lastStatus()->first();
-    }
-
-    public static function createWithoutEvents(array $options = [])
-    {
-        return static::withoutEvents(function () use ($options) {
-            return static::create($options);
-        });
     }
 }

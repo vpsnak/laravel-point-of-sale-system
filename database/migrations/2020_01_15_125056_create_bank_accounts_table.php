@@ -14,9 +14,9 @@ class CreateBankAccountsTable extends Migration
     public function up()
     {
         Schema::create('bank_accounts', function (Blueprint $table) {
-            $table->tinyIncrements('id');
+            $table->id();
 
-            $table->unsignedTinyInteger('company_id');
+            $table->foreignId('company_id');
             $table->string('type');
             $table->text('account');
         });

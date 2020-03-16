@@ -1,10 +1,11 @@
 <template>
   <v-menu
-    v-model="orderPaymentAnalysis"
+    v-model="orderIncomeAnalysis"
     bottom
     right
     transition="scale-transition"
     :close-on-content-click="false"
+    offset-y
   >
     <template v-slot:activator="{ on }">
       <v-chip
@@ -13,10 +14,10 @@
         color="primary"
         :small="small"
       >
-        {{ parsePrice($props.paid_price).toFormat() }}
+        <b>{{ parsePrice($props.income_price).toFormat() }}</b>
       </v-chip>
     </template>
-    <orderPaymentAnalysis :orderId="Number($props.orderId)" />
+    <orderIncomeAnalysis :orderId="$props.orderId" />
   </v-menu>
 </template>
 
@@ -29,12 +30,12 @@ export default {
     small: Boolean,
     menu: Boolean,
     orderId: Number,
-    paid_price: Object
+    income_price: Object
   },
 
   data() {
     return {
-      orderPaymentAnalysis: false
+      orderIncomeAnalysis: false
     };
   },
 
@@ -43,7 +44,7 @@ export default {
   },
 
   watch: {
-    orderPaymentAnalysis(value) {
+    orderIncomeAnalysis(value) {
       EventBus.$emit("overlay", value);
     }
   }

@@ -13,39 +13,49 @@
       height="15vh"
       fixed-header
       :headers="headers"
-      :items="payments"
+      :items="transactions"
       class="elevation-1"
       disable-pagination
       disable-filtering
       hide-default-footer
       :loading="false"
     >
-      <template v-slot:item.status="{ item }">
-        <b :class="statusColor(item.status)">
-          {{ parseStatus(item.status) }}
-        </b>
-      </template>
-
       <template v-slot:item.price="{ item }">
-        <b :class="statusColor(item.status)">
+        <b :class="statusColor(item.status, 'amount')">
           {{ parsePrice(item.price).toFormat() }}
         </b>
       </template>
 
       <template v-slot:item.change_price="{ item }">
-        <b :class="changePriceColor">
-          {{ changePrice(item.change_price).toFormat() }}
+        <b :class="changePriceColor(item)" v-if="!changePrice(item).isZero()">
+          {{ changePrice(item).toFormat() }}
+        </b>
+      </template>
+
+      <template v-slot:item.earnings_price="{ item }">
+        <b :class="statusColor(item.status, 'earnings')">
+          {{ earningsPrice(item) }}
+        </b>
+      </template>
+
+      <template v-slot:item.status="{ item }">
+        <b :class="statusColor(item.status, 'status')">
+          {{ parseStatus(item.status) }}
         </b>
       </template>
 
       <template v-slot:item.actions="{ item }">
         <v-tooltip bottom v-if="enableRefund(item)">
           <template v-slot:activator="{ on }">
-            <v-btn @click="refundDialog(item)" icon v-on="on" :loading="false">
-              <v-icon v-if="item.payment_type_name === 'cash'">
-                mdi-cash-refund
+            <v-btn
+              @click="refundDialog(item)"
+              icon
+              v-on="on"
+              :loading="rollbackLoading"
+            >
+              <v-icon>
+                mdi-undo
               </v-icon>
-              <v-icon v-else>mdi-credit-card-refund</v-icon>
             </v-btn>
           </template>
           <span>Rollback transaction</span>
@@ -61,19 +71,20 @@ import { EventBus } from "../../../plugins/eventBus";
 
 export default {
   mounted() {
-    EventBus.$on("payment-history-refund", event => {
+    EventBus.$on("transaction-history-refund", event => {
       if (event.payload && this.selected_payment) {
-        this.refund();
+        this.rollbackPayment();
       }
     });
   },
 
   beforeDestroy() {
-    EventBus.$off("payment-history-refund");
+    EventBus.$off("transaction-history-refund");
   },
 
   data() {
     return {
+      rollbackLoading: false,
       selected_payment: null,
       headers: [
         {
@@ -93,7 +104,7 @@ export default {
         },
         {
           text: "Type",
-          value: "payment_type_name",
+          value: "type_name",
           sortable: false
         },
         {
@@ -104,6 +115,11 @@ export default {
         {
           text: "Change",
           value: "change_price",
+          sortable: false
+        },
+        {
+          text: "Earnings",
+          value: "earnings_price",
           sortable: false
         },
         {
@@ -121,36 +137,60 @@ export default {
   },
 
   computed: {
-    ...mapState("cart", ["payments"])
+    ...mapState("cart", ["transactions"])
   },
 
   methods: {
     ...mapMutations("cart", [
       "setPaymentRefundedStatus",
-      "setPayments",
+      "setTransactions",
       "setOrderChangePrice",
       "setOrderRemainingPrice",
-      "setOrderStatus"
+      "setOrderStatus",
+      "setCheckoutLoading"
     ]),
     ...mapMutations("dialog", ["setDialog"]),
     ...mapActions("requests", ["request"]),
 
-    changePrice(change_price) {
-      if (change_price) {
-        return this.parsePrice(change_price);
+    earningsPrice(transaction) {
+      if (
+        _.isObjectLike(transaction.payment) &&
+        transaction.status === "failed"
+      ) {
+        return this.parsePrice().toFormat();
+      } else if (_.isObjectLike(transaction.payment)) {
+        return this.parsePrice(transaction.price)
+          .subtract(this.changePrice(transaction))
+          .toFormat();
       } else {
-        return this.$price();
+        return this.parsePrice(transaction.price)
+          .subtract(this.changePrice(transaction))
+          .multiply(-1)
+          .toFormat();
       }
     },
-    changePriceColor(change_price) {
-      if (!this.changePrice.isZero() && this.changePrice.isPositive()) {
+    changePrice(transaction) {
+      if (
+        _.has(transaction.payment, "change_price") &&
+        this.parsePrice(transaction.payment.change_price).isPositive()
+      ) {
+        return this.parsePrice(transaction.payment.change_price);
+      } else {
+        return this.parsePrice();
+      }
+    },
+    changePriceColor(item) {
+      if (
+        !this.changePrice(item).isZero() &&
+        this.changePrice(item).isPositive()
+      ) {
         return "amber--text";
       } else {
         return null;
       }
     },
     enableRefund(item) {
-      if (item.status === "approved" && item.is_refundable) {
+      if (_.has(item.payment, "is_refundable") && item.payment.is_refundable) {
         return true;
       } else {
         return false;
@@ -159,31 +199,57 @@ export default {
     parseStatus(status) {
       return _.upperFirst(status);
     },
-    statusColor(status) {
+    statusColor(status, column) {
       switch (status) {
         case "approved":
+          switch (column) {
+            case "status":
+              return "green--text";
+            case "amount":
+              return "primary--text";
+            case "earnings":
+              return "green--text";
+          }
           return "green--text";
         case "failed":
-          return "red--text";
+          switch (column) {
+            case "status":
+              return "red--text";
+            case "amount":
+              return "primary--text";
+            case "earnings":
+              return "amber--text";
+          }
+        case "refund approved":
+          switch (column) {
+            case "status":
+              return "green--text";
+            case "amount":
+              return "primary--text";
+            case "earnings":
+              return "red--text";
+          }
         default:
           return null;
       }
     },
-    refund() {
+    rollbackPayment() {
+      this.setCheckoutLoading(true);
+      this.rollbackLoading = true;
       const payload = {
-        method: "delete",
-        url: `payments/${this.selected_payment.id}`
+        method: "post",
+        url: `transactions/${this.selected_payment.id}/rollback`
       };
 
       this.request(payload)
         .then(response => {
           if (response.refunded_payment_id) {
-            const index = _.findIndex(this.payments, {
+            const index = _.findIndex(this.transactions, {
               id: response.refunded_payment_id
             });
 
             this.setPaymentRefundedStatus(index);
-            this.setPayments(response.refund);
+            this.setTransactions(response.transaction);
           }
 
           this.setOrderChangePrice(response.change);
@@ -193,16 +259,19 @@ export default {
         .catch(error => {
           console.log(error);
           // @TODO fix payload object
-          if (_.has(error, "response.data.refund")) {
-            this.payments = error.response.data.refund;
-            this.$emit("refund", error.response.data);
+          if (_.has(error, "response.transaction")) {
+            this.transactions = error.response.data.refund;
           } else {
             console.error(error);
           }
+        })
+        .finally(() => {
+          this.setCheckoutLoading(false);
+          this.rollbackLoading = false;
         });
     },
     refundDialog(item) {
-      this.selected_payment = item;
+      this.selected_payment = item.payment;
       const payload = {
         show: true,
         width: 600,
@@ -212,7 +281,7 @@ export default {
         component: "passwordForm",
         model: { action: "verify" },
         persistent: true,
-        eventChannel: "payment-history-refund"
+        eventChannel: "transaction-history-refund"
       };
 
       this.setDialog(payload);

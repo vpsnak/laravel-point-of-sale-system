@@ -3,7 +3,7 @@
     <h5 v-if="$props.title">{{ $props.title }}</h5>
     <v-chip pill :small="small">
       <v-icon left>{{ $props.icon }}</v-icon>
-      {{ $props.timestamp }}
+      <b>{{ $props.timestamp }}</b>
     </v-chip>
   </div>
 </template>

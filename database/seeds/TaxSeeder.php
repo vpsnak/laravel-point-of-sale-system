@@ -16,7 +16,7 @@ class TaxSeeder extends Seeder
         DB::table('taxes')->insert([
             'name' => '8.875% Tax',
             'percentage' => 8.875,
-            'user_id' => 1,
+            'created_by_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);

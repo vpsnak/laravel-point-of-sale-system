@@ -3,10 +3,10 @@
     <v-row justify="center" align="center" v-if="loading || !order_id">
       <div class="text-center ma-12">
         <v-progress-circular
-          :indeterminate="true"
+          indeterminate
           :size="100"
           :width="10"
-          color="light-blue"
+          color="primary"
         ></v-progress-circular>
       </div>
     </v-row>
@@ -20,7 +20,7 @@
             </v-icon>
             View order # {{ order_id }}
             <v-spacer />
-            <v-tooltip bottom color="red">
+            <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-btn @click.stop="close()" color="red" icon v-on="on">
                   <v-icon>mdi-close</v-icon>
@@ -48,14 +48,14 @@
               <OrderItemsTabItem />
             </v-tabs-items>
           </v-tabs>
-          <v-tooltip bottom v-if="order_id" color="primary">
+          <v-tooltip bottom v-if="order_id">
             <template v-slot:activator="{ on }">
               <v-btn
-                color="primary"
                 absolute
                 bottom
                 left
-                fab
+                icon
+                elevation="12"
                 v-on="on"
                 @click.stop="setOrderPageActions(true)"
               >
@@ -81,9 +81,7 @@ export default {
   },
 
   created() {
-    this.getOrder(this.$route.params.id).then(() => {
-      this.loading = false;
-    });
+    this.getOrder(this.$route.params.id);
   },
 
   computed: {
@@ -112,19 +110,19 @@ export default {
       this.resetState();
     },
     getOrder(id) {
-      return new Promise((resolve, reject) => {
-        this.request({
-          method: "get",
-          url: `orders/get/${id}`
+      this.request({
+        method: "get",
+        url: `orders/get/${id}`
+      })
+        .then(response => {
+          this.loadOrder(response);
         })
-          .then(response => {
-            this.loadOrder(response);
-            resolve(true);
-          })
-          .catch(error => {
-            reject(error);
-          });
-      });
+        .catch(error => {
+          console.error(error);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     }
   }
 };

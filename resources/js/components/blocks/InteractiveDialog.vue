@@ -17,7 +17,7 @@
 
         <v-spacer v-if="dialog.titleCloseBtn" />
 
-        <v-tooltip v-if="dialog.titleCloseBtn" bottom color="red">
+        <v-tooltip v-if="dialog.titleCloseBtn" bottom>
           <template v-slot:activator="{ on }">
             <v-btn
               @click.stop="closeEvent(false, true)"

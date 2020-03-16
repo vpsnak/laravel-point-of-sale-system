@@ -5,6 +5,7 @@
     right
     transition="scale-transition"
     :close-on-content-click="false"
+    offset-y
   >
     <template v-slot:activator="{ on }">
       <h5 v-if="$props.title">Type</h5>
@@ -15,10 +16,10 @@
         :small="small"
       >
         <v-icon left>{{ parseMethod.icon }}</v-icon>
-        {{ parseMethod.name }}
+        <b>{{ parseMethod.name }}</b>
       </v-chip>
     </template>
-    <v-card class="pa-5" outlined width="600" shaped>
+    <v-card class="pa-5" outlined width="600">
       <component
         :is="parseMethod.component"
         :model="parseMethod.model"

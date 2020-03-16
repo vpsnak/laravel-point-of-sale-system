@@ -5,6 +5,7 @@
     right
     transition="scale-transition"
     :close-on-content-click="false"
+    offset-y
   >
     <template v-slot:activator="{ on }">
       <v-chip
@@ -14,7 +15,7 @@
         :small="small"
         dark
       >
-        {{ parsePrice($props.totalPrice).toFormat() }}
+        <b>{{ parsePrice($props.totalPrice).toFormat() }}</b>
       </v-chip>
     </template>
     <orderCostAnalysis />

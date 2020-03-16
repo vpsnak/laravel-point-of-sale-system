@@ -9,7 +9,7 @@
             </v-icon>
             Edit order options
             <v-spacer />
-            <v-tooltip bottom color="red">
+            <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-btn @click.stop="back()" color="red" icon v-on="on">
                   <v-icon>mdi-close</v-icon>

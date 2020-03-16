@@ -14,7 +14,7 @@ class CreateProductsTable extends Migration
     public function up()
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->mediumIncrements('id');
+            $table->id();
 
             $table->string('sku')->unique()->index();
             $table->string('name')->index();
@@ -29,8 +29,8 @@ class CreateProductsTable extends Migration
 
             $table->text('description')->nullable();
 
-            $table->unsignedMediumInteger('magento_id')->nullable();
-            $table->unsignedMediumInteger('stock_id')->nullable();
+            $table->foreignId('magento_id')->nullable();
+            $table->foreignId('stock_id')->nullable();
 
             $table->timestampsTz();
         });

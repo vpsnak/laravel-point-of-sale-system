@@ -8,7 +8,7 @@
     </v-card-title>
     <v-container>
       <v-row justify="center" align="center">
-        <v-progress-circular v-if="loading" indeterminate color="secondary" />
+        <v-progress-circular v-if="loading" indeterminate color="primary" />
 
         <v-col v-else-if="total_paid.greaterThan($price({ amount: 0 }))">
           <vc-donut
@@ -21,7 +21,7 @@
             :background="bgColor"
           >
             <h2>{{ total_paid.toFormat() }}</h2>
-            <h2>total paid</h2>
+            <h2>total income</h2>
           </vc-donut>
         </v-col>
         <v-col v-else cols="auto">
@@ -40,7 +40,7 @@ export default {
   },
 
   created() {
-    this.getPaymentAnalysis();
+    this.getEarningsAnalysis();
   },
 
   data() {
@@ -115,11 +115,11 @@ export default {
 
       return this.sections;
     },
-    getPaymentAnalysis() {
+    getEarningsAnalysis() {
       this.loading = true;
       const payload = {
         method: "get",
-        url: `orders/${this.$props.orderId}/payment-details`
+        url: `orders/${this.$props.orderId}/income-details`
       };
 
       this.request(payload)

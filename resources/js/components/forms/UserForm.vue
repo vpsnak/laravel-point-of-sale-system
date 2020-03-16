@@ -94,7 +94,7 @@
               type="submit"
               :loading="loading"
               :disabled="invalid || disableSubmit"
-              color="secondary"
+              color="primary"
               >submit</v-btn
             >
           </v-col>

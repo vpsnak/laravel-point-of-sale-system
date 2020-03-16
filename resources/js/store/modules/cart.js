@@ -6,7 +6,7 @@ export default {
 
     tax_percentage: 0,
     checkoutDialog: false,
-    payments: [],
+    transactions: [],
 
     is_valid: false,
     isValidCheckout: false,
@@ -122,6 +122,9 @@ export default {
   },
 
   mutations: {
+    setPaymentRefundedStatus(state, index) {
+      state.transactions[index].payment.is_refundable = false;
+    },
     setCheckoutLoading(state, value) {
       state.checkout_loading = value;
     },
@@ -178,7 +181,8 @@ export default {
       state.delivery.occasion = value;
     },
     setOrderId(state, value) {
-      state.order_id = value;
+      // patch, shouldn't be really needed
+      state.order_id = Number.parseInt(value);
     },
     setOrderStatus(state, value) {
       state.order_status = value;
@@ -189,8 +193,8 @@ export default {
     setOrderTotalPrice(state, value) {
       state.order_total_price = value;
     },
-    setOrderPaidPrice(state, value) {
-      state.order_paid_price = value;
+    setOrderIncomePrice(state, value) {
+      state.order_income_price = value;
     },
     setOrderTaxPrice(state, value) {
       state.order_tax_price = value;
@@ -228,14 +232,11 @@ export default {
     setCheckoutDialog(state, value) {
       state.checkoutDialog = value;
     },
-    setPaymentRefundedStatus(state, index) {
-      state.payments[index].refunded = true;
-    },
-    setPayments(state, value) {
+    setTransactions(state, value) {
       if (Array.isArray(value)) {
-        state.payments = value;
+        state.transactions = value;
       } else {
-        state.payments.push(value);
+        state.transactions.push(value);
       }
     },
     setIsValid(state, value) {
@@ -348,10 +349,10 @@ export default {
       state.order_tax_price = { amount: 0 };
       state.order_remaining_price = { amount: 0 };
       state.order_change_price = { amount: 0 };
-      state.order_paid_price = { amount: 0 };
+      state.order_income_price = { amount: 0 };
       state.order_mdse_price = { amount: 0 };
       state.delivery_fees_price = { amount: 0 };
-      state.payments = [];
+      state.transactions = [];
       state.order_notes = "";
 
       state.checkoutDialog = false;
@@ -512,12 +513,12 @@ export default {
         context.commit("setOrderMasOrderStatus", order.mas_order);
 
         context.commit("setOrderTotalPrice", order.total_price);
-        context.commit("setOrderPaidPrice", order.paid_price);
+        context.commit("setOrderIncomePrice", order.income_price);
         context.commit("setOrderMdsePrice", order.mdse_price);
         context.commit("setOrderTaxPrice", order.tax_price);
         context.commit("setOrderChangePrice", order.change);
         context.commit("setOrderRemainingPrice", order.remaining_price);
-        context.commit("setPayments", order.payments);
+        context.commit("setTransactions", order.transactions);
         context.commit("setCartDiscount", order.discount);
         context.commit("setCustomer", order.customer);
         context.commit("setOrderNotes", order.notes);

@@ -1,85 +1,87 @@
 <template>
-  <v-container fluid>
-    <v-row align="center" justify="center" no-gutters>
-      <v-combobox
-        ref="searchfield"
-        :no-filter="true"
-        v-if="editable"
-        v-model="cartCustomer"
-        clearable
-        dense
-        :items="results"
-        :loading="loading"
-        :search-input.sync="search"
-        hide-no-data
-        hide-selected
-        :item-text="getCustomerFullname"
-        label="Select customer"
-        placeholder="Start typing to Search"
-        prepend-icon="mdi-account-search"
-        return-object
-        @blur="checkIfObjectEvent"
-      ></v-combobox>
+  <v-row align="center" class="mx-3">
+    <v-combobox
+      style="max-width:43vw;"
+      solo
+      loader-height="5"
+      class="pt-5 mt-2"
+      ref="searchfield"
+      :no-filter="true"
+      v-if="editable"
+      v-model="cartCustomer"
+      clearable
+      outlined
+      dense
+      :items="results"
+      :loading="loading"
+      :search-input.sync="search"
+      hide-no-data
+      hide-selected
+      :item-text="getCustomerFullname"
+      label="Search customer"
+      placeholder="Search customer"
+      prepend-inner-icon="mdi-account-search"
+      return-object
+      @blur="checkIfObjectEvent"
+    ></v-combobox>
 
-      <v-text-field
-        v-else
-        :value="getCustomerFullname(cartCustomer)"
-        disabled
-        prepend-icon="person"
-      ></v-text-field>
+    <v-text-field
+      v-else
+      :value="getCustomerFullname(cartCustomer)"
+      disabled
+      prepend-icon="person"
+    ></v-text-field>
 
-      <v-tooltip bottom v-if="cartCustomer">
-        <template v-slot:activator="{ on }">
-          <v-btn
-            class="mx-1"
-            @click.stop="customerForm(false)"
-            v-on="on"
-            icon
-            small
-            :disabled="!editable"
-          >
-            <v-icon small>mdi-pencil</v-icon>
-          </v-btn>
-        </template>
-        <span>View / Edit selected customer</span>
-      </v-tooltip>
+    <v-tooltip bottom v-if="cartCustomer">
+      <template v-slot:activator="{ on }">
+        <v-btn
+          class="mx-1"
+          @click.stop="customerForm(false)"
+          v-on="on"
+          icon
+          :disabled="!editable"
+          small
+        >
+          <v-icon>mdi-pencil</v-icon>
+        </v-btn>
+      </template>
+      <span>View / Edit selected customer</span>
+    </v-tooltip>
 
-      <v-tooltip bottom v-if="cartCustomerComment" color="red">
-        <template v-slot:activator="{ on }">
-          <v-btn
-            class="mx-1"
-            @click.stop="viewCustomerComments"
-            text
-            icon
-            color="red"
-            small
-            v-on="on"
-          >
-            <v-icon small>mdi-comment</v-icon>
-          </v-btn>
-        </template>
-        <span>View comments</span>
-      </v-tooltip>
+    <v-tooltip bottom v-if="cartCustomerComment">
+      <template v-slot:activator="{ on }">
+        <v-btn
+          class="mx-1"
+          @click.stop="viewCustomerComments"
+          icon
+          color="red"
+          v-on="on"
+          small
+        >
+          <v-icon>mdi-comment</v-icon>
+        </v-btn>
+      </template>
+      <span>View comments</span>
+    </v-tooltip>
 
-      <v-divider inset vertical class="mx-2"></v-divider>
-
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            class="mx-1"
-            @click.stop="customerForm(true)"
-            v-on="on"
-            icon
-            :disabled="!editable"
-            small
-          >
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
-        </template>
-        <span>Add a customer</span>
-      </v-tooltip>
-    </v-row>
-  </v-container>
+    <v-tooltip bottom>
+      <template v-slot:activator="{ on }">
+        <v-btn
+          class="mx-1"
+          @click.stop="customerForm(true)"
+          v-on="on"
+          icon
+          :disabled="!editable"
+          small
+        >
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+      </template>
+      <span>Add a customer</span>
+    </v-tooltip>
+    <v-divider vertical class="mx-1"></v-divider>
+    <cartMethods v-if="$props.showMethods" />
+  </v-row>
 </template>
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
@@ -99,6 +101,7 @@ export default {
   },
 
   props: {
+    showMethods: Boolean,
     keywordLength: Number,
     editable: Boolean
   },

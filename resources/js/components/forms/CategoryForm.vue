@@ -16,11 +16,11 @@
             required
           ></v-text-field>
         </ValidationProvider>
-        <v-switch
+        <v-checkbox
           :readonly="$props.readonly"
-          v-model="formFields.enabled"
-          label="In Product listing"
-        ></v-switch>
+          v-model="formFields.is_enabled"
+          label="Enabled"
+        ></v-checkbox>
       </v-container>
       <v-container>
         <v-row v-if="!$props.readonly">
@@ -31,9 +31,9 @@
               @click.prevent="submit"
               :loading="loading"
               :disabled="invalid || loading"
-              color="secondary"
-              >submit</v-btn
-            >
+              color="primary"
+              >submit
+            </v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -55,7 +55,7 @@ export default {
       defaultValues: {},
       formFields: {
         name: "",
-        enabled: false
+        is_enabled: false
       }
     };
   },

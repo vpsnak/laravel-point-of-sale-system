@@ -244,7 +244,7 @@
               type="submit"
               :loading="loading"
               :disabled="invalid || loading"
-              color="secondary"
+              color="primary"
               >SAVE CHANGES</v-btn
             >
           </v-col>

@@ -9,7 +9,7 @@ class Tax extends Model
     protected $fillable = [
         'name',
         'percentage',
-        'user_id'
+        'created_by_id'
     ];
 
     protected $casts = [

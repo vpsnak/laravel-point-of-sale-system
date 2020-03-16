@@ -1,10 +1,10 @@
 <template>
   <v-container fluid>
     <v-row dense>
-      <v-col :lg="7" :cols="12">
+      <v-col :xl="7" :cols="12">
         <productList />
       </v-col>
-      <v-col :lg="5" :cols="12">
+      <v-col :xl="5" :cols="12">
         <cart
           :editable="true"
           :showMethods="$props.showMethods"

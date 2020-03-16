@@ -26,11 +26,11 @@ class Company extends Model
 
     public function bankAccountSdk()
     {
-        return $this->bankAccounts()->whereType('sdk')->first();
+        return $this->bankAccounts()->whereType('sdk')->firstOrFail();
     }
 
     public function bankAccountApi()
     {
-        return $this->bankAccounts()->whereType('api')->first();
+        return $this->bankAccounts()->whereType('api')->firstOrFail();
     }
 }

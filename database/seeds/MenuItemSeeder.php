@@ -20,134 +20,126 @@ class MenuItemSeeder extends Seeder
 
         $all = [$admin, $cashier, $store_manager];
 
-        $dashboard = new MenuItem([
+        $dashboard = MenuItem::create([
             'title' => 'Dashboard',
             'action' => ['link' => '/'],
             'icon' =>  'dashboard',
             'location' => 'side_menu'
         ]);
 
-        $sales = new MenuItem([
+        $sales = MenuItem::create([
             'title' => 'Sales',
             'action' => ['link' => 'sales'],
             'icon' =>  'mdi-cart',
             'location' => 'side_menu'
         ]);
 
-        $orders = new MenuItem([
+        $orders = MenuItem::create([
             'title' => 'Orders',
             'action' => ['link' => 'orders'],
             'icon' =>  'mdi-buffer',
             'location' => 'side_menu'
         ]);
 
-        $customers = new MenuItem([
+        $customers = MenuItem::create([
             'title' => 'Customers',
             'action' => ['link' => 'customers'],
             'icon' =>  'mdi-account-group',
             'location' => 'side_menu'
         ]);
 
-        $products = new MenuItem([
+        $products = MenuItem::create([
             'title' => 'Products',
             'action' => ['link' => 'products'],
             'icon' =>  'mdi-package-variant',
             'location' => 'side_menu'
         ]);
 
-        $categories = new MenuItem([
+        $categories = MenuItem::create([
             'title' => 'Categories',
             'action' => ['link' => 'categories'],
             'icon' =>  'mdi-inbox-multiple',
             'location' => 'side_menu'
         ]);
 
-        $giftCards = new MenuItem([
+        $giftCards = MenuItem::create([
             'title' => 'Gift Cards',
             'action' => ['link' => 'gift-cards'],
             'icon' =>  'mdi-wallet-giftcard',
             'location' => 'side_menu'
         ]);
 
-        $coupons = new MenuItem([
+        $coupons = MenuItem::create([
             'title' => 'Coupons',
             'action' => ['link' => 'coupons'],
             'icon' =>  'mdi-ticket-percent',
             'location' => 'side_menu'
         ]);
 
-        $cashRegisters = new MenuItem([
+        $cashRegisters = MenuItem::create([
             'title' => 'Cash registers',
             'action' => ['link' => 'cash-registers'],
             'icon' =>  'mdi-cash-register',
             'location' => 'side_menu'
         ]);
 
-        $stores = new MenuItem([
+        $stores = MenuItem::create([
             'title' => 'Stores',
             'action' => ['link' => 'stores'],
             'icon' =>  'mdi-store',
             'location' => 'side_menu'
         ]);
 
-        $storePickups = new MenuItem([
+        $storePickups = MenuItem::create([
             'title' => 'Store pickups',
             'action' => ['link' => 'store-pickups'],
             'icon' =>  'mdi-storefront',
             'location' => 'side_menu'
         ]);
 
-        $taxes = new MenuItem([
+        $taxes = MenuItem::create([
             'title' => 'Taxes',
             'action' => ['link' => 'taxes'],
             'icon' =>  'mdi-sack-percent',
             'location' => 'side_menu'
         ]);
 
-        $reports = new MenuItem([
+        $reports = MenuItem::create([
             'title' => 'Reports',
             'action' => ['link' => 'reports'],
             'icon' =>  'mdi-chart-areaspline',
             'location' => 'side_menu'
         ]);
 
-        $users = new MenuItem([
+        $users = MenuItem::create([
             'title' => 'Users',
             'action' => ['link' => 'users'],
             'icon' =>  'mdi-account-multiple',
             'location' => 'side_menu'
         ]);
 
-        $sign_out = new MenuItem([
+        $settings = MenuItem::create([
+            'title' => 'Settings',
+            'action' => ['link' => 'settings'],
+            'icon' =>  'mdi-cog-outline',
+            'location' => 'side_menu'
+        ]);
+
+        $sign_out = MenuItem::create([
             'title' => 'Sign out',
             'action' => ['link' => '/logout'],
             'icon' =>  'mdi-logout-variant',
             'location' => 'top_menu'
         ]);
 
-        $change_password = new MenuItem([
+        $change_password = MenuItem::create([
             'title' => 'Change password',
             'action' => ['method' => 'changePasswordDialog'],
             'icon' =>  'mdi-key',
             'location' => 'top_menu'
         ]);
 
-        //side menu
-        $dashboard->save();
-        $sales->save();
-        $orders->save();
-        $customers->save();
-        $products->save();
-        $categories->save();
-        $giftCards->save();
-        $coupons->save();
-        $cashRegisters->save();
-        $stores->save();
-        $storePickups->save();
-        $taxes->save();
-        $reports->save();
-        $users->save();
-
+        // side menu
         $dashboard->roles()->sync($all);
         $sales->roles()->sync($all);
         $orders->roles()->sync($all);
@@ -162,11 +154,9 @@ class MenuItemSeeder extends Seeder
         $taxes->roles()->sync($admin);
         $reports->roles()->sync([$admin, $store_manager]);
         $users->roles()->sync($admin);
+        $settings->roles()->sync($admin);
 
-        //top menu
-        $sign_out->save();
-        $change_password->save();
-
+        // top menu
         $sign_out->roles()->sync($all);
         $change_password->roles()->sync($all);
     }

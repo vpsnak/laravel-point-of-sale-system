@@ -1,44 +1,43 @@
 <template>
-  <div class="d-flex flex-column">
-    <div
-      class="d-flex justify-space-between pa-2"
-      v-if="!totalDiscount.isZero()"
-    >
+  <v-container>
+    <v-row v-if="!totalDiscount.isZero()" class="pa-1" dense>
       <span>Total discount</span>
+      <v-spacer />
       <span>{{ totalDiscount.toFormat() }}</span>
-    </div>
+    </v-row>
 
     <v-divider v-if="!totalDiscount.isZero()" />
 
-    <div class="d-flex justify-space-between pa-2">
+    <v-row class="pa-1" dense>
       <span>Sub total w/ discount</span>
+      <v-spacer />
       <span>{{ subTotalwDiscount.toFormat() }}</span>
-    </div>
+    </v-row>
 
     <v-divider />
 
-    <div
-      class="d-flex justify-space-between pa-2"
-      v-if="!deliveryFeesPrice.isZero()"
-    >
+    <v-row class="pa-1" v-if="!deliveryFeesPrice.isZero()" dense>
       <span>Delivery Fees</span>
+      <v-spacer />
       <span>{{ deliveryFeesPrice.toFormat() }}</span>
-    </div>
+    </v-row>
 
     <v-divider v-if="!deliveryFeesPrice.isZero()" />
 
-    <div class="d-flex justify-space-between pa-2 bb-1">
+    <v-row class="pa-1" dense>
       <span>Tax</span>
+      <v-spacer />
       <span>{{ tax.toFormat() }}</span>
-    </div>
+    </v-row>
 
     <v-divider />
 
-    <div class="d-flex justify-space-between pa-2">
+    <v-row class="pa-1" dense>
       <span>Total</span>
+      <v-spacer />
       <span>{{ orderTotal.toFormat() }}</span>
-    </div>
-  </div>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -99,10 +98,13 @@ export default {
   },
 
   watch: {
-    immediate: true,
-    orderTotal(value) {
-      this.setOrderTotalPrice(value.toJSON());
-      this.setOrderRemainingPrice(value.toJSON());
+    orderTotal: {
+      immediate: true,
+
+      handler(value) {
+        this.setOrderTotalPrice(value.toJSON());
+        this.setOrderRemainingPrice(value.toJSON());
+      }
     }
   },
 

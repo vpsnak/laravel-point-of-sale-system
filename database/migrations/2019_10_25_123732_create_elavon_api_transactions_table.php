@@ -14,17 +14,15 @@ class CreateElavonApiTransactionsTable extends Migration
     public function up()
     {
         Schema::create('elavon_api_transactions', function (Blueprint $table) {
-            $table->mediumIncrements('id');
-            $table->unsignedMediumInteger('transaction_id');
+            $table->id();
 
+            $table->foreignId('transaction_id');
             $table->string('txn_id')->nullable();
             $table->string('transaction')->nullable();
             $table->string('card_number')->nullable();
             $table->string('card_holder')->nullable();
             $table->string('status')->nullable();
             $table->json('log');
-
-            $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('cascade');
 
             $table->timestampsTz();
         });

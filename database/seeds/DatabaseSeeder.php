@@ -16,10 +16,10 @@ class DatabaseSeeder extends Seeder
         $this->call(RegionSeeder::class);
         $this->call(RoleSeeder::class);
         $this->call(UserSeeder::class);
+        $this->call(SettingSeeder::class);
         $this->call(MasAccountSeeder::class);
         $this->call(MenuItemSeeder::class);
         $this->call(PaymentTypeSeeder::class);
-        $this->call(RefundTypeSeeder::class);
         $this->call(StorePickupSeeder::class);
         $this->call(StatusSeeder::class);
 

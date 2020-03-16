@@ -10,7 +10,7 @@
         <v-progress-circular
           v-if="payment_types_loading"
           indeterminate
-          color="secondary"
+          color="primary"
         ></v-progress-circular>
         <v-col :cols="12" v-else>
           <v-btn-toggle
@@ -82,7 +82,7 @@ export default {
   computed: {
     ...mapState("cart", [
       "order_id",
-      "order_paid_price",
+      "order_income_price",
       "order_total_price",
       "order_status"
     ]),
@@ -91,7 +91,7 @@ export default {
       if (this.order_status === "paid") {
         return this.order_total_price;
       } else {
-        return this.order_paid_price;
+        return this.order_income_price;
       }
     },
     getIcon() {
@@ -108,7 +108,7 @@ export default {
 
       let payload = {
         method: "post",
-        url: "payments/unlinked-refund",
+        url: "transactions/unlinked-refund",
         mutations: [],
         data: {
           order_id: this.order_id,

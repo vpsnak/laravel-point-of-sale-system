@@ -19,7 +19,7 @@ class OrderAnalysisController extends Controller
     private $giftcard;
     private $total_paid;
 
-    public function getPaymentDetails(Order $model)
+    public function getIncomeDetails(Order $model)
     {
         $paidAmount =
             $this->total_paid =
@@ -31,17 +31,15 @@ class OrderAnalysisController extends Controller
             $this->giftcard =
             new Money(0, new Currency($model->currency));
 
-        foreach ($model->payments as $payment) {
-            if ($payment->status === 'approved') {
-
-
-                $paidAmount = $payment->price;
-                switch ($payment->paymentType->type) {
+        foreach ($model->transactions as $transaction) {
+            if ($transaction->status === 'approved') {
+                $paidAmount = $transaction->price;
+                switch ($transaction->payment->paymentType->type) {
                     case 'pos-terminal':
                         $this->cc_pos = $this->cc_pos->add($paidAmount);
                         break;
                     case 'cash':
-                        $paidAmount = $paidAmount->subtract($payment->change_price);
+                        $paidAmount = $paidAmount->subtract($transaction->payment->change_price);
                         $this->cash = $this->cash->add($paidAmount);
                         break;
                     case 'card':
@@ -55,6 +53,28 @@ class OrderAnalysisController extends Controller
                         break;
                     case 'giftcard':
                         $this->giftcard = $this->giftcard->add($paidAmount);
+                        break;
+                }
+            } else if ($transaction->status === 'refund approved') {
+                $refundAmount = $transaction->price;
+                switch ($transaction->type_name) {
+                    case 'pos-terminal':
+                        $this->cc_pos = $this->cc_pos->add($refundAmount);
+                        break;
+                    case 'Cash refund':
+                        $this->cash = $this->cash->subtract($refundAmount);
+                        break;
+                    case "Credit Card (keyed) refund":
+                        $this->cc_api = $this->cc_api->subtract($refundAmount);
+                        break;
+                    case 'house-account':
+                        $this->house_account = $this->house_account->subtract($refundAmount);
+                        break;
+                    case 'coupon':
+                        $this->coupon = $this->coupon->subtract($refundAmount);
+                        break;
+                    case 'giftcard':
+                        $this->giftcard = $this->giftcard->subtract($refundAmount);
                         break;
                 }
             }

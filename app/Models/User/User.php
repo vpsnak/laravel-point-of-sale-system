@@ -70,6 +70,11 @@ class User extends Authenticatable
         return Hash::check($password, $this->password);
     }
 
+    public function settings()
+    {
+        return $this->hasMany(Setting::class);
+    }
+
     public function transactions()
     {
         return $this->hasMany(Transaction::class);

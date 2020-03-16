@@ -14,14 +14,15 @@ class CreateReceiptsTable extends Migration
     public function up()
     {
         Schema::create('receipts', function (Blueprint $table) {
-            $table->mediumIncrements('id');
+            $table->id();
 
-            $table->unsignedSmallInteger('issued_by');
+            $table->foreignId('issued_by_id');
             $table->json('content');
-            $table->unsignedMediumInteger('order_id');
-            $table->unsignedSmallInteger('cash_register_id');
+            $table->foreignId('order_id');
+            $table->foreignId('cash_register_id');
             $table->unsignedTinyInteger('print_count');
             $table->unsignedTinyInteger('email_count');
+
             $table->timestampsTz();
         });
     }

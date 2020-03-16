@@ -10,7 +10,7 @@
         </v-col>
 
         <v-col cols="auto">
-          <v-tooltip bottom color="green" v-if="data_table.refreshBtn">
+          <v-tooltip bottom v-if="data_table.refreshBtn">
             <template v-slot:activator="{ on }">
               <v-btn
                 :loading="data_table.loading"
@@ -42,11 +42,12 @@
           <v-text-field
             ref="searchInput"
             :disabled="data_table.loading"
-            prepend-icon="search"
+            prepend-inner-icon="search"
             hide-details
             label="Search"
             dense
-            single-line
+            outlined
+            solo
             v-model="searchValue"
             clearable
             @click:clear="
@@ -55,7 +56,7 @@
                 (search = false),
                 getItems(search)
             "
-            @click:prepend="getItems(search)"
+            @click:prepend-inner="getItems(search)"
             @keyup.enter="
               (keyword = searchValue), (search = true), getItems(search)
             "
@@ -119,8 +120,6 @@
               v-model="page"
               :length="pageCount"
               @input="getItems(search)"
-              @next="page++"
-              @previous="page--"
             ></v-pagination>
           </v-card-actions>
         </v-col>

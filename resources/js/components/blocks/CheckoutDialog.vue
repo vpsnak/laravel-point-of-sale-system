@@ -8,7 +8,7 @@
   >
     <v-card>
       <v-toolbar>
-        <v-tooltip bottom color="red">
+        <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
               :disabled="disableControls"
@@ -33,8 +33,6 @@
           </v-col>
           <v-col :lg="4">
             <cart
-              icon="mdi-clipboard-list"
-              title="Order summary"
               :editable="order_id ? false : true"
               :showMethods="true"
               :showCustomer="true"

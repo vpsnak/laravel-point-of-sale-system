@@ -18,12 +18,10 @@ class CreateCardsTable extends Migration
 
             $table->text('content');
             $table->string('title');
-            $table->unsignedSmallInteger('created_by');
-            $table->unsignedMediumInteger('cardable_id');
+            $table->foreignId('created_by_id');
+            $table->foreignId('cardable_id');
 
             $table->string('cardable_type'); // card is for order or for product
-
-            $table->foreign('created_by')->references('id')->on('users')->onDelete('restrict');
 
             $table->timestamps();
         });

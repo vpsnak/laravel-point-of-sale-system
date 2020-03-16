@@ -1,6 +1,6 @@
 <template>
   <div>
-    <paymentHistory />
+    <transactionHistory />
 
     <paymentActions v-if="showPaymentActions" />
   </div>

@@ -6,7 +6,7 @@
           <v-col :cols="12">
             <ValidationProvider
               rules="required"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Store"
             >
               <v-select
@@ -20,14 +20,15 @@
                 @change="changeCashRegisters"
                 @input="enableCashRegisters"
                 :error-messages="errors"
-                :success="valid"
+                outlined
+                dense
               ></v-select>
             </ValidationProvider>
           </v-col>
           <v-col :cols="12">
             <ValidationProvider
               rules="required"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Cash Register"
             >
               <v-select
@@ -39,7 +40,8 @@
                 item-value="id"
                 @input="enableOpeningAmount"
                 :error-messages="errors"
-                :success="valid"
+                outlined
+                dense
               ></v-select>
             </ValidationProvider>
           </v-col>
@@ -48,7 +50,7 @@
           <v-col :cols="4" v-if="fill_amount || !cashRegisterIsopen">
             <ValidationProvider
               rules="required|between:1,10000"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Opening amount"
             >
               <v-text-field
@@ -59,7 +61,8 @@
                 label="Amount"
                 hint="Opening amount"
                 :error-messages="errors"
-                :success="valid"
+                outlined
+                dense
               ></v-text-field>
             </ValidationProvider>
           </v-col>
@@ -80,10 +83,12 @@
         </v-row>
         <v-row align="center" justify="center">
           <v-btn
-            color="secondary"
+            color="primary"
             type="submit"
             :loading="submitLoading"
             :disabled="disableOpenCashRegister || invalid || loading"
+            outlined
+            dense
             >Start session
           </v-btn>
         </v-row>

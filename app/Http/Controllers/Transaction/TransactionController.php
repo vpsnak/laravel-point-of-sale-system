@@ -11,97 +11,120 @@ use App\Giftcard;
 use App\Helper\Price;
 use App\Jobs\ProcessOrder;
 use App\Order;
+use App\Payment;
 use App\Transaction;
 use App\PaymentType;
+use App\Refund;
 use Illuminate\Http\Request;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\DecimalMoneyFormatter;
 
 class TransactionController extends Controller
 {
+    private $transactionData;
+    private $paymentData;
+
     public function createPayment(Request $request)
     {
-        $validatedData = $request->validate([
-            'payment_type_id' => 'required|exists:payment_types,id',
-            'payment_type' => 'required|exists:payment_types,type',
-            'price' => 'nullable|required_unless:payment_type,coupon|array',
-            'order_id' => 'required|exists:orders,id',
+        $paymentType =
+            $request->validate([
+                'payment_type' => 'required|exists:payment_types,type'
+            ])['payment_type'];
+
+        $this->transactionData =
+            $request->validate([
+                'price' => 'nullable|required_unless:payment_type,coupon|array',
+                'order_id' => 'required|exists:orders,id',
+                'card.number' => 'nullable|required_if:payment_type,card|numeric',
+                'card.cvc' => 'nullable|required_if:payment_type,card|digits_between:3,4',
+                'card.card_holder' => 'nullable|required_if:payment_type,card|string',
+                'card.exp_date' => 'nullable|required_if:payment_type,card|after_or_equal:today',
+                'code' => 'required_if:payment_type,coupon|required_if:payment_type,giftcard',
+                'house_account_number' => 'required_if:payment_type,house-account'
+            ]);
+
+        $this->paymentData = $request->validate([
+            'payment_type_id' => 'required|exists:payment_types,id'
+        ]);
+
+        $creditCardData = $request->validate([
             'card.number' => 'nullable|required_if:payment_type,card|numeric',
             'card.cvc' => 'nullable|required_if:payment_type,card|digits_between:3,4',
             'card.card_holder' => 'nullable|required_if:payment_type,card|string',
-            'card.exp_date' => 'nullable|required_if:payment_type,card|after_or_equal:today',
-            'code' => 'required_if:payment_type,coupon|required_if:payment_type,giftcard',
-            'house_account_number' => 'required_if:payment_type,house-account'
+            'card.exp_date' => 'nullable|required_if:payment_type,card|after_or_equal:today'
         ]);
-        $validatedData['user_id'] = auth()->user()->id;
-        $validatedData['cash_register_id'] = auth()->user()->open_register->cash_register->id;
-        $paymentType = $validatedData['payment_type'];
-        $order = Order::findOrFail($validatedData['order_id']);
-        unset($validatedData['payment_type']);
 
-        $newPayment = $validatedData;
-        $newPayment['status'] = 'pending';
+        $this->transactionData['created_by_id'] = auth()->user()->id;
+        $this->transactionData['cash_register_id'] = auth()->user()->open_register->cash_register->id;
+        $this->transactionData['status'] = 'pending';
+        $this->transactionData = Transaction::create($this->transactionData);
 
-        $payment = Transaction::create($newPayment);
+        $this->paymentData['transaction_id'] = $this->transactionData->id;
+
+        $payment = Payment::create($this->paymentData);
+        $this->transactionData->payment_id = $payment->id;
 
         $response = [];
+        $order = Order::findOrFail($this->transactionData['order_id']);
 
         switch ($paymentType) {
             case 'cash':
-                $change_price = $payment->price->subtract($order->remaining_price);
+                $change_price = $this->transactionData->price->subtract($order->remaining_price);
                 if ($change_price->isPositive()) {
                     $payment->change_price = $change_price;
+                    $payment->save();
                 }
                 break;
             case 'pos-terminal':
-                $response = $this->posPay($payment);
+                $response = $this->posPay($this->transactionData);
                 break;
             case 'card':
-                $response = $this->apiPay($validatedData, $payment);
+                $creditCardData = $creditCardData['card'];
+                $response = $this->apiPay($creditCardData);
                 break;
             case 'coupon':
-                $response = $this->couponPay($validatedData, $payment);
+                $response = $this->couponPay($this->transactionData);
                 break;
             case 'giftcard':
-                $response = $this->giftcardPay($validatedData, $payment);
+                $response = $this->giftcardPay($this->transactionData);
                 break;
             case 'house-account':
-                $response = $this->houseAccPay($validatedData, $payment);
-                break;
-            default:
-                $response = [
-                    'errors' => ['Payment method' => 'This payment method does not exist'],
-                    'payment' => $payment
-                ];
+                $response = $this->houseAccPay($this->transactionData);
                 break;
         }
+
+
 
         if (is_array($response)) {
             if (array_key_exists('transaction_id', $response)) {
-                $payment->code = $response['transaction_id'];
-                $payment->save();
+                $this->transactionData->code = $response['transaction_id'];
+                $this->transactionData->save();
             } else if (array_key_exists('id', $response)) {
-                $payment->code = $response['id'];
-                $payment->save();
+                $this->transactionData->code = $response['id'];
+                $this->transactionData->save();
             }
 
             if (array_key_exists('errors', $response)) {
-                $payment->status = 'failed';
-                $payment->save();
-                $response['payment'] = $payment->load(['createdBy', 'paymentType']);
+                $this->transactionData->status = 'failed';
+                $this->transactionData->save();
+                $response['transaction'] = $this->transactionData;
 
-                return response($response, 422);
+                return response()->json($response, 422, [], JSON_NUMERIC_CHECK);
             }
         }
 
-        $payment->status = 'approved';
-        $payment->save();
+        $this->transactionData->status = 'approved';
+        $this->transactionData->save();
         $orderStatusController = new OrderStatusController($order->refresh());
-        $orderStatus = $orderStatusController->updateOrderStatus($payment);
+        $response = $orderStatusController->updateOrderStatus();
         ProcessOrder::dispatchNow($order);
-        $orderStatus['payment'] = $payment;
+        $response['transaction'] = $this->transactionData;
+        $response['notification'] = [
+            'msg' => 'Payment received!',
+            'type' => 'success'
+        ];
 
-        return response()->json($orderStatus, 201, [], JSON_NUMERIC_CHECK);
+        return response()->json($response, 201, [], JSON_NUMERIC_CHECK);
     }
 
     public function search(Request $request)
@@ -120,23 +143,21 @@ class TransactionController extends Controller
         $elavonSdkPayment->amount = $transaction->price->getAmount();
         $elavonSdkPayment->transaction_id = $transaction->id;
 
-        $transactionResponse = $elavonSdkPayment->posPayment();
-
-        return $transactionResponse;
+        return $elavonSdkPayment->posPayment();
     }
 
-    private function apiPay($validatedData, Transaction $payment)
+    private function apiPay(array $creditCardData)
     {
         $currencies = new ISOCurrencies();
         $moneyFormatter = new DecimalMoneyFormatter($currencies);
-        $price = $payment->price;
+        $price = $this->transactionData->price;
 
         $paymentResponse = (new CreditCardController)->creditCardAction(
             'ccsale',
-            $validatedData['card']['number'],
-            $validatedData['card']['exp_date'],
-            $validatedData['card']['cvc'],
-            $validatedData['card']['card_holder'] ?? '',
+            $creditCardData['number'],
+            $creditCardData['exp_date'],
+            $creditCardData['cvc'],
+            $creditCardData['card_holder'],
             $moneyFormatter->format($price)
         );
 
@@ -144,49 +165,48 @@ class TransactionController extends Controller
             'txn_id' => $paymentResponse['response']['ssl_txn_id'] ?? '',
             'transaction' => $paymentResponse['response']['ssl_transaction_type'] ?? '',
             'card_number' => $paymentResponse['response']['ssl_card_number'] ?? '',
-            'card_holder' => $validatedData['card']['card_holder'],
+            'card_holder' => $creditCardData['card_holder'],
             'status' => $paymentResponse['response']['ssl_result_message'] ?? '',
             'log' => $paymentResponse['response'] ? json_encode($paymentResponse['response']) : '',
-            'transaction_id' => $payment->id,
+            'transaction_id' => $this->transactionData->id,
         ]);
 
         return $paymentResponse;
     }
 
-    private function couponPay($validatedData, Transaction $payment)
+    private function couponPay(Transaction $transaction)
     {
-        $coupon = Coupon::where('code', $validatedData['code'])->first();
+        $coupon = Coupon::where('code', $transaction->code)->first();
 
         if (empty($coupon)) {
-            $payment->status = 'failed';
-            $payment->save();
+            $transaction->status = 'failed';
+            $transaction->save();
 
-            return ['errors' => ['Coupon' => ['Coupon does not exist']]];
+            return ['errors' => ['Coupon does not exist']];
         }
 
         if (date('Y-m-d H:i:s') > $coupon->to || $coupon->uses === 0) {
-            return ['errors' => ['Coupon' => ['This coupon has expired']]];
+            return ['errors' => ['This coupon has expired']];
         } else if ($coupon->from > date('Y-m-d H:i:s')) {
-            return ['errors' => ['Coupon' => ['Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))]]];
+            return ['errors' => ['Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))]];
         } else {
-            $order = Order::findOrFail($validatedData['order_id']);
+            $order = Order::findOrFail($transaction['order_id']);
 
-            $payment->amount = $order->subtotal - Price::calculateDiscount(
-                $order->subtotal,
-                $coupon->discount->type,
-                $coupon->discount->amount
-            );
-            $payment->save();
+            $transaction->price =
+                $order
+                ->subtotal
+                ->subtract(Price::calculateDiscount($order->subtotal, $coupon->discount));
+            $transaction->save();
             $coupon->decrement('uses');
 
             return true;
         }
     }
 
-    private function giftcardPay($validatedData, Transaction $payment)
+    private function giftcardPay(Transaction $transaction)
     {
 
-        $giftcard = Giftcard::where('code', $validatedData['code'])->first();
+        $giftcard = Giftcard::where('code', $transaction['code'])->first();
 
         if (!$giftcard->is_enabled) {
             return ['errors' => ['Gift card' => ['This gift card is inactive']]];
@@ -298,9 +318,11 @@ class TransactionController extends Controller
         $cash_register_id = $user->open_register->cash_register_id;
 
         if ($validatedData['amount'] > $order->total_paid) {
-            return response(['errors' => [
-                ['The amount field cannot exceed the total paid amount of $' . $order->total_paid]
-            ]], 422);
+            return response([
+                'errors' => [
+                    'The amount field cannot exceed the total paid amount of $' . $order->total_paid
+                ]
+            ], 422);
         }
 
         $code = null;
@@ -330,18 +352,18 @@ class TransactionController extends Controller
             'payment_type' => $refundType->id,
             'amount' => abs($validatedData['amount']) * -1,
             'code' => $code,
-            'status' => 'refunded',
+            'status' => 'refund approved',
             'refunded' => false,
             'cash_register_id' => $cash_register_id,
             'order_id' => $order->id,
-            'user_id' => $user->id
+            'created_by_id' => $user->id
         ]);
 
         $refund->save();
         $refund = $refund->load(['createdBy', 'paymentType', 'order']);
 
         $orderStatusController = new OrderStatusController($refund->order);
-        $orderStatus = $orderStatusController->updateOrderStatus($refund, true);
+        $orderStatus = $orderStatusController->updateOrderStatus(true);
         $orderStatus['notification'] = [
             'msg' => ['Refund completed successfully!'],
             'type' => 'success'
@@ -351,78 +373,86 @@ class TransactionController extends Controller
         return response($orderStatus, 500); // 500 status for debug purposes only!
     }
 
-    private function createLinkedRefund(Transaction $payment, bool $succeed)
+    private function createLinkedRefund(Transaction $transaction, bool $succeed)
     {
         $user = auth()->user();
-        $refund = $payment->replicate();
-        $refund->amount = abs($refund->amount) * -1;
-        $refund->status = $succeed ? 'refunded' : 'failed';
-        $refund->user_id = $user->id;
-        $refund->cash_register_id = $user->open_register->cash_register_id;
-        $refund->save();
+        $payment  = $transaction->payment;
+        $type = $payment['type_name'];
 
-        $payment->refunded = $succeed;
-        $payment->save();
+        $refundTransaction = Transaction::create([
+            'price' => $transaction->price->subtract($payment->change_price),
+            'status' => $succeed ? 'refund approved' : 'refund failed',
+            'cash_register_id' => $user->open_register->cash_register_id,
+            'order_id' => $transaction->order->id,
+            'created_by_id' => $user->id
+        ]);
+        $refund = Refund::create([
+            'transaction_id' => $refundTransaction->id,
+            'payment_id' =>  $transaction->payment->id,
+            'type' => "{$type} refund"
+        ]);
 
-        return $refund;
+        $refundTransaction->refund_id = $refund->id;
+        $refundTransaction->save();
+
+        return $refundTransaction;
     }
 
-    public function refundPayment(Transaction $payment, bool $setOrderStatus = true)
+    public function rollbackPayment(Payment $model, bool $setOrderStatus = true)
     {
-        if ($payment->refunded) {
-            return response(['errors' => ['Refund' => 'This payment has already been refunded']], 422);
+        $transaction = $model->transaction;
+        if (!$model->is_refundable) {
+            return response(['errors' => ['This payment cannot be refunded']], 422);
         }
 
-        switch ($payment->paymentType->type) {
+        switch ($model->paymentType->type) {
             case 'pos-terminal':
-                $result = $this->posRefund($payment);
+                $result = $this->posRefund($transaction);
                 break;
             case 'card':
-                $result = $this->apiRefund($payment);
+                $result = $this->apiRefund($transaction);
                 break;
             case 'coupon':
-                $result = $this->couponRefund($payment);
+                $result = $this->couponRefund($transaction);
                 break;
             case 'giftcard':
-                $result = $this->giftcardRefund($payment);
+                $result = $this->giftcardRefund($transaction);
                 break;
             case 'house-account':
-                $result = $this->houseAccRefund($payment);
+                $result = $this->houseAccRefund($transaction);
                 break;
             case 'cash':
                 $result = true;
                 break;
             default:
                 if ($setOrderStatus) {
-                    return response(['errors' => ['Refund' => "Payment method: {$payment->paymentType->type} cannot be refunded"]], 500);
+                    return response(['errors' => ["Payment method: {$model->paymentType->type} cannot be refunded"]], 500);
                 } else {
-                    return ['errors' => ['Refund' => "Payment method: {$payment->paymentType->type} cannot be refunded"]];
+                    return ['errors' => ["Payment method: {$model->paymentType->type} cannot be refunded"]];
                 }
         }
 
         if ($setOrderStatus) {
-            $orderStatusController = new OrderStatusController($payment->order);
+            $orderStatusController = new OrderStatusController($model->transaction->order);
 
             if (is_array($result) && array_key_exists('errors', $result)) {
-                $refund = $this->createLinkedRefund($payment, false);
-                $refund->load(['createdBy', 'paymentType', 'order']);
+                $refundTransaction = $this->createLinkedRefund($transaction, false);
 
-                $orderStatus = $orderStatusController->updateOrderStatus($refund, true);
+                $orderStatus = $orderStatusController->updateOrderStatus(true);
                 $orderStatus['errors'] = $result['errors'];
-                $orderStatus['refund'] = $refund->refresh();
+                $orderStatus['transaction'] = $refundTransaction;
 
                 return response($orderStatus, 500);
             } else {
-                $refund = $this->createLinkedRefund($payment, true);
-                $refund->load(['createdBy', 'paymentType', 'order']);
+                $refundTransaction = $this->createLinkedRefund($transaction, true);
 
-                $orderStatus = $orderStatusController->updateOrderStatus($refund, true);
-                $orderStatus['refunded_payment_id'] = $payment->id;
+                $orderStatus = $orderStatusController->updateOrderStatus(true);
+                $orderStatus['refunded_payment_id'] = $transaction->id;
                 $orderStatus['notification'] = [
                     'msg' => ['Refund completed successfully!'],
                     'type' => 'success'
                 ];
-                $orderStatus['refund'] = $refund->refresh();
+                $orderStatus['transaction'] = $refundTransaction;
 
                 return response($orderStatus);
             }
@@ -430,7 +460,7 @@ class TransactionController extends Controller
             if (is_array($result) && array_key_exists('errors', $result)) {
                 return ['errors' => $result['errors']];
             } else {
-                $refund = $this->createLinkedRefund($payment, true);
+                $refund = $this->createLinkedRefund($transaction, true);
                 return $refund;
             }
         }

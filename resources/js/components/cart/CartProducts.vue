@@ -1,181 +1,192 @@
 <template>
-  <div class="d-flex flex-grow-1" style="height:38vh; overflow-y:auto">
-    <v-expansion-panels class="d-block" accordion>
-      <v-expansion-panel v-for="(product, index) in products" :key="product.id">
-        <v-expansion-panel-header class="pa-2" ripple @click.stop>
-          <div class="d-flex flex-column" v-if="product.photo_url">
-            <v-img
-              :src="product.photo_url"
-              :lazy-src="product.photo_url"
-              aspect-ratio="1"
-              class="grey lighten-2"
-              width="100%"
-              height="100%"
-              max-width="50"
-              max-height="50"
-            ></v-img>
-          </div>
-          <div class="d-flex justify-space-around">
-            <div class="d-flex flex-column">
-              <span class="pb-1">
-                {{ product.name }}
-              </span>
-              <div style="width:100%; max-width:150px;">
-                <v-text-field
-                  prefix="$"
-                  @click.stop
-                  single-line
-                  @keyup.esc="revertPrice(index)"
-                  @keyup.enter="setPrice(index, true)"
-                  :ref="'priceField' + index"
-                  :min="0"
-                  type="number"
-                  :readonly="!editPrice(index)"
-                  :flat="!editPrice(index)"
-                  :outlined="editPrice(index)"
-                  :solo="!editPrice(index)"
-                  :color="editPrice(index) ? 'yellow' : ''"
-                  :value="$price(product.price).toFormat('0.00')"
-                  :hint="
-                    'Original price: ' +
-                      $price(product.original_price).toFormat('$0.00')
-                  "
-                  dense
-                ></v-text-field>
-              </div>
-            </div>
+  <v-container style="height:41vh; overflow-y:auto">
+    <v-row>
+      <v-col>
+        <v-expansion-panels accordion>
+          <v-expansion-panel
+            v-for="(product, index) in products"
+            :key="product.id"
+          >
+            <v-expansion-panel-header @click.stop class="pa-1">
+              <v-container fluid>
+                <v-row dense align="center">
+                  <b class="primary--text">{{ 1 + index }}.</b>
+                  <i class="mx-1">
+                    <b>
+                      {{ product.name }}
+                    </b>
+                  </i>
+                  <v-spacer />
+                  <span class="mx-1">
+                    Price:
+                    <i :class="productPrice(product).class">
+                      <b>
+                        {{ productPrice(product).label }}
+                      </b>
+                    </i>
+                  </span>
+                  <v-spacer />
+                  <span class="mx-1">
+                    Original price:
+                    <i class="primary--text">
+                      <b>
+                        {{ $price(product.original_price).toFormat() }}
+                      </b>
+                    </i>
+                  </span>
+                </v-row>
 
-            <v-spacer />
+                <v-row align="center">
+                  <v-img
+                    :src="product.photo_url"
+                    :lazy-src="product.photo_url"
+                    aspect-ratio="1"
+                    class="grey lighten-2"
+                    width="100%"
+                    height="100%"
+                    max-width="50"
+                    max-height="50"
+                  ></v-img>
 
-            <div class="d-flex justify-content-center align-center">
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    v-if="
-                      product.editable_price &&
-                        editable &&
-                        !product.sku.startsWith('giftCard')
-                    "
-                    :color="editPrice(index) ? 'yellow' : ''"
-                    :input-value="editPrice(index) ? true : false"
-                    @click.stop="toggleEdit(index)"
-                    icon
-                    v-on="on"
-                  >
-                    <v-icon>mdi-pencil</v-icon>
-                  </v-btn>
-                </template>
-                <span>Edit price</span>
-              </v-tooltip>
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    class="mx-2"
-                    v-if="
-                      editable &&
-                        !(
-                          product.sku.startsWith('dummy') ||
-                          product.sku.startsWith('giftCard')
-                        )
-                    "
-                    icon
-                    @click.stop="viewProductDialog(product)"
-                    v-on="on"
-                  >
-                    <v-icon>mdi-eye</v-icon>
-                  </v-btn>
-                </template>
-                <span>View item</span>
-              </v-tooltip>
-              <v-tooltip bottom color="red">
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    color="red"
-                    v-on="on"
-                    v-if="editable"
-                    class="mx-2"
-                    icon
-                    @click.stop="decreaseProductQty(product)"
-                  >
-                    <v-icon>remove</v-icon>
-                  </v-btn>
-                </template>
-                <span>Decrease qty</span>
-              </v-tooltip>
-              <v-text-field
-                style="max-width:45px;"
-                :disabled="!editable"
-                type="number"
-                label="Qty"
-                v-model="product.qty"
-                :min="1"
-                @click.stop
-                @blur="limits(product)"
-                @keyup="limits(product)"
-              ></v-text-field>
+                  <v-spacer />
 
-              <v-tooltip bottom color="green">
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    color="green"
-                    v-on="on"
-                    icon
-                    class="mx-2"
-                    v-if="editable"
-                    @click.stop="increaseProductQty(product)"
-                  >
-                    <v-icon>add</v-icon>
-                  </v-btn>
-                </template>
-                <span>Increase qty</span>
-              </v-tooltip>
+                  <v-text-field
+                    v-if="product.editable_price && editable"
+                    class="mt-5 mx-1 pt-3"
+                    style="max-width:125px;"
+                    prefix="$"
+                    @click.stop
+                    @keyup.esc="revertPrice(index)"
+                    @keyup.enter="setPrice(index, true)"
+                    :ref="'priceField' + index"
+                    :min="0"
+                    type="number"
+                    label="Edit price"
+                    :readonly="!editPrice(index)"
+                    outlined
+                    :color="editPrice(index) ? 'primary' : ''"
+                    :value="parsePrice(product.price).toFormat('0.00')"
+                    dense
+                    append-icon="mdi-pencil"
+                    @click:append.stop="toggleEdit(index)"
+                    persistent-hint
+                    :hint="editPriceHint(index)"
+                  ></v-text-field>
 
-              <v-tooltip bottom color="red">
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    class="mx-2"
-                    v-if="editable"
-                    icon
-                    @click.stop="removeProduct(index)"
-                    color="red"
-                    v-on="on"
-                  >
-                    <v-icon>delete</v-icon>
-                  </v-btn>
-                </template>
-                <span>Remove from cart</span>
-              </v-tooltip>
-            </div>
-          </div>
-        </v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <cartDiscount
-            v-if="product.is_discountable"
-            :productIndex="index"
-            :productPrice="$price(product.price).multiply(product.qty)"
-            :editable="editable"
-          />
-          <v-row>
-            <v-col :cols="12">
-              <v-textarea
-                v-model="product.notes"
-                prepend-inner-icon="mdi-card-text-outline"
-                :rows="2"
-                label="Notes"
-                :hint="'For product: ' + product.name"
-                counter
-                no-resize
-                :disabled="!editable"
-              ></v-textarea>
-            </v-col>
-          </v-row>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
-  </div>
+                  <v-text-field
+                    v-else
+                    class="mt-5 mx-1 pt-3"
+                    style="max-width:125px;"
+                    prefix="$"
+                    :ref="'priceField' + index"
+                    :min="0"
+                    type="number"
+                    label="Unit price"
+                    :disabled="true"
+                    outlined
+                    :value="parsePrice(product.price).toFormat('0.00')"
+                    dense
+                    persistent-hint
+                    :hint="editPriceHint(index)"
+                  ></v-text-field>
+
+                  <v-spacer />
+
+                  <v-text-field
+                    dense
+                    outlined
+                    class="mt-5 pt-3"
+                    style="max-width:110px;"
+                    :disabled="!editable"
+                    type="number"
+                    label="Qty"
+                    v-model="product.qty"
+                    :min="1"
+                    @click.stop
+                    @blur="limits(product)"
+                    @keyup="limits(product)"
+                    :prepend-inner-icon="editable ? 'remove' : null"
+                    @click:prepend-inner.stop="decreaseProductQty(product)"
+                    :append-icon="editable ? 'add' : null"
+                    @click:append.stop="increaseProductQty(product)"
+                    persistent-hint
+                    :hint="editPriceHint(null)"
+                  ></v-text-field>
+
+                  <v-spacer />
+
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                      <v-btn
+                        class="mx-1"
+                        v-if="editable"
+                        @click.stop="viewProductDialog(product)"
+                        v-on="on"
+                        small
+                        icon
+                      >
+                        <v-icon>mdi-eye</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>View item</span>
+                  </v-tooltip>
+
+                  <v-spacer />
+
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                      <v-btn
+                        class="mx-1"
+                        v-if="editable"
+                        @click.stop="removeProduct(index)"
+                        color="red"
+                        v-on="on"
+                        small
+                        icon
+                      >
+                        <v-icon>mdi-cart-remove</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Remove from cart</span>
+                  </v-tooltip>
+
+                  <v-spacer />
+                </v-row>
+              </v-container>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <cartDiscount
+                v-if="product.is_discountable"
+                :productIndex="index"
+                :productPrice="$price(product.price).multiply(product.qty)"
+                :editable="editable"
+              />
+              <v-row>
+                <v-col :cols="12">
+                  <v-textarea
+                    dense
+                    outlined
+                    v-model="product.notes"
+                    prepend-inner-icon="mdi-card-text-outline"
+                    :rows="2"
+                    label="Notes"
+                    :hint="'For product: ' + product.name"
+                    counter
+                    no-resize
+                    :disabled="!editable"
+                  ></v-textarea>
+                </v-col>
+              </v-row>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
+import Dinero from "dinero.js";
 import { mapState, mapMutations, mapActions } from "vuex";
 
 export default {
@@ -204,9 +215,27 @@ export default {
     ]),
     ...mapActions("cart", ["removeProduct"]),
 
-    cancelEvent(index, event) {
-      if (!this.editPrice(index)) {
-        event.preventDefault();
+    editPriceHint(index) {
+      if (this.editPrice(index)) {
+        return "Enter to submit\nESC reverts price";
+      } else {
+        return `${_.repeat("\xa0", 15)}\n${_.repeat("\xa0", 18)}`;
+      }
+    },
+
+    productPrice(product) {
+      const label = this.calcProductDiscount(product);
+      const priceBeforeDiscount = this.parsePrice(product.price).multiply(
+        Number.parseInt(product.qty)
+      );
+
+      if (label.isNegative() || label.isZero()) {
+        return { class: "red--text", label: "Discount error" };
+      } else {
+        return {
+          class: "primary--text",
+          label: label.toFormat()
+        };
       }
     },
     getSelectedInput(index) {

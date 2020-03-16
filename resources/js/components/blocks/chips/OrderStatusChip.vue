@@ -5,6 +5,7 @@
     right
     transition="scale-transition"
     :close-on-content-click="false"
+    offset-y
   >
     <template v-slot:activator="{ on }">
       <h5 v-if="$props.title">Status</h5>
@@ -15,10 +16,10 @@
         :small="small"
       >
         <v-icon left>{{ $props.latestStatus.icon }}</v-icon>
-        {{ $props.latestStatus.text }}
+        <b>{{ $props.latestStatus.text }}</b>
       </v-chip>
     </template>
-    <v-card class="pa-5 fill-height" outlined width="750" shaped>
+    <v-card class="pa-5 fill-height" outlined width="750">
       <v-container fluid>
         <v-row v-if="loading" justify="center" align="center">
           <div class="text-center ma-12">

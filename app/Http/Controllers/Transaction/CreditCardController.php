@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Company;
+use App\Helper\PhpHelper;
 use App\Transaction;
 use Illuminate\Http\Request;
 
@@ -115,13 +117,14 @@ class CreditCardController extends Controller
 
     public function cardRefund($transaction_id)
     {
-        $payment = Transaction::where('code', $transaction_id)->firstOrFail();
-        $store = $payment->cash_register->store;
+        $paymentTransaction = Transaction::where('code', $transaction_id)->firstOrFail();
+        $store = $paymentTransaction->cashRegister->store;
+        $bankAccountApi = $store->company->bankAccountApi()->account;
 
         $data = [
-            'ssl_merchant_id' => ($store->company->bankAccountApi()->account)['merchant_id'],
-            'ssl_user_id' => ($store->company->bankAccountApi()->account)['ssl_user_id'],
-            'ssl_pin' => ($store->company->bankAccountApi()->account)['ssl_pin'],
+            'ssl_merchant_id' => $bankAccountApi['ssl_merchant_id'],
+            'ssl_user_id' => $bankAccountApi['ssl_user_id'],
+            'ssl_pin' => $bankAccountApi['ssl_pin'],
             'ssl_txn_id' => $transaction_id
         ];
         $elavonApiPaymentController = new ElavonApiTransactionController();

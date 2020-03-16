@@ -35,45 +35,47 @@
     <v-card-actions>
       <v-container>
         <v-row no-gutters align="center" justify="center">
-          <v-spacer></v-spacer>
+          <v-spacer />
 
           <v-btn
+            icon
+            fab
             @click="previousStep()"
             v-show="!order_id && currentCheckoutStep === 2"
-            text
             color="deep-orange"
+            :disabled="checkout_loading"
           >
             <v-icon large>
               mdi-chevron-left
             </v-icon>
-            Back
           </v-btn>
 
           <v-spacer v-show="currentCheckoutStep !== 3" />
 
           <v-btn
             @click="resetState()"
-            color="success"
-            text
+            color="primary"
+            outlined
             v-show="currentCheckoutStep === 3 ? true : false"
+            :disabled="checkout_loading"
           >
             Close
           </v-btn>
 
           <v-btn
+            icon
+            fab
             @click="completeStep()"
-            :disabled="disableNext"
-            color="green"
-            text
+            :disabled="disableNext || checkout_loading"
+            color="primary"
             v-show="currentCheckoutStep === 1 ? true : false"
           >
-            Next
             <v-icon large>
               mdi-chevron-right
             </v-icon>
           </v-btn>
 
-          <v-spacer></v-spacer>
+          <v-spacer />
         </v-row>
       </v-container>
     </v-card-actions>
@@ -85,6 +87,7 @@ import { mapState, mapMutations, mapActions } from "vuex";
 export default {
   computed: {
     ...mapState("cart", [
+      "checkout_loading",
       "currentCheckoutStep",
       "is_valid",
       "order_id",

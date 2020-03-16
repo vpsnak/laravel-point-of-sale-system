@@ -35,7 +35,7 @@
         <v-row>
           <v-col cols="6">
             <v-btn
-              color="secondary"
+              color="primary"
               type="submit"
               :loading="loading"
               :disabled="invalid"

@@ -9,7 +9,7 @@
         ​<v-progress-circular
           v-if="paymentTypesLoading"
           indeterminate
-          color="secondary"
+          color="primary"
         ></v-progress-circular>
         <v-chip-group
           v-else
@@ -24,7 +24,7 @@
             :value="payment_type"
             :disabled="loading"
             outlined
-            active-class="success--text"
+            active-class="primary--text"
           >
             <v-icon left>{{ payment_type.icon }}</v-icon>
             {{ payment_type.name }}
@@ -158,7 +158,7 @@
         <v-col :lg="2" :md="3" :cols="6" v-if="paymentType.type !== 'coupon'">
           <ValidationProvider
             :rules="`required|between:0.01,${amountRules}`"
-            v-slot="{ errors, valid }"
+            v-slot="{ errors }"
             name="Payment amount"
           >
             <v-text-field
@@ -172,7 +172,6 @@
               prefix="$"
               v-model="amount"
               :error="errors[0] ? true : false"
-              :success="valid"
             ></v-text-field>
           </ValidationProvider>
         </v-col>
@@ -180,10 +179,11 @@
       <v-row justify="center" align="center" dense>
         <v-col :lg="4" :cols="6">
           <v-btn
+            outlined
             type="submit"
             dark
             block
-            color="green darken-3"
+            color="primary"
             :loading="makePaymentLoading"
             :disabled="invalid || !isValidCheckout || loading"
           >
@@ -281,9 +281,9 @@ export default {
         this.order_remaining_price &&
         _.has(this.order_remaining_price, "amount")
       ) {
-        return this.$price(this.order_remaining_price);
+        return this.parsePrice(this.order_remaining_price);
       } else {
-        return this.$price();
+        return this.parsePrice();
       }
     },
     amountRules() {
@@ -333,7 +333,7 @@ export default {
   methods: {
     ...mapMutations("cart", [
       "setOrderId",
-      "setPayments",
+      "setTransactions",
       "setOrderChangePrice",
       "setOrderRemainingPrice",
       "setOrderStatus",
@@ -343,7 +343,6 @@ export default {
     ...mapActions("requests", ["request"]),
 
     setAmount() {
-      console.log(this.orderRemainingPrice);
       this.amount = this.orderRemainingPrice.toFormat("0.00");
     },
     getPaymentTypes() {
@@ -397,46 +396,28 @@ export default {
 
       const payload = {
         method: "post",
-        url: "payments/create",
+        url: "transactions/create",
         data: data
       };
 
       this.request(payload)
         .then(response => {
-          this.setOrderChangePrice(response.payment.change_price);
+          this.setOrderChangePrice(response.transaction.payment.change_price);
           this.setOrderRemainingPrice(response.remaining);
           this.setOrderStatus(response.status);
 
-          this.setPayments(response.payment);
+          this.setTransactions(response.transaction);
         })
         .catch(error => {
           console.error(error);
-          if (_.has(error, "payment")) {
-            this.setPayments(error.payment);
+          if (_.has(error, "transaction")) {
+            this.setTransactions(error.transaction);
           }
         })
         .finally(() => {
           this.makePaymentLoading = false;
           this.setCheckoutLoading(false);
         });
-    },
-    max() {
-      if (this.paymentType !== "cash") {
-        if (this.paymentType === "house-account") {
-          if (this.houseAccountLimit.greaterThan(this.orderRemainingPrice)) {
-            this.paymentPrice.equalsTo(this.orderRemainingPrice);
-          } else if (this.paymentPrice.greaterThan(this.houseAccountLimit)) {
-            this.paymentPrice.equalsTo(this.houseAccountLimit);
-          }
-        }
-        if (this.paymentPrice.greaterThan(this.orderRemainingPrice)) {
-          this.paymentPrice.equalsTo(this.orderRemainingPrice);
-        }
-      } else if (
-        this.paymentPrice.greaterThan(this.$price({ amount: 999900 }))
-      ) {
-        this.amount = 999900;
-      }
     },
     fillDemoCard() {
       if (process.env.NODE_ENV === "development") {
