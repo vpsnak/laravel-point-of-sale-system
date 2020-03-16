@@ -2,7 +2,7 @@
   <ValidationObserver v-slot="{ invalid }" slim>
     <v-container class="fill-height" fluid>
       <v-row align="center" justify="center">
-        <v-col cols="12" sm="8" md="4" lg="3" xl="2">
+        <v-col cols="12" sm="8" md="4" lg="3">
           <v-card class="elevation-12">
             <v-form @submit.prevent="submit">
               <v-toolbar flat class="d-flex justify-center">
@@ -21,9 +21,8 @@
                     prepend-inner-icon="person"
                     type="text"
                     :error="errors[0]"
-                    outlined
                     dense
-                    solo
+                    single-line
                   ></v-text-field>
                 </ValidationProvider>
                 <ValidationProvider
@@ -37,9 +36,8 @@
                     prepend-inner-icon="lock"
                     type="password"
                     :error="errors[0]"
-                    outlined
                     dense
-                    solo
+                    single-line
                   ></v-text-field>
                 </ValidationProvider>
               </v-card-text>

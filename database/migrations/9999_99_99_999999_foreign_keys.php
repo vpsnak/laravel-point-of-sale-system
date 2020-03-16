@@ -98,15 +98,13 @@ class ForeignKeys extends Migration
 
         Schema::table('addresses', function (Blueprint $table) {
             $table->foreign('region_id')->references('id')->on('regions');
+            $table->foreign('customer_id')->references('id')->on('customers');
+            $table->foreign('store_pickup_id')->references('id')->on('store_pickups');
         });
 
         Schema::table('menu_item_role', function (Blueprint $table) {
             $table->foreign('menu_item_id')->references('id')->on('menu_items');
             $table->foreign('role_id')->references('id')->on('roles');
-        });
-
-        Schema::table('addresses', function (Blueprint $table) {
-            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
         });
 
         Schema::table('category_product', function (Blueprint $table) {
@@ -225,15 +223,13 @@ class ForeignKeys extends Migration
 
         Schema::table('addresses', function (Blueprint $table) {
             $table->dropForeign(['region_id']);
+            $table->dropForeign(['customer_id']);
+            $table->dropForeign(['store_pickup_id']);
         });
 
         Schema::table('menu_item_role', function (Blueprint $table) {
             $table->dropForeign(['menu_item_id']);
             $table->dropForeign(['role_id']);
-        });
-
-        Schema::table('addresses', function (Blueprint $table) {
-            $table->dropForeign(['customer_id']);
         });
 
         Schema::table('product_store', function (Blueprint $table) {
