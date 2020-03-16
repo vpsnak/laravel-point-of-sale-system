@@ -20,7 +20,7 @@
             </v-icon>
             View order # {{ order_id }}
             <v-spacer />
-            <v-tooltip bottom color="red">
+            <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-btn @click.stop="close()" color="red" icon v-on="on">
                   <v-icon>mdi-close</v-icon>
@@ -48,7 +48,7 @@
               <OrderItemsTabItem />
             </v-tabs-items>
           </v-tabs>
-          <v-tooltip bottom v-if="order_id" color="primary">
+          <v-tooltip bottom v-if="order_id">
             <template v-slot:activator="{ on }">
               <v-btn
                 color="primary"

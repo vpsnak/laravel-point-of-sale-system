@@ -129,7 +129,7 @@
         <span>Receipt</span>
       </v-tooltip>
 
-      <v-tooltip bottom v-if="canCancel(item.status)" color="red">
+      <v-tooltip bottom v-if="canCancel(item.status)">
         <template v-slot:activator="{ on }">
           <v-btn
             icon

@@ -48,7 +48,7 @@
       <span>View / Edit selected customer</span>
     </v-tooltip>
 
-    <v-tooltip bottom v-if="cartCustomerComment" color="red">
+    <v-tooltip bottom v-if="cartCustomerComment">
       <template v-slot:activator="{ on }">
         <v-btn
           class="mx-1"

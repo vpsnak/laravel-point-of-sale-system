@@ -5,7 +5,7 @@
     group
     @change="resetDelivery()"
   >
-    <v-tooltip bottom color="primary">
+    <v-tooltip bottom>
       <template v-slot:activator="{ on }">
         <v-btn
           v-if="!$props.editOrder"
@@ -20,7 +20,7 @@
       </template>
       <span>Cash & Carry</span>
     </v-tooltip>
-    <v-tooltip bottom color="warning">
+    <v-tooltip bottom>
       <template v-slot:activator="{ on }">
         <v-btn
           color="warning"
@@ -34,7 +34,7 @@
       </template>
       <span>In Store Pickup</span>
     </v-tooltip>
-    <v-tooltip bottom color="purple">
+    <v-tooltip bottom>
       <template v-slot:activator="{ on }">
         <v-btn
           color="purple"

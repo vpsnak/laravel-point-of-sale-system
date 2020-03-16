@@ -8,7 +8,7 @@
   >
     <v-card>
       <v-toolbar>
-        <v-tooltip bottom color="red">
+        <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
               :disabled="disableControls"

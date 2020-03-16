@@ -13,7 +13,7 @@
       </v-btn>
     </v-row>
     <v-row align="center" justify="space-around">
-      <v-tooltip bottom color="green">
+      <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
             icon
@@ -36,7 +36,7 @@
         </span>
       </v-tooltip>
 
-      <v-tooltip bottom color="orange">
+      <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
             icon
@@ -54,7 +54,7 @@
         </span>
       </v-tooltip>
 
-      <v-tooltip bottom color="red">
+      <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
             icon

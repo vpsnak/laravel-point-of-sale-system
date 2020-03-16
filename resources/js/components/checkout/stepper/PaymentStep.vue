@@ -15,11 +15,10 @@
 
           <v-btn
             v-if="completed"
-            color="success"
+            color="primary"
             @click="complete"
             :loading="false"
             :disabled="false"
-            text
             outlined
             >Complete order
           </v-btn>

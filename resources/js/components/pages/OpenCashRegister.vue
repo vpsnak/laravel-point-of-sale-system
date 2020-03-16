@@ -9,7 +9,7 @@
             </v-icon>
             Select cash register
             <v-spacer />
-            <v-tooltip bottom color="red">
+            <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-btn
                   @click="$router.replace({ name: 'dashboard' })"
