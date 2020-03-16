@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Address;
 use Illuminate\Http\Request;
 use App\Region;
+use App\StorePickup;
 
 class AddressController extends Controller
 {
+    private $address;
+
     public function all()
     {
         return response(Address::paginate());
@@ -20,10 +23,11 @@ class AddressController extends Controller
 
     public function create(Request $request)
     {
-        $validatedData = $request->validate([
+        $this->address = $request->validate([
             'customer_id' => 'required|exists:customers,id',
-            'first_name' => 'required|string',
-            'last_name' => 'required|string',
+            'store_pickup_id' => 'required|exists:customers,id',
+            'first_name' => 'nullable|string|required_with:customer_id',
+            'last_name' => 'nullable|string|required_with:customer_id',
             'street' => 'required|string',
             'street2' => 'nullable|string',
             'city' => 'required|string',
@@ -38,15 +42,22 @@ class AddressController extends Controller
             'location' => 'nullable|numeric|between:1,12',
             'location_name' => 'nullable|string'
         ]);
-        $response = self::regionValidation($validatedData['region_id'], $validatedData['country_id']);
+        $response = self::regionValidation($this->address['region_id'], $this->address['country_id']);
+
+        if ($this->addressstore_pickup_id) {
+            $storePickup = StorePickup::created($this->address['region_id'], $this->address['country_id']);
+            $storePickup->address_id = $this->address(['store_pickup_id']);
+            $storePickup->save();
+        }
+
         if (isset($response['errors'])) {
             return response($response, 422);
         } else {
-            unset($validatedData['country_id']);
+            unset($this->address['country_id']);
 
-            $address = Address::create($validatedData);
+            $address = Address::create($this->address);
 
-            return response(['address' => $address->load('region'), 'notification' => [
+            return response(['address' => $address, 'notification' => [
                 'msg' => ["Address successfully created!"],
                 'type' => 'success'
             ]], 201);
@@ -55,10 +66,10 @@ class AddressController extends Controller
 
     public function update(Request $request)
     {
-        $validatedData = $request->validate([
+        $this->address = $request->validate([
             'id' => 'required|exists:addresses,id',
-            'customer_id' => 'required|exists:customers,id',
-            'country_id' => 'required|exists:countries,id',
+            'first_name' => 'nullable|string|required_with:customer_id',
+            'last_name' => 'nullable|string|required_with:customer_id',
             'region_id' => 'required|exists:regions,id',
             'first_name' => 'required|string',
             'last_name' => 'required|string',
@@ -74,14 +85,14 @@ class AddressController extends Controller
             'location' => 'nullable|numeric|between:1,12',
             'location_name' => 'nullable|string'
         ]);
-        $response = self::regionValidation($validatedData['region_id'], $validatedData['country_id']);
+        $response = self::regionValidation($this->address['region_id'], $this->address['country_id']);
         if (isset($response['errors'])) {
             return response($response, 422);
         } else {
-            unset($validatedData['country_id']);
+            unset($this->address['country_id']);
 
-            $address = Address::findOrFail($validatedData['id']);
-            $address->fill($validatedData);
+            $address = Address::findOrFail($this->address['id']);
+            $address->fill($this->address);
             $address->save();
 
             return response([

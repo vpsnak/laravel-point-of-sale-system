@@ -52,7 +52,7 @@ export default {
   mounted() {
     EventBus.$on("checkout-cancel-order", event => {
       if (event.payload) {
-        this.setIsValidCheckout(false);
+        this.setCheckoutLoading(true);
         this.request({
           method: "delete",
           url: `orders/${this.order_id}`
@@ -113,7 +113,7 @@ export default {
     ...mapMutations("dialog", ["setDialog"]),
     ...mapMutations("cart", [
       "setCheckoutDialog",
-      "setIsValidCheckout",
+      "setCheckoutLoading",
       "resetState"
     ]),
     ...mapActions("requests", ["request"]),

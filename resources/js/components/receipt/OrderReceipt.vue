@@ -64,16 +64,23 @@ export default {
     }
   },
   methods: {
-    ...mapActions("cart", ["saveGuestEmail", "mailReceipt"]),
+    ...mapActions("cart", ["saveGuestEmail"]),
+    ...mapActions("requests", ["request"]),
 
     printReceipt() {
       window.open(`/receipt/${this.order_id}`, "_blank");
     },
     mailReceipt() {
       this.loading = true;
+      let payload = {
+        method: "post",
+        url: `/guest-email/create`,
+        data: { email: this.customerEmail }
+      };
 
-      this.saveGuestEmail({ email: this.customerEmail }).finally(() => {
-        this.mailReceipt({ email: this.customerEmail }).finally(() => {
+      this.request(payload).finally(() => {
+        payload.url = `mail-receipt/${this.order_id}`;
+        this.request(payload).finally(() => {
           this.loading = false;
         });
       });

@@ -410,58 +410,6 @@ export default {
       context.commit("removeProduct", index);
       context.commit("isValidDiscount");
     },
-    mailReceipt(context, payload) {
-      return new Promise((resolve, reject) => {
-        axios
-          .post(
-            `${context.rootState.config.base_url}/mail-receipt/${context.state.order.id}`,
-            payload
-          )
-          .then(response => {
-            let notification = {
-              msg: response.data.info,
-              type: "success"
-            };
-
-            context.commit("setNotification", notification, {
-              root: true
-            });
-            resolve(response);
-          })
-          .catch(error => {
-            let notification = {
-              msg: error.response.data.errors,
-              type: "error"
-            };
-            context.commit("setNotification", notification, {
-              root: true
-            });
-            reject(error);
-          });
-      });
-    },
-    saveGuestEmail(context, payload) {
-      return new Promise((resolve, reject) => {
-        axios
-          .post(
-            `${context.rootState.config.base_url}/guest-email/create`,
-            payload
-          )
-          .then(response => {
-            resolve(response);
-          })
-          .catch(error => {
-            let notification = {
-              msg: error.response.data.errors,
-              type: "error"
-            };
-            context.commit("setNotification", notification, {
-              root: true
-            });
-            reject(error);
-          });
-      });
-    },
     submitOrder(context, url) {
       return new Promise((resolve, reject) => {
         let payload = {
