@@ -69,6 +69,7 @@ class AddressController extends Controller
     {
         $this->address = $request->validate([
             'id' => 'required|exists:addresses,id',
+            'store_pickup_id' => 'nullable|required_with:store_pickup_id',
             'name' => 'nullable|required_with:store_pickup_id',
             'first_name' => 'nullable|string|required_with:customer_id',
             'last_name' => 'nullable|string|required_with:customer_id',

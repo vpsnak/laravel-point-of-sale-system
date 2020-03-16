@@ -37,7 +37,7 @@
         <v-col :lg="3" :cols="6">
           <ValidationProvider
             rules="required"
-            v-slot="{ errors, valid }"
+            v-slot="{ errors }"
             name="Card number"
           >
             <v-text-field
@@ -50,14 +50,13 @@
               v-model="card.number"
               :disabled="loading"
               :error-messages="errors"
-              :success="valid"
             ></v-text-field>
           </ValidationProvider>
         </v-col>
         <v-col :lg="3" :cols="6">
           <ValidationProvider
             rules="required"
-            v-slot="{ errors, valid }"
+            v-slot="{ errors }"
             name="Card holder's name"
           >
             <v-text-field
@@ -69,14 +68,13 @@
               v-model="card.card_holder"
               :disabled="loading"
               :error-messages="errors"
-              :success="valid"
             ></v-text-field>
           </ValidationProvider>
         </v-col>
         <v-col :lg="2" :cols="6">
           <ValidationProvider
             rules="required|digits:4"
-            v-slot="{ errors, valid }"
+            v-slot="{ errors }"
             name="Exp date"
           >
             <v-text-field
@@ -91,7 +89,6 @@
               prepend-inner-icon="mdi-calendar"
               :error-messages="errors[0] ? 'Format: MMYY' : null"
               hint="Format: MMYY"
-              :success="valid"
             ></v-text-field>
           </ValidationProvider>
         </v-col>
@@ -99,7 +96,7 @@
         <v-col :lg="2" :cols="6">
           <ValidationProvider
             rules="required|min:3|max:4"
-            v-slot="{ errors, valid }"
+            v-slot="{ errors }"
             name="CVC/CVV"
           >
             <v-text-field
@@ -112,7 +109,6 @@
               v-model="card.cvc"
               :disabled="loading"
               :error-messages="errors"
-              :success="valid"
             ></v-text-field>
           </ValidationProvider>
         </v-col>
@@ -123,11 +119,7 @@
         v-else-if="['giftcard', 'coupon'].indexOf(paymentType.type) !== -1"
       >
         <v-col :lg="2" :md="3" :cols="6">
-          <ValidationProvider
-            rules="required"
-            v-slot="{ errors, valid }"
-            name="Code"
-          >
+          <ValidationProvider rules="required" v-slot="{ errors }" name="Code">
             <v-text-field
               dense
               outlined
@@ -136,7 +128,6 @@
               :disabled="loading"
               v-model="code"
               :error-messages="errors"
-              :success="valid"
             ></v-text-field>
           </ValidationProvider>
         </v-col>
