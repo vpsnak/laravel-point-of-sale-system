@@ -8,7 +8,7 @@
         block
         class="my-2"
         @click.stop="setCheckoutDialog(true)"
-        :disabled="disabled || !isValidCheckout"
+        :disabled="disableCheckout"
         >Checkout
       </v-btn>
     </v-row>
@@ -148,6 +148,20 @@ export default {
           return "warning";
         case "delivery":
           return "purple";
+      }
+    },
+    disableCheckout() {
+      const orderTotalPrice = this.parsePrice(this.order_total_price);
+
+      if (
+        !this.$props.disabled &&
+        this.isValidCheckout &&
+        orderTotalPrice.isPositive() &&
+        !orderTotalPrice.isZero()
+      ) {
+        return false;
+      } else {
+        return true;
       }
     }
   },

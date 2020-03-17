@@ -3,9 +3,15 @@
     <v-card-text>
       <v-container fluid>
         <v-row>
-          <v-btn class="mx-1" @click="btnactive = !btnactive" :color="btnactive ? 'primary' : null">
+          <v-btn
+            class="mx-1"
+            @click="btnactive = !btnactive"
+            :color="btnactive ? 'primary' : null"
+          >
             <v-icon left>mdi-barcode-scan</v-icon>
-            <v-icon right>{{ btnactive ? "mdi-cart-arrow-down" : "mdi-eye" }}</v-icon>
+            <v-icon right>{{
+              btnactive ? "mdi-cart-arrow-down" : "mdi-eye"
+            }}</v-icon>
           </v-btn>
 
           <v-text-field
@@ -22,7 +28,7 @@
             @click:clear="(currentPage = 1), getAllProducts()"
           ></v-text-field>
 
-          <v-menu offset-y>
+          <v-menu :nudge-width="200" offset-x>
             <template v-slot:activator="{ on }">
               <v-btn icon v-on="on">
                 <v-icon>mdi-plus</v-icon>
@@ -51,7 +57,11 @@
 
         <v-row align="center" justify="center">
           <v-col>
-            <v-slide-group show-arrows v-model="selectedCategory" @change="keyword = ''">
+            <v-slide-group
+              show-arrows
+              v-model="selectedCategory"
+              @change="keyword = ''"
+            >
               <v-slide-item
                 v-for="category in categories"
                 :key="category.id"
@@ -64,7 +74,8 @@
                   @click="toggle"
                   depressed
                   rounded
-                >{{ category.name }}</v-btn>
+                  >{{ category.name }}
+                </v-btn>
               </v-slide-item>
             </v-slide-group>
           </v-col>
@@ -74,8 +85,19 @@
     <div v-if="products.length">
       <v-container style="max-height:61vh;" class="overflow-y-auto fill-height">
         <v-row justify="center" align="center">
-          <v-col v-for="product in products" :key="product.id" :cols="12" :md="6" :lg="4">
-            <v-card :img="product.photo_url" @click="addProduct(product)" height="170px" dark>
+          <v-col
+            v-for="product in products"
+            :key="product.id"
+            :cols="12"
+            :md="6"
+            :lg="4"
+          >
+            <v-card
+              :img="product.photo_url"
+              @click="addProduct(product)"
+              height="170px"
+              dark
+            >
               <v-card-title class="pa-0 grey darken-2" @click.stop>
                 <h6 class="px-2">{{ truncate(product.name) }}</h6>
                 <v-spacer />
@@ -106,7 +128,12 @@
                       <v-icon class="pr-2">mdi-email-send</v-icon>
                       <h5>Send plant care pdf</h5>
                     </v-list-item>
-                    <v-list-item :href="product.url" target="_blank" link :disabled="!product.url">
+                    <v-list-item
+                      :href="product.url"
+                      target="_blank"
+                      link
+                      :disabled="!product.url"
+                    >
                       <v-icon class="pr-2">mdi-alpha-m-circle-outline</v-icon>
                       <h5>View on Magento</h5>
                     </v-list-item>
@@ -159,7 +186,13 @@
     </div>
     <v-container v-else-if="!products.length">
       <v-row align="center" justify="center" style="height:58vh;">
-        <v-progress-circular :size="100" :width="10" color="primary" v-if="loader" indeterminate></v-progress-circular>
+        <v-progress-circular
+          :size="100"
+          :width="10"
+          color="primary"
+          v-if="loader"
+          indeterminate
+        ></v-progress-circular>
         <h2 v-else>No products found</h2>
       </v-row>
     </v-container>
