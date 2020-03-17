@@ -20,7 +20,6 @@
                 @change="changeCashRegisters"
                 @input="enableCashRegisters"
                 :error-messages="errors"
-                outlined
                 dense
               ></v-select>
             </ValidationProvider>
@@ -40,7 +39,6 @@
                 item-value="id"
                 @input="enableOpeningAmount"
                 :error-messages="errors"
-                outlined
                 dense
               ></v-select>
             </ValidationProvider>
@@ -61,7 +59,6 @@
                 label="Amount"
                 hint="Opening amount"
                 :error-messages="errors"
-                outlined
                 dense
               ></v-text-field>
             </ValidationProvider>
@@ -87,8 +84,8 @@
             type="submit"
             :loading="submitLoading"
             :disabled="disableOpenCashRegister || invalid || loading"
-            outlined
             dense
+            text
             >Start session
           </v-btn>
         </v-row>

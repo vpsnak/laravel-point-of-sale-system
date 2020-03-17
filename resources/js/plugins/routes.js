@@ -8,11 +8,10 @@ import LandingPage from "../components/blocks/LandingPage.vue";
 import Dashboard from "../components/pages/Dashboard";
 import Sales from "../components/pages/Sales";
 import OpenCashRegister from "../components/pages/OpenCashRegister";
-
 import Orders from "../components/order/table/OrderTable";
 import OrderViewPage from "../components/order/pages/OrderViewPage";
 import OrderEditOptionsPage from "../components/order/pages/OrderEditOptionsPage";
-import Settings from "../components/settings/SettingsPage";
+import Settings from "../components/settings/pages/SettingsPage";
 // data tables
 import Customers from "../components/tables/CustomerTable";
 import Products from "../components/tables/ProductTable";

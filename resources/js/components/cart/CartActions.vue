@@ -156,8 +156,7 @@ export default {
       if (
         !this.$props.disabled &&
         this.isValidCheckout &&
-        orderTotalPrice.isPositive() &&
-        !orderTotalPrice.isZero()
+        orderTotalPrice.greaterThan(this.parsePrice())
       ) {
         return false;
       } else {
