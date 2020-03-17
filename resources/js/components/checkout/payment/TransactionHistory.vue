@@ -39,10 +39,8 @@
       </template>
 
       <template v-slot:item.status="{ item }">
-        <v-chip class="ma-2" :color="statusColor(item.status, 'status')">
-          <v-avatar left>
-            <v-icon>{{ parseStatusIcon(item.status) }}</v-icon>
-          </v-avatar>
+        <v-chip small :color="statusColor(item.status, 'status')">
+          <v-icon left>{{ parseStatusIcon(item.status) }}</v-icon>
           <b>
             {{ parseStatus(item.status) }}
           </b>
