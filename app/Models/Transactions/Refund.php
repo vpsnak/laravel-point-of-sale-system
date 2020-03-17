@@ -23,4 +23,9 @@ class Refund extends Model
     {
         return $this->belongsTo(Transaction::class);
     }
+
+    public function payment()
+    {
+        return $this->belongsTo(Payment::class);
+    }
 }

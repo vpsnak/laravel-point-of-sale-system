@@ -18,7 +18,6 @@ use App\Refund;
 use Illuminate\Http\Request;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\DecimalMoneyFormatter;
-use Psy\Readline\Transient;
 
 class TransactionController extends Controller
 {
@@ -407,7 +406,7 @@ class TransactionController extends Controller
     public function rollbackPayment(Payment $model, bool $setOrderStatus = true)
     {
         $transaction = $model->transaction;
-        if (!$model->is_refundable) {
+        if (!$model->refundable_price->isPositive() && $model->refundable_price->isZero()) {
             return response(['errors' => ['This payment cannot be refunded']], 422);
         }
 

@@ -123,7 +123,7 @@ export default {
 
   mutations: {
     setPaymentRefundedStatus(state, index) {
-      state.transactions[index].payment.is_refundable = false;
+      state.transactions[index].payment.refundable_price = 0;
     },
     setCheckoutLoading(state, value) {
       state.checkout_loading = value;

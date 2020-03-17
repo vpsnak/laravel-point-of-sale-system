@@ -194,7 +194,12 @@ export default {
       }
     },
     enableRefund(item) {
-      if (_.has(item.payment, "is_refundable") && item.payment.is_refundable) {
+      if (
+        _.has(item.payment, "refundable_price") &&
+        this.parsePrice(item.payment.refundable_price).greaterThan(
+          this.parsePrice()
+        )
+      ) {
         return true;
       } else {
         return false;
