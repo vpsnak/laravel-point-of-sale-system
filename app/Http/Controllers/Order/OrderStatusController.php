@@ -15,7 +15,7 @@ class OrderStatusController extends Controller
 
     public function __construct(Order $order)
     {
-        $this->order = $order->refresh();
+        $this->order = $order;
     }
 
     public function getOrderStatuses(Order $model)

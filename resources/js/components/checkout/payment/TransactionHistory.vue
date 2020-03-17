@@ -39,9 +39,14 @@
       </template>
 
       <template v-slot:item.status="{ item }">
-        <b :class="statusColor(item.status, 'status')">
-          {{ parseStatus(item.status) }}
-        </b>
+        <v-chip class="ma-2" :color="statusColor(item.status, 'status')">
+          <v-avatar left>
+            <v-icon>{{ parseStatusIcon(item.status) }}</v-icon>
+          </v-avatar>
+          <b>
+            {{ parseStatus(item.status) }}
+          </b>
+        </v-chip>
       </template>
 
       <template v-slot:item.actions="{ item }">
@@ -153,15 +158,14 @@ export default {
     ...mapActions("requests", ["request"]),
 
     earningsPrice(transaction) {
-      if (
-        _.isObjectLike(transaction.payment) &&
-        transaction.status === "failed"
-      ) {
-        return this.parsePrice().toFormat();
-      } else if (_.isObjectLike(transaction.payment)) {
-        return this.parsePrice(transaction.price)
-          .subtract(this.changePrice(transaction))
-          .toFormat();
+      if (_.isObjectLike(transaction.payment)) {
+        if (transaction.status === "failed") {
+          return this.parsePrice().toFormat();
+        } else {
+          return this.parsePrice(transaction.price)
+            .subtract(this.changePrice(transaction))
+            .toFormat();
+        }
       } else {
         return this.parsePrice(transaction.price)
           .subtract(this.changePrice(transaction))
@@ -199,22 +203,28 @@ export default {
     parseStatus(status) {
       return _.upperFirst(status);
     },
+    parseStatusIcon(status) {
+      if (this.statusColor(status, "status") === "green") {
+        return "mdi-check";
+      } else {
+        return "mdi-alert-circle-outline";
+      }
+    },
     statusColor(status, column) {
       switch (status) {
         case "approved":
           switch (column) {
             case "status":
-              return "green--text";
+              return "green";
             case "amount":
               return "primary--text";
             case "earnings":
               return "green--text";
           }
-          return "green--text";
         case "failed":
           switch (column) {
             case "status":
-              return "red--text";
+              return "red";
             case "amount":
               return "primary--text";
             case "earnings":
@@ -223,7 +233,7 @@ export default {
         case "refund approved":
           switch (column) {
             case "status":
-              return "green--text";
+              return "green";
             case "amount":
               return "primary--text";
             case "earnings":

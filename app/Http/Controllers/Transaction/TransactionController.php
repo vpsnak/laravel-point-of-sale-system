@@ -32,7 +32,6 @@ class TransactionController extends Controller
             $request->validate([
                 'payment_type' => 'required|exists:payment_types,type'
             ])['payment_type'];
-
         $this->transactionData =
             $request->validate([
                 'price' => 'nullable|required_unless:payment_type,coupon|array',
@@ -44,25 +43,21 @@ class TransactionController extends Controller
                 'code' => 'required_if:payment_type,coupon|required_if:payment_type,giftcard',
                 'house_account_number' => 'required_if:payment_type,house-account'
             ]);
-
         $this->paymentData = $request->validate([
             'payment_type_id' => 'required|exists:payment_types,id'
         ]);
-
-        $this->order = Order::findOrFail($this->transactionData['order_id']);
-
         $creditCardData = $request->validate([
             'card.number' => 'nullable|required_if:payment_type,card|numeric',
             'card.cvc' => 'nullable|required_if:payment_type,card|digits_between:3,4',
             'card.card_holder' => 'nullable|required_if:payment_type,card|string',
             'card.exp_date' => 'nullable|required_if:payment_type,card|after_or_equal:today'
         ]);
-
+        $this->order = Order::findOrFail($this->transactionData['order_id']);
         $this->transactionData['created_by_id'] = auth()->user()->id;
         $this->transactionData['cash_register_id'] = auth()->user()->open_register->cash_register->id;
         $this->transactionData['status'] = 'pending';
-
         $response = [];
+
         switch ($paymentType) {
             case 'cash':
                 $response = $this->cashPay();
@@ -94,25 +89,31 @@ class TransactionController extends Controller
             }
 
             if (array_key_exists('errors', $response)) {
-                $this->transactionData->status = 'failed';
-                $this->transactionData->save();
-                $response['transaction'] = $this->transactionData;
+                if (isset($this->transactionData['payment_id'])) {
+                    $this->transactionData->status = 'failed';
+                    $this->transactionData->save();
+                    $response['transaction'] = $this->transactionData;
 
-                return response()->json($response, 422, [], JSON_NUMERIC_CHECK);
+                    return response()->json($response, 422, [], JSON_NUMERIC_CHECK);
+                } else {
+                    return response($response, 422);
+                }
             }
         }
 
         $this->transactionData->status = 'approved';
         $this->transactionData->save();
-        $orderStatusController = new OrderStatusController($this->order->refresh());
+        $this->order = $this->order->refresh();
+
+        $orderStatusController = new OrderStatusController($this->order);
         $response = $orderStatusController->updateOrderStatus();
         ProcessOrder::dispatchNow($this->order);
+
         $response['transaction'] = $this->transactionData;
         $response['notification'] = [
             'msg' => 'Payment received!',
             'type' => 'success'
         ];
-
         return response()->json($response, 201, [], JSON_NUMERIC_CHECK);
     }
 
@@ -122,8 +123,7 @@ class TransactionController extends Controller
 
         $change_price = $this->transactionData->price->subtract($this->order->remaining_price);
         if ($change_price->isPositive()) {
-            $this->paymentData->change_price = $change_price;
-            $this->paymentData->save();
+            $this->paymentData->update(['change_price' => $change_price]);
         }
         return true;
     }
@@ -143,6 +143,7 @@ class TransactionController extends Controller
         $this->paymentData['transaction_id'] = $this->transactionData->id;
         $this->paymentData = Payment::create($this->paymentData);
         $this->transactionData->payment_id = $this->paymentData->id;
+        $this->transactionData->save();
     }
 
     private function posPay()
@@ -198,16 +199,8 @@ class TransactionController extends Controller
         } else if ($coupon->from > now()) {
             return ['errors' => ['Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))]];
         } else {
-            $this->transactionData['price'] = Price::calculateDiscount($this->order->mdse_price, $coupon->discount);
-
+            $this->transactionData['price'] = $this->order->mdse_price->subtract(Price::calculateDiscount($this->order->mdse_price, $coupon->discount));
             $this->createTransaction();
-
-            $this->transactionData->price =
-                $this
-                ->order
-                ->mdse_price
-                ->subtract(Price::calculateDiscount($this->order->mdse_price, $coupon->discount));
-            $this->transactionData->save();
             $coupon->decrement('uses');
 
             return true;
@@ -296,9 +289,7 @@ class TransactionController extends Controller
     public function giftcardRefund(Transaction $transaction)
     {
         $giftcard = Giftcard::where('code', $transaction->code)->firstOrFail();
-        $giftcard->increment('amount', $transaction->price);
-
-        return true;
+        return $giftcard->update(['price' => $giftcard->price->add($transaction->price)]);
     }
 
     public function couponRefund(Transaction $transaction)
