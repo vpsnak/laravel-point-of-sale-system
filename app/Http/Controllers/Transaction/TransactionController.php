@@ -203,7 +203,8 @@ class TransactionController extends Controller
             $this->createTransaction();
 
             $this->transactionData->price =
-                $this->order
+                $this
+                ->order
                 ->mdse_price
                 ->subtract(Price::calculateDiscount($this->order->mdse_price, $coupon->discount));
             $this->transactionData->save();
@@ -216,15 +217,18 @@ class TransactionController extends Controller
     private function giftcardPay()
     {
         $this->createTransaction();
-        $giftcard = Giftcard::where('code', $this->transaction['code'])->first();
+        $giftcard = Giftcard::where('code', $this->transactionData['code'])->first();
 
-        if (!$giftcard->is_enabled) {
-            return ['errors' => ['Gift card' => ['This gift card is inactive']]];
+        if (!$giftcard) {
+            return ['errors' => ['Giftcard <b>#' . $this->transactionData['code'] . '</b> does not exist']];
+        } else if (!$giftcard->enabled_at) {
+            return ['errors' => ['This gift card is inactive']];
         } else if ($giftcard->price->lessThan($this->transactionData->price)) {
-            return ['errors' => ['Gift card' => ['This gift card has insufficient balance to complete the transaction']]];
+            return ['errors' => ['This gift card has insufficient balance to complete the transaction']];
         } else {
-            // subtract the payed amount from giftcard
-            return  $giftcard->decrement('amount', $this->validatedData['amount']);
+            $giftcard->price = $giftcard->price->subtract($this->transactionData->price);
+            $giftcard->save();
+            return true;
         }
     }
 

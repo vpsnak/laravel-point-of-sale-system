@@ -30,15 +30,11 @@ class Giftcard extends Model
 
     public function setPriceAttribute($value)
     {
-        if (!is_array($value)) {
-            $value = json_decode($value, true);
+        if (is_array($value) || $value instanceof Money) {
+            $this->attributes['price'] = json_encode($value);
+        } else {
+            $this->attributes['price'] = $value;
         }
-        if (isset($value['amount'])) {
-            $value['amount'] = (int) $value['amount'];
-        }
-        $value = json_encode($value);
-
-        $this->attributes['price'] = json_encode($value);
     }
 
     public function createdBy()
