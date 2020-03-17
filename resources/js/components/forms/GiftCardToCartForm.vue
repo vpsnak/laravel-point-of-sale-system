@@ -104,7 +104,7 @@ export default {
     getGiftCard(code) {
       let payload = {
         method: "post",
-        url: "gift-cards/search",
+        url: "giftcards/search",
         data: { keyword: code }
       };
       this.request(payload).then(response => {

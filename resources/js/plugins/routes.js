@@ -205,7 +205,7 @@ export default [
   },
   {
     name: "GiftCards",
-    path: "/gift-cards",
+    path: "/giftcards",
     components: {
       default: GiftCards,
       side_menu: SideMenu,

@@ -63,7 +63,7 @@ export default {
     this.setDataTable({
       icon: "mdi-wallet-giftcard",
       title: "Gift Cards",
-      model: "gift-cards",
+      model: "giftcards",
       newForm: this.form,
       btnTxt: "New Gift Card",
       loading: true

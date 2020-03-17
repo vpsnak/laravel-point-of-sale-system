@@ -113,13 +113,13 @@ Route::post('/cash-register-reports/create', 'CashRegisterReportController@creat
 Route::post('/cash-register-reports/search', 'CashRegisterReportController@search')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/cash-register-reports/{model}', 'CashRegisterReportController@delete')->middleware('scope:admin,store_manager,cashier');
 
-// gift-cards
-Route::get('/gift-cards', 'GiftcardController@all')->middleware('scope:admin,store_manager,cashier');
-Route::get('/gift-cards/get/{model}', 'GiftcardController@getOne')->middleware('scope:admin,store_manager,cashier');
-Route::post('/gift-cards/create', 'GiftcardController@create')->middleware('scope:admin,store_manager,cashier');
-Route::patch('/gift-cards/update', 'GiftcardController@update')->middleware('scope:admin,store_manager,cashier');
-Route::post('/gift-cards/search', 'GiftcardController@search')->middleware('scope:admin,store_manager,cashier');
-Route::delete('/gift-cards/{model}', 'GiftcardController@delete')->middleware('scope:admin,store_manager,cashier');
+// giftcards
+Route::get('/giftcards', 'GiftcardController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/giftcards/get/{model}', 'GiftcardController@getOne')->middleware('scope:admin,store_manager,cashier');
+Route::post('/giftcards/create', 'GiftcardController@create')->middleware('scope:admin,store_manager,cashier');
+Route::patch('/giftcards/update', 'GiftcardController@update')->middleware('scope:admin,store_manager,cashier');
+Route::post('/giftcards/search', 'GiftcardController@search')->middleware('scope:admin,store_manager,cashier');
+Route::delete('/giftcards/{model}', 'GiftcardController@delete')->middleware('scope:admin,store_manager,cashier');
 
 // coupons
 Route::get('/coupons', 'CouponController@all')->middleware('scope:admin,store_manager,cashier');

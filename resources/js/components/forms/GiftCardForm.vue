@@ -2,7 +2,11 @@
   <ValidationObserver v-slot="{ invalid }">
     <v-form @submit.prevent="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
-        <ValidationProvider rules="required|max:255" v-slot="{ errors, valid }" name="Name">
+        <ValidationProvider
+          rules="required|max:255"
+          v-slot="{ errors, valid }"
+          name="Name"
+        >
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.name"
@@ -12,7 +16,11 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider rules="required|max:255|numeric" v-slot="{ errors, valid }" name="Code">
+        <ValidationProvider
+          rules="required|max:255|numeric"
+          v-slot="{ errors, valid }"
+          name="Code"
+        >
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.code"
@@ -54,7 +62,7 @@
           ></v-switch>
         </v-row>
         <ValidationProvider
-          rules="required_if:bulk_action|max:5|min_value:1|numeric"
+          rules="required_if:bulk_action|min_value:1|numeric"
           v-slot="{ errors, valid }"
           name="Qty"
         >
@@ -67,6 +75,7 @@
             :disabled="loading"
             :error-messages="errors"
             :success="valid"
+            :min="1"
           ></v-text-field>
         </ValidationProvider>
       </v-container>
@@ -79,7 +88,8 @@
               :loading="loading"
               :disabled="invalid || loading"
               color="primary"
-            >submit</v-btn>
+              >submit
+            </v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -107,7 +117,7 @@ export default {
           amount: null
         },
         bulk_action: false,
-        qty: 0
+        qty: 1
       }
     };
   },
@@ -128,7 +138,7 @@ export default {
       if (this.$props.model) {
         this.request({
           method: "patch",
-          url: "gift-cards/update",
+          url: "giftcards/update",
           data: { ...this.formFields }
         })
           .then(() => {
@@ -142,7 +152,7 @@ export default {
       } else {
         this.request({
           method: "post",
-          url: "gift-cards/create",
+          url: "giftcards/create",
           data: { ...this.formFields }
         })
           .then(() => {
