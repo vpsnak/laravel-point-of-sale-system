@@ -18,11 +18,13 @@ use App\Refund;
 use Illuminate\Http\Request;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\DecimalMoneyFormatter;
+use Psy\Readline\Transient;
 
 class TransactionController extends Controller
 {
     private $transactionData;
     private $paymentData;
+    private $order;
 
     public function createPayment(Request $request)
     {
@@ -47,6 +49,8 @@ class TransactionController extends Controller
             'payment_type_id' => 'required|exists:payment_types,id'
         ]);
 
+        $this->order = Order::findOrFail($this->transactionData['order_id']);
+
         $creditCardData = $request->validate([
             'card.number' => 'nullable|required_if:payment_type,card|numeric',
             'card.cvc' => 'nullable|required_if:payment_type,card|digits_between:3,4',
@@ -57,43 +61,28 @@ class TransactionController extends Controller
         $this->transactionData['created_by_id'] = auth()->user()->id;
         $this->transactionData['cash_register_id'] = auth()->user()->open_register->cash_register->id;
         $this->transactionData['status'] = 'pending';
-        $this->transactionData = Transaction::create($this->transactionData);
-
-        $this->paymentData['transaction_id'] = $this->transactionData->id;
-
-        $payment = Payment::create($this->paymentData);
-        $this->transactionData->payment_id = $payment->id;
 
         $response = [];
-        $order = Order::findOrFail($this->transactionData['order_id']);
-
         switch ($paymentType) {
             case 'cash':
-                $change_price = $this->transactionData->price->subtract($order->remaining_price);
-                if ($change_price->isPositive()) {
-                    $payment->change_price = $change_price;
-                    $payment->save();
-                }
+                $response = $this->cashPay();
                 break;
             case 'pos-terminal':
-                $response = $this->posPay($this->transactionData);
+                $response = $this->posPay();
                 break;
             case 'card':
-                $creditCardData = $creditCardData['card'];
-                $response = $this->apiPay($creditCardData);
+                $response = $this->apiPay($creditCardData['card']);
                 break;
             case 'coupon':
-                $response = $this->couponPay($this->transactionData);
+                $response = $this->couponPay();
                 break;
             case 'giftcard':
-                $response = $this->giftcardPay($this->transactionData);
+                $response = $this->giftcardPay();
                 break;
             case 'house-account':
-                $response = $this->houseAccPay($this->transactionData);
+                $response = $this->houseAccPay();
                 break;
         }
-
-
 
         if (is_array($response)) {
             if (array_key_exists('transaction_id', $response)) {
@@ -115,9 +104,9 @@ class TransactionController extends Controller
 
         $this->transactionData->status = 'approved';
         $this->transactionData->save();
-        $orderStatusController = new OrderStatusController($order->refresh());
+        $orderStatusController = new OrderStatusController($this->order->refresh());
         $response = $orderStatusController->updateOrderStatus();
-        ProcessOrder::dispatchNow($order);
+        ProcessOrder::dispatchNow($this->order);
         $response['transaction'] = $this->transactionData;
         $response['notification'] = [
             'msg' => 'Payment received!',
@@ -125,6 +114,18 @@ class TransactionController extends Controller
         ];
 
         return response()->json($response, 201, [], JSON_NUMERIC_CHECK);
+    }
+
+    private function cashPay()
+    {
+        $this->createTransaction();
+
+        $change_price = $this->transactionData->price->subtract($this->order->remaining_price);
+        if ($change_price->isPositive()) {
+            $this->paymentData->change_price = $change_price;
+            $this->paymentData->save();
+        }
+        return true;
     }
 
     public function search(Request $request)
@@ -136,18 +137,28 @@ class TransactionController extends Controller
         return response(Transaction::where('order_id', $validatedData['keyword'])->get());
     }
 
-    private function posPay(Transaction $transaction)
+    private function createTransaction()
     {
+        $this->transactionData = Transaction::create($this->transactionData);
+        $this->paymentData['transaction_id'] = $this->transactionData->id;
+        $this->paymentData = Payment::create($this->paymentData);
+        $this->transactionData->payment_id = $this->paymentData->id;
+    }
+
+    private function posPay()
+    {
+        $this->createTransaction();
         $elavonSdkPayment = new ElavonSdkTransactionController();
         $elavonSdkPayment->selected_transaction = 'SALE';
-        $elavonSdkPayment->amount = $transaction->price->getAmount();
-        $elavonSdkPayment->transaction_id = $transaction->id;
+        $elavonSdkPayment->amount = $this->transactionData->price->getAmount();
+        $elavonSdkPayment->transaction_id = $this->transactionData->id;
 
         return $elavonSdkPayment->posPayment();
     }
 
     private function apiPay(array $creditCardData)
     {
+        $this->createTransaction();
         $currencies = new ISOCurrencies();
         $moneyFormatter = new DecimalMoneyFormatter($currencies);
         $price = $this->transactionData->price;
@@ -174,57 +185,57 @@ class TransactionController extends Controller
         return $paymentResponse;
     }
 
-    private function couponPay(Transaction $transaction)
+    private function couponPay()
     {
-        $coupon = Coupon::where('code', $transaction->code)->first();
+        $coupon = Coupon::where('code', $this->transactionData['code'])->first();
 
         if (empty($coupon)) {
-            $transaction->status = 'failed';
-            $transaction->save();
-
             return ['errors' => ['Coupon does not exist']];
         }
 
-        if (date('Y-m-d H:i:s') > $coupon->to || $coupon->uses === 0) {
+        if (now() > $coupon->to || $coupon->uses === 0) {
             return ['errors' => ['This coupon has expired']];
-        } else if ($coupon->from > date('Y-m-d H:i:s')) {
+        } else if ($coupon->from > now()) {
             return ['errors' => ['Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))]];
         } else {
-            $order = Order::findOrFail($transaction['order_id']);
+            $this->transactionData['price'] = Price::calculateDiscount($this->order->mdse_price, $coupon->discount);
 
-            $transaction->price =
-                $order
-                ->subtotal
-                ->subtract(Price::calculateDiscount($order->subtotal, $coupon->discount));
-            $transaction->save();
+            $this->createTransaction();
+
+            $this->transactionData->price =
+                $this->order
+                ->mdse_price
+                ->subtract(Price::calculateDiscount($this->order->mdse_price, $coupon->discount));
+            $this->transactionData->save();
             $coupon->decrement('uses');
 
             return true;
         }
     }
 
-    private function giftcardPay(Transaction $transaction)
+    private function giftcardPay()
     {
-
-        $giftcard = Giftcard::where('code', $transaction['code'])->first();
+        $this->createTransaction();
+        $giftcard = Giftcard::where('code', $this->transaction['code'])->first();
 
         if (!$giftcard->is_enabled) {
             return ['errors' => ['Gift card' => ['This gift card is inactive']]];
-        } else if ($giftcard->amount < $validatedData['amount']) {
+        } else if ($giftcard->price->lessThan($this->transactionData->price)) {
             return ['errors' => ['Gift card' => ['This gift card has insufficient balance to complete the transaction']]];
         } else {
             // subtract the payed amount from giftcard
-            return  $giftcard->decrement('amount', $validatedData['amount']);
+            return  $giftcard->decrement('amount', $this->validatedData['amount']);
         }
     }
 
 
-    private function houseAccPay($validatedData, Transaction $payment)
+    private function houseAccPay()
     {
-        $customer = Customer::where('house_account_number', $validatedData['house_account_number'])->first();
+        $this->createTransaction();
+        $customer = Customer::where('house_account_number', $this->transactionData['house_account_number'])->first();
         if (empty($customer)) {
             return ['errors' => ['House Account' => ['House account does not exist.']]];
-        } else if ($validatedData['amount'] > $customer->house_account_limit) {
+        } else if ($this->transactionData['price'] > $customer->house_account_limit) {
             return [
                 'errors' => [
                     'House Account' => [
@@ -233,22 +244,22 @@ class TransactionController extends Controller
                 ]
             ];
         } else {
-            $customer->decrement('house_account_limit', $validatedData['amount']);
-            $payment->code = $validatedData['house_account_number'];
+            $customer->decrement('house_account_limit', $this->transactionData['price']);
+            $this->transactionData->code = $this->transactionData['house_account_number'];
         }
     }
 
-    public function posRefund(Transaction $payment)
+    public function posRefund(Transaction $transaction)
     {
         $elavonSdkPaymentController = new ElavonSdkTransactionController;
 
         $elavonSdkPaymentController->selected_transaction = 'VOID';
-        $elavonSdkPaymentController->originalTransId = $payment->code;
+        $elavonSdkPaymentController->originalTransId = $this->paymentData->code;
         $paymentResponse = $elavonSdkPaymentController->posPayment();
 
         if (isset($paymentResponse['errors'])) {
             $elavonSdkPaymentController->selected_transaction = 'LINKED_REFUND';
-            $elavonSdkPaymentController->amount = $payment->amount;
+            $elavonSdkPaymentController->amount = $this->paymentData->amount;
             $paymentResponse = $elavonSdkPaymentController->posPayment();
         } else {
             return $paymentResponse;
@@ -273,22 +284,22 @@ class TransactionController extends Controller
     public function houseAccRefund(Transaction $transaction)
     {
         $customer = Customer::where('house_account_number', $transaction->code)->firstOrFail();
-        $customer->increment('house_account_limit', $transaction->amount);
+        $customer->increment('house_account_limit', $this->transactionData->price);
 
         return true;
     }
 
-    public function giftcardRefund(Transaction $payment)
+    public function giftcardRefund(Transaction $transaction)
     {
-        $giftcard = Giftcard::whereCode($payment->code)->firstOrFail();
-        $giftcard->increment('amount', $payment->amount);
+        $giftcard = Giftcard::where('code', $transaction->code)->firstOrFail();
+        $giftcard->increment('amount', $transaction->price);
 
         return true;
     }
 
-    public function couponRefund(Transaction $payment)
+    public function couponRefund(Transaction $transaction)
     {
-        $coupon = Coupon::whereCode($payment->code)->firstOrFail();
+        $coupon = Coupon::where('code', $transaction->code)->firstOrFail();
         $coupon->increment('uses');
 
         return true;
@@ -379,7 +390,7 @@ class TransactionController extends Controller
         $payment  = $transaction->payment;
         $type = $payment['type_name'];
 
-        $refundTransaction = Transaction::create([
+        $this->transactionData = Transaction::create([
             'price' => $transaction->price->subtract($payment->change_price),
             'status' => $succeed ? 'refund approved' : 'refund failed',
             'cash_register_id' => $user->open_register->cash_register_id,
@@ -387,15 +398,15 @@ class TransactionController extends Controller
             'created_by_id' => $user->id
         ]);
         $refund = Refund::create([
-            'transaction_id' => $refundTransaction->id,
+            'transaction_id' => $this->transactionData->id,
             'payment_id' =>  $transaction->payment->id,
             'type' => "{$type} refund"
         ]);
 
-        $refundTransaction->refund_id = $refund->id;
-        $refundTransaction->save();
+        $this->transactionData->refund_id = $refund->id;
+        $this->transactionData->save();
 
-        return $refundTransaction;
+        return $this->transactionData;
     }
 
     public function rollbackPayment(Payment $model, bool $setOrderStatus = true)

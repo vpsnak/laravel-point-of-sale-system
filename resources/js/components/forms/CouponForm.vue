@@ -6,7 +6,7 @@
           <v-col :cols="6">
             <ValidationProvider
               rules="required|max:255"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Name"
             >
               <v-text-field
@@ -15,14 +15,13 @@
                 label="Name"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
           <v-col :cols="6">
             <ValidationProvider
               rules="required|max:255"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Code"
             >
               <v-text-field
@@ -31,7 +30,6 @@
                 label="Code"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
@@ -40,7 +38,7 @@
           <v-col :cols="6">
             <ValidationProvider
               rules="required"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Discount type"
             >
               <v-select
@@ -50,24 +48,23 @@
                 :items="discount_types"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-select>
             </ValidationProvider>
           </v-col>
           <v-col :cols="6">
             <ValidationProvider
               :rules="discountAmountRules"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Discount amount"
             >
               <v-text-field
                 :readonly="$props.readonly"
-                v-model="formFields.discount.amount"
+                v-model="discountAmountPrice"
                 type="number"
                 label="Discount amount"
                 :disabled="loading || !formFields.discount.type"
                 :error-messages="errors"
-                :success="valid"
+                :max="discountAmountRules"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
@@ -86,15 +83,14 @@
               <template v-slot:activator="{ on }">
                 <ValidationProvider
                   rules="required"
-                  v-slot="{ errors, valid }"
+                  v-slot="{ errors }"
                   name="From"
                 >
                   <v-text-field
                     v-model="fromDate"
                     label="From:"
-                    prepend-icon="event"
+                    prepend-inner-icon="event"
                     :error-messages="errors"
-                    :success="valid"
                     readonly
                     v-on="on"
                   ></v-text-field>
@@ -120,17 +116,16 @@
               <template v-slot:activator="{ on }">
                 <ValidationProvider
                   rules="required"
-                  v-slot="{ errors, valid }"
+                  v-slot="{ errors }"
                   name="To"
                 >
                   <v-text-field
                     v-model="toDate"
                     label="To:"
-                    prepend-icon="event"
+                    prepend-inner-icon="event"
                     readonly
                     v-on="on"
                     :error-messages="errors"
-                    :success="valid"
                   ></v-text-field>
                 </ValidationProvider>
               </template>
@@ -152,7 +147,7 @@
                 v-model="formFields.uses"
                 type="number"
                 label="No. of uses"
-                prepend-icon="mdi-pound"
+                prepend-inner-icon="mdi-pound"
                 :disabled="loading"
                 :error-messages="errors"
                 :success="valid"
@@ -189,6 +184,7 @@ export default {
 
   data() {
     return {
+      discount_amount: null,
       fromDatePicker: false,
       toDatePicker: false,
       loading: false,
@@ -225,6 +221,19 @@ export default {
   },
 
   computed: {
+    discountAmountPrice: {
+      get() {
+        return this.discount_amount;
+      },
+      set(value) {
+        this.discount_amount = value;
+        if (this.formFields.discount.type === "flat") {
+          this.formFields.discount.amount = Math.round(value * 10000) / 100;
+        } else {
+          this.formFields.discount.amount = value;
+        }
+      }
+    },
     discountAmountRules() {
       switch (this.formFields.discount.type) {
         case "flat":
@@ -232,6 +241,8 @@ export default {
         case "percentage":
           return "required|between:1,99";
       }
+
+      return null;
     },
     fromDate() {
       if (this.formFields.from) {

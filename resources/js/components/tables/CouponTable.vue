@@ -1,5 +1,8 @@
 <template>
   <data-table v-if="render">
+    <template v-slot:item.discount.amount="{ item }">
+      {{ couponAmount(item) }}
+    </template>
     <template v-slot:item.actions="{ item }">
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
@@ -64,7 +67,15 @@ export default {
   },
   methods: {
     ...mapMutations("dialog", ["setDialog", "editItem", "viewItem"]),
-    ...mapMutations("datatable", ["setDataTable", "resetDataTable"])
+    ...mapMutations("datatable", ["setDataTable", "resetDataTable"]),
+
+    couponAmount(item) {
+      if (item.discount.type === "flat") {
+        return this.parsePrice(item.discount.amount).toFormat();
+      } else {
+        return `${item.discount.amount}%`;
+      }
+    }
   }
 };
 </script>

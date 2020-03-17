@@ -9,14 +9,12 @@ class Receipt extends Model
     protected $fillable = [
         'print_count',
         'email_count',
-        'content',
         'issued_by_id',
         'order_id',
         'cash_register_id'
     ];
 
     protected $casts = [
-        'content' => 'array',
         'created_at' => 'datetime:m/d/Y H:i:s',
         'updated_at' => 'datetime:m/d/Y H:i:s'
     ];

@@ -18,7 +18,6 @@ class Price
         if (isset($discount['amount']) && isset($discount['type'])) {
             switch ($discount['type']) {
                 case 'flat':
-
                     $amount = new Money($discount['amount'], $price->getCurrency());
                     $price = $price->subtract($amount);
                     break;
