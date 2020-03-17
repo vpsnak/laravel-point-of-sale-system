@@ -13,7 +13,7 @@
 
     body {
         height: auto;
-        margin: auto;
+        margin: 30px;
         font-size: 18px;
     }
 
@@ -82,12 +82,14 @@
     .footer {
         position: absolute;
         bottom: 0;
-        width: 100%;
+        left: 0;
+        right: 0;  
         height: 2.5rem;
         display: flex;
         justify-content: space-between;
         align-items: flex-end;
         padding-bottom: 2rem;
+        margin: 30px;
     }
 
     .left-footer {

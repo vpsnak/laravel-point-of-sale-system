@@ -12,11 +12,10 @@
     }
 
     body {
+        margin: 30px;
         height: auto;
-        margin: auto;
         font-size: 18px;
     }
-
     .products-table thead {
         margin-bottom: 3px;
     }
@@ -93,7 +92,10 @@
     .footer {
         position: absolute;
         bottom: 0;
-        width: 100%;
+        left: 0;
+        right: 0; 
+        margin-left: auto; 
+        margin-right: auto; 
     }
 
     .left-footer {
