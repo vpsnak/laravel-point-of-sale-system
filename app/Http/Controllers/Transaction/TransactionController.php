@@ -19,6 +19,7 @@ use App\Refund;
 use Illuminate\Http\Request;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\DecimalMoneyFormatter;
+use Money\Money;
 
 class TransactionController extends Controller
 {
@@ -300,93 +301,47 @@ class TransactionController extends Controller
         return true;
     }
 
-    public function createUnlinkedRefund(Request $request)
+    public function createRefund(Request $request)
     {
         $validatedData = $request->validate([
-            'order_id' => 'required|exists:orders,id',
-            'method' => 'required|string',
-            'amount' => 'required|numeric',
-            // giftcard-existing validation
-            'existing_gc_code' => 'nullable|required_if:method,giftcard-existing|exists:giftcards,code',
-            // giftcard-new validation
-            'giftcard.code' => 'nullable|required_if:method,giftcard-new|unique:giftcards,code|string',
-            'giftcard.name' => 'nullable|required_if:method,giftcard-new|string|',
-            // cc validation
-            'card.number' => 'nullable|required_if:method,cc-api',
-            'card.holder' => 'nullable|required_if:method,cc-api',
-            'card.exp_date' => 'nullable|required_if:method,cc-api',
-            'card.cvc' => 'nullable|required_if:method,cc-api'
+            'payment_id' => 'required|exists:payments,id',
+            'price' => 'required|array',
+            'price.amount' => 'required|numeric',
+            'price.currency' => 'required|string',
         ]);
 
-        $order = Order::findOrFail($validatedData['order_id']);
-        $refundType = PaymentType::whereType($validatedData['method'])->firstOrFail();
+        $refundPrice = Price::parsePrice($validatedData['price']);
+        $payment = Payment::findOrFail($validatedData['payment_id']);
+        $this->order = $payment->transaction->order;
+        $transaction = $payment->transaction;
         $user = auth()->user();
         $cash_register_id = $user->open_register->cash_register_id;
 
-        if ($validatedData['amount'] > $order->total_paid) {
+        if ($refundPrice->greaterThan($transaction->price->subtract($transaction->payment->change_price))) {
             return response([
                 'errors' => [
-                    'The amount field cannot exceed the total paid amount of $' . $order->total_paid
+                    'The amount field cannot exceed the total paid amount of $' . $this->order->total_paid
                 ]
             ], 422);
         }
 
-        $code = null;
-        switch ($validatedData['method']) {
-            case 'cc-api':
-                break;
-            case 'cc-pos':
-                break;
-            case 'giftcard-existing':
-                $code = $validatedData['existing_gc_code'];
-                $giftcard = Giftcard::whereCode($validatedData['existing_gc_code'])->firstOrFail();
-                $giftcard->amount += $validatedData['amount'];
-                $giftcard->save();
-                break;
-            case 'giftcard-new':
-                $code = $validatedData['giftcard']['code'];
-                Giftcard::create([
-                    'code' => $validatedData['giftcard']['code'],
-                    'name' => $validatedData['giftcard']['name'],
-                    'amount' => $validatedData['amount'],
-                    'is_enabled' => true,
-                ]);
-                break;
-        }
-
-        $refund = new Transaction([
-            'payment_type' => $refundType->id,
-            'amount' => abs($validatedData['amount']) * -1,
-            'code' => $code,
-            'status' => 'refund approved',
-            'refunded' => false,
-            'cash_register_id' => $cash_register_id,
-            'order_id' => $order->id,
-            'created_by_id' => $user->id
-        ]);
-
-        $refund->save();
-        $refund = $refund->load(['createdBy', 'paymentType', 'order']);
-
-        $orderStatusController = new OrderStatusController($refund->order);
-        $orderStatus = $orderStatusController->updateOrderStatus(true);
-        $orderStatus['notification'] = [
-            'msg' => ['Refund completed successfully!'],
-            'type' => 'success'
-        ];
-        $orderStatus['refund'] = $refund->refresh();
-
-        return response($orderStatus, 500); // 500 status for debug purposes only!
+        static::rollbackPayment($payment, true, $refundPrice);
     }
 
-    private function createLinkedRefund(Transaction $transaction, bool $succeed)
+    private function createLinkedRefund(Transaction $transaction, bool $succeed, Money $price = null)
     {
         $user = auth()->user();
         $payment  = $transaction->payment;
         $type = $payment['type_name'];
 
+        if ($price) {
+            $transactionPrice = $transaction->price->subtract($payment->change_price);
+        } else {
+            $transactionPrice = $transaction->price;
+        }
+
         $this->transactionData = Transaction::create([
-            'price' => $transaction->price->subtract($payment->change_price),
+            'price' => $transactionPrice,
             'status' => $succeed ? 'refund approved' : 'refund failed',
             'cash_register_id' => $user->open_register->cash_register_id,
             'order_id' => $transaction->order->id,
@@ -404,10 +359,10 @@ class TransactionController extends Controller
         return $this->transactionData;
     }
 
-    public function rollbackPayment(Payment $model, bool $setOrderStatus = true)
+    public function rollbackPayment(Payment $model, bool $setOrderStatus = true, Money $price = null)
     {
         $transaction = $model->transaction;
-        if (!$model->refundable_price->isPositive() && $model->refundable_price->isZero()) {
+        if (!$model->refundable_price->isPositive() || $model->refundable_price->isZero()) {
             return response(['errors' => ['This payment cannot be refunded']], 422);
         }
 
@@ -430,19 +385,13 @@ class TransactionController extends Controller
             case 'cash':
                 $result = true;
                 break;
-            default:
-                if ($setOrderStatus) {
-                    return response(['errors' => ["Payment method: {$model->paymentType->type} cannot be refunded"]], 500);
-                } else {
-                    return ['errors' => ["Payment method: {$model->paymentType->type} cannot be refunded"]];
-                }
         }
 
         if ($setOrderStatus) {
             $orderStatusController = new OrderStatusController($model->transaction->order);
 
             if (is_array($result) && array_key_exists('errors', $result)) {
-                $refundTransaction = $this->createLinkedRefund($transaction, false);
+                $refundTransaction = $this->createLinkedRefund($transaction, false, $price);
 
                 $orderStatus = $orderStatusController->updateOrderStatus(true);
                 $orderStatus['errors'] = $result['errors'];
@@ -450,7 +399,7 @@ class TransactionController extends Controller
 
                 return response($orderStatus, 500);
             } else {
-                $refundTransaction = $this->createLinkedRefund($transaction, true);
+                $refundTransaction = $this->createLinkedRefund($transaction, true, $price);
 
                 $orderStatus = $orderStatusController->updateOrderStatus(true);
                 $orderStatus['refunded_payment_id'] = $transaction->id;

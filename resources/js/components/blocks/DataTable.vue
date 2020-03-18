@@ -88,11 +88,12 @@
             disable-sort
             dense
             disable-filtering
+            disable-pagination
+            hide-default-footer
+            loading-text=" "
             :headers="getHeaders"
             :items="data_table.items"
             :loading="data_table.loading"
-            disable-pagination
-            hide-default-footer
           >
             <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
               <slot :name="slot" v-bind="scope" />

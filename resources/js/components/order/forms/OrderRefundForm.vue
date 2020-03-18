@@ -124,6 +124,12 @@ export default {
             txt: `<b>${this.$props.transaction.code}</b>`
           };
           break;
+        case "cash":
+          return {
+            icon: "mdi-cash-multiple",
+            txt: `<b>Cash</b>`
+          };
+          break;
         default:
           return {};
       }

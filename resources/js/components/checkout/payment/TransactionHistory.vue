@@ -18,7 +18,6 @@
       disable-pagination
       disable-filtering
       hide-default-footer
-      :loading="false"
     >
       <template v-slot:item.price="{ item }">
         <b :class="statusColor(item.status, 'amount')">
@@ -70,8 +69,7 @@
           v-else-if="enableRefund(item)"
           v-model="linkedRefundMenu"
           :close-on-content-click="false"
-          left
-          offset-x
+          offset-y
         >
           <template v-slot:activator="{ on: menu }">
             <v-tooltip bottom>
