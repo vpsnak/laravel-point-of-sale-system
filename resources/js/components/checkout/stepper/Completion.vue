@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <v-row justify="space-around" align="center">
-      <h3 v-if="!changePrice.isZero() && changePrice.isPositive()">
+    <v-row justify="space-around" align="center" class="flex-column">
+      <h3 v-if="!changePrice.greaterThan(this.parsePrice())">
         Change:
         <span class="amber--text" v-text="changePrice.toFormat()" />
       </h3>
@@ -21,7 +21,7 @@ export default {
       if (this.order_change_price) {
         return this.parsePrice(this.order_change_price);
       } else {
-        return this.$price();
+        return this.parsePrice();
       }
     }
   }

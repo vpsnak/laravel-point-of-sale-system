@@ -41,7 +41,7 @@ class OrderController extends Controller
     {
         $this->order_data = $request->validate([
             'order_id' => 'required|exists:orders,id',
-
+            // order discount
             'discount_type' => 'string|nullable',
             'discount_amount' => 'numeric|nullable',
             // items (products)

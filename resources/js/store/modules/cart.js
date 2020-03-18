@@ -236,7 +236,7 @@ export default {
       if (Array.isArray(value)) {
         state.transactions = value;
       } else {
-        state.transactions.push(value);
+        state.transactions = [value, ...state.transactions];
       }
     },
     setIsValid(state, value) {
