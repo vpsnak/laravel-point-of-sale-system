@@ -3,7 +3,7 @@
     <v-card-title>
       <v-icon left>mdi-file-chart</v-icon>
       <span class="subheading">
-        Payment analysis
+        Earnings analysis
       </span>
     </v-card-title>
     <v-container>
@@ -25,7 +25,7 @@
           </vc-donut>
         </v-col>
         <v-col v-else cols="auto">
-          No payments have been made
+          No earnings
         </v-col>
       </v-row>
     </v-container>
