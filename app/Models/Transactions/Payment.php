@@ -52,7 +52,7 @@ class Payment extends Model
     {
         $transaction = $this->transaction()->without('payment')->first();
         $refundablePrice = $transaction->price->subtract($this->change_price);
-        if ($transaction->status === 'approved') {
+        if ($transaction->status === 'approved' && $transaction->payment->paymentType->type !== 'coupon') {
             foreach ($this->refunds as $refund) {
                 $refundTransaction = $refund->transaction;
                 if ($refundTransaction->status === 'refund approved') {
