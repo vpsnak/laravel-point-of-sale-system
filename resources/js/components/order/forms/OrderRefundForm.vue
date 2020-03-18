@@ -188,16 +188,9 @@ export default {
       this.request(payload)
         .then(response => {
           EventBus.$emit("income-analysis-refresh");
-          const index = _.findIndex(this.transactions, {
-            id: response.refunded_transaction.id
-          });
-
           this.setTransactions(response.transaction);
 
-          this.setPaymentRefundablePrice({
-            index: index,
-            value: response.refunded_transaction.payment.refundable_price
-          });
+          this.setPaymentRefundablePrice(response.refunded_transaction);
 
           this.maxRefundablePrice = this.parsePrice(
             response.refunded_transaction.payment.refundable_price

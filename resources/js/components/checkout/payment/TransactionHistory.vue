@@ -287,12 +287,8 @@ export default {
       this.request(payload)
         .then(response => {
           if (response.refunded_transaction) {
-            const index = _.findIndex(this.transactions, {
-              id: response.refunded_transaction.id
-            });
-
             this.setTransactions(response.transaction);
-            this.setPaymentRefundablePrice(index, this.parsePrice());
+            this.setPaymentRefundablePrice(response.refunded_transaction);
           }
 
           this.setOrderChangePrice(response.change);
