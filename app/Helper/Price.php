@@ -15,10 +15,14 @@ class Price
         return new DecimalMoneyFormatter($currencies);
     }
 
-    public static function parsePrice(array $price = null)
+    public static function parsePrice($price = null)
     {
         $amount = 0;
         $currency = 'USD';
+
+        if ($price instanceof Money) {
+            return $price;
+        }
 
         if (isset($price['amount'])) {
             $amount = (int) $price['amount'];

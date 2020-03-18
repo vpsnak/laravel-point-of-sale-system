@@ -195,7 +195,12 @@ class TransactionController extends Controller
             if ($this->transactionData['price']->greaterThan($orderRemainingPrice)) {
                 $this->transactionData['price'] = $orderRemainingPrice;
             }
+            $change_price = Price::parsePrice($this->transactionData['price'])->subtract($this->order->remaining_price);
             $this->createTransaction();
+            if ($change_price->isPositive()) {
+                $this->paymentData->update(['change_price' => $change_price]);
+            }
+
             $coupon->decrement('uses');
 
             return true;
