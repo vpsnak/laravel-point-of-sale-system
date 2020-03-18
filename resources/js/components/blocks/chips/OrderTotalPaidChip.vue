@@ -8,12 +8,7 @@
     offset-y
   >
     <template v-slot:activator="{ on }">
-      <v-chip
-        pill
-        v-on="$props.menu ? on : null"
-        color="primary"
-        :small="small"
-      >
+      <v-chip pill v-on="$props.menu ? on : null" color="green" :small="small">
         <b>{{ parsePrice($props.income_price).toFormat() }}</b>
       </v-chip>
     </template>

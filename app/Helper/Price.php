@@ -15,7 +15,7 @@ class Price
         return new DecimalMoneyFormatter($currencies);
     }
 
-    public static function newMoney(array $price = null)
+    public static function parsePrice(array $price = null)
     {
         $amount = 0;
         $currency = 'USD';

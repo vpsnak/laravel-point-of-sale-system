@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Coupon;
 use App\Customer;
 use App\ElavonApiTransaction;
@@ -116,6 +117,15 @@ class TransactionController extends Controller
         return response()->json($response, 201, [], JSON_NUMERIC_CHECK);
     }
 
+    private function createTransaction()
+    {
+        $this->transactionData = Transaction::create($this->transactionData);
+        $this->paymentData['transaction_id'] = $this->transactionData->id;
+        $this->paymentData = Payment::create($this->paymentData);
+        $this->transactionData->payment_id = $this->paymentData->id;
+        $this->transactionData->save();
+    }
+
     private function cashPay()
     {
         $this->createTransaction();
@@ -125,24 +135,6 @@ class TransactionController extends Controller
             $this->paymentData->update(['change_price' => $change_price]);
         }
         return true;
-    }
-
-    public function search(Request $request)
-    {
-        $validatedData = $request->validate([
-            'keyword' => 'required|exists:orders,id'
-        ]);
-
-        return response(Transaction::where('order_id', $validatedData['keyword'])->get());
-    }
-
-    private function createTransaction()
-    {
-        $this->transactionData = Transaction::create($this->transactionData);
-        $this->paymentData['transaction_id'] = $this->transactionData->id;
-        $this->paymentData = Payment::create($this->paymentData);
-        $this->transactionData->payment_id = $this->paymentData->id;
-        $this->transactionData->save();
     }
 
     private function posPay()
@@ -198,7 +190,11 @@ class TransactionController extends Controller
         } else if ($coupon->from > now()) {
             return ['errors' => ['Coupon activates at ' . date("m-d-Y", strtotime($coupon->from))]];
         } else {
+            $orderRemainingPrice = $this->order->remaining_price;
             $this->transactionData['price'] = $this->order->mdse_price->subtract(Price::calculateDiscount($this->order->mdse_price, $coupon->discount));
+            if ($this->transactionData['price']->greaterThan($orderRemainingPrice)) {
+                $this->transactionData['price'] = $orderRemainingPrice;
+            }
             $this->createTransaction();
             $coupon->decrement('uses');
 
