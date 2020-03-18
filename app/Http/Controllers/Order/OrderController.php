@@ -29,7 +29,7 @@ class OrderController extends Controller
 
     public function all()
     {
-        return response(Order::paginate());
+        return response(Order::orderBy('created_at', 'desc')->paginate());
     }
 
     public function getOne(Order $model)
