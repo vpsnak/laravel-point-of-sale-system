@@ -25,23 +25,42 @@
 
       <v-container>
         <v-row justify="center">
-          <v-col :cols="6">
-            <v-text-field
-              type="number"
-              v-model="amount"
-              :max="maxRefundablePrice.toFormat(0.0)"
-              prefix="$"
-              label="Amount"
-              single-line
-              dense
-            ></v-text-field>
-          </v-col> </v-row
-      ></v-container>
+          <v-col :lg="4" :cols="6">
+            <ValidationProvider
+              :rules="
+                'required|between:0.01,' + maxRefundablePrice.toFormat('0.00')
+              "
+              v-slot="{ invalid }"
+              name="Amount"
+            >
+              <v-text-field
+                class="text-center"
+                type="number"
+                v-model="amount"
+                :max="maxRefundablePrice.toFormat(0.0)"
+                min="0.01"
+                prefix="$"
+                label="Amount"
+                single-line
+                dense
+                :disabled="disableAmount || loading"
+                :error="invalid"
+              ></v-text-field>
+            </ValidationProvider>
+          </v-col>
+        </v-row>
+      </v-container>
 
       <v-card-actions>
         <v-spacer />
 
-        <v-btn color="primary" text type="submit" :disabled="!valid">
+        <v-btn
+          color="primary"
+          text
+          type="submit"
+          :loading="loading"
+          :disabled="!valid || loading"
+        >
           Refund
         </v-btn>
         <v-spacer />
@@ -67,12 +86,9 @@ export default {
     this.price.currency = this.$props.transaction.price.currency;
   },
 
-  beforeDestroy() {
-    EventBus.$off("");
-  },
-
   data() {
     return {
+      loading: false,
       display_amount: null,
       maxRefundablePrice: null,
       price: {
@@ -87,9 +103,21 @@ export default {
       "order_id",
       "order_income_price",
       "order_total_price",
-      "order_status"
+      "order_status",
+      "transactions"
     ]),
 
+    disableAmount() {
+      switch (this.$props.transaction.payment.payment_type.type) {
+        case "card":
+        case "pos-terminal":
+          this.price = this.maxRefundablePrice.toJSON();
+          this.display_amount = this.maxRefundablePrice.toFormat("0.00");
+          return true;
+        default:
+          return false;
+      }
+    },
     amount: {
       get() {
         return this.display_amount;
@@ -111,25 +139,21 @@ export default {
             icon: "mdi-credit-card-outline",
             txt: ``
           };
-          break;
         case "giftcard":
           return {
             icon: "mdi-wallet-giftcard",
             txt: `<b>${this.$props.transaction.code}</b>`
           };
-          break;
         case "coupon":
           return {
             icon: "mdi-ticket-percent",
             txt: `<b>${this.$props.transaction.code}</b>`
           };
-          break;
         case "cash":
           return {
             icon: "mdi-cash-multiple",
             txt: `<b>Cash</b>`
           };
-          break;
         default:
           return {};
       }
@@ -138,10 +162,16 @@ export default {
   },
 
   methods: {
+    ...mapMutations("cart", [
+      "setCheckoutLoading",
+      "setTransactions",
+      "setPaymentRefundablePrice"
+    ]),
     ...mapMutations("dialog", ["setDialog"]),
     ...mapActions("requests", ["request"]),
 
     submitRefund() {
+      this.setCheckoutLoading(true);
       this.loading = true;
 
       const payload = {
@@ -156,9 +186,31 @@ export default {
       };
 
       this.request(payload)
-        .then(response => {})
+        .then(response => {
+          EventBus.$emit("income-analysis-refresh");
+          const index = _.findIndex(this.transactions, {
+            id: response.refunded_transaction.id
+          });
+
+          this.setTransactions(response.transaction);
+
+          this.setPaymentRefundablePrice({
+            index: index,
+            value: response.refunded_transaction.payment.refundable_price
+          });
+
+          this.maxRefundablePrice = this.parsePrice(
+            response.refunded_transaction.payment.refundable_price
+          );
+        })
+        .catch(error => {
+          console.log(error);
+          if (_.has(error, "transaction"))
+            this.setTransactions(error.transaction);
+        })
         .finally(() => {
           this.loading = false;
+          this.setCheckoutLoading(false);
         });
     }
   }

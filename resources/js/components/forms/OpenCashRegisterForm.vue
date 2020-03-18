@@ -57,7 +57,6 @@
                 prefix="$"
                 type="number"
                 label="Amount"
-                hint="Opening amount"
                 :error-messages="errors"
                 dense
               ></v-text-field>

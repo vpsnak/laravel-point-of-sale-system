@@ -34,6 +34,7 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import { EventBus } from "../../plugins/eventBus";
 export default {
   props: {
     orderId: Number
@@ -43,18 +44,28 @@ export default {
     this.getEarningsAnalysis();
   },
 
+  mounted() {
+    EventBus.$on("income-analysis-refresh", () => {
+      this.getEarningsAnalysis();
+    });
+  },
+
+  beforeDestroy() {
+    EventBus.$off("income-analysis-refresh");
+  },
+
   data() {
     return {
       sections: [],
       loading: false,
 
-      card_pos: this.$price(),
-      card_keyed: this.$price(),
-      cash: this.$price(),
-      house_account: this.$price(),
-      giftcard: this.$price(),
-      coupon: this.$price(),
-      total_paid: this.$price()
+      card_pos: null,
+      card_keyed: null,
+      cash: null,
+      house_account: null,
+      giftcard: null,
+      coupon: null,
+      total_paid: null
     };
   },
 
@@ -68,6 +79,15 @@ export default {
   methods: {
     ...mapActions("requests", ["request"]),
 
+    init() {
+      this.card_pos = this.parsePrice();
+      this.card_keyed = this.parsePrice();
+      this.cash = this.parsePrice();
+      this.house_account = this.parsePrice();
+      this.giftcard = this.parsePrice();
+      this.coupon = this.parsePrice();
+      this.total_paid = this.parsePrice();
+    },
     setSections() {
       this.sections = [];
       if (this.card_pos.greaterThan(this.$price())) {
@@ -117,6 +137,7 @@ export default {
     },
     getEarningsAnalysis() {
       this.loading = true;
+      this.init();
       const payload = {
         method: "get",
         url: `orders/${this.$props.orderId}/income-details`

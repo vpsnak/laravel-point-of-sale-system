@@ -67,9 +67,9 @@
         </v-tooltip>
         <v-menu
           v-else-if="enableRefund(item)"
-          v-model="linkedRefundMenu"
           :close-on-content-click="false"
           offset-y
+          :key="item.id"
         >
           <template v-slot:activator="{ on: menu }">
             <v-tooltip bottom>
@@ -113,7 +113,6 @@ export default {
 
   data() {
     return {
-      linkedRefundMenu: false,
       rollbackLoading: false,
       selected_payment: null,
       headers: [
@@ -180,7 +179,7 @@ export default {
 
   methods: {
     ...mapMutations("cart", [
-      "setPaymentRefundedStatus",
+      "setPaymentRefundablePrice",
       "setTransactions",
       "setOrderChangePrice",
       "setOrderRemainingPrice",
@@ -191,18 +190,15 @@ export default {
     ...mapActions("requests", ["request"]),
 
     earningsPrice(transaction) {
-      if (_.isObjectLike(transaction.payment)) {
-        if (transaction.status === "failed") {
-          return this.parsePrice();
-        } else {
-          return this.parsePrice(transaction.price).subtract(
-            this.changePrice(transaction)
-          );
-        }
+      if (_.has(transaction.payment, "earnings_price")) {
+        return this.parsePrice(transaction.payment.earnings_price);
+      } else if (
+        _.has(transaction.refund, "id") &&
+        transaction.status !== "refund failed"
+      ) {
+        return this.parsePrice(transaction.price).multiply(-1);
       } else {
-        return this.parsePrice(transaction.price)
-          .subtract(this.changePrice(transaction))
-          .multiply(-1);
+        return this.parsePrice();
       }
     },
     changePrice(transaction) {
@@ -290,13 +286,13 @@ export default {
 
       this.request(payload)
         .then(response => {
-          if (response.refunded_payment_id) {
+          if (response.refunded_transaction) {
             const index = _.findIndex(this.transactions, {
-              id: response.refunded_payment_id
+              id: response.refunded_transaction.id
             });
 
-            this.setPaymentRefundedStatus(index);
             this.setTransactions(response.transaction);
+            this.setPaymentRefundablePrice(index, this.parsePrice());
           }
 
           this.setOrderChangePrice(response.change);

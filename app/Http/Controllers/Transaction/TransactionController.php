@@ -266,7 +266,7 @@ class TransactionController extends Controller
 
     public function apiRefund(Transaction $transaction)
     {
-        $paymentResponse = (new CreditCardController)->cardRefund($transaction->code);
+        $paymentResponse = (new CreditCardController)->cardRefund($transaction);
         ElavonApiTransaction::create([
             'txn_id' => $paymentResponse['response']['ssl_txn_id'] ?? '',
             'transaction' => $paymentResponse['response']['ssl_transaction_type'] ?? '',
@@ -315,17 +315,22 @@ class TransactionController extends Controller
         $this->order = $payment->transaction->order;
         $transaction = $payment->transaction;
         $user = auth()->user();
-        $cash_register_id = $user->open_register->cash_register_id;
 
         if ($refundPrice->greaterThan($transaction->price->subtract($transaction->payment->change_price))) {
             return response([
                 'errors' => [
-                    'The amount field cannot exceed the total paid amount of $' . $this->order->total_paid
+                    'The amount field cannot exceed the total amount of ' . Price::newFormatter()->format(Price::parsePrice($payment->refundable_price))
                 ]
             ], 422);
         }
 
-        static::rollbackPayment($payment, true, $refundPrice);
+        $response = $this->rollbackPayment($payment, true, $refundPrice);
+
+        if (isset($response['errors'])) {
+            return response($response, 422);
+        } else {
+            return response($response);
+        }
     }
 
     private function createLinkedRefund(Transaction $transaction, bool $succeed, Money $price = null)
@@ -335,7 +340,7 @@ class TransactionController extends Controller
         $type = $payment['type_name'];
 
         if ($price) {
-            $transactionPrice = $transaction->price->subtract($payment->change_price);
+            $transactionPrice = $price;
         } else {
             $transactionPrice = $transaction->price;
         }
@@ -359,11 +364,21 @@ class TransactionController extends Controller
         return $this->transactionData;
     }
 
-    public function rollbackPayment(Payment $model, bool $setOrderStatus = true, Money $price = null)
+    public function rollbackPayment(Payment $model, bool $setOrderStatus = true, Money $refundPrice = null)
     {
         $transaction = $model->transaction;
         if (!$model->refundable_price->isPositive() || $model->refundable_price->isZero()) {
-            return response(['errors' => ['This payment cannot be refunded']], 422);
+            if ($refundPrice) {
+                return ['errors' => ['This payment cannot be refunded']];
+            } else {
+                return response(['errors' => ['This payment cannot be refunded']], 422);
+            }
+        } else if ($refundPrice) {
+            if ($model->refundable_price->lessThan($refundPrice)) {
+                return ['errors' => ['This payment cannot be refunded']];
+            } else {
+                $transaction->price = $refundPrice;
+            }
         }
 
         switch ($model->paymentType->type) {
@@ -391,25 +406,32 @@ class TransactionController extends Controller
             $orderStatusController = new OrderStatusController($model->transaction->order);
 
             if (is_array($result) && array_key_exists('errors', $result)) {
-                $refundTransaction = $this->createLinkedRefund($transaction, false, $price);
+                $refundTransaction = $this->createLinkedRefund($transaction, false, $refundPrice);
 
                 $orderStatus = $orderStatusController->updateOrderStatus(true);
                 $orderStatus['errors'] = $result['errors'];
                 $orderStatus['transaction'] = $refundTransaction;
-
-                return response($orderStatus, 500);
+                if ($refundPrice) {
+                    return $orderStatus;
+                } else {
+                    return response($orderStatus, 500);
+                }
             } else {
-                $refundTransaction = $this->createLinkedRefund($transaction, true, $price);
+                $refundTransaction = $this->createLinkedRefund($transaction, true, $refundPrice);
 
                 $orderStatus = $orderStatusController->updateOrderStatus(true);
-                $orderStatus['refunded_payment_id'] = $transaction->id;
+                $orderStatus['refunded_transaction'] = $transaction;
                 $orderStatus['notification'] = [
                     'msg' => ['Refund completed successfully!'],
                     'type' => 'success'
                 ];
                 $orderStatus['transaction'] = $refundTransaction;
 
-                return response($orderStatus);
+                if ($refundPrice) {
+                    return $orderStatus;
+                } else {
+                    return response($orderStatus);
+                }
             }
         } else {
             if (is_array($result) && array_key_exists('errors', $result)) {

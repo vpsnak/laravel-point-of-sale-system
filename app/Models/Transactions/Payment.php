@@ -11,6 +11,7 @@ class Payment extends Model
     public $timestamps = false;
 
     protected $appends = [
+        'earnings_price',
         'refundable_price'
     ];
 
@@ -23,6 +24,12 @@ class Payment extends Model
     protected $hidden = [
         'payment_type_id',
     ];
+
+    public function getEarningsPriceAttribute()
+    {
+        $transaction = $this->transaction()->without('payment')->first();
+        return $transaction->price->subtract($this->change_price);
+    }
 
     public function getChangePriceAttribute()
     {

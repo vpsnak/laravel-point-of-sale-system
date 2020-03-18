@@ -115,9 +115,8 @@ class CreditCardController extends Controller
         }
     }
 
-    public function cardRefund($transaction_id)
+    public function cardRefund(Transaction $paymentTransaction)
     {
-        $paymentTransaction = Transaction::where('code', $transaction_id)->firstOrFail();
         $store = $paymentTransaction->cashRegister->store;
         $bankAccountApi = $store->company->bankAccountApi()->account;
 
@@ -125,7 +124,7 @@ class CreditCardController extends Controller
             'ssl_merchant_id' => $bankAccountApi['ssl_merchant_id'],
             'ssl_user_id' => $bankAccountApi['ssl_user_id'],
             'ssl_pin' => $bankAccountApi['ssl_pin'],
-            'ssl_txn_id' => $transaction_id
+            'ssl_txn_id' => $paymentTransaction->code
         ];
         $elavonApiPaymentController = new ElavonApiTransactionController();
         $response = $elavonApiPaymentController->doTransaction('txnquery', $data);
@@ -139,7 +138,7 @@ class CreditCardController extends Controller
             } else {
                 $transaction = 'ccreturn';
             }
-            $response = $elavonApiPaymentController->doTransaction($transaction, ['ssl_txn_id' => $transaction_id]);
+            $response = $elavonApiPaymentController->doTransaction($transaction, ['ssl_txn_id' => $paymentTransaction->code]);
             return $this->prepareResponse($response);
         }
         return ['errors' => ['Cannot refund!']];
