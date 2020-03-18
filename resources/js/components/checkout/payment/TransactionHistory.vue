@@ -28,7 +28,7 @@
 
       <template v-slot:item.earnings_price="{ item }">
         <b :class="statusColor(item.status, 'earnings')">
-          {{ earningsPrice(item) }}
+          {{ earningsPrice(item).toFormat() }}
         </b>
       </template>
 
@@ -48,21 +48,45 @@
       </template>
 
       <template v-slot:item.actions="{ item }">
-        <v-tooltip bottom v-if="enableRefund(item)">
+        <v-tooltip bottom v-if="enableRefund(item) && $props.checkout">
           <template v-slot:activator="{ on }">
             <v-btn
               @click="refundDialog(item)"
               icon
               v-on="on"
               :loading="rollbackLoading"
+              :disabled="loading"
             >
               <v-icon>
                 mdi-undo
               </v-icon>
             </v-btn>
           </template>
-          <span>Rollback transaction</span>
+          <span>
+            Rollback transaction
+          </span>
         </v-tooltip>
+        <v-menu
+          v-else-if="enableRefund(item)"
+          v-model="linkedRefundMenu"
+          :close-on-content-click="false"
+          left
+          offset-x
+        >
+          <template v-slot:activator="{ on: menu }">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on: tooltip }">
+                <v-btn icon v-on="{ ...tooltip, ...menu }">
+                  <v-icon>
+                    mdi-cash-refund
+                  </v-icon>
+                </v-btn>
+              </template>
+              <span>Issue a refund</span>
+            </v-tooltip>
+          </template>
+          <orderRefundForm :transaction="item" />
+        </v-menu>
       </template>
     </v-data-table>
   </v-card>
@@ -73,6 +97,10 @@ import { mapActions, mapState, mapMutations } from "vuex";
 import { EventBus } from "../../../plugins/eventBus";
 
 export default {
+  props: {
+    checkout: Boolean
+  },
+
   mounted() {
     EventBus.$on("transaction-history-refund", event => {
       if (event.payload && this.selected_payment) {
@@ -87,6 +115,7 @@ export default {
 
   data() {
     return {
+      linkedRefundMenu: false,
       rollbackLoading: false,
       selected_payment: null,
       headers: [
@@ -140,7 +169,15 @@ export default {
   },
 
   computed: {
-    ...mapState("cart", ["transactions"])
+    ...mapState("cart", ["transactions"]),
+
+    loading() {
+      if (this.rollbackLoading || this.checkoutLoading) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   },
 
   methods: {
@@ -158,17 +195,16 @@ export default {
     earningsPrice(transaction) {
       if (_.isObjectLike(transaction.payment)) {
         if (transaction.status === "failed") {
-          return this.parsePrice().toFormat();
+          return this.parsePrice();
         } else {
-          return this.parsePrice(transaction.price)
-            .subtract(this.changePrice(transaction))
-            .toFormat();
+          return this.parsePrice(transaction.price).subtract(
+            this.changePrice(transaction)
+          );
         }
       } else {
         return this.parsePrice(transaction.price)
           .subtract(this.changePrice(transaction))
-          .multiply(-1)
-          .toFormat();
+          .multiply(-1);
       }
     },
     changePrice(transaction) {
@@ -251,7 +287,7 @@ export default {
       this.rollbackLoading = true;
       const payload = {
         method: "post",
-        url: `transactions/${this.selected_payment.id}/rollback`
+        url: `payments/${this.selected_payment.id}/rollback`
       };
 
       this.request(payload)

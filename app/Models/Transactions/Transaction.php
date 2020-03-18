@@ -11,7 +11,8 @@ class Transaction extends Model
     protected $appends = [
         'type',
         'type_name',
-        'created_by_name'
+        'created_by_name',
+        'last_log'
     ];
 
     protected $casts = [
@@ -48,9 +49,26 @@ class Transaction extends Model
         }
     }
 
+    public function getLastLogAttribute()
+    {
+        if ($this->elavonApiTransactions) {
+            $last_log = $this->elavonApiTransactions()->latest()->first();
+            return $last_log;
+        } else if ($this->elavonSdkTransactions) {
+            $last_log = $this->elavonSdkTransactions()->latest()->first();
+            return $last_log;
+        } else {
+            return null;
+        }
+    }
+
     public function getTypeNameAttribute()
     {
-        return $this->payment->type_name ?? $this->refund->type;
+        if (isset($this->payment)) {
+            return $this->payment->type_name;
+        } else if (isset($this->refund)) {
+            return $this->refund->type;
+        }
     }
 
     public function getPriceAttribute()

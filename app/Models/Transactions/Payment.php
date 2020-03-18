@@ -51,7 +51,7 @@ class Payment extends Model
     public function getRefundablePriceAttribute()
     {
         $transaction = $this->transaction()->without('payment')->first();
-        $refundablePrice = $transaction->price;
+        $refundablePrice = $transaction->price->subtract($this->change_price);
         if ($transaction->status === 'approved') {
             foreach ($this->refunds as $refund) {
                 $refundTransaction = $refund->transaction;

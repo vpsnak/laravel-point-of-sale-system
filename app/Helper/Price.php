@@ -2,11 +2,43 @@
 
 namespace App\Helper;
 
+use Money\Currencies\ISOCurrencies;
 use Money\Currency;
+use Money\Formatter\DecimalMoneyFormatter;
 use Money\Money;
 
 class Price
 {
+    public static function newFormatter()
+    {
+        $currencies = new ISOCurrencies();
+        return new DecimalMoneyFormatter($currencies);
+    }
+
+    public static function newMoney(array $price = null)
+    {
+        $amount = 0;
+        $currency = 'USD';
+
+        if (isset($price['amount'])) {
+            $amount = (int) $price['amount'];
+        }
+        if (isset($price['currency'])) {
+            $currency = $price['currency'];
+        }
+
+        return new Money($amount, static::newCurrency($currency));
+    }
+
+    public static function newCurrency(string $currency = null)
+    {
+        if ($currency) {
+            return new Currency($currency);
+        } else {
+            return new Currency('USD');
+        }
+    }
+
     public static function calculateItemDiscount(array $item, string $currency)
     {
         $price = new Money($item['price']['amount'], new Currency($currency));

@@ -75,8 +75,7 @@ export default {
       "order_id",
       "order_status",
       "checkoutDialog",
-      "currentCheckoutStep",
-      "completeOrderLoading"
+      "currentCheckoutStep"
     ]),
 
     disableControls() {

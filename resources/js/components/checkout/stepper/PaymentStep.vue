@@ -5,7 +5,10 @@
     <v-container>
       <v-row justify="center" align="center">
         <v-col :lg="6" :md="12" justify="center" align="center">
-          <h3 v-if="!changePrice.isZero() && changePrice.isPositive()" class="my-3">
+          <h3
+            v-if="!changePrice.isZero() && changePrice.isPositive()"
+            class="my-3"
+          >
             Change:
             <span class="amber--text" v-text="changePrice.toFormat()" />
           </h3>
@@ -13,11 +16,12 @@
           <v-btn
             v-if="completed"
             color="primary"
-            @click="complete"
+            @click="completeStep()"
             :loading="false"
-            :disabled="false"
+            :disabled="checkout_loading"
             outlined
-          >Complete order</v-btn>
+            >Complete order
+          </v-btn>
         </v-col>
       </v-row>
     </v-container>
@@ -47,7 +51,11 @@ export default {
   },
 
   computed: {
-    ...mapState("cart", ["order_id", "order_status", "order_change_price"]),
+    ...mapState("cart", [
+      "order_status",
+      "order_change_price",
+      "checkout_loading"
+    ]),
 
     changePrice() {
       if (_.has(this.order_change_price, "amount")) {
@@ -59,22 +67,7 @@ export default {
   },
 
   methods: {
-    ...mapActions("cart", ["createReceipt", "completeStep"]),
-    ...mapActions("requests", ["request"]),
-
-    complete() {
-      this.request({
-        method: "get",
-        url: `receipts/create/${this.order_id}`
-      })
-        .then(() => {
-          this.completeStep();
-        })
-        .catch(error => {
-          console.error(error);
-        })
-        .finally(() => {});
-    }
+    ...mapActions("cart", ["createReceipt", "completeStep"])
   }
 };
 </script>
