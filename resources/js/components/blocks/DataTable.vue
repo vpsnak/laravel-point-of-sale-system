@@ -75,6 +75,7 @@
             v-if="data_table.newForm && data_table.btnTxt"
             :disabled="data_table.disableNewBtn || data_table.loading"
             color="primary"
+            outlined
             @click="createItemDialog()"
           >
             {{ data_table.btnTxt }}
