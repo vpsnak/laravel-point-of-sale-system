@@ -93,13 +93,14 @@
                     :error-messages="errors"
                     readonly
                     v-on="on"
+                    :disabled="loading"
                   ></v-text-field>
                 </ValidationProvider>
               </template>
               <v-date-picker
                 :readonly="$props.readonly"
                 v-model="formFields.from"
-                @input="fromDatePicker = false"
+                @input="(fromDatePicker = false), (formFields.to = null)"
               ></v-date-picker>
             </v-menu>
           </v-col>
@@ -126,10 +127,12 @@
                     readonly
                     v-on="on"
                     :error-messages="errors"
+                    :disabled="loading || !formFields.from"
                   ></v-text-field>
                 </ValidationProvider>
               </template>
               <v-date-picker
+                :min="formFields.from"
                 :readonly="$props.readonly"
                 v-model="formFields.to"
                 @input="toDatePicker = false"
@@ -139,7 +142,7 @@
           <v-col :cols="4">
             <ValidationProvider
               rules="required|numeric|max:11"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="No. of uses"
             >
               <v-text-field
@@ -150,7 +153,6 @@
                 prepend-inner-icon="mdi-pound"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
@@ -161,7 +163,6 @@
           <v-col :cols="12" align="center" justify="center">
             <v-btn
               color="primary"
-              class="mr-4"
               type="submit"
               :loading="loading"
               :disabled="invalid || loading"

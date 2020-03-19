@@ -75,6 +75,7 @@
             v-if="data_table.newForm && data_table.btnTxt"
             :disabled="data_table.disableNewBtn || data_table.loading"
             color="primary"
+            outlined
             @click="createItemDialog()"
           >
             {{ data_table.btnTxt }}
@@ -88,11 +89,12 @@
             disable-sort
             dense
             disable-filtering
+            disable-pagination
+            hide-default-footer
+            loading-text=" "
             :headers="getHeaders"
             :items="data_table.items"
             :loading="data_table.loading"
-            disable-pagination
-            hide-default-footer
           >
             <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
               <slot :name="slot" v-bind="scope" />

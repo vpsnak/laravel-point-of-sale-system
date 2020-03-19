@@ -29,7 +29,7 @@ class OrderController extends Controller
 
     public function all()
     {
-        return response(Order::paginate());
+        return response(Order::orderBy('created_at', 'desc')->paginate());
     }
 
     public function getOne(Order $model)
@@ -41,7 +41,7 @@ class OrderController extends Controller
     {
         $this->order_data = $request->validate([
             'order_id' => 'required|exists:orders,id',
-
+            // order discount
             'discount_type' => 'string|nullable',
             'discount_amount' => 'numeric|nullable',
             // items (products)

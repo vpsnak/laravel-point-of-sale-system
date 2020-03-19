@@ -11,7 +11,8 @@ class Payment extends Model
     public $timestamps = false;
 
     protected $appends = [
-        'is_refundable'
+        'earnings_price',
+        'refundable_price'
     ];
 
     protected $fillable = [
@@ -23,6 +24,12 @@ class Payment extends Model
     protected $hidden = [
         'payment_type_id',
     ];
+
+    public function getEarningsPriceAttribute()
+    {
+        $transaction = $this->transaction()->without('payment')->first();
+        return $transaction->price->subtract($this->change_price);
+    }
 
     public function getChangePriceAttribute()
     {
@@ -48,14 +55,24 @@ class Payment extends Model
         return $this->paymentType->name;
     }
 
-    public function getIsRefundableAttribute()
+    public function getRefundablePriceAttribute()
     {
-        if ($this->transaction()->without('payment')->first()->status === 'approved') {
-            // @TODO calc if refundable using refund table
-            return true;
-        } else {
-            return false;
+        $transaction = $this->transaction()->without('payment')->first();
+        $refundablePrice = $transaction->price->subtract($this->change_price);
+        if ($transaction->status === 'approved' && $transaction->payment->paymentType->type !== 'coupon') {
+            foreach ($this->refunds as $refund) {
+                $refundTransaction = $refund->transaction;
+                if ($refundTransaction->status === 'refund approved') {
+                    $refundablePrice = $refundablePrice->subtract($refundTransaction->price);
+                }
+            }
+            return $refundablePrice;
         }
+    }
+
+    public function refunds()
+    {
+        return $this->hasMany(Refund::class);
     }
 
     public function transaction()

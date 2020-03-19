@@ -64,7 +64,7 @@ class MenuItemSeeder extends Seeder
 
         $giftCards = MenuItem::create([
             'title' => 'Gift Cards',
-            'action' => ['link' => 'gift-cards'],
+            'action' => ['link' => 'giftcards'],
             'icon' =>  'mdi-wallet-giftcard',
             'location' => 'side_menu'
         ]);

@@ -122,8 +122,11 @@ export default {
   },
 
   mutations: {
-    setPaymentRefundedStatus(state, index) {
-      state.transactions[index].payment.is_refundable = false;
+    setPaymentRefundablePrice(state, value) {
+      const index = _.findIndex(state.transactions, {
+        id: value.id
+      });
+      state.transactions[index] = value;
     },
     setCheckoutLoading(state, value) {
       state.checkout_loading = value;
@@ -236,7 +239,7 @@ export default {
       if (Array.isArray(value)) {
         state.transactions = value;
       } else {
-        state.transactions.push(value);
+        state.transactions = [value, ...state.transactions];
       }
     },
     setIsValid(state, value) {

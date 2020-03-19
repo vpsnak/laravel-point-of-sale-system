@@ -40,6 +40,7 @@ class CreateOrdersTable extends Migration
 
             $table->timestampsTz();
         });
+        DB::statement("ALTER TABLE orders AUTO_INCREMENT = 10000;");
     }
 
     /**

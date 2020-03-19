@@ -18,7 +18,6 @@
       disable-pagination
       disable-filtering
       hide-default-footer
-      :loading="false"
     >
       <template v-slot:item.price="{ item }">
         <b :class="statusColor(item.status, 'amount')">
@@ -28,7 +27,7 @@
 
       <template v-slot:item.earnings_price="{ item }">
         <b :class="statusColor(item.status, 'earnings')">
-          {{ earningsPrice(item) }}
+          {{ earningsPrice(item).toFormat() }}
         </b>
       </template>
 
@@ -39,27 +38,53 @@
       </template>
 
       <template v-slot:item.status="{ item }">
-        <b :class="statusColor(item.status, 'status')">
-          {{ parseStatus(item.status) }}
-        </b>
+        <v-chip small :color="statusColor(item.status, 'status')">
+          <v-icon left>{{ parseStatusIcon(item.status) }}</v-icon>
+          <b>
+            {{ parseStatus(item.status) }}
+          </b>
+        </v-chip>
       </template>
 
       <template v-slot:item.actions="{ item }">
-        <v-tooltip bottom v-if="enableRefund(item)">
+        <v-tooltip bottom v-if="enableRefund(item) && $props.checkout">
           <template v-slot:activator="{ on }">
             <v-btn
               @click="refundDialog(item)"
               icon
               v-on="on"
               :loading="rollbackLoading"
+              :disabled="loading"
             >
               <v-icon>
                 mdi-undo
               </v-icon>
             </v-btn>
           </template>
-          <span>Rollback transaction</span>
+          <span>
+            Rollback transaction
+          </span>
         </v-tooltip>
+        <v-menu
+          v-else-if="enableRefund(item)"
+          :close-on-content-click="false"
+          offset-y
+          :key="item.id"
+        >
+          <template v-slot:activator="{ on: menu }">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on: tooltip }">
+                <v-btn icon v-on="{ ...tooltip, ...menu }">
+                  <v-icon>
+                    mdi-cash-refund
+                  </v-icon>
+                </v-btn>
+              </template>
+              <span>Issue a refund</span>
+            </v-tooltip>
+          </template>
+          <orderRefundForm :transaction="item" />
+        </v-menu>
       </template>
     </v-data-table>
   </v-card>
@@ -70,6 +95,10 @@ import { mapActions, mapState, mapMutations } from "vuex";
 import { EventBus } from "../../../plugins/eventBus";
 
 export default {
+  props: {
+    checkout: Boolean
+  },
+
   mounted() {
     EventBus.$on("transaction-history-refund", event => {
       if (event.payload && this.selected_payment) {
@@ -137,12 +166,20 @@ export default {
   },
 
   computed: {
-    ...mapState("cart", ["transactions"])
+    ...mapState("cart", ["transactions"]),
+
+    loading() {
+      if (this.rollbackLoading || this.checkoutLoading) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   },
 
   methods: {
     ...mapMutations("cart", [
-      "setPaymentRefundedStatus",
+      "setPaymentRefundablePrice",
       "setTransactions",
       "setOrderChangePrice",
       "setOrderRemainingPrice",
@@ -153,20 +190,15 @@ export default {
     ...mapActions("requests", ["request"]),
 
     earningsPrice(transaction) {
-      if (
-        _.isObjectLike(transaction.payment) &&
-        transaction.status === "failed"
+      if (_.has(transaction.payment, "earnings_price")) {
+        return this.parsePrice(transaction.payment.earnings_price);
+      } else if (
+        _.has(transaction.refund, "id") &&
+        transaction.status !== "refund failed"
       ) {
-        return this.parsePrice().toFormat();
-      } else if (_.isObjectLike(transaction.payment)) {
-        return this.parsePrice(transaction.price)
-          .subtract(this.changePrice(transaction))
-          .toFormat();
+        return this.parsePrice(transaction.price).multiply(-1);
       } else {
-        return this.parsePrice(transaction.price)
-          .subtract(this.changePrice(transaction))
-          .multiply(-1)
-          .toFormat();
+        return this.parsePrice();
       }
     },
     changePrice(transaction) {
@@ -190,7 +222,12 @@ export default {
       }
     },
     enableRefund(item) {
-      if (_.has(item.payment, "is_refundable") && item.payment.is_refundable) {
+      if (
+        _.has(item.payment, "refundable_price") &&
+        this.parsePrice(item.payment.refundable_price).greaterThan(
+          this.parsePrice()
+        )
+      ) {
         return true;
       } else {
         return false;
@@ -199,22 +236,28 @@ export default {
     parseStatus(status) {
       return _.upperFirst(status);
     },
+    parseStatusIcon(status) {
+      if (this.statusColor(status, "status") === "green") {
+        return "mdi-check";
+      } else {
+        return "mdi-alert-circle-outline";
+      }
+    },
     statusColor(status, column) {
       switch (status) {
         case "approved":
           switch (column) {
             case "status":
-              return "green--text";
+              return "green";
             case "amount":
               return "primary--text";
             case "earnings":
               return "green--text";
           }
-          return "green--text";
         case "failed":
           switch (column) {
             case "status":
-              return "red--text";
+              return "red";
             case "amount":
               return "primary--text";
             case "earnings":
@@ -223,7 +266,7 @@ export default {
         case "refund approved":
           switch (column) {
             case "status":
-              return "green--text";
+              return "green";
             case "amount":
               return "primary--text";
             case "earnings":
@@ -238,18 +281,14 @@ export default {
       this.rollbackLoading = true;
       const payload = {
         method: "post",
-        url: `transactions/${this.selected_payment.id}/rollback`
+        url: `payments/${this.selected_payment.id}/rollback`
       };
 
       this.request(payload)
         .then(response => {
-          if (response.refunded_payment_id) {
-            const index = _.findIndex(this.transactions, {
-              id: response.refunded_payment_id
-            });
-
-            this.setPaymentRefundedStatus(index);
+          if (response.refunded_transaction) {
             this.setTransactions(response.transaction);
+            this.setPaymentRefundablePrice(response.refunded_transaction);
           }
 
           this.setOrderChangePrice(response.change);

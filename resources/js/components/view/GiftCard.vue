@@ -47,7 +47,7 @@ export default {
     if (this.$props.model)
       this.request({
         method: "get",
-        url: `gift-cards/get/${this.$props.model.id}`
+        url: `giftcards/get/${this.$props.model.id}`
       }).then(result => {
         this.giftCard = result;
       });

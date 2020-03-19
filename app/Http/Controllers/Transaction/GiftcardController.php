@@ -24,28 +24,35 @@ class GiftcardController extends Controller
             'code' => 'required|string',
             'enabled' => 'required|boolean',
             'price' => 'required|array',
-            'bulk_action' => 'boolean',
-            'qty' => 'numeric',
+            'bulk' => 'required|boolean',
+            'qty' => 'required|numeric|min:1',
         ]);
+        $validatedData['created_by_id'] = auth()->user()->id;
+        $bulk = $validatedData['bulk'];
+        $qty = $validatedData['qty'];
 
         if ($validatedData['enabled']) {
-            $validatedData['enabled'] = now();
-        } else {
-            $validatedData['enabled'] = null;
+            $validatedData['enabled_at'] = now();
         }
+        unset($validatedData['bulk']);
+        unset($validatedData['enabled']);
+        unset($validatedData['qty']);
 
-        if ($validatedData['bulk_action'] && $validatedData['qty'] != 0) {
-            for ($i = 1; $i <= $validatedData['qty']; $i++) {
-                if ($i != 1) {
-                    $validatedData['code']++;
-                }
-                $giftcard = Giftcard::create($validatedData);
+
+        if ($bulk) {
+            $giftcardCollection = [];
+            for ($i = 0; $i < $qty; $i++) {
+                $giftcardCollection[$i] = $validatedData;
+                $start_pos = -1 * strlen($i);
+                $giftcardCollection[$i]['code'] = substr($validatedData['code'], 0, $start_pos);
+                $giftcardCollection[$i]['code'] .= $i;
             }
+            Giftcard::insert($giftcardCollection);
         } else {
-            $giftcard = Giftcard::create($validatedData);
+            Giftcard::create($validatedData);
         }
         return response(['notification' => [
-            'msg' => ["Gift card {$giftcard->name} created successfully!"],
+            'msg' => ["Gift card created successfully!"],
             'type' => 'success'
         ]]);
     }
@@ -53,19 +60,14 @@ class GiftcardController extends Controller
     public function update(Request $request)
     {
         $validatedData = $request->validate([
-            'id' => 'required|exists:giftcards,id',
             'name' => 'required|string',
             'code' => 'required|string',
-            'enabled' => 'required',
+            'enabled' => 'required|boolean',
             'price' => 'required|array'
         ]);
 
         $giftcard = Giftcard::findOrFail($validatedData['id']);
         $validatedData['enabled'] = now();
-
-        if ($validatedData['enabled'] && !$giftcard['enabled']) {
-            $validatedData['enabled'] = now();
-        }
 
         $giftcard->fill($validatedData);
         $giftcard->save();

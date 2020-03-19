@@ -11,7 +11,7 @@
       <v-chip
         pill
         v-on="$props.menu ? on : null"
-        color="teal"
+        color="primary"
         :small="small"
         dark
       >

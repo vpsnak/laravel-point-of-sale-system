@@ -1,28 +1,27 @@
 <template>
-  <div
-    class="my-5 d-flex align-center justify-space-around flex-column"
-    v-if="order_status === 'paid'"
-  >
-    <h3 v-if="!changePrice.isZero() && changePrice.isPositive()">
-      Change:
-      <span class="amber--text" v-text="changePrice.toFormat()" />
-    </h3>
+  <v-container>
+    <v-row justify="space-around" align="center" class="flex-column">
+      <h3 v-if="!changePrice.greaterThan(this.parsePrice())">
+        Change:
+        <span class="amber--text" v-text="changePrice.toFormat()" />
+      </h3>
 
-    <orderReceipt />
-  </div>
+      <orderReceipt />
+    </v-row>
+  </v-container>
 </template>
 
 <script>
 import { mapState } from "vuex";
 export default {
   computed: {
-    ...mapState("cart", ["order_status", "order_change_price"]),
+    ...mapState("cart", ["order_change_price"]),
 
     changePrice() {
       if (this.order_change_price) {
         return this.parsePrice(this.order_change_price);
       } else {
-        return this.$price();
+        return this.parsePrice();
       }
     }
   }

@@ -1,13 +1,6 @@
 <template>
   <v-card class="mx-auto" max-width="500">
     <v-list>
-      <v-subheader>
-        <v-icon left>mdi-receipt</v-icon>
-        <h3>
-          Order <i class="cyan--text">#{{ order_id }}</i>
-        </h3>
-      </v-subheader>
-      <v-divider></v-divider>
       <v-list-item @click="printReceipt">
         <v-list-item-icon>
           <v-icon>mdi-printer</v-icon>
@@ -34,7 +27,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
   data() {
@@ -72,7 +65,7 @@ export default {
     },
     mailReceipt() {
       this.loading = true;
-      let payload = {
+      const payload = {
         method: "post",
         url: `/guest-email/create`,
         data: { email: this.customerEmail }

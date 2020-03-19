@@ -70,17 +70,6 @@
           <v-list-item-title>Upload to MAS</v-list-item-title>
         </v-list-item>
         <v-list-item
-          @click.stop="setRefundDialog()"
-          v-if="canRefund"
-          :disabled="loading"
-          :loading="refund_loading"
-        >
-          <v-list-item-avatar>
-            <v-icon>mdi-credit-card-refund-outline</v-icon>
-          </v-list-item-avatar>
-          <v-list-item-title>Issue a refund</v-list-item-title>
-        </v-list-item>
-        <v-list-item
           color="red"
           @click.stop="cancelDialog()"
           v-if="canCancel"
