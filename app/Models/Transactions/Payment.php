@@ -2,9 +2,9 @@
 
 namespace App;
 
+use App\Helper\Price;
 use Illuminate\Database\Eloquent\Model;
 use Money\Money;
-use Money\Currency;
 
 class Payment extends Model
 {
@@ -35,9 +35,12 @@ class Payment extends Model
     {
         if (isset($this->attributes['change_price'])) {
             $price = json_decode($this->attributes['change_price'], true);
-            return new Money($price['amount'], new Currency($price['currency']));
+            return Price::parsePrice($price);
         } else {
-            return new Money(0, $this->transaction()->without('payment')->first()->price->getCurrency());
+            return Price::parsePrice([
+                'amount' => 0,
+                'currency' => $this->transaction()->without('payment')->first()->price->getCurrency()
+            ]);
         }
     }
 

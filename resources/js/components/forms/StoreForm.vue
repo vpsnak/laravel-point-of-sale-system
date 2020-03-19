@@ -3,7 +3,7 @@
     <v-form @submit="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         <ValidationProvider
-          rules="required|max:255"
+          rules="required|max:100"
           v-slot="{ errors, valid }"
           name="Name"
         >
@@ -37,7 +37,7 @@
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
-          rules="required|max:255"
+          rules="required|max:100"
           v-slot="{ errors, valid }"
           name="Street"
         >
@@ -51,7 +51,7 @@
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
-          rules="required|max:255"
+          rules="required|max:100"
           v-slot="{ errors, valid }"
           name="Postal code"
         >
@@ -65,7 +65,7 @@
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
-          rules="required|max:255"
+          rules="required|max:100"
           v-slot="{ errors, valid }"
           name="City"
         >

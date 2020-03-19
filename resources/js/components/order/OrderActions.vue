@@ -99,18 +99,10 @@ export default {
         this.cancel_loading = false;
       }
     });
-
-    EventBus.$on("order-edit-refund-confirmation", event => {
-      this.refund_loading = false;
-      if (event.payload) {
-        this.setRefundDialog();
-      }
-    });
   },
 
   beforeDestroy() {
     EventBus.$off("order-edit-cancel-order");
-    EventBus.$off("order-edit-refund-confirmation");
   },
 
   data() {
@@ -119,7 +111,6 @@ export default {
       reorder_loading: false,
       receipt_loading: false,
       upload_to_mas_loading: false,
-      refund_loading: false,
       cancel_loading: false
     };
   },
@@ -147,7 +138,6 @@ export default {
         this.reorder_loading ||
         this.receipt_loading ||
         this.upload_to_mas_loading ||
-        this.refund_loading ||
         this.cancel_loading
       ) {
         this.setOrderPageActions(false);
@@ -188,18 +178,6 @@ export default {
         return false;
       }
     },
-    canRefund() {
-      if (
-        this.transactions.length > 0 &&
-        (this.order_status !==
-          ["completed", "canceled"].indexOf(this.order_status)) !==
-          -1
-      ) {
-        return true;
-      } else {
-        return false;
-      }
-    },
     canCancel() {
       if (
         (this.order_status !==
@@ -228,33 +206,18 @@ export default {
     editOrderOptions() {
       this.$router.push({ name: "editOrderOptionsPage" });
     },
-    refund() {},
-    setRefundDialog() {
-      this.refund_loading = true;
-
-      this.setDialog({
-        show: true,
-        width: 700,
-        title: `Issue a refund for order #${this.order_id}`,
-        titleCloseBtn: true,
-        icon: "mdi-credit-card-refund-outline",
-        component: "orderRefundForm",
-        persistent: true,
-        eventChannel: "order-edit-refund"
-      });
-    },
     reorder() {
       this.reorder_loading = true;
       const items = this.cart_products;
       this.resetState();
       this.setReorder(items);
-      this.$router.replace({ name: "sales" });
+      this.$router.replace({ name: "sale" });
       this.setCheckoutDialog(true);
       this.reorder_loading = false;
     },
     checkout() {
       this.checkout_loading = true;
-      this.$router.replace({ name: "sales" });
+      this.$router.replace({ name: "sale" });
       this.setCheckoutDialog(true);
       this.checkout_loading = false;
     },

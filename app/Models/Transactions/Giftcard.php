@@ -2,8 +2,8 @@
 
 namespace App;
 
+use App\Helper\Price;
 use Illuminate\Database\Eloquent\Model;
-use Money\Currency;
 use Money\Money;
 
 class Giftcard extends Model
@@ -25,7 +25,7 @@ class Giftcard extends Model
     public function getPriceAttribute()
     {
         $price = json_decode($this->attributes['price'], true);
-        return new Money($price['amount'], new Currency($price['currency']));
+        return Price::parsePrice($price);
     }
 
     public function setPriceAttribute($value)
@@ -39,6 +39,6 @@ class Giftcard extends Model
 
     public function createdBy()
     {
-        $this->belongsTo(User::class);
+        return $this->belongsTo(User::class);
     }
 }

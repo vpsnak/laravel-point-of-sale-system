@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Helper\Price;
 use App\Receipt;
 use App\Order;
-use Illuminate\Support\Carbon;
-use Money\Currencies\ISOCurrencies;
-use Money\Formatter\DecimalMoneyFormatter;
 
 
 class ReceiptController extends Controller
@@ -60,15 +58,12 @@ class ReceiptController extends Controller
     {
         $order = $order->load(['createdBy', 'store']);
 
-        $currencies = new ISOCurrencies();
-        $moneyFormatter = new DecimalMoneyFormatter($currencies);
-
         return view('receipt')->with([
             'order' => $order,
             'created_by' => $order->createdBy,
             'store' => $order->store,
             'cash_register' => $order->createdBy->open_register->cash_register,
-            'moneyFormatter' => $moneyFormatter
+            'moneyFormatter' => Price::newFormatter()
         ]);
     }
 

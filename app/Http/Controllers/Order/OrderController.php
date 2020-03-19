@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Address;
 use App\Customer;
 use App\Giftcard;
+use App\Helper\Price;
 use App\Jobs\ProcessOrder;
 use App\Order;
 use App\Status;
@@ -12,8 +13,6 @@ use App\StorePickup;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use CodeItNow\BarcodeBundle\Utils\BarcodeGenerator;
-use Money\Currencies\ISOCurrencies;
-use Money\Formatter\DecimalMoneyFormatter;
 
 class OrderController extends Controller
 {
@@ -318,23 +317,25 @@ class OrderController extends Controller
 
     public function rollbackPayments(Order $order)
     {
-        $paymentController = new PaymentController();
-        $results = [];
+        // @TODO fix cancel order
 
-        foreach ($order->payments as $payment) {
-            if ($payment->status === 'approved' && !$payment->refunded) {
-                $result = $paymentController->refundPayment($payment, false);
+        // $paymentController = new TransactionController();
+        // $results = [];
 
-                if (is_array($result) && array_key_exists('errors', $result)) {
-                    if (!array_key_exists('errors', $results)) {
-                        $results['errors'] = [];
-                    }
-                    array_push($results['errors'], $result['errors']);
-                }
-            }
-        }
+        // foreach ($order->transactions as $transaction) {
+        //     if ($transaction->status === 'approved' && !$transaction->refund_id) {
+        //         $result = $paymentController->refundPayment($payment, false);
 
-        return $results ? $results : true;
+        //         if (is_array($result) && array_key_exists('errors', $result)) {
+        //             if (!array_key_exists('errors', $results)) {
+        //                 $results['errors'] = [];
+        //             }
+        //             array_push($results['errors'], $result['errors']);
+        //         }
+        //     }
+        // }
+
+        // return $results ? $results : true;
     }
 
     public function search(Request $request)
@@ -411,7 +412,7 @@ class OrderController extends Controller
         return $query;
     }
 
-    public function printCustomersOrder(Order $order)
+    public function printCustomerOrder(Order $order)
     {
         $order = $order->load(['store']);
 
@@ -425,9 +426,6 @@ class OrderController extends Controller
         $barcode->setFontSize(0);
         $code = $barcode->generate();
 
-        $currencies = new ISOCurrencies();
-        $moneyFormatter = new DecimalMoneyFormatter($currencies);
-
         $customer_billing_address = null;
         if ($order->customer) {
             $customer_billing_address = $order->customer->getDefaultBilling();
@@ -438,7 +436,7 @@ class OrderController extends Controller
             'store' => $order->store,
             'customer_billing_address' => $customer_billing_address,
             'code' => $code,
-            'moneyFormatter' => $moneyFormatter
+            'moneyFormatter' => Price::newFormatter()
         ]);
     }
 
@@ -456,9 +454,6 @@ class OrderController extends Controller
         $barcode->setFontSize(0);
         $code = $barcode->generate();
 
-        $currencies = new ISOCurrencies();
-        $moneyFormatter = new DecimalMoneyFormatter($currencies);
-
         $customer_billing_address = null;
         if ($order->customer) {
             $customer_billing_address = $order->customer->getDefaultBilling();
@@ -469,7 +464,7 @@ class OrderController extends Controller
             'store' => $order->store,
             'customer_billing_address' => $customer_billing_address,
             'code' => $code,
-            'moneyFormatter' => $moneyFormatter
+            'moneyFormatter' => Price::newFormatter()
         ]);
     }
 }

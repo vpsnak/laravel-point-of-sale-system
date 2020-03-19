@@ -5,7 +5,7 @@
         <v-row>
           <v-col :cols="6">
             <ValidationProvider
-              rules="required|max:255"
+              rules="required|max:100"
               v-slot="{ errors }"
               name="Name"
             >
@@ -20,7 +20,7 @@
           </v-col>
           <v-col :cols="6">
             <ValidationProvider
-              rules="required|max:255"
+              rules="required|max:100"
               v-slot="{ errors }"
               name="Code"
             >

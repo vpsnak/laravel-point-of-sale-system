@@ -3,7 +3,7 @@
     <v-form @submit.prevent="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         <ValidationProvider
-          rules="required|max:255"
+          rules="required|max:100"
           v-slot="{ errors, valid }"
           name="Name"
         >
@@ -29,7 +29,7 @@
         <ValidationProvider
           rules="required|between:0.01,1000"
           v-slot="{ errors, valid }"
-          name="Price Amount"
+          name="Price"
         >
           <v-text-field
             type="number"

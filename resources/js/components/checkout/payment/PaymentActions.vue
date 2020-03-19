@@ -262,9 +262,7 @@ export default {
       },
       set(value) {
         this.amount_value = value;
-        this.paymentPrice = this.parsePrice({
-          amount: Math.round(value * 10000) / 100
-        });
+        this.paymentPrice = this.parsePrice(Math.round(value * 10000) / 100);
       }
     },
     orderRemainingPrice() {

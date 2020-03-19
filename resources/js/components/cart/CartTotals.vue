@@ -59,7 +59,7 @@ export default {
       return this.parsePrice(this.delivery_fees_price);
     },
     subTotalwDiscount() {
-      var subtotal = this.$price();
+      let subtotal = this.parsePrice();
 
       this.cart_products.forEach(product => {
         const productPrice = this.$price(product.price).multiply(
@@ -75,7 +75,7 @@ export default {
     },
     tax() {
       if (this.customer && this.customer.no_tax) {
-        return this.$price();
+        return this.parsePrice();
       } else {
         return this.subTotalwDiscount
           .add(this.deliveryFeesPrice)
@@ -83,10 +83,12 @@ export default {
       }
     },
     totalDiscount() {
-      var subtotalNoDiscount = this.$price();
+      let subtotalNoDiscount = this.parsePrice();
 
       this.cart_products.forEach(product => {
-        const result = this.$price(product.price).multiply(Number(product.qty));
+        const result = this.parsePrice(product.price).multiply(
+          Number(product.qty)
+        );
         subtotalNoDiscount = subtotalNoDiscount.add(result);
       });
 

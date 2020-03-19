@@ -8,24 +8,18 @@ use App\MasOrder;
 use App\MasOrderLog;
 use App\Order;
 use GuzzleHttp\Client;
-use Money\Currencies\ISOCurrencies;
-use Money\Currency;
-use Money\Formatter\DecimalMoneyFormatter;
-use Money\Money;
 
 class MasOrderController extends Controller
 {
     private $masAccount;
     private $order;
     private $store;
-    private $currencies;
     private $moneyFormatter;
 
     public function __construct()
     {
         $this->masAccount = MasAccount::getActive();
-        $this->currencies = new ISOCurrencies();
-        $this->moneyFormatter = new DecimalMoneyFormatter($this->currencies);
+        $this->moneyFormatter = Price::newFormatter();
     }
 
     public function submitToMas(Order $order)

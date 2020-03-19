@@ -27,7 +27,7 @@ class MenuItemSeeder extends Seeder
             'location' => 'side_menu'
         ]);
 
-        $sales = MenuItem::create([
+        $sale = MenuItem::create([
             'title' => 'Sale',
             'action' => ['link' => 'sale'],
             'icon' =>  'mdi-cart',
@@ -141,7 +141,7 @@ class MenuItemSeeder extends Seeder
 
         // side menu
         $dashboard->roles()->sync($all);
-        $sales->roles()->sync($all);
+        $sale->roles()->sync($all);
         $orders->roles()->sync($all);
         $customers->roles()->sync($all);
         $products->roles()->sync($all);
@@ -155,7 +155,6 @@ class MenuItemSeeder extends Seeder
         $reports->roles()->sync([$admin, $store_manager]);
         $users->roles()->sync($admin);
         $settings->roles()->sync($admin);
-
         // top menu
         $sign_out->roles()->sync($all);
         $change_password->roles()->sync($all);

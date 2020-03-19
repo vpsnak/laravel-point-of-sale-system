@@ -15,7 +15,7 @@ Route::get('/', 'AppController@index');
 
 Route::get('/report/{report}', 'CashRegisterReportController@report');
 
-Route::get('/customer-order/{order}', 'OrderController@printCustomersOrder');
+Route::get('/customer-order/{order}', 'OrderController@printCustomerOrder');
 
 Route::get('/order/{order}', 'OrderController@printOrder');
 

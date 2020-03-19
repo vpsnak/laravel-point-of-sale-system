@@ -3,7 +3,7 @@
     <v-form @submit.prevent="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         <ValidationProvider
-          rules="required|max:255"
+          rules="required|max:100"
           v-slot="{ errors, valid }"
           name="Name"
         >
@@ -17,7 +17,7 @@
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
-          rules="required|max:255|numeric"
+          rules="required|max:100"
           v-slot="{ errors, valid }"
           name="Code"
         >
@@ -33,13 +33,13 @@
         <ValidationProvider
           rules="required|between:0.01,1000"
           v-slot="{ errors, valid }"
-          name="Price amount"
+          name="Price"
         >
           <v-text-field
             :readonly="$props.readonly"
-            v-model="formFields.price.amount"
+            v-model="price"
             type="number"
-            label="Price amount"
+            label="Price"
             :disabled="loading"
             :error-messages="errors"
             :success="valid"
@@ -48,7 +48,7 @@
         <v-row justify="space-around">
           <ValidationProvider vid="bulk_action">
             <v-switch
-              :disabled="$props.model"
+              :disabled="$props.model ? true : false"
               :readonly="$props.readonly"
               v-model="formFields.bulk_action"
               label="Bulk Action"
@@ -106,29 +106,50 @@ export default {
   },
   data() {
     return {
+      price_amount: null,
       loading: false,
-      defaultValues: {},
       formFields: {
         name: null,
         code: null,
         enabled: false,
         price: {
-          type: null,
-          amount: null
+          amount: null,
+          currency: null
         },
         bulk_action: false,
         qty: 1
       }
     };
   },
+
   mounted() {
-    this.defaultValues = { ...this.formFields };
     if (this.$props.model) {
       this.formFields = {
         ...this.$props.model
       };
+      if (this.formFields.enabled_at) {
+        this.formFields.enabled = true;
+      }
+      this.price_amount = this.parsePrice(this.formFields.price).toFormat(
+        "0.00"
+      );
     }
   },
+
+  computed: {
+    price: {
+      get() {
+        return this.price_amount;
+      },
+      set(value) {
+        this.price_amount = value;
+        this.formFields.price = this.parsePrice(
+          Math.round(value * 10000) / 100
+        ).toJSON();
+      }
+    }
+  },
+
   methods: {
     ...mapActions("requests", ["request"]),
 

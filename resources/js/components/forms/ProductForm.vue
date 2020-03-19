@@ -6,7 +6,7 @@
   >
     <v-container class="overflow-y-auto" style="max-height: 60vh">
       <ValidationProvider
-        rules="required|max:255"
+        rules="required|max:100"
         v-slot="{ errors, valid }"
         name="Name"
       >
@@ -19,7 +19,7 @@
         ></v-text-field>
       </ValidationProvider>
       <ValidationProvider
-        rules="required|max:255"
+        rules="required|max:100"
         v-slot="{ errors, valid }"
         name="Sku"
       >
@@ -31,7 +31,7 @@
           :color="valid ? 'primary' : ''"
         ></v-text-field>
       </ValidationProvider>
-      <ValidationProvider rules="max:255" v-slot="{ errors, valid }" name="Url">
+      <ValidationProvider rules="max:100" v-slot="{ errors, valid }" name="Url">
         <v-text-field
           :readonly="$props.readonly"
           v-model="formFields.url"
@@ -41,7 +41,7 @@
         ></v-text-field>
       </ValidationProvider>
       <ValidationProvider
-        rules="max:255"
+        rules="max:100"
         v-slot="{ errors, valid }"
         name="Photo url"
       >

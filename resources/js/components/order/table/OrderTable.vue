@@ -1,7 +1,11 @@
 <template>
   <data-table v-if="render">
     <template v-slot:item.customer="{ item }">
-      <customerChip :menu="true" :customer="item.customer" :small="smallChips" />
+      <customerChip
+        :menu="true"
+        :customer="item.customer"
+        :small="smallChips"
+      />
     </template>
     <template v-slot:item.store="{ item }">
       <storeChip :menu="true" :store="item.store" :small="smallChips" />
@@ -36,7 +40,11 @@
       />
     </template>
     <template v-slot:item.created_by="{ item }">
-      <createdByChip :menu="true" :createdBy="item.created_by" :small="smallChips" />
+      <createdByChip
+        :menu="true"
+        :createdBy="item.created_by"
+        :small="smallChips"
+      />
     </template>
 
     <template v-slot:item.actions="{ item }">
@@ -263,7 +271,7 @@ export default {
       })
         .then(response => {
           this.setReorder(response.items);
-          this.$router.push({ name: "sales" });
+          this.$router.push({ name: "sale" });
           this.setCheckoutDialog(true);
         })
         .finally(() => {

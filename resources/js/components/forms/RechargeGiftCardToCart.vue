@@ -7,7 +7,7 @@
     <ValidationProvider
       rules="required|between:0.01,1000"
       v-slot="{ errors, valid }"
-      name="Price Amount"
+      name="Price"
     >
       <v-text-field
         :min="0"
