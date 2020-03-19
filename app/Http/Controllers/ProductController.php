@@ -27,11 +27,11 @@ class ProductController extends Controller
             'url' => 'nullable|string',
             'photo_url' => 'nullable|string',
             'description' => 'nullable|string',
-            'is_price_editable' => 'nullable|boolean',
+            'is_discountable' => 'required|boolean',
+            'is_price_editable' => 'required|boolean',
             'price' => 'required|array',
             'price.amount' => 'required|integer',
             'price.currency' => 'required|string|size:3',
-            'is_discountable' => 'required|boolean'
         ]);
 
         $validatedExtra = $request->validate([

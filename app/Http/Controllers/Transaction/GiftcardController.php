@@ -43,12 +43,14 @@ class GiftcardController extends Controller
 
         if ($bulk) {
             $giftcardCollection = [];
+            $j = substr($validatedData['code'], -1);
             for ($i = 0; $i < $qty; $i++) {
                 $giftcardCollection[$i] = $validatedData;
                 $giftcardCollection[$i]['price'] = json_encode($giftcardCollection[$i]['price']);
-                $start_pos = -1 * strlen($i);
+                $start_pos = -1 * strlen($j);
                 $giftcardCollection[$i]['code'] = substr($validatedData['code'], 0, $start_pos);
-                $giftcardCollection[$i]['code'] .= $i;
+                $giftcardCollection[$i]['code'] .= $j;
+                $j++;
             }
 
             Giftcard::insert($giftcardCollection);

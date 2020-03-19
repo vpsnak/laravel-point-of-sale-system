@@ -182,7 +182,7 @@ export default {
         price: null,
         url: null,
         description: null,
-        is_price_editable: "",
+        is_price_editable: true,
         is_discountable: true,
         categories: [],
         stores: []
