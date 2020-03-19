@@ -2,9 +2,9 @@
 
 namespace App;
 
+use App\Helper\Price;
 use Illuminate\Database\Eloquent\Model;
 use Money\Money;
-use Money\Currency;
 
 class Transaction extends Model
 {
@@ -73,12 +73,11 @@ class Transaction extends Model
 
     public function getPriceAttribute()
     {
+        $price = null;
         if (isset($this->attributes['price'])) {
             $price = json_decode($this->attributes['price'], true, 512, JSON_NUMERIC_CHECK);
-            return new Money((int) $price['amount'], new Currency($price['currency']));
-        } else {
-            return new Money(0, new Currency($this->order()->first()->currency));
         }
+        return Price::parsePrice($price);
     }
 
     public function setPriceAttribute($value)

@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Order;
-use App\Transaction;
 use App\MasOrder;
 use App\Status;
-use Money\Money;
-use Money\Currency;
+use App\Helper\Price;
 
 class OrderStatusController extends Controller
 {
@@ -26,12 +24,10 @@ class OrderStatusController extends Controller
     public function updateOrderStatus(bool $refund = false)
     {
         $this->user = auth()->user();
-
         $remaining = $this->order->remaining_price;
 
-
         if ($remaining->isPositive()) {
-            $this->order->change = new Money(0, new Currency($this->order->currency));
+            $this->order->change = Price::parsePrice();
             if ($this->order->status->value !== 'pending_payment') {
                 $pendingPaymentStatusId = Status::where('value', 'pending_payment')->firstOrFail('id');
                 $this->order->statuses()->attach($pendingPaymentStatusId, ['processed_by_id' => $this->user->id]);

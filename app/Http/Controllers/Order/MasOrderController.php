@@ -222,7 +222,11 @@ class MasOrderController extends Controller
     {
         $response = [];
         foreach ($this->order->items as $item) {
-            $itemPrice = new Money($item['price']['amount'], new Currency($this->order->currency));
+            $price = [
+                'amount' => $item['price']['amount'],
+                'currency' => $this->order->currency
+            ];
+            $itemPrice = Price::parsePrice($price);
             $response[$item['id']] = [
                 'ItemCode' => $item['sku'],
                 'ItemName' => $item['name'],

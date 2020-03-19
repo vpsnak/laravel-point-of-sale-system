@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Money\Money;
 use Money\Currency;
 use AjCastro\EagerLoadPivotRelations\EagerLoadPivotTrait;
-use App\Helper\PhpHelper;
+use App\Helper\Price;
 
 class Order extends Model
 {
@@ -126,7 +126,10 @@ class Order extends Model
 
     public function getMdsePriceAttribute()
     {
-        $mdsePrice = new Money(0, new Currency($this->currency));
+        $mdsePrice = Price::parsePrice([
+            'price' => 0,
+            'currency' => $this->currency
+        ]);
         foreach ($this->items as $item) {
             $price = new Money($item['price']['amount'], new Currency($this->currency));
             $price = $price->multiply($item['qty']);

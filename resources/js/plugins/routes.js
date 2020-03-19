@@ -6,7 +6,7 @@ import Logout from "../components/auth/Logout";
 
 import LandingPage from "../components/blocks/LandingPage.vue";
 import Dashboard from "../components/pages/Dashboard";
-import Sales from "../components/pages/Sales";
+import Sale from "../components/pages/Sale";
 import OpenCashRegister from "../components/pages/OpenCashRegister";
 import Orders from "../components/order/table/OrderTable";
 import OrderViewPage from "../components/order/pages/OrderViewPage";
@@ -68,10 +68,10 @@ export default [
     meta: { requiresAuth: true }
   },
   {
-    name: "sales",
-    path: "/sales",
+    name: "sale",
+    path: "/sale",
     components: {
-      default: Sales,
+      default: Sale,
       side_menu: SideMenu,
       top_menu: TopMenu
     },
@@ -103,7 +103,7 @@ export default [
   {
     name: "editOrderItemsPage",
     path: "/order/:id/edit-items",
-    component: Sales,
+    component: Sale,
     meta: { requiresAuth: true },
     props: { showSave: true }
   },

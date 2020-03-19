@@ -28,8 +28,8 @@ class MenuItemSeeder extends Seeder
         ]);
 
         $sales = MenuItem::create([
-            'title' => 'Sales',
-            'action' => ['link' => 'sales'],
+            'title' => 'Sale',
+            'action' => ['link' => 'sale'],
             'icon' =>  'mdi-cart',
             'location' => 'side_menu'
         ]);

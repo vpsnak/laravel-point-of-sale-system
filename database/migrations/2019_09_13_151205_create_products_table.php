@@ -22,7 +22,7 @@ class CreateProductsTable extends Migration
             $table->string('photo_url')->nullable();
             $table->string('url')->nullable();
             $table->string('plantcare_pdf')->nullable();
-            $table->boolean('editable_price')->nullable()->default(true);
+            $table->boolean('is_price_editable')->nullable()->default(true);
             $table->boolean('is_discountable')->nullable()->default(true);
             $table->json('price');
             $table->json('discount')->nullable();
