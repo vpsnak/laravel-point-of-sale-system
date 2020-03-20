@@ -265,6 +265,7 @@ class Order extends Model
         return $this
             ->belongsToMany(Status::class)
             ->using(OrderStatus::class)
+            ->withPivot('id')
             ->withPivot('processed_by_id')
             ->withTimestamps(['created_at'])
             ->orderBy('created_at', 'desc');

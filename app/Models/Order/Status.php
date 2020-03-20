@@ -14,6 +14,7 @@ class Status extends Model
     {
         return $this->belongsToMany(Order::class)
             ->using(OrderStatus::class)
+            ->withPivot('id')
             ->withPivot('user_id')
             ->withTimestamps(['created_at']);
     }

@@ -41,7 +41,7 @@
             hide-default-footer
             :headers="headers"
             :items="statuses"
-            item-key="pivot.created_at"
+            item-key="pivot.id"
           >
             <template v-slot:item.text="{ item }">
               <v-chip pill :color="item.color">
