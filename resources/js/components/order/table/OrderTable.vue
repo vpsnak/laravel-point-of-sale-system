@@ -133,7 +133,6 @@
           <v-btn
             icon
             small
-            color="red"
             :disabled="data_table.loading"
             @click.stop="cancelOrderDialog(item)"
             class="my-2"
