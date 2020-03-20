@@ -2,11 +2,7 @@
   <ValidationObserver v-slot="{ invalid }">
     <v-form @submit.prevent="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
-        <ValidationProvider
-          rules="required|max:100"
-          v-slot="{ errors, valid }"
-          name="Name"
-        >
+        <ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Name">
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.name"
@@ -16,11 +12,7 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
-          name="Regions"
-        >
+        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Regions">
           <v-select
             :readonly="$props.readonly"
             v-model="formFields.region_id"
@@ -34,11 +26,7 @@
             item-value="id"
           ></v-select>
         </ValidationProvider>
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
-          name="Countries"
-        >
+        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Countries">
           <v-select
             :readonly="$props.readonly"
             v-model="formFields.country_id"
@@ -52,11 +40,7 @@
             item-value="iso2_code"
           ></v-select>
         </ValidationProvider>
-        <ValidationProvider
-          rules="required|max:100"
-          v-slot="{ errors, valid }"
-          name="Street"
-        >
+        <ValidationProvider rules="required|max:100" v-slot="{ errors, valid }" name="Street">
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.street"
@@ -66,11 +50,7 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider
-          rules="max:100"
-          v-slot="{ errors, valid }"
-          name="Second Street"
-        >
+        <ValidationProvider rules="max:100" v-slot="{ errors, valid }" name="Second Street">
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.street1"
@@ -90,8 +70,7 @@
               :loading="loading"
               :disabled="invalid || loading"
               color="primary"
-              >submit
-            </v-btn>
+            >submit</v-btn>
           </v-col>
         </v-row>
       </v-container>

@@ -25,7 +25,7 @@ class AddressController extends Controller
     {
         $this->address = $request->validate([
             'customer_id' => 'nullable|exists:customers,id',
-            'store_pickup_id' => 'nullable|exists:customers,id',
+            'store_pickup_id' => 'nullable|exists:store_pickups,id',
             'name' => 'nullable|required_with:store_pickup_id',
             'first_name' => 'nullable|string|required_with:customer_id',
             'last_name' => 'nullable|string|required_with:customer_id',
@@ -45,7 +45,7 @@ class AddressController extends Controller
         ]);
         $response = self::regionValidation($this->address['region_id'], $this->address['country_id']);
 
-        if ($this->addressstore_pickup_id) {
+        if ($this->address_store_pickup_id) {
             $storePickup = StorePickup::created($this->address['region_id'], $this->address['country_id']);
             $storePickup->address_id = $this->address(['store_pickup_id']);
             $storePickup->save();

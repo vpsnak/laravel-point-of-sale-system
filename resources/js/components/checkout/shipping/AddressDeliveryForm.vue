@@ -7,11 +7,7 @@
   >
     <v-row>
       <v-col cols="6">
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
-          name="First name"
-        >
+        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="First name">
           <v-text-field
             v-model="address.first_name"
             :readonly="$props.readonly"
@@ -21,11 +17,7 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
-          name="Address"
-        >
+        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Address">
           <v-text-field
             :readonly="$props.readonly"
             v-model="address.street"
@@ -38,11 +30,7 @@
       </v-col>
 
       <v-col cols="6">
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
-          name="Last Name"
-        >
+        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Last Name">
           <v-text-field
             v-model="address.last_name"
             :readonly="$props.readonly"
@@ -65,11 +53,7 @@
         </ValidationProvider>
       </v-col>
       <v-col cols="3">
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
-          name="City"
-        >
+        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="City">
           <v-text-field
             v-model="address.city"
             :readonly="$props.readonly"
@@ -81,11 +65,7 @@
         </ValidationProvider>
       </v-col>
       <v-col cols="3">
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
-          name="Zip Code"
-        >
+        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Zip Code">
           <v-text-field
             :readonly="$props.readonly"
             v-model="address.postcode"
@@ -97,11 +77,7 @@
         </ValidationProvider>
       </v-col>
       <v-col :cols="3">
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
-          name="Country"
-        >
+        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Country">
           <v-autocomplete
             @change="countryChanged"
             :readonly="$props.readonly"
@@ -118,11 +94,7 @@
         </ValidationProvider>
       </v-col>
       <v-col :cols="3">
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
-          name="State"
-        >
+        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="State">
           <v-autocomplete
             v-model="address.region"
             :loading="region_loading"
@@ -137,11 +109,7 @@
         </ValidationProvider>
       </v-col>
       <v-col :cols="6">
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
-          name="Phone"
-        >
+        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Phone">
           <v-text-field
             :readonly="$props.readonly"
             v-model="address.phone"
@@ -171,9 +139,7 @@
         type="submit"
         :disabled="invalid || loading"
         :loading="submit_loading"
-      >
-        save
-      </v-btn>
+      >save</v-btn>
     </v-row>
   </ValidationObserver>
 </template>
