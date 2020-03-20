@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card class="fill-height">
     <v-container fluid>
       <v-row justify="center" align="center">
         <v-col cols="auto">
@@ -86,7 +86,6 @@
         <v-col :cols="12">
           <v-data-table
             fixed-header
-            height="77vh"
             disable-sort
             dense
             disable-filtering

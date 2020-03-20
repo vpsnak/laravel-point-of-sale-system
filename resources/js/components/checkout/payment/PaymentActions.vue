@@ -32,8 +32,13 @@
         </v-chip-group>
       </v-row>
     </v-container>
-    <v-container fluid class="overflow-y-auto" style="max-height: 20vh">
-      <v-row justify="center" align="center" v-if="paymentType.type === 'card'">
+    <v-container fluid class="overflow-y-auto py-0" style="max-height:75px;">
+      <v-row
+        justify="center"
+        align="center"
+        v-if="paymentType.type === 'card'"
+        dense
+      >
         <v-col :lg="3" :cols="6">
           <ValidationProvider
             rules="required"
@@ -114,6 +119,7 @@
         </v-col>
       </v-row>
       <v-row
+        dense
         justify="center"
         align="center"
         v-else-if="['giftcard', 'coupon'].indexOf(paymentType.type) !== -1"
@@ -135,7 +141,7 @@
     </v-container>
 
     <v-container fluid>
-      <v-row justify="center" align="center">
+      <v-row justify="center" align="center" dense>
         <v-col :lg="2" :md="3" :cols="6">
           <v-text-field
             dense

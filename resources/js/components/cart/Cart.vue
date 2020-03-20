@@ -1,6 +1,6 @@
 <template>
-  <v-card>
-    <v-container class="pa-0 ">
+  <v-card class="fill-height">
+    <v-container fluid>
       <customerSearch
         v-if="$props.showCustomer"
         :editable="$props.editable"
