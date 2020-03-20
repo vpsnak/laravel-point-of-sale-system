@@ -2,7 +2,7 @@
   <div class="text-center">
     <v-bottom-sheet v-model="orderPageActions">
       <v-list>
-        <v-subheader>Edit</v-subheader>
+        <v-subheader><h3>Edit</h3></v-subheader>
         <v-list-item
           @click.stop="editOrderItems()"
           :disabled="loading"
@@ -25,7 +25,6 @@
           <v-list-item-title>Order options</v-list-item-title>
         </v-list-item>
         <v-divider />
-        <v-subheader>Actions</v-subheader>
         <v-list-item
           @click.stop="checkout()"
           v-if="canCheckout"
@@ -70,14 +69,13 @@
           <v-list-item-title>Upload to MAS</v-list-item-title>
         </v-list-item>
         <v-list-item
-          color="red"
           @click.stop="cancelDialog()"
           v-if="canCancel"
           :disabled="loading"
           :loading="cancel_loading"
         >
           <v-list-item-avatar>
-            <v-icon color="red">mdi-cancel</v-icon>
+            <v-icon>mdi-cancel</v-icon>
           </v-list-item-avatar>
           <v-list-item-title>Cancel order</v-list-item-title>
         </v-list-item>
