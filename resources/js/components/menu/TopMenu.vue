@@ -66,7 +66,7 @@
           <v-divider />
           <v-list-item @click="checkCashRegisterDialog">
             <v-list-item-avatar>
-              <v-icon color="primary">mdi-alpha-x-circle</v-icon>
+              <v-icon>mdi-alpha-x-circle</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>Generate X report</v-list-item-title>
@@ -74,7 +74,7 @@
           </v-list-item>
           <v-list-item @click.stop="cashRegisterLogout()">
             <v-list-item-avatar>
-              <v-icon color="primary">mdi-logout</v-icon>
+              <v-icon>mdi-logout</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>Logout</v-list-item-title>
@@ -83,7 +83,7 @@
           <v-divider></v-divider>
           <v-list-item @click.stop="closeCashRegisterDialog()">
             <v-list-item-avatar>
-              <v-icon color="red">mdi-alpha-z-circle</v-icon>
+              <v-icon>mdi-alpha-z-circle</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>

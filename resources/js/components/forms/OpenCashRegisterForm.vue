@@ -52,7 +52,7 @@
               name="Opening amount"
             >
               <v-text-field
-                :disabled="openingAmountDisabled"
+                :disabled="loading || openingAmountDisabled"
                 v-model="opening_amount"
                 prefix="$"
                 type="number"
@@ -83,7 +83,6 @@
             type="submit"
             :loading="submitLoading"
             :disabled="disableOpenCashRegister || invalid || loading"
-            dense
             text
             >Start session
           </v-btn>

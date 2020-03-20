@@ -156,7 +156,7 @@ export default {
     canCheckout() {
       if (
         (this.order_status ===
-          ["pending", "pending_payment"].indexOf(this.order_status)) !==
+          ["pending", "payment_pending"].indexOf(this.order_status)) !==
         -1
       ) {
         return true;
@@ -165,18 +165,10 @@ export default {
       }
     },
     canReceipt() {
-      if (this.order_status === "paid") {
-        return true;
-      } else {
-        return false;
-      }
+      return this.order_status.can_receipt;
     },
     canUploadToMas() {
-      if (true) {
-        return true;
-      } else {
-        return false;
-      }
+      return this.order_status.can_upload_to_mas;
     },
     canCancel() {
       if (
@@ -222,7 +214,7 @@ export default {
       this.checkout_loading = false;
     },
     receipt() {
-      this.setDialog({
+      const payload = {
         show: true,
         width: 600,
         title: `Receipt #${this.order_id}`,
@@ -231,7 +223,8 @@ export default {
         component: "orderReceipt",
         persistent: true,
         eventChannel: "orders-table-receipt"
-      });
+      };
+      this.setDialog(payload);
     },
     uploadToMas() {},
     cancelDialog() {

@@ -253,15 +253,12 @@ export default {
         return false;
       }
     },
-
     printCustomerOrder(item) {
       window.open(`/customer-order/${item}`, "_blank");
     },
-
     printOrder(item) {
       window.open(`/order/${item}`, "_blank");
     },
-
     reorder(id) {
       this.setLoading(true);
       this.resetState();
@@ -314,10 +311,11 @@ export default {
     },
     getSingleOrder(id) {
       return new Promise((resolve, reject) => {
-        this.request({
+        const payload = {
           method: "get",
           url: `orders/get/${id}`
-        }).then(response => {
+        };
+        this.request(payload).then(response => {
           this.resetState();
           this.loadOrder(response);
           resolve(true);

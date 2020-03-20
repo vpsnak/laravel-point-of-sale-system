@@ -193,21 +193,13 @@ export default {
   created() {
     this.getPaymentTypes();
     this.fillDemoCard();
-    if (process.env.NODE_ENV === "development") {
-      this.card = {
-        card_holder: "John Longjohn",
-        number: "4000000000000002",
-        cvc: "123",
-        exp_date: "1224"
-      };
-    }
   },
 
   watch: {
     order_remaining_price: {
       immediate: true,
       handler(value) {
-        if (this.order_status === "pending_payment" || !this.order_status) {
+        if (!this.order_status || this.order_status.can_checkout) {
           this.paymentPrice = this.parsePrice(value);
           this.setAmount();
         }

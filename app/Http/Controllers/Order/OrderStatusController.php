@@ -28,9 +28,14 @@ class OrderStatusController extends Controller
 
         if ($remaining->isPositive()) {
             $this->order->change = Price::parsePrice();
-            if ($this->order->status->value !== 'pending_payment') {
-                $pendingPaymentStatusId = Status::where('value', 'pending_payment')->firstOrFail('id');
-                $this->order->statuses()->attach($pendingPaymentStatusId, ['processed_by_id' => $this->user->id]);
+            if ($this->order->status->value !== 'payment_pending') {
+                $paymentPendingStatusId = Status::where('value', 'payment_pending')->firstOrFail('id');
+                $this->order->statuses()->attach($paymentPendingStatusId, ['processed_by_id' => $this->user->id]);
+            }
+        } else if ($refund && $remaining->isNegative()) {
+            if ($this->order->status->value !== 'refund_pending') {
+                $refundPendingStatusId = Status::where('value', 'refund_pending')->firstOrFail('id');
+                $this->order->statuses()->attach($refundPendingStatusId, ['processed_by_id' => $this->user->id]);
             }
         } else {
             if (!$refund) {
