@@ -4,7 +4,7 @@
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         <ValidationProvider
           v-if="action === 'change_self' || action === 'verify'"
-          rules="required|min:8|max:255"
+          rules="required|min:8|max:100"
           v-slot="{ errors, valid }"
           name="Password"
         >
@@ -23,7 +23,7 @@
         <ValidationProvider
           v-if="action === 'change' || action === 'change_self'"
           v-slot="{ errors, valid }"
-          rules="required|min:8|max:255"
+          rules="required|min:8|max:100"
           name="New Password"
           vid="confirmation"
         >
@@ -43,7 +43,7 @@
 
         <ValidationProvider
           v-if="action === 'change' || action === 'change_self'"
-          rules="required|min:8|max:255|confirmed:confirmation"
+          rules="required|min:8|max:100|confirmed:confirmation"
           v-slot="{ errors, valid }"
           name="Password Confirmation"
         >

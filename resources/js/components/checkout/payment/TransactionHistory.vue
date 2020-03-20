@@ -190,15 +190,15 @@ export default {
     ...mapActions("requests", ["request"]),
 
     earningsPrice(transaction) {
-      if (_.has(transaction.payment, "earnings_price")) {
-        return this.parsePrice(transaction.payment.earnings_price);
-      } else if (
-        _.has(transaction.refund, "id") &&
-        transaction.status !== "refund failed"
+      if (
+        transaction.status === "failed" ||
+        transaction.status === "refund failed"
       ) {
-        return this.parsePrice(transaction.price).multiply(-1);
-      } else {
         return this.parsePrice();
+      } else if (_.has(transaction.payment, "earnings_price")) {
+        return this.parsePrice(transaction.payment.earnings_price);
+      } else if (_.has(transaction.refund, "id")) {
+        return this.parsePrice(transaction.price).multiply(-1);
       }
     },
     changePrice(transaction) {

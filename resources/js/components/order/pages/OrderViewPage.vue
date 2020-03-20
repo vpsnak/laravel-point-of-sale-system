@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="fill-height">
+  <v-container fluid class="fill-height pa-0">
     <v-row justify="center" align="center" v-if="loading || !order_id">
       <div class="text-center ma-12">
         <v-progress-circular
@@ -12,8 +12,8 @@
     </v-row>
 
     <v-row no-gutters v-else-if="order_id" class="fill-height">
-      <v-col cols="12">
-        <v-card class="fill-height">
+      <v-col :cols="12">
+        <v-card class="fill-height" outlined>
           <v-card-title>
             <v-icon class="pr-2">
               mdi-eye

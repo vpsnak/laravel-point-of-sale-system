@@ -82,7 +82,6 @@ export default {
     this.maxRefundablePrice = this.parsePrice(
       this.$props.transaction.payment.refundable_price
     );
-
     this.price.currency = this.$props.transaction.price.currency;
   },
 
@@ -165,9 +164,9 @@ export default {
     ...mapMutations("cart", [
       "setCheckoutLoading",
       "setTransactions",
-      "setPaymentRefundablePrice"
+      "setPaymentRefundablePrice",
+      "setOrderStatus"
     ]),
-    ...mapMutations("dialog", ["setDialog"]),
     ...mapActions("requests", ["request"]),
 
     submitRefund() {
@@ -191,6 +190,7 @@ export default {
           this.setTransactions(response.transaction);
 
           this.setPaymentRefundablePrice(response.refunded_transaction);
+          this.setOrderStatus(response.status);
 
           this.maxRefundablePrice = this.parsePrice(
             response.refunded_transaction.payment.refundable_price

@@ -2,11 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Money\Money;
-use Money\Currency;
 use App\Order;
-use App\Transaction;
 use App\Helper\Price;
 
 class OrderAnalysisController extends Controller
@@ -21,6 +17,11 @@ class OrderAnalysisController extends Controller
 
     public function getIncomeDetails(Order $model)
     {
+        $price = [
+            'amount' => 0,
+            'currency' => $model->currency
+        ];
+
         $paidAmount =
             $this->total_paid =
             $this->cc_pos =
@@ -28,8 +29,7 @@ class OrderAnalysisController extends Controller
             $this->cash =
             $this->house_account =
             $this->coupon =
-            $this->giftcard =
-            new Money(0, new Currency($model->currency));
+            $this->giftcard = Price::parsePrice($price);
 
         foreach ($model->transactions as $transaction) {
             if ($transaction->status === 'approved') {

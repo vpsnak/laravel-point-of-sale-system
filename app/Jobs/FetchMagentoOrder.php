@@ -105,6 +105,7 @@ class FetchMagentoOrder implements ShouldQueue
     }
 
     /**
+     * magento order status mapping?
      * @param $status
      * @return string
      */
@@ -114,8 +115,8 @@ class FetchMagentoOrder implements ShouldQueue
             case 'transmitted':
             case 'complete':
                 return 'paid';
-            case 'pending_payment':
-                return 'pending_payment';
+            case 'payment_pending':
+                return 'payment_pending';
             case 'canceled':
             case 'paypal_reversed':
             case 'paypal_canceled_reversal':

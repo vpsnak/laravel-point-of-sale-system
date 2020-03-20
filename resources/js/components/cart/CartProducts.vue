@@ -51,7 +51,7 @@
                   <v-spacer />
 
                   <v-text-field
-                    v-if="product.editable_price && editable"
+                    v-if="product.is_price_editable && editable"
                     class="mt-5 mx-1 pt-3"
                     style="max-width:125px;"
                     prefix="$"

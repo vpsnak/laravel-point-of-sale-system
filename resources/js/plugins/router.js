@@ -31,9 +31,9 @@ router.beforeEach((to, from, next) => {
     next({ name: "dashboard" });
   }
 
-  // guard sales page if no register is selected
+  // guard sale page if no register is selected
   else if (
-    to.matched.some(record => record.name === "sales") &&
+    to.matched.some(record => record.name === "sale") &&
     !store.state.cashRegister
   ) {
     next({
@@ -42,7 +42,7 @@ router.beforeEach((to, from, next) => {
     });
   }
 
-  // guard sales page if no register is selected
+  // guard sale page if no register is selected
   else if (
     to.matched.some(record => record.name === "orders") &&
     !store.state.cashRegister

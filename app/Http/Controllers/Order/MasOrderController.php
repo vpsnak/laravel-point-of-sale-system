@@ -8,24 +8,18 @@ use App\MasOrder;
 use App\MasOrderLog;
 use App\Order;
 use GuzzleHttp\Client;
-use Money\Currencies\ISOCurrencies;
-use Money\Currency;
-use Money\Formatter\DecimalMoneyFormatter;
-use Money\Money;
 
 class MasOrderController extends Controller
 {
     private $masAccount;
     private $order;
     private $store;
-    private $currencies;
     private $moneyFormatter;
 
     public function __construct()
     {
         $this->masAccount = MasAccount::getActive();
-        $this->currencies = new ISOCurrencies();
-        $this->moneyFormatter = new DecimalMoneyFormatter($this->currencies);
+        $this->moneyFormatter = Price::newFormatter();
     }
 
     public function submitToMas(Order $order)
@@ -222,7 +216,11 @@ class MasOrderController extends Controller
     {
         $response = [];
         foreach ($this->order->items as $item) {
-            $itemPrice = new Money($item['price']['amount'], new Currency($this->order->currency));
+            $price = [
+                'amount' => $item['price']['amount'],
+                'currency' => $this->order->currency
+            ];
+            $itemPrice = Price::parsePrice($price);
             $response[$item['id']] = [
                 'ItemCode' => $item['sku'],
                 'ItemName' => $item['name'],

@@ -1,7 +1,11 @@
 <template>
   <data-table v-if="render">
     <template v-slot:item.customer="{ item }">
-      <customerChip :menu="true" :customer="item.customer" :small="smallChips" />
+      <customerChip
+        :menu="true"
+        :customer="item.customer"
+        :small="smallChips"
+      />
     </template>
     <template v-slot:item.store="{ item }">
       <storeChip :menu="true" :store="item.store" :small="smallChips" />
@@ -36,7 +40,11 @@
       />
     </template>
     <template v-slot:item.created_by="{ item }">
-      <createdByChip :menu="true" :createdBy="item.created_by" :small="smallChips" />
+      <createdByChip
+        :menu="true"
+        :createdBy="item.created_by"
+        :small="smallChips"
+      />
     </template>
 
     <template v-slot:item.actions="{ item }">
@@ -125,7 +133,6 @@
           <v-btn
             icon
             small
-            color="red"
             :disabled="data_table.loading"
             @click.stop="cancelOrderDialog(item)"
             class="my-2"
@@ -245,15 +252,12 @@ export default {
         return false;
       }
     },
-
     printCustomerOrder(item) {
       window.open(`/customer-order/${item}`, "_blank");
     },
-
     printOrder(item) {
       window.open(`/order/${item}`, "_blank");
     },
-
     reorder(id) {
       this.setLoading(true);
       this.resetState();
@@ -263,7 +267,7 @@ export default {
       })
         .then(response => {
           this.setReorder(response.items);
-          this.$router.push({ name: "sales" });
+          this.$router.push({ name: "sale" });
           this.setCheckoutDialog(true);
         })
         .finally(() => {
@@ -306,10 +310,11 @@ export default {
     },
     getSingleOrder(id) {
       return new Promise((resolve, reject) => {
-        this.request({
+        const payload = {
           method: "get",
           url: `orders/get/${id}`
-        }).then(response => {
+        };
+        this.request(payload).then(response => {
           this.resetState();
           this.loadOrder(response);
           resolve(true);

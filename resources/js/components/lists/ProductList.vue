@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card class="fill-height">
     <v-card-text>
       <v-container fluid>
         <v-row>

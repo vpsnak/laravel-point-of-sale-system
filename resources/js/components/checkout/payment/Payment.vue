@@ -23,16 +23,9 @@ export default {
     ...mapState("cart", ["order_status"]),
 
     showPaymentActions() {
-      if (_.has(this.order_status, "value")) {
-        switch (this.order_status.value) {
-          case undefined:
-          case null:
-          case "submitted":
-          case "pending_payment":
-            return true;
-          default:
-            return false;
-        }
+      // @TODO use order status can_checkout
+      if (_.has(this.order_status, "can_checkout")) {
+        return this.order_status.can_checkout;
       } else {
         return true;
       }

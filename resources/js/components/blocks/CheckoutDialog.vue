@@ -6,7 +6,7 @@
     persistent
     no-click-animation
   >
-    <v-card>
+    <v-card class="fill-height">
       <v-toolbar>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">

@@ -22,7 +22,7 @@ class Product extends Model
         'url',
         'plantcare_pdf',
         'description',
-        'editable_price',
+        'is_price_editable',
         'price',
         'discount',
         'is_discountable',
@@ -35,7 +35,7 @@ class Product extends Model
         'price' => 'array',
         'discount' => 'array',
         'is_discountable' => 'boolean',
-        'editable_price' => 'boolean',
+        'is_price_editable' => 'boolean',
         'created_at' => 'datetime:m/d/Y H:i:s',
         'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
@@ -71,10 +71,9 @@ class Product extends Model
     {
         $stock = 0;
         foreach ($this->stores as $store) {
-            if ($store->id == self::MAGENTO_STORE_ID) {
-                continue;
+            if ((int) $store->id === self::MAGENTO_STORE_ID) {
+                $stock += $store->pivot->qty;
             }
-            $stock += $store->pivot->qty;
         };
         return $stock;
     }
@@ -95,7 +94,9 @@ class Product extends Model
 
     public function stores()
     {
-        return $this->belongsToMany(Store::class)->withPivot('qty');
+        return $this
+            ->belongsToMany(Store::class)
+            ->withPivot('qty');
     }
 
     public function getLaravelStockAttribute()

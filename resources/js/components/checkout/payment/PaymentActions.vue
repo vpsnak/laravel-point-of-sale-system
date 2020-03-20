@@ -32,8 +32,13 @@
         </v-chip-group>
       </v-row>
     </v-container>
-    <v-container fluid class="overflow-y-auto" style="max-height: 20vh">
-      <v-row justify="center" align="center" v-if="paymentType.type === 'card'">
+    <v-container fluid class="overflow-y-auto py-0" style="max-height:75px;">
+      <v-row
+        justify="center"
+        align="center"
+        v-if="paymentType.type === 'card'"
+        dense
+      >
         <v-col :lg="3" :cols="6">
           <ValidationProvider
             rules="required"
@@ -114,6 +119,7 @@
         </v-col>
       </v-row>
       <v-row
+        dense
         justify="center"
         align="center"
         v-else-if="['giftcard', 'coupon'].indexOf(paymentType.type) !== -1"
@@ -135,7 +141,7 @@
     </v-container>
 
     <v-container fluid>
-      <v-row justify="center" align="center">
+      <v-row justify="center" align="center" dense>
         <v-col :lg="2" :md="3" :cols="6">
           <v-text-field
             dense
@@ -193,21 +199,13 @@ export default {
   created() {
     this.getPaymentTypes();
     this.fillDemoCard();
-    if (process.env.NODE_ENV === "development") {
-      this.card = {
-        card_holder: "John Longjohn",
-        number: "4000000000000002",
-        cvc: "123",
-        exp_date: "1224"
-      };
-    }
   },
 
   watch: {
     order_remaining_price: {
       immediate: true,
       handler(value) {
-        if (this.order_status === "pending_payment" || !this.order_status) {
+        if (!this.order_status || this.order_status.can_checkout) {
           this.paymentPrice = this.parsePrice(value);
           this.setAmount();
         }
@@ -262,9 +260,7 @@ export default {
       },
       set(value) {
         this.amount_value = value;
-        this.paymentPrice = this.parsePrice({
-          amount: Math.round(value * 10000) / 100
-        });
+        this.paymentPrice = this.parsePrice(Math.round(value * 10000) / 100);
       }
     },
     orderRemainingPrice() {

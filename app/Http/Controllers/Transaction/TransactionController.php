@@ -14,11 +14,8 @@ use App\Jobs\ProcessOrder;
 use App\Order;
 use App\Payment;
 use App\Transaction;
-use App\PaymentType;
 use App\Refund;
 use Illuminate\Http\Request;
-use Money\Currencies\ISOCurrencies;
-use Money\Formatter\DecimalMoneyFormatter;
 use Money\Money;
 
 class TransactionController extends Controller
@@ -152,9 +149,8 @@ class TransactionController extends Controller
     private function apiPay(array $creditCardData)
     {
         $this->createTransaction();
-        $currencies = new ISOCurrencies();
-        $moneyFormatter = new DecimalMoneyFormatter($currencies);
-        $price = $this->transactionData->price;
+        $moneyFormatter = Price::newFormatter();
+        $price = Price::parsePrice($this->transactionData->price);
 
         $paymentResponse = (new CreditCardController)->creditCardAction(
             'ccsale',

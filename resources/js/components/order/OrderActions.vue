@@ -2,7 +2,7 @@
   <div class="text-center">
     <v-bottom-sheet v-model="orderPageActions">
       <v-list>
-        <v-subheader>Edit</v-subheader>
+        <v-subheader><h3>Edit</h3></v-subheader>
         <v-list-item
           @click.stop="editOrderItems()"
           :disabled="loading"
@@ -25,7 +25,6 @@
           <v-list-item-title>Order options</v-list-item-title>
         </v-list-item>
         <v-divider />
-        <v-subheader>Actions</v-subheader>
         <v-list-item
           @click.stop="checkout()"
           v-if="canCheckout"
@@ -70,14 +69,13 @@
           <v-list-item-title>Upload to MAS</v-list-item-title>
         </v-list-item>
         <v-list-item
-          color="red"
           @click.stop="cancelDialog()"
           v-if="canCancel"
           :disabled="loading"
           :loading="cancel_loading"
         >
           <v-list-item-avatar>
-            <v-icon color="red">mdi-cancel</v-icon>
+            <v-icon>mdi-cancel</v-icon>
           </v-list-item-avatar>
           <v-list-item-title>Cancel order</v-list-item-title>
         </v-list-item>
@@ -99,18 +97,10 @@ export default {
         this.cancel_loading = false;
       }
     });
-
-    EventBus.$on("order-edit-refund-confirmation", event => {
-      this.refund_loading = false;
-      if (event.payload) {
-        this.setRefundDialog();
-      }
-    });
   },
 
   beforeDestroy() {
     EventBus.$off("order-edit-cancel-order");
-    EventBus.$off("order-edit-refund-confirmation");
   },
 
   data() {
@@ -119,7 +109,6 @@ export default {
       reorder_loading: false,
       receipt_loading: false,
       upload_to_mas_loading: false,
-      refund_loading: false,
       cancel_loading: false
     };
   },
@@ -147,7 +136,6 @@ export default {
         this.reorder_loading ||
         this.receipt_loading ||
         this.upload_to_mas_loading ||
-        this.refund_loading ||
         this.cancel_loading
       ) {
         this.setOrderPageActions(false);
@@ -166,7 +154,7 @@ export default {
     canCheckout() {
       if (
         (this.order_status ===
-          ["pending", "pending_payment"].indexOf(this.order_status)) !==
+          ["pending", "payment_pending"].indexOf(this.order_status)) !==
         -1
       ) {
         return true;
@@ -175,30 +163,10 @@ export default {
       }
     },
     canReceipt() {
-      if (this.order_status === "paid") {
-        return true;
-      } else {
-        return false;
-      }
+      return this.order_status.can_receipt;
     },
     canUploadToMas() {
-      if (true) {
-        return true;
-      } else {
-        return false;
-      }
-    },
-    canRefund() {
-      if (
-        this.transactions.length > 0 &&
-        (this.order_status !==
-          ["completed", "canceled"].indexOf(this.order_status)) !==
-          -1
-      ) {
-        return true;
-      } else {
-        return false;
-      }
+      return this.order_status.can_upload_to_mas;
     },
     canCancel() {
       if (
@@ -228,38 +196,23 @@ export default {
     editOrderOptions() {
       this.$router.push({ name: "editOrderOptionsPage" });
     },
-    refund() {},
-    setRefundDialog() {
-      this.refund_loading = true;
-
-      this.setDialog({
-        show: true,
-        width: 700,
-        title: `Issue a refund for order #${this.order_id}`,
-        titleCloseBtn: true,
-        icon: "mdi-credit-card-refund-outline",
-        component: "orderRefundForm",
-        persistent: true,
-        eventChannel: "order-edit-refund"
-      });
-    },
     reorder() {
       this.reorder_loading = true;
       const items = this.cart_products;
       this.resetState();
       this.setReorder(items);
-      this.$router.replace({ name: "sales" });
+      this.$router.replace({ name: "sale" });
       this.setCheckoutDialog(true);
       this.reorder_loading = false;
     },
     checkout() {
       this.checkout_loading = true;
-      this.$router.replace({ name: "sales" });
+      this.$router.replace({ name: "sale" });
       this.setCheckoutDialog(true);
       this.checkout_loading = false;
     },
     receipt() {
-      this.setDialog({
+      const payload = {
         show: true,
         width: 600,
         title: `Receipt #${this.order_id}`,
@@ -268,7 +221,8 @@ export default {
         component: "orderReceipt",
         persistent: true,
         eventChannel: "orders-table-receipt"
-      });
+      };
+      this.setDialog(payload);
     },
     uploadToMas() {},
     cancelDialog() {

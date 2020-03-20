@@ -9,7 +9,7 @@ class GiftcardController extends Controller
 {
     public function all()
     {
-        return response(Giftcard::paginate());
+        return response(Giftcard::with('createdBy')->paginate());
     }
 
     public function getOne(Giftcard $model)
@@ -24,35 +24,41 @@ class GiftcardController extends Controller
             'code' => 'required|string',
             'enabled' => 'required|boolean',
             'price' => 'required|array',
-            'bulk' => 'required|boolean',
+            'price.amount' => 'required|integer',
+            'price.currency' => 'required|string|size:3',
+            'bulk_action' => 'required|boolean',
             'qty' => 'required|numeric|min:1',
         ]);
         $validatedData['created_by_id'] = auth()->user()->id;
-        $bulk = $validatedData['bulk'];
+        $bulk = $validatedData['bulk_action'];
         $qty = $validatedData['qty'];
 
         if ($validatedData['enabled']) {
             $validatedData['enabled_at'] = now();
         }
-        unset($validatedData['bulk']);
+        unset($validatedData['bulk_action']);
         unset($validatedData['enabled']);
         unset($validatedData['qty']);
 
 
         if ($bulk) {
             $giftcardCollection = [];
+            $j = substr($validatedData['code'], -1);
             for ($i = 0; $i < $qty; $i++) {
                 $giftcardCollection[$i] = $validatedData;
-                $start_pos = -1 * strlen($i);
+                $giftcardCollection[$i]['price'] = json_encode($giftcardCollection[$i]['price']);
+                $start_pos = -1 * strlen($j);
                 $giftcardCollection[$i]['code'] = substr($validatedData['code'], 0, $start_pos);
-                $giftcardCollection[$i]['code'] .= $i;
+                $giftcardCollection[$i]['code'] .= $j;
+                $j++;
             }
+
             Giftcard::insert($giftcardCollection);
         } else {
             Giftcard::create($validatedData);
         }
         return response(['notification' => [
-            'msg' => ["Gift card created successfully!"],
+            'msg' => ["Giftcard created successfully!"],
             'type' => 'success'
         ]]);
     }
@@ -60,6 +66,7 @@ class GiftcardController extends Controller
     public function update(Request $request)
     {
         $validatedData = $request->validate([
+            'id' => 'required|exists:giftcards,id',
             'name' => 'required|string',
             'code' => 'required|string',
             'enabled' => 'required|boolean',

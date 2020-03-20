@@ -1,6 +1,6 @@
 <?php
 
-use App\Price;
+use App\Store;
 use App\Product;
 use Illuminate\Database\Seeder;
 
@@ -15,7 +15,8 @@ class ProductSeeder extends Seeder
     {
         factory(Product::class, 30)->make()->each(function ($product) {
             $product->save();
-            $product->stores()->attach(1, ['qty' => rand(-100, 200)]);
+            $store_ids = Store::where('id', '>', 0)->pluck('id')->toArray();
+            $product->stores()->attach($store_ids, ['qty' => rand(-100, 200)]);
         });
     }
 }

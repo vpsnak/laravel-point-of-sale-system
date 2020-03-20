@@ -12,8 +12,10 @@ class Status extends Model
 
     public function orders()
     {
-        return $this->belongsToMany(Order::class)
+        return $this
+            ->belongsToMany(Order::class)
             ->using(OrderStatus::class)
+            ->withPivot('id')
             ->withPivot('user_id')
             ->withTimestamps(['created_at']);
     }

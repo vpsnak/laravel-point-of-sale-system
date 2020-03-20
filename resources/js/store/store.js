@@ -191,7 +191,7 @@ export default new Vuex.Store({
         context
           .dispatch("requests/request", payload)
           .then(response => {
-            if (["sales", "orders"].indexOf(router.currentRoute.name) !== -1) {
+            if (["sale", "orders"].indexOf(router.currentRoute.name) !== -1) {
               router.replace({ name: "dashboard" });
             }
 
@@ -212,7 +212,7 @@ export default new Vuex.Store({
         context
           .dispatch("requests/request", payload)
           .then(response => {
-            if (["sales", "orders"].indexOf(router.currentRoute.name) !== -1) {
+            if (["sale", "orders"].indexOf(router.currentRoute.name) !== -1) {
               router.push({ name: "dashboard" });
             }
 

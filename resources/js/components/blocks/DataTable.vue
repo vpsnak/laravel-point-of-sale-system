@@ -1,9 +1,9 @@
 <template>
-  <v-card>
-    <v-container>
+  <v-card class="fill-height">
+    <v-container fluid>
       <v-row justify="center" align="center">
         <v-col cols="auto">
-          <v-icon v-if="data_table.icon" class="mr-2">
+          <v-icon v-if="data_table.icon" class="mx-2">
             {{ data_table.icon }}
           </v-icon>
           {{ data_table.title }}

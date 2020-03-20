@@ -5,7 +5,7 @@
         <v-row>
           <v-col cols="6">
             <ValidationProvider
-              rules="required|max:255"
+              rules="required|max:100"
               v-slot="{ errors, valid }"
               name="First Name"
             >
@@ -19,7 +19,7 @@
               ></v-text-field>
             </ValidationProvider>
             <ValidationProvider
-              rules="required|max:255"
+              rules="required|max:100"
               v-slot="{ errors, valid }"
               name="Address"
             >
@@ -35,7 +35,7 @@
           </v-col>
           <v-col cols="6">
             <ValidationProvider
-              rules="required|max:255"
+              rules="required|max:100"
               v-slot="{ errors, valid }"
               name="Last Name"
             >
@@ -65,7 +65,7 @@
           </v-col>
           <v-col cols="3">
             <ValidationProvider
-              rules="required|max:255"
+              rules="required|max:100"
               v-slot="{ errors, valid }"
               name="City"
             >
@@ -155,7 +155,7 @@
           </v-col>
           <v-col cols="4">
             <ValidationProvider
-              rules="max:255"
+              rules="max:100"
               v-slot="{ errors, valid }"
               name="Location name"
             >
@@ -192,7 +192,7 @@
           </v-col>
           <v-col cols="6">
             <ValidationProvider
-              rules="max:255"
+              rules="max:100"
               v-slot="{ errors, valid }"
               name="Company"
             >

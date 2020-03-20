@@ -23,28 +23,23 @@ class ProductController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string',
-            'sku' => 'required|string',
+            'sku' => 'required|string|unique:products,sku',
             'url' => 'nullable|string',
             'photo_url' => 'nullable|string',
             'description' => 'nullable|string',
-            'editable_price' => 'nullable|boolean',
+            'is_discountable' => 'required|boolean',
+            'is_price_editable' => 'required|boolean',
             'price' => 'required|array',
             'price.amount' => 'required|integer',
             'price.currency' => 'required|string|size:3',
-            'is_discountable' => 'required|boolean'
         ]);
 
         $validatedExtra = $request->validate([
             'categories' => 'nullable|array',
-            'stores' => 'required|array'
+            'stores' => 'nullable|array'
         ]);
-
         $product = Product::create($validatedData);
-
-        $product->price->save();
-
         $product->categories()->sync($validatedExtra['categories']);
-
         foreach ($validatedExtra['stores'] as $store) {
             if (!empty($store['pivot'])) {
                 $product->stores()->syncWithoutDetaching(
@@ -65,15 +60,15 @@ class ProductController extends Controller
         $validatedData = $request->validate([
             'id' => 'required|exists:products,id',
             'name' => 'required|string',
-            'sku' => 'required|string',
+            'sku' => 'required|string|unique:products,sku,' . $request->id,
             'url' => 'nullable|string',
             'photo_url' => 'nullable|string',
             'description' => 'nullable|string',
-            'editable_price' => 'nullable|boolean',
+            'is_price_editable' => 'nullable|boolean',
+            'is_discountable' => 'required|boolean',
             'price' => 'required|array',
             'price.amount' => 'required|integer',
             'price.currency' => 'required|string|size:3',
-            'is_discountable' => 'required|boolean'
         ]);
 
         $validatedExtra = $request->validate([
@@ -93,8 +88,7 @@ class ProductController extends Controller
             }
         }
 
-        $product->fill($validatedData);
-        $product->save();
+        $product->update($validatedData);
 
         return response(['notification' => [
             'msg' => ["Product {$product->name} updated successfully!"],

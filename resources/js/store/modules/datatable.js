@@ -80,12 +80,13 @@ const state = {
       { text: "House Account", value: "house_account_status" },
       { text: "Actions", value: "actions" }
     ],
-    giftCards: [
+    giftcards: [
       { text: "#", value: "id" },
       { text: "Name", value: "name" },
       { text: "Code", value: "code" },
-      { text: "Enabled", value: "enabled" },
-      { text: "Price amount", value: "price.amount" },
+      { text: "Price", value: "price" },
+      { text: "Enabled at", value: "enabled_at" },
+      { text: "Created by", value: "created_by.name" },
       { text: "Actions", value: "actions" }
     ],
     orders: [

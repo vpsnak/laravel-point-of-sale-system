@@ -3,10 +3,9 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Money\Money;
-use Money\Currency;
 use AjCastro\EagerLoadPivotRelations\EagerLoadPivotTrait;
-use App\Helper\PhpHelper;
+use App\Helper\Price;
+use Money\Money;
 
 class Order extends Model
 {
@@ -126,14 +125,17 @@ class Order extends Model
 
     public function getMdsePriceAttribute()
     {
-        $mdsePrice = new Money(0, new Currency($this->currency));
+        $mdsePrice = Price::parsePrice([
+            'price' => 0,
+            'currency' => $this->currency
+        ]);
         foreach ($this->items as $item) {
-            $price = new Money($item['price']['amount'], new Currency($this->currency));
+            $price = Price::parsePrice($item['price']);
             $price = $price->multiply($item['qty']);
             if (isset($item['discount']) && isset($item['discount']['type']) && isset($item['discount']['amount'])) {
                 switch ($item['discount']['type']) {
                     case 'flat':
-                        $price = $price->subtract(new Money($item['discount']['amount'], new Currency($this->currency)));
+                        $price = $price->subtract(Price::parsePrice($item['discount']));
                         break;
                     case 'percentage':
                         $price = $price->multiply($item['discount']['amount'])->divide(100);
@@ -149,7 +151,7 @@ class Order extends Model
         if (isset($this->discount) && isset($this->discount['type']) && isset($this->discount['amount'])) {
             switch ($this->discount['type']) {
                 case 'flat':
-                    $amount = new Money($this->discount['amount'], new Currency($this->currency));
+                    $amount = Price::parsePrice($this->discount);
                     $mdsePrice = $mdsePrice->subtract($amount);
                     break;
                 case 'percentage':
@@ -168,10 +170,9 @@ class Order extends Model
     {
         if (isset($this->attributes['delivery_fees_price'])) {
             $price = json_decode($this->attributes['delivery_fees_price'], true);
-            $currency = $price['currency'] ?? $this->currency;
-            return new Money($price['amount'], new Currency($currency));
+            return Price::parsePrice($price);
         } else {
-            return new Money(0,  new Currency($this->currency));
+            return Price::parsePrice(['currency' => $this->currency]);
         }
     }
 
@@ -202,7 +203,7 @@ class Order extends Model
 
     public function getIncomePriceAttribute()
     {
-        $incomePrice = new Money(0, new Currency($this->currency));
+        $incomePrice = Price::parsePrice(['amount' => 0, 'currency' => $this->currency]);
         foreach ($this->transactions as $transaction) {
             if (!empty($transaction->payment) && $transaction->status === 'approved') {
                 $incomePrice = $incomePrice->add($transaction->price);
@@ -264,6 +265,7 @@ class Order extends Model
         return $this
             ->belongsToMany(Status::class)
             ->using(OrderStatus::class)
+            ->withPivot('id')
             ->withPivot('processed_by_id')
             ->withTimestamps(['created_at'])
             ->orderBy('created_at', 'desc');

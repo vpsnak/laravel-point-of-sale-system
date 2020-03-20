@@ -202,7 +202,7 @@ Route::patch('/cards/update', 'CardController@update')->middleware('scope:admin,
 Route::post('/cards/search', 'CardController@search')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/cards/{model}', 'CardController@delete')->middleware('scope:admin,store_manager,cashier');
 
-// categories to list in sales
+// categories to list in sale
 Route::get('/product-listing/categories', "CategoryController@productListingCategories")->middleware('scope:admin,store_manager,cashier');
 
 // delivery times slot
