@@ -63,12 +63,6 @@ class ForeignKeys extends Migration
             $table->foreign('payment_id')->references('id')->on('payments')->onDelete('restrict');
         });
 
-        Schema::table('receipts', function (Blueprint $table) {
-            $table->foreign('issued_by_id')->references('id')->on('users')->onDelete('restrict');
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
-            $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('cascade');
-        });
-
         Schema::table('cash_registers', function (Blueprint $table) {
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('restrict');
         });
@@ -198,12 +192,6 @@ class ForeignKeys extends Migration
         Schema::table('refunds', function (Blueprint $table) {
             $table->dropForeign(['transaction_id']);
             $table->dropForeign(['payment_id']);
-        });
-
-        Schema::table('receipts', function (Blueprint $table) {
-            $table->dropForeign(['issued_by_id']);
-            $table->dropForeign(['order_id']);
-            $table->dropForeign(['cash_register_id']);
         });
 
         Schema::table('stores', function (Blueprint $table) {

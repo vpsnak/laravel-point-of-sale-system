@@ -20,7 +20,6 @@
                 @change="changeCashRegisters"
                 @input="enableCashRegisters"
                 :error-messages="errors"
-                dense
               ></v-select>
             </ValidationProvider>
           </v-col>
@@ -39,7 +38,6 @@
                 item-value="id"
                 @input="enableOpeningAmount"
                 :error-messages="errors"
-                dense
               ></v-select>
             </ValidationProvider>
           </v-col>
@@ -58,7 +56,6 @@
                 type="number"
                 label="Amount"
                 :error-messages="errors"
-                dense
               ></v-text-field>
             </ValidationProvider>
           </v-col>
