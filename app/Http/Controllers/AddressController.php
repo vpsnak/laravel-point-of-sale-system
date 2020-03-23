@@ -25,8 +25,6 @@ class AddressController extends Controller
     {
         $this->address = $request->validate([
             'customer_id' => 'nullable|exists:customers,id',
-            'store_pickup_id' => 'nullable|exists:customers,id',
-            'name' => 'nullable|required_with:store_pickup_id',
             'first_name' => 'nullable|string|required_with:customer_id',
             'last_name' => 'nullable|string|required_with:customer_id',
             'street' => 'required|string',
@@ -35,7 +33,7 @@ class AddressController extends Controller
             'country_id' => 'required|exists:countries,id',
             'region_id' => 'required|exists:regions,id',
             'postcode' => 'required|string',
-            'phone' => 'required|numeric',
+            'phone' => 'required|string',
             'company' => 'nullable|string',
             'vat_id' => 'nullable|string',
             'is_default_billing' => 'nullable|bool',

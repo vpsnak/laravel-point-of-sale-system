@@ -12,8 +12,13 @@ class StorePickupController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string',
             'street' => 'required|string',
-            'street1' => 'nullable|string',
+            'street2' => 'nullable|string',
+            'city' => 'required|string',
             'region_id' => 'required|exists:regions,id',
+            'postcode' => 'required|numeric|size:5',
+            'phone' => 'required|string',
+            'company' => 'required|string',
+            'location_id' => 'nullable|numeric|between:1,12',
         ]);
 
         $storePickup = StorePickup::create($validatedData);
@@ -30,13 +35,17 @@ class StorePickupController extends Controller
             'id' => 'required|exists:store_pickups,id',
             'name' => 'required|string',
             'street' => 'required|string',
-            'street1' => 'nullable|string',
+            'street2' => 'nullable|string',
+            'city' => 'required|string',
             'region_id' => 'required|exists:regions,id',
+            'postcode' => 'required|numeric|size:5',
+            'phone' => 'required|string',
+            'company' => 'required|string',
+            'location_id' => 'nullable|numeric|between:1,12',
         ]);
 
         $storePickup = StorePickup::findOrFail($validatedData['id']);
-        $storePickup->fill($validatedData);
-        $storePickup->save();
+        $storePickup->update($validatedData);
 
         return response(['notification' => [
             "msg" => "Store pickup: {$storePickup->name} successfully updated!",
@@ -46,7 +55,7 @@ class StorePickupController extends Controller
 
     public function all()
     {
-        return response(StorePickup::with('region')->paginate());
+        return response(StorePickup::paginate());
     }
 
     public function search(Request $request)

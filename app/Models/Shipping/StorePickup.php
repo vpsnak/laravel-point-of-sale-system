@@ -8,17 +8,24 @@ class StorePickup extends Model
 {
     protected $fillable = [
         'name',
-        'address_id'
+        'street',
+        'street2',
+        'city',
+        'region_id',
+        'postcode',
+        'phone',
+        'company',
+        'location_id',
     ];
-
     protected $casts = [
-        'region_id' => 'integer',
         'created_at' => 'datetime:m/d/Y H:i:s',
         'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
 
-    public function address()
+    protected $with = ['region'];
+
+    public function region()
     {
-        return $this->hasOne(Address::class);
+        return $this->belongsTo(Region::class);
     }
 }
