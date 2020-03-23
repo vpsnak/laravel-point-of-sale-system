@@ -10,7 +10,7 @@
       <v-col :cols="12" align="center" justify="center">
         <v-progress-circular
           rotate="270"
-          :color="color"
+          :color="error_txt ? color : 'error'"
           :size="150"
           :value="error_txt ? 100 : loadPercent"
           :width="18"
@@ -157,7 +157,6 @@ export default {
     },
     setError(error) {
       this.loadPercent = 0;
-      this.color = "red";
       this.error_txt = "Error";
       console.error(error);
     },

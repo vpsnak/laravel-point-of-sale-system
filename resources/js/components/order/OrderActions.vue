@@ -2,8 +2,11 @@
   <div class="text-center">
     <v-bottom-sheet v-model="orderPageActions">
       <v-list>
-        <v-subheader><h3>Edit</h3></v-subheader>
+        <v-subheader v-if="canEditOrderItems || canEditOrderOptions">
+          <h3>Edit</h3>
+        </v-subheader>
         <v-list-item
+          v-if="canEditOrderItems"
           @click.stop="editOrderItems()"
           :disabled="loading"
           :loading="checkout_loading"
@@ -144,23 +147,14 @@ export default {
         return false;
       }
     },
+    canEditOrderItems() {
+      return this.order_status.can_edit_order_items;
+    },
     canEditOrderOptions() {
-      if (this.method !== "retail") {
-        return true;
-      } else {
-        return false;
-      }
+      return this.order_status.can_edit_order_options;
     },
     canCheckout() {
-      if (
-        (this.order_status ===
-          ["pending", "payment_pending"].indexOf(this.order_status)) !==
-        -1
-      ) {
-        return true;
-      } else {
-        return false;
-      }
+      return this.order_status.can_checkout;
     },
     canReceipt() {
       return this.order_status.can_receipt;
@@ -169,15 +163,7 @@ export default {
       return this.order_status.can_upload_to_mas;
     },
     canCancel() {
-      if (
-        (this.order_status !==
-          ["canceled", "completed"].indexOf(this.order_status)) !==
-        -1
-      ) {
-        return true;
-      } else {
-        return false;
-      }
+      return this.order_status.can_cancel;
     }
   },
   methods: {
@@ -253,7 +239,6 @@ export default {
           method: "delete",
           url: `orders/${this.order_id}`
         };
-
         this.request(payload)
           .then(() => {
             this.$router.replace({ name: "orders" });

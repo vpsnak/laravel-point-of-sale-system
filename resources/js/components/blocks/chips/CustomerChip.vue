@@ -10,7 +10,7 @@
     <template v-slot:activator="{ on }">
       <h5 v-if="$props.title">Customer</h5>
       <v-chip
-        pill
+        label
         v-on="$props.customer && $props.menu ? on : null"
         :color="$props.customer ? 'primary' : null"
         :small="small"

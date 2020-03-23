@@ -34,6 +34,7 @@
               name="Amount"
             >
               <v-text-field
+                autofocus
                 class="text-center"
                 type="number"
                 v-model="amount"
@@ -51,9 +52,7 @@
         </v-row>
       </v-container>
 
-      <v-card-actions>
-        <v-spacer />
-
+      <v-card-actions class="justify-center">
         <v-btn
           color="primary"
           text
@@ -63,7 +62,6 @@
         >
           Refund
         </v-btn>
-        <v-spacer />
       </v-card-actions>
     </v-card>
   </ValidationObserver>
@@ -83,6 +81,10 @@ export default {
       this.$props.transaction.payment.refundable_price
     );
     this.price.currency = this.$props.transaction.price.currency;
+  },
+
+  beforeDestroy() {
+    this.$off("submit");
   },
 
   data() {
@@ -187,6 +189,8 @@ export default {
       this.request(payload)
         .then(response => {
           EventBus.$emit("income-analysis-refresh");
+          this.$emit("submit");
+
           this.setTransactions(response.transaction);
 
           this.setPaymentRefundablePrice(response.refunded_transaction);
@@ -202,6 +206,7 @@ export default {
             this.setTransactions(error.transaction);
         })
         .finally(() => {
+          this.amount = null;
           this.loading = false;
           this.setCheckoutLoading(false);
         });

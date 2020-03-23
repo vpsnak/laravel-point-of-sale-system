@@ -1,12 +1,11 @@
 <template>
   <ValidationObserver
     v-slot="{ invalid }"
-    ref="addressDeliveryObs"
     tag="v-form"
-    @submit.prevent="submit"
+    @submit.prevent="submit()"
   >
     <v-row>
-      <v-col cols="6">
+      <v-col :cols="6">
         <ValidationProvider
           rules="required"
           v-slot="{ errors, valid }"
@@ -21,6 +20,8 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
+      </v-col>
+      <v-col :cols="6">
         <ValidationProvider
           rules="required"
           v-slot="{ errors, valid }"
@@ -53,16 +54,12 @@
           ></v-text-field>
         </ValidationProvider>
 
-        <ValidationProvider v-slot="{ errors, valid }" name="Second Address">
-          <v-text-field
-            :readonly="$props.readonly"
-            v-model="address.street2"
-            label="Second Address"
-            :disabled="loading"
-            :error-messages="errors"
-            :success="valid"
-          ></v-text-field>
-        </ValidationProvider>
+        <v-text-field
+          :readonly="$props.readonly"
+          v-model="address.street2"
+          label="Second Address"
+          :disabled="loading"
+        ></v-text-field>
       </v-col>
       <v-col cols="3">
         <ValidationProvider
@@ -167,12 +164,12 @@
     </v-row>
     <v-row v-if="!$props.readonly" justify="center">
       <v-btn
-        color="success"
+        color="primary"
         type="submit"
         :disabled="invalid || loading"
         :loading="submit_loading"
       >
-        save
+        {{ submitBtnTxt }}
       </v-btn>
     </v-row>
   </ValidationObserver>
@@ -235,6 +232,13 @@ export default {
   computed: {
     ...mapState("cart", ["locations", "customer"]),
 
+    submitBtnTxt() {
+      if (_.has(this.$props.model, "id")) {
+        return "Save";
+      } else {
+        return "Create";
+      }
+    },
     location: {
       get() {
         return this.selected_location;
@@ -308,6 +312,8 @@ export default {
             this.address.country = _.find(this.countries, {
               iso3_code: "USA"
             });
+
+            this.regions = this.store_pickup.country.regions;
           }
         })
         .catch(error => {

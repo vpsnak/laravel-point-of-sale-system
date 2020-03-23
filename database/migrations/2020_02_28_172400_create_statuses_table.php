@@ -22,6 +22,7 @@ class CreateStatusesTable extends Migration
 
             $table->boolean('can_checkout');
             $table->boolean('can_edit_order_options');
+            $table->boolean('can_edit_order_items');
             $table->boolean('can_receipt');
             $table->boolean('can_mas_upload');
             $table->boolean('can_mas_reupload');

@@ -38,7 +38,7 @@
       </template>
 
       <template v-slot:item.status="{ item }">
-        <v-chip small :color="statusColor(item.status, 'status')">
+        <v-chip small label :color="statusColor(item.status, 'status')">
           <v-icon left>{{ parseStatusIcon(item.status) }}</v-icon>
           <b>
             {{ parseStatus(item.status) }}
@@ -70,6 +70,7 @@
           :close-on-content-click="false"
           offset-y
           :key="item.id"
+          v-model="refundMenu[item.id]"
         >
           <template v-slot:activator="{ on: menu }">
             <v-tooltip bottom>
@@ -83,7 +84,10 @@
               <span>Issue a refund</span>
             </v-tooltip>
           </template>
-          <orderRefundForm :transaction="item" />
+          <orderRefundForm
+            :transaction="item"
+            @submit="refundSubmit(item.id)"
+          />
         </v-menu>
       </template>
     </v-data-table>
@@ -113,6 +117,7 @@ export default {
 
   data() {
     return {
+      refundMenu: [],
       rollbackLoading: false,
       selected_payment: null,
       headers: [
@@ -189,6 +194,9 @@ export default {
     ...mapMutations("dialog", ["setDialog"]),
     ...mapActions("requests", ["request"]),
 
+    refundSubmit(id) {
+      this.refundMenu[id] = false;
+    },
     earningsPrice(transaction) {
       if (
         transaction.status === "failed" ||

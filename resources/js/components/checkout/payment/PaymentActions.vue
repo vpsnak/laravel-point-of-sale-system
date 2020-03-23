@@ -25,6 +25,7 @@
             :disabled="loading"
             outlined
             active-class="primary--text"
+            label
           >
             <v-icon left>{{ payment_type.icon }}</v-icon>
             {{ payment_type.name }}
@@ -32,6 +33,7 @@
         </v-chip-group>
       </v-row>
     </v-container>
+    <v-divider class="mb-2" />
     <v-container fluid class="overflow-y-auto py-0" style="max-height:75px;">
       <v-row
         justify="center"

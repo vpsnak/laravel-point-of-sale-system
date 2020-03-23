@@ -15,9 +15,9 @@ class StorePickupController extends Controller
             'street2' => 'nullable|string',
             'city' => 'required|string',
             'region_id' => 'required|exists:regions,id',
-            'postcode' => 'required|numeric|size:5',
+            'postcode' => 'required|numeric|digits:5',
             'phone' => 'required|string',
-            'company' => 'required|string',
+            'company' => 'nullable|string',
             'location_id' => 'nullable|numeric|between:1,12',
         ]);
 
@@ -38,9 +38,9 @@ class StorePickupController extends Controller
             'street2' => 'nullable|string',
             'city' => 'required|string',
             'region_id' => 'required|exists:regions,id',
-            'postcode' => 'required|numeric|size:5',
+            'postcode' => 'required|numeric|digits:5',
             'phone' => 'required|string',
-            'company' => 'required|string',
+            'company' => 'nullable|string',
             'location_id' => 'nullable|numeric|between:1,12',
         ]);
 

@@ -9,7 +9,7 @@
   >
     <template v-slot:activator="{ on }">
       <v-chip
-        pill
+        label
         v-on="$props.menu ? on : null"
         color="primary"
         :small="small"

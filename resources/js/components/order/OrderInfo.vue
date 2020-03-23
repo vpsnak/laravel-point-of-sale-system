@@ -60,7 +60,7 @@
             <template v-slot:activator="{ on }">
               <h5>Notes</h5>
               <v-chip
-                pill
+                label
                 v-on="on"
                 :color="order_notes ? 'orange' : null"
                 :disabled="!order_notes"

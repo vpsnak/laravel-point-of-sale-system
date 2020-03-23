@@ -1,7 +1,7 @@
 <template>
   <div>
     <h5 v-if="$props.title">MAS Status</h5>
-    <v-chip pill :color="parseMasStatus.color" :small="small">
+    <v-chip label :color="parseMasStatus.color" :small="small">
       <v-icon left>
         {{ parseMasStatus.icon }}
       </v-icon>
