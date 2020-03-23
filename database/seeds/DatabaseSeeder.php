@@ -27,9 +27,10 @@ class DatabaseSeeder extends Seeder
         $this->call(StoreSeeder::class);
         $this->call(BankAccountSeeder::class);
         $this->call(CashRegisterSeeder::class);
+        $this->call(LocationSeeder::class);
 
         $this->call(PlantshedPostCodes::class);
-
+        
         if (config('app.env') === 'local') {
             $this->call(CustomerSeeder::class);
             $this->call(AddressSeeder::class);
