@@ -1,16 +1,21 @@
 <template>
-  <ValidationObserver v-slot="{ invalid }">
-    <v-form @submit.prevent="submit">
-      <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
+  <ValidationObserver
+    v-slot="{ invalid }"
+    ref="addressDeliveryObs"
+    tag="v-form"
+    @submit.prevent="submit"
+  >
+    <v-row>
+      <v-col cols="6">
         <ValidationProvider
-          rules="required|max:100"
+          rules="required"
           v-slot="{ errors, valid }"
-          name="Name"
+          name="First name"
         >
           <v-text-field
+            v-model="address.first_name"
             :readonly="$props.readonly"
-            v-model="formFields.name"
-            label="Name"
+            label="First name"
             :disabled="loading"
             :error-messages="errors"
             :success="valid"
@@ -19,178 +24,312 @@
         <ValidationProvider
           rules="required"
           v-slot="{ errors, valid }"
-          name="Regions"
+          name="Address"
         >
-          <v-select
+          <v-text-field
             :readonly="$props.readonly"
-            v-model="formFields.region_id"
-            :items="regions"
-            label="Regions"
+            v-model="address.street"
+            label="Address"
             :disabled="loading"
-            :loading="loading"
             :error-messages="errors"
             :success="valid"
-            item-text="name"
-            item-value="id"
-          ></v-select>
+          ></v-text-field>
         </ValidationProvider>
+      </v-col>
+
+      <v-col cols="6">
         <ValidationProvider
           rules="required"
           v-slot="{ errors, valid }"
-          name="Countries"
+          name="Last Name"
         >
-          <v-select
+          <v-text-field
+            v-model="address.last_name"
             :readonly="$props.readonly"
-            v-model="formFields.country_id"
+            label="Last name"
+            :disabled="loading"
+            :error-messages="errors"
+            :success="valid"
+          ></v-text-field>
+        </ValidationProvider>
+
+        <ValidationProvider v-slot="{ errors, valid }" name="Second Address">
+          <v-text-field
+            :readonly="$props.readonly"
+            v-model="address.street2"
+            label="Second Address"
+            :disabled="loading"
+            :error-messages="errors"
+            :success="valid"
+          ></v-text-field>
+        </ValidationProvider>
+      </v-col>
+      <v-col cols="3">
+        <ValidationProvider
+          rules="required"
+          v-slot="{ errors, valid }"
+          name="City"
+        >
+          <v-text-field
+            v-model="address.city"
+            :readonly="$props.readonly"
+            label="City"
+            :disabled="loading"
+            :error-messages="errors"
+            :success="valid"
+          ></v-text-field>
+        </ValidationProvider>
+      </v-col>
+      <v-col cols="3">
+        <ValidationProvider
+          rules="required"
+          v-slot="{ errors, valid }"
+          name="Zip Code"
+        >
+          <v-text-field
+            :readonly="$props.readonly"
+            v-model="address.postcode"
+            label="Zip Code"
+            :disabled="loading"
+            :error-messages="errors"
+            :success="valid"
+          ></v-text-field>
+        </ValidationProvider>
+      </v-col>
+      <v-col :cols="3">
+        <ValidationProvider
+          rules="required"
+          v-slot="{ errors, valid }"
+          name="Country"
+        >
+          <v-autocomplete
+            @change="countryChanged"
+            :readonly="$props.readonly"
+            v-model="address.country"
             :items="countries"
-            label="Countries"
-            :disabled="loading"
-            :loading="loading"
-            :error-messages="errors"
-            :success="valid"
+            label="Country"
+            required
             item-text="name"
-            item-value="iso2_code"
-          ></v-select>
+            return-object
+            :error-messages="errors"
+            :success="valid"
+            :loading="country_loading"
+          ></v-autocomplete>
         </ValidationProvider>
+      </v-col>
+      <v-col :cols="3">
         <ValidationProvider
-          rules="required|max:100"
+          rules="required"
           v-slot="{ errors, valid }"
-          name="Street"
+          name="State"
+        >
+          <v-autocomplete
+            v-model="address.region"
+            :loading="region_loading"
+            :readonly="$props.readonly"
+            :items="regions"
+            label="State"
+            item-text="name"
+            return-object
+            :error-messages="errors"
+            :success="valid"
+          ></v-autocomplete>
+        </ValidationProvider>
+      </v-col>
+      <v-col :cols="6">
+        <ValidationProvider
+          rules="required"
+          v-slot="{ errors, valid }"
+          name="Phone"
         >
           <v-text-field
             :readonly="$props.readonly"
-            v-model="formFields.street"
-            label="Street"
+            v-model="address.phone"
+            label="Phone"
             :disabled="loading"
             :error-messages="errors"
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider
-          rules="max:100"
-          v-slot="{ errors, valid }"
-          name="Second Street"
-        >
-          <v-text-field
-            :readonly="$props.readonly"
-            v-model="formFields.street1"
-            label="Second Street"
-            :disabled="loading"
-            :error-messages="errors"
-            :success="valid"
-          ></v-text-field>
-        </ValidationProvider>
-      </v-container>
-      <v-container>
-        <v-row v-if="!$props.readonly">
-          <v-col cols="12" align="center" justify="center">
-            <v-btn
-              class="mr-4"
-              type="submit"
-              :loading="loading"
-              :disabled="invalid || loading"
-              color="primary"
-              >submit
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-form>
+      </v-col>
+      <v-col :cols="6">
+        <v-select
+          :readonly="$props.readonly"
+          :disabled="loading"
+          label="Location"
+          :items="locations"
+          item-text="label"
+          return-object
+          v-model="location"
+          prepend-icon="mdi-city"
+        ></v-select>
+      </v-col>
+    </v-row>
+    <v-row v-if="!$props.readonly" justify="center">
+      <v-btn
+        color="success"
+        type="submit"
+        :disabled="invalid || loading"
+        :loading="submit_loading"
+      >
+        save
+      </v-btn>
+    </v-row>
   </ValidationObserver>
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapState, mapActions, mapMutations } from "vuex";
 
 export default {
   props: {
     model: Object,
     readonly: Boolean
   },
+
+  beforeDestroy() {
+    this.$off("submit");
+  },
+
   data() {
     return {
-      loading: false,
-      defaultValues: {},
-      countries: [],
+      submit_loading: false,
+      country_loading: false,
+      region_loading: false,
+
       regions: [],
-      formFields: {
-        name: null,
+      countries: [],
+      selected_location: null,
+      store_pickup: {
+        id: null,
+        name: "",
         street: null,
-        street1: null,
-        region_id: null,
-        country_id: null
+        street2: null,
+        city: null,
+        region: null,
+        country: null,
+        postcode: null,
+        phone: null,
+        deliverydate: null,
+        billing: false,
+        location: 11
       }
     };
   },
+
   mounted() {
-    this.getAllRegions();
-    this.getAllCountries();
-    this.defaultValues = { ...this.formFields };
     if (this.$props.model) {
-      this.formFields = {
-        ...this.$props.model
-      };
+      this.getAllCountries(true);
+      this.store_pickup = { ...this.store_pickup, ...this.$props.model };
+
+      this.selected_location = _.find(this.locations, {
+        id: this.$props.model.location
+      });
+    } else {
+      this.getAllCountries(false);
     }
   },
-  beforeDestroy() {
-    this.$off("submit");
+
+  computed: {
+    ...mapState("cart", ["locations"]),
+
+    location: {
+      get() {
+        return this.selected_location;
+      },
+      set(value) {
+        this.selected_location = value;
+        if (value) {
+          this.store_pickup.location = value.id;
+        } else {
+          this.store_pickup.location = null;
+        }
+      }
+    },
+    loading() {
+      if (this.submit_loading || this.country_loading || this.region_loading) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   },
   methods: {
     ...mapActions("requests", ["request"]),
 
-    submit() {
-      this.loading = true;
-
-      if (this.$props.model) {
-        this.request({
-          method: "patch",
-          url: "store-pickups/update",
-          data: { ...this.formFields }
-        })
-          .then(() => {
-            this.$emit("submit", {
-              action: "paginate"
-            });
-          })
-          .finally(() => {
-            this.loading = false;
-          });
-      } else {
-        this.request({
-          method: "post",
-          url: "store-pickups/create",
-          data: { ...this.formFields }
-        })
-          .then(() => {
-            this.$emit("submit", {
-              action: "paginate"
-            });
-          })
-          .finally(() => {
-            this.loading = false;
-          });
+    countryChanged(country) {
+      if (
+        country &&
+        this.store_pickup.region &&
+        this.store_pickup.region.country.id !== country.id
+      ) {
+        this.store_pickup.region = null;
       }
+      this.getRegionsByCountry(country);
     },
-    getAllRegions() {
-      this.loading = true;
-      this.request({
+    submit() {
+      this.submit_loading = true;
+
+      let payload = {
+        method: "post",
+        url: this.store_pickup.id
+          ? "store_pickups/update"
+          : "store_pickups/create",
+        data: this.store_pickup
+      };
+
+      payload.data.region_id = this.store_pickup.region.id;
+      payload.data.country_id = this.store_pickup.country.id;
+
+      this.request(payload)
+        .then(response => {
+          this.$emit("submit", { data: response.store_pickup });
+        })
+        .finally(() => {
+          this.submit_loading = false;
+        });
+    },
+    getAllCountries(modelInit) {
+      this.country_loading = true;
+
+      const payload = {
         method: "get",
-        url: "regions"
-      })
+        url: "countries"
+      };
+      this.request(payload)
+        .then(response => {
+          this.countries = response;
+
+          if (modelInit) {
+            this.getRegionsByCountry(this.$props.model.region.country);
+          }
+          if (!this.store_pickup.country) {
+            this.store_pickup.country = _.find(this.countries, {
+              iso3_code: "USA"
+            });
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        })
+        .finally(() => {
+          this.country_loading = false;
+        });
+    },
+    getRegionsByCountry(country) {
+      this.region_loading = true;
+
+      const payload = {
+        method: "get",
+        url: `countries/${country.id}/regions`
+      };
+      this.request(payload)
         .then(response => {
           this.regions = response;
         })
         .finally(() => {
-          this.loading = false;
+          this.region_loading = false;
         });
-    },
-    getAllCountries() {
-      this.request({
-        method: "get",
-        url: "countries"
-      }).then(response => {
-        this.countries = response;
-      });
     }
   }
 };

@@ -186,6 +186,11 @@ export default {
     model: Object,
     readonly: Boolean
   },
+
+  beforeDestroy() {
+    this.$off("submit");
+  },
+
   data() {
     return {
       submit_loading: false,
@@ -252,7 +257,6 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["setNotification"]),
     ...mapActions("requests", ["request"]),
 
     countryChanged(country) {
@@ -271,7 +275,6 @@ export default {
       let payload = {
         method: "post",
         url: this.address.id ? "addresses/update" : "addresses/create",
-        model: "addresses",
         data: this.address
       };
 
@@ -329,9 +332,6 @@ export default {
           this.region_loading = false;
         });
     }
-  },
-  beforeDestroy() {
-    this.$off("submit");
   }
 };
 </script>
