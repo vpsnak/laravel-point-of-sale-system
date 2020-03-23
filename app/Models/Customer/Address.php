@@ -9,7 +9,6 @@ class Address extends Model
     protected $with = ['region'];
 
     protected $fillable = [
-        'name',
         'first_name',
         'last_name',
         'street',
@@ -26,7 +25,6 @@ class Address extends Model
         'location_name',
 
         'customer_id',
-        'store_pickup_id',
         'magento_id'
     ];
 
@@ -67,11 +65,6 @@ class Address extends Model
             }
         }
         $this->attributes['is_default_billing'] = $value;
-    }
-
-    public function storePickup()
-    {
-        return $this->belongsTo(StorePickup::class);
     }
 
     public function customer()

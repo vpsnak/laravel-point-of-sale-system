@@ -63,12 +63,6 @@ class ForeignKeys extends Migration
             $table->foreign('payment_id')->references('id')->on('payments')->onDelete('restrict');
         });
 
-        Schema::table('receipts', function (Blueprint $table) {
-            $table->foreign('issued_by_id')->references('id')->on('users')->onDelete('restrict');
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
-            $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('cascade');
-        });
-
         Schema::table('cash_registers', function (Blueprint $table) {
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('restrict');
         });
@@ -96,14 +90,9 @@ class ForeignKeys extends Migration
             $table->foreign('country_id')->references('id')->on('countries');
         });
 
-        Schema::table('store_pickups', function (Blueprint $table) {
-            $table->foreign('address_id')->references('id')->on('addresses');
-        });
-
         Schema::table('addresses', function (Blueprint $table) {
             $table->foreign('region_id')->references('id')->on('regions');
             $table->foreign('customer_id')->references('id')->on('customers');
-            $table->foreign('store_pickup_id')->references('id')->on('store_pickups');
         });
 
         Schema::table('menu_item_role', function (Blueprint $table) {
@@ -148,10 +137,6 @@ class ForeignKeys extends Migration
      */
     public function down()
     {
-        Schema::table('store_pickups', function (Blueprint $table) {
-            $table->dropForeign(['address_id'])->references('id')->on('addresses');
-        });
-
         Schema::table('settings', function (Blueprint $table) {
             $table->dropForeign(['user_id']);
         });
@@ -200,12 +185,6 @@ class ForeignKeys extends Migration
             $table->dropForeign(['payment_id']);
         });
 
-        Schema::table('receipts', function (Blueprint $table) {
-            $table->dropForeign(['issued_by_id']);
-            $table->dropForeign(['order_id']);
-            $table->dropForeign(['cash_register_id']);
-        });
-
         Schema::table('stores', function (Blueprint $table) {
             $table->dropForeign(['tax_id']);
             $table->dropForeign(['company_id']);
@@ -232,7 +211,6 @@ class ForeignKeys extends Migration
         Schema::table('addresses', function (Blueprint $table) {
             $table->dropForeign(['region_id']);
             $table->dropForeign(['customer_id']);
-            $table->dropForeign(['store_pickup_id']);
         });
 
         Schema::table('menu_item_role', function (Blueprint $table) {

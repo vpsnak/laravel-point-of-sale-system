@@ -245,11 +245,6 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function receipts()
-    {
-        return $this->hasMany(Receipt::class);
-    }
-
     public function masOrderLog()
     {
         return $this->hasMany(MasOrderLog::class);

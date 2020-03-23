@@ -18,7 +18,6 @@ class CreateAddressesTable extends Migration
 
             $table->foreignId('customer_id')->nullable();
             $table->foreignId('store_pickup_id')->nullable();
-            $table->string('name')->nullable();
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('street');

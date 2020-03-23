@@ -10,7 +10,7 @@
     <template v-slot:activator="{ on }">
       <h5 v-if="$props.title">Status</h5>
       <v-chip
-        pill
+        label
         v-on="$props.menu ? on : null"
         :color="latestStatus.color"
         :small="small"
@@ -44,7 +44,7 @@
             item-key="pivot.id"
           >
             <template v-slot:item.text="{ item }">
-              <v-chip pill :color="item.color">
+              <v-chip label :color="item.color">
                 <v-icon left>{{ item.icon }}</v-icon>
                 {{ item.text }}
               </v-chip>

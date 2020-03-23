@@ -1,18 +1,16 @@
 <template>
   <data-table v-if="render">
-    <template v-slot:item.email="{ item }">
-      <a :href="'mailto:' + item.email">{{ item.email }}</a>
-    </template>
-    <template v-slot:item.phone="{ item }">
-      <a :href="'tel:' + item.phone">{{ item.phone }}</a>
-    </template>
-
     <template v-slot:item.roles[0].name="{ item }">
       <span>{{ parseRoleName(item.roles[0].name) }}</span>
     </template>
 
     <template v-slot:item.active="{ item }">
-      {{ item.active ? "Yes" : "No" }}
+      <v-checkbox
+        readonly
+        v-model="item.active"
+        dense
+        :ripple="false"
+      ></v-checkbox>
     </template>
 
     <template v-slot:item.actions="{ item }">

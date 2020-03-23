@@ -1,12 +1,7 @@
 <template>
-  <ValidationObserver
-    v-slot="{ invalid }"
-    ref="addressDeliveryObs"
-    tag="v-form"
-    @submit.prevent="submit"
-  >
+  <ValidationObserver v-slot="{ invalid }" tag="v-form" @submit.prevent="submit()">
     <v-row>
-      <v-col cols="6">
+      <v-col :cols="6">
         <ValidationProvider rules="required" v-slot="{ errors, valid }" name="First name">
           <v-text-field
             v-model="address.first_name"
@@ -17,6 +12,8 @@
             :success="valid"
           ></v-text-field>
         </ValidationProvider>
+      </v-col>
+      <v-col :cols="6">
         <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Address">
           <v-text-field
             :readonly="$props.readonly"
@@ -41,16 +38,12 @@
           ></v-text-field>
         </ValidationProvider>
 
-        <ValidationProvider v-slot="{ errors, valid }" name="Second Address">
-          <v-text-field
-            :readonly="$props.readonly"
-            v-model="address.street2"
-            label="Second Address"
-            :disabled="loading"
-            :error-messages="errors"
-            :success="valid"
-          ></v-text-field>
-        </ValidationProvider>
+        <v-text-field
+          :readonly="$props.readonly"
+          v-model="address.street2"
+          label="Second Address"
+          :disabled="loading"
+        ></v-text-field>
       </v-col>
       <v-col cols="3">
         <ValidationProvider rules="required" v-slot="{ errors, valid }" name="City">
@@ -135,11 +128,11 @@
     </v-row>
     <v-row v-if="!$props.readonly" justify="center">
       <v-btn
-        color="success"
+        color="primary"
         type="submit"
         :disabled="invalid || loading"
         :loading="submit_loading"
-      >save</v-btn>
+      >{{ submitBtnTxt }}</v-btn>
     </v-row>
   </ValidationObserver>
 </template>
@@ -152,6 +145,11 @@ export default {
     model: Object,
     readonly: Boolean
   },
+
+  beforeDestroy() {
+    this.$off("submit");
+  },
+
   data() {
     return {
       submit_loading: false,
@@ -196,6 +194,13 @@ export default {
   computed: {
     ...mapState("cart", ["locations", "customer"]),
 
+    submitBtnTxt() {
+      if (_.has(this.$props.model, "id")) {
+        return "Save";
+      } else {
+        return "Create";
+      }
+    },
     location: {
       get() {
         return this.selected_location;
@@ -218,7 +223,6 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["setNotification"]),
     ...mapActions("requests", ["request"]),
 
     countryChanged(country) {
@@ -237,7 +241,6 @@ export default {
       let payload = {
         method: "post",
         url: this.address.id ? "addresses/update" : "addresses/create",
-        model: "addresses",
         data: this.address
       };
 
@@ -271,6 +274,8 @@ export default {
             this.address.country = _.find(this.countries, {
               iso3_code: "USA"
             });
+
+            this.regions = this.store_pickup.country.regions;
           }
         })
         .catch(error => {
@@ -295,9 +300,6 @@ export default {
           this.region_loading = false;
         });
     }
-  },
-  beforeDestroy() {
-    this.$off("submit");
   }
 };
 </script>

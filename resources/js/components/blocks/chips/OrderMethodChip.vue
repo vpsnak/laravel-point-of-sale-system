@@ -10,7 +10,7 @@
     <template v-slot:activator="{ on }">
       <h5 v-if="$props.title">Type</h5>
       <v-chip
-        pill
+        label
         v-on="$props.method === 'retail' || !$props.menu ? '' : on"
         :color="parseMethod.color"
         :small="small"

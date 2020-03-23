@@ -10,7 +10,7 @@
     <template v-slot:activator="{ on }">
       <h5 v-if="$props.title">Created by</h5>
       <v-chip
-        pill
+        label
         v-on="$props.menu ? on : null"
         color="primary"
         :small="small"

@@ -113,10 +113,11 @@ const state = {
     storePickups: [
       { text: "#", value: "id" },
       { text: "Name", value: "name" },
+      { text: "Phone", value: "phone" },
       { text: "Street", value: "street" },
-      { text: "Street 1", value: "street1" },
-      { text: "Country ID", value: "country_id" },
-      { text: "Region", value: "region.default_name" },
+      { text: "Street 2", value: "street2" },
+      { text: "State", value: "region.name" },
+      { text: "Country", value: "region.country.name" },
       { text: "Actions", value: "actions" }
     ],
     stores: [

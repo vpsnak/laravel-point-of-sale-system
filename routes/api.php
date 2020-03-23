@@ -190,10 +190,6 @@ Route::post('/cash-register-logs/open', 'CashRegisterLogsController@open')->midd
 Route::post('/cash-register-logs/close', 'CashRegisterLogsController@close')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/cash-register-logs/{model}', 'CashRegisterLogsController@delete')->middleware('scope:admin');
 
-// receipts
-Route::get('/receipts/get/{model}', 'ReceiptController@getOne')->middleware('scope:admin,store_manager,cashier');
-Route::get('/receipts/create/{model}', 'ReceiptController@create')->middleware('scope:admin,store_manager,cashier');
-
 // cards
 Route::get('/cards', 'CardController@all')->middleware('scope:admin,store_manager,cashier');
 Route::get('/cards/get/{model}', 'CardController@getOne')->middleware('scope:admin,store_manager,cashier');

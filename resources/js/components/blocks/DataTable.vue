@@ -62,14 +62,9 @@
             "
           ></v-text-field>
         </v-col>
+
         <v-spacer />
 
-        <v-divider
-          class="mx-4"
-          v-if="data_table.newForm && data_table.btnTxt"
-          inset
-          vertical
-        />
         <v-col cols="auto">
           <v-btn
             v-if="data_table.newForm && data_table.btnTxt"
@@ -100,13 +95,22 @@
               <slot :name="slot" v-bind="scope" />
             </template>
 
-            <!-- <template v-slot:item.created_at="{ item }">
-          <timestampChip :timestamp="item.created_at" />
-        </template>
+            <!-- generic fields -->
+            <template v-slot:item.created_at="{ item }">
+              <timestampChip :timestamp="item.created_at" />
+            </template>
 
-        <template v-slot:item.created_at="{ item }">
-          <timestampChip :timestamp="item.updated_at" />
-        </template> -->
+            <template v-slot:item.updated_at="{ item }">
+              <timestampChip :timestamp="item.updated_at" />
+            </template>
+
+            <template v-slot:item.email="{ item }">
+              <a :href="'mailto:' + item.email">{{ item.email }}</a>
+            </template>
+            <template v-slot:item.phone="{ item }">
+              <a :href="'tel:' + item.phone">{{ item.phone }}</a>
+            </template>
+            <!-- generic fields end -->
 
             <v-alert
               :value="true"
@@ -114,7 +118,7 @@
               icon="warning"
               slot="no-results"
             >
-              Your search for "{{ keyword }}" found no results.
+              Your search for "{{ keyword }}" found no results
             </v-alert>
           </v-data-table>
           <v-card-actions>

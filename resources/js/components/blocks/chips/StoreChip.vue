@@ -10,7 +10,7 @@
   >
     <template v-slot:activator="{ on }">
       <h5 v-if="$props.title">Store</h5>
-      <v-chip :small="small" pill v-on="$props.menu ? on : false">
+      <v-chip :small="small" label v-on="$props.menu ? on : false">
         <v-icon left>mdi-store</v-icon>
         <b>{{ $props.store.name }}</b>
       </v-chip>
