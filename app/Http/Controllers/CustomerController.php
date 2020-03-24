@@ -33,7 +33,7 @@ class CustomerController extends Controller
             'no_tax' => 'nullable|bool',
             'file' => 'nullable|file|max:15000|mimes:jpeg,jpg,png,pdf',
             'comment' => 'nullable|string',
-            'phone' => 'nullable|string'
+            'phone' => 'nullable|string|unique:customers,phone,' . $request->id,
         ]);
 
         $customer = Customer::findOrFail($validatedData['id']);
@@ -66,7 +66,7 @@ class CustomerController extends Controller
             'no_tax' => 'nullable|bool',
             'file' => 'nullable|required_if:no_tax,1|file|max:15000|mimes:jpeg,jpg,png,pdf',
             'comment' => 'nullable|string',
-            'phone' => 'nullable|string'
+            'phone' => 'nullable|string|unique:customers,phone',
         ]);
 
         $addressData = $request->validate([

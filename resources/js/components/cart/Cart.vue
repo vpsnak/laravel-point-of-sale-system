@@ -10,7 +10,7 @@
       <v-divider v-if="$props.showCustomer" />
     </v-container>
     <v-container>
-      <cartProducts :editable="$props.editable" />
+      <cartProducts class="mt-2 elevation-2" :editable="$props.editable" />
 
       <cartDiscount
         class="mt-2"

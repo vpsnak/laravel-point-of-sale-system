@@ -3,7 +3,7 @@
     <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
       <ValidationProvider
         rules="required|max:100"
-        v-slot="{ errors, valid }"
+        v-slot="{ errors }"
         name="Name"
       >
         <v-text-field
@@ -11,12 +11,11 @@
           v-model="giftCard.name"
           label="Name"
           :error-messages="errors"
-          :success="valid"
         ></v-text-field>
       </ValidationProvider>
       <ValidationProvider
         rules="required|between:0.01,1000"
-        v-slot="{ errors, valid }"
+        v-slot="{ errors }"
         name="Price"
       >
         <v-text-field
@@ -24,13 +23,12 @@
           v-model="giftCard.final_price"
           label="Price"
           :error-messages="errors"
-          :success="valid"
         ></v-text-field>
       </ValidationProvider>
 
       <ValidationProvider
         rules="required|max:100"
-        v-slot="{ errors, valid }"
+        v-slot="{ errors }"
         name="Code"
       >
         <v-text-field
@@ -38,7 +36,6 @@
           v-model="giftCard.code"
           label="Code"
           :error-messages="errors"
-          :success="valid"
         ></v-text-field>
       </ValidationProvider>
 

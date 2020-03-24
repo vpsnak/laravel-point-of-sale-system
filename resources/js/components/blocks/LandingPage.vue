@@ -10,7 +10,7 @@
       <v-col :cols="12" align="center" justify="center">
         <v-progress-circular
           rotate="270"
-          :color="error_txt ? color : 'error'"
+          :color="color"
           :size="150"
           :value="error_txt ? 100 : loadPercent"
           :width="18"
@@ -67,10 +67,14 @@ export default {
     ...mapState("config", ["app_load", "verbose", "init_info"]),
 
     color() {
-      if (this.$vuetify.theme.dark) {
-        return "white";
+      if (this.error_txt) {
+        return "error";
       } else {
-        return "black";
+        if (this.$vuetify.theme.dark) {
+          return "white";
+        } else {
+          return "black";
+        }
       }
     },
     loadPercent: {

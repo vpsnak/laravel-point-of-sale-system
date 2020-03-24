@@ -8,7 +8,7 @@
       <v-col cols="6">
         <ValidationProvider
           rules="required"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Recipient First name"
         >
           <v-text-field
@@ -17,12 +17,11 @@
             label="Recipient First name"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
           rules="required"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Recipient Address"
         >
           <v-text-field
@@ -31,7 +30,6 @@
             label="Recipient Address"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
       </v-col>
@@ -39,7 +37,7 @@
       <v-col cols="6">
         <ValidationProvider
           rules="required"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Recipient Last Name"
         >
           <v-text-field
@@ -48,21 +46,16 @@
             label="Recipient Last name"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
 
-        <ValidationProvider
-          v-slot="{ errors, valid }"
-          name="Recipient Second Address"
-        >
+        <ValidationProvider v-slot="{ errors }" name="Recipient Second Address">
           <v-text-field
             :readonly="$props.readonly"
             v-model="Recipient.RecipientAddress2"
             label="Recipient Second Address"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
       </v-col>
@@ -70,7 +63,7 @@
       <v-col cols="6">
         <ValidationProvider
           rules="required"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Recipient Attention"
         >
           <v-text-field
@@ -79,12 +72,11 @@
             label="Recipient Attention"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
           rules="required|email"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Recipient Email"
         >
           <v-text-field
@@ -93,7 +85,6 @@
             label="Recipient Email"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
       </v-col>
@@ -101,7 +92,7 @@
       <v-col cols="6">
         <ValidationProvider
           rules="required"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Recipient City"
         >
           <v-text-field
@@ -110,12 +101,11 @@
             label="Recipient City"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
           rules="required"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Recipient Zip Code"
         >
           <v-text-field
@@ -124,14 +114,13 @@
             label="Recipient Zip Code"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
       </v-col>
       <v-col cols="6">
         <ValidationProvider
           rules="required"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Recipient Country"
         >
           <v-autocomplete
@@ -144,14 +133,13 @@
             item-text="name"
             return-object
             :error-messages="errors"
-            :success="valid"
             :loading="country_loading"
           ></v-autocomplete>
         </ValidationProvider>
 
         <ValidationProvider
           rules="required"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Recipient Phone"
         >
           <v-text-field
@@ -160,14 +148,13 @@
             label="Recipient Phone"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
       </v-col>
       <v-col cols="6">
         <ValidationProvider
           rules="required"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Recipient State"
         >
           <v-autocomplete
@@ -179,12 +166,11 @@
             item-text="name"
             return-object
             :error-messages="errors"
-            :success="valid"
           ></v-autocomplete>
         </ValidationProvider>
         <ValidationProvider
           rules="required"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Recipient Special Instructions"
         >
           <v-text-field
@@ -193,14 +179,13 @@
             label="Recipient Special Instructions"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
       </v-col>
       <v-col cols="6">
         <ValidationProvider
           rules="required"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Occasion Type"
         >
           <v-text-field
@@ -209,14 +194,13 @@
             label="Occasion Type"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
       </v-col>
       <v-col cols="6">
         <ValidationProvider
           rules="required"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Recipient Residence Type"
         >
           <v-text-field
@@ -225,7 +209,6 @@
             label="Recipient Residence Type"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
       </v-col>

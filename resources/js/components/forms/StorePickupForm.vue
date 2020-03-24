@@ -2,28 +2,26 @@
   <ValidationObserver v-slot="{ invalid }" tag="v-form" @submit.prevent="submit()">
     <v-row>
       <v-col :cols="12">
-        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Store name">
+        <ValidationProvider rules="required" v-slot="{ errors }" name="Store name">
           <v-text-field
             v-model="store_pickup.name"
             :readonly="$props.readonly"
             label="Store name"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
       </v-col>
     </v-row>
     <v-row>
       <v-col :cols="6">
-        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Address">
+        <ValidationProvider rules="required" v-slot="{ errors }" name="Address">
           <v-text-field
             :readonly="$props.readonly"
             v-model="store_pickup.street"
             label="Address"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
       </v-col>
@@ -38,33 +36,31 @@
     </v-row>
     <v-row>
       <v-col :cols="6">
-        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="City">
+        <ValidationProvider rules="required" v-slot="{ errors }" name="City">
           <v-text-field
             v-model="store_pickup.city"
             :readonly="$props.readonly"
             label="City"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
       </v-col>
       <v-col :cols="6">
-        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Zip Code">
+        <ValidationProvider rules="required|digits:5" v-slot="{ errors }" name="Zip Code">
           <v-text-field
             :readonly="$props.readonly"
             v-model="store_pickup.postcode"
             label="Zip Code"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
       </v-col>
     </v-row>
     <v-row>
       <v-col :cols="6">
-        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Country">
+        <ValidationProvider rules="required" v-slot="{ errors }" name="Country">
           <v-autocomplete
             @change="countryChanged"
             :readonly="$props.readonly"
@@ -75,13 +71,12 @@
             item-text="name"
             return-object
             :error-messages="errors"
-            :success="valid"
             :loading="country_loading"
           ></v-autocomplete>
         </ValidationProvider>
       </v-col>
       <v-col :cols="6">
-        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="State">
+        <ValidationProvider rules="required" v-slot="{ errors }" name="State">
           <v-autocomplete
             v-model="store_pickup.region"
             :loading="region_loading"
@@ -91,21 +86,19 @@
             item-text="name"
             return-object
             :error-messages="errors"
-            :success="valid"
           ></v-autocomplete>
         </ValidationProvider>
       </v-col>
     </v-row>
     <v-row>
       <v-col :cols="6">
-        <ValidationProvider rules="required" v-slot="{ errors, valid }" name="Phone">
+        <ValidationProvider rules="required" v-slot="{ errors }" name="Phone">
           <v-text-field
             :readonly="$props.readonly"
             v-model="store_pickup.phone"
             label="Phone"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
       </v-col>
@@ -232,20 +225,23 @@ export default {
     submit() {
       this.submit_loading = true;
 
-      let payload = {
-        method: "post",
+      this.store_pickup.region_id = this.store_pickup.region.id;
+      this.store_pickup.country_id = this.store_pickup.country.id;
+
+      const payload = {
+        method: this.store_pickup.id ? "patch" : "post",
         url: this.store_pickup.id
           ? "store-pickups/update"
           : "store-pickups/create",
         data: this.store_pickup
       };
 
-      payload.data.region_id = this.store_pickup.region.id;
-      payload.data.country_id = this.store_pickup.country.id;
-
       this.request(payload)
         .then(response => {
-          this.$emit("submit", { action: "paginate" });
+          this.$emit("submit", {
+            action: "paginate",
+            payload: response.store_pickup
+          });
         })
         .finally(() => {
           this.submit_loading = false;

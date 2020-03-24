@@ -5,38 +5,35 @@
         PERSONAL INFORMATION
         <ValidationProvider
           rules="required|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="First name"
         >
           <v-text-field
             v-model="firstName"
             label="First name"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
           rules="required|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Last Name"
         >
           <v-text-field
             v-model="lastName"
             label="Last name"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
           rules="required|email|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Email"
         >
           <v-text-field
             v-model="formFields.email"
             label="Email"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
@@ -45,7 +42,7 @@
             max: 255,
             regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
           }"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Phone"
         >
           <v-text-field
@@ -54,7 +51,6 @@
             :min="0"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
 
@@ -70,19 +66,18 @@
           <v-col v-if="formFields.house_account_status">
             <ValidationProvider
               rules="required_if:house_account_status|max:100"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="House account number"
             >
               <v-text-field
                 v-model="formFields.house_account_number"
                 label="House account number"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
             <ValidationProvider
               rules="required_if:house_account_status|max:8|numeric"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="House account limit"
             >
               <v-text-field
@@ -90,14 +85,13 @@
                 v-model="formFields.house_account_limit"
                 label="House account limit"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
         </v-row>
         <ValidationProvider
           rules="max:65535"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Comment"
         >
           <v-textarea
@@ -105,7 +99,6 @@
             v-model="formFields.comment"
             label="Comments"
             :error-messages="errors"
-            :success="valid"
           ></v-textarea>
         </ValidationProvider>
 
@@ -118,7 +111,7 @@
           <v-col cols="6">
             <ValidationProvider
               rules="required|max:100"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="First Name"
             >
               <v-text-field
@@ -126,12 +119,11 @@
                 label="First name"
                 :disabled="loading || syncName"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
             <ValidationProvider
               rules="required|max:100"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Address"
             >
               <v-text-field
@@ -139,7 +131,6 @@
                 label="Address"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
@@ -147,7 +138,7 @@
           <v-col cols="6">
             <ValidationProvider
               rules="required|max:100"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Last Name"
             >
               <v-text-field
@@ -155,12 +146,11 @@
                 label="Last name"
                 :disabled="loading || syncName"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
             <ValidationProvider
               rules="max:100"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Second Address"
             >
               <v-text-field
@@ -168,14 +158,13 @@
                 label="Second Address"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
           <v-col cols="3">
             <ValidationProvider
               rules="required|max:100"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="City"
             >
               <v-text-field
@@ -183,14 +172,13 @@
                 label="City"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
           <v-col cols="3">
             <ValidationProvider
               rules="required|max:100"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Zip code"
             >
               <v-text-field
@@ -198,14 +186,13 @@
                 label="Zip code"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
           <v-col cols="3">
             <ValidationProvider
               rules="required|max:100"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="State"
             >
               <v-select
@@ -216,14 +203,13 @@
                 item-text="name"
                 item-value="id"
                 :error-messages="errors"
-                :success="valid"
               ></v-select>
             </ValidationProvider>
           </v-col>
           <v-col cols="3">
             <ValidationProvider
               rules="required|max:100"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Countries"
             >
               <v-select
@@ -234,14 +220,13 @@
                 item-text="name"
                 item-value="id"
                 :error-messages="errors"
-                :success="valid"
               ></v-select>
             </ValidationProvider>
           </v-col>
           <v-col cols="4">
             <ValidationProvider
               rules="max:100"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Location"
             >
               <v-select
@@ -252,14 +237,13 @@
                 item-value="label"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-select>
             </ValidationProvider>
           </v-col>
           <v-col cols="4">
             <ValidationProvider
               rules="max:100"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Location name"
             >
               <v-text-field
@@ -267,7 +251,6 @@
                 label="Location name"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
@@ -278,7 +261,7 @@
                 max: 100,
                 regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
               }"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Phone"
             >
               <v-text-field
@@ -287,7 +270,6 @@
                 :min="0"
                 :disabled="loading || syncName"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
           </v-col>

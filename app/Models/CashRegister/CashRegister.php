@@ -9,7 +9,7 @@ class CashRegister extends Model
 {
     public $timestamps = false;
 
-    protected $appends = ['is_open', 'open_session_user'];
+    protected $appends = ['store_name', 'is_open', 'open_session_user'];
 
     protected $fillable = [
         'name',
@@ -37,6 +37,11 @@ class CashRegister extends Model
     public function store()
     {
         return $this->belongsTo(Store::class);
+    }
+
+    public function getStoreNameAttribute()
+    {
+        return $this->store->name;
     }
 
     public function getOpenSessionUserAttribute()

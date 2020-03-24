@@ -4,7 +4,7 @@
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         <ValidationProvider
           rules="required|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Name"
         >
           <v-text-field
@@ -13,12 +13,11 @@
             v-model="formFields.name"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
           rules="required|min:0|max_value:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Percentage"
         >
           <v-text-field
@@ -28,7 +27,6 @@
             :min="0"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
       </v-container>

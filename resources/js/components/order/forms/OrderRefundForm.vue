@@ -1,7 +1,7 @@
 <template>
   <ValidationObserver
     ref="refund-form"
-    v-slot="{ valid }"
+    v-slot="{ errors }"
     tag="v-form"
     @submit.prevent="submitRefund()"
   >

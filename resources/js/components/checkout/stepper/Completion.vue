@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row justify="space-around" align="center" class="flex-column">
-      <h3 v-if="!changePrice.greaterThan(this.parsePrice())">
+      <h3 v-if="changePrice.greaterThan(this.parsePrice())">
         Change:
         <span class="amber--text" v-text="changePrice.toFormat()" />
       </h3>

@@ -4,7 +4,7 @@
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         <ValidationProvider
           rules="required|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Name"
         >
           <v-text-field
@@ -13,12 +13,11 @@
             label="Name"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
           rules="required|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Code"
         >
           <v-text-field
@@ -27,12 +26,11 @@
             label="Code"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
           rules="required|between:0.01,1000"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Price"
         >
           <v-text-field
@@ -42,7 +40,6 @@
             label="Price"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <v-row justify="space-around">
@@ -63,7 +60,7 @@
         </v-row>
         <ValidationProvider
           rules="required_if:bulk_action|min_value:1|numeric"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Qty"
         >
           <v-text-field
@@ -74,7 +71,6 @@
             label="Qty"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
             :min="1"
           ></v-text-field>
         </ValidationProvider>

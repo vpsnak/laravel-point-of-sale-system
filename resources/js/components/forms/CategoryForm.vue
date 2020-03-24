@@ -4,13 +4,12 @@
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         <ValidationProvider
           rules="required|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Name"
         >
           <v-text-field
             :readonly="$props.readonly"
             :error-messages="errors"
-            :success="valid"
             v-model="formFields.name"
             label="Name"
             required

@@ -3,7 +3,7 @@
     <v-textarea
       :readonly="$props.readonly"
       label="Notes"
-      prepend-icon="mdi-card-text-outline"
+      prepend-inner-icon="mdi-card-text-outline"
       v-model="delivery.notes"
       counter
       clearable

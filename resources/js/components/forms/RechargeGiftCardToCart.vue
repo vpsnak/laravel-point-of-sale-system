@@ -6,7 +6,7 @@
   >
     <ValidationProvider
       rules="required|between:0.01,1000"
-      v-slot="{ errors, valid }"
+      v-slot="{ errors }"
       name="Price"
     >
       <v-text-field
@@ -16,7 +16,6 @@
         v-model="amount"
         label="Price"
         :error-messages="errors"
-        :success="valid"
       ></v-text-field>
     </ValidationProvider>
     <v-row>
