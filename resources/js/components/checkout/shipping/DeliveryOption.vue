@@ -5,7 +5,7 @@
         <v-col :cols="$props.readonly ? 12 : 10">
           <ValidationProvider
             rules="required"
-            v-slot="{ errors, valid }"
+            v-slot="{ errors }"
             name="Billing address"
           >
             <v-select
@@ -18,7 +18,6 @@
               :item-text="getAddressText"
               return-object
               :error-messages="errors"
-              :success="valid"
             ></v-select>
           </ValidationProvider>
         </v-col>
@@ -50,7 +49,7 @@
         <v-col :cols="$props.readonly ? 12 : 10">
           <ValidationProvider
             rules="required"
-            v-slot="{ errors, valid }"
+            v-slot="{ errors }"
             name="Delivery address"
           >
             <v-select
@@ -64,7 +63,6 @@
               :item-text="getAddressText"
               return-object
               :error-messages="errors"
-              :success="valid"
             ></v-select>
           </ValidationProvider>
         </v-col>
@@ -114,7 +112,7 @@
             <template v-slot:activator="{ on }">
               <ValidationProvider
                 rules="required"
-                v-slot="{ errors, valid }"
+                v-slot="{ errors }"
                 name="Date"
               >
                 <v-text-field
@@ -122,7 +120,6 @@
                   label="Date"
                   prepend-inner-icon="event"
                   :error-messages="errors"
-                  :success="valid"
                   v-on="on"
                   @input="getTimeSlots"
                   @blur="parseDate, validate()"
@@ -140,7 +137,7 @@
         <v-col :cols="3">
           <ValidationProvider
             rules="required"
-            v-slot="{ errors, valid }"
+            v-slot="{ errors }"
             name="Time Slot"
           >
             <v-select
@@ -151,7 +148,6 @@
               :append-icon="$props.readonly ? null : 'mdi-plus'"
               :items="timeSlots"
               :error-messages="errors"
-              :success="valid"
               item-text="label"
               v-model="deliveryTime"
               @input="setCost"
@@ -163,7 +159,7 @@
         <v-col :cols="2">
           <ValidationProvider
             rules="required|min_value:0"
-            v-slot="{ errors, valid }"
+            v-slot="{ errors }"
             name="Fees"
           >
             <v-text-field
@@ -172,7 +168,6 @@
               label="Fees"
               prefix="$"
               :error-messages="errors"
-              :success="valid"
               :min="0"
               v-model="deliveryFeesPrice"
               @input="validate()"
@@ -425,7 +420,7 @@ export default {
     },
 
     addTimeSlotDialog() {
-      this.setDialog({
+      const payload = {
         show: true,
         title: "Add time slot",
         titleCloseBtn: true,
@@ -433,7 +428,8 @@ export default {
         component: "timeSlotForm",
         persistent: true,
         eventChannel: "shipping-timeslot"
-      });
+      };
+      this.setDialog(payload);
     },
     validate() {
       this.$nextTick(() => {

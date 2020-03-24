@@ -1,110 +1,124 @@
 <template>
   <v-container>
     <ValidationObserver ref="inStorePickupValidation">
-      <v-form>
-        <v-row align="center" justify="space-between">
-          <v-col :lg="4" :md="6" :cols="12">
-            <v-menu
-              v-model="datePicker"
-              transition="scale-transition"
-              offset-y
-              min-width="290px"
-            >
-              <template v-slot:activator="{ on }">
-                <ValidationProvider
-                  rules="required"
-                  v-slot="{ errors, valid }"
-                  name="Date"
-                >
-                  <v-text-field
-                    readonly
-                    v-model="dateFormatted"
-                    label="Date"
-                    prepend-inner-icon="event"
-                    :error-messages="errors"
-                    :success="valid"
-                    v-on="$props.readonly ? null : on"
-                    @blur="parseDate, validate()"
-                  ></v-text-field>
-                </ValidationProvider>
-              </template>
-              <v-date-picker
-                v-model="deliveryDate"
-                :min="new Date().toJSON()"
-              ></v-date-picker>
-            </v-menu>
-          </v-col>
-          <v-col :lg="4" :md="4" :cols="12">
-            <ValidationProvider
-              rules="required"
-              v-slot="{ errors, valid }"
-              name="Time Slot"
-            >
-              <v-select
-                :readonly="$props.readonly"
-                :loading="loading"
-                label="Time Slot"
-                prepend-inner-icon="mdi-clock"
-                :append-icon="$props.readonly ? null : 'mdi-plus'"
-                :items="time_slots"
-                :error-messages="errors"
-                :success="valid"
-                item-text="label"
-                v-model="deliveryTime"
-                @input="setCost()"
-                @click:append="$props.readonly ? null : addTimeSlotDialog()"
-                @change="validate()"
-              ></v-select>
-            </ValidationProvider>
-          </v-col>
-          <v-col :md="2" :cols="4">
-            <ValidationProvider
-              rules="required|min_value:0"
-              v-slot="{ errors, valid }"
-              name="Fees"
-            >
-              <v-text-field
-                :readonly="$props.readonly"
-                type="number"
-                label="Fees"
-                prefix="$"
-                :error-messages="errors"
-                :success="valid"
-                :min="0"
-                v-model="deliveryFeesPrice"
-                @input="validate()"
-              ></v-text-field>
-            </ValidationProvider>
-          </v-col>
-        </v-row>
-        <v-row align="center" justify="space-between">
-          <v-col :md="10" :cols="12">
-            <ValidationProvider
-              rules="required"
-              v-slot="{ errors, valid }"
-              name="Location"
-            >
-              <v-select
-                :readonly="$props.readonly"
-                :error-messages="errors"
-                :success="valid"
-                :loading="loading"
-                label="Location"
-                :items="store_pickups"
-                item-text="name"
-                return-object
-                v-model="storePickup"
-                prepend-inner-icon="mdi-store"
-                @change="validate()"
-              ></v-select>
-            </ValidationProvider>
-          </v-col>
-        </v-row>
-      </v-form>
+      <v-row align="center" justify="space-between">
+        <v-col :cols="10">
+          <ValidationProvider
+            rules="required"
+            v-slot="{ errors }"
+            name="Location"
+          >
+            <v-select
+              :readonly="$props.readonly"
+              :error-messages="errors"
+              :loading="loading"
+              label="Location"
+              :items="store_pickups"
+              item-text="name"
+              return-object
+              v-model="storePickup"
+              prepend-inner-icon="mdi-storefront"
+              @change="validate()"
+            ></v-select>
+          </ValidationProvider>
+        </v-col>
+
+        <v-col :cols="1">
+          <v-btn
+            icon
+            @click="storePickupDialog(selected_store_pickup)"
+            :disabled="!selected_store_pickup"
+          >
+            <v-icon>
+              mdi-pencil
+            </v-icon>
+          </v-btn>
+        </v-col>
+
+        <v-col :cols="1">
+          <v-btn icon @click="storePickupDialog()">
+            <v-icon>
+              mdi-plus
+            </v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-row align="center" justify="space-between">
+        <v-col :lg="4" :md="6" :cols="12">
+          <v-menu
+            v-model="datePicker"
+            transition="scale-transition"
+            offset-y
+            min-width="290px"
+          >
+            <template v-slot:activator="{ on }">
+              <ValidationProvider
+                rules="required"
+                v-slot="{ errors }"
+                name="Date"
+              >
+                <v-text-field
+                  readonly
+                  v-model="dateFormatted"
+                  label="Date"
+                  prepend-inner-icon="event"
+                  :error-messages="errors"
+                  v-on="$props.readonly ? null : on"
+                  @blur="parseDate, validate()"
+                ></v-text-field>
+              </ValidationProvider>
+            </template>
+            <v-date-picker
+              v-model="deliveryDate"
+              :min="new Date().toJSON()"
+            ></v-date-picker>
+          </v-menu>
+        </v-col>
+        <v-col :lg="4" :md="4" :cols="12">
+          <ValidationProvider
+            rules="required"
+            v-slot="{ errors }"
+            name="Time Slot"
+          >
+            <v-select
+              :readonly="$props.readonly"
+              :loading="loading"
+              label="Time Slot"
+              prepend-inner-icon="mdi-clock"
+              :append-icon="$props.readonly ? null : 'mdi-plus'"
+              :items="time_slots"
+              :error-messages="errors"
+              item-text="label"
+              v-model="deliveryTime"
+              @input="setCost()"
+              @click:append="$props.readonly ? null : addTimeSlotDialog()"
+              @change="validate()"
+            ></v-select>
+          </ValidationProvider>
+        </v-col>
+        <v-col :md="2" :cols="4">
+          <ValidationProvider
+            rules="required|min_value:0"
+            v-slot="{ errors }"
+            name="Fees"
+          >
+            <v-text-field
+              :readonly="$props.readonly"
+              type="number"
+              label="Fees"
+              prefix="$"
+              :error-messages="errors"
+              :min="0"
+              v-model="deliveryFeesPrice"
+              @input="validate()"
+            ></v-text-field>
+          </ValidationProvider>
+        </v-col>
+      </v-row>
+      <v-row v-if="!hideNotes">
+        <orderNotes />
+      </v-row>
     </ValidationObserver>
-    <v-row>
-      <orderNotes v-if="!hideNotes" />
-    </v-row>
   </v-container>
 </template>
 
@@ -121,6 +135,7 @@ export default {
   mounted() {
     this.getStores();
     this.validate();
+    this.initEvents();
 
     if (this.order_delivery_store_pickup) {
       this.storePickup = this.order_delivery_store_pickup;
@@ -129,18 +144,12 @@ export default {
     if (this.deliveryTime) {
       this.time_slots.push(this.deliveryTime);
     }
-
-    EventBus.$on("delivery-timeslot", event => {
-      console.log(event);
-      if (event.payload) {
-        this.time_slots.push(event.payload);
-        this.deliveryTime = event.payload.label;
-      }
-    });
   },
 
   beforeDestroy() {
     EventBus.$off("delivery-timeslot");
+    EventBus.$off("new-instore-pickup");
+    EventBus.$off("edit-instore-pickup");
   },
 
   data() {
@@ -150,20 +159,7 @@ export default {
       datePicker: false,
       store_pickups: [],
       selected_store_pickup: null,
-      delivery_amount: null,
-
-      dialog: {
-        show: false,
-        width: 600,
-        fullscreen: false,
-        title: "",
-        titleCloseBtn: false,
-        icon: "",
-        component: "",
-        content: "",
-        model: "",
-        persistent: false
-      }
+      delivery_amount: null
     };
   },
 
@@ -236,6 +232,45 @@ export default {
       "setIsValid"
     ]),
 
+    initEvents() {
+      EventBus.$on("delivery-timeslot", event => {
+        if (event.payload) {
+          this.time_slots.push(event.payload);
+          this.deliveryTime = event.payload.label;
+        }
+      });
+
+      EventBus.$on("new-instore-pickup", event => {
+        console.log(event);
+        if (event.payload) {
+          this.store_pickups.push(event.payload);
+          this.storePickup = event.payload;
+        }
+      });
+
+      EventBus.$on("edit-instore-pickup", event => {
+        if (event.payload) {
+          const index = _.findIndex(this.store_pickups, {
+            id: event.payload.id
+          });
+          this.store_pickups[index] = event.payload;
+          this.storePickup = event.payload;
+        }
+      });
+    },
+    storePickupDialog(model) {
+      const payload = {
+        show: true,
+        title: model ? `Edit pickup store ${model.name}` : "Add pickup store",
+        titleCloseBtn: true,
+        icon: "mdi-storefront",
+        component: "storePickupForm",
+        persistent: true,
+        eventChannel: model ? "edit-instore-pickup" : "new-instore-pickup",
+        model: model
+      };
+      this.setDialog(payload);
+    },
     addTimeSlotDialog() {
       const payload = {
         show: true,

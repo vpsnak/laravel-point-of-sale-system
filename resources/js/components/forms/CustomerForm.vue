@@ -4,40 +4,37 @@
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         <ValidationProvider
           rules="required|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="First name"
         >
           <v-text-field
             v-model="formFields.first_name"
             label="First name"
             :error-messages="errors"
-            :success="valid"
             :readonly="$props.readonly"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
           rules="required|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Last Name"
         >
           <v-text-field
             v-model="formFields.last_name"
             label="Last name"
             :error-messages="errors"
-            :success="valid"
             :readonly="$props.readonly"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
           rules="required|email|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Email"
         >
           <v-text-field
             v-model="formFields.email"
             label="Email"
             :error-messages="errors"
-            :success="valid"
             :readonly="$props.readonly"
           ></v-text-field>
         </ValidationProvider>
@@ -48,7 +45,7 @@
             max: 255,
             regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
           }"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Phone"
         >
           <v-text-field
@@ -57,7 +54,6 @@
             :min="0"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
             :readonly="$props.readonly"
           ></v-text-field>
         </ValidationProvider>
@@ -83,14 +79,13 @@
           <v-col v-if="formFields.house_account_status">
             <ValidationProvider
               rules="required_if:house_account_status|max:100"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="House account number"
             >
               <v-text-field
                 v-model="formFields.house_account_number"
                 label="House account number"
                 :error-messages="errors"
-                :success="valid"
                 :readonly="$props.readonly"
               ></v-text-field>
             </ValidationProvider>
@@ -100,7 +95,7 @@
                 required: true,
                 regex: /^[\d]{1,7}(\.[\d]{1,4})?$/g
               }"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="House account limit"
             >
               <v-text-field
@@ -108,7 +103,6 @@
                 v-model="formFields.house_account_limit"
                 label="House account limit"
                 :error-messages="errors"
-                :success="valid"
                 :readonly="$props.readonly"
               ></v-text-field>
             </ValidationProvider>
@@ -118,7 +112,7 @@
           <v-col :cols="6">
             <ValidationProvider
               rules="ext:jpg,png,jpeg,pdf"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Certification file"
             >
               <v-file-input
@@ -128,7 +122,6 @@
                 label="Upload new certification file"
                 clearable
                 :error-messages="errors"
-                :success="valid"
                 :readonly="$props.readonly"
               ></v-file-input>
             </ValidationProvider>
@@ -146,7 +139,7 @@
         </v-row>
         <ValidationProvider
           rules="max:65535"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Comment"
         >
           <v-textarea
@@ -155,7 +148,6 @@
             v-model="formFields.comment"
             label="Comments"
             :error-messages="errors"
-            :success="valid"
             :readonly="$props.readonly"
           ></v-textarea>
         </ValidationProvider>

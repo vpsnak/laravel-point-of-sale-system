@@ -7,7 +7,7 @@
     <v-container class="overflow-y-auto" style="max-height: 60vh">
       <ValidationProvider
         rules="required|max:100"
-        v-slot="{ errors, valid }"
+        v-slot="{ errors }"
         name="Name"
       >
         <v-text-field
@@ -20,7 +20,7 @@
       </ValidationProvider>
       <ValidationProvider
         rules="required|max:100"
-        v-slot="{ errors, valid }"
+        v-slot="{ errors }"
         name="Sku"
       >
         <v-text-field
@@ -31,7 +31,7 @@
           :color="valid ? 'primary' : ''"
         ></v-text-field>
       </ValidationProvider>
-      <ValidationProvider rules="max:100" v-slot="{ errors, valid }" name="Url">
+      <ValidationProvider rules="max:100" v-slot="{ errors }" name="Url">
         <v-text-field
           :readonly="$props.readonly"
           v-model="formFields.url"
@@ -40,11 +40,7 @@
           :color="valid ? 'primary' : ''"
         ></v-text-field>
       </ValidationProvider>
-      <ValidationProvider
-        rules="max:100"
-        v-slot="{ errors, valid }"
-        name="Photo url"
-      >
+      <ValidationProvider rules="max:100" v-slot="{ errors }" name="Photo url">
         <v-text-field
           :readonly="$props.readonly"
           v-model="formFields.photo_url"
@@ -56,7 +52,7 @@
 
       <ValidationProvider
         rules="max:65535"
-        v-slot="{ errors, valid }"
+        v-slot="{ errors }"
         name="Description"
       >
         <v-text-field
@@ -69,11 +65,7 @@
         ></v-text-field>
       </ValidationProvider>
 
-      <ValidationProvider
-        rules="required"
-        v-slot="{ errors, valid }"
-        name="Price"
-      >
+      <ValidationProvider rules="required" v-slot="{ errors }" name="Price">
         <v-text-field
           :readonly="$props.readonly"
           type="number"
@@ -122,11 +114,7 @@
             <v-card-title class="blue-grey pa-0" @click.stop>
               <h6 class="px-2">{{ store.name }}</h6>
             </v-card-title>
-            <ValidationProvider
-              rules="max:10"
-              v-slot="{ errors, valid }"
-              name="Qty"
-            >
+            <ValidationProvider rules="max:10" v-slot="{ errors }" name="Qty">
               <v-text-field
                 :readonly="$props.readonly"
                 type="number"

@@ -1,6 +1,6 @@
 <template>
   <v-form @submit.prevent="submit()">
-    <v-row>
+    <v-row align="center" justify="center">
       <v-col :cols="6">
         <v-select
           label="From"
@@ -11,15 +11,13 @@
       <v-col :cols="6">
         <v-select label="To" :items="hours" v-model="timeSlot.to_h"></v-select>
       </v-col>
-      <v-col :cols="12">
-        <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-          type="submit"
-          :disabled="!(timeSlot.from_h && timeSlot.to_h)"
-          >OK</v-btn
-        >
-      </v-col>
+      <v-btn
+        text
+        color="primary"
+        type="submit"
+        :disabled="!(timeSlot.from_h && timeSlot.to_h)"
+        >submit
+      </v-btn>
     </v-row>
   </v-form>
 </template>
@@ -50,12 +48,12 @@ export default {
       return a;
     },
     hoursAmPm() {
-      let x = 30; //minutes interval
+      let x = 30; // minutes interval
       let times = []; // time array
       let tt = 0; // start time
       let ap = [" AM", " PM"]; // AM-PM
 
-      //loop to increment the time and push results in array
+      // loop to increment the time and push results in array
       for (let i = 0; tt < 24 * 60; i++) {
         let hh = Math.floor(tt / 60); // getting hours of day in 0-24 format
         let mm = tt % 60; // getting minutes of the hour in 0-55 format
@@ -72,8 +70,7 @@ export default {
 
   methods: {
     submit() {
-      let payload = {
-        notification: false,
+      const payload = {
         data: {
           label: this.timeSlot.from_h + "-" + this.timeSlot.to_h
         }

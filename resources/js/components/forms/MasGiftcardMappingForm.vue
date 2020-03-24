@@ -8,7 +8,7 @@
       <v-col cols="6">
         <ValidationProvider
           rules="required"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Coupon code"
         >
           <v-text-field
@@ -17,14 +17,13 @@
             label="Coupon code"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
       </v-col>
       <v-col cols="6">
         <ValidationProvider
           rules="required"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Gift card code"
         >
           <v-text-field
@@ -33,7 +32,6 @@
             label="Gift card code"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
       </v-col>

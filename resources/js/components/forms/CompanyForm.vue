@@ -4,7 +4,7 @@
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         <ValidationProvider
           rules="required|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Name"
         >
           <v-text-field
@@ -12,12 +12,11 @@
             v-model="formFields.name"
             label="Name"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
           rules="required|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Tax number"
         >
           <v-text-field
@@ -25,7 +24,6 @@
             v-model="formFields.tax_number"
             label="Tax number"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
       </v-container>

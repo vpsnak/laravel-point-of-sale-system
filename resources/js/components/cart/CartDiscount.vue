@@ -25,7 +25,7 @@
 
       <v-col :cols="6">
         <ValidationProvider
-          v-slot="{ valid }"
+          v-slot="{ errors }"
           :rules="`between:${0},${max}`"
           name="Discount amount"
           v-if="$props.editable"
@@ -37,7 +37,7 @@
             label="Amount"
             :min="0"
             :max="max"
-            :error-messages="!valid ? 'Invalid amount' : undefined"
+            :error-messages="errors[0] ? 'Invalid amount' : undefined"
             :disabled="enableAmount"
             dense
             outlined
@@ -169,7 +169,7 @@ export default {
   methods: {
     ...mapMutations("cart", [
       "setCartDiscount",
-      "isValidDiscount",
+      "isValidCart",
       "setDiscountError"
     ]),
 
@@ -183,7 +183,7 @@ export default {
         } else {
           this.setDiscountError(!result);
         }
-        this.isValidDiscount();
+        this.isValidCart();
       });
     },
     prepareDiscount(value) {
@@ -194,7 +194,11 @@ export default {
           case "flat":
             return Number.parseInt(value * 100);
           case "percentage":
-            return Number(value);
+            if (value > 0 && value < 100) {
+              return Number(value);
+            } else {
+              return 0;
+            }
           case "none":
             return null;
           default:

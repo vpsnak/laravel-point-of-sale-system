@@ -248,7 +248,7 @@ export default {
     setIsValidCheckout(state, value) {
       state.isValidCheckout = value;
     },
-    isValidDiscount(state) {
+    isValidCart(state) {
       var result = true;
 
       if (state.discount_error) {
@@ -257,6 +257,12 @@ export default {
 
       state.productMap.forEach(product => {
         if (product.discount_error) {
+          result = false;
+        }
+      });
+
+      state.cart_products.forEach(product => {
+        if (product.qty < 0) {
           result = false;
         }
       });
@@ -407,11 +413,11 @@ export default {
   actions: {
     addProduct(context, payload) {
       context.commit("addProduct", payload);
-      context.commit("isValidDiscount");
+      context.commit("isValidCart");
     },
     removeProduct(context, index) {
       context.commit("removeProduct", index);
-      context.commit("isValidDiscount");
+      context.commit("isValidCart");
     },
     submitOrder(context, url) {
       return new Promise((resolve, reject) => {

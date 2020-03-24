@@ -6,7 +6,7 @@
           <v-col cols="6">
             <ValidationProvider
               rules="required|max:100"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="First Name"
             >
               <v-text-field
@@ -15,12 +15,11 @@
                 label="First name"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
             <ValidationProvider
               rules="required|max:100"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Address"
             >
               <v-text-field
@@ -29,14 +28,13 @@
                 label="Address"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
           <v-col cols="6">
             <ValidationProvider
               rules="required|max:100"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Last Name"
             >
               <v-text-field
@@ -45,12 +43,11 @@
                 label="Last name"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
             <ValidationProvider
               rules="max:100"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Second Address"
             >
               <v-text-field
@@ -59,14 +56,13 @@
                 label="Second Address"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
           <v-col cols="3">
             <ValidationProvider
               rules="required|max:100"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="City"
             >
               <v-text-field
@@ -75,14 +71,13 @@
                 label="City"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
           <v-col cols="3">
             <ValidationProvider
               rules="required|max:10"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Zip Code"
             >
               <v-text-field
@@ -91,14 +86,13 @@
                 label="Zip Code"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
           <v-col cols="3">
             <ValidationProvider
               rules="required|max:5"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="State"
             >
               <v-select
@@ -109,7 +103,6 @@
                 :items="regions"
                 label="States"
                 :error-messages="errors"
-                :success="valid"
                 item-text="name"
                 item-value="id"
               ></v-select>
@@ -118,7 +111,7 @@
           <v-col cols="3">
             <ValidationProvider
               rules="required|max:5"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Countries"
             >
               <v-select
@@ -129,7 +122,6 @@
                 :items="countries"
                 label="Countries"
                 :error-messages="errors"
-                :success="valid"
                 item-text="name"
                 item-value="id"
               ></v-select>
@@ -138,7 +130,7 @@
           <v-col cols="4">
             <ValidationProvider
               rules="max:100"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Location"
             >
               <v-select
@@ -149,14 +141,13 @@
                 item-value="id"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-select>
             </ValidationProvider>
           </v-col>
           <v-col cols="4">
             <ValidationProvider
               rules="max:100"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Location name"
             >
               <v-text-field
@@ -164,7 +155,6 @@
                 label="Location name"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
@@ -176,7 +166,7 @@
                 max: 20,
                 regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
               }"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Phone"
             >
               <v-text-field
@@ -186,14 +176,13 @@
                 :min="0"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
           <v-col cols="6">
             <ValidationProvider
               rules="max:100"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Company"
             >
               <v-text-field
@@ -202,14 +191,13 @@
                 label="Company"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
           <v-col cols="6">
             <ValidationProvider
               rules="max:20"
-              v-slot="{ errors, valid }"
+              v-slot="{ errors }"
               name="Vat id"
             >
               <v-text-field
@@ -218,7 +206,6 @@
                 label="Vat id"
                 :disabled="loading"
                 :error-messages="errors"
-                :success="valid"
               ></v-text-field>
             </ValidationProvider>
           </v-col>

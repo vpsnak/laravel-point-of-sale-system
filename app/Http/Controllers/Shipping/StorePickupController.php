@@ -23,10 +23,13 @@ class StorePickupController extends Controller
 
         $storePickup = StorePickup::create($validatedData);
 
-        return response(['notification' => [
-            'msg' => ["Store pickup {$storePickup->name} created successfully!"],
-            'type' => 'success'
-        ]]);
+        return response([
+            'store_pickup' => $storePickup,
+            'notification' => [
+                'msg' => ["Store pickup {$storePickup->name} created successfully!"],
+                'type' => 'success'
+            ]
+        ]);
     }
 
     public function update(Request $request)

@@ -4,7 +4,7 @@
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         <ValidationProvider
           rules="required|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Name"
         >
           <v-text-field
@@ -13,7 +13,6 @@
             label="Name"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
@@ -23,7 +22,7 @@
             max: 255,
             regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
           }"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Phone"
         >
           <v-text-field
@@ -33,12 +32,11 @@
             :min="0"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
           rules="required|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Street"
         >
           <v-text-field
@@ -47,12 +45,11 @@
             label="Street"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
           rules="required|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Postal code"
         >
           <v-text-field
@@ -61,12 +58,11 @@
             label="Postcode"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
           rules="required|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="City"
         >
           <v-text-field
@@ -75,12 +71,11 @@
             label="City"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
           rules="required"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Companies"
         >
           <v-select
@@ -92,14 +87,9 @@
             item-text="name"
             item-value="id"
             :error-messages="errors"
-            :success="valid"
           ></v-select>
         </ValidationProvider>
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
-          name="Taxes"
-        >
+        <ValidationProvider rules="required" v-slot="{ errors }" name="Taxes">
           <v-select
             :readonly="$props.readonly"
             v-model="formFields.tax_id"
@@ -109,7 +99,6 @@
             item-text="name"
             item-value="id"
             :error-messages="errors"
-            :success="valid"
           ></v-select>
         </ValidationProvider>
         <v-row justify="space-between">

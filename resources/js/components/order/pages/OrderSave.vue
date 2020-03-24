@@ -13,6 +13,7 @@
         :disabled="!enableSave || saveLoading"
         :loading="saveLoading"
         @click="confirmationDialog()"
+        color="primary"
       >
         <v-icon left>mdi-content-save-outline</v-icon>
         save
@@ -63,6 +64,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations("cart", ["setCheckoutLoading"]),
     ...mapMutations("dialog", ["setDialog"]),
     ...mapActions("cart", ["submitOrder"]),
 
@@ -81,6 +83,7 @@ export default {
       });
     },
     save() {
+      this.setCheckoutLoading(true);
       this.saveLoading = true;
       this.submitOrder(this.$props.url)
         .then(() => {
@@ -88,6 +91,7 @@ export default {
         })
         .finally(() => {
           this.saveLoading = false;
+          this.setCheckoutLoading(false);
         });
     },
     back() {

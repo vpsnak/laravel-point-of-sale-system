@@ -5,7 +5,7 @@
         <ValidationProvider
           v-if="action === 'change_self' || action === 'verify'"
           rules="required|min:8|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Password"
         >
           <v-text-field
@@ -13,7 +13,6 @@
             :append-icon="showCurrentPassword ? 'visibility' : 'visibility_off'"
             :type="showCurrentPassword ? 'text' : 'password'"
             :error-messages="errors"
-            :success="valid"
             label="Password"
             hint="At least 8 characters"
             counter
@@ -22,7 +21,7 @@
         </ValidationProvider>
         <ValidationProvider
           v-if="action === 'change' || action === 'change_self'"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           rules="required|min:8|max:100"
           name="New Password"
           vid="confirmation"
@@ -32,7 +31,6 @@
             :append-icon="showPassword ? 'visibility' : 'visibility_off'"
             :type="showPassword ? 'text' : 'password'"
             :error-messages="errors"
-            :success="valid"
             name="input-10-1"
             label="New Password"
             hint="At least 8 characters"
@@ -44,7 +42,7 @@
         <ValidationProvider
           v-if="action === 'change' || action === 'change_self'"
           rules="required|min:8|max:100|confirmed:confirmation"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Password Confirmation"
         >
           <v-text-field
@@ -54,7 +52,6 @@
             "
             :type="showPasswordConfirmation ? 'text' : 'password'"
             :error-messages="errors"
-            :success="valid"
             name="input-10-1"
             label="Retype the new password"
             counter

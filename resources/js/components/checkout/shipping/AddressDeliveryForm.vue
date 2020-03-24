@@ -8,7 +8,7 @@
       <v-col :cols="6">
         <ValidationProvider
           rules="required"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="First name"
         >
           <v-text-field
@@ -17,31 +17,14 @@
             label="First name"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
-          ></v-text-field>
-        </ValidationProvider>
-      </v-col>
-      <v-col :cols="6">
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
-          name="Address"
-        >
-          <v-text-field
-            :readonly="$props.readonly"
-            v-model="address.street"
-            label="Address"
-            :disabled="loading"
-            :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
       </v-col>
 
-      <v-col cols="6">
+      <v-col :cols="6">
         <ValidationProvider
           rules="required"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Last Name"
         >
           <v-text-field
@@ -50,10 +33,23 @@
             label="Last name"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
+      </v-col>
 
+      <v-col :cols="6">
+        <ValidationProvider rules="required" v-slot="{ errors }" name="Address">
+          <v-text-field
+            :readonly="$props.readonly"
+            v-model="address.street"
+            label="Address"
+            :disabled="loading"
+            :error-messages="errors"
+          ></v-text-field>
+        </ValidationProvider>
+      </v-col>
+
+      <v-col :cols="6">
         <v-text-field
           :readonly="$props.readonly"
           v-model="address.street2"
@@ -61,26 +57,23 @@
           :disabled="loading"
         ></v-text-field>
       </v-col>
-      <v-col cols="3">
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
-          name="City"
-        >
+
+      <v-col :cols="6">
+        <ValidationProvider rules="required" v-slot="{ errors }" name="City">
           <v-text-field
             v-model="address.city"
             :readonly="$props.readonly"
             label="City"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
       </v-col>
-      <v-col cols="3">
+
+      <v-col :cols="6">
         <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
+          rules="required|digits:5"
+          v-slot="{ errors }"
           name="Zip Code"
         >
           <v-text-field
@@ -89,16 +82,13 @@
             label="Zip Code"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
+            type="number"
           ></v-text-field>
         </ValidationProvider>
       </v-col>
-      <v-col :cols="3">
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
-          name="Country"
-        >
+
+      <v-col :cols="6">
+        <ValidationProvider rules="required" v-slot="{ errors }" name="Country">
           <v-autocomplete
             @change="countryChanged"
             :readonly="$props.readonly"
@@ -109,17 +99,13 @@
             item-text="name"
             return-object
             :error-messages="errors"
-            :success="valid"
             :loading="country_loading"
           ></v-autocomplete>
         </ValidationProvider>
       </v-col>
-      <v-col :cols="3">
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
-          name="State"
-        >
+
+      <v-col :cols="6">
+        <ValidationProvider rules="required" v-slot="{ errors }" name="State">
           <v-autocomplete
             v-model="address.region"
             :loading="region_loading"
@@ -129,26 +115,22 @@
             item-text="name"
             return-object
             :error-messages="errors"
-            :success="valid"
           ></v-autocomplete>
         </ValidationProvider>
       </v-col>
+
       <v-col :cols="6">
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
-          name="Phone"
-        >
+        <ValidationProvider rules="required" v-slot="{ errors }" name="Phone">
           <v-text-field
             :readonly="$props.readonly"
             v-model="address.phone"
             label="Phone"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
       </v-col>
+
       <v-col :cols="6">
         <v-select
           :readonly="$props.readonly"
@@ -158,12 +140,13 @@
           item-text="label"
           return-object
           v-model="location"
-          prepend-icon="mdi-city"
+          prepend-inner-icon="mdi-city"
         ></v-select>
       </v-col>
     </v-row>
     <v-row v-if="!$props.readonly" justify="center">
       <v-btn
+        text
         color="primary"
         type="submit"
         :disabled="invalid || loading"
@@ -260,6 +243,7 @@ export default {
       }
     }
   },
+
   methods: {
     ...mapActions("requests", ["request"]),
 
@@ -313,7 +297,7 @@ export default {
               iso3_code: "USA"
             });
 
-            this.regions = this.store_pickup.country.regions;
+            this.regions = this.address.country.regions;
           }
         })
         .catch(error => {

@@ -22,6 +22,7 @@ class TaxController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string',
             'percentage' => 'required|numeric',
+            'created_by_id' => 'required|exists:users,id'
         ]);
 
         $tax = Tax::create($validatedData);
@@ -38,27 +39,14 @@ class TaxController extends Controller
             'id' => 'required|exists:taxes,id',
             'name' => 'required|string',
             'percentage' => 'required|numeric',
+            'created_by_id' => 'required|exists:users,id'
         ]);
         $tax = Tax::findOrFail($validatedData['id']);
-
-        $tax->fill($validatedData);
-        $tax->save();
+        $tax->update($validatedData);
 
         return response(['notification' => [
             'msg' => ["Tax {$tax->name} updated successfully!"],
             'type' => 'success'
         ]]);
-    }
-
-    public function search(Request $request)
-    {
-        $validatedData = $request->validate([
-            'keyword' => 'required|string'
-        ]);
-
-        $columns = ['name'];
-        $query = Tax::query()->search($columns, $validatedData['keyword']);
-
-        return response($query->paginate());
     }
 }

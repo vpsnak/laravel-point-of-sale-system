@@ -43,12 +43,6 @@ class AddressController extends Controller
         ]);
         $response = self::regionValidation($this->address['region_id'], $this->address['country_id']);
 
-        if ($this->addressstore_pickup_id) {
-            $storePickup = StorePickup::created($this->address['region_id'], $this->address['country_id']);
-            $storePickup->address_id = $this->address(['store_pickup_id']);
-            $storePickup->save();
-        }
-
         if (isset($response['errors'])) {
             return response($response, 422);
         } else {
@@ -56,7 +50,7 @@ class AddressController extends Controller
 
             $address = Address::create($this->address);
 
-            return response(['address' => $address, 'notification' => [
+            return response(['address' => $address->load('region'), 'notification' => [
                 'msg' => ["Address successfully created!"],
                 'type' => 'success'
             ]], 201);
@@ -67,8 +61,6 @@ class AddressController extends Controller
     {
         $this->address = $request->validate([
             'id' => 'required|exists:addresses,id',
-            'store_pickup_id' => 'nullable|exists:store_pickup_id',
-            'name' => 'nullable|required_with:store_pickup_id',
             'first_name' => 'nullable|string|required_with:customer_id',
             'last_name' => 'nullable|string|required_with:customer_id',
             'region_id' => 'required|exists:regions,id',

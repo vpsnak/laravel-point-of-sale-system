@@ -50,7 +50,7 @@ class OrderController extends Controller
             'products.*.sku' => 'required|string',
             'products.*.price' => 'required|array',
             'products.*.price.amount' => 'required|numeric|integer',
-            'products.*.qty' => 'required|numeric',
+            'products.*.qty' => 'required|numeric|min:1|max:500',
             'products.*.discount' => 'required|array',
             'products.*.discount.amount' => 'nullable|numeric|integer',
             'products.*.discount.type' => 'nullable|string|in:none,flat,percentage',
@@ -64,8 +64,7 @@ class OrderController extends Controller
 
         $this->order = Order::findOrFail($this->order_data['order_id']);
 
-        $this->order->fill($this->order_data);
-        $this->order->save();
+        $this->order->update($this->order_data);
 
         $orderStatusController = new OrderStatusController($this->order);
         $orderStatusController->updateOrderStatus(true);
@@ -110,8 +109,7 @@ class OrderController extends Controller
         $this->parseStoreData();
 
         $this->order = Order::findOrFail($this->order_data['order_id']);
-        $this->order->fill($this->order_data);
-        $this->order->save();
+        $this->order->update($this->order_data);
 
         $orderStatusController = new OrderStatusController($this->order);
         $orderStatusController->updateOrderStatus(true);
@@ -135,7 +133,7 @@ class OrderController extends Controller
             'products.*.sku' => 'required|string',
             'products.*.price' => 'required|array',
             'products.*.price.amount' => 'required|numeric|integer',
-            'products.*.qty' => 'required|numeric',
+            'products.*.qty' => 'required|numeric|min:1|max:500',
             'products.*.discount' => 'required|array',
             'products.*.discount.amount' => 'nullable|numeric|integer',
             'products.*.discount.type' => 'nullable|string|in:none,flat,percentage',

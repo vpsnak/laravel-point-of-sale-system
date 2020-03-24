@@ -2,7 +2,7 @@
   <ValidationObserver v-slot="{ invalid }">
     <v-form @submit.prevent="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
-        <ValidationProvider v-slot="{ errors, valid }" name="Role">
+        <ValidationProvider v-slot="{ errors }" name="Role">
           <v-select
             hide-selected
             v-model="role_id"
@@ -12,7 +12,6 @@
             :loading="loading"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
             item-text="name"
             item-value="id"
           ></v-select>

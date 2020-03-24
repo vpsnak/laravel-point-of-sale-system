@@ -46,6 +46,7 @@ import { mapState, mapMutations } from "vuex";
 export default {
   computed: {
     ...mapState("cart", [
+      "isValidCheckout",
       "tax_percentage",
       "order_id",
       "cart_products",
@@ -70,16 +71,17 @@ export default {
       });
 
       const cartDiscount = this.calcDiscount(subtotal, this.order_discount);
-
-      return subtotal.subtract(cartDiscount);
+      subtotal = subtotal.subtract(cartDiscount);
+      return this.isValidCheckout ? subtotal : this.parsePrice();
     },
     tax() {
       if (this.customer && this.customer.no_tax) {
         return this.parsePrice();
       } else {
-        return this.subTotalwDiscount
+        const tax = this.subTotalwDiscount
           .add(this.deliveryFeesPrice)
           .percentage(this.tax_percentage);
+        return this.isValidCheckout ? tax : this.parsePrice();
       }
     },
     totalDiscount() {
@@ -92,10 +94,14 @@ export default {
         subtotalNoDiscount = subtotalNoDiscount.add(result);
       });
 
-      return subtotalNoDiscount.subtract(this.subTotalwDiscount);
+      subtotalNoDiscount = subtotalNoDiscount.subtract(this.subTotalwDiscount);
+      return this.isValidCheckout ? subtotalNoDiscount : this.parsePrice();
     },
     orderTotal() {
-      return this.subTotalwDiscount.add(this.tax).add(this.deliveryFeesPrice);
+      const orderTotal = this.subTotalwDiscount
+        .add(this.tax)
+        .add(this.deliveryFeesPrice);
+      return this.isValidCheckout ? orderTotal : this.parsePrice();
     }
   },
 
@@ -114,7 +120,7 @@ export default {
     ...mapMutations("cart", [
       "setOrderTotalPrice",
       "setOrderRemainingPrice",
-      "isValidDiscount"
+      "isValidCart"
     ]),
 
     calcDiscount(price, discount) {
@@ -128,15 +134,15 @@ export default {
             return this.$price({ amount: discount.amount });
           case "percentage":
             if (Number(discount.amount) > 100) {
-              return this.$price({ amount: 0 });
+              return this.parsePrice();
             } else {
               return price.percentage(Number(discount.amount));
             }
           default:
-            return this.$price({ amount: 0 });
+            return this.parsePrice();
         }
       } else {
-        return this.$price({ amount: 0 });
+        return this.parsePrice();
       }
     }
   }

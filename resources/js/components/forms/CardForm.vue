@@ -4,7 +4,7 @@
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         <ValidationProvider
           rules="required|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Title"
         >
           <v-text-field
@@ -13,27 +13,21 @@
             label="Title"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors, valid }"
-          name="Content"
-        >
+        <ValidationProvider rules="required" v-slot="{ errors }" name="Content">
           <v-textarea
             :readonly="$props.readonly"
             v-model="formFields.content"
             label="Content"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-textarea>
         </ValidationProvider>
         <ValidationProvider
           v-if="!order_checkbox"
           :rules="{ required: { allowFalse: false } }"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Products"
         >
           <v-switch
@@ -44,14 +38,13 @@
             v-model="product_checkbox"
             label="Products"
             :error-messages="errors"
-            :success="valid"
           ></v-switch>
         </ValidationProvider>
 
         <ValidationProvider
           v-if="product_checkbox"
           rules="required"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Products"
         >
           <v-select
@@ -63,14 +56,13 @@
             item-text="name"
             item-value="id"
             :error-messages="errors"
-            :success="valid"
           ></v-select>
         </ValidationProvider>
 
         <ValidationProvider
           v-if="!product_checkbox"
           :rules="{ required: { allowFalse: false } }"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Checkbox"
         >
           <v-switch
@@ -81,14 +73,13 @@
             v-model="order_checkbox"
             label="Orders"
             :error-messages="errors"
-            :success="valid"
           ></v-switch>
         </ValidationProvider>
 
         <ValidationProvider
           v-if="order_checkbox"
           rules="required"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Orders"
         >
           <v-select
@@ -100,7 +91,6 @@
             item-text="method"
             item-value="id"
             :error-messages="errors"
-            :success="valid"
           ></v-select>
         </ValidationProvider>
       </v-container>

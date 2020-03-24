@@ -4,13 +4,12 @@
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         <ValidationProvider
           rules="required|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Name"
         >
           <v-text-field
             :readonly="$props.readonly"
             :error-messages="errors"
-            :success="valid"
             v-model="formFields.name"
             label="Name"
           ></v-text-field>
@@ -18,14 +17,13 @@
 
         <ValidationProvider
           rules="required|email|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Email"
         >
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.email"
             :error-messages="errors"
-            :success="valid"
             label="E-mail"
           ></v-text-field>
         </ValidationProvider>
@@ -36,34 +34,32 @@
             max: 191,
             regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
           }"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Phone"
         >
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.phone"
             :error-messages="errors"
-            :success="valid"
             label="Phone"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
           rules="required|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Username"
         >
           <v-text-field
             :readonly="$props.readonly"
             v-model="formFields.username"
             :error-messages="errors"
-            :success="valid"
             label="Username"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
           v-if="!model"
           rules="required|min:8|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Password"
         >
           <v-text-field
@@ -72,7 +68,6 @@
             :append-icon="showPassword ? 'visibility' : 'visibility_off'"
             :type="showPassword ? 'text' : 'password'"
             :error-messages="errors"
-            :success="valid"
             name="input-10-1"
             label="Password"
             hint="At least 8 characters"

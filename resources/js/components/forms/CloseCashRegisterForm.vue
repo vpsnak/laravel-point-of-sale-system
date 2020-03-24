@@ -4,7 +4,7 @@
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         <ValidationProvider
           rules="required"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Password"
         >
           <v-text-field
@@ -13,7 +13,6 @@
             v-model="password"
             label="Password"
             :error-messages="errors"
-            :success="valid"
             prepend-icon="mdi-key"
             @click:append="showPassword = !showPassword"
           ></v-text-field>

@@ -4,7 +4,7 @@
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
         <ValidationProvider
           rules="required|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Name"
         >
           <v-text-field
@@ -13,12 +13,11 @@
             label="Name"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
           rules="required|max:3"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Stores"
         >
           <v-select
@@ -30,12 +29,11 @@
             item-value="id"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-select>
         </ValidationProvider>
         <ValidationProvider
           rules="required|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Barcode"
         >
           <v-text-field
@@ -44,12 +42,11 @@
             label="Barcode"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
           rules="required|max:45"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Pos Terminal IP"
         >
           <v-text-field
@@ -58,12 +55,11 @@
             label="Pos Terminal IP"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
           rules="required|max:100"
-          v-slot="{ errors, valid }"
+          v-slot="{ errors }"
           name="Pos terminal port"
         >
           <v-text-field
@@ -72,7 +68,6 @@
             label="Pos terminal port"
             :disabled="loading"
             :error-messages="errors"
-            :success="valid"
           ></v-text-field>
         </ValidationProvider>
         <v-checkbox
