@@ -1,14 +1,10 @@
 <template>
   <data-table v-if="render">
     <template v-slot:item.customer="{ item }">
-      <customerChip
-        :menu="true"
-        :customer="item.customer"
-        :small="smallChips"
-      />
+      <customerChip menu :customer="item.customer" :small="smallChips" />
     </template>
     <template v-slot:item.store="{ item }">
-      <storeChip :menu="true" :store="item.store" :small="smallChips" />
+      <storeChip menu :store="item.store" :small="smallChips" />
     </template>
     <template v-slot:item.method="{ item }">
       <orderMethodChip :method="item.method" :small="smallChips" />
@@ -17,13 +13,13 @@
       <orderStatusChip
         :latestStatus="item.status"
         :orderId="Number(item.id)"
-        :menu="true"
+        menu
         :small="smallChips"
       />
     </template>
     <template v-slot:item.total_price="{ item }">
       <orderTotalChip
-        :menu="true"
+        menu
         :totalPrice="item.total_price"
         :mdsePrice="item.mdse_price"
         :taxPrice="item.tax_price"
@@ -34,17 +30,13 @@
     <template v-slot:item.income_price="{ item }">
       <orderTotalPaidChip
         :orderId="item.id"
-        :menu="true"
+        menu
         :income_price="item.income_price"
         :small="smallChips"
       />
     </template>
     <template v-slot:item.created_by="{ item }">
-      <createdByChip
-        :menu="true"
-        :createdBy="item.created_by"
-        :small="smallChips"
-      />
+      <createdByChip menu :createdBy="item.created_by" :small="smallChips" />
     </template>
 
     <template v-slot:item.actions="{ item }">

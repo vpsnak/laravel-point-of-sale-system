@@ -145,7 +145,7 @@ const state = {
       { text: "Name", value: "name" },
       { text: "Email", value: "email" },
       { text: "Phone", value: "phone" },
-      { text: "Role", value: "roles[0].name" },
+      { text: "Role", value: "role_name" },
       { text: "Active", value: "active" },
       { text: "Created at", value: "created_at" },
       { text: "Updated at", value: "updated_at" },

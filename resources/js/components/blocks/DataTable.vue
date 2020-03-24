@@ -97,11 +97,11 @@
 
             <!-- generic fields -->
             <template v-slot:item.created_at="{ item }">
-              <timestampChip :timestamp="item.created_at" />
+              <timestampChip :timestamp="item.created_at" small />
             </template>
 
             <template v-slot:item.updated_at="{ item }">
-              <timestampChip :timestamp="item.updated_at" />
+              <timestampChip :timestamp="item.updated_at" small />
             </template>
 
             <template v-slot:item.email="{ item }">

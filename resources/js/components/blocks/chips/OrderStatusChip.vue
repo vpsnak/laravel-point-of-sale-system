@@ -57,7 +57,7 @@
             </template>
             <template v-slot:item.processed_by="{ item }">
               <createdByChip
-                :menu="true"
+                menu
                 :createdBy="item.pivot.processed_by"
               ></createdByChip>
             </template>

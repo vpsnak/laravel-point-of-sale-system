@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="fill-height">
+  <v-container fluid class="fill-height pa-0">
     <v-row dense class="fill-height">
       <v-col :lg="7" :cols="12">
         <productList />

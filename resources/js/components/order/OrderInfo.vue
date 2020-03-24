@@ -9,11 +9,7 @@
     <v-container>
       <v-row justify="center" align="center">
         <v-col :lg="4" :md="6" :cols="12" class="text-center">
-          <createdByChip
-            :title="true"
-            :menu="true"
-            :createdBy="order_created_by"
-          />
+          <createdByChip title menu :createdBy="order_created_by" />
         </v-col>
         <v-col :lg="4" :md="6" :cols="12" class="text-center">
           <timestampChip
@@ -30,11 +26,11 @@
           />
         </v-col>
         <v-col :lg="4" :md="6" :cols="12" class="text-center">
-          <storeChip :title="true" :menu="true" :store="order_store" />
+          <storeChip :title="true" menu :store="order_store" />
         </v-col>
         <v-col :lg="4" :md="6" :cols="12" class="text-center">
           <orderStatusChip
-            :menu="true"
+            menu
             :title="true"
             :latestStatus="order_status"
             :orderId="order_id"
@@ -44,10 +40,10 @@
           <masStatusChip :title="true" :mas_order="order_mas_order" />
         </v-col>
         <v-col :lg="4" :md="6" :cols="12" class="text-center">
-          <orderMethodChip :method="method" :menu="true" :title="true" />
+          <orderMethodChip :method="method" menu :title="true" />
         </v-col>
         <v-col :lg="4" :md="6" :cols="12" class="text-center">
-          <customerChip :title="true" :menu="true" :customer="customer" />
+          <customerChip :title="true" menu :customer="customer" />
         </v-col>
         <v-col :lg="4" :md="6" :cols="12" class="text-center">
           <v-menu

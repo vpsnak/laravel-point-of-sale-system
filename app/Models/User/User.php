@@ -14,6 +14,10 @@ class User extends Authenticatable
 
     protected $guard_name = 'api';
 
+    protected $appends = [
+        'role_name'
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -48,6 +52,11 @@ class User extends Authenticatable
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = Hash::make($value);
+    }
+
+    public function getRoleNameAttribute()
+    {
+        return $this->roles[0]->name ?? null;
     }
 
     public static function getRoleNameByIndentifier($identifier)
