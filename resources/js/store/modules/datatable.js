@@ -42,11 +42,12 @@ const state = {
     cashRegisters: [
       { text: "#", value: "id" },
       { text: "Name", value: "name" },
+      { text: "Store", value: "store_name" },
       { text: "Barcode", value: "barcode" },
       { text: "Pos terminal IP", value: "pos_terminal_ip" },
       { text: "Pos terminal port", value: "pos_terminal_port" },
       { text: "Is open", value: "is_open" },
-      { text: "Operator", value: "open_session_user.name" },
+      { text: "Open session with", value: "open_session_user.name" },
       { text: "Active", value: "active" },
       { text: "Actions", value: "actions" }
     ],
