@@ -30,4 +30,13 @@ class Setting extends Model
             $this->attributes['data'] = $value;
         }
     }
+
+    public static function createUserDefaultSettings(int $user_id)
+    {
+        Setting::create([
+            'key' => 'dark_mode',
+            'value' => false,
+            'user_id' => $user_id
+        ]);
+    }
 }

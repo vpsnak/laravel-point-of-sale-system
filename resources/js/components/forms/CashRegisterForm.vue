@@ -104,7 +104,6 @@ export default {
   data() {
     return {
       loading: false,
-      defaultValues: {},
       formFields: {
         name: null,
         store_id: null,
@@ -118,7 +117,6 @@ export default {
   },
   mounted() {
     this.getAllStores();
-    this.defaultValues = { ...this.formFields };
     if (this.$props.model) {
       this.formFields = {
         ...this.$props.model

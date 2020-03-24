@@ -1,7 +1,7 @@
 <template>
   <data-table v-if="render">
-    <template v-slot:item.roles[0].name="{ item }">
-      <span>{{ parseRoleName(item.roles[0].name) }}</span>
+    <template v-slot:item.role_name="{ item }">
+      <span>{{ item.role_name }}</span>
     </template>
 
     <template v-slot:item.active="{ item }">
@@ -14,21 +14,6 @@
     </template>
 
     <template v-slot:item.actions="{ item }">
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            small
-            :disabled="data_table.loading"
-            @click="roleDialog(item)"
-            class="my-2"
-            v-on="on"
-            icon
-          >
-            <v-icon small>mdi-account-key</v-icon>
-          </v-btn>
-        </template>
-        <span>Edit Role</span>
-      </v-tooltip>
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
@@ -116,27 +101,9 @@ export default {
       "resetDataTable"
     ]),
 
-    parseRoleName(value) {
-      return _.upperFirst(value.replace("_", " "));
-    },
-    roleDialog(item) {
-      this.setDialog({
-        show: true,
-        width: 450,
-        title: `Edit role for: ${item.name}`,
-        titleCloseBtn: true,
-        icon: "mdi-account-key",
-        component: "userRoleForm",
-        model: item,
-        persistent: true,
-        eventChannel: "data-table"
-      });
-    },
-
     changePasswordDialog(item) {
       item.action = "change";
-
-      this.setDialog({
+      const payload = {
         show: true,
         width: 600,
         title: `Change password for user: ${item.name}`,
@@ -145,7 +112,9 @@ export default {
         component: "passwordForm",
         model: item,
         persistent: true
-      });
+      };
+
+      this.setDialog(payload);
     }
   }
 };

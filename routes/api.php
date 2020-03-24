@@ -23,7 +23,6 @@ Route::get('/menu-items', 'MenuItemController@all')->middleware('scope:admin,sto
 
 // roles
 Route::get('/roles', "RoleController@all")->middleware('scope:admin');
-Route::post('/roles/set', "RoleController@setRole")->middleware('scope:admin');
 
 // auth
 Route::get('/auth/logout', 'UserController@logout')->middleware('scope:admin,store_manager,cashier');

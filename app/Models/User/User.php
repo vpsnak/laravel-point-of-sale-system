@@ -56,7 +56,7 @@ class User extends Authenticatable
 
     public function getRoleNameAttribute()
     {
-        return $this->roles[0]->name ?? null;
+        return $this->roles[0]->text ?? null;
     }
 
     public static function getRoleNameByIndentifier($identifier)

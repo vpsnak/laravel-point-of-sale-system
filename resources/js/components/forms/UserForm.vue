@@ -2,96 +2,108 @@
   <ValidationObserver v-slot="{ invalid }">
     <v-form @submit.prevent="submit">
       <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
-        <ValidationProvider
-          rules="required|max:100"
-          v-slot="{ errors }"
-          name="Name"
-        >
-          <v-text-field
-            :readonly="$props.readonly"
-            :error-messages="errors"
-            v-model="formFields.name"
-            label="Name"
-          ></v-text-field>
-        </ValidationProvider>
+        <v-row justify="center">
+          <v-col :cols="6">
+            <ValidationProvider
+              rules="required|max:100"
+              v-slot="{ errors }"
+              name="Name"
+            >
+              <v-text-field
+                :disabled="loading"
+                :readonly="$props.readonly"
+                :error-messages="errors"
+                v-model="formFields.name"
+                label="Name"
+              ></v-text-field>
+            </ValidationProvider>
+          </v-col>
+          <v-col :cols="6">
+            <ValidationProvider
+              rules="required|min:10|max:15"
+              v-slot="{ errors }"
+              name="Phone"
+            >
+              <v-text-field
+                :disabled="loading"
+                :readonly="$props.readonly"
+                v-model="formFields.phone"
+                :error-messages="errors"
+                label="Phone"
+              ></v-text-field>
+            </ValidationProvider>
+          </v-col>
+          <v-col :cols="6">
+            <ValidationProvider
+              rules="required|email|max:100"
+              v-slot="{ errors }"
+              name="Email"
+            >
+              <v-text-field
+                :disabled="loading"
+                :readonly="$props.readonly"
+                v-model="formFields.email"
+                :error-messages="errors"
+                label="E-mail"
+              ></v-text-field>
+            </ValidationProvider>
+          </v-col>
 
-        <ValidationProvider
-          rules="required|email|max:100"
-          v-slot="{ errors }"
-          name="Email"
-        >
-          <v-text-field
-            :readonly="$props.readonly"
-            v-model="formFields.email"
-            :error-messages="errors"
-            label="E-mail"
-          ></v-text-field>
-        </ValidationProvider>
-        <ValidationProvider
-          :rules="{
-            required: true,
-            min: 8,
-            max: 191,
-            regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
-          }"
-          v-slot="{ errors }"
-          name="Phone"
-        >
-          <v-text-field
-            :readonly="$props.readonly"
-            v-model="formFields.phone"
-            :error-messages="errors"
-            label="Phone"
-          ></v-text-field>
-        </ValidationProvider>
-        <ValidationProvider
-          rules="required|max:100"
-          v-slot="{ errors }"
-          name="Username"
-        >
-          <v-text-field
-            :readonly="$props.readonly"
-            v-model="formFields.username"
-            :error-messages="errors"
-            label="Username"
-          ></v-text-field>
-        </ValidationProvider>
-        <ValidationProvider
-          v-if="!model"
-          rules="required|min:8|max:100"
-          v-slot="{ errors }"
-          name="Password"
-        >
-          <v-text-field
-            :readonly="$props.readonly"
-            v-model="formFields.password"
-            :append-icon="showPassword ? 'visibility' : 'visibility_off'"
-            :type="showPassword ? 'text' : 'password'"
-            :error-messages="errors"
-            name="input-10-1"
-            label="Password"
-            hint="At least 8 characters"
-            counter
-            @click:append="showPassword = !showPassword"
-          ></v-text-field>
-        </ValidationProvider>
-        <v-checkbox
-          :readonly="$props.readonly"
-          v-model="formFields.active"
-          label="Active"
-        ></v-checkbox>
+          <v-col :cols="6">
+            <ValidationProvider
+              rules="required|max:100"
+              v-slot="{ errors }"
+              name="Username"
+            >
+              <v-text-field
+                :disabled="loading"
+                :readonly="$props.readonly"
+                v-model="formFields.username"
+                :error-messages="errors"
+                label="Username"
+              ></v-text-field>
+            </ValidationProvider>
+          </v-col>
+          <v-col :cols="6">
+            <v-checkbox
+              :disabled="loading"
+              :readonly="$props.readonly"
+              v-model="formFields.active"
+              label="Active"
+            ></v-checkbox>
+          </v-col>
+          <v-col :cols="6">
+            <ValidationProvider
+              v-slot="{ errors }"
+              name="Role"
+              rules="required"
+            >
+              <v-select
+                hide-selected
+                v-model="formFields.role_id"
+                :items="roles"
+                label="Role"
+                :error-messages="errors"
+                :loading="rolesLoading"
+                :disabled="loading"
+                item-text="text"
+                item-value="id"
+              ></v-select>
+            </ValidationProvider>
+          </v-col>
+        </v-row>
       </v-container>
       <v-container>
         <v-row v-if="!$props.readonly">
-          <v-col cols="12" align="center" justify="center">
+          <v-col :cols="12" align="center" justify="center">
             <v-btn
               class="mr-4"
               type="submit"
-              :loading="loading"
-              :disabled="invalid || disableSubmit"
+              :loading="submitLoading"
+              :disabled="invalid || loading"
               color="primary"
-              >submit</v-btn
-            >
+              >submit
+            </v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -109,11 +121,12 @@ export default {
   },
 
   mounted() {
-    this.defaultValues = { ...this.formFields };
+    this.getAllUserRoles();
     if (this.$props.model) {
       this.formFields = {
         ...this.$props.model
       };
+      this.formFields.role_id = this.$props.model.roles[0].id;
     }
   },
 
@@ -123,9 +136,10 @@ export default {
 
   data() {
     return {
-      loading: false,
-      showPassword: false,
-      defaultValues: {},
+      submitLoading: false,
+      rolesLoading: false,
+      roles: [],
+
       formFields: {
         id: null,
         name: null,
@@ -133,7 +147,8 @@ export default {
         phone: null,
         username: null,
         password: null,
-        active: true
+        active: true,
+        role_id: null
       }
     };
   },
@@ -141,44 +156,51 @@ export default {
   computed: {
     disableSubmit() {
       return this.formFields.name ? false : true;
+    },
+    loading() {
+      if (this.submitLoading || this.rolesLoading) {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
 
   methods: {
     ...mapActions("requests", ["request"]),
 
-    submit() {
-      this.loading = true;
+    getAllUserRoles() {
+      this.rolesLoading = true;
 
-      if (this.$props.model) {
-        this.request({
-          method: "patch",
-          url: "users/update",
-          data: { ...this.formFields }
+      const payload = {
+        method: "get",
+        url: "roles"
+      };
+      this.request(payload)
+        .then(response => {
+          this.roles = response;
         })
-          .then(() => {
-            this.$emit("submit", {
-              action: "paginate"
-            });
-          })
-          .finally(() => {
-            this.loading = false;
+        .finally(() => {
+          this.rolesLoading = false;
+        });
+    },
+    submit() {
+      this.submitLoading = true;
+      const payload = {
+        method: this.$props.model ? "patch" : "post",
+        url: this.$props.model ? "users/update" : "users/create",
+        data: this.formFields
+      };
+
+      this.request(payload)
+        .then(() => {
+          this.$emit("submit", {
+            action: "paginate"
           });
-      } else {
-        this.request({
-          method: "post",
-          url: "users/create",
-          data: { ...this.formFields }
         })
-          .then(() => {
-            this.$emit("submit", {
-              action: "paginate"
-            });
-          })
-          .finally(() => {
-            this.loading = false;
-          });
-      }
+        .finally(() => {
+          this.submitLoading = false;
+        });
     }
   }
 };

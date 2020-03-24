@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Role;
 use App\Setting;
 use App\User;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
+use Str;
 
 class UserController extends Controller
 {
@@ -27,8 +29,9 @@ class UserController extends Controller
         ]);
 
         $http = new Client;
+        $url = config('app.url') . '/oauth/token';
 
-        $response = $http->post(config('app.url') . '/oauth/token', [
+        $response = $http->post($url, [
             'form_params' => [
                 'grant_type' => 'password',
                 'client_id' => '2',
@@ -149,18 +152,22 @@ class UserController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string',
-            'password' => 'required|string',
             'username' => 'required|string',
-            'email' => 'required|email',
-            'phone' => 'required|numeric',
-            'active' => 'required|boolean'
+            'email' => 'required|email|unique:users,email',
+            'phone' => 'required|string|max:15|min:10',
+            'active' => 'required|boolean',
+            'role_id' => 'required|exists:roles,id'
         ]);
-
+        $validatedData['password'] = Str::random(16);
+        $role = Role::findOrFail($validatedData['role_id']);
+        unset($validatedData['role_id']);
         $user = User::create($validatedData);
+        $roleController = new RoleController($user, $role);
+        $roleController->assignRole();
 
         Setting::create([
             'key' => 'dark_mode',
-            'value' => null,
+            'value' => false,
             'user_id' => $user->id
         ]);
 
@@ -178,12 +185,17 @@ class UserController extends Controller
             'username' => 'required|string',
             'email' => 'required|email',
             'phone' => 'required|numeric',
-            'active' => 'required|boolean'
+            'active' => 'required|boolean',
+            'role_id' => 'required|exists:roles,id'
         ]);
+        $role = Role::findOrFail($validatedData['role_id']);
+        unset($validatedData['role_id']);
         $user = User::findOrFail($validatedData['id']);
+        $user->update($validatedData);
+        $roleController = new RoleController($user, $role);
+        $roleController->assignRole();
 
-        $user->fill($validatedData);
-        $user->save();
+        Setting::createUserDefaultSettings($user->id);
 
         return response(['notification' => [
             'msg' => ["User {$user->name} updated successfully!"],

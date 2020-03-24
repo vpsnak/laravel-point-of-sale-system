@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\User;
 use DB;
@@ -10,43 +9,46 @@ use DB;
 
 class RoleController extends Controller
 {
+    private $user;
+    private $role;
+
+    public function __construct(User $user = null, Role $role = null)
+    {
+        $this->user = $user;
+        $this->role = $role;
+    }
+
     public function all()
     {
         return response(Role::all());
     }
 
-    public function setRole(Request $request)
+    public function assignRole(bool $replace = true, User $user = null, Role $role = null)
     {
-        $validatedData = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'role_id' => 'required|exists:roles,id'
-        ]);
-
-        $user = User::with('roles')->findOrFail($validatedData['user_id']);
-
-        if ($user->roles) {
-            foreach ($user->roles as $assignedRole) {
-                $user->removeRole($assignedRole->name);
-            }
+        if ($replace) {
+            $this->removeRoles($user);
         }
-
-        $role = Role::findOrFail($validatedData['role_id']);
-        $user->assignRole($role->name);
+        $this->user = $user ? $user : $this->user;
+        $this->role = $role ? $role : $this->role;
+        $this->user = $this->user->assignRole($this->role);
 
         // remove user's tokens
-        $tokens = DB::table('oauth_access_tokens')->where('user_id', $user->id)->get();
+        $tokens = DB::table('oauth_access_tokens')->where('user_id', $this->user->id)->get();
         if ($tokens) {
             foreach ($tokens as $token) {
                 DB::table('oauth_refresh_tokens')->where('access_token_id', $token->id)->delete();
             }
-            DB::table('oauth_access_tokens')->where('user_id', $user->id)->delete();
+            DB::table('oauth_access_tokens')->where('user_id', $this->user->id)->delete();
         }
+    }
 
-        return response([
-            'notification' => [
-                'msg' => ['Auth' => 'Role ' . $role->name . ' assigned to ' . $user->name . ' successfully!'],
-                'type' => 'success'
-            ]
-        ]);
+    public function removeRoles(User $user = null)
+    {
+        $this->user = $user ? $user : $this->user;
+        if ($this->user->roles) {
+            foreach ($this->user->roles as $role) {
+                $this->user->removeRole($role->name);
+            }
+        }
     }
 }

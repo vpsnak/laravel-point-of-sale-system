@@ -252,7 +252,6 @@ export default {
   data() {
     return {
       loading: false,
-      defaultValues: {},
       regions: [],
       countries: [],
       formFields: {
@@ -277,7 +276,6 @@ export default {
   mounted() {
     this.getAllRegions();
     this.getAllCountries();
-    this.defaultValues = { ...this.formFields };
     if (this.$props.model) {
       this.formFields = {
         ...this.$props.model

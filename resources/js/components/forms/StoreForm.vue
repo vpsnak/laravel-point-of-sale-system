@@ -146,7 +146,6 @@ export default {
       valid: true,
       taxes: [],
       companies: [],
-      defaultValues: {},
       formFields: {
         name: null,
         phone: null,
@@ -166,7 +165,6 @@ export default {
   mounted() {
     this.getAllTaxes();
     this.getAllCompanies();
-    this.defaultValues = { ...this.formFields };
     if (this.$props.model) {
       this.formFields = {
         ...this.$props.model

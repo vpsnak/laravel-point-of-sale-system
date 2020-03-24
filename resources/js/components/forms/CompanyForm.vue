@@ -55,7 +55,6 @@ export default {
   data() {
     return {
       loading: false,
-      defaultValues: {},
       formFields: {
         name: null,
         tax_number: null,
@@ -64,7 +63,6 @@ export default {
     };
   },
   mounted() {
-    this.defaultValues = { ...this.formFields };
     if (this.$props.model) {
       this.formFields = {
         ...this.$props.model

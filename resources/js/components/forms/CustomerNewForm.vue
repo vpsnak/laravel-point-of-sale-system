@@ -302,7 +302,6 @@ export default {
       syncName: true,
       countries: [],
       regions: [],
-      defaultValues: {},
       formFields: {
         first_name: null,
         last_name: null,
@@ -344,7 +343,6 @@ export default {
     }).then(response => {
       this.countries = response;
     });
-    this.defaultValues = { ...this.formFields };
   },
   computed: {
     firstName: {

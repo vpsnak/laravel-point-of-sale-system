@@ -126,7 +126,6 @@ export default {
       product_checkbox: false,
       order_checkbox: false,
       loading: false,
-      defaultValues: {},
       formFields: {
         title: null,
         content: null,
@@ -138,7 +137,6 @@ export default {
   mounted() {
     this.getAllProducts();
     this.getAllOrders();
-    this.defaultValues = { ...this.formFields };
     if (this.$props.model) {
       this.formFields = {
         ...this.$props.model

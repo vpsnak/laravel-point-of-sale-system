@@ -658,12 +658,12 @@ class CountrySeeder extends Seeder
                 'iso3_code' => 'LKA'
             ],
             [
-                'name' => '',
+                'name' => 'Liberia',
                 'iso2_code' => 'LR',
                 'iso3_code' => 'LBR'
             ],
             [
-                'name' => 'Liberia',
+                'name' => 'Lesotho',
                 'iso2_code' => 'LS',
                 'iso3_code' => 'LSO'
             ],

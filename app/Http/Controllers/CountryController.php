@@ -8,7 +8,7 @@ class CountryController extends Controller
 {
     public function all()
     {
-        return response(Country::with('regions')->get());
+        return response(Country::with('regions')->orderBy('name', 'asc')->get());
     }
 
     public function regions(Country $model)

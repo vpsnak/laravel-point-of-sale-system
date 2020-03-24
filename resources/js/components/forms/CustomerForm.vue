@@ -180,7 +180,6 @@ export default {
   data() {
     return {
       loading: false,
-      defaultValues: {},
       formFields: {
         first_name: null,
         last_name: null,
@@ -196,7 +195,6 @@ export default {
     };
   },
   mounted() {
-    this.defaultValues = { ...this.formFields };
     if (this.$props.model) {
       this.formFields = {
         ...this.$props.model
