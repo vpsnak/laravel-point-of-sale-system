@@ -2,7 +2,7 @@
   <v-container>
     <ValidationObserver ref="inStorePickupValidation">
       <v-row align="center" justify="space-between">
-        <v-col :cols="10">
+        <v-col :cols="$props.readonly ? 12 : 10">
           <ValidationProvider
             rules="required"
             v-slot="{ errors }"
@@ -23,7 +23,7 @@
           </ValidationProvider>
         </v-col>
 
-        <v-col :cols="1">
+        <v-col :cols="1" v-if="$props.readonly">
           <v-btn
             icon
             @click="storePickupDialog(selected_store_pickup)"
@@ -35,7 +35,7 @@
           </v-btn>
         </v-col>
 
-        <v-col :cols="1">
+        <v-col :cols="1" v-if="$props.readonly">
           <v-btn icon @click="storePickupDialog()">
             <v-icon>
               mdi-plus
@@ -136,6 +136,10 @@ export default {
     this.getStores();
     this.validate();
     this.initEvents();
+
+    this.delivery_amount = this.parsePrice(this.delivery_fees_price).toFormat(
+      "0.00"
+    );
 
     if (this.order_delivery_store_pickup) {
       this.storePickup = this.order_delivery_store_pickup;
