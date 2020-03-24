@@ -45,8 +45,10 @@ export default {
     user: {
       deep: true,
       immediate: true,
-      handler() {
-        this.applyUserTheme();
+      handler(value) {
+        if (value) {
+          this.applyUserTheme();
+        }
       }
     }
   },
@@ -60,7 +62,7 @@ export default {
           key: "theme_dark"
         });
 
-        if (theme_dark.value === "0") {
+        if (_.has(theme_dark, "value") && this.theme_dark === "0") {
           this.$vuetify.theme.dark = false;
         } else {
           this.$vuetify.theme.dark = true;

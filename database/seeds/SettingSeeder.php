@@ -32,7 +32,7 @@ class SettingSeeder extends Seeder
                 'key' => 'theme_dark',
                 'value' => null,
                 'data' => null,
-                'user_id' => 1,
+                'user_id' => 3,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
@@ -40,7 +40,7 @@ class SettingSeeder extends Seeder
                 'key' => 'theme_dark',
                 'value' => null,
                 'data' => null,
-                'user_id' => 1,
+                'user_id' => 4,
                 'created_at' => now(),
                 'updated_at' => now()
             ],
