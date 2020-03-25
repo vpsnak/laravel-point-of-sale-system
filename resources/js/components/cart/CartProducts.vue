@@ -20,9 +20,9 @@
                     <v-spacer />
                     <span class="mx-1">
                       Price:
-                      <i :class="productPrice(product).class">
+                      <i :class="parseProductPrice(product).class">
                         <b>
-                          {{ productPrice(product).label }}
+                          {{ parseProductPrice(product).label }}
                         </b>
                       </i>
                     </span>
@@ -223,11 +223,11 @@ export default {
     ]),
     ...mapActions("cart", ["removeProduct"]),
 
-    productPrice() {
+    productPrice(product) {
       if (product.qty > 0) {
-        return parsePrice(product.price).multiply(product.qty);
+        return this.parsePrice(product.price).multiply(product.qty);
       } else {
-        return parsePrice(product.price).multiply(0);
+        return this.parsePrice(product.price).multiply(0);
       }
     },
     editPriceHint(index) {
@@ -237,7 +237,7 @@ export default {
         return `${_.repeat("\xa0", 15)}\n${_.repeat("\xa0", 18)}`;
       }
     },
-    productPrice(product) {
+    parseProductPrice(product) {
       const label = this.calcProductDiscount(product);
       const qty = product.qty ? Number.parseInt(product.qty) : 0;
       const priceBeforeDiscount = this.parsePrice(product.price).multiply(qty);

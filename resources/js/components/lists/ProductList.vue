@@ -84,7 +84,7 @@
     </v-card-text>
     <div v-if="products.length">
       <v-container style="max-height:61vh;" class="overflow-y-auto fill-height">
-        <v-row justify="center" align="center">
+        <v-row>
           <v-col
             v-for="product in products"
             :key="product.id"
