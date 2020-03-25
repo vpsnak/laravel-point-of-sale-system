@@ -77,23 +77,23 @@
             ></v-text-field>
           </ValidationProvider>
         </v-col>
-        <v-col :cols="12">
+        <v-col :cols="12" v-if="action === 'change'">
           <v-checkbox label="Deauthorize" v-model="formFields.deauth">
           </v-checkbox>
         </v-col>
       </v-row>
     </v-container>
     <v-container>
-      <v-row>
-        <v-col cols="12" align="center" justify="center">
-          <v-btn
-            class="mr-4 mt-2"
-            type="submit"
-            :loading="loading"
-            :disabled="invalid || disableSubmit"
-            >submit
-          </v-btn>
-        </v-col>
+      <v-row align="center" justify="center">
+        <v-btn
+          class="mt-2"
+          type="submit"
+          color="primary"
+          outlined
+          :loading="loading"
+          :disabled="invalid || disableSubmit"
+          >submit
+        </v-btn>
       </v-row>
     </v-container>
   </ValidationObserver>

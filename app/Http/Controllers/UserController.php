@@ -137,7 +137,7 @@ class UserController extends Controller
             $this->logout($model, true, $msg);
 
             return response(['notification' => [
-                'msg' => "User {$model->name} has been signed out successfully!",
+                'msg' => "User {$model->name} deauthorized successfully!",
                 'type' => 'success'
             ]]);
         } else {
