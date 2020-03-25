@@ -37,9 +37,7 @@ export default {
       deep: true,
       immediate: true,
       handler(value) {
-        if (value) {
-          this.applyUserTheme();
-        }
+        this.applyUserTheme();
       }
     }
   },
@@ -48,12 +46,12 @@ export default {
     ...mapMutations(["logout"]),
 
     applyUserTheme() {
-      if (this.auth && _.has(this.user, "settings")) {
+      if (_.has(this.user, "settings")) {
         const theme_dark = _.find(this.user.settings, {
           key: "theme_dark"
         });
 
-        if (_.has(theme_dark, "value") && this.theme_dark === "0") {
+        if (_.has(theme_dark, "value") && theme_dark.value === "0") {
           this.$vuetify.theme.dark = false;
         } else {
           this.$vuetify.theme.dark = true;

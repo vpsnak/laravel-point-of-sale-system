@@ -34,7 +34,7 @@ class Setting extends Model
     public static function createUserDefaultSettings(int $user_id)
     {
         Setting::create([
-            'key' => 'dark_mode',
+            'key' => 'theme_dark',
             'value' => false,
             'user_id' => $user_id
         ]);
