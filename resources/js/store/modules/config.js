@@ -203,6 +203,12 @@ const actions = {
               });
             }
 
+            if (_.has(e, "actions")) {
+              e.actions.forEach(action => {
+                context.dispatch(action.name, action.data, action.root);
+              });
+            }
+
             if (_.has(e, "notification")) {
               context.commit("setNotification", e.notification, {
                 root: true

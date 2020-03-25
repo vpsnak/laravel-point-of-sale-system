@@ -63,6 +63,7 @@ export default new Vuex.Store({
     },
     logout(state) {
       if (_.has(state.user, "id")) {
+        console.log(state);
         state.config.echo.leave(`user.${state.user.id}`);
       }
 
@@ -87,6 +88,13 @@ export default new Vuex.Store({
     },
     setCashRegister(state, cashRegister) {
       state.cashRegister = cashRegister;
+
+      if (
+        !cashRegister &&
+        ["sale", "orders"].indexOf(router.currentRoute.name) !== -1
+      ) {
+        router.replace({ name: "dashboard" });
+      }
     },
     setUser(state, user) {
       if (user) {
@@ -191,17 +199,15 @@ export default new Vuex.Store({
         context
           .dispatch("requests/request", payload)
           .then(response => {
-            if (["sale", "orders"].indexOf(router.currentRoute.name) !== -1) {
-              router.replace({ name: "dashboard" });
-            }
-
-            context.commit("setCashRegister", null);
-            context.commit("cart/setTaxPercentage", null);
-
-            resolve(true);
+            resolve(response);
           })
           .catch(error => {
             reject(error);
+          })
+          .finally(() => {
+            context.commit("setCashRegister", null);
+            context.commit("menu/setStoreName", null);
+            context.commit("cart/setTaxPercentage", null);
           });
       });
     },
@@ -212,10 +218,6 @@ export default new Vuex.Store({
         context
           .dispatch("requests/request", payload)
           .then(response => {
-            if (["sale", "orders"].indexOf(router.currentRoute.name) !== -1) {
-              router.push({ name: "dashboard" });
-            }
-
             context.commit("setCashRegister", null);
             context.commit("menu/setStoreName", null);
 

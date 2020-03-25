@@ -2,9 +2,9 @@
   <v-app id="app">
     <notification />
 
-    <interactiveDialog v-if="showComponents"></interactiveDialog>
+    <interactiveDialog />
 
-    <checkoutDialog v-if="showComponents && checkoutDialog" />
+    <checkoutDialog v-if="checkoutDialog" />
 
     <transition name="fade" mode="out-in">
       <v-content>
@@ -21,24 +21,15 @@ import { mapGetters, mapMutations, mapState } from "vuex";
 
 export default {
   created() {
-    this.applyUserTheme();
     if (this.auth && this.app_load <= 100) {
       this.$router.replace({ name: "landingPage" });
     }
   },
   computed: {
-    ...mapGetters(["auth", "role"]),
+    ...mapGetters(["auth"]),
     ...mapState(["user"]),
     ...mapState("config", ["app_load"]),
-    ...mapState("cart", ["checkoutDialog"]),
-
-    showComponents() {
-      if (this.app_load > 100 && this.auth) {
-        return true;
-      } else {
-        return false;
-      }
-    }
+    ...mapState("cart", ["checkoutDialog"])
   },
 
   watch: {

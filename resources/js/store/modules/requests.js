@@ -86,7 +86,7 @@ const actions = {
             error.response.status === 401 &&
             router.currentRoute.name !== "login"
           ) {
-            context.commit("logout", null, { root: true });
+            context.dispatch("logout", null, { root: true });
           }
 
           reject(error_response);

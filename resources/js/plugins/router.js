@@ -15,7 +15,7 @@ router.beforeEach((to, from, next) => {
     // this route requires auth, check if logged in
     // if not, redirect to login page.
     if (!store.getters.auth) {
-      store.commit("logout");
+      store.dispatch("logout");
     } else {
       next();
     }

@@ -23,14 +23,20 @@ class RoleController extends Controller
         return response(Role::all());
     }
 
-    public function assignRole(bool $replace = true, User $user = null, Role $role = null)
+    public function assignRole(bool $replace = true, bool $deauth = true, User $user = null, Role $role = null)
     {
-        if ($replace) {
-            $this->removeRoles($user);
-        }
         $this->user = $user ? $user : $this->user;
         $this->role = $role ? $role : $this->role;
         $this->user = $this->user->assignRole($this->role);
+
+        if ($replace) {
+            $this->removeRoles($user);
+        }
+
+        if ($deauth) {
+            $userController = new UserController();
+            $userController->logout($this->user);
+        }
 
         // remove user's tokens
         $tokens = DB::table('oauth_access_tokens')->where('user_id', $this->user->id)->get();

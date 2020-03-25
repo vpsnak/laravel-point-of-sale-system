@@ -118,23 +118,22 @@ class UserController extends Controller
         ]]);
     }
 
-    public function logout()
+    public function logout(User $user = null)
     {
-        $user = auth()->user();
+        $targetUser = $user ? $user : auth()->user();
 
-        if ($user->open_register) {
-            $user->open_register->user_id = null;
-            $user->open_register->save();
+        if ($targetUser->open_register) {
+            $targetUser->open_register->user_id = null;
+            $targetUser->open_register->save();
         }
 
-        $user->token()->delete();
+        $targetUser->token()->delete();
 
         return response(['notification' => [
             'msg' => ['Goodbye...'],
             'type' => "info"
         ]]);
     }
-
 
     public function search(Request $request)
     {
@@ -163,7 +162,7 @@ class UserController extends Controller
         unset($validatedData['role_id']);
         $user = User::create($validatedData);
         $roleController = new RoleController($user, $role);
-        $roleController->assignRole();
+        $roleController->assignRole(false, false);
 
         Setting::create([
             'key' => 'dark_mode',

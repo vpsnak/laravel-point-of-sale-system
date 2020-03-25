@@ -89,10 +89,10 @@ class User extends Authenticatable
         return $this->hasMany(Transaction::class);
     }
 
-    // public function orderStatus()
-    // {
-    //     return $this->hasMany(OrderStatus::class);
-    // }
+    public function orderStatuses()
+    {
+        return $this->hasMany(OrderStatus::class);
+    }
 
     public function openRegister()
     {

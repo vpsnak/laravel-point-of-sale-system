@@ -50,22 +50,25 @@ class CashRegisterLogin implements ShouldBroadcast
         $cashReg = $this->cashRegisterLogs->cash_register()->first();
         $mutations = [
             [
-                'name' => 'setStore',
+                'name' => 'setCashRegister',
                 'data' => null,
                 'root' => ['root' => true],
             ], [
-                'name' => 'setCashRegister',
+                'name' => 'menu/setStoreName',
+                'data' => null,
+                'root' => ['root' => true],
+            ], [
+                'name' => 'cart/setTaxPercentage',
                 'data' => null,
                 'root' => ['root' => true],
             ]
         ];
 
-
         return [
             'mutations' => $mutations,
             'notification' => [
                 'msg' => "<b>{$this->loggedUser->name}</b> logged into the cash register
-                    <br>Your session with cash register <b>{$cashReg->name}</b> terminated",
+                    <br>Your session with cash register <b>{$cashReg->name}</b> has been terminated",
                 'type' => 'warning'
             ]
         ];
