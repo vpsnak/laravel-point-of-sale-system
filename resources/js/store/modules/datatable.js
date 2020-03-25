@@ -131,7 +131,7 @@ const state = {
       { text: "Tax", value: "tax.name" },
       { text: "Company", value: "company.name" },
       { text: "Active", value: "active" },
-      { text: "Created by", value: "created_by" },
+      { text: "Created by", value: "created_by_name" },
       { text: "Actions", value: "actions" }
     ],
     taxes: [

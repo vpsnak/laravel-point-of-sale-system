@@ -124,7 +124,7 @@ export default {
       this.$store.commit("cart/addProduct", this.giftCard);
       this.$emit("submit", {
         notification: {
-          msg: this.giftCard.name + " added to cart!",
+          msg: this.giftCard.name + " added to cart",
           type: "success"
         }
       });

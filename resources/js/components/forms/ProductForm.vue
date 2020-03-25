@@ -15,7 +15,6 @@
           v-model="formFields.name"
           label="Name"
           :error-messages="errors"
-          :color="valid ? 'primary' : ''"
         ></v-text-field>
       </ValidationProvider>
       <ValidationProvider
@@ -28,7 +27,6 @@
           v-model="formFields.sku"
           label="Sku"
           :error-messages="errors"
-          :color="valid ? 'primary' : ''"
         ></v-text-field>
       </ValidationProvider>
       <ValidationProvider rules="max:100" v-slot="{ errors }" name="Url">
@@ -37,7 +35,6 @@
           v-model="formFields.url"
           label="Url"
           :error-messages="errors"
-          :color="valid ? 'primary' : ''"
         ></v-text-field>
       </ValidationProvider>
       <ValidationProvider rules="max:100" v-slot="{ errors }" name="Photo url">
@@ -46,7 +43,6 @@
           v-model="formFields.photo_url"
           label="Photo url"
           :error-messages="errors"
-          :color="valid ? 'primary' : ''"
         ></v-text-field>
       </ValidationProvider>
 
@@ -60,7 +56,6 @@
           v-model="formFields.description"
           label="Description"
           :error-messages="errors"
-          :color="valid ? 'primary' : ''"
           :disabled="loading"
         ></v-text-field>
       </ValidationProvider>
@@ -73,7 +68,6 @@
           label="Price"
           prefix="$"
           :error-messages="errors"
-          :color="valid ? 'primary' : ''"
           :disabled="loading"
         ></v-text-field>
       </ValidationProvider>
@@ -122,7 +116,6 @@
                 :error-messages="errors"
                 v-model="store.pivot.qty"
                 required
-                :color="valid ? 'primary' : ''"
                 :disabled="loading"
               ></v-text-field>
             </ValidationProvider>

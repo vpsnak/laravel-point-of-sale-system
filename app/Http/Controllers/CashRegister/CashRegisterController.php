@@ -31,7 +31,7 @@ class CashRegisterController extends Controller
         $cashRegister = CashRegister::create($validatedData);
 
         return response(['notification' => [
-            'msg' => ["Cash register {$cashRegister->name} created successfully!"],
+            'msg' => ["Cash register {$cashRegister->name} created successfully"],
             'type' => 'success'
         ]]);
     }
@@ -53,7 +53,7 @@ class CashRegisterController extends Controller
         $cashRegister->save();
 
         return response(['notification' => [
-            'msg' => ["Cash register {$cashRegister->name} updated successfully!"],
+            'msg' => ["Cash register {$cashRegister->name} updated successfully"],
             'type' => 'success'
         ]]);
     }

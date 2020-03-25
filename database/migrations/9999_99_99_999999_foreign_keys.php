@@ -69,7 +69,8 @@ class ForeignKeys extends Migration
 
         Schema::table('stores', function (Blueprint $table) {
             $table->foreign('tax_id')->references('id')->on('taxes')->onDelete('restrict');
-            $table->foreign('company_id')->references('id')->on('companies');
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('restrict');
+            $table->foreign('created_by_id')->references('id')->on('users')->onDelete('restrict');
         });
 
         Schema::table('taxes', function (Blueprint $table) {
@@ -188,6 +189,7 @@ class ForeignKeys extends Migration
         Schema::table('stores', function (Blueprint $table) {
             $table->dropForeign(['tax_id']);
             $table->dropForeign(['company_id']);
+            $table->dropForeign(['created_by_id']);
         });
 
         Schema::table('taxes', function (Blueprint $table) {

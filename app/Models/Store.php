@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Store extends Model
 {
-    public $timestamps = false;
+    protected $appends = [
+        'created_by_name'
+    ];
 
     protected $with = [
         'company',
@@ -25,13 +27,24 @@ class Store extends Model
         'is_phone_center',
         'company_id',
         'tax_id',
-        'default_currency'
+        'default_currency',
+        'created_by_id'
     ];
 
     protected $casts = [
         'is_phone_center' => 'boolean',
         'active' => 'boolean'
     ];
+
+    public function getCreatedByNameAttribute()
+    {
+        return $this->createdBy->name ?? null;
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function products()
     {

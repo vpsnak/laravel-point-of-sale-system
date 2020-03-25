@@ -51,7 +51,7 @@ class AddressController extends Controller
             $address = Address::create($this->address);
 
             return response(['address' => $address->load('region'), 'notification' => [
-                'msg' => ["Address successfully created!"],
+                'msg' => ["Address successfully created"],
                 'type' => 'success'
             ]], 201);
         }

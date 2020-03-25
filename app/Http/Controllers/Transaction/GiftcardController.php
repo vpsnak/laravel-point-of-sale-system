@@ -58,7 +58,7 @@ class GiftcardController extends Controller
             Giftcard::create($validatedData);
         }
         return response(['notification' => [
-            'msg' => ["Giftcard created successfully!"],
+            'msg' => ["Giftcard created successfully"],
             'type' => 'success'
         ]]);
     }
@@ -80,7 +80,7 @@ class GiftcardController extends Controller
         $giftcard->save();
 
         return response(['notification' => [
-            'msg' => ["Gift card {$giftcard->name} updated successfully!"],
+            'msg' => ["Gift card {$giftcard->name} updated successfully"],
             'type' => 'success'
         ]]);
     }

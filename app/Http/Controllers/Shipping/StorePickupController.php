@@ -26,7 +26,7 @@ class StorePickupController extends Controller
         return response([
             'store_pickup' => $storePickup,
             'notification' => [
-                'msg' => ["Store pickup {$storePickup->name} created successfully!"],
+                'msg' => ["Store pickup {$storePickup->name} created successfully"],
                 'type' => 'success'
             ]
         ]);
@@ -51,7 +51,7 @@ class StorePickupController extends Controller
         $storePickup->update($validatedData);
 
         return response(['notification' => [
-            "msg" => "Store pickup: {$storePickup->name} successfully updated!",
+            "msg" => "Store pickup: {$storePickup->name} successfully updated",
             "type" => "success"
         ]]);
     }

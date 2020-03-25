@@ -70,7 +70,7 @@ const actions = {
               "setNotification",
               {
                 msg: [
-                  "Unhandled Exception!",
+                  "Unhandled Exception",
                   `Message: ${error_response.message}<br>${error_response.file}<br>line: ${error_response.line}`
                 ],
                 type: "error"

@@ -24,6 +24,9 @@ class StoreSeeder extends Seeder
                 'is_phone_center' => false,
                 'default_currency' => 'USD',
                 'tax_id' => 1,
+                'created_by_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now()
             ],
             [
                 'company_id' => 2,
@@ -36,6 +39,9 @@ class StoreSeeder extends Seeder
                 'is_phone_center' => false,
                 'default_currency' => 'USD',
                 'tax_id' => 1,
+                'created_by_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now()
             ],
             [
                 'company_id' => 2,
@@ -48,6 +54,9 @@ class StoreSeeder extends Seeder
                 'is_phone_center' => true,
                 'default_currency' => 'USD',
                 'tax_id' => 1,
+                'created_by_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now()
             ],
             [
                 'company_id' => 3,
@@ -60,6 +69,9 @@ class StoreSeeder extends Seeder
                 'is_phone_center' => false,
                 'default_currency' => 'USD',
                 'tax_id' => 1,
+                'created_by_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now()
             ],
 
             // store using demo elavon acc
@@ -74,6 +86,9 @@ class StoreSeeder extends Seeder
                 'is_phone_center' => false,
                 'default_currency' => 'USD',
                 'tax_id' => 1,
+                'created_by_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now()
             ],
         ]);
     }

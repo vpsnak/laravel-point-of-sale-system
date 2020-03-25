@@ -49,7 +49,7 @@ class ProductController extends Controller
         }
 
         return response(['notification' => [
-            'msg' => ["Product {$product->name} created successfully!"],
+            'msg' => ["Product {$product->name} created successfully"],
             'type' => 'success'
         ]]);
     }
@@ -73,7 +73,7 @@ class ProductController extends Controller
 
         $validatedExtra = $request->validate([
             'categories' => 'nullable|array',
-            'stores' => 'required|array'
+            'stores' => 'nullable|array'
         ]);
 
         $product = Product::findOrFail($validatedData['id']);
@@ -91,7 +91,7 @@ class ProductController extends Controller
         $product->update($validatedData);
 
         return response(['notification' => [
-            'msg' => ["Product {$product->name} updated successfully!"],
+            'msg' => ["Product {$product->name} updated successfully"],
             'type' => 'success'
         ]]);
     }

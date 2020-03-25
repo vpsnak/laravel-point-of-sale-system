@@ -29,7 +29,7 @@ class CategoryController extends Controller
         $category = Category::create($validatedData);
 
         return response(['notification' => [
-            'msg' => ["Category {$category->name} created successfully!"],
+            'msg' => ["Category {$category->name} created successfully"],
             'type' => 'success'
         ]], 201);
     }
@@ -47,7 +47,7 @@ class CategoryController extends Controller
         $category->save();
 
         return response(['notification' => [
-            'msg' => ["Category {$category->name} updated successfully!"],
+            'msg' => ["Category {$category->name} updated successfully"],
             'type' => 'success'
         ]]);
     }

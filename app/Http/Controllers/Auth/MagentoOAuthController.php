@@ -85,7 +85,7 @@ class MagentoOAuthController extends Controller
                     );
                     return response()->json([
                         'status' => 'active',
-                        'message' => "Authenticated!"
+                        'message' => "Authenticated"
                     ]);
                 }
             }

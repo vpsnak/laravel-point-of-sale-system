@@ -28,14 +28,15 @@ class StoreController extends Controller
             'postcode' => 'required|string',
             'city' => 'required|string',
             'active' => 'required|boolean',
-            'default_currency' => 'required|string|exists:countries,iso3_code',
+            'default_currency' => 'required|string|size:3',
             'is_phone_center' => 'required|boolean'
 
         ]);
+        $validatedData['created_by_id'] = auth()->user();
         $store = Store::create($validatedData);
 
         return response(['notification' => [
-            'msg' => ["Store {$store->name} created successfully!"],
+            'msg' => ["Store {$store->name} created successfully"],
             'type' => 'success'
         ]]);
     }
@@ -52,17 +53,16 @@ class StoreController extends Controller
             'postcode' => 'required|string',
             'city' => 'required|string',
             'active' => 'required|boolean',
-            'default_currency' => 'required|string|exists:countries,iso3_code',
+            'default_currency' => 'required|string|size:3',
             'is_phone_center' => 'required|boolean'
         ]);
         $validatedData['user_id'] = auth()->user()->id;
 
         $store = Store::findOrFail($validatedData['id']);
-        $store->fill($validatedData);
-        $store->save();
+        $store->update($validatedData);
 
         return response(['notification' => [
-            'msg' => ["Store {$store->name} updated successfully!"],
+            'msg' => ["Store {$store->name} updated successfully"],
             'type' => 'success'
         ]]);
     }

@@ -53,7 +53,7 @@ class UserController extends Controller
 
         return response([
             'notification' => [
-                'msg' => ["Welcome <b>{$user->name}</b>!"],
+                'msg' => ["Welcome <b>{$user->name}</b>"],
                 'type' => 'info'
             ],
             'user' => $user,
@@ -137,7 +137,7 @@ class UserController extends Controller
             $this->logout($model, true, $msg);
 
             return response(['notification' => [
-                'msg' => "User {$model->name} deauthorized successfully!",
+                'msg' => "User {$model->name} has been deauthorized",
                 'type' => 'success'
             ]]);
         } else {
@@ -147,7 +147,11 @@ class UserController extends Controller
 
     public function logout(User $user = null, bool $deauthEvent = false, string $deauthMsg = null)
     {
-        $this->user = $user ? $user : auth()->user();
+        if ($user) {
+            $this->user = $user;
+        } else if (!$this->user) {
+            $this->user = auth()->user();
+        }
 
         if ($this->user->open_register) {
             $this->user->open_register->user_id = null;
@@ -206,7 +210,7 @@ class UserController extends Controller
         Setting::createUserDefaultSettings($user->id);
 
         return response(['notification' => [
-            'msg' => ["User {$user->name} created successfully!"],
+            'msg' => ["User {$user->name} created successfully"],
             'type' => 'success'
         ]], 201);
     }
@@ -224,18 +228,19 @@ class UserController extends Controller
         ]);
         $role = Role::findOrFail($validatedData['role_id']);
         unset($validatedData['role_id']);
-        $user = User::findOrFail($validatedData['id']);
-        $user->update($validatedData);
+        $this->user = User::findOrFail($validatedData['id']);
+        $this->user->update($validatedData);
 
-        if (!$user->role || $user->role->id !== $role->id) {
-            $roleController = new RoleController($user, $role);
+        if (!$this->user->role || $this->user->role->id !== $role->id) {
+            $roleController = new RoleController($this->user, $role);
             $roleController->assignRole();
-        } else if (!$user->active) {
-            $this->logout();
+        } else if (!$this->user->active) {
+            $msg = 'Your account has been deactivated';
+            $this->logout(null, true, $msg);
         }
 
         return response(['notification' => [
-            'msg' => ["User {$user->name} updated successfully!"],
+            'msg' => ["User {$this->user->name} updated successfully"],
             'type' => 'success'
         ]]);
     }

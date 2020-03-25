@@ -68,7 +68,7 @@ class CashRegisterLogsController extends Controller
 
             return response([
                 'notification' => [
-                    'msg' => ["Logged out successfully!"],
+                    'msg' => ["Logged out successfully"],
                     'type' => 'success',
                 ]
             ]);

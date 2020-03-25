@@ -26,6 +26,9 @@ class CreateStoresTable extends Migration
             $table->string('default_currency', 3);
             $table->foreignId('company_id');
             $table->foreignId('tax_id');
+            $table->foreignId('created_by_id');
+
+            $table->timestampsTz();
         });
     }
 

@@ -31,7 +31,7 @@ class CouponController extends Controller
         $coupon = Coupon::create($validatedData);
 
         return response(['notification' => [
-            'msg' => ["Coupon {$coupon->name} created successfully!"],
+            'msg' => ["Coupon {$coupon->name} created successfully"],
             'type' => 'success'
         ]]);
     }
@@ -54,7 +54,7 @@ class CouponController extends Controller
         $coupon->save();
 
         return response(['notification' => [
-            'msg' => ["Coupon {$coupon->name} updated successfully!"],
+            'msg' => ["Coupon {$coupon->name} updated successfully"],
             'type' => 'success'
         ]]);
     }

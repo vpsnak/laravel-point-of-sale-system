@@ -27,7 +27,7 @@ class CompanyController extends Controller
         $company = Company::create($validatedData);
 
         return response(['notification' => [
-            'msg' => ["Company {$company->name} created successfully!"],
+            'msg' => ["Company {$company->name} created successfully"],
             'type' => 'success'
         ]], 201);
     }
@@ -45,7 +45,7 @@ class CompanyController extends Controller
         $company->save();
 
         return response(['notification' => [
-            'msg' => ["Company {$company->name} updated successfully!"],
+            'msg' => ["Company {$company->name} updated successfully"],
             'type' => 'success'
         ]]);
     }

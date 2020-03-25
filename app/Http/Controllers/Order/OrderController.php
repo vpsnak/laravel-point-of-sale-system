@@ -305,7 +305,7 @@ class OrderController extends Controller
 
         return response([
             'notification' => [
-                'msg' => ["Order #{$model->id} successfully canceled!"],
+                'msg' => ["Order #{$model->id} successfully canceled"],
                 'type' => 'success'
             ],
             'data' => $model

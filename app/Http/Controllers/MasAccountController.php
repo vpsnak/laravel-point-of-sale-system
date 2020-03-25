@@ -77,7 +77,7 @@ class MasAccountController extends Controller
 
         return response([
             'notification' => [
-                'msg' => ["Default recipient account for mas env: {$mas_account->environment} updated successfully!"],
+                'msg' => ["Default recipient account for mas env: {$mas_account->environment} updated successfully"],
                 'type' => 'success'
             ]
         ]);
@@ -117,7 +117,7 @@ class MasAccountController extends Controller
 
         return response([
             'notification' => [
-                'msg' => ["Default online partnet account for mas env: {$mas_account->environment} updated successfully!"],
+                'msg' => ["Default online partnet account for mas env: {$mas_account->environment} updated successfully"],
                 'type' => 'success'
             ]
         ]);

@@ -49,7 +49,7 @@ class CustomerController extends Controller
         $customer->save();
 
         return response(['notification' => [
-            'msg' => ["Customer {$customer->name} updated successfully!"],
+            'msg' => ["Customer {$customer->name} updated successfully"],
             'type' => 'success'
         ]]);
     }

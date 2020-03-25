@@ -32,7 +32,7 @@ class CardController extends Controller
         $card = Card::create($validatedData);
 
         return response(['notification' => [
-            'msg' => ["Card {$card->name} created successfully!"],
+            'msg' => ["Card {$card->name} created successfully"],
             'type' => 'success'
         ]], 201);
     }
@@ -52,7 +52,7 @@ class CardController extends Controller
         $card->save();
 
         return response(['notification' => [
-            'msg' => ["Card {$card->name} updated successfully!"],
+            'msg' => ["Card {$card->name} updated successfully"],
             'type' => 'success'
         ]]);
     }

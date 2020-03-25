@@ -79,7 +79,7 @@ export default {
       this.$store.commit("cart/addProduct", this.dummyProduct);
       this.$emit("submit", {
         notification: {
-          msg: this.dummyProduct.name + " added to cart!",
+          msg: this.dummyProduct.name + " added to cart",
           type: "success"
         }
       });

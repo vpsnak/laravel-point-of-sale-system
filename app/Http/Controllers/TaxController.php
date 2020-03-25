@@ -28,7 +28,7 @@ class TaxController extends Controller
         $tax = Tax::create($validatedData);
 
         return response(['notification' => [
-            'msg' => ["Tax {$tax->name} created successfully!"],
+            'msg' => ["Tax {$tax->name} created successfully"],
             'type' => 'success'
         ]], 201);
     }
@@ -45,7 +45,7 @@ class TaxController extends Controller
         $tax->update($validatedData);
 
         return response(['notification' => [
-            'msg' => ["Tax {$tax->name} updated successfully!"],
+            'msg' => ["Tax {$tax->name} updated successfully"],
             'type' => 'success'
         ]]);
     }
