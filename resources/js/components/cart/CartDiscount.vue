@@ -147,7 +147,9 @@ export default {
       switch (this.discount.type) {
         case "flat":
           if (this.product) {
-            return this.$props.productPrice.toFormat("0.00");
+            return this.$props.productPrice
+              .subtract(this.parsePrice(1))
+              .toFormat("0.00");
           } else {
             let max = this.parsePrice(this.order_total_price);
             if (this.discount.amount) {
@@ -179,7 +181,7 @@ export default {
           const index = _.findIndex(this.productMap, {
             id: this.product.id
           });
-          this.productMap[index].discount_error = !result;
+          this.$set(this.productMap[index], "discount_error", !result);
         } else {
           this.setDiscountError(!result);
         }
