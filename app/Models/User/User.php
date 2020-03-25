@@ -54,9 +54,14 @@ class User extends Authenticatable
         $this->attributes['password'] = Hash::make($value);
     }
 
+    public function getRoleAttribute()
+    {
+        return $this->roles[0] ?? null;
+    }
+
     public function getRoleNameAttribute()
     {
-        return $this->roles[0]->text ?? null;
+        return $this->role->text ?? null;
     }
 
     public static function getRoleNameByIndentifier($identifier)

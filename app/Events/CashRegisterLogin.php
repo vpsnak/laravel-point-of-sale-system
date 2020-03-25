@@ -37,7 +37,7 @@ class CashRegisterLogin implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('user.' . $this->cashRegisterLogs->user_id);
+        return new PrivateChannel("user.{$this->cashRegisterLogs->user_id}");
     }
 
     /**

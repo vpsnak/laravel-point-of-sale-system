@@ -100,7 +100,7 @@ export default {
       "getMasEnv",
       "getMenuItems",
       "initWebSockets",
-      "initPrivateChannels",
+      "initChannels",
       "retrieveCashRegister"
     ]),
 
@@ -119,7 +119,7 @@ export default {
         .then(() => {
           this.loadPercent = 15;
 
-          this.initPrivateChannels()
+          this.initChannels()
             .then(() => {
               this.loadPercent = 15;
             })

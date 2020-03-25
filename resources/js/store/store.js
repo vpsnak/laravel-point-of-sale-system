@@ -63,14 +63,11 @@ export default new Vuex.Store({
     },
     logout(state) {
       if (_.has(state.user, "id")) {
-        console.log(state);
         state.config.echo.leave(`user.${state.user.id}`);
       }
 
       Cookies.remove("user");
       Cookies.remove("token");
-      Cookies.remove("store");
-      Cookies.remove("cash_register");
 
       state.user = null;
       state.token = null;
@@ -83,7 +80,7 @@ export default new Vuex.Store({
       state.menu.side_menu = [];
 
       if (router.currentRoute.name !== "login") {
-        router.push({ name: "login" });
+        router.replace({ name: "login" });
       }
     },
     setCashRegister(state, cashRegister) {

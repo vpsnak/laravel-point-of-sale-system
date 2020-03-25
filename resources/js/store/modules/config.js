@@ -184,10 +184,10 @@ const actions = {
       }
     });
   },
-  initPrivateChannels(context) {
+  initChannels(context) {
     context.state.verbose
       ? context.commit("setInitInfo", {
-          action: "initPrivateChannels",
+          action: "initChannels",
           status: "info",
           message: "LOADING"
         })
@@ -197,28 +197,27 @@ const actions = {
         state.echo
           .private(`user.${context.rootState.user.id}`)
           .listen("CashRegisterLogin", e => {
-            if (_.has(e, "mutations")) {
-              e.mutations.forEach(mutation => {
-                context.commit(mutation.name, mutation.data, mutation.root);
-              });
-            }
+            e.mutations.forEach(mutation => {
+              context.commit(mutation.name, mutation.data, mutation.root);
+            });
 
-            if (_.has(e, "actions")) {
-              e.actions.forEach(action => {
-                context.dispatch(action.name, action.data, action.root);
-              });
-            }
+            context.commit("setNotification", e.notification, {
+              root: true
+            });
+          })
+          .listen("UserDeauth", e => {
+            e.actions.forEach(action => {
+              context.dispatch(action.name, action.data, action.root);
+            });
 
-            if (_.has(e, "notification")) {
-              context.commit("setNotification", e.notification, {
-                root: true
-              });
-            }
+            context.commit("setNotification", e.notification, {
+              root: true
+            });
           });
 
         context.state.verbose
           ? context.commit("setInitInfo", {
-              action: "initPrivateChannels",
+              action: "initChannels",
               status: "success",
               message: "OK"
             })
@@ -226,15 +225,17 @@ const actions = {
 
         resolve(true);
       } catch (error) {
-        context.state.verbose
-          ? context.commit("setInitInfo", {
-              action: "initPrivateChannels",
-              status: "error",
-              message: "FAILED"
-            })
-          : "";
+        if (context.state.verbose) {
+          context.commit("setInitInfo", {
+            action: "initChannels",
+            status: "error",
+            message: "FAILED"
+          });
 
-        reject(error);
+          reject(error);
+        } else {
+          reject();
+        }
       }
     });
   },
@@ -248,7 +249,7 @@ const actions = {
       : "";
 
     return new Promise((resolve, reject) => {
-      let payload = {
+      const payload = {
         method: "get",
         url: "cash-register-logs/retrieve"
       };
@@ -269,15 +270,17 @@ const actions = {
           resolve(response.data);
         })
         .catch(error => {
-          context.state.verbose
-            ? context.commit("setInitInfo", {
-                action: "retrieveCashRegister",
-                status: "error",
-                message: "FAILED"
-              })
-            : "";
+          if (context.state.verbose) {
+            context.commit("setInitInfo", {
+              action: "retrieveCashRegister",
+              status: "error",
+              message: "FAILED"
+            });
 
-          reject(error);
+            reject(error);
+          } else {
+            reject();
+          }
         });
     });
   }

@@ -14,7 +14,23 @@
     </template>
 
     <template v-slot:item.actions="{ item }">
-      <v-tooltip bottom>
+      <v-tooltip bottom v-if="item.id !== user.id">
+        <template v-slot:activator="{ on }">
+          <v-btn
+            small
+            :disabled="data_table.loading"
+            @click.stop="deauthUser(item.id)"
+            class="my-2"
+            v-on="on"
+            icon
+          >
+            <v-icon small>mdi-logout-variant</v-icon>
+          </v-btn>
+        </template>
+        <span> Deauthorize {{ item.name }} </span>
+      </v-tooltip>
+
+      <v-tooltip bottom v-if="item.id !== user.id">
         <template v-slot:activator="{ on }">
           <v-btn
             small
@@ -66,7 +82,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 
 export default {
   mounted() {
@@ -91,7 +107,8 @@ export default {
   },
 
   computed: {
-    ...mapState("datatable", ["data_table"])
+    ...mapState("datatable", ["data_table"]),
+    ...mapState(["user"])
   },
   methods: {
     ...mapMutations("dialog", ["setDialog", "editItem", "viewItem"]),
@@ -100,13 +117,24 @@ export default {
       "setDataTable",
       "resetDataTable"
     ]),
+    ...mapActions("requests", ["request"]),
 
+    deauthUser(id) {
+      this.setLoading(true);
+      const payload = {
+        method: "get",
+        url: `users/${id}/deauth`
+      };
+      this.request(payload).finally(() => {
+        this.setLoading(false);
+      });
+    },
     changePasswordDialog(item) {
       item.action = "change";
       const payload = {
         show: true,
         width: 600,
-        title: `Change password for user: ${item.name}`,
+        title: `Change ${item.name} password`,
         titleCloseBtn: true,
         icon: "mdi-lock-reset",
         component: "passwordForm",

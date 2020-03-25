@@ -37,7 +37,7 @@ Route::post('/users/create', 'UserController@create')->middleware('scope:admin,s
 Route::post('/users/search', 'UserController@search')->middleware('scope:admin,store_manager,cashier');
 Route::post('/users/password', 'UserController@changeUserPwd')->middleware('scope:admin');
 Route::patch('/users/update', 'UserController@update')->middleware('scope:admin,store_manager');
-Route::delete('/users/{model}', 'UserController@delete')->middleware('scope:admin');
+Route::get('/users/{model}/deauth', 'UserController@deauthUser')->middleware('scope:admin');
 
 // transaction
 Route::get('/transactions', 'TransactionController@all')->middleware('scope:admin,store_manager,cashier');

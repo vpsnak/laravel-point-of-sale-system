@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserDeauth;
 use App\Role;
 use App\Setting;
 use App\User;
+use DB;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Str;
 
 class UserController extends Controller
 {
+    private $user;
+
     public function all()
     {
         return response(User::with('roles')->paginate());
@@ -106,33 +110,68 @@ class UserController extends Controller
             'user_id' => 'required|exists:users,id',
             'password' => 'required|string|confirmed',
             'password_confirmation' => 'required|string',
+            'deauth' => 'required|boolean'
         ]);
+        if ($validatedData['user_id'] !== auth()->user()->id) {
+            $user = User::findOrFail($validatedData['user_id']);
+            $user->password = $validatedData['password'];
+            $user->save();
 
-        $user = User::findOrFail($validatedData['user_id']);
-        $user->password = $validatedData['password'];
-        $user->save();
+            if ($validatedData['deauth']) {
+                $this->deauthUser($user);
+            }
 
-        return response(['notification' => [
-            'msg' => ['Password changed successfully!'],
-            'type' => 'success'
-        ]]);
+            return response(['notification' => [
+                'msg' => ['Password changed successfully!'],
+                'type' => 'success'
+            ]]);
+        } else {
+            return response(['errors' => [""]], 422);
+        }
     }
 
-    public function logout(User $user = null)
+    public function deauthUser(User $model)
     {
-        $targetUser = $user ? $user : auth()->user();
+        if ($model->id !== auth()->user()->id) {
+            $msg = 'You\'ve been signed out';
+            $this->logout($model, true, $msg);
 
-        if ($targetUser->open_register) {
-            $targetUser->open_register->user_id = null;
-            $targetUser->open_register->save();
+            return response(['notification' => [
+                'msg' => "User {$model->name} has been signed out successfully!",
+                'type' => 'success'
+            ]]);
+        } else {
+            return response(['errors' => ["You cannot deauth yourself"]], 422);
+        }
+    }
+
+    public function logout(User $user = null, bool $deauthEvent = false, string $deauthMsg = null)
+    {
+        $this->user = $user ? $user : auth()->user();
+
+        if ($this->user->open_register) {
+            $this->user->open_register->user_id = null;
+            $this->user->open_register->save();
         }
 
-        $targetUser->token()->delete();
+        // remove user's tokens
+        $tokens = DB::table('oauth_access_tokens')->where('user_id', $this->user->id)->get();
+        if ($tokens) {
+            foreach ($tokens as $token) {
+                DB::table('oauth_refresh_tokens')->where('access_token_id', $token->id)->delete();
+            }
+            DB::table('oauth_access_tokens')->where('user_id', $this->user->id)->delete();
+        }
 
-        return response(['notification' => [
-            'msg' => ['Goodbye...'],
-            'type' => "info"
-        ]]);
+        if ($deauthEvent) {
+            $msg = $deauthMsg;
+            event(new UserDeauth($this->user, $msg));
+        } else {
+            return response(['notification' => [
+                'msg' => ['Goodbye...'],
+                'type' => "info"
+            ]]);
+        }
     }
 
     public function search(Request $request)
@@ -164,11 +203,7 @@ class UserController extends Controller
         $roleController = new RoleController($user, $role);
         $roleController->assignRole(false, false);
 
-        Setting::create([
-            'key' => 'dark_mode',
-            'value' => false,
-            'user_id' => $user->id
-        ]);
+        Setting::createUserDefaultSettings($user->id);
 
         return response(['notification' => [
             'msg' => ["User {$user->name} created successfully!"],
@@ -191,10 +226,13 @@ class UserController extends Controller
         unset($validatedData['role_id']);
         $user = User::findOrFail($validatedData['id']);
         $user->update($validatedData);
-        $roleController = new RoleController($user, $role);
-        $roleController->assignRole();
 
-        Setting::createUserDefaultSettings($user->id);
+        if (!$user->role || $user->role->id !== $role->id) {
+            $roleController = new RoleController($user, $role);
+            $roleController->assignRole();
+        } else if (!$user->active) {
+            $this->logout();
+        }
 
         return response(['notification' => [
             'msg' => ["User {$user->name} updated successfully!"],

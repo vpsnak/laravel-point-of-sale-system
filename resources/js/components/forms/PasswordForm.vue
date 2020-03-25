@@ -1,78 +1,101 @@
 <template>
-  <ValidationObserver v-slot="{ invalid }">
-    <v-form @submit.prevent="submit">
-      <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
-        <ValidationProvider
+  <ValidationObserver
+    v-slot="{ invalid }"
+    tag="v-form"
+    @submit.prevent="submit"
+  >
+    <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
+      <v-row>
+        <v-col
+          :cols="12"
           v-if="action === 'change_self' || action === 'verify'"
-          rules="required|min:8|max:100"
-          v-slot="{ errors }"
-          name="Password"
         >
-          <v-text-field
-            v-model="formFields.current_password"
-            :append-icon="showCurrentPassword ? 'visibility' : 'visibility_off'"
-            :type="showCurrentPassword ? 'text' : 'password'"
-            :error-messages="errors"
-            label="Password"
-            hint="At least 8 characters"
-            counter
-            @click:append="showCurrentPassword = !showCurrentPassword"
-          ></v-text-field>
-        </ValidationProvider>
-        <ValidationProvider
+          <ValidationProvider
+            rules="required|min:8|max:100"
+            v-slot="{ errors }"
+            name="Password"
+          >
+            <v-text-field
+              v-model="formFields.current_password"
+              :append-icon="
+                showCurrentPassword ? 'visibility' : 'visibility_off'
+              "
+              :type="showCurrentPassword ? 'text' : 'password'"
+              :error-messages="errors"
+              label="Password"
+              hint="At least 8 characters"
+              counter
+              @click:append="showCurrentPassword = !showCurrentPassword"
+            ></v-text-field>
+          </ValidationProvider>
+        </v-col>
+        <v-col
+          :cols="12"
           v-if="action === 'change' || action === 'change_self'"
-          v-slot="{ errors }"
-          rules="required|min:8|max:100"
-          name="New Password"
-          vid="confirmation"
         >
-          <v-text-field
-            v-model="formFields.password"
-            :append-icon="showPassword ? 'visibility' : 'visibility_off'"
-            :type="showPassword ? 'text' : 'password'"
-            :error-messages="errors"
-            name="input-10-1"
-            label="New Password"
-            hint="At least 8 characters"
-            counter
-            @click:append="showPassword = !showPassword"
-          ></v-text-field>
-        </ValidationProvider>
-
-        <ValidationProvider
+          <ValidationProvider
+            v-slot="{ errors }"
+            rules="required|min:8|max:100"
+            name="New Password"
+            vid="confirmation"
+          >
+            <v-text-field
+              v-model="formFields.password"
+              :append-icon="showPassword ? 'visibility' : 'visibility_off'"
+              :type="showPassword ? 'text' : 'password'"
+              :error-messages="errors"
+              name="input-10-1"
+              label="New Password"
+              hint="At least 8 characters"
+              counter
+              @click:append="showPassword = !showPassword"
+            ></v-text-field>
+          </ValidationProvider>
+        </v-col>
+        <v-col
+          :cols="12"
           v-if="action === 'change' || action === 'change_self'"
-          rules="required|min:8|max:100|confirmed:confirmation"
-          v-slot="{ errors }"
-          name="Password Confirmation"
         >
-          <v-text-field
-            v-model="formFields.password_confirmation"
-            :append-icon="
-              showPasswordConfirmation ? 'visibility' : 'visibility_off'
-            "
-            :type="showPasswordConfirmation ? 'text' : 'password'"
-            :error-messages="errors"
-            name="input-10-1"
-            label="Retype the new password"
-            counter
-            @click:append="showPasswordConfirmation = !showPasswordConfirmation"
-          ></v-text-field>
-        </ValidationProvider>
-      </v-container>
-      <v-container>
-        <v-row>
-          <v-col cols="12" align="center" justify="center">
-            <v-btn
-              class="mr-4 mt-2"
-              type="submit"
-              :loading="loading"
-              :disabled="invalid || disableSubmit"
-              >submit</v-btn
-            >
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-form>
+          <ValidationProvider
+            rules="required|min:8|max:100|confirmed:confirmation"
+            v-slot="{ errors }"
+            name="Password Confirmation"
+          >
+            <v-text-field
+              v-model="formFields.password_confirmation"
+              :append-icon="
+                showPasswordConfirmation ? 'visibility' : 'visibility_off'
+              "
+              :type="showPasswordConfirmation ? 'text' : 'password'"
+              :error-messages="errors"
+              name="input-10-1"
+              label="Retype the new password"
+              counter
+              @click:append="
+                showPasswordConfirmation = !showPasswordConfirmation
+              "
+            ></v-text-field>
+          </ValidationProvider>
+        </v-col>
+        <v-col :cols="12">
+          <v-checkbox label="Deauthorize" v-model="formFields.deauth">
+          </v-checkbox>
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-container>
+      <v-row>
+        <v-col cols="12" align="center" justify="center">
+          <v-btn
+            class="mr-4 mt-2"
+            type="submit"
+            :loading="loading"
+            :disabled="invalid || disableSubmit"
+            >submit
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-container>
   </ValidationObserver>
 </template>
 
@@ -97,7 +120,8 @@ export default {
       formFields: {
         current_password: null,
         password: null,
-        password_confirmation: null
+        password_confirmation: null,
+        deauth: false
       }
     };
   },
