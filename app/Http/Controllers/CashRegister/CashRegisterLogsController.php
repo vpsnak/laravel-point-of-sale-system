@@ -88,7 +88,7 @@ class CashRegisterLogsController extends Controller
             return response([
                 'notification' => [
                     'msg' => ["Your open session with cash register: <b>{$cash_register->name}</b> has been restored"],
-                    'type' => 'success'
+                    'type' => 'info'
                 ],
                 'cash_register' => $cash_register,
                 'store_name' => $store->name,
