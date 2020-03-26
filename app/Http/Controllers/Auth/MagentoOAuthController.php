@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Setting;
 use Illuminate\Http\Request;
 use OAuth;
-use OAuthException;
 
 class MagentoOAuthController extends Controller
 {
@@ -89,13 +88,14 @@ class MagentoOAuthController extends Controller
                     ]);
                 }
             }
-        } catch (OAuthException $e) {
-            report($e);
+        } catch (Exception $e) {
             Setting::truncate();
-            return response()->json([
-                'status' => 'exception',
-                'message' => 'There was an error. You can not access data over REST api.'
-            ], $this->oauth_client->getLastResponseInfo()['http_code']);
+            return $e;
+            //     return response()->json([
+            //         'status' => 'exception',
+            //         'message' => 'There was an error. You can not access data over REST api',
+            //         'exception' => $e
+            //     ], $this->oauth_client->getLastResponseInfo()['http_code']);
         }
     }
 
@@ -133,8 +133,8 @@ class MagentoOAuthController extends Controller
             );
             $this->oauth_client->enableDebug();
             $this->oauth_client->setSSLChecks(OAUTH_SSLCHECK_NONE);
-        } catch (OAuthException $e) {
-            report($e);
+        } catch (Exception $e) {
+            return $e;
         }
     }
 }
