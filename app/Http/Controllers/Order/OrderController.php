@@ -51,7 +51,7 @@ class OrderController extends Controller
             'products.*.price' => 'required|array',
             'products.*.price.amount' => 'required|numeric|integer',
             'products.*.qty' => 'required|numeric|min:1|max:500',
-            'products.*.discount' => 'required|array',
+            'products.*.discount' => 'nullable|array',
             'products.*.discount.amount' => 'nullable|numeric|integer',
             'products.*.discount.type' => 'nullable|string|in:none,flat,percentage',
             'products.*.notes' => 'nullable|string',
@@ -134,7 +134,7 @@ class OrderController extends Controller
             'products.*.price' => 'required|array',
             'products.*.price.amount' => 'required|numeric|integer',
             'products.*.qty' => 'required|numeric|min:1|max:500',
-            'products.*.discount' => 'required|array',
+            'products.*.discount' => 'nullable|array',
             'products.*.discount.amount' => 'nullable|numeric|integer',
             'products.*.discount.type' => 'nullable|string|in:none,flat,percentage',
             'products.*.notes' => 'nullable|string',
@@ -171,7 +171,7 @@ class OrderController extends Controller
 
         $submittedStatusId = Status::where('value', 'submitted')->firstOrFail('id');
         $this->order->statuses()->attach($submittedStatusId, ['processed_by_id' => $this->user->id]);
-
+        sleep(1);
         ProcessOrder::dispatchNow($this->order);
 
         return response([
@@ -270,7 +270,7 @@ class OrderController extends Controller
         return $product;
     }
 
-    public function rollbackOrder(Order $model)
+    public function cancelOrder(Order $model)
     {
         foreach ($model->items as $product) {
             if (isset($product['sku'])) {
@@ -295,13 +295,12 @@ class OrderController extends Controller
 
         $results = $this->rollbackPayments($model);
 
-        if (!$results || (is_array($results) && array_key_exists('errors', $results))) {
+        if ((is_array($results) && array_key_exists('errors', $results))) {
             return response(['errors' => $results['errors']], 500);
         }
 
-
-        $model->status = 'canceled';
-        $model->save();
+        $canceledStatusId = Status::where('value', 'canceled')->firstOrFail('id');
+        $model->statuses()->attach($canceledStatusId, ['processed_by_id' => auth()->user()->id]);
 
         return response([
             'notification' => [
@@ -314,25 +313,23 @@ class OrderController extends Controller
 
     public function rollbackPayments(Order $order)
     {
-        // @TODO fix cancel order
+        $transactionController = new TransactionController();
+        $results = [];
 
-        // $paymentController = new TransactionController();
-        // $results = [];
+        foreach ($order->transactions as $transaction) {
+            if ($transaction->status === 'approved' && !$transaction->refund_id) {
+                $result = $transactionController->rollbackPayment($transaction->payment, false, null, false);
 
-        // foreach ($order->transactions as $transaction) {
-        //     if ($transaction->status === 'approved' && !$transaction->refund_id) {
-        //         $result = $paymentController->refundPayment($payment, false);
+                if (is_array($result) && array_key_exists('errors', $result)) {
+                    if (!array_key_exists('errors', $results)) {
+                        $results['errors'] = [];
+                    }
+                    array_push($results['errors'], $result['errors']);
+                }
+            }
+        }
 
-        //         if (is_array($result) && array_key_exists('errors', $result)) {
-        //             if (!array_key_exists('errors', $results)) {
-        //                 $results['errors'] = [];
-        //             }
-        //             array_push($results['errors'], $result['errors']);
-        //         }
-        //     }
-        // }
-
-        // return $results ? $results : true;
+        return $results ? $results : true;
     }
 
     public function search(Request $request)

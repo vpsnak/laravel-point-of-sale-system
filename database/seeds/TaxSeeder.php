@@ -14,7 +14,7 @@ class TaxSeeder extends Seeder
     public function run()
     {
         DB::table('taxes')->insert([
-            'name' => '8.875% Tax',
+            'name' => '8.875%',
             'percentage' => 8.875,
             'created_by_id' => 1,
             'created_at' => now(),

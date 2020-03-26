@@ -122,12 +122,6 @@ export default {
   },
 
   mutations: {
-    setPaymentRefundablePrice(state, value) {
-      const index = _.findIndex(state.transactions, {
-        id: value.id
-      });
-      state.transactions[index] = value;
-    },
     setCheckoutLoading(state, value) {
       state.checkout_loading = value;
     },
@@ -137,9 +131,6 @@ export default {
     setReorder(state, items) {
       const strippedItems = items.map(({ discount, ...attrs }) => attrs);
       state.cart_products = strippedItems;
-    },
-    setCartProduct(state, payload) {
-      state.cart_products[payload.index] = payload.value;
     },
     setOrderStore(state, value) {
       state.order_store = value;

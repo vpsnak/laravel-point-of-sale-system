@@ -46,7 +46,7 @@ class Price
     public static function calculateItemDiscount(array $item, string $currency)
     {
         $price = new Money($item['price']['amount'], new Currency($currency));
-        return static::calculateDiscount($price, $item['discount']);
+        return static::calculateDiscount($price, $item['discount'] ?? []);
     }
 
     public static function calculateDiscount(Money $price, array $discount)

@@ -184,7 +184,6 @@ export default {
 
   methods: {
     ...mapMutations("cart", [
-      "setPaymentRefundablePrice",
       "setTransactions",
       "setOrderChangePrice",
       "setOrderRemainingPrice",
@@ -296,7 +295,6 @@ export default {
         .then(response => {
           if (response.refunded_transaction) {
             this.setTransactions(response.transaction);
-            this.setPaymentRefundablePrice(response.refunded_transaction);
           }
 
           this.setOrderChangePrice(response.change);

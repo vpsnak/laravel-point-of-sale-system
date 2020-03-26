@@ -236,7 +236,7 @@ export default {
     cancelOrder() {
       return new Promise((resolve, reject) => {
         const payload = {
-          method: "delete",
+          method: "get",
           url: `orders/${this.order_id}`
         };
         this.request(payload)

@@ -152,9 +152,13 @@ export default {
     EventBus.$on("order-table-cancel-order", event => {
       if (event.payload && this.selectedItem) {
         this.setLoading(true);
-        this.cancelOrder().then(() => {
-          EventBus.$emit("data-table", { payload: { action: "paginate" } });
-        });
+        this.cancelOrder()
+          .then(() => {
+            EventBus.$emit("data-table", { payload: { action: "paginate" } });
+          })
+          .finally(() => {
+            this.setLoading(false);
+          });
       }
     });
 
@@ -331,13 +335,16 @@ export default {
     cancelOrder() {
       return new Promise((resolve, reject) => {
         const payload = {
-          method: "delete",
-          url: `orders${this.selectedItem.id}`
+          method: "get",
+          url: `orders/${this.selectedItem.id}`
         };
 
         this.request(payload)
           .then(() => {
             resolve(true);
+          })
+          .catch(error => {
+            reject(error);
           })
           .finally(() => {
             this.selectedItem = null;

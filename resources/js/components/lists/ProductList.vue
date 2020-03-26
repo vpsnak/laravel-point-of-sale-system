@@ -9,9 +9,10 @@
             :color="btnactive ? 'primary' : null"
           >
             <v-icon left>mdi-barcode-scan</v-icon>
-            <v-icon right>{{
-              btnactive ? "mdi-cart-arrow-down" : "mdi-eye"
-            }}</v-icon>
+            <v-icon small>mdi-chevron-right</v-icon>
+            <v-icon right>
+              {{ btnactive ? "mdi-cart-arrow-down" : "mdi-eye" }}
+            </v-icon>
           </v-btn>
 
           <v-text-field

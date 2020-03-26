@@ -320,7 +320,7 @@ class TransactionController extends Controller
             ], 422);
         }
 
-        $response = $this->rollbackPayment($payment, true, $refundPrice);
+        $response = $this->rollbackPayment($payment, true, $refundPrice, false);
 
         if (isset($response['errors'])) {
             return response($response, 422);
@@ -338,7 +338,7 @@ class TransactionController extends Controller
         if ($price) {
             $transactionPrice = $price;
         } else {
-            $transactionPrice = $transaction->price;
+            $transactionPrice = $transaction->payment->refundable_price;
         }
 
         $this->transactionData = Transaction::create([
@@ -360,20 +360,20 @@ class TransactionController extends Controller
         return $this->transactionData;
     }
 
-    public function rollbackPayment(Payment $model, bool $setOrderStatus = true, Money $refundPrice = null)
+    public function rollbackPayment(Payment $model, bool $setOrderStatus = true, Money $refundPrice = null, bool $response = true)
     {
         $transaction = $model->transaction;
-        if (!$model->refundable_price->isPositive() || $model->refundable_price->isZero()) {
-            if ($refundPrice) {
-                return ['errors' => ['This payment cannot be refunded']];
-            } else {
-                return response(['errors' => ['This payment cannot be refunded']], 422);
-            }
-        } else if ($refundPrice) {
+        if ($refundPrice) {
             if ($model->refundable_price->lessThan($refundPrice)) {
                 return ['errors' => ['This payment cannot be refunded']];
             } else {
                 $transaction->price = $refundPrice;
+            }
+        } else if (!$model->refundable_price->isPositive() || $model->refundable_price->isZero()) {
+            if ($response) {
+                return response(['errors' => ['This payment cannot be refunded']], 422);
+            } else {
+                return ['errors' => ['This payment cannot be refunded']];
             }
         }
 
@@ -423,10 +423,10 @@ class TransactionController extends Controller
                 ];
                 $orderStatus['transaction'] = $refundTransaction;
 
-                if ($refundPrice) {
-                    return $orderStatus;
-                } else {
+                if ($response) {
                     return response($orderStatus);
+                } else {
+                    return $orderStatus;
                 }
             }
         } else {

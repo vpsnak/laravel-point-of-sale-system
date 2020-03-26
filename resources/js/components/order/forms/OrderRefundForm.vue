@@ -1,7 +1,7 @@
 <template>
   <ValidationObserver
     ref="refund-form"
-    v-slot="{ errors }"
+    v-slot="{ invalid }"
     tag="v-form"
     @submit.prevent="submitRefund()"
   >
@@ -58,7 +58,7 @@
           text
           type="submit"
           :loading="loading"
-          :disabled="!valid || loading"
+          :disabled="invalid || loading"
         >
           Refund
         </v-btn>
@@ -166,7 +166,6 @@ export default {
     ...mapMutations("cart", [
       "setCheckoutLoading",
       "setTransactions",
-      "setPaymentRefundablePrice",
       "setOrderStatus"
     ]),
     ...mapActions("requests", ["request"]),
@@ -189,16 +188,15 @@ export default {
       this.request(payload)
         .then(response => {
           EventBus.$emit("income-analysis-refresh");
-          this.$emit("submit");
 
           this.setTransactions(response.transaction);
-
-          this.setPaymentRefundablePrice(response.refunded_transaction);
           this.setOrderStatus(response.status);
 
           this.maxRefundablePrice = this.parsePrice(
             response.refunded_transaction.payment.refundable_price
           );
+
+          this.$emit("submit");
         })
         .catch(error => {
           console.log(error);
