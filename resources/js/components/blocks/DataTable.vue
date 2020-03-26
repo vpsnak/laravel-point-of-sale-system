@@ -13,12 +13,12 @@
           <v-tooltip bottom v-if="data_table.refreshBtn">
             <template v-slot:activator="{ on }">
               <v-btn
-                :loading="data_table.loading"
+                :loading="refreshLoading"
                 :disabled="data_table.loading"
-                @click.stop="getItems(true)"
+                @click.stop="(refreshLoading = true), getItems(true)"
                 icon
                 v-on="on"
-                color="green"
+                color="primary"
               >
                 <v-icon>
                   mdi-refresh
@@ -142,6 +142,7 @@ import { EventBus } from "../../plugins/eventBus";
 export default {
   data() {
     return {
+      refreshLoading: false,
       overlay: false,
       page: 1,
       pageCount: null,
@@ -239,6 +240,7 @@ export default {
           console.error(error);
         })
         .finally(() => {
+          this.refreshLoading = false;
           this.setLoading(false);
         });
     },

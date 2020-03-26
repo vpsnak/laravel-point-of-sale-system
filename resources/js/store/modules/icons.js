@@ -2,8 +2,8 @@
 const state = {
   dashboard: "dashboard",
   sale: "mdi-cart",
-  orders: "mdi-buffer",
-  order: "mdi-buffer",
+  orders: "mdi-file-multiple",
+  order: "mdi-file-multiple",
   customers: "mdi-account-group",
   customer: "mdi-account",
   addresses: "mdi-account-card-details",

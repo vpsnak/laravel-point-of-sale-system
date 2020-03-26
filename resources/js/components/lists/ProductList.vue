@@ -9,9 +9,9 @@
             :color="btnactive ? 'primary' : null"
           >
             <v-icon left>mdi-barcode-scan</v-icon>
-            <v-icon small>mdi-chevron-right</v-icon>
+            <v-icon>mdi-chevron-right</v-icon>
             <v-icon right>
-              {{ btnactive ? "mdi-cart-arrow-down" : "mdi-eye" }}
+              {{ btnactive ? "mdi-cart" : "mdi-eye" }}
             </v-icon>
           </v-btn>
 
@@ -57,7 +57,7 @@
         </v-row>
 
         <v-row align="center" justify="center">
-          <v-col>
+          <v-col :cols="12" v-if="!categoriesLoading">
             <v-slide-group
               show-arrows
               v-model="selectedCategory"
@@ -80,6 +80,14 @@
               </v-slide-item>
             </v-slide-group>
           </v-col>
+          <v-progress-circular
+            class="my-5"
+            :size="25"
+            :width="3"
+            color="primary"
+            v-if="categoriesLoading"
+            indeterminate
+          ></v-progress-circular>
         </v-row>
       </v-container>
     </v-card-text>
@@ -179,7 +187,7 @@
               @input="paginate"
               :length="lastPage"
               color="primary"
-              :disabled="loader"
+              :disabled="productLoading"
             ></v-pagination>
           </v-col>
         </v-row>
@@ -191,7 +199,7 @@
           :size="100"
           :width="10"
           color="primary"
-          v-if="loader"
+          v-if="productLoading"
           indeterminate
         ></v-progress-circular>
         <h2 v-else>No products found</h2>
@@ -210,7 +218,8 @@ export default {
       current_page: 1,
       last_page: null,
       viewId: null,
-      loader: false,
+      productLoading: false,
+      categoriesLoading: false,
       search_keyword: "",
       selected_category: null,
       btnactive: true
@@ -243,10 +252,10 @@ export default {
         return this.search_keyword;
       },
       set(value) {
-        if (!this.keyword) {
+        this.search_keyword = value;
+        if (value) {
           this.currentPage = 1;
         }
-        this.search_keyword = value;
       }
     },
     currentPage: {
@@ -320,42 +329,13 @@ export default {
         this.getAllProducts();
       }
     },
-    initiateLoadingSearchResults(loading) {
-      if (loading) {
-        this.loader = true;
-        this.products = [];
-      } else {
-        this.loader = false;
-      }
-    },
-    getAllProducts() {
-      this.initiateLoadingSearchResults(true);
-      this.selected_category = null;
-
-      const payload = {
-        method: "get",
-        url: "products" + "?page=" + this.current_page
-      };
-      this.request(payload)
-        .then(response => {
-          this.products = response.data;
-          this.currentPage = response.current_page;
-          this.lastPage = response.last_page;
-        })
-        .catch(error => {
-          console.log(error);
-        })
-        .finally(() => {
-          this.initiateLoadingSearchResults();
-        });
-    },
     getAllCategories() {
-      this.initiateLoadingSearchResults(true);
-
+      this.categoriesLoading = true;
       const payload = {
         method: "get",
         url: "product-listing/categories"
       };
+
       this.request(payload)
         .then(response => {
           this.categories = response.data;
@@ -364,86 +344,80 @@ export default {
           console.log(error);
         })
         .finally(() => {
-          this.initiateLoadingSearchResults(false);
+          this.categoriesLoading = false;
         });
     },
+
     getProductsFromCategoryID() {
-      this.initiateLoadingSearchResults(true);
-      const page = this.currentPage ? "?page=" + this.currentPage : "";
       const payload = {
         method: "get",
-        url: `categories/${this.selectedCategory}/products${page}`
+        url: `categories/${this.selectedCategory}/products?page=${this.currentPage}`
       };
 
-      this.request(payload)
-        .then(response => {
-          this.products = response.data;
-          this.currentPage = response.current_page;
-          this.lastPage = response.last_page;
-        })
-        .catch(error => {
-          console.log(error);
-        })
-        .finally(() => {
-          this.initiateLoadingSearchResults();
-        });
+      this.getProductRequest(payload);
     },
     getSingleProduct(sku) {
-      this.initiateLoadingSearchResults(true);
-
-      const payload = {
-        method: "post",
-        url: `products/search?page=${this.currentPage}`,
-        data: { keyword: sku }
-      };
-
-      this.request(payload)
-        .then(response => {
-          this.products = response.data;
-          this.currentPage = response.current_page;
-          this.lastPage = response.last_page;
-          if (_.isObjectLike(response[0])) {
+      if (this.products.length === 1 && this.products[0].sku === sku) {
+        if (this.btnactive) {
+          this.addProduct(this.products[0]);
+        } else {
+          this.viewProductDialog(this.products[0]);
+        }
+      } else {
+        this.keyword = sku;
+        this.searchProduct().then(() => {
+          if (_.isObjectLike(this.products[0])) {
             if (this.btnactive) {
-              this.addProduct(response[0]);
+              this.addProduct(this.products[0]);
             } else {
-              response[0].form = "product";
-              this.viewProductDialog(response[0]);
+              this.viewProductDialog(this.products[0]);
             }
           }
-        })
-        .catch(error => {
-          console.log(error);
-        })
-        .finally(() => {
-          this.initiateLoadingSearchResults();
         });
+      }
     },
     searchProduct() {
-      this.selected_category = null;
-
       if (this.keyword.length > 0) {
-        this.initiateLoadingSearchResults(true);
-        let payload = {
+        this.selected_category = null;
+        const payload = {
           method: "post",
           url: `products/search?page=${this.currentPage}`,
           data: { keyword: this.keyword }
         };
+
+        this.getProductRequest(payload);
+      } else {
+        this.getAllProducts();
+      }
+    },
+    getAllProducts() {
+      this.selected_category = null;
+      const payload = {
+        method: "get",
+        url: `products?page=${this.current_page}`
+      };
+      this.getProductRequest(payload);
+    },
+    getProductRequest(payload) {
+      return new Promise((resolve, reject) => {
+        this.productLoading = true;
+        this.products = [];
 
         this.request(payload)
           .then(response => {
             this.products = response.data;
             this.currentPage = response.current_page;
             this.lastPage = response.last_page;
+            resolve(true);
           })
           .catch(error => {
             console.log(error);
+            reject(error);
           })
           .finally(() => {
-            this.initiateLoadingSearchResults();
+            this.productLoading = false;
           });
-      } else {
-        this.getAllProducts();
-      }
+      });
     },
     viewProductDialog(product) {
       product.form = "product";

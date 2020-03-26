@@ -29,7 +29,7 @@
           :error-messages="errors"
         ></v-text-field>
       </ValidationProvider>
-      <ValidationProvider rules="max:100" v-slot="{ errors }" name="Url">
+      <ValidationProvider rules="max:255" v-slot="{ errors }" name="Url">
         <v-text-field
           :readonly="$props.readonly"
           v-model="formFields.url"
@@ -37,7 +37,7 @@
           :error-messages="errors"
         ></v-text-field>
       </ValidationProvider>
-      <ValidationProvider rules="max:100" v-slot="{ errors }" name="Photo url">
+      <ValidationProvider rules="max:255" v-slot="{ errors }" name="Photo url">
         <v-text-field
           :readonly="$props.readonly"
           v-model="formFields.photo_url"

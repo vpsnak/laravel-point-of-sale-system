@@ -181,7 +181,7 @@ export default {
       viewForm: "order",
       selectedItem: null,
       table: {
-        icon: "mdi-buffer",
+        icon: "mdi-file-multiple",
         title: "Orders",
         model: "orders",
         disableNewBtn: true,
@@ -319,8 +319,7 @@ export default {
     },
     cancelOrderDialog(item) {
       this.selectedItem = item;
-
-      this.setDialog({
+      const payload = {
         show: true,
         width: 600,
         title: `Verify your password to cancel order #${item.id}`,
@@ -330,7 +329,9 @@ export default {
         model: { action: "verify" },
         persistent: true,
         eventChannel: "order-table-cancel-order"
-      });
+      };
+
+      this.setDialog(payload);
     },
     cancelOrder() {
       return new Promise((resolve, reject) => {

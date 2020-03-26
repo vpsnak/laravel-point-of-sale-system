@@ -37,7 +37,7 @@ class MenuItemSeeder extends Seeder
         $orders = MenuItem::create([
             'title' => 'Orders',
             'action' => ['link' => 'orders'],
-            'icon' =>  'mdi-buffer',
+            'icon' =>  'mdi-file-multiple',
             'location' => 'side_menu'
         ]);
 

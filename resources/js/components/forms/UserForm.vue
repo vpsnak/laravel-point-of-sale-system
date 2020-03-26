@@ -73,7 +73,16 @@
             ></v-checkbox>
           </v-col>
           <v-col :cols="6">
+            <v-text-field
+              v-if="$props.readonly"
+              :value="formFields.role_name"
+              label="Role"
+              :disabled="loading"
+              readonly
+            >
+            </v-text-field>
             <ValidationProvider
+              v-else
               v-slot="{ errors }"
               name="Role"
               rules="required"
