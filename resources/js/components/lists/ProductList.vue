@@ -193,13 +193,13 @@
         </v-row>
       </v-container>
     </div>
-    <v-container v-else-if="!products.length">
+    <v-container v-else>
       <v-row align="center" justify="center" style="height:58vh;">
         <v-progress-circular
+          v-if="productLoading"
           :size="100"
           :width="10"
           color="primary"
-          v-if="productLoading"
           indeterminate
         ></v-progress-circular>
         <h2 v-else>No products found</h2>
