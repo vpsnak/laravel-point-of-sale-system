@@ -1,55 +1,62 @@
 <template>
-  <ValidationObserver v-slot="{ invalid }">
-    <v-form @submit.prevent="submit">
-      <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
-        <ValidationProvider
-          rules="required|max:100"
-          v-slot="{ errors }"
-          name="Name"
-        >
-          <v-text-field
-            v-model="dummyProduct.name"
-            label="Name"
-            :error-messages="errors"
-          ></v-text-field>
-        </ValidationProvider>
-        <ValidationProvider v-slot="{ errors }" name="Notes">
+  <ValidationObserver
+    v-slot="{ invalid }"
+    tag="v-form"
+    @submit.prevent="submit"
+  >
+    <v-container fluid class="overflow-y-auto" style="max-height:60vh;">
+      <v-row>
+        <v-col :cols="12">
+          <ValidationProvider
+            rules="required|max:100"
+            v-slot="{ errors }"
+            name="Name"
+          >
+            <v-text-field
+              outlined
+              dense
+              v-model="customItem.name"
+              label="Name"
+              :error-messages="errors"
+            ></v-text-field>
+          </ValidationProvider>
+        </v-col>
+        <v-col :cols="12">
+          <ValidationProvider rules="required" v-slot="{ errors }" name="Price">
+            <v-text-field
+              outlined
+              dense
+              type="number"
+              v-model="price"
+              label="Price"
+              prefix="$"
+              :error-messages="errors"
+              style="max-width:100px;"
+            ></v-text-field>
+          </ValidationProvider>
+        </v-col>
+        <v-col :cols="12">
           <v-textarea
+            outlined
+            dense
+            prepend-inner-icon="mdi-message-text-outline"
             :rows="3"
-            v-model="dummyProduct.notes"
+            v-model="customItem.notes"
             label="Notes"
-            :error-messages="errors"
             count
             no-resize
           ></v-textarea>
-        </ValidationProvider>
-      </v-container>
-      <v-container>
-        <ValidationProvider
-          rules="required|between:0.01,1000"
-          v-slot="{ errors }"
-          name="Price"
-        >
-          <v-text-field
-            type="number"
-            v-model="dummyProduct.final_price"
-            label="Price"
-            :error-messages="errors"
-          ></v-text-field>
-        </ValidationProvider>
-        <v-row>
-          <v-col cols="12" align="center" justify="center">
-            <v-btn
-              color="primary"
-              class="mr-4"
-              type="submit"
-              :disabled="invalid"
-              >Add to cart
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-form>
+        </v-col>
+      </v-row>
+    </v-container>
+
+    <v-container>
+      <v-row align="center" justify="center">
+        <v-btn color="primary" type="submit" :disabled="invalid">
+          Add to cart
+        </v-btn>
+      </v-row>
+    </v-container>
   </ValidationObserver>
 </template>
 
@@ -57,43 +64,55 @@
 import { mapActions } from "vuex";
 
 export default {
+  mounted() {
+    this.customItem.id = this.customItem.sku = `c${parseInt(
+      Math.random() * 1000
+    )}`;
+  },
+
+  beforeDestroy() {
+    this.$off("submit");
+  },
+
   data() {
     return {
-      dummyProduct: {
-        id: null,
-        name: "",
-        sku: null,
-        notes: "",
-        price: {
-          amount: null
-        },
-        final_price: null
+      price_amount: null,
+
+      customItem: {
+        id: "c",
+        sku: "c",
+        custom_item: true,
+        name: null,
+        notes: null,
+        price: {},
+        original_price: {},
+
+        is_price_editable: true
       }
     };
   },
 
-  methods: {
-    submit() {
-      this.skuGenerator();
-      this.dummyProduct.final_price = this.dummyProduct.price.amount;
-      this.$store.commit("cart/addProduct", this.dummyProduct);
-      this.$emit("submit", {
-        notification: {
-          msg: this.dummyProduct.name + " added to cart",
-          type: "success"
-        }
-      });
-    },
-    skuGenerator() {
-      let random = function() {
-        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-      };
-      this.dummyProduct.id = "dummy" + "-" + random();
-      this.dummyProduct.sku = "dummy" + "-" + random();
+  computed: {
+    price: {
+      get() {
+        return this.price_amount;
+      },
+      set(value) {
+        this.price_amount = value;
+        this.customItem.price = this.customItem.original_price = this.parsePrice(
+          Math.round(value * 10000) / 100
+        ).toJSON();
+      }
     }
   },
-  beforeDestroy() {
-    this.$off("submit");
+
+  methods: {
+    ...mapActions("cart", ["addProduct"]),
+
+    submit() {
+      this.addProduct(this.customItem);
+      this.$emit("submit", true);
+    }
   }
 };
 </script>

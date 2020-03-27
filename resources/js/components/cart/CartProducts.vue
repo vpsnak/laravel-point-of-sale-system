@@ -40,9 +40,7 @@
                   <v-row align="center">
                     <v-img
                       :src="product.photo_url"
-                      :lazy-src="product.photo_url"
                       aspect-ratio="1"
-                      class="grey lighten-2"
                       width="100%"
                       height="100%"
                       max-width="50"
@@ -130,6 +128,7 @@
                           v-on="on"
                           small
                           icon
+                          :disabled="product.custom_product || product.giftcard"
                         >
                           <v-icon>mdi-eye</v-icon>
                         </v-btn>

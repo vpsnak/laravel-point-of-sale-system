@@ -23,15 +23,7 @@ class CashRegisterLogsController extends Controller
         ]);
         $validatedData['user_id'] = $validatedData['opened_by_id'] = auth()->user()->id;
 
-        $validatedID = $request->validate([
-            'id' => 'nullable|exists:cash_register_logs,id'
-        ]);
-
-        if (!empty($validatedID)) {
-            return response(CashRegisterLogs::updateData($validatedID, $validatedData));
-        } else {
-            return response(CashRegisterLogs::store($validatedData), 201);
-        }
+        return response(CashRegisterLogs::create($validatedData), 201);
     }
 
     public function close(Request $request)

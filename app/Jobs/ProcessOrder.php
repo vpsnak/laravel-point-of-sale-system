@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Str;
 
 class ProcessOrder implements ShouldQueue
 {
@@ -42,7 +43,9 @@ class ProcessOrder implements ShouldQueue
         switch ($this->order->status->value) {
             case 'submitted':
                 foreach ($this->order->items as $item) {
-                    $this->handleStock($item, 'remove');
+                    if (!Str::startsWith($item['sku'], ['c', 'g'])) {
+                        $this->handleStock($item, 'remove');
+                    }
                 }
                 break;
             case 'paid':
@@ -51,7 +54,9 @@ class ProcessOrder implements ShouldQueue
                 break;
             case 'canceled':
                 foreach ($this->order->items as $item) {
-                    $this->handleStock($item, 'add');
+                    if (!Str::startsWith($item['sku'], ['c', 'g'])) {
+                        $this->handleStock($item, 'add');
+                    }
                 }
                 break;
         }

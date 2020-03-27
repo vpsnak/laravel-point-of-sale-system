@@ -41,7 +41,7 @@
                   <v-icon>mdi-flower</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title>Add custom product</v-list-item-title>
+                  <v-list-item-title>Custom item</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
               <v-list-item @click="giftcardDialog()">
@@ -49,7 +49,7 @@
                   <v-icon>mdi-wallet-giftcard</v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title>Add giftcard</v-list-item-title>
+                  <v-list-item-title>Giftcard</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -437,20 +437,20 @@ export default {
       this.setDialog({
         show: true,
         component: "giftCardToCartForm",
-        title: "Add a gift card",
-        cancelBtnTxt: "Close",
+        title: "Add a gift card to cart",
         icon: "mdi-wallet-giftcard",
-        titleCloseBtn: true
+        titleCloseBtn: true,
+        persistent: true
       });
     },
     addCustomProductDialog() {
       this.setDialog({
         show: true,
         component: "customProductForm",
-        title: "Add a custom product",
-        cancelBtnTxt: "Close",
+        title: "Add custom item to cart",
         icon: "mdi-flower",
-        titleCloseBtn: true
+        titleCloseBtn: true,
+        persistent: true
       });
     }
   }

@@ -45,7 +45,7 @@ class OrderController extends Controller
             'discount_amount' => 'numeric|nullable',
             // items (products)
             'products' => 'required',
-            'products.*.id' => 'nullable|numeric',
+            'products.*.id' => 'required',
             'products.*.name' => 'required|string',
             'products.*.sku' => 'required|string',
             'products.*.price' => 'required|array',
@@ -128,7 +128,7 @@ class OrderController extends Controller
             'method' => 'required|in:retail,pickup,delivery',
             // items (products)
             'products' => 'required',
-            'products.*.id' => 'nullable|numeric',
+            'products.*.id' => 'required',
             'products.*.name' => 'required|string',
             'products.*.sku' => 'required|string',
             'products.*.price' => 'required|array',
