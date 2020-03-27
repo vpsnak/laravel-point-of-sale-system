@@ -38,7 +38,7 @@ class Order extends Model
         'mas_order_id',
         'magento_id',
         'magento_shipping_address_id',
-        'magento_billing_address_id'
+        'magento_billing_address_id',
     ];
 
     protected $with = [

@@ -159,11 +159,12 @@ class OrderController extends Controller
             'delivery_fees_price.amount' => 'nullable|integer',
             'delivery_fees_price.currency' => 'nullable|string|size:3',
         ]);
-
         $this->user = auth()->user();
         $this->store = $this->user->open_register->cash_register->store;
+
         $this->order_data['created_by_id'] = $this->user->id;
         $this->order_data['store_id'] = $this->store->id;
+
         $this->parseAddresses();
         $this->parseStoreData();
         $this->parseProducts();

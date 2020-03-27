@@ -21,7 +21,7 @@ class GiftcardController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string',
-            'code' => 'required|string',
+            'code' => 'required|string|unique:giftcards,code',
             'enabled' => 'required|boolean',
             'price' => 'required|array',
             'price.amount' => 'required|integer',
@@ -68,7 +68,7 @@ class GiftcardController extends Controller
         $validatedData = $request->validate([
             'id' => 'required|exists:giftcards,id',
             'name' => 'required|string',
-            'code' => 'required|string',
+            'code' => "required|string|unique:giftcards,code,{$request->id}",
             'enabled' => 'required|boolean',
             'price' => 'required|array'
         ]);

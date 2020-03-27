@@ -48,9 +48,9 @@ class OrderAnalysisController extends Controller
                     case 'house-account':
                         $this->house_account = $this->house_account->add($paidAmount);
                         break;
-                    case 'coupon':
-                        $this->coupon = $this->coupon->add($paidAmount);
-                        break;
+                        // case 'coupon':
+                        //     $this->coupon = $this->coupon->add($paidAmount);
+                        //     break;
                     case 'giftcard':
                         $this->giftcard = $this->giftcard->add($paidAmount);
                         break;
@@ -70,10 +70,10 @@ class OrderAnalysisController extends Controller
                     case 'house-account':
                         $this->house_account = $this->house_account->subtract($refundAmount);
                         break;
-                    case 'coupon':
-                        $this->coupon = $this->coupon->subtract($refundAmount);
-                        break;
-                    case 'giftcard':
+                        // case 'coupon':
+                        //     $this->coupon = $this->coupon->subtract($refundAmount);
+                        //     break;
+                    case 'Gift Card refund':
                         $this->giftcard = $this->giftcard->subtract($refundAmount);
                         break;
                 }
