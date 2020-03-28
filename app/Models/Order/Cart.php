@@ -11,35 +11,41 @@ class Cart extends Model
     ];
 
     protected $fillable = [
-        'cash_register_id',
         'name',
         'cart',
-        'is_globally_visible',
+        'visibility',
+        'store_id',
         'created_by_id'
     ];
 
     protected $casts = [
-        'is_globally_visible' => 'boolean',
         'created_at' => 'datetime:m/d/Y H:i:s',
         'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
 
     protected $hidden = [
         'created_by_id',
-        'cash_register_id',
-        'is_globally_visible'
+        'store_id',
+        'visibility'
     ];
 
-    public function getCanDeleteAttribute($user_id)
+    public function getCanDeleteAttribute(int $user_id)
     {
-        return (int) $this->created_by_id === (int) $user_id ? true : false;
+        return $this->created_by_id === $user_id ? true : false;
     }
 
-    public static function getUserPublicCarts(int $created_by_id)
+    public static function getUserCarts(User $user)
     {
+        $cash_register =  $user->open_register->cash_register;
+        $store = $cash_register->store;
         return
-            Cart::orWhere('created_by_id', $created_by_id)
-            ->orWhere('is_public', true);
+            Cart::orWhere('created_by_id', $user->id)
+            ->orWhere('visibility', 'public')
+            ->orWhere(function ($query) use ($store) {
+                $query
+                    ->where('visibility', 'store')
+                    ->where('store_id', $store->id);
+            });
     }
 
     public function cashRegister()

@@ -10,8 +10,8 @@ class CartController extends Controller
 {
     public function all()
     {
-        $created_by_id = auth()->user()->id;
-        return response(Cart::getUserPublicCarts($created_by_id)->paginate());
+        $user = auth()->user();
+        return response(Cart::getUserCarts($user)->paginate());
     }
 
     public function getOne(Cart $model)

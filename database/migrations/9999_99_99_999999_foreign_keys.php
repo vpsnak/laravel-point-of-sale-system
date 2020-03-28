@@ -78,7 +78,8 @@ class ForeignKeys extends Migration
         });
 
         Schema::table('carts', function (Blueprint $table) {
-            $table->foreign('cash_register_id')->references('id')->on('cash_registers')->onDelete('cascade');
+            $table->foreign('created_by_id')->references('id')->on('users')->onDelete('restrict');
+            $table->foreign('store_id')->references('id')->on('stores')->onDelete('restrict');
         });
 
         Schema::table('order_status', function (Blueprint $table) {
@@ -197,7 +198,8 @@ class ForeignKeys extends Migration
         });
 
         Schema::table('carts', function (Blueprint $table) {
-            $table->dropForeign(['cash_register_id']);
+            $table->dropForeign(['store_id']);
+            $table->dropForeign(['created_by_id']);
         });
 
         Schema::table('order_status', function (Blueprint $table) {

@@ -16,11 +16,11 @@ class CreateCartsTable extends Migration
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('cash_register_id')->nullable();
             $table->string('name');
             $table->json('cart');
-            $table->boolean('is_globally_visible');
+            $table->enum('visibility', ['private', 'store', 'public']);
             $table->foreignId('created_by_id')->nullable();
+            $table->foreignId('store_id')->nullable();
 
             $table->timestampsTz();
         });
