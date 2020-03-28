@@ -72,12 +72,13 @@ class GiftcardController extends Controller
             'enabled' => 'required|boolean',
             'price' => 'required|array'
         ]);
-
         $giftcard = Giftcard::findOrFail($validatedData['id']);
-        $validatedData['enabled'] = now();
+        if ($validatedData['enabled']) {
+            $validatedData['enabled_at'] = now();
+        }
+        unset($validatedData['enabled']);
 
-        $giftcard->fill($validatedData);
-        $giftcard->save();
+        $giftcard->update($validatedData);
 
         return response(['notification' => [
             'msg' => ["Gift card {$giftcard->name} updated successfully"],

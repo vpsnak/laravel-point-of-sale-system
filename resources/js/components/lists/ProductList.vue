@@ -239,10 +239,6 @@ export default {
     });
   },
 
-  beforeDestroy() {
-    this.$root.$off("barcodeScan");
-  },
-
   computed: {
     ...mapState(["productList"]),
     ...mapState("dialog", ["interactive_dialog"]),
@@ -424,34 +420,37 @@ export default {
       this.viewItem(product);
     },
     mailPlantCareDialog(product) {
-      this.setDialog({
+      const payload = {
         show: true,
         component: "MailPlantCareDialog",
         title: "Send plant care",
         cancelBtnTxt: "Close",
         model: product,
         titleCloseBtn: true
-      });
+      };
+      this.setDialog(payload);
     },
     giftcardDialog() {
-      this.setDialog({
+      const payload = {
         show: true,
         component: "giftCardToCartForm",
         title: "Add a gift card to cart",
         icon: "mdi-wallet-giftcard",
         titleCloseBtn: true,
         persistent: true
-      });
+      };
+      this.setDialog(payload);
     },
     addCustomProductDialog() {
-      this.setDialog({
+      const payload = {
         show: true,
         component: "customProductForm",
         title: "Add custom item to cart",
         icon: "mdi-flower",
         titleCloseBtn: true,
         persistent: true
-      });
+      };
+      this.setDialog(payload);
     }
   }
 };

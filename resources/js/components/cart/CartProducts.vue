@@ -1,56 +1,71 @@
 <template>
   <ValidationObserver tag="v-form" @input="isValidCart()">
-    <v-container style="height:41vh; overflow-y:auto">
-      <v-row>
-        <v-col>
+    <v-container fluid style="height:47vh;overflow-y:auto;" class="py-0">
+      <v-row dense>
+        <v-col :cols="12">
           <v-expansion-panels accordion>
             <v-expansion-panel
               v-for="(product, index) in products"
               :key="product.id"
+              class="elevation-8"
             >
-              <v-expansion-panel-header @click.stop class="pa-1">
+              <v-expansion-panel-header class="px-2 py-0" @click.stop>
                 <v-container fluid>
                   <v-row dense align="center">
-                    <b class="primary--text">{{ 1 + index }}.</b>
-                    <i class="mx-1">
-                      <b>
-                        {{ product.name }}
-                      </b>
-                    </i>
-                    <v-spacer />
-                    <span class="mx-1">
-                      Price:
-                      <i :class="parseProductPrice(product).class">
-                        <b>
-                          {{ parseProductPrice(product).label }}
-                        </b>
+                    <v-col :cols="4">
+                      <b class="amber--text mb-1" v-text="`${1 + index}.`" />
+                      <i>
+                        <b class="primary--text" v-text="product.name" />
+                        <p class="ml-5 mt-1" v-text="`(${product.type})`" />
                       </i>
-                    </span>
-                    <v-spacer />
-                    <span class="mx-1">
-                      Original price:
-                      <i class="primary--text">
-                        <b>
-                          {{ $price(product.original_price).toFormat() }}
-                        </b>
-                      </i>
-                    </span>
+                    </v-col>
+                    <v-col :cols="4">
+                      <span>
+                        Price:
+                        <i :class="parseProductPrice(product).class">
+                          <b v-text="parseProductPrice(product).label" />
+                        </i>
+                      </span>
+                    </v-col>
+
+                    <v-col :cols="4" v-if="product.type !== 'giftcard'">
+                      <span>
+                        Original price:
+                        <i class="primary--text">
+                          <b
+                            v-text="
+                              parsePrice(product.original_price).toFormat()
+                            "
+                          />
+                        </i>
+                      </span>
+                    </v-col>
                   </v-row>
 
                   <v-row align="center">
                     <v-img
+                      v-if="product.type === 'product' && product.photo_url"
                       :src="product.photo_url"
                       aspect-ratio="1"
                       width="100%"
                       height="100%"
                       max-width="50"
                       max-height="50"
-                    ></v-img>
+                      contain
+                    />
+
+                    <v-icon
+                      v-else-if="product.type === 'giftcard'"
+                      size="40"
+                      v-text="`mdi-wallet-giftcard`"
+                    />
+
+                    <v-icon v-else size="40" v-text="`mdi-flower`" />
 
                     <v-spacer />
 
                     <v-text-field
-                      v-if="product.is_price_editable && editable"
+                      v-if="product.is_price_editable && $props.editable"
                       class="mt-5 mx-1 pt-3"
                       style="max-width:125px;"
                       prefix="$"
@@ -70,14 +85,20 @@
                       @click:append.stop="toggleEdit(index)"
                       persistent-hint
                       :hint="editPriceHint(index)"
-                    ></v-text-field>
+                    />
 
                     <v-text-field
                       v-else
                       class="mt-5 mx-1 pt-3"
-                      style="max-width:125px;"
+                      :style="
+                        `max-width:125px;${
+                          product.type === 'giftcard'
+                            ? 'visibility:hidden;'
+                            : ''
+                        }`
+                      "
                       prefix="$"
-                      :ref="'priceField' + index"
+                      :ref="`priceField${index}`"
                       :min="0"
                       type="number"
                       label="Unit price"
@@ -87,7 +108,7 @@
                       dense
                       persistent-hint
                       :hint="editPriceHint(index)"
-                    ></v-text-field>
+                    />
 
                     <v-spacer />
 
@@ -100,8 +121,16 @@
                         dense
                         outlined
                         class="mt-5 pt-3"
-                        style="max-width:110px;"
-                        :disabled="!editable"
+                        :style="
+                          `max-width:110px;${
+                            product.type === 'giftcard'
+                              ? 'visibility:hidden;'
+                              : ''
+                          }`
+                        "
+                        :disabled="
+                          !$props.editable || product.type === 'giftcard'
+                        "
                         type="number"
                         label="Qty"
                         v-model="product.qty"
@@ -114,7 +143,7 @@
                         persistent-hint
                         :hint="editPriceHint(null)"
                         :error="errors[0] ? true : false"
-                      ></v-text-field>
+                      />
                     </ValidationProvider>
 
                     <v-spacer />
@@ -123,17 +152,17 @@
                       <template v-slot:activator="{ on }">
                         <v-btn
                           class="mx-1"
-                          v-if="editable"
-                          @click.stop="viewProductDialog(product)"
+                          v-if="$props.editable"
+                          @click.stop="viewItemDialog(product)"
                           v-on="on"
                           small
                           icon
-                          :disabled="product.custom_product || product.giftcard"
+                          :disabled="product.type === 'custom'"
                         >
-                          <v-icon>mdi-eye</v-icon>
+                          <v-icon v-text="`mdi-eye`" />
                         </v-btn>
                       </template>
-                      <span>View item</span>
+                      <span v-text="`View item`" />
                     </v-tooltip>
 
                     <v-spacer />
@@ -142,17 +171,17 @@
                       <template v-slot:activator="{ on }">
                         <v-btn
                           class="mx-1"
-                          v-if="editable"
+                          v-if="$props.editable"
                           @click.stop="removeProduct(index)"
                           color="red"
                           v-on="on"
                           small
                           icon
                         >
-                          <v-icon>mdi-cart-remove</v-icon>
+                          <v-icon v-text="`mdi-cart-remove`" />
                         </v-btn>
                       </template>
-                      <span>Remove from cart</span>
+                      <span v-text="`Remove from cart`" />
                     </v-tooltip>
 
                     <v-spacer />
@@ -164,7 +193,7 @@
                   v-if="product.is_discountable"
                   :productIndex="index"
                   :productPrice="productPrice(product)"
-                  :editable="editable"
+                  :editable="$props.editable"
                 />
                 <v-row>
                   <v-col :cols="12">
@@ -175,11 +204,11 @@
                       prepend-inner-icon="mdi-card-text-outline"
                       :rows="2"
                       label="Notes"
-                      :hint="'For product: ' + product.name"
+                      :hint="`For product: ${product.name}`"
                       counter
                       no-resize
-                      :disabled="!editable"
-                    ></v-textarea>
+                      :disabled="!$props.editable"
+                    />
                   </v-col>
                 </v-row>
               </v-expansion-panel-content>
@@ -302,16 +331,17 @@ export default {
         this.setPrice(index);
       }
     },
-    viewProductDialog(product) {
-      this.setDialog({
+    viewItemDialog(item) {
+      const payload = {
         show: true,
         width: 1000,
         title: "Cart item",
         titleCloseBtn: true,
         icon: "mdi-package-variant",
         component: "product",
-        model: product
-      });
+        model: item
+      };
+      this.setDialog(payload);
     }
   }
 };

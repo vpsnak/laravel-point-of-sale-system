@@ -43,7 +43,7 @@ class ProcessOrder implements ShouldQueue
         switch ($this->order->status->value) {
             case 'submitted':
                 foreach ($this->order->items as $item) {
-                    if (!Str::startsWith($item['sku'], ['c', 'g'])) {
+                    if ($item['type'] === 'product') {
                         $this->handleStock($item, 'remove');
                     }
                 }
@@ -54,7 +54,7 @@ class ProcessOrder implements ShouldQueue
                 break;
             case 'canceled':
                 foreach ($this->order->items as $item) {
-                    if (!Str::startsWith($item['sku'], ['c', 'g'])) {
+                    if ($item['type'] === 'product') {
                         $this->handleStock($item, 'add');
                     }
                 }

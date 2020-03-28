@@ -79,9 +79,9 @@ export default {
       price_amount: null,
 
       customItem: {
-        id: "c",
-        sku: "c",
-        custom_item: true,
+        id: null,
+        sku: null,
+        type: "custom",
         name: null,
         notes: null,
         price: {},

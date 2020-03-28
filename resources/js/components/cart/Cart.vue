@@ -1,6 +1,6 @@
 <template>
   <v-card class="fill-height">
-    <v-container fluid>
+    <v-container fluid class="pa-0">
       <customerSearch
         v-if="$props.showCustomer"
         :editable="$props.editable"
@@ -9,21 +9,22 @@
       />
       <v-divider v-if="$props.showCustomer" />
     </v-container>
-    <v-container>
+    <v-container fluid class="pa-0">
       <cartProducts class="mt-2 elevation-2" :editable="$props.editable" />
+    </v-container>
 
+    <v-container class="py-0">
       <cartDiscount
         class="mt-2"
         :productIndex="-1"
         :editable="$props.editable"
       />
-
-      <cartTotals />
-
-      <cartActions :disabled="totalProducts" v-if="$props.showActions" />
-
-      <orderSave url="update-items" v-else-if="$props.showSave" />
     </v-container>
+    <cartTotals />
+
+    <cartActions :disabled="totalProducts" v-if="$props.showActions" />
+
+    <orderSave url="update-items" v-else-if="$props.showSave" />
   </v-card>
 </template>
 

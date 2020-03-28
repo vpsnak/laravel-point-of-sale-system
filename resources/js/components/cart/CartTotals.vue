@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="py-0 px-5">
     <v-row v-if="!totalDiscount.isZero()" class="pa-1" dense>
       <span>Total discount</span>
       <v-spacer />

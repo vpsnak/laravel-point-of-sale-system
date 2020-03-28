@@ -131,6 +131,7 @@ class OrderController extends Controller
             'products.*.id' => 'required',
             'products.*.name' => 'required|string',
             'products.*.sku' => 'required|string',
+            'products.*.type' => 'required|string|in:product,giftcard,custom',
             'products.*.price' => 'required|array',
             'products.*.price.amount' => 'required|numeric|integer',
             'products.*.qty' => 'required|numeric|min:1|max:500',

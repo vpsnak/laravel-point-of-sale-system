@@ -161,9 +161,6 @@ export default {
 
   beforeDestroy() {
     EventBus.$off("data-table");
-    if (this.data_table.newForm === "productForm") {
-      this.$root.$off("barcodeScan");
-    }
     this.resetDataTable();
   },
 

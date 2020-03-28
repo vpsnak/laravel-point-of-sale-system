@@ -1,6 +1,6 @@
 <template>
-  <v-container>
-    <v-row>
+  <v-container class="pb-0">
+    <v-row justify="center" class="px-5">
       <v-btn
         outlined
         dark
@@ -9,8 +9,8 @@
         class="my-2"
         @click.stop="setCheckoutDialog(true)"
         :disabled="disableCheckout"
-        >Checkout
-      </v-btn>
+        v-text="`checkout`"
+      />
     </v-row>
     <v-row align="center" justify="space-around">
       <v-tooltip bottom>
@@ -23,17 +23,15 @@
             v-on="on"
             :disabled="!cartsOnHoldSize"
           >
-            <v-icon>mdi-recycle</v-icon>
+            <v-icon v-text="`mdi-recycle`" />
             <v-badge
               :value="cartsOnHoldSize > 0 ? true : false"
               color="deep-orange"
               :content="cartsOnHoldSize"
-            ></v-badge>
+            />
           </v-btn>
         </template>
-        <span>
-          <b>Restore cart</b>
-        </span>
+        <b v-text="`Restore cart`" />
       </v-tooltip>
 
       <v-tooltip bottom>
@@ -49,9 +47,7 @@
             <v-icon>pause</v-icon>
           </v-btn>
         </template>
-        <span>
-          <b>Hold current cart</b>
-        </span>
+        <b v-text="`Hold current cart`" />
       </v-tooltip>
 
       <v-tooltip bottom>
@@ -67,9 +63,7 @@
             <v-icon>mdi-delete-outline</v-icon>
           </v-btn>
         </template>
-        <span>
-          <b>Empty current cart</b>
-        </span>
+        <b v-text="`Empty current cart`" />
       </v-tooltip>
     </v-row>
   </v-container>

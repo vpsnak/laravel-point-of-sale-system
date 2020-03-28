@@ -10,7 +10,7 @@ class Product extends Model
     const LARAVEL_STORE_ID = 1;
     const MAGENTO_STORE_ID = 2;
 
-    protected $appends = ['stock', 'magento_stock', 'laravel_stock', 'original_price'];
+    protected $appends = ['stock', 'magento_stock', 'laravel_stock', 'original_price', 'type'];
 
     protected $with = ['stores', 'categories'];
 
@@ -39,6 +39,11 @@ class Product extends Model
         'created_at' => 'datetime:m/d/Y H:i:s',
         'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
+
+    public function getTypeAttribute($value)
+    {
+        return 'product';
+    }
 
     public function setDiscountAttribute($value)
     {
