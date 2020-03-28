@@ -10,9 +10,18 @@ class Product extends Model
     const LARAVEL_STORE_ID = 1;
     const MAGENTO_STORE_ID = 2;
 
-    protected $appends = ['stock', 'magento_stock', 'laravel_stock', 'original_price', 'type'];
+    protected $appends = [
+        'stock',
+        'magento_stock',
+        'laravel_stock',
+        'original_price',
+        'type'
+    ];
 
-    protected $with = ['stores', 'categories'];
+    protected $with = [
+        'stores',
+        'categories'
+    ];
 
     protected $fillable = [
         'sku',
@@ -99,7 +108,8 @@ class Product extends Model
 
     public function stores()
     {
-        return $this
+        return
+            $this
             ->belongsToMany(Store::class)
             ->withPivot('qty');
     }
@@ -121,10 +131,5 @@ class Product extends Model
     public function categories()
     {
         return $this->belongsToMany(Category::class);
-    }
-
-    public function cards()
-    {
-        return $this->morphMany(Card::class, 'cardable');
     }
 }
