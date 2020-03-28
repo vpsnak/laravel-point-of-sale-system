@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cart extends Model
 {
+    protected $appends = [
+        'can_delete'
+    ];
+
     protected $fillable = [
         'cash_register_id',
         'name',
@@ -26,9 +30,9 @@ class Cart extends Model
         'is_globally_visible'
     ];
 
-    public function canDelete($user_id)
+    public function getCanDeleteAttribute($user_id)
     {
-        return $this->created_by_id === $user_id ? true : false;
+        return (int) $this->created_by_id === (int) $user_id ? true : false;
     }
 
     public static function getUserPublicCarts(int $created_by_id)
