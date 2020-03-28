@@ -16,7 +16,10 @@
                       <b class="amber--text mb-1" v-text="`${1 + index}.`" />
                       <i>
                         <b class="primary--text" v-text="product.name" />
-                        <p class="ml-5 mt-1" v-text="`(${product.type})`" />
+                        <p
+                          class="ml-5 mt-1 mb-0"
+                          v-text="`(${product.type})`"
+                        />
                       </i>
                     </v-col>
                     <v-col :cols="4">
@@ -52,6 +55,7 @@
                       max-width="50"
                       max-height="50"
                       contain
+                      @error="product.photo_url = null"
                     />
 
                     <v-icon
@@ -204,7 +208,7 @@
                       prepend-inner-icon="mdi-card-text-outline"
                       :rows="2"
                       label="Notes"
-                      :hint="`For product: ${product.name}`"
+                      :hint="`for ${product.type}: ${product.name}`"
                       counter
                       no-resize
                       :disabled="!$props.editable"
