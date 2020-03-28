@@ -34,6 +34,11 @@ class CashRegister extends Model
         return null;
     }
 
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
+    }
+
     public function store()
     {
         return $this->belongsTo(Store::class);

@@ -8,11 +8,10 @@ use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
-    protected $model = Cart::class;
-
     public function all()
     {
-        return response(Cart::paginate());
+        $created_by_id = auth()->user()->id;
+        return response(Cart::getUserPublicCarts($created_by_id)->paginate());
     }
 
     public function getOne(Cart $model)
@@ -26,10 +25,8 @@ class CartController extends Controller
             'cash_register_id' => 'required|exists:cash_registers,id',
             'name' => 'nullable|string',
             'cart' => 'required|array',
-            'product_count' => 'required|numeric|min:0',
-            'total_price' => 'required|numeric|min:0'
         ]);
-
+        $validatedData['created_by_id'] = auth()->user()->id;
         $validatedData['cart'] = json_encode($validatedData['cart']);
 
         if (empty($validatedData['name'])) {

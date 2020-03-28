@@ -26,6 +26,23 @@ class Cart extends Model
         'is_globally_visible'
     ];
 
+    public function canDelete($user_id)
+    {
+        return $this->created_by_id === $user_id ? true : false;
+    }
+
+    public static function getUserPublicCarts(int $created_by_id)
+    {
+        return
+            Cart::orWhere('created_by_id', $created_by_id)
+            ->orWhere('is_public', true);
+    }
+
+    public function cashRegister()
+    {
+        $this->belongsTo(CashRegister::class);
+    }
+
     public function createdBy()
     {
         $this->belongsTo(User::class);
