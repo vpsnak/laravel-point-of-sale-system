@@ -75,19 +75,20 @@
                   @click="toggle"
                   depressed
                   rounded
-                  >{{ category.name }}
-                </v-btn>
+                  v-text="category.name"
+                />
               </v-slide-item>
             </v-slide-group>
           </v-col>
-          <v-progress-circular
+          <v-progress-linear
+            v-if="categoriesLoading"
             class="my-5"
             :size="25"
             :width="3"
             color="primary"
-            v-if="categoriesLoading"
             indeterminate
-          ></v-progress-circular>
+            rounded
+          />
         </v-row>
       </v-container>
     </v-card-text>

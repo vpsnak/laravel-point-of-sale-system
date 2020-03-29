@@ -16,7 +16,7 @@ class CreateCartsTable extends Migration
         Schema::create('carts', function (Blueprint $table) {
             $table->id();
 
-            $table->string('name');
+            $table->string('name')->nullable();
             $table->json('cart');
             $table->enum('visibility', ['private', 'store', 'public']);
             $table->foreignId('created_by_id')->nullable();

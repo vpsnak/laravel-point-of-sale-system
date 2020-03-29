@@ -19,6 +19,7 @@ class Cart extends Model
     ];
 
     protected $casts = [
+        'cart' => 'array',
         'created_at' => 'datetime:m/d/Y H:i:s',
         'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
@@ -29,14 +30,19 @@ class Cart extends Model
         'visibility'
     ];
 
-    public function getCanDeleteAttribute(int $user_id)
+    public function setCartAttribute(array $value)
     {
-        return $this->created_by_id === $user_id ? true : false;
+        $this->attributes['cart'] = json_encode($value);
+    }
+
+    public function getCanDeleteAttribute()
+    {
+        return $this->created_by_id === auth()->user()->id ? true : false;
     }
 
     public static function getUserCarts(User $user)
     {
-        $cash_register =  $user->open_register->cash_register;
+        $cash_register = $user->open_register->cash_register;
         $store = $cash_register->store;
         return
             Cart::orWhere('created_by_id', $user->id)

@@ -19,6 +19,12 @@ class CartController extends Controller
         return response($model);
     }
 
+    public function count()
+    {
+        $user = auth()->user();
+        return response(Cart::getUserCarts($user)->count());
+    }
+
     public function create(Request $request)
     {
         $validatedData = $request->validate([
@@ -26,14 +32,21 @@ class CartController extends Controller
             'name' => 'nullable|string',
             'cart' => 'required|array',
         ]);
-        $validatedData['created_by_id'] = auth()->user()->id;
-        $validatedData['cart'] = json_encode($validatedData['cart']);
+        $user = auth()->user();
+        $store = $user->open_register->cash_register->store;
+        $validatedData['store_id'] = $store->id;
+        $validatedData['created_by_id'] = $user->id;
+        Cart::create($validatedData);
 
-        if (empty($validatedData['name'])) {
-            $validatedData['name'] = Carbon::now()->toDateString() . " (" .  $validatedData['product_count'] . " Products) - " . "$" . $validatedData['total_price'];
-        }
+        $notification = [
+            'msg' => "Cart added on hold list",
+            'type' => "info"
+        ];
 
-        return response(Cart::create($validatedData), 201);
+        return response([
+            'notification' => $notification,
+            'count' => Cart::getUserCarts($user)->count()
+        ], 201);
     }
 
     public function getHold(Request $request)

@@ -9,7 +9,7 @@
         class="my-2"
         @click.stop="setCheckoutDialog(true)"
         :disabled="disableCheckout"
-        v-text="`checkout`"
+        v-text="'checkout'"
       />
     </v-row>
     <v-row align="center" justify="space-around">
@@ -23,7 +23,7 @@
             v-on="on"
             :disabled="!cartsOnHoldSize"
           >
-            <v-icon v-text="`mdi-recycle`" />
+            <v-icon v-text="'mdi-recycle'" />
             <v-badge
               :value="cartsOnHoldSize > 0 ? true : false"
               color="deep-orange"
@@ -31,7 +31,7 @@
             />
           </v-btn>
         </template>
-        <b v-text="`Restore cart`" />
+        <b v-text="'Restore cart'" />
       </v-tooltip>
 
       <v-tooltip bottom>
@@ -47,7 +47,7 @@
             <v-icon>pause</v-icon>
           </v-btn>
         </template>
-        <b v-text="`Hold current cart`" />
+        <b v-text="'Hold current cart'" />
       </v-tooltip>
 
       <v-tooltip bottom>
@@ -60,10 +60,10 @@
             color="red"
             v-on="on"
           >
-            <v-icon>mdi-delete-outline</v-icon>
+            <v-icon v-text="'mdi-delete-outline'" />
           </v-btn>
         </template>
-        <b v-text="`Empty current cart`" />
+        <b v-text="'Empty current cart'" />
       </v-tooltip>
     </v-row>
   </v-container>
@@ -170,7 +170,7 @@ export default {
     ...mapActions("cart", ["submitOrder"]),
 
     holdCart() {
-      let payload = {
+      const payload = {
         method: "post",
         url: "carts/create",
         data: {
@@ -188,26 +188,21 @@ export default {
           total_price: this.order_total_price
         }
       };
-      this.request(payload).then(() => {
-        this.getCartsOnHoldSize();
+      this.request(payload).then((response) => {
+        this.cartsOnHoldSize = response.count
         this.resetState();
-        // @TODO move notification to backend
-        this.$store.commit("setNotification", {
-          msg: "Cart added on hold list",
-          type: "info"
-        });
       });
     },
     showRestoreOnHoldCartDialog() {
       this.cartRestoreDialog = true;
     },
     getCartsOnHoldSize() {
-      let payload = {
+      const payload = {
         method: "get",
-        url: "carts"
+        url: "carts/count"
       };
       this.request(payload).then(response => {
-        this.cartsOnHoldSize = _.size(response.data);
+        this.cartsOnHoldSize = response;
       });
     }
   }

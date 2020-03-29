@@ -161,6 +161,7 @@ Route::post('/products/search', 'ProductController@search')->middleware('scope:a
 // carts
 Route::get('/carts', 'CartController@all')->middleware('scope:admin,store_manager,cashier');
 Route::get('/carts/get/{model}', 'CartController@getOne')->middleware('scope:admin,store_manager,cashier');
+Route::get('/carts/count', 'CartController@count')->middleware('scope:admin,store_manager,cashier');
 Route::get('/carts/hold', 'CartController@getHold')->middleware('scope:admin,store_manager,cashier');
 Route::post('/carts/create', 'CartController@create')->middleware('scope:admin,store_manager,cashier');
 Route::post('/carts/search', 'CartController@search')->middleware('scope:admin,store_manager,cashier');

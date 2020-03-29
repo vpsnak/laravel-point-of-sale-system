@@ -61,10 +61,10 @@
                     <v-icon
                       v-else-if="product.type === 'giftcard'"
                       size="40"
-                      v-text="`mdi-wallet-giftcard`"
+                      v-text="'mdi-wallet-giftcard'"
                     />
 
-                    <v-icon v-else size="40" v-text="`mdi-flower`" />
+                    <v-icon v-else size="40" v-text="'mdi-flower'" />
 
                     <v-spacer />
 
@@ -163,10 +163,10 @@
                           icon
                           :disabled="product.type === 'custom'"
                         >
-                          <v-icon v-text="`mdi-eye`" />
+                          <v-icon v-text="'mdi-eye'" />
                         </v-btn>
                       </template>
-                      <span v-text="`View item`" />
+                      <span v-text="'View item'" />
                     </v-tooltip>
 
                     <v-spacer />
@@ -182,10 +182,10 @@
                           small
                           icon
                         >
-                          <v-icon v-text="`mdi-cart-remove`" />
+                          <v-icon v-text="'mdi-cart-remove'" />
                         </v-btn>
                       </template>
-                      <span v-text="`Remove from cart`" />
+                      <span v-text="'Remove from cart'" />
                     </v-tooltip>
 
                     <v-spacer />
