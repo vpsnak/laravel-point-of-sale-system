@@ -114,10 +114,10 @@ export default {
       cartRestoreDialog: {
         show: true,
         icon: "mdi-recycle",
+        width: 750,
         titleCloseBtn: true,
         title: "Restore cart",
         component: "cartRestoreDialog",
-        persistent: true,
         eventChannel: "cart-actions-restore-cart"
       }
     };
@@ -171,11 +171,7 @@ export default {
 
   methods: {
     ...mapMutations("dialog", ["setDialog"]),
-    ...mapMutations("cart", [
-      "resetState",
-      "setCheckoutDialog",
-      "cart_products"
-    ]),
+    ...mapMutations("cart", ["resetState", "setCheckoutDialog"]),
     ...mapActions("requests", ["request"]),
     ...mapActions("cart", ["submitOrder"]),
 

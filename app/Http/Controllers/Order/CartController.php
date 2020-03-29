@@ -10,7 +10,7 @@ class CartController extends Controller
     public function all()
     {
         $carts = auth()->user()->carts();
-        return response($carts->paginate());
+        return response($carts->orderBy('id', 'desc')->paginate(3));
     }
 
     public function getOne(Cart $model)
