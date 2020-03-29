@@ -3,15 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Cart;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
     public function all()
     {
-        $user = auth()->user();
-        return response(Cart::getUserCarts($user)->paginate());
+        $carts = auth()->user()->carts();
+        return response($carts->paginate());
     }
 
     public function getOne(Cart $model)
@@ -21,40 +20,29 @@ class CartController extends Controller
 
     public function count()
     {
-        $user = auth()->user();
-        return response(Cart::getUserCarts($user)->count());
+        $carts = auth()->user()->carts();
+        return response($carts->count());
     }
 
     public function create(Request $request)
     {
         $validatedData = $request->validate([
-            'cash_register_id' => 'required|exists:cash_registers,id',
-            'name' => 'nullable|string',
             'cart' => 'required|array',
         ]);
         $user = auth()->user();
-        $store = $user->open_register->cash_register->store;
-        $validatedData['store_id'] = $store->id;
         $validatedData['created_by_id'] = $user->id;
         Cart::create($validatedData);
 
+        $carts = auth()->user()->carts();
         $notification = [
             'msg' => "Cart added on hold list",
             'type' => "info"
         ];
 
         return response([
-            'notification' => $notification,
-            'count' => Cart::getUserCarts($user)->count()
+            'count' => $carts->count(),
+            'notification' => $notification
         ], 201);
-    }
-
-    public function getHold(Request $request)
-    {
-        $validatedData = $request->validate([
-            'cash_register_id' => 'required|int'
-        ]);
-        return response(Cart::where("cash_register_id", $validatedData['cash_register_id'])->get());
     }
 
     public function delete(Cart $model)

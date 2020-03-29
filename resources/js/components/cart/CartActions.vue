@@ -44,7 +44,7 @@
             color="orange"
             v-on="on"
           >
-            <v-icon>pause</v-icon>
+            <v-icon v-text="'pause'" />
           </v-btn>
         </template>
         <b v-text="'Hold current cart'" />
@@ -99,7 +99,7 @@ export default {
 
   data() {
     return {
-      cartsOnHoldSize: 0,
+      cartsOnHoldSize: null,
 
       emptyCartDialog: {
         show: true,
@@ -128,8 +128,18 @@ export default {
       "isValidCheckout",
       "method",
       "customer",
-      "discount_type",
-      "discount_amount",
+      "productMap",
+      "customer",
+      "method",
+      "delivery_fees_price",
+      "cart_products",
+      "order_discount",
+      "delivery",
+      "billing_address_id",
+      "order_notes",
+      "order_billing_address",
+      "order_delivery_address",
+      "order_delivery_store_pickup",
       "notes",
       "order_total_price"
     ]),
@@ -174,27 +184,35 @@ export default {
         method: "post",
         url: "carts/create",
         data: {
-          cash_register_id: this.$store.state.cashRegister.id,
           cart: {
-            products: this.cart_products,
-            customer_id: this.$store.state.cart.customer
-              ? this.$store.state.cart.customer.id
-              : null
-          },
-          discount_type: this.discount_type,
-          discount_amount: this.discount_amount,
-          shipping: { notes: this.notes },
-          product_count: Object.keys(this.cart_products).length,
-          total_price: this.order_total_price
+            productMap: this.productMap,
+            customer: this.customer,
+            method: this.method,
+            delivery_fees_price: this.delivery_fees_price,
+            cart_products: this.cart_products,
+
+            order_discount: this.order_discount,
+
+            delivery: this.delivery,
+
+            billing_address_id: this.billing_address_id,
+
+            // order_total_price,
+            // order_mdse_price,
+            // order_tax_price,
+
+            // order_remaining_price,
+            order_notes: this.order_notes,
+            order_billing_address: this.order_billing_address,
+            order_delivery_address: this.order_delivery_address,
+            order_delivery_store_pickup: this.order_delivery_store_pickup
+          }
         }
       };
-      this.request(payload).then((response) => {
-        this.cartsOnHoldSize = response.count
+      this.request(payload).then(response => {
+        this.cartsOnHoldSize = response.count;
         this.resetState();
       });
-    },
-    showRestoreOnHoldCartDialog() {
-      this.cartRestoreDialog = true;
     },
     getCartsOnHoldSize() {
       const payload = {

@@ -35,6 +35,11 @@ class UserController extends Controller
         $http = new Client;
         $url = config('app.url') . '/oauth/token';
 
+        $user =
+            User::getUserByIndentifier($validatedData['username'])
+            ->with(['settings', 'roles'])
+            ->first();
+
         $response = $http->post($url, [
             'form_params' => [
                 'grant_type' => 'password',
@@ -42,13 +47,12 @@ class UserController extends Controller
                 'client_secret' => 'wtx0OMH1wmzMjVu8KV72vC6QXDqijRrBJygHJRV7',
                 'username' => $validatedData['username'],
                 'password' => $validatedData['password'],
-                'scope' => User::getRoleNameByIndentifier($validatedData['username']),
+                'scope' => $user->role->name,
             ],
         ]);
 
-        $user =
-            User::findForPassport($validatedData['username'])
-            ->load('settings', 'roles');
+
+
         $token = (json_decode((string) $response->getBody(), true))['access_token'];
 
         return response([

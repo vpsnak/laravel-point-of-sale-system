@@ -114,7 +114,6 @@ export default {
     order_billing_address: null,
     order_delivery_address: null,
     order_delivery_store_pickup: null,
-    order_delivery_store_pickup: null,
     order_timestamp: null,
     order_created_by: null,
 

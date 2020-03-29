@@ -49,7 +49,7 @@ class User extends Authenticatable
         'updated_at' => 'datetime:m/d/Y H:i:s'
     ];
 
-    public function setPasswordAttribute($value)
+    public function setPasswordAttribute(string $value)
     {
         $this->attributes['password'] = Hash::make($value);
     }
@@ -62,16 +62,6 @@ class User extends Authenticatable
     public function getRoleNameAttribute()
     {
         return $this->role->text ?? null;
-    }
-
-    public static function getRoleNameByIndentifier($identifier)
-    {
-        $user = self::findForPassport($identifier);
-        if ($user) {
-            return $user->roles[0]->name;
-        } else {
-            return null;
-        }
     }
 
     public static function activeUsers()
@@ -99,6 +89,11 @@ class User extends Authenticatable
         return $this->hasMany(OrderStatus::class);
     }
 
+    public function carts()
+    {
+        return $this->hasMany(Cart::class, 'created_by_id');
+    }
+
     public function openRegister()
     {
         return $this->hasOne(CashRegisterLogs::class);
@@ -109,13 +104,20 @@ class User extends Authenticatable
         return $this->openRegister()->whereStatus(1);
     }
 
-    public static function findForPassport(string $identifier)
+    public static function getUserByIndentifier(string $identifier)
     {
-        return self::where('active', true)
+        return
+            self::where('active', true)
             ->where(function ($query) use ($identifier) {
-                $query->orWhere('email', $identifier)
+                $query
+                    ->orWhere('email', $identifier)
                     ->orWhere('username', $identifier)
                     ->orWhere('phone', $identifier);
-            })->first();
+            });
+    }
+
+    public static function findForPassport(string $identifier)
+    {
+        return self::getUserByIndentifier($identifier)->first();
     }
 }

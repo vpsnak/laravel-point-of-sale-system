@@ -79,7 +79,6 @@ class ForeignKeys extends Migration
 
         Schema::table('carts', function (Blueprint $table) {
             $table->foreign('created_by_id')->references('id')->on('users')->onDelete('restrict');
-            $table->foreign('store_id')->references('id')->on('stores')->onDelete('restrict');
         });
 
         Schema::table('order_status', function (Blueprint $table) {
@@ -198,7 +197,6 @@ class ForeignKeys extends Migration
         });
 
         Schema::table('carts', function (Blueprint $table) {
-            $table->dropForeign(['store_id']);
             $table->dropForeign(['created_by_id']);
         });
 

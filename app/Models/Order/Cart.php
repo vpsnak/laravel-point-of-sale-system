@@ -6,15 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cart extends Model
 {
-    protected $appends = [
-        'can_delete'
-    ];
-
     protected $fillable = [
-        'name',
         'cart',
-        'visibility',
-        'store_id',
         'created_by_id'
     ];
 
@@ -25,9 +18,7 @@ class Cart extends Model
     ];
 
     protected $hidden = [
-        'created_by_id',
-        'store_id',
-        'visibility'
+        'created_by_id'
     ];
 
     public function setCartAttribute(array $value)
@@ -35,32 +26,8 @@ class Cart extends Model
         $this->attributes['cart'] = json_encode($value);
     }
 
-    public function getCanDeleteAttribute()
-    {
-        return $this->created_by_id === auth()->user()->id ? true : false;
-    }
-
-    public static function getUserCarts(User $user)
-    {
-        $cash_register = $user->open_register->cash_register;
-        $store = $cash_register->store;
-        return
-            Cart::orWhere('created_by_id', $user->id)
-            ->orWhere('visibility', 'public')
-            ->orWhere(function ($query) use ($store) {
-                $query
-                    ->where('visibility', 'store')
-                    ->where('store_id', $store->id);
-            });
-    }
-
-    public function cashRegister()
-    {
-        $this->belongsTo(CashRegister::class);
-    }
-
     public function createdBy()
     {
-        $this->belongsTo(User::class);
+        return $this->belongsTo(User::class);
     }
 }
