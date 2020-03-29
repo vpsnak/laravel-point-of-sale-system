@@ -33,7 +33,7 @@ class CartController extends Controller
         $validatedData['created_by_id'] = $user->id;
         Cart::create($validatedData);
 
-        $carts = auth()->user()->carts();
+        $carts = $user->carts();
         $notification = [
             'msg' => "Cart added on hold list",
             'type' => "info"
