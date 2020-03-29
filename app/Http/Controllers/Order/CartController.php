@@ -15,7 +15,16 @@ class CartController extends Controller
 
     public function getOne(Cart $model)
     {
-        return response($model);
+        if ($model->created_by_id === auth()->user()->id) {
+            return response($model);
+        } else {
+            return response([
+                'notification' => [
+                    'msg' => ['You cannot retrieve this cart'],
+                    'type' => 'error'
+                ]
+            ], 422);
+        }
     }
 
     public function count()
@@ -47,10 +56,17 @@ class CartController extends Controller
 
     public function delete(Cart $model)
     {
-        $model->delete();
-        return response(['notification' => [
-            'msg' => 'Cart deleted successfully',
-            'type' => 'success'
-        ]]);
+        if ($model->created_by_id === auth()->user()->id) {
+            $model->delete();
+            return response(['notification' => [
+                'msg' => 'Cart deleted successfully',
+                'type' => 'success'
+            ]]);
+        } else {
+            return response(['notification' => [
+                'msg' => 'You cannot delete this cart',
+                'type' => 'error'
+            ]], 422);
+        }
     }
 }

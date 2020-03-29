@@ -1,7 +1,13 @@
 <template>
   <ValidationObserver tag="v-form" @input="isValidCart()">
-    <v-container fluid style="height:47vh;overflow-y:auto;" class="py-0">
-      <v-row dense>
+    <perfect-scrollbar
+      style="height:500px;"
+      tag="v-container"
+      fluid
+      class="py-0"
+      ref="scroll"
+    >
+      <v-row dense ref="cart">
         <v-col :cols="12">
           <v-expansion-panels accordion>
             <v-expansion-panel
@@ -220,7 +226,7 @@
           </v-expansion-panels>
         </v-col>
       </v-row>
-    </v-container>
+    </perfect-scrollbar>
   </ValidationObserver>
 </template>
 
@@ -245,6 +251,15 @@ export default {
       }
     }
   },
+
+  watch: {
+    cart_products() {
+      this.$nextTick(() => {
+        this.$refs.scroll.$el.scrollTop = this.$refs.cart.clientHeight;
+      });
+    }
+  },
+
   methods: {
     ...mapMutations("dialog", ["setDialog"]),
     ...mapMutations("cart", [

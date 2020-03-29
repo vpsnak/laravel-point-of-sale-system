@@ -2,23 +2,17 @@
   <div>
     <v-chip-group multiple column active-class="primary--text">
       <v-chip
-        class="d-flex justify-center pa-2"
         v-for="cartOnHold in cartsOnHold"
         :key="cartOnHold.id"
         close
         @click="(selectedCart = cartOnHold), restoreCart()"
         @click:close="(selectedCart = cartOnHold), removeCart()"
       >
-        <span>
-          {{ cartOnHold.name }}
-          <v-icon left>mdi-cartOnHold</v-icon>
-        </span>
+        <span v-tezt="cartOnHold.name" />
       </v-chip>
     </v-chip-group>
-    <v-divider></v-divider>
 
-    <v-card-actions>
-      <div class="flex-grow-1"></div>
+    <v-card-actions class="justify-center">
       <v-btn color="primary" text @click="close">Close</v-btn>
     </v-card-actions>
   </div>
@@ -29,6 +23,10 @@ import { mapActions } from "vuex";
 export default {
   props: {
     show: Boolean
+  },
+
+  beforeDestroy() {
+    this.$off("close");
   },
 
   data() {
@@ -73,7 +71,7 @@ export default {
       this.cartReplacePrompt = false;
     },
     getCartsOnHold() {
-      let payload = {
+      const payload = {
         method: "get",
         url: "carts"
       };
@@ -83,11 +81,8 @@ export default {
     },
     close() {
       this.$emit("close");
-      this.$store.state.cartRestoreDialog = false;
     },
     restoreCart() {
-      let cart = JSON.parse(this.selectedCart.cart).products;
-
       if (_.size(this.$store.state.cart.products)) {
         this.cartReplacePrompt = true;
       } else {
@@ -95,35 +90,33 @@ export default {
       }
     },
     loadCart() {
-      let cart = JSON.parse(this.selectedCart.cart).products;
+      const cart = JSON.parse(this.selectedCart.cart).products;
       this.$store.state.cart.products = cart.products;
       this.$store.state.cart.shipping.notes = cart.shipping.notes;
       this.$store.state.cart.discount_type = cart.discount_type;
       this.$store.state.cart.discount_amount = cart.discount_amount;
 
-      this.request({
+      const payload = {
         method: "get",
-        url: `customers/get/${JSON.parse(this.selectedCart.cart).customer_id}`,
-        mutation: "cart/setCustomer"
-      }).then(response => {
+        url: `customers/get/${JSON.parse(this.selectedCart.cart).customer_id}`
+      };
+      this.request(payload).then(response => {
         this.removeCart();
         this.close();
       });
     },
     removeCart() {
-      return this.request({
+      const payload = {
         method: "delete",
         url: `carts/${this.selectedCart.id}`
-      }).then(() => {
+      };
+
+      return this.request(payload).then(() => {
         this.cartsOnHold = this.cartsOnHold.filter(cart => {
           return cart.id !== this.selectedCart.id;
         });
       });
     }
-  },
-
-  beforeDestroy() {
-    this.$off("close");
   }
 };
 </script>

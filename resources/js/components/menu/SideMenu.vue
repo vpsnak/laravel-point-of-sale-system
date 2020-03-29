@@ -1,21 +1,20 @@
 <template>
-  <v-navigation-drawer clipped app v-model="menuVisibility">
+  <v-navigation-drawer app clipped v-model="menuVisibility" :width="180">
     <v-list dense>
       <v-list-item
         v-for="menu_item in side_menu"
         :key="menu_item.id"
         :to="menuAction(menu_item)"
-        exact
         :disabled="data_table.loading"
       >
         <v-list-item-icon>
-          <v-icon>{{ menu_item.icon }}</v-icon>
+          <v-icon v-text="menu_item.icon" />
         </v-list-item-icon>
         <v-list-item-content>
-          <v-list-item-title>{{ menu_item.title }}</v-list-item-title>
+          <v-list-item-title v-text="menu_item.title" />
         </v-list-item-content>
       </v-list-item>
-      <v-divider dark class="my-4"></v-divider>
+      <v-divider class="my-4" />
       <v-subheader class="mt-5 grey--text text--darken-1">
         "Designed" and "developed" by WebO2
       </v-subheader>

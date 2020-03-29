@@ -92,8 +92,8 @@
         </v-row>
       </v-container>
     </v-card-text>
-    <div v-if="products.length">
-      <v-container style="max-height:61vh;" class="overflow-y-auto fill-height">
+    <div v-show="products.length">
+      <perfect-scrollbar tag="v-container" style="height:600px;">
         <v-row>
           <v-col
             v-for="product in products"
@@ -179,7 +179,8 @@
             </v-card>
           </v-col>
         </v-row>
-      </v-container>
+      </perfect-scrollbar>
+
       <v-container>
         <v-row justify="center">
           <v-col :cols="10">
@@ -194,16 +195,16 @@
         </v-row>
       </v-container>
     </div>
-    <v-container v-else>
+    <v-container v-show="!products.length">
       <v-row align="center" justify="center" style="height:58vh;">
         <v-progress-circular
-          v-if="productLoading"
+          v-show="productLoading"
           :size="100"
           :width="10"
           color="primary"
           indeterminate
         ></v-progress-circular>
-        <h2 v-else>No products found</h2>
+        <h2 v-show="!productLoading">No products found</h2>
       </v-row>
     </v-container>
   </v-card>

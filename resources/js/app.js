@@ -14,6 +14,8 @@ import Donut from "vue-css-donut-chart";
 import Price from "./plugins/price";
 import store from "./store/store";
 import "vue-css-donut-chart/dist/vcdonut.css";
+import PerfectScrollbar from "vue2-perfect-scrollbar";
+import "vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css";
 
 import {
   ValidationProvider,
@@ -28,6 +30,7 @@ Vue.component("barcode", VueBarcode);
 
 Vue.use(Donut);
 Vue.use(Price);
+Vue.use(PerfectScrollbar);
 
 const scanner = BarcodeScanner();
 
@@ -68,5 +71,8 @@ const app = new Vue({
       event.preventDefault();
       this.$emit("barcodeScan", code);
     });
+  },
+  beforeDestroy() {
+    this.$off("barcodeScan");
   }
 });
