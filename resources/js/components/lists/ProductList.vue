@@ -72,10 +72,7 @@
                   :color="active ? 'secondary' : ''"
                   class="mx-1"
                   @click="toggle"
-                  depressed
-                  rounded
                   v-text="category.name"
-                  tile
                 />
               </v-slide-item>
             </v-slide-group>
@@ -99,17 +96,17 @@
             <v-card
               :img="product.photo_url"
               @click="addProduct(product)"
-              height="170px"
+              height="170"
               dark
               :elevation="12"
             >
               <v-card-title class="pa-0 grey darken-2" @click.stop>
-                <h6 class="px-2">{{ truncate(product.name) }}</h6>
+                <h6 class="px-2" v-text="truncate(product.name)" />
                 <v-spacer />
                 <v-menu bottom left>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
-                      <v-icon>mdi-dots-vertical</v-icon>
+                      <v-icon v-text="'mdi-dots-vertical'" />
                     </v-btn>
                   </template>
                   <v-list>
@@ -153,26 +150,35 @@
                   </v-list>
                 </v-menu>
               </v-card-title>
-              <v-card-actions>
-                <div class="d-flex flex-column">
-                  <v-chip small class="grey darken-1 mt-2 ml-1 elevation-12">
-                    <span v-text="`SKU: ${product.sku}`"></span>
-                  </v-chip>
-                  <v-chip small class="secondary mt-2 ml-1 elevation-12">
-                    <span
-                      v-text="`Price: ${parsePrice(product.price).toFormat()}`"
-                    />
-                  </v-chip>
-                  <v-chip
-                    v-if="stockColor(product)"
-                    small
-                    class="mt-2 ml-1 elevation-12"
-                    :color="stockColor(product)"
-                  >
-                    <span v-text="`Stock: ${product.stock}`" />
-                  </v-chip>
-                </div>
-              </v-card-actions>
+              <v-card-text @click.stop>
+                <v-slide-group show-arrows>
+                  <v-slide-item @click.prevent>
+                    <v-chip label small class="mx-1 secondary">
+                      <span
+                        v-text="
+                          `Price: ${parsePrice(product.price).toFormat()}`
+                        "
+                      />
+                    </v-chip>
+                  </v-slide-item>
+                  <v-slide-item @click.stop>
+                    <v-chip label small class="mx-1 grey darken-1">
+                      <span v-text="`SKU: ${product.sku}`" />
+                    </v-chip>
+                  </v-slide-item>
+                  <v-slide-item @click.stop>
+                    <v-chip
+                      v-if="stockColor(product)"
+                      label
+                      small
+                      class="mx-1"
+                      :color="stockColor(product)"
+                    >
+                      <span v-text="`Stock: ${product.stock}`" />
+                    </v-chip>
+                  </v-slide-item>
+                </v-slide-group>
+              </v-card-text>
             </v-card>
           </v-col>
         </v-row>
