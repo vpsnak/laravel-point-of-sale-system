@@ -12,7 +12,7 @@ export default {
     isValidCheckout: false,
     discount_error: false,
 
-    productMap: [],
+    product_map: [],
 
     locations: [
       { id: 1, label: "Funeral Home" },
@@ -121,6 +121,12 @@ export default {
   },
 
   mutations: {
+    setDelivery(state, value) {
+      state.delivery = value;
+    },
+    setProductMap(state, value) {
+      state.product_map = value;
+    },
     setCheckoutLoading(state, value) {
       state.checkout_loading = value;
     },
@@ -245,7 +251,7 @@ export default {
         result = false;
       }
 
-      state.productMap.forEach(product => {
+      state.product_map.forEach(product => {
         if (product.discount_error) {
           result = false;
         }
@@ -274,7 +280,7 @@ export default {
         Vue.set(clonedProduct, "qty", 1);
 
         state.cart_products.push(clonedProduct);
-        state.productMap.push({
+        state.product_map.push({
           id: clonedProduct.id,
           discount_error: false
         });
@@ -282,12 +288,12 @@ export default {
     },
     removeProduct(state, index) {
       const productId = state.cart_products[index].id;
-      const productMapindex = _.findIndex(state.productMap, {
+      const product_mapindex = _.findIndex(state.product_map, {
         id: productId
       });
 
       state.cart_products.splice(index, 1);
-      state.productMap.splice(productMapindex, 1);
+      state.product_map.splice(product_mapindex, 1);
     },
     increaseProductQty(state, target_product) {
       const index = _.findIndex(state.cart_products, product => {
@@ -334,7 +340,7 @@ export default {
     },
     resetState(state) {
       state.checkout_loading = false;
-      state.productMap = [];
+      state.product_map = [];
 
       state.order_id = null;
       state.order_store_id = null;
@@ -446,6 +452,37 @@ export default {
           .catch(error => {
             reject(error);
           });
+      });
+    },
+    restoreCart(context, payload) {
+      return new Promise(resolve => {
+        context.commit("setMethod", payload.cart.method);
+        context.commit("setCustomer", payload.cart.customer);
+        context.commit("setDelivery", payload.cart.delivery);
+        context.commit("setOrderNotes", payload.cart.order_notes);
+        context.commit("setProductMap", payload.cart.product_map);
+        context.commit("setCartProducts", payload.cart.cart_products);
+        context.commit("setCartDiscount", payload.cart.order_discount);
+        context.commit("setBillingAddressId", payload.cart.billing_address_id);
+        context.commit(
+          "setDeliveryFeesPrice",
+          payload.cart.delivery_fees_price
+        );
+        context.commit("setBillingAddress", payload.cart.order_billing_address);
+        context.commit(
+          "setDeliveryAddress",
+          payload.cart.order_delivery_address
+        );
+        context.commit(
+          "setDeliveryStorePickup",
+          payload.cart.order_delivery_store_pickup
+        );
+
+        if (payload.cart.method !== "retail") {
+          context.commit("previousStep");
+        }
+
+        resolve(true);
       });
     },
     loadOrder(context, order) {

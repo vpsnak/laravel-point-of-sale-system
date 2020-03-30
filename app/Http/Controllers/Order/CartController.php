@@ -44,8 +44,8 @@ class CartController extends Controller
 
         $carts = $user->carts();
         $notification = [
-            'msg' => "Cart added on hold list",
-            'type' => "info"
+            'msg' => "Cart saved",
+            'type' => "success"
         ];
 
         return response([

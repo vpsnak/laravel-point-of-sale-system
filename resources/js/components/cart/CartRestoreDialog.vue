@@ -16,28 +16,41 @@
             v-for="(item, index) in items"
             :key="item.id"
           >
-            <v-card :disabled="isLoading">
+            <v-card>
               <v-card-title>
-                <h6 v-text="`${1 + index}. ${item.created_at}`" />
+                <h6>
+                  <span class="amber--text" v-text="`${1 + index}.`" />
+                  <span class="primary--text" v-text="`${item.created_at}`" />
+                </h6>
               </v-card-title>
               <v-divider />
-              <v-list>
+              <v-list height="200px">
                 <v-list-item>
                   <v-list-item-content v-text="'Items:'" />
                   <v-list-item-content
-                    class="align-end"
-                    v-text="item.item_count"
+                    class="align-end primary--text"
+                    v-html="`<b><i>${item.item_count}</i></b>`"
                   />
                 </v-list-item>
                 <v-list-item>
                   <v-list-item-content v-text="'Method:'" />
-                  <v-list-item-content class="align-end" v-text="item.method" />
+                  <v-list-item-content
+                    class="align-end primary--text"
+                    v-html="`<b><i>${item.cart.method}</i></b>`"
+                  />
                 </v-list-item>
                 <v-list-item>
                   <v-list-item-content v-text="'Customer:'" />
                   <v-list-item-content
-                    class="align-end"
-                    v-text="item.customer"
+                    class="align-end primary--text"
+                    v-html="
+                      `
+                      ${
+                        item.cart.customer
+                          ? '<b><i>' + item.cart.customer.full_name + '</i></b>'
+                          : '<b><i>Guest</i></b>'
+                      }`
+                    "
                   />
                 </v-list-item>
               </v-list>
@@ -46,6 +59,7 @@
                   <template v-slot:activator="{ on }">
                     <v-btn
                       :loading="deleteLoading[index]"
+                      :disabled="isLoading"
                       icon
                       color="red"
                       @click.stop="
@@ -65,8 +79,9 @@
                       icon
                       color="primary"
                       :loading="restoreLoading[index]"
+                      :disabled="isLoading"
                       @click.stop="
-                        (restoreLoading[index] = true), loadCart(item.id, index)
+                        (restoreLoading[index] = true), restore(item)
                       "
                     >
                       <v-icon v-on="on" v-text="'mdi-cart-arrow-down'" />
@@ -93,13 +108,15 @@
 
     <v-row v-else>
       <v-col v-for="i in 3" :key="i" :cols="12" :sm="6" :md="4">
-        <v-skeleton-loader type="card-heading" tile class="mx-auto" />
-        <v-divider />
-        <v-skeleton-loader type="image" tile class="mx-auto" />
-        <div class="d-flex justify-space-between align-center mt-2">
-          <v-skeleton-loader type="button" tile class="" width="40px" />
-          <v-skeleton-loader type="button" tile class="" width="40px" />
-        </div>
+        <v-card>
+          <v-skeleton-loader type="card-heading" tile class="mx-auto" />
+          <v-divider class="my-5" />
+          <v-skeleton-loader type="image" tile class="mx-auto" height="200px" />
+          <v-card-actions class="justify-space-between">
+            <v-skeleton-loader type="button" tile class="" width="40px" />
+            <v-skeleton-loader type="button" tile class="" width="40px" />
+          </v-card-actions>
+        </v-card>
       </v-col>
       <v-col :cols="12">
         <v-skeleton-loader
@@ -119,6 +136,7 @@ import { mapState, mapActions } from "vuex";
 export default {
   data() {
     return {
+      isLoading: false,
       deleteLoading: [],
       restoreLoading: [],
       cartsLoading: false,
@@ -133,34 +151,17 @@ export default {
     this.getCarts();
   },
 
+  beforeDestroy() {
+    this.$off("submit");
+  },
+
   computed: {
-    ...mapState("cart", ["cart_products"]),
-
-    isLoading() {
-      const deleteLoading = this.deleteLoading.forEach(item => {
-        if (item) {
-          return true;
-        }
-      });
-
-      const restoreLoading = this.restoreLoading.forEach(item => {
-        if (item) {
-          return true;
-        }
-      });
-
-      console.log(deleteLoading);
-
-      if (this.cartLoading || deleteLoading || restoreLoading) {
-        return true;
-      } else {
-        return false;
-      }
-    }
+    ...mapState("cart", ["cart_products"])
   },
 
   methods: {
     ...mapActions("requests", ["request"]),
+    ...mapActions("cart", ["restoreCart"]),
 
     confirmation(event) {
       if (event) {
@@ -188,24 +189,31 @@ export default {
           this.cartsLoading = false;
         });
     },
-    restoreCart(cart, index) {
-      this.restoreLoading[index] = true;
+    restore(cart, index) {
+      this.isLoading = true;
       if (_.size(this.cart_products)) {
         this.cartReplacePrompt = true;
       } else {
-        this.loadCart();
+        this.loadCart(cart);
       }
     },
-    loadCart() {
-      this.deleteCart();
-      this.close();
+    loadCart(cart) {
+      this.restoreCart(cart)
+        .then(() => {
+          this.deleteCart(cart.id);
+          this.$emit("submit", true);
+        })
+        .finally(() => {
+          this.isLoading = false;
+        });
     },
     deleteCart(id, index) {
-      this.deleteLoading[index] = true;
+      this.isLoading = true;
 
       const payload = {
         method: "delete",
-        url: `carts/${id}`
+        url: `carts/${id}`,
+        no_success_notification: true
       };
 
       this.request(payload)
@@ -213,10 +221,10 @@ export default {
           this.getCarts();
         })
         .catch(error => {
-          this.cartsLoading = false;
+          console.error(error);
         })
         .finally(() => {
-          this.deleteLoading[index] = false;
+          this.isLoading = this.deleteLoading[index] = false;
         });
     }
   }

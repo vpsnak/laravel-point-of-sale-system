@@ -12,15 +12,16 @@
         v-text="'checkout'"
       />
     </v-row>
-    <v-row align="center" justify="space-around">
+    <v-row align="center" justify="space-around" class="mt-3">
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            icon
-            fab
+            text
             @click="setDialog(cartRestoreDialog)"
             v-on="on"
-            :disabled="!cartsOnHoldSize"
+            :disabled="disabled || loading || !cartsOnHoldSize"
+            color="primary"
+            :loading="cartsOnHoldSizeLoading"
           >
             <v-icon v-text="'mdi-cart-arrow-down'" />
             <v-badge
@@ -36,33 +37,33 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            icon
-            fab
-            :disabled="disabled"
+            text
+            :disabled="disabled || loading"
             @click="holdCart"
             color="orange"
             v-on="on"
           >
-            <v-icon v-text="'pause'" />
+            <v-icon v-text="'mdi-cart-outline'" left />
+            <v-icon v-text="'mdi-chevron-right'" />
+            <v-icon v-text="'mdi-content-save-outline'" right />
           </v-btn>
         </template>
-        <b v-text="'Hold current cart'" />
+        <b v-text="'Save cart'" />
       </v-tooltip>
 
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            icon
-            fab
+            text
             @click.stop="setDialog(emptyCartDialog)"
-            :disabled="disabled"
+            :disabled="disabled || loading"
             color="red"
             v-on="on"
           >
-            <v-icon v-text="'mdi-delete-outline'" />
+            <v-icon v-text="'mdi-cart-remove'" />
           </v-btn>
         </template>
-        <b v-text="'Empty current cart'" />
+        <b v-text="'Empty cart'" />
       </v-tooltip>
     </v-row>
   </v-container>
@@ -99,6 +100,7 @@ export default {
   data() {
     return {
       cartsOnHoldSize: null,
+      cartsOnHoldSizeLoading: false,
 
       emptyCartDialog: {
         show: true,
@@ -127,7 +129,7 @@ export default {
       "isValidCheckout",
       "method",
       "customer",
-      "productMap",
+      "product_map",
       "customer",
       "method",
       "delivery_fees_price",
@@ -143,6 +145,13 @@ export default {
       "order_total_price"
     ]),
 
+    loading() {
+      if (this.checkout_loading || this.cartsOnHoldSizeLoading) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     checkoutColor() {
       switch (this.method) {
         case "retail":
@@ -157,6 +166,7 @@ export default {
       const orderTotalPrice = this.parsePrice(this.order_total_price);
 
       if (
+        !this.loading &&
         !this.$props.disabled &&
         this.isValidCheckout &&
         orderTotalPrice.greaterThan(this.parsePrice())
@@ -170,7 +180,11 @@ export default {
 
   methods: {
     ...mapMutations("dialog", ["setDialog"]),
-    ...mapMutations("cart", ["resetState", "setCheckoutDialog"]),
+    ...mapMutations("cart", [
+      "resetState",
+      "setCheckoutDialog",
+      "setCheckoutLoading"
+    ]),
     ...mapActions("requests", ["request"]),
     ...mapActions("cart", ["submitOrder"]),
 
@@ -180,7 +194,7 @@ export default {
         url: "carts/create",
         data: {
           cart: {
-            productMap: this.productMap,
+            product_map: this.product_map,
             customer: this.customer,
             method: this.method,
             delivery_fees_price: this.delivery_fees_price,
@@ -210,13 +224,20 @@ export default {
       });
     },
     getCartsOnHoldSize() {
+      this.setCheckoutLoading(true);
+      this.cartsOnHoldSizeLoading = true;
       const payload = {
         method: "get",
         url: "carts/count"
       };
-      this.request(payload).then(response => {
-        this.cartsOnHoldSize = response;
-      });
+      this.request(payload)
+        .then(response => {
+          this.cartsOnHoldSize = response;
+        })
+        .finally(() => {
+          this.setCheckoutLoading(false);
+          this.cartsOnHoldSizeLoading = false;
+        });
     }
   }
 };

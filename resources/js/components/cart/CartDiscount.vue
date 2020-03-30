@@ -105,7 +105,7 @@ export default {
 
   computed: {
     ...mapState("cart", [
-      "productMap",
+      "product_map",
       "order_total_price",
       "discountTypes",
       "order_id",
@@ -178,10 +178,10 @@ export default {
     runValidation() {
       this.$refs.checkoutObs.validate().then(result => {
         if (this.product) {
-          const index = _.findIndex(this.productMap, {
+          const index = _.findIndex(this.product_map, {
             id: this.product.id
           });
-          this.$set(this.productMap[index], "discount_error", !result);
+          this.$set(this.product_map[index], "discount_error", !result);
         } else {
           this.setDiscountError(!result);
         }

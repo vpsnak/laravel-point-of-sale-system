@@ -81,7 +81,7 @@
           {{ dialog.cancelBtnTxt }}
         </v-btn>
 
-        <v-btn @click="closeEvent(true, true)" text color="primary">
+        <v-btn @click="closeEvent(true, true)" text outlined color="primary">
           {{ dialog.confirmationBtnTxt }}
         </v-btn>
       </v-card-actions>

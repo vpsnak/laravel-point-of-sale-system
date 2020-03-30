@@ -1,7 +1,7 @@
 <template>
   <ValidationObserver tag="v-form" @input="isValidCart()">
     <perfect-scrollbar
-      style="height:495px;"
+      style="height:450px;"
       tag="v-container"
       fluid
       class="py-0"
@@ -187,7 +187,7 @@
                           small
                           icon
                         >
-                          <v-icon v-text="'mdi-cart-remove'" />
+                          <v-icon v-text="'mdi-delete-outline'" />
                         </v-btn>
                       </template>
                       <span v-text="'Remove from cart'" />

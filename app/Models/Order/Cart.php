@@ -8,7 +8,6 @@ class Cart extends Model
 {
     protected $appends = [
         'item_count',
-        'customer',
     ];
 
     protected $fillable = [
@@ -28,12 +27,7 @@ class Cart extends Model
 
     public function getItemCountAttribute()
     {
-        return "name: {$this->id}";
-    }
-
-    public function getCustomerAttribute()
-    {
-        return "name: {$this->id}";
+        return count($this->cart['cart_products']);
     }
 
     public function setCartAttribute(array $value)

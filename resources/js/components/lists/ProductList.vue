@@ -8,14 +8,13 @@
             @click="btnactive = !btnactive"
             :color="btnactive ? 'primary' : null"
           >
-            <v-icon left>mdi-barcode-scan</v-icon>
-            <v-icon>mdi-chevron-right</v-icon>
-            <v-icon right>
-              {{ btnactive ? "mdi-cart" : "mdi-eye" }}
-            </v-icon>
+            <v-icon left v-text="'mdi-barcode-scan'" />
+            <v-icon v-text="'mdi-chevron-right'" />
+            <v-icon right v-text="btnactive ? 'mdi-cart' : 'mdi-eye'" />
           </v-btn>
 
           <v-text-field
+            :disabled="productLoading"
             dense
             class="mx-1"
             outlined
@@ -32,24 +31,24 @@
           <v-menu :nudge-width="200" offset-x>
             <template v-slot:activator="{ on }">
               <v-btn icon v-on="on">
-                <v-icon>mdi-plus</v-icon>
+                <v-icon v-text="'mdi-plus'" />
               </v-btn>
             </template>
             <v-list>
               <v-list-item @click="addCustomProductDialog()">
                 <v-list-item-icon>
-                  <v-icon>mdi-flower</v-icon>
+                  <v-icon v-text="'mdi-flower'" />
                 </v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title>Custom item</v-list-item-title>
+                  <v-list-item-title v-text="'Custom item'" />
                 </v-list-item-content>
               </v-list-item>
               <v-list-item @click="giftcardDialog()">
                 <v-list-item-icon>
-                  <v-icon>mdi-wallet-giftcard</v-icon>
+                  <v-icon v-text="'mdi-wallet-giftcard'" />
                 </v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title>Giftcard</v-list-item-title>
+                  <v-list-item-title v-text="'Giftcard'" />
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -76,23 +75,18 @@
                   depressed
                   rounded
                   v-text="category.name"
+                  tile
                 />
               </v-slide-item>
             </v-slide-group>
           </v-col>
-          <v-progress-linear
-            v-if="categoriesLoading"
-            class="my-5"
-            :size="25"
-            :width="3"
-            color="primary"
-            indeterminate
-            rounded
-          />
+          <v-col v-else v-for="n in 4" :key="n" :cols="3">
+            <v-skeleton-loader type="chip" tile />
+          </v-col>
         </v-row>
       </v-container>
     </v-card-text>
-    <div v-show="products.length">
+    <div v-if="products.length">
       <perfect-scrollbar tag="v-container" style="height:600px;">
         <v-row>
           <v-col
@@ -195,16 +189,31 @@
         </v-row>
       </v-container>
     </div>
-    <v-container v-show="!products.length">
-      <v-row align="center" justify="center" style="height:58vh;">
-        <v-progress-circular
-          v-show="productLoading"
-          :size="100"
-          :width="10"
-          color="primary"
-          indeterminate
-        ></v-progress-circular>
-        <h2 v-show="!productLoading">No products found</h2>
+    <v-container v-else>
+      <v-row v-if="productLoading" align="center" justify="center">
+        <v-col v-for="n in 9" :cols="12" :md="6" :lg="4" :key="n">
+          <v-card>
+            <v-skeleton-loader type="card-heading" tile class="mx-auto" />
+            <v-skeleton-loader
+              type="image"
+              tile
+              class="mx-auto"
+              height="125px"
+            />
+          </v-card>
+        </v-col>
+        <v-col :cols="12">
+          <v-skeleton-loader
+            type="heading"
+            tile
+            class="mx-auto d-flex justify-center mt-2"
+            max-width="600px"
+            width="100%"
+          />
+        </v-col>
+      </v-row>
+      <v-row justify="center" v-else>
+        <h2 v-text="'No products found'" />
       </v-row>
     </v-container>
   </v-card>
