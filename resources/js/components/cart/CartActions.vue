@@ -19,7 +19,7 @@
             text
             @click="setDialog(cartRestoreDialog)"
             v-on="on"
-            :disabled="disabled || loading || !cartsOnHoldSize"
+            :disabled="loading || !cartsOnHoldSize"
             color="primary"
             :loading="cartsOnHoldSizeLoading"
           >
@@ -38,8 +38,9 @@
         <template v-slot:activator="{ on }">
           <v-btn
             text
+            :loading="saveCartLoading"
             :disabled="disabled || loading"
-            @click="holdCart"
+            @click="saveCart()"
             color="orange"
             v-on="on"
           >
@@ -101,6 +102,7 @@ export default {
     return {
       cartsOnHoldSize: null,
       cartsOnHoldSizeLoading: false,
+      saveCartLoading: false,
 
       emptyCartDialog: {
         show: true,
@@ -126,6 +128,7 @@ export default {
 
   computed: {
     ...mapState("cart", [
+      "checkout_loading",
       "isValidCheckout",
       "method",
       "customer",
@@ -188,7 +191,9 @@ export default {
     ...mapActions("requests", ["request"]),
     ...mapActions("cart", ["submitOrder"]),
 
-    holdCart() {
+    saveCart() {
+      this.setCheckoutLoading(true);
+      this.saveCartLoading = true;
       const payload = {
         method: "post",
         url: "carts/create",
@@ -218,10 +223,15 @@ export default {
           }
         }
       };
-      this.request(payload).then(response => {
-        this.cartsOnHoldSize = response.count;
-        this.resetState();
-      });
+      this.request(payload)
+        .then(response => {
+          this.cartsOnHoldSize = response.count;
+          this.resetState();
+        })
+        .finally(() => {
+          this.setCheckoutLoading(false);
+          this.saveCartLoading = false;
+        });
     },
     getCartsOnHoldSize() {
       this.setCheckoutLoading(true);
