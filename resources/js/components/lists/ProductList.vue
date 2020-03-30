@@ -66,6 +66,7 @@
               v-for="category in categories"
               :key="category.id"
               :value="category.id"
+              :disabled="productLoading"
               class="ma-1"
               v-text="category.name"
               label
@@ -222,7 +223,7 @@
           />
         </v-col>
       </v-row>
-      <v-row justify="center" v-else>
+      <v-row v-else justify="center">
         <h2 v-text="'No products found'" />
       </v-row>
     </v-container>
@@ -236,13 +237,13 @@ export default {
   data() {
     return {
       categories: [],
-      current_page: 1,
-      last_page: null,
+      currentPage: 1,
+      lastPage: null,
       viewId: null,
       productLoading: false,
       categoriesLoading: false,
       search_keyword: "",
-      selected_category: null,
+      selectedCategory: null,
       btnactive: true
     };
   },
@@ -275,40 +276,6 @@ export default {
         }
       }
     },
-    currentPage: {
-      get() {
-        return this.current_page;
-      },
-      set(value) {
-        this.current_page = value;
-      }
-    },
-    lastPage: {
-      get() {
-        return this.last_page;
-      },
-      set(value) {
-        this.last_page = value;
-      }
-    },
-    selectedCategory: {
-      get() {
-        return this.selected_category;
-      },
-      set(value) {
-        if (!this.selected_category) {
-          this.currentPage = 1;
-        }
-
-        this.selected_category = value;
-
-        if (value) {
-          this.getProductsFromCategoryID();
-        } else {
-          this.getAllProducts();
-        }
-      }
-    },
     products: {
       get() {
         return this.productList;
@@ -318,6 +285,18 @@ export default {
       }
     }
   },
+
+  watch: {
+    selectedCategory(value) {
+      if (value) {
+        this.getProductsFromCategoryID();
+      } else {
+        this.currentPage = 1;
+        this.getAllProducts();
+      }
+    }
+  },
+
   methods: {
     ...mapMutations(["setProductList"]),
     ...mapMutations("dialog", ["viewItem", "setDialog"]),
