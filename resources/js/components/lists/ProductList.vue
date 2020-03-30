@@ -56,26 +56,21 @@
         </v-row>
 
         <v-row align="center" justify="center">
-          <v-slide-group
+          <v-chip-group
             v-if="!categoriesLoading"
-            show-arrows
             v-model="selectedCategory"
             @change="keyword = ''"
+            active-class="primary--text"
           >
-            <v-slide-item
+            <v-chip
               v-for="category in categories"
               :key="category.id"
-              v-slot:default="{ active, toggle }"
               :value="category.id"
-            >
-              <v-btn
-                :color="active ? 'secondary' : ''"
-                class="ma-1"
-                @click="toggle"
-                v-text="category.name"
-              />
-            </v-slide-item>
-          </v-slide-group>
+              class="ma-1"
+              v-text="category.name"
+              label
+            />
+          </v-chip-group>
 
           <v-col v-else v-for="n in 6" :key="n" :cols="2">
             <v-skeleton-loader type="chip" tile />
@@ -158,39 +153,38 @@
               <v-card-text style="height:55%;" v-ripple />
 
               <v-card-actions @click.stop>
-                <v-slide-group>
-                  <v-slide-item>
-                    <v-chip label dark small class="mr-1 elevation-6 secondary">
-                      <span
-                        v-text="
-                          `Price: ${parsePrice(product.price).toFormat()}`
-                        "
-                      />
-                    </v-chip>
-                  </v-slide-item>
-                  <v-slide-item>
-                    <v-chip
-                      label
-                      small
-                      dark
-                      class="mx-1 elevation-6 grey darken-1"
-                    >
-                      <span v-text="`SKU: ${product.sku}`" />
-                    </v-chip>
-                  </v-slide-item>
-                  <v-slide-item>
-                    <v-chip
-                      v-if="stockColor(product)"
-                      label
-                      small
-                      dark
-                      class="ml-1 elevation-6"
-                      :color="stockColor(product)"
-                    >
-                      <span v-text="`Stock: ${product.stock}`" />
-                    </v-chip>
-                  </v-slide-item>
-                </v-slide-group>
+                <v-chip-group>
+                  <v-chip
+                    :value="active"
+                    label
+                    dark
+                    small
+                    class="mr-1 elevation-6 secondary"
+                  >
+                    <span
+                      v-text="`Price: ${parsePrice(product.price).toFormat()}`"
+                    />
+                  </v-chip>
+                  <v-chip
+                    label
+                    small
+                    dark
+                    class="mx-1 elevation-6 grey darken-1"
+                  >
+                    <span v-text="`SKU: ${product.sku}`" />
+                  </v-chip>
+
+                  <v-chip
+                    v-if="stockColor(product)"
+                    label
+                    small
+                    dark
+                    class="ml-1 elevation-6"
+                    :color="stockColor(product)"
+                  >
+                    <span v-text="`Stock: ${product.stock}`" />
+                  </v-chip>
+                </v-chip-group>
               </v-card-actions>
             </v-card>
           </v-col>
