@@ -19,7 +19,7 @@
               v-model="storePickup"
               prepend-inner-icon="mdi-storefront"
               @change="validate()"
-            ></v-select>
+            />
           </ValidationProvider>
         </v-col>
 
@@ -61,13 +61,10 @@
                   :error-messages="errors"
                   v-on="$props.readonly ? null : on"
                   @blur="parseDate, validate()"
-                ></v-text-field>
+                />
               </ValidationProvider>
             </template>
-            <v-date-picker
-              v-model="deliveryDate"
-              :min="new Date().toJSON()"
-            ></v-date-picker>
+            <v-date-picker v-model="deliveryDate" :min="new Date().toJSON()" />
           </v-menu>
         </v-col>
         <v-col :lg="4" :md="4" :cols="12">

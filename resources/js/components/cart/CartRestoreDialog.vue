@@ -60,7 +60,7 @@
                     <v-btn
                       :loading="deleteLoading[index]"
                       :disabled="isLoading"
-                      icon
+                      text
                       color="red"
                       @click.stop="
                         (deleteLoading[index] = true),
@@ -76,7 +76,6 @@
                   <template v-slot:activator="{ on }">
                     <v-btn
                       text
-                      icon
                       color="primary"
                       :loading="restoreLoading[index]"
                       :disabled="isLoading"
@@ -200,20 +199,20 @@ export default {
     loadCart(cart) {
       this.restoreCart(cart)
         .then(() => {
-          this.deleteCart(cart.id);
+          this.deleteCart(cart.id, null, true);
           this.$emit("submit", true);
         })
         .finally(() => {
           this.isLoading = false;
         });
     },
-    deleteCart(id, index) {
+    deleteCart(id, index, silent) {
       this.isLoading = true;
 
       const payload = {
         method: "delete",
         url: `carts/${id}`,
-        no_success_notification: true
+        no_success_notification: silent
       };
 
       this.request(payload)
@@ -224,7 +223,10 @@ export default {
           console.error(error);
         })
         .finally(() => {
-          this.isLoading = this.deleteLoading[index] = false;
+          this.isLoading = false;
+          if (index) {
+            this.deleteLoading[index] = false;
+          }
         });
     }
   }

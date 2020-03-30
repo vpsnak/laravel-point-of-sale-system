@@ -26,7 +26,7 @@
             @keyup.enter="searchProduct"
             clearable
             @click:clear="(currentPage = 1), getAllProducts()"
-          ></v-text-field>
+          />
 
           <v-menu :nudge-width="200" offset-x>
             <template v-slot:activator="{ on }">
@@ -101,6 +101,7 @@
               @click="addProduct(product)"
               height="170px"
               dark
+              :elevation="12"
             >
               <v-card-title class="pa-0 grey darken-2" @click.stop>
                 <h6 class="px-2">{{ truncate(product.name) }}</h6>
@@ -192,7 +193,7 @@
     <v-container v-else>
       <v-row v-if="productLoading" align="center" justify="center">
         <v-col v-for="n in 9" :cols="12" :md="6" :lg="4" :key="n">
-          <v-card>
+          <v-card :elevation="12">
             <v-skeleton-loader type="card-heading" tile class="mx-auto" />
             <v-skeleton-loader
               type="image"
