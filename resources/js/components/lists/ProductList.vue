@@ -56,28 +56,28 @@
         </v-row>
 
         <v-row align="center" justify="center">
-          <v-col :cols="12" v-if="!categoriesLoading">
-            <v-slide-group
-              show-arrows
-              v-model="selectedCategory"
-              @change="keyword = ''"
+          <v-slide-group
+            v-if="!categoriesLoading"
+            show-arrows
+            v-model="selectedCategory"
+            @change="keyword = ''"
+          >
+            <v-slide-item
+              v-for="category in categories"
+              :key="category.id"
+              v-slot:default="{ active, toggle }"
+              :value="category.id"
             >
-              <v-slide-item
-                v-for="category in categories"
-                :key="category.id"
-                v-slot:default="{ active, toggle }"
-                :value="category.id"
-              >
-                <v-btn
-                  :color="active ? 'secondary' : ''"
-                  class="mx-1"
-                  @click="toggle"
-                  v-text="category.name"
-                />
-              </v-slide-item>
-            </v-slide-group>
-          </v-col>
-          <v-col v-else v-for="n in 4" :key="n" :cols="3">
+              <v-btn
+                :color="active ? 'secondary' : ''"
+                class="ma-1"
+                @click="toggle"
+                v-text="category.name"
+              />
+            </v-slide-item>
+          </v-slide-group>
+
+          <v-col v-else v-for="n in 6" :key="n" :cols="2">
             <v-skeleton-loader type="chip" tile />
           </v-col>
         </v-row>
@@ -97,16 +97,16 @@
               :img="product.photo_url"
               @click="addProduct(product)"
               height="170"
-              dark
               :elevation="12"
+              :ripple="false"
             >
-              <v-card-title class="pa-0 grey darken-2" @click.stop>
+              <v-card-title class="pa-0 grey white--text darken-2" @click.stop>
                 <h6 class="px-2" v-text="truncate(product.name)" />
                 <v-spacer />
-                <v-menu bottom left>
+                <v-menu bottom left dark>
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
-                      <v-icon v-text="'mdi-dots-vertical'" />
+                      <v-icon color="white" v-text="'mdi-dots-vertical'" />
                     </v-btn>
                   </template>
                   <v-list>
@@ -114,22 +114,7 @@
                       <v-icon class="pr-2" v-text="'mdi-eye'" />
                       <h5 v-text="'View product'" />
                     </v-list-item>
-                    <v-list-item
-                      :href="product.plantcare_pdf"
-                      target="_blank"
-                      link
-                      :disabled="!product.plantcare_pdf"
-                    >
-                      <v-icon class="pr-2" v-text="'mdi-flower-outline'" />
-                      <h5 v-text="'Plant care'" />
-                    </v-list-item>
-                    <v-list-item
-                      :disabled="!product.plantcare_pdf"
-                      @click="mailPlantCareDialog(product)"
-                    >
-                      <v-icon class="pr-2" v-text="'mdi-email-send'" />
-                      <h5 v-text="'Send plant care pdf'" />
-                    </v-list-item>
+
                     <v-list-item
                       :href="product.url"
                       target="_blank"
@@ -142,7 +127,26 @@
                       />
                       <h5 v-text="'View on Magento'" />
                     </v-list-item>
+
+                    <v-list-item
+                      :href="product.plantcare_pdf"
+                      target="_blank"
+                      link
+                      :disabled="!product.plantcare_pdf"
+                    >
+                      <v-icon class="pr-2" v-text="'mdi-flower-outline'" />
+                      <h5 v-text="'Plant care'" />
+                    </v-list-item>
                     <v-divider />
+
+                    <v-list-item
+                      :disabled="!product.plantcare_pdf"
+                      @click="mailPlantCareDialog(product)"
+                    >
+                      <v-icon class="pr-2" v-text="'mdi-email-send'" />
+                      <h5 v-text="'Send plant care pdf'" />
+                    </v-list-item>
+
                     <v-list-item @click="printProductBarcode(product)">
                       <v-icon class="pr-2">mdi-barcode</v-icon>
                       <h5 v-text="'Print barcode'" />
@@ -150,10 +154,12 @@
                   </v-list>
                 </v-menu>
               </v-card-title>
-              <v-card-text @click.stop>
-                <v-slide-group show-arrows>
-                  <v-slide-item @click.prevent>
-                    <v-chip label small class="mx-1 secondary">
+              <v-card-text style="height:55%;" v-ripple />
+
+              <v-card-actions @click.stop>
+                <v-slide-group>
+                  <v-slide-item>
+                    <v-chip label dark small class="mr-1 elevation-6 secondary">
                       <span
                         v-text="
                           `Price: ${parsePrice(product.price).toFormat()}`
@@ -161,24 +167,30 @@
                       />
                     </v-chip>
                   </v-slide-item>
-                  <v-slide-item @click.stop>
-                    <v-chip label small class="mx-1 grey darken-1">
+                  <v-slide-item>
+                    <v-chip
+                      label
+                      small
+                      dark
+                      class="mx-1 elevation-6 grey darken-1"
+                    >
                       <span v-text="`SKU: ${product.sku}`" />
                     </v-chip>
                   </v-slide-item>
-                  <v-slide-item @click.stop>
+                  <v-slide-item>
                     <v-chip
                       v-if="stockColor(product)"
                       label
                       small
-                      class="mx-1"
+                      dark
+                      class="ml-1 elevation-6"
                       :color="stockColor(product)"
                     >
                       <span v-text="`Stock: ${product.stock}`" />
                     </v-chip>
                   </v-slide-item>
                 </v-slide-group>
-              </v-card-text>
+              </v-card-actions>
             </v-card>
           </v-col>
         </v-row>
@@ -207,7 +219,7 @@
               type="image"
               tile
               class="mx-auto"
-              height="125px"
+              height="120px"
             />
           </v-card>
         </v-col>
