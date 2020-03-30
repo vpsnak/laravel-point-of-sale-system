@@ -154,13 +154,7 @@
 
               <v-card-actions @click.stop>
                 <v-chip-group>
-                  <v-chip
-                    :value="active"
-                    label
-                    dark
-                    small
-                    class="mr-1 elevation-6 secondary"
-                  >
+                  <v-chip label dark small class="mr-1 elevation-6 secondary">
                     <span
                       v-text="`Price: ${parsePrice(product.price).toFormat()}`"
                     />

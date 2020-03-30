@@ -16,12 +16,12 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            text
             @click="setDialog(cartRestoreDialog)"
-            v-on="on"
             :disabled="loading || !cartsOnHoldSize"
-            color="primary"
             :loading="cartsOnHoldSizeLoading"
+            text
+            color="primary"
+            v-on="on"
           >
             <v-icon v-text="'mdi-cart-arrow-down'" />
             <v-badge
@@ -31,7 +31,7 @@
             />
           </v-btn>
         </template>
-        <b v-text="'Restore cart'" />
+        <b v-text="'Restore a saved cart'" />
       </v-tooltip>
 
       <v-tooltip bottom>

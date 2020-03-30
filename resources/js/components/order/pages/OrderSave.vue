@@ -69,7 +69,7 @@ export default {
     ...mapActions("cart", ["submitOrder"]),
 
     confirmationDialog() {
-      this.setDialog({
+      const payload = {
         show: true,
         action: "confirmation",
         icon: "mdi-content-save-outline",
@@ -80,7 +80,8 @@ export default {
         cancelBtnTxt: "No",
         confirmationBtnTxt: "Yes",
         eventChannel: "order-save-confirmation"
-      });
+      };
+      this.setDialog(payload);
     },
     save() {
       this.setCheckoutLoading(true);

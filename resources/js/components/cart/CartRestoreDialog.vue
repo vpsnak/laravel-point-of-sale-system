@@ -1,110 +1,122 @@
 <template>
   <v-container fluid>
-    <v-data-iterator
-      v-if="!cartsLoading"
-      :items="carts"
-      :items-per-page="4"
-      hide-default-footer
-      no-data-text="No carts found"
-    >
-      <template v-slot:default="{ items }">
-        <v-row>
-          <v-col
-            :cols="12"
-            :sm="6"
-            :md="4"
-            v-for="(item, index) in items"
-            :key="item.id"
-          >
-            <v-card>
-              <v-card-title>
-                <h6>
-                  <span class="amber--text" v-text="`${1 + index}.`" />
-                  <span class="primary--text" v-text="`${item.created_at}`" />
-                </h6>
-              </v-card-title>
-              <v-divider />
-              <v-list height="200px">
-                <v-list-item>
-                  <v-list-item-content v-text="'Items:'" />
-                  <v-list-item-content
-                    class="align-end primary--text"
-                    v-html="`<b><i>${item.item_count}</i></b>`"
-                  />
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-content v-text="'Method:'" />
-                  <v-list-item-content
-                    class="align-end primary--text"
-                    v-html="`<b><i>${item.cart.method}</i></b>`"
-                  />
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-content v-text="'Customer:'" />
-                  <v-list-item-content
-                    class="align-end primary--text"
-                    v-html="
-                      `
-                      ${
-                        item.cart.customer
-                          ? '<b><i>' + item.cart.customer.full_name + '</i></b>'
-                          : '<b><i>Guest</i></b>'
-                      }`
-                    "
-                  />
-                </v-list-item>
-              </v-list>
-              <v-card-actions class="justify-space-between">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <v-btn
-                      :loading="deleteLoading[index]"
-                      :disabled="isLoading"
-                      text
-                      color="red"
-                      @click.stop="
-                        (deleteLoading[index] = true),
-                          deleteCart(item.id, index)
-                      "
-                    >
-                      <v-icon v-text="'mdi-delete-outline'" v-on="on" />
-                    </v-btn>
-                  </template>
-                  <span v-text="'Delete'" />
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <v-btn
-                      text
-                      color="primary"
-                      :loading="restoreLoading[index]"
-                      :disabled="isLoading"
-                      @click.stop="
-                        (restoreLoading[index] = true), restore(item)
-                      "
-                    >
-                      <v-icon v-on="on" v-text="'mdi-cart-arrow-down'" />
-                    </v-btn>
-                  </template>
-                  <span v-text="'Restore'" />
-                </v-tooltip>
-              </v-card-actions>
-            </v-card>
-          </v-col>
-        </v-row>
-      </template>
-      <template v-slot:footer>
-        <v-row class="mt-2" align="center" justify="end">
-          <v-pagination
-            v-model="currentPage"
-            :length="lastPage"
-            @input="getCarts()"
-            :total-visible="5"
-          />
-        </v-row>
-      </template>
-    </v-data-iterator>
+    <v-row v-if="!cartsLoading" justify="center" dense>
+      <v-col v-if="showWarning" cols="auto">
+        <v-alert type="warning" dense outlined>
+          Your current cart will be replaced
+        </v-alert>
+      </v-col>
 
+      <v-data-iterator
+        :items="carts"
+        disable-pagination
+        disable-filtering
+        disable-sort
+        hide-default-footer
+        no-data-text="No carts found"
+      >
+        <template v-slot:default="{ items }">
+          <perfect-scrollbar tag="v-container" style="height:375px;">
+            <v-row dense>
+              <v-col
+                :cols="12"
+                :sm="6"
+                :md="4"
+                v-for="(item, index) in items"
+                :key="item.id"
+              >
+                <v-card>
+                  <v-card-title>
+                    <h6>
+                      <span class="amber--text" v-text="`${1 + index}.`" />
+                      <span
+                        class="primary--text"
+                        v-text="`${item.created_at}`"
+                      />
+                    </h6>
+                  </v-card-title>
+                  <v-divider />
+                  <v-list height="200px">
+                    <v-list-item>
+                      <v-list-item-content v-text="'Items:'" />
+                      <v-list-item-content
+                        class="align-end primary--text"
+                        v-html="`<b><i>${item.item_count}</i></b>`"
+                      />
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-content v-text="'Method:'" />
+                      <v-list-item-content
+                        class="align-end primary--text"
+                        v-html="`<b><i>${item.cart.method}</i></b>`"
+                      />
+                    </v-list-item>
+                    <v-list-item>
+                      <v-list-item-content v-text="'Customer:'" />
+                      <v-list-item-content
+                        class="align-end primary--text"
+                        v-html="
+                          `<b><i>${
+                            item.cart.customer
+                              ? item.cart.customer.full_name
+                              : 'Guest'
+                          }</i></b>`
+                        "
+                      />
+                    </v-list-item>
+                  </v-list>
+                  <v-card-actions class="justify-space-between">
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          :loading="deleteLoading[index]"
+                          :disabled="isLoading"
+                          text
+                          color="red"
+                          @click.stop="
+                            (deleteLoading[index] = true),
+                              deleteCart(item.id, index)
+                          "
+                        >
+                          <v-icon v-text="'mdi-delete-outline'" v-on="on" />
+                        </v-btn>
+                      </template>
+                      <span v-text="'Delete'" />
+                    </v-tooltip>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          text
+                          color="primary"
+                          :loading="restoreLoading[index]"
+                          :disabled="isLoading"
+                          @click.stop="
+                            (restoreLoading[index] = true), restore(item)
+                          "
+                        >
+                          <v-icon v-on="on" v-text="'mdi-cart-arrow-down'" />
+                        </v-btn>
+                      </template>
+                      <span v-text="'Restore'" />
+                    </v-tooltip>
+                  </v-card-actions>
+                </v-card>
+              </v-col>
+            </v-row>
+          </perfect-scrollbar>
+        </template>
+        <template v-slot:footer>
+          <v-row class="mt-2" align="center" justify="end">
+            <v-pagination
+              v-model="currentPage"
+              :length="lastPage"
+              @input="getCarts()"
+              :total-visible="5"
+            />
+          </v-row>
+        </template>
+      </v-data-iterator>
+    </v-row>
     <v-row v-else>
       <v-col v-for="i in 3" :key="i" :cols="12" :sm="6" :md="4">
         <v-card>
@@ -131,7 +143,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions, mapMutations } from "vuex";
 import { EventBus } from "../../plugins/eventBus";
 export default {
   data() {
@@ -156,20 +168,21 @@ export default {
   },
 
   computed: {
-    ...mapState("cart", ["cart_products"])
+    ...mapState("cart", ["cart_products", "customer"]),
+
+    showWarning() {
+      if (_.size(this.cart_products) || this.customer) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   },
 
   methods: {
     ...mapActions("requests", ["request"]),
     ...mapActions("cart", ["restoreCart"]),
 
-    confirmation(event) {
-      if (event) {
-        this.loadCart();
-      }
-
-      this.cartReplacePrompt = false;
-    },
     getCarts() {
       this.cartsLoading = true;
       const payload = {
@@ -189,15 +202,7 @@ export default {
           this.cartsLoading = false;
         });
     },
-    restore(cart, index) {
-      this.isLoading = true;
-      if (_.size(this.cart_products)) {
-        this.cartReplacePrompt = true;
-      } else {
-        this.loadCart(cart);
-      }
-    },
-    loadCart(cart) {
+    restore(cart) {
       this.restoreCart(cart)
         .then(() => {
           this.deleteCart(cart.id, null, true);

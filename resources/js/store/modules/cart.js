@@ -180,7 +180,7 @@ export default {
       state.delivery.occasion = value;
     },
     setOrderId(state, value) {
-      // patch, shouldn't be really needed
+      // casting shouldn't be really needed
       state.order_id = Number.parseInt(value);
     },
     setOrderStatus(state, value) {
@@ -456,6 +456,7 @@ export default {
     },
     restoreCart(context, payload) {
       return new Promise(resolve => {
+        context.commit("resetState");
         context.commit("setMethod", payload.cart.method);
         context.commit("setCustomer", payload.cart.customer);
         context.commit("setDelivery", payload.cart.delivery);
