@@ -132,6 +132,7 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import { EventBus } from "../../plugins/eventBus";
 export default {
   data() {
     return {
@@ -218,6 +219,7 @@ export default {
       this.request(payload)
         .then(() => {
           this.getCarts();
+          EventBus.$emit("cart-actions-reduce-cart-counter");
         })
         .catch(error => {
           console.error(error);

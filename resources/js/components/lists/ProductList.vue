@@ -114,8 +114,8 @@
                   </template>
                   <v-list>
                     <v-list-item @click="viewProductDialog(product)">
-                      <v-icon class="pr-2">mdi-eye</v-icon>
-                      <h5>View product</h5>
+                      <v-icon class="pr-2" v-text="'mdi-eye'" />
+                      <h5 v-text="'View product'" />
                     </v-list-item>
                     <v-list-item
                       :href="product.plantcare_pdf"
@@ -123,15 +123,15 @@
                       link
                       :disabled="!product.plantcare_pdf"
                     >
-                      <v-icon class="pr-2">mdi-flower-outline</v-icon>
-                      <h5>Plant care</h5>
+                      <v-icon class="pr-2" v-text="'mdi-flower-outline'" />
+                      <h5 v-text="'Plant care'" />
                     </v-list-item>
                     <v-list-item
                       :disabled="!product.plantcare_pdf"
                       @click="mailPlantCareDialog(product)"
                     >
-                      <v-icon class="pr-2">mdi-email-send</v-icon>
-                      <h5>Send plant care pdf</h5>
+                      <v-icon class="pr-2" v-text="'mdi-email-send'" />
+                      <h5 v-text="'Send plant care pdf'" />
                     </v-list-item>
                     <v-list-item
                       :href="product.url"
@@ -139,13 +139,16 @@
                       link
                       :disabled="!product.url"
                     >
-                      <v-icon class="pr-2">mdi-alpha-m-circle-outline</v-icon>
-                      <h5>View on Magento</h5>
+                      <v-icon
+                        class="pr-2"
+                        v-text="'mdi-alpha-m-circle-outline'"
+                      />
+                      <h5 v-text="'View on Magento'" />
                     </v-list-item>
                     <v-divider />
                     <v-list-item @click="printProductBarcode(product)">
                       <v-icon class="pr-2">mdi-barcode</v-icon>
-                      <h5>Print barcode</h5>
+                      <h5 v-text="'Print barcode'" />
                     </v-list-item>
                   </v-list>
                 </v-menu>
@@ -153,13 +156,12 @@
               <v-card-actions>
                 <div class="d-flex flex-column">
                   <v-chip small class="grey darken-1 mt-2 ml-1 elevation-12">
-                    <span>SKU: {{ product.sku }}</span>
+                    <span v-text="`SKU: ${product.sku}`"></span>
                   </v-chip>
                   <v-chip small class="secondary mt-2 ml-1 elevation-12">
-                    <span>
-                      Price:
-                      {{ $price(product.price).toFormat() }}
-                    </span>
+                    <span
+                      v-text="`Price: ${parsePrice(product.price).toFormat()}`"
+                    />
                   </v-chip>
                   <v-chip
                     v-if="stockColor(product)"
@@ -167,7 +169,7 @@
                     class="mt-2 ml-1 elevation-12"
                     :color="stockColor(product)"
                   >
-                    <span>Stock: {{ product.stock }}</span>
+                    <span v-text="`Stock: ${product.stock}`" />
                   </v-chip>
                 </div>
               </v-card-actions>
@@ -185,7 +187,7 @@
               :length="lastPage"
               color="primary"
               :disabled="productLoading"
-            ></v-pagination>
+            />
           </v-col>
         </v-row>
       </v-container>

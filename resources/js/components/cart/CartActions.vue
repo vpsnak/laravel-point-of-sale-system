@@ -81,19 +81,17 @@ export default {
     this.getCartsOnHoldSize();
     EventBus.$on("cart-actions-empty-current-cart", event => {
       if (event.payload) {
-        this.resetState(event.payload);
+        this.resetState();
       }
     });
-    EventBus.$on("cart-actions-restore-cart", event => {
-      if (event.payload) {
-        this.getCartsOnHoldSize(event.payload);
-      }
+    EventBus.$on("cart-actions-reduce-cart-counter", () => {
+      this.cartsOnHoldSize--;
     });
   },
 
   beforeDestroy() {
     EventBus.$off("cart-actions-empty-current-cart");
-    EventBus.$off("cart-actions-restore-cart");
+    EventBus.$off("cart-actions-reduce-cart-counter");
   },
 
   data() {
