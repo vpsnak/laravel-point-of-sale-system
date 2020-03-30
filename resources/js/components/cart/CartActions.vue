@@ -19,11 +19,10 @@
             icon
             fab
             @click="setDialog(cartRestoreDialog)"
-            color="green"
             v-on="on"
             :disabled="!cartsOnHoldSize"
           >
-            <v-icon v-text="'mdi-recycle'" />
+            <v-icon v-text="'mdi-cart-arrow-down'" />
             <v-badge
               :value="cartsOnHoldSize > 0 ? true : false"
               color="deep-orange"
@@ -113,7 +112,7 @@ export default {
       },
       cartRestoreDialog: {
         show: true,
-        icon: "mdi-recycle",
+        icon: "mdi-cart-arrow-down",
         width: 750,
         titleCloseBtn: true,
         title: "Restore cart",

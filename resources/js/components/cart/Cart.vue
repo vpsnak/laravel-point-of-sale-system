@@ -13,6 +13,8 @@
       <cartProducts class="mt-2 elevation-2" :editable="$props.editable" />
     </v-container>
 
+    <v-divider />
+
     <v-container class="py-0">
       <cartDiscount
         class="mt-2"

@@ -2,25 +2,21 @@
   <v-container fluid>
     <v-data-iterator
       v-if="!cartsLoading"
-      v-model="selected"
       :items="carts"
-      item-key="id"
       :items-per-page="4"
       hide-default-footer
       no-data-text="No carts found"
-      single-select
-      show-select
     >
-      <template v-slot:default="{ items, select }">
+      <template v-slot:default="{ items }">
         <v-row>
           <v-col
-            v-for="(item, index) in items"
-            :key="item.id"
             :cols="12"
             :sm="6"
             :md="4"
+            v-for="(item, index) in items"
+            :key="item.id"
           >
-            <v-card ripple @click="select = true">
+            <v-card :disabled="isLoading">
               <v-card-title>
                 <h6 v-text="`${1 + index}. ${item.created_at}`" />
               </v-card-title>
@@ -45,6 +41,40 @@
                   />
                 </v-list-item>
               </v-list>
+              <v-card-actions class="justify-space-between">
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      :loading="deleteLoading[index]"
+                      icon
+                      color="red"
+                      @click.stop="
+                        (deleteLoading[index] = true),
+                          deleteCart(item.id, index)
+                      "
+                    >
+                      <v-icon v-text="'mdi-delete-outline'" v-on="on" />
+                    </v-btn>
+                  </template>
+                  <span v-text="'Delete'" />
+                </v-tooltip>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      text
+                      icon
+                      color="primary"
+                      :loading="restoreLoading[index]"
+                      @click.stop="
+                        (restoreLoading[index] = true), loadCart(item.id, index)
+                      "
+                    >
+                      <v-icon v-on="on" v-text="'mdi-cart-arrow-down'" />
+                    </v-btn>
+                  </template>
+                  <span v-text="'Restore'" />
+                </v-tooltip>
+              </v-card-actions>
             </v-card>
           </v-col>
         </v-row>
@@ -66,12 +96,16 @@
         <v-skeleton-loader type="card-heading" tile class="mx-auto" />
         <v-divider />
         <v-skeleton-loader type="image" tile class="mx-auto" />
+        <div class="d-flex justify-space-between align-center mt-2">
+          <v-skeleton-loader type="button" tile class="" width="40px" />
+          <v-skeleton-loader type="button" tile class="" width="40px" />
+        </div>
       </v-col>
       <v-col :cols="12">
         <v-skeleton-loader
           type="heading"
           tile
-          class="mx-auto d-flex justify-center"
+          class="mx-auto d-flex justify-center mt-2"
           max-width="600px"
           width="100%"
         />
@@ -83,31 +117,46 @@
 <script>
 import { mapState, mapActions } from "vuex";
 export default {
-  props: {
-    show: Boolean
-  },
-
   data() {
     return {
+      deleteLoading: [],
+      restoreLoading: [],
       cartsLoading: false,
       carts: [],
       currentPage: 1,
       lastPage: null,
-      cartReplacePrompt: false,
-      selected: []
+      cartReplacePrompt: false
     };
   },
-  watch: {
-    selected(value) {
-      console.log(value);
-    }
-  },
+
   mounted() {
     this.getCarts();
   },
 
   computed: {
-    ...mapState("cart", ["cart_products"])
+    ...mapState("cart", ["cart_products"]),
+
+    isLoading() {
+      const deleteLoading = this.deleteLoading.forEach(item => {
+        if (item) {
+          return true;
+        }
+      });
+
+      const restoreLoading = this.restoreLoading.forEach(item => {
+        if (item) {
+          return true;
+        }
+      });
+
+      console.log(deleteLoading);
+
+      if (this.cartLoading || deleteLoading || restoreLoading) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   },
 
   methods: {
@@ -126,15 +175,21 @@ export default {
         method: "get",
         url: `carts?page=${this.currentPage}`
       };
-      this.request(payload).then(response => {
-        this.currentPage = response.current_page;
-        this.lastPage = response.last_page;
-        this.carts = response.data;
-
-        this.cartsLoading = false;
-      });
+      this.request(payload)
+        .then(response => {
+          this.currentPage = response.current_page;
+          this.lastPage = response.last_page;
+          this.carts = response.data;
+        })
+        .catch(error => {
+          console.error(error);
+        })
+        .finally(() => {
+          this.cartsLoading = false;
+        });
     },
-    restoreCart() {
+    restoreCart(cart, index) {
+      this.restoreLoading[index] = true;
       if (_.size(this.cart_products)) {
         this.cartReplacePrompt = true;
       } else {
@@ -142,26 +197,27 @@ export default {
       }
     },
     loadCart() {
-      const cart = JSON.parse(this.selectedCart.cart).products;
-      this.$store.state.cart.products = cart.products;
-      this.$store.state.cart.shipping.notes = cart.shipping.notes;
-      this.$store.state.cart.discount_type = cart.discount_type;
-      this.$store.state.cart.discount_amount = cart.discount_amount;
-
-      this.removeCart();
+      this.deleteCart();
       this.close();
     },
-    removeCart() {
+    deleteCart(id, index) {
+      this.deleteLoading[index] = true;
+
       const payload = {
         method: "delete",
-        url: `carts/${this.selectedCart.id}`
+        url: `carts/${id}`
       };
 
-      this.request(payload).then(() => {
-        this.carts = this.carts.filter(cart => {
-          return cart.id !== this.selectedCart.id;
+      this.request(payload)
+        .then(() => {
+          this.getCarts();
+        })
+        .catch(error => {
+          this.cartsLoading = false;
+        })
+        .finally(() => {
+          this.deleteLoading[index] = false;
         });
-      });
     }
   }
 };

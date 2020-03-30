@@ -1,7 +1,7 @@
 <template>
   <ValidationObserver tag="v-form" @input="isValidCart()">
     <perfect-scrollbar
-      style="height:500px;"
+      style="height:495px;"
       tag="v-container"
       fluid
       class="py-0"
@@ -88,7 +88,6 @@
                       label="Edit price"
                       :readonly="!editPrice(index)"
                       outlined
-                      :color="editPrice(index) ? 'primary' : ''"
                       :value="parsePrice(product.price).toFormat('0.00')"
                       dense
                       append-icon="mdi-pencil"
