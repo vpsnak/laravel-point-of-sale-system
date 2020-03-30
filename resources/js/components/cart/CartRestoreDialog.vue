@@ -1,22 +1,23 @@
 <template>
   <v-container fluid>
-    <v-row v-if="!cartsLoading" justify="center" dense>
+    <v-row v-if="!cartsLoading" justify="center">
       <v-col v-if="showWarning" cols="auto">
         <v-alert type="warning" dense outlined>
-          Your current cart will be replaced
+          Your current cart will be <b>replaced</b>
         </v-alert>
       </v-col>
-
-      <v-data-iterator
-        :items="carts"
-        disable-pagination
-        disable-filtering
-        disable-sort
-        hide-default-footer
-        no-data-text="No carts found"
-      >
-        <template v-slot:default="{ items }">
-          <perfect-scrollbar tag="v-container" style="height:375px;">
+    </v-row>
+    <v-row v-if="!cartsLoading" justify="center" dense>
+      <perfect-scrollbar style="height:375px;" tag="v-col" :cols="12">
+        <v-data-iterator
+          :items="carts"
+          disable-pagination
+          disable-filtering
+          disable-sort
+          hide-default-footer
+          no-data-text="No carts found"
+        >
+          <template v-slot:default="{ items }">
             <v-row dense>
               <v-col
                 :cols="12"
@@ -103,19 +104,17 @@
                 </v-card>
               </v-col>
             </v-row>
-          </perfect-scrollbar>
-        </template>
-        <template v-slot:footer>
-          <v-row class="mt-2" align="center" justify="end">
-            <v-pagination
-              v-model="currentPage"
-              :length="lastPage"
-              @input="getCarts()"
-              :total-visible="5"
-            />
-          </v-row>
-        </template>
-      </v-data-iterator>
+          </template>
+        </v-data-iterator>
+      </perfect-scrollbar>
+      <v-col :cols="12" align="center" justify="end">
+        <v-pagination
+          v-model="currentPage"
+          :length="lastPage"
+          @input="getCarts()"
+          :total-visible="5"
+        />
+      </v-col>
     </v-row>
     <v-row v-else>
       <v-col v-for="i in 3" :key="i" :cols="12" :sm="6" :md="4">
