@@ -44,9 +44,7 @@
             color="orange"
             v-on="on"
           >
-            <v-icon v-text="'mdi-cart-outline'" left />
-            <v-icon v-text="'mdi-chevron-right'" />
-            <v-icon v-text="'mdi-content-save-outline'" right />
+            <v-icon v-text="'mdi-content-save-outline'" />
           </v-btn>
         </template>
         <b v-text="'Save cart'" />

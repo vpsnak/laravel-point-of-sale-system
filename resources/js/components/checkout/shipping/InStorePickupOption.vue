@@ -23,23 +23,19 @@
           </ValidationProvider>
         </v-col>
 
-        <v-col :cols="1" v-if="$props.readonly">
+        <v-col :cols="1" v-if="!$props.readonly">
           <v-btn
             icon
             @click="storePickupDialog(selected_store_pickup)"
             :disabled="!selected_store_pickup"
           >
-            <v-icon>
-              mdi-pencil
-            </v-icon>
+            <v-icon v-text="'mdi-pencil'" />
           </v-btn>
         </v-col>
 
-        <v-col :cols="1" v-if="$props.readonly">
+        <v-col :cols="1" v-if="!$props.readonly">
           <v-btn icon @click="storePickupDialog()">
-            <v-icon>
-              mdi-plus
-            </v-icon>
+            <v-icon v-text="'mdi-plus'" />
           </v-btn>
         </v-col>
       </v-row>
