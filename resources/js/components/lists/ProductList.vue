@@ -109,10 +109,11 @@
                       <v-icon color="white" v-text="'mdi-dots-vertical'" />
                     </v-btn>
                   </template>
-                  <v-list>
+                  <v-list dense>
+                    <v-subheader v-text="'VIEW'" />
                     <v-list-item @click="viewProductDialog(product)">
                       <v-icon class="pr-2" v-text="'mdi-eye'" />
-                      <h5 v-text="'View product'" />
+                      <h5 v-text="'Product'" />
                     </v-list-item>
 
                     <v-list-item
@@ -125,7 +126,7 @@
                         class="pr-2"
                         v-text="'mdi-alpha-m-circle-outline'"
                       />
-                      <h5 v-text="'View on Magento'" />
+                      <h5 v-text="'On Magento'" />
                     </v-list-item>
 
                     <v-list-item
@@ -137,8 +138,8 @@
                       <v-icon class="pr-2" v-text="'mdi-flower-outline'" />
                       <h5 v-text="'Plant care'" />
                     </v-list-item>
-                    <v-divider />
 
+                    <v-subheader v-text="'ACTIONS'" />
                     <v-list-item
                       :disabled="!product.plantcare_pdf"
                       @click="mailPlantCareDialog(product)"
@@ -148,7 +149,7 @@
                     </v-list-item>
 
                     <v-list-item @click="printProductBarcode(product)">
-                      <v-icon class="pr-2">mdi-barcode</v-icon>
+                      <v-icon class="pr-2" v-text="'mdi-barcode'" />
                       <h5 v-text="'Print barcode'" />
                     </v-list-item>
                   </v-list>
