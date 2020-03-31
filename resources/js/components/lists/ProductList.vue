@@ -437,7 +437,8 @@ export default {
         title: "Add a gift card to cart",
         icon: "mdi-wallet-giftcard",
         titleCloseBtn: true,
-        persistent: true
+        persistent: true,
+        width: 700
       };
       this.setDialog(payload);
     },

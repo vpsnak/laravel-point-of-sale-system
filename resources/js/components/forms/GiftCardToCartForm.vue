@@ -1,104 +1,103 @@
 <template>
-  <ValidationObserver v-slot="{ invalid }" tag="form" @submit.prevent="submit">
-    <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
-      <v-row>
-        <v-col :cols="12">
-          <ValidationProvider
-            rules="required|max:100"
-            v-slot="{ errors }"
-            name="Name"
-          >
-            <v-text-field
-              disabled
-              v-model="giftCard.name"
-              label="Name"
-              :error-messages="errors"
-            ></v-text-field>
-          </ValidationProvider>
-        </v-col>
-        <v-col :cols="12">
-          <ValidationProvider
-            rules="required|between:0.01,1000"
-            v-slot="{ errors }"
-            name="Price"
-          >
-            <v-text-field
-              type="number"
-              v-model="price"
-              label="Price"
-              :error-messages="errors"
-            ></v-text-field>
-          </ValidationProvider>
-        </v-col>
-        <v-col :cols="12">
-          <ValidationProvider
-            rules="required|max:100"
-            v-slot="{ errors }"
-            name="Code"
-          >
-            <v-text-field
-              disabled
-              v-model="giftCard.code"
-              label="Code"
-              :error-messages="errors"
-            ></v-text-field>
-          </ValidationProvider>
-        </v-col>
-        <v-col :cols="12">
-          <v-textarea
+<ValidationObserver slim v-slot={invalid}>
+  <v-container fluid>
+    <v-row>
+      <v-col :cols="12">
+        <v-text-field
+            v-model="keyword"
+            @click:prepend-inner="getGiftCard()"
+            @keyup.enter="getGiftCard()"
+            label="Search by code or name"
+            prepend-inner-icon="mdi-magnify"
+            clearable
+            single-line
             outlined
             dense
-            prepend-inner-icon="mdi-message-text-outline"
-            :rows="3"
-            v-model="giftCard.notes"
-            label="Notes"
-            count
-            no-resize
-          ></v-textarea>
-        </v-col>
-        <v-col :cols="12">
-          <v-alert v-if="giftCardEnabled" dense outlined type="warning">
-            This gift card with {{ parsePrice(giftCard.price).toFormat() }} is
-            enabled. If you want to recharge it type the amount and add it to
-            cart
-          </v-alert>
+          />
+      </v-col>
+      <v-col :cols="12">
+        <v-data-table
+          v-model="selectedGiftcard"
+          dense
+          :headers="headers.giftcardToCart"
+          :items="giftcards"
+          :loading="datatableLoading"
+          single-select
+          show-select
+          class="elevation-3"
+          hide-default-footer
+          disable-filtering
+          disable-pagination
+          disable-sort
+          height="150px"
+        >
+          <template v-slot:item.price="{ item }">
+            <h4>{{ parsePrice(item.price).toFormat() }}</h4>
+          </template>
+        </v-data-table>
+      </v-col>
+    </v-row>
+
+      <v-row justify="center" v-if="isEnabled">
+        <v-col :cols="4">
+          <ValidationProvider
+            rules="required|between:0.01,10000"
+            v-slot="{ errors, valid }"
+            name="Recharge amount"
+          >
+            <v-text-field
+              v-model="price"
+              type="number"
+              :disabled="!selectedGiftcard[0]"
+              @keyup.enter="valid ? submit() : null"
+              @click:clear="price = original_price"
+              :error-messages="errors"
+              clearable
+              label="Recharge amount"
+              :hint="`Original amount: ${original_price.toFormat()}`"
+              prefix="$"
+              outlined
+              dense
+            />
+          </ValidationProvider>
         </v-col>
       </v-row>
-    </v-container>
-    <v-container>
-      <v-row justify="center">
-        <v-btn color="primary" class="mr-4" type="submit" :disabled="invalid">
-          Add to cart
-        </v-btn>
-      </v-row>
-    </v-container>
+    <v-row justify="center">
+      <v-btn
+        text
+        outlined
+        v-text="'Add to cart'"
+        @click.stop="submit()"
+        :disabled="invalid || !selectedGiftcard[0]"
+        color="primary"
+      />
+    </v-row>
+  </v-container>
   </ValidationObserver>
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
   data() {
     return {
-      price_amount: null,
-      giftCardEnabled: false,
-      giftCard: {
-        id: null,
-        sku: null,
-        type: "giftcard",
-        notes: null,
-        price: {}
-      }
+      original_price: {},
+      recharge_price: {},
+      recharge_price_amount: null,
+
+      datatableLoading: false,
+      keyword: null,
+      giftcards: [],
+      selectedGiftcard: []
     };
   },
 
   mounted() {
     this.$root.$on("barcodeScan", code => {
-      this.getGiftCard(code);
+      this.keyword = code;
+      this.getGiftCard();
     });
-
-    this.giftCard.id = this.giftCard.sku = `g${parseInt(Math.random() * 1000)}`;
   },
 
   beforeDestroy() {
@@ -106,15 +105,34 @@ export default {
   },
 
   computed: {
+    ...mapState("datatable", ["headers"]),
+
+    isEnabled() {
+      if (this.selectedGiftcard[0] && this.selectedGiftcard[0].enabled_at) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     price: {
       get() {
-        return this.price_amount;
+        return this.recharge_price_amount;
       },
       set(value) {
-        this.price_amount = value;
-        this.giftCard.price = this.parsePrice(
+        this.recharge_price_amount = value;
+        this.recharge_price = this.parsePrice(
           Math.round(value * 10000) / 100
         ).toJSON();
+      }
+    }
+  },
+
+  watch: {
+    selectedGiftcard(value) {
+      if (value[0]) {
+        this.original_price = this.parsePrice(value[0].price);
+      } else {
+        this.price_amount = null;
       }
     }
   },
@@ -123,23 +141,33 @@ export default {
     ...mapActions("requests", ["request"]),
     ...mapActions("cart", ["addProduct"]),
 
-    getGiftCard(code) {
-      const payload = {
-        method: "post",
-        url: "giftcards/search",
-        data: { keyword: code }
-      };
-      this.request(payload).then(response => {
-        if (response.data[0]) {
-          this.giftCard = { ...this.giftCard, ...response.data[0] };
-          this.price_amount = this.parsePrice(this.giftCard.price).toFormat(
-            "0.00"
-          );
-        }
-      });
+    getGiftCard() {
+      if (this.keyword.length) {
+        this.datatableLoading = true;
+        const payload = {
+          method: "post",
+          url: "giftcards/search",
+          data: { keyword: this.keyword }
+        };
+        this.request(payload)
+          .then(response => {
+            this.giftcards = response.data;
+            if (this.giftcards.length === 1) {
+              this.selectedGiftcard[0] = this.giftcards[0];
+            }
+          })
+          .finally(() => {
+            this.datatableLoading = false;
+          });
+      }
     },
     submit() {
-      this.addProduct(this.giftCard);
+      this.selectedGiftcard[0].id = this.selectedGiftcard[0].sku =
+          this.selectedGiftcard[0].code;
+      if (this.isEnabled) {
+        this.selectedGiftcard[0].price = this.recharge_price;
+      }
+      this.addProduct(this.selectedGiftcard[0]);
       this.$emit("submit", true);
     }
   }

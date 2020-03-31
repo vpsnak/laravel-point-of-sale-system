@@ -350,15 +350,31 @@ export default {
       }
     },
     viewItemDialog(item) {
-      const payload = {
-        show: true,
-        width: 1000,
-        title: "Cart item",
-        titleCloseBtn: true,
-        icon: "mdi-package-variant",
-        component: "product",
-        model: item
-      };
+      let payload;
+      switch (item.type) {
+        case 'giftcard':
+          payload = {
+            show: true,
+            width: 1000,
+            title: "Cart item",
+            titleCloseBtn: true,
+            icon: "mdi-package-variant",
+            component: 'giftCardForm',
+            model: item
+          };
+          break;
+        case 'product':
+          payload = {
+            show: true,
+            width: 1000,
+            title: "Cart item",
+            titleCloseBtn: true,
+            icon: "mdi-package-variant",
+            component: `productForm`,
+            model: item
+          };
+          break;
+      }
       this.setDialog(payload);
     }
   }

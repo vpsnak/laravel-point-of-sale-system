@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Giftcard;
 use App\Order;
 use App\MasOrder;
 use App\Status;
@@ -43,6 +44,8 @@ class OrderStatusController extends Controller
                     $paidPaymentStatusId = Status::where('value', 'paid')->firstOrFail('id');
                     $this->order->statuses()->attach($paidPaymentStatusId, ['processed_by_id' => $this->user->id]);
 
+                    $this->handleGiftcards();
+
                     MasOrder::create([
                         'order_id' => $this->order->id,
                         'status' => 'queued'
@@ -58,5 +61,21 @@ class OrderStatusController extends Controller
             'remaining' => $remaining,
             'status' => $this->order->status
         ];
+    }
+
+    private function handleGiftcards()
+    {
+        foreach ($this->order->items as $item) {
+            if ($item['type'] === 'giftcard') {
+                $gc = Giftcard::where('code', $item['code'])->firstOrFail();
+
+                if (!$gc->enabled_at) {
+                    $gc->update(['enabled_at' => now()]);
+                } else {
+                    $gc->price = $gc->price->add(Price::parsePrice($item['price']));
+                    $gc->save();
+                }
+            }
+        }
     }
 }

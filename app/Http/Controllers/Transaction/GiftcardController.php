@@ -29,6 +29,7 @@ class GiftcardController extends Controller
             'bulk_action' => 'required|boolean',
             'qty' => 'required|numeric|min:1',
         ]);
+        $validatedData['original_price'] = $validatedData['price'];
         $validatedData['created_by_id'] = auth()->user()->id;
         $bulk = $validatedData['bulk_action'];
         $qty = $validatedData['qty'];

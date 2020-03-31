@@ -90,6 +90,13 @@ const state = {
       { text: "Created by", value: "created_by.name" },
       { text: "Actions", value: "actions" }
     ],
+    giftcardToCart: [
+      { text: "#", value: "id" },
+      { text: "Name", value: "name" },
+      { text: "Code", value: "code" },
+      { text: "Price", value: "price" },
+      { text: "Enabled at", value: "enabled_at" }
+    ],
     orders: [
       { text: "#", value: "id" },
       { text: "Customer", value: "customer" },

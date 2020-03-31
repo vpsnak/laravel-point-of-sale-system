@@ -16,14 +16,16 @@
         v-model="amount"
         label="Price"
         :error-messages="errors"
-      ></v-text-field>
+      />
     </ValidationProvider>
-    <v-row>
-      <v-col cols="12" align="center" justify="center">
-        <v-btn color="primary" class="mr-4" type="submit" :disabled="invalid">
-          Add to cart
-        </v-btn>
-      </v-col>
+    <v-row justify="center">
+      <v-btn
+        color="primary"
+        outlined
+        type="submit"
+        :disabled="invalid"
+        v-text="'Add to cart'"
+      />
     </v-row>
   </ValidationObserver>
 </template>

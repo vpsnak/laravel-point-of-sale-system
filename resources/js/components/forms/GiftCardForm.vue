@@ -40,23 +40,22 @@
             label="Price"
             :disabled="loading"
             :error-messages="errors"
-          ></v-text-field>
+          />
         </ValidationProvider>
         <v-row justify="space-around">
-          <ValidationProvider vid="bulk_action">
-            <v-switch
-              :disabled="$props.model ? true : false"
-              :readonly="$props.readonly"
-              v-model="formFields.bulk_action"
-              label="Bulk Action"
-            ></v-switch>
-          </ValidationProvider>
+          <v-switch
+            v-if="$props.model ? true : false"
+            v-model="formFields.bulk_action"
+            label="Bulk Action"
+            :readonly="$props.readonly"
+          />
+
           <v-switch
             :readonly="$props.readonly"
             v-model="formFields.enabled"
             label="Enabled"
             :disabled="loading"
-          ></v-switch>
+          />
         </v-row>
         <ValidationProvider
           rules="required_if:bulk_action|min_value:1|numeric"
@@ -72,7 +71,7 @@
             :disabled="loading"
             :error-messages="errors"
             :min="1"
-          ></v-text-field>
+          />
         </ValidationProvider>
       </v-container>
       <v-container>

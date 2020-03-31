@@ -20,6 +20,8 @@ class CreateGiftcardsTable extends Migration
             $table->string('code');
             $table->timestampTz('enabled_at')->nullable();
             $table->json('price');
+            $table->json('original_price');
+            $table->unsignedSmallInteger('times_used')->default(0)->nullable();
             $table->foreignId('created_by_id');
 
             $table->timestampsTz();

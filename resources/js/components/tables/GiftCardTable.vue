@@ -8,14 +8,13 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            small
             icon
             @click="rechargeGiftcardDialog(item)"
             :disabled="data_table.loading"
-            class="my-2"
+            class="mr-4"
             v-on="on"
           >
-            <v-icon small>mdi-credit-card-plus</v-icon>
+            <v-icon>mdi-credit-card-plus</v-icon>
           </v-btn>
         </template>
         <span>Recharge</span>
@@ -24,14 +23,13 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            small
             icon
             :disabled="data_table.loading"
             @click.stop="(item.form = form), editItem(item)"
-            class="my-2"
+            class="my-4"
             v-on="on"
           >
-            <v-icon small>edit</v-icon>
+            <v-icon>edit</v-icon>
           </v-btn>
         </template>
         <span>Edit</span>
@@ -39,14 +37,13 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            small
             icon
             :disabled="data_table.loading"
             @click.stop="(item.form = form), viewItem(item)"
-            class="my-2"
+            class="ml-4"
             v-on="on"
           >
-            <v-icon small>mdi-eye</v-icon>
+            <v-icon v-text="'mdi-eye'" />
           </v-btn>
         </template>
         <span>View</span>
@@ -102,17 +99,18 @@ export default {
     ...mapMutations("cart", ["setCheckoutDialog"]),
 
     rechargeGiftcardDialog(item) {
-      this.setDialog({
+      const payload = {
         show: true,
         width: 400,
-        title: `Recharge the giftcard #${item.code}`,
+        title: `Recharge giftcard: ${item.code}`,
         titleCloseBtn: true,
         icon: "mdi-wallet-giftcard",
         component: "RechargeGiftCardToCart",
         model: item,
         persistent: true,
         eventChannel: "gift-card-table"
-      });
+      };
+      this.setDialog(payload);
     }
   }
 };
