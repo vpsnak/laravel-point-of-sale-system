@@ -22,6 +22,11 @@
                       <b class="amber--text mb-1" v-text="`${1 + index}.`" />
                       <i>
                         <b class="primary--text" v-text="product.name" />
+                        <b
+                          v-if="product.type === 'giftcard'"
+                          class="amber--text"
+                          v-text="`- ${product.code}`"
+                        />
                         <p
                           class="ml-5 mt-1 mb-0"
                           v-text="`(${product.type})`"
@@ -347,10 +352,10 @@ export default {
         case "giftcard":
           payload = {
             show: true,
-            width: 1000,
-            title: "Cart item",
+            width: 450,
+            title: `Giftcard: ${item.code}`,
             titleCloseBtn: true,
-            icon: "mdi-package-variant",
+            icon: "mdi-wallet-giftcard",
             component: "giftCardForm",
             model: item
           };
@@ -359,9 +364,9 @@ export default {
           payload = {
             show: true,
             width: 1000,
-            title: "Cart item",
+            title: `Product: ${item.sku}`,
             titleCloseBtn: true,
-            icon: "mdi-package-variant",
+            icon: "mdi-flower",
             component: `productForm`,
             model: item
           };

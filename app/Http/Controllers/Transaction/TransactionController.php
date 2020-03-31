@@ -214,7 +214,8 @@ class TransactionController extends Controller
         } else if (!$giftcard->enabled_at) {
             return ['errors' => ['This gift card is inactive']];
         } else if ($giftcard->price->lessThan($this->transactionData->price)) {
-            return ['errors' => ['This gift card has insufficient balance to complete the transaction']];
+            $balance  = Price::newFormatter(true)->format($giftcard->price);
+            return ['errors' => ["This gift card has insufficient balance to complete the transaction<br>Available balance: {$balance}"]];
         } else {
             $giftcard->price = $giftcard->price->subtract($this->transactionData->price);
             $giftcard->save();

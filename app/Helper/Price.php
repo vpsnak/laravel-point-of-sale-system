@@ -5,14 +5,21 @@ namespace App\Helper;
 use Money\Currencies\ISOCurrencies;
 use Money\Currency;
 use Money\Formatter\DecimalMoneyFormatter;
+use Money\Formatter\IntlMoneyFormatter;
 use Money\Money;
 
 class Price
 {
-    public static function newFormatter()
+    public static function newFormatter(bool $displayCurrency = false)
     {
         $currencies = new ISOCurrencies();
-        return new DecimalMoneyFormatter($currencies);
+
+        if ($displayCurrency) {
+            $numberFormatter = new \NumberFormatter('en_US', \NumberFormatter::CURRENCY);
+            return new IntlMoneyFormatter($numberFormatter, $currencies);
+        } else {
+            return new DecimalMoneyFormatter($currencies);
+        }
     }
 
     public static function parsePrice($price = null)
