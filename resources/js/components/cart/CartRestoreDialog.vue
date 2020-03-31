@@ -107,7 +107,7 @@
           </template>
         </v-data-iterator>
       </perfect-scrollbar>
-      <v-col :cols="12" align="center" justify="end">
+      <v-col :cols="12" align="center" justify="end" v-if="lastPage > 1">
         <v-pagination
           v-model="currentPage"
           :length="lastPage"

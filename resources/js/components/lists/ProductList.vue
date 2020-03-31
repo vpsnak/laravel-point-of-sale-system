@@ -186,7 +186,7 @@
         </v-row>
       </perfect-scrollbar>
 
-      <v-container>
+      <v-container v-show="lastPage > 1">
         <v-row justify="center">
           <v-col :cols="10">
             <v-pagination
