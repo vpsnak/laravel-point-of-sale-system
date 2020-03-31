@@ -30,7 +30,7 @@
         <v-col cols="auto" v-if="data_table.filters">
           <component
             :is="data_table.filters"
-            @applyFilters="(applied_filters = $event), getItems()"
+            @applyFilters="(appliedFilters = $event), getItems()"
           />
         </v-col>
 
@@ -153,7 +153,7 @@ export default {
       searchValue: "",
       search: false,
       keyword: null,
-      applied_filters: null
+      appliedFilters: null
     };
   },
 
@@ -217,13 +217,13 @@ export default {
 
       let payload = {};
 
-      if (this.search && (this.keyword || this.applied_filters)) {
+      if ((this.search && this.keyword) || this.appliedFilters) {
         payload.method = "post";
         payload.url = `${this.data_table.model}/search?page=${this.page}`;
         payload.data = {
           keyword: this.keyword ? this.keyword : ""
         };
-        payload.data.filters = this.applied_filters;
+        payload.data.filters = this.appliedFilters;
       } else {
         payload.method = "get";
         payload.url = `${this.data_table.model}?page=${this.page}`;
@@ -244,7 +244,7 @@ export default {
         });
     },
     createItemDialog() {
-      this.setDialog({
+      const payload = {
         show: true,
         width: 600,
         title: this.data_table.btnTxt,
@@ -252,7 +252,8 @@ export default {
         component: this.data_table.newForm,
         persistent: true,
         eventChannel: "data-table"
-      });
+      };
+      this.setDialog(payload);
     }
   }
 };
