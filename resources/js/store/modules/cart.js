@@ -268,23 +268,35 @@ export default {
     setDeliveryFeesPrice(state, value) {
       state.delivery_fees_price = value;
     },
-    addProduct(state, newProduct) {
-      let index = _.findIndex(state.cart_products, product => {
-        return product.id === newProduct.id;
+    addProduct(state, item) {
+      const index = _.findIndex(state.cart_products, giftcard => {
+        return giftcard.id === item.id;
       });
-
-      if (index !== -1) {
-        state.cart_products[index].qty++;
-      } else {
-        const clonedProduct = _.cloneDeep(newProduct);
-        Vue.set(clonedProduct, "qty", 1);
-
-        state.cart_products.push(clonedProduct);
-        state.product_map.push({
-          id: clonedProduct.id,
-          discount_error: false
-        });
+      switch (item.type) {
+        case "giftcard":
+          if (index !== -1) {
+            return;
+          }
+          item.is_price_editable = true;
+          break;
+        case "custom item":
+          if (index !== -1) {
+            item.id = item.sku = `c${parseInt(Math.random() * 1000)}`;
+          }
+        case "product":
+          if (index !== -1) {
+            state.cart_products[index].qty++;
+            return;
+          }
       }
+      const clonedProduct = _.cloneDeep(item);
+      Vue.set(clonedProduct, "qty", 1);
+
+      state.product_map.push({
+        id: clonedProduct.id,
+        discount_error: false
+      });
+      state.cart_products.push(clonedProduct);
     },
     removeProduct(state, index) {
       const productId = state.cart_products[index].id;

@@ -64,12 +64,6 @@
 import { mapActions } from "vuex";
 
 export default {
-  mounted() {
-    this.customItem.id = this.customItem.sku = `c${parseInt(
-      Math.random() * 1000
-    )}`;
-  },
-
   beforeDestroy() {
     this.$off("submit");
   },
@@ -81,12 +75,13 @@ export default {
       customItem: {
         id: null,
         sku: null,
-        type: "custom",
+        type: "custom item",
         name: null,
         notes: null,
         price: {},
         original_price: {},
-
+        discount: {},
+        is_discountable: true,
         is_price_editable: true
       }
     };
@@ -110,6 +105,9 @@ export default {
     ...mapActions("cart", ["addProduct"]),
 
     submit() {
+      this.customItem.id = this.customItem.sku = `c${parseInt(
+        Math.random() * 1000
+      )}`;
       this.addProduct(this.customItem);
       this.$emit("submit", true);
     }

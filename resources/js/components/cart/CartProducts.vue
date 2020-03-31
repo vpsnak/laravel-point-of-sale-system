@@ -37,7 +37,7 @@
                       </span>
                     </v-col>
 
-                    <v-col :cols="4" v-if="product.type !== 'giftcard'">
+                    <v-col :cols="4">
                       <span>
                         Original price:
                         <i class="primary--text">
@@ -99,13 +99,7 @@
                     <v-text-field
                       v-else
                       class="mt-5 mx-1 pt-3"
-                      :style="
-                        `max-width:125px;${
-                          product.type === 'giftcard'
-                            ? 'visibility:hidden;'
-                            : ''
-                        }`
-                      "
+                      style="max-width:125px;"
                       prefix="$"
                       :ref="`priceField${index}`"
                       :min="0"
@@ -285,8 +279,6 @@ export default {
     },
     parseProductPrice(product) {
       const label = this.calcProductDiscount(product);
-      const qty = product.qty ? Number.parseInt(product.qty) : 0;
-      const priceBeforeDiscount = this.parsePrice(product.price).multiply(qty);
 
       if (label.isNegative() || label.isZero()) {
         return { class: "red--text", label: "Discount error" };
@@ -325,7 +317,7 @@ export default {
       this.getSelectedInput(index).blur();
     },
     originalPrice(index) {
-      return this.$price(this.products[index].original_price);
+      return this.parsePrice(this.products[index].original_price);
     },
     editPrice(index) {
       if (_.has(this.products[index], "editPrice")) {
@@ -352,18 +344,18 @@ export default {
     viewItemDialog(item) {
       let payload;
       switch (item.type) {
-        case 'giftcard':
+        case "giftcard":
           payload = {
             show: true,
             width: 1000,
             title: "Cart item",
             titleCloseBtn: true,
             icon: "mdi-package-variant",
-            component: 'giftCardForm',
+            component: "giftCardForm",
             model: item
           };
           break;
-        case 'product':
+        case "product":
           payload = {
             show: true,
             width: 1000,

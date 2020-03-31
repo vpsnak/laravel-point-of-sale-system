@@ -32,11 +32,9 @@ class GiftcardController extends Controller
         $validatedData['original_price'] = $validatedData['price'];
         $validatedData['created_by_id'] = auth()->user()->id;
         $bulk = $validatedData['bulk_action'];
+        $validatedData['enabled_at'] = $validatedData['enabled'] ? now() : null;
         $qty = $validatedData['qty'];
 
-        if ($validatedData['enabled']) {
-            $validatedData['enabled_at'] = now();
-        }
         unset($validatedData['bulk_action']);
         unset($validatedData['enabled']);
         unset($validatedData['qty']);
@@ -74,9 +72,7 @@ class GiftcardController extends Controller
             'price' => 'required|array'
         ]);
         $giftcard = Giftcard::findOrFail($validatedData['id']);
-        if ($validatedData['enabled']) {
-            $validatedData['enabled_at'] = now();
-        }
+        $validatedData['enabled_at'] = $validatedData['enabled'] ? now() : null;
         unset($validatedData['enabled']);
 
         $giftcard->update($validatedData);

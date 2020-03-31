@@ -1,9 +1,9 @@
 <template>
-<ValidationObserver slim v-slot={invalid}>
-  <v-container fluid>
-    <v-row>
-      <v-col :cols="12">
-        <v-text-field
+  <ValidationObserver slim v-slot="{ invalid }">
+    <v-container fluid>
+      <v-row>
+        <v-col :cols="12">
+          <v-text-field
             v-model="keyword"
             @click:prepend-inner="getGiftCard()"
             @keyup.enter="getGiftCard()"
@@ -14,29 +14,29 @@
             outlined
             dense
           />
-      </v-col>
-      <v-col :cols="12">
-        <v-data-table
-          v-model="selectedGiftcard"
-          dense
-          :headers="headers.giftcardToCart"
-          :items="giftcards"
-          :loading="datatableLoading"
-          single-select
-          show-select
-          class="elevation-3"
-          hide-default-footer
-          disable-filtering
-          disable-pagination
-          disable-sort
-          height="150px"
-        >
-          <template v-slot:item.price="{ item }">
-            <h4>{{ parsePrice(item.price).toFormat() }}</h4>
-          </template>
-        </v-data-table>
-      </v-col>
-    </v-row>
+        </v-col>
+        <v-col :cols="12">
+          <v-data-table
+            v-model="selectedGiftcard"
+            dense
+            :headers="headers.giftcardToCart"
+            :items="giftcards"
+            :loading="datatableLoading"
+            single-select
+            show-select
+            class="elevation-3"
+            hide-default-footer
+            disable-filtering
+            disable-pagination
+            disable-sort
+            height="150px"
+          >
+            <template v-slot:item.price="{ item }">
+              <h4>{{ parsePrice(item.price).toFormat() }}</h4>
+            </template>
+          </v-data-table>
+        </v-col>
+      </v-row>
 
       <v-row justify="center" v-if="isEnabled">
         <v-col :cols="4">
@@ -50,11 +50,14 @@
               type="number"
               :disabled="!selectedGiftcard[0]"
               @keyup.enter="valid ? submit() : null"
-              @click:clear="price = original_price"
               :error-messages="errors"
               clearable
               label="Recharge amount"
-              :hint="`Original amount: ${original_price.toFormat()}`"
+              :hint="
+                `Original amount: ${parsePrice(
+                  selectedGiftcard[0].original_price
+                ).toFormat()}`
+              "
               prefix="$"
               outlined
               dense
@@ -62,17 +65,17 @@
           </ValidationProvider>
         </v-col>
       </v-row>
-    <v-row justify="center">
-      <v-btn
-        text
-        outlined
-        v-text="'Add to cart'"
-        @click.stop="submit()"
-        :disabled="invalid || !selectedGiftcard[0]"
-        color="primary"
-      />
-    </v-row>
-  </v-container>
+      <v-row justify="center">
+        <v-btn
+          text
+          outlined
+          v-text="'Add to cart'"
+          @click.stop="submit()"
+          :disabled="invalid || !selectedGiftcard[0]"
+          color="primary"
+        />
+      </v-row>
+    </v-container>
   </ValidationObserver>
 </template>
 
@@ -82,7 +85,6 @@ import { mapState, mapActions } from "vuex";
 export default {
   data() {
     return {
-      original_price: {},
       recharge_price: {},
       recharge_price_amount: null,
 
@@ -153,7 +155,7 @@ export default {
           .then(response => {
             this.giftcards = response.data;
             if (this.giftcards.length === 1) {
-              this.selectedGiftcard[0] = this.giftcards[0];
+              this.selectedGiftcard.push(this.giftcards[0]);
             }
           })
           .finally(() => {
@@ -162,8 +164,6 @@ export default {
       }
     },
     submit() {
-      this.selectedGiftcard[0].id = this.selectedGiftcard[0].sku =
-          this.selectedGiftcard[0].code;
       if (this.isEnabled) {
         this.selectedGiftcard[0].price = this.recharge_price;
       }

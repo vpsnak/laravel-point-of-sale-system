@@ -107,6 +107,7 @@ export default {
         name: null,
         code: null,
         enabled: false,
+        enabled_at: null,
         price: {
           amount: null,
           currency: null
@@ -122,9 +123,9 @@ export default {
       this.formFields = {
         ...this.$props.model
       };
-      if (this.formFields.enabled_at) {
-        this.formFields.enabled = true;
-      }
+
+      this.formFields.enabled = this.formFields.enabled_at ? true : false;
+
       this.price_amount = this.parsePrice(this.formFields.price).toFormat(
         "0.00"
       );
