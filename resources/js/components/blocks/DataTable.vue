@@ -15,24 +15,22 @@
               <v-btn
                 :loading="refreshLoading"
                 :disabled="data_table.loading"
-                @click.stop="(refreshLoading = true), getItems(true)"
+                @click.stop="(refreshLoading = true), getItems()"
                 icon
                 v-on="on"
                 color="primary"
               >
-                <v-icon>
-                  mdi-refresh
-                </v-icon>
+                <v-icon v-text="'mdi-refresh'" />
               </v-btn>
             </template>
-            <span>Refresh</span>
+            <span v-text="'Refresh'" />
           </v-tooltip>
         </v-col>
 
         <v-col cols="auto" v-if="data_table.filters">
           <component
             :is="data_table.filters"
-            @applyFilters="(applied_filters = $event), getItems(true)"
+            @applyFilters="(applied_filters = $event), getItems()"
           />
         </v-col>
 
@@ -54,12 +52,10 @@
               (page = 1),
                 (keyword = searchValue = null),
                 (search = false),
-                getItems(search)
+                getItems()
             "
-            @click:prepend-inner="getItems(search)"
-            @keyup.enter="
-              (keyword = searchValue), (search = true), getItems(search)
-            "
+            @click:prepend-inner="getItems()"
+            @keyup.enter="(keyword = searchValue), (search = true), getItems()"
           ></v-text-field>
         </v-col>
 
@@ -86,7 +82,6 @@
             disable-filtering
             disable-pagination
             hide-default-footer
-            loading-text=" "
             :headers="getHeaders"
             :items="data_table.items"
             :loading="data_table.loading"
@@ -112,20 +107,28 @@
             </template>
             <!-- generic fields end -->
 
-            <v-alert
-              :value="true"
-              color="error"
-              icon="warning"
-              slot="no-results"
-            >
-              Your search for "{{ keyword }}" found no results
-            </v-alert>
+            <template v-slot:no-data v-if="!data_table.loading">
+              <v-row justify="center" align="center" style="height:200px">
+                <v-alert
+                  v-if="search && keyword"
+                  type="warning"
+                  outlined
+                  dense
+                  max-width="300px"
+                >
+                  Your search for "{{ keyword }}" found no results
+                </v-alert>
+                <v-alert v-else type="info" outlined dense max-width="300px">
+                  No data
+                </v-alert>
+              </v-row>
+            </template>
           </v-data-table>
-          <v-card-actions>
+          <v-card-actions v-show="data_table.items.length > 0">
             <v-pagination
               v-model="page"
               :length="pageCount"
-              @input="getItems(search)"
+              @input="getItems()"
             ></v-pagination>
           </v-card-actions>
         </v-col>
@@ -178,7 +181,6 @@ export default {
       EventBus.$on("overlay", event => {
         this.overlay = event;
       });
-
       EventBus.$on("data-table", event => {
         if (_.has(event, "payload.action")) {
           switch (event.payload.action) {
@@ -187,7 +189,7 @@ export default {
               break;
             case "search":
               this.keyword = event.keyword || null;
-              this.getItems(true);
+              this.getItems();
               break;
             default:
               if (_.isBoolean(event.payload) && event.payload) {
@@ -207,7 +209,7 @@ export default {
         });
       }
     },
-    getItems(search = false) {
+    getItems() {
       this.setLoading(true);
       this.setItems([]);
       this.pageCount = null;
@@ -215,7 +217,7 @@ export default {
 
       let payload = {};
 
-      if (search && (this.keyword || this.applied_filters)) {
+      if (this.search && (this.keyword || this.applied_filters)) {
         payload.method = "post";
         payload.url = `${this.data_table.model}/search?page=${this.page}`;
         payload.data = {
