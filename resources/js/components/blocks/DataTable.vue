@@ -124,12 +124,12 @@
               </v-row>
             </template>
           </v-data-table>
-          <v-card-actions v-show="data_table.items.length > 0">
+          <v-card-actions v-show="pageCount > 1">
             <v-pagination
               v-model="page"
               :length="pageCount"
               @input="getItems()"
-            ></v-pagination>
+            />
           </v-card-actions>
         </v-col>
       </v-row>
