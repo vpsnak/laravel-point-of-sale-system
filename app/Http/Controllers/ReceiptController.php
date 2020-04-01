@@ -29,11 +29,13 @@ class ReceiptController extends Controller
     {
         $order = $order->load(['createdBy', 'store']);
 
-        return view('receipt')->with([
-            'order' => $order,
-            'store' => $order->store,
-            'cash_register' => $order->createdBy->open_register->cash_register,
-            'moneyFormatter' => Price::newFormatter()
-        ]);
+        return
+            view('receipt')
+            ->with([
+                'order' => $order,
+                'store' => $order->store,
+                'cash_register' => $order->createdBy->open_register->cash_register,
+                'moneyFormatter' => Price::newFormatter(true)
+            ]);
     }
 }

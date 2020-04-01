@@ -1,7 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-​
+@php
+use App\Order;
+use App\Helper\Price;
+@endphp
 
+<!DOCTYPE html>
+<html>
+​
 <head>
     <meta charset="UTF-8">
     <title>Receipt</title>
@@ -144,8 +148,8 @@
                     <tr>
                         <td colspan="2">{{ $item['name'] }}</td>
                         <td style="text-align: center;">{{ $item['qty'] }}</td>
-                        <td>${{ $item['price']['amount'] }}</td>
-                        <td style="text-align:end;">${{ $item['price']['amount'] * $item['qty'] }}</td>
+                        <td>{{ $moneyFormatter->format(Order::getItemPrice($item)) }}</td>
+                        <td style="text-align:end;">{{ $moneyFormatter->format(Order::getItemTimesQtyPrice($item)) }}</td>
                     </tr>
                     @if($item['discount']['type'])
                     <tr>
@@ -155,7 +159,7 @@
                         </td>
                         @else
                         <td>
-                            Discount: {{ $item['discount']['amount'] }}-
+                            Discount: {{ $moneyFormatter->format(Price::parsePrice($item['discount']['amount'])) }}-
                         </td>
                         @endif
                         <td>
@@ -178,108 +182,106 @@
                 </tbody>
             </table>
             <table style="font-size:14px;">
-                @if($moneyFormatter->format($model->delivery_fees_price) > 0)
+                @if($order->delivery_fees_price->isPositive())
                 <tr>
                     <td style="text-align: end;">Delivery fees:</td>
-                    <td style="text-align: end;"> ${{ $moneyFormatter->format($model->delivery_fees_price) }}</td>
+                    <td style="text-align: end;">{{ $moneyFormatter->format($order->delivery_fees_price) }}</td>
                 </tr>
                 @endif
                 <tr>
                     <td style="text-align: end;">Sales tax:</td>
-                    <td style="text-align: end;"> ${{ $moneyFormatter->format($order->tax_price) }}</td>
+                    <td style="text-align: end;">{{ $moneyFormatter->format($order->tax_price) }}</td>
                 </tr>
                 <tr>
                     <td style="text-align: end;">Total Amt:</td>
-                    <td style="text-align: end;">${{ $moneyFormatter->format($order->total_price) }}</td>
+                    <td style="text-align: end;">{{ $moneyFormatter->format($order->total_price) }}</td>
                 </tr>
             </table>
             <p style="text-align: center; font-size:14px;">*** Tendering details ***</p>
             <table style="font-size:14px;">
                 <tr>
                     <td style="text-align: end;">Order Total is:</th>
-                    <td style="text-align: center;">${{ $moneyFormatter->format($order->total_price) }}</td>
+                    <td style="text-align: center;">{{ $moneyFormatter->format($order->total_price) }}</td>
                 </tr>
             </table>
-            @foreach(json_decode($order['payments'] , true) as $payment)
+            @foreach($order->transactions as $transaction)
 
             @php
-            if($payment['payment_type_name'] === 'card' || $payment['payment_type_name'] === 'pos-terminal')
+            if($transaction['payment_type_name'] === 'card' || $transaction['payment_type_name'] === 'pos-terminal')
             $payment['payment_type_name'] = 'Credit card';
             @endphp
 
             <table style="font-size:14px;">
                 <tr>
                     <td>
-                        {{ Carbon\Carbon::parse($payment['created_at'])->format('m/d/Y') }}</td>
-                    @if($payment['status'] === 'refunded')
+                        {{ $transaction->created_at->format('m/d/Y h:m:s') }}
+                    </td>
+                    @if($transaction->refund)
                     <td>
                         Refunded
-                        {{ $payment['payment_type_name']}}
+                        {{ $transaction['payment_type_name']}}
                     </td>
-                    <td style="text-align: end;">${{$payment['price']['amount']}}+</td>
+                    <td style="text-align: end;">{{ $moneyFormatter->format($transaction->price) }}+</td>
                     @else
-                    <td>{{ $payment['payment_type_name'] }}</td>
-                    <td style="text-align: end;">${{ $payment['price']['amount'] }}-</td>
+                    <td>{{ $transaction['payment_type_name'] }}</td>
+                    <td style="text-align: end;">{{ $moneyFormatter->format($transaction->price) }}-</td>
                     @endif
                 </tr>
-                @if($payment['payment_type_name'] === 'card')
+                @if($transaction['payment_type_name'] === 'card')
                 <tr>
                     <td style="text-align: end;">Cardholder's Name:</td>
-                    <td style="text-align: end;">{{ $payment['elavon_api_payments'][0]['card_holder'] }}</td>
+                    <td style="text-align: end;">{{ $transaction['elavon_api_payments'][0]['card_holder'] }}</td>
                 </tr>
                 <tr>
                     <td style="text-align: end;">Credit Cd No:</td>
-                    <td style="text-align: end;">{{ $payment['elavon_api_payments'][0]['card_number'] }}</td>
+                    <td style="text-align: end;">{{ $transaction['elavon_api_payments'][0]['card_number'] }}</td>
                 </tr>
                 <tr>
                     <td style="text-align: end;">Credit Card Tot:</td>
-                    <td style="text-align: end;">{{ $payment['price']['amount'] }}</td>
+                    <td style="text-align: end;">{{ $moneyFormatter->format(Price::parsePrice($transaction['price'])) }}</td>
                 </tr>
                 @endif
             </table>
-            {{-- @php
-        if($payment['payment_type']['type'] === 'card'){
-        $paid_by_credit_card = true;
-        $total_credit_card_tot = $payment['amount'];
-        $card_number = $payment['elavon_api_payments'][0]['card_number'];
-        $card_holder = $payment['elavon_api_payments'][0]['card_holder'];
-        }
-        @endphp --}}
             @endforeach
+
             <br>
+
             <table style="font-size:14px;">
                 <tr>
                     <td style="text-align: center;">*** Balance Remaining ***</th>
-                    <td style="text-align: end;">${{ $moneyFormatter->format($order->remaining_price) }}</td>
+                    <td style="text-align: end;">{{ $moneyFormatter->format($order->remaining_price) }}</td>
                 </tr>
             </table>
             <br>
             <table style="font-size:14px;">
                 <tr>
                     <th style="text-align: end;">Total Amt Tendered:</th>
-                    <td style="text-align: end;">${{ $moneyFormatter->format($order->income_price) }}</td>
+                    <td style="text-align: end;">{{ $moneyFormatter->format($order->income_price) }}</td>
                 </tr>
                 <tr>
                     <th style="text-align: end;">Customer Change:</th>
-                    <td style="text-align: end;">${{ $moneyFormatter->format($order->remaining_price) }}</td>
+                    <td style="text-align: end;">{{ $moneyFormatter->format($order->remaining_price) }}</td>
                 </tr>
             </table>
+
             <br>
+
             @if($order->delivery)
             <table style="font-size:14px;">
                 <tr>
                     <td style="text-align: end;">Delv on:</td>
-                    <td>{{ Carbon\Carbon::parse($order->delivery['date'])->format('m/d/Y') }}</td>
+                    <td>{{ $order->delivery->date }}</td>
                 </tr>
                 <tr>
                     <td style="text-align: end;">Delv to:</td>
-                    <td>{{ $order->delivery['address']['first_name'] }}
+                    <td>
+                        {{ $order->delivery['address']['first_name'] }}
                         {{ $order->delivery['address']['last_name'] }}
                     </td>
                 </tr>
                 <tr>
                     <td style="text-align: end;">C/O:</td>
-                    <td>{{ $order->customer->first_name }} {{ $order->customer->last_name }}</td>
+                    <td>{{ $order->customer->full_name }}</td>
                 </tr>
                 <tr>
                     <td style="text-align: end;">Address:</td>
@@ -318,5 +320,4 @@
             <p style="text-align: center;">PLEASE SEE POSTED POLICY REGARDING REFUNDS</p>
         </div>
     </body>
-
 </html>

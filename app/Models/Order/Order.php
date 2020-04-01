@@ -123,6 +123,36 @@ class Order extends Model
         $this->attributes['billing_address'] = $value;
     }
 
+    public static function getItemPrice(array $item)
+    {
+        return Price::parsePrice($item['price']);
+    }
+
+    public static function getItemTimesQtyPrice(array $item)
+    {
+        return self::getItemPrice($item)->multiply($item['qty']);
+    }
+
+    public static function getItemFinalPrice(array $item)
+    {
+        $price = self::getItemTimesQtyPrice($item);
+
+        if (isset($item['discount']) && isset($item['discount']['type']) && isset($item['discount']['amount'])) {
+            switch ($item['discount']['type']) {
+                case 'flat':
+                    $price = $price->subtract(Price::parsePrice($item['discount']));
+                    break;
+                case 'percentage':
+                    $price = $price->multiply($item['discount']['amount'])->divide(100);
+                    break;
+                default:
+                case 'none':
+                    break;
+            }
+        }
+        return $price;
+    }
+
     public function getMdsePriceAttribute()
     {
         $mdsePrice = Price::parsePrice([
@@ -130,21 +160,7 @@ class Order extends Model
             'currency' => $this->currency
         ]);
         foreach ($this->items as $item) {
-            $price = Price::parsePrice($item['price']);
-            $price = $price->multiply($item['qty']);
-            if (isset($item['discount']) && isset($item['discount']['type']) && isset($item['discount']['amount'])) {
-                switch ($item['discount']['type']) {
-                    case 'flat':
-                        $price = $price->subtract(Price::parsePrice($item['discount']));
-                        break;
-                    case 'percentage':
-                        $price = $price->multiply($item['discount']['amount'])->divide(100);
-                        break;
-                    default:
-                    case 'none':
-                        break;
-                }
-            }
+            $price = self::getItemFinalPrice($item);
             $mdsePrice = $mdsePrice->add($price);
         }
 
@@ -187,7 +203,8 @@ class Order extends Model
 
     public function getTaxPriceAttribute()
     {
-        return $this
+        return
+            $this
             ->mdse_price
             ->add($this->delivery_fees_price)
             ->multiply($this->tax_percentage / 100);
@@ -195,7 +212,8 @@ class Order extends Model
 
     public function getTotalPriceAttribute()
     {
-        return $this
+        return
+            $this
             ->tax_price
             ->add($this->mdse_price)
             ->add($this->delivery_fees_price);
