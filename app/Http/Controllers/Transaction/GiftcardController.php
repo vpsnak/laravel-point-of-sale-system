@@ -86,12 +86,13 @@ class GiftcardController extends Controller
     public function search(Request $request)
     {
         $validatedData = $request->validate([
-            'keyword' => 'required|string'
+            'keyword' => 'required|string',
+            'items' => 'nullable|integer|min:1'
         ]);
 
         $columns =  ['name', 'code'];
         $query = Giftcard::query()->search($columns, $validatedData['keyword']);
 
-        return response($query->paginate());
+        return response($query->paginate($validatedData['items'] ?? null));
     }
 }

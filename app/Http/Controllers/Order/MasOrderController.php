@@ -222,7 +222,7 @@ class MasOrderController extends Controller
             ];
             $itemPrice = Price::parsePrice($price);
             $response[$item['id']] = [
-                'ItemCode' => $item['sku'],
+                'ItemCode' => $item['sku'] ?? $item['code'],
                 'ItemName' => $item['name'],
                 'ItemDescription' => $item['notes'] ?? '-',
                 'ItemCost' => $this->moneyFormatter->format($itemPrice),

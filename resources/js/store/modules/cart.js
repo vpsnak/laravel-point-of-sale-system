@@ -275,6 +275,7 @@ export default {
       switch (item.type) {
         case "giftcard":
           if (index !== -1) {
+            state.cart_products[index].price = item.price;
             return;
           }
           item.is_price_editable = true;

@@ -1,11 +1,11 @@
 <template>
   <data-table v-if="render">
     <template v-slot:item.price="{ item }">
-      <h4>{{ parsePrice(item.price).toFormat() }}</h4>
+      <h4 v-text="parsePrice(item.price).toFormat()" />
     </template>
 
     <template v-slot:item.actions="{ item }">
-      <v-tooltip bottom>
+      <v-tooltip v-if="item.enabled_at" bottom>
         <template v-slot:activator="{ on }">
           <v-btn
             icon
@@ -14,10 +14,10 @@
             class="mr-4"
             v-on="on"
           >
-            <v-icon>mdi-credit-card-plus</v-icon>
+            <v-icon v-text="'mdi-credit-card-plus'" />
           </v-btn>
         </template>
-        <span>Recharge</span>
+        <span v-text="'Recharge'" />
       </v-tooltip>
 
       <v-tooltip bottom>
@@ -29,10 +29,10 @@
             class="my-4"
             v-on="on"
           >
-            <v-icon>edit</v-icon>
+            <v-icon v-text="'edit'" />
           </v-btn>
         </template>
-        <span>Edit</span>
+        <span v-text="'Edit'" />
       </v-tooltip>
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
@@ -46,7 +46,7 @@
             <v-icon v-text="'mdi-eye'" />
           </v-btn>
         </template>
-        <span>View</span>
+        <span v-text="'View'" />
       </v-tooltip>
     </template>
   </data-table>
@@ -59,15 +59,14 @@ import { EventBus } from "../../plugins/eventBus";
 export default {
   mounted() {
     this.resetDataTable();
-
-    this.setDataTable({
+    const payload = {
       icon: "mdi-wallet-giftcard",
       title: "Gift Cards",
       model: "giftcards",
-      newForm: this.form,
-      btnTxt: "New Gift Card",
-      loading: true
-    });
+      newForm: "giftCardForm",
+      btnTxt: "New Gift Card"
+    };
+    this.setDataTable(payload);
 
     EventBus.$on("gift-card-table", event => {
       if (event.payload) {
@@ -79,13 +78,12 @@ export default {
   },
 
   beforeDestroy() {
-    this.$off();
+    EventBus.$off("gift-card-table");
   },
 
   data() {
     return {
-      render: false,
-      form: "giftCardForm"
+      render: false
     };
   },
 
@@ -101,11 +99,11 @@ export default {
     rechargeGiftcardDialog(item) {
       const payload = {
         show: true,
-        width: 400,
+        width: 600,
         title: `Recharge giftcard: ${item.code}`,
         titleCloseBtn: true,
         icon: "mdi-wallet-giftcard",
-        component: "RechargeGiftCardToCart",
+        component: "giftCardToCartForm",
         model: item,
         persistent: true,
         eventChannel: "gift-card-table"

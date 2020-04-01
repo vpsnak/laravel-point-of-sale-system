@@ -1,12 +1,12 @@
 <template>
   <ValidationObserver slim v-slot="{ invalid }">
     <v-container fluid>
-      <v-row>
+      <v-row v-if="!$props.model">
         <v-col :cols="12">
           <v-text-field
             v-model="keyword"
-            @click:prepend-inner="getGiftCard()"
-            @keyup.enter="getGiftCard()"
+            @click:prepend-inner="getGiftCards()"
+            @keyup.enter="getGiftCards()"
             label="Search by code or name"
             prepend-inner-icon="mdi-magnify"
             clearable
@@ -30,15 +30,23 @@
             disable-pagination
             disable-sort
             height="150px"
+            fixed-header
           >
             <template v-slot:item.price="{ item }">
               <h4>{{ parsePrice(item.price).toFormat() }}</h4>
             </template>
           </v-data-table>
         </v-col>
+        <v-col v-show="pageCount > 1" :cols="12">
+          <v-pagination
+            v-model="page"
+            :length="pageCount"
+            @input="getGiftCards()"
+          />
+        </v-col>
       </v-row>
 
-      <v-row justify="center" v-if="isEnabled">
+      <v-row justify="center" v-if="isEnabled || $props.model">
         <v-col :cols="4">
           <ValidationProvider
             rules="required|between:0.01,10000"
@@ -46,7 +54,7 @@
             name="Recharge amount"
           >
             <v-text-field
-              v-model="price"
+              v-model="rechargePrice"
               type="number"
               :disabled="!selectedGiftcard[0]"
               @keyup.enter="valid ? submit() : null"
@@ -83,8 +91,15 @@
 import { mapState, mapActions } from "vuex";
 
 export default {
+  props: {
+    model: Object
+  },
+
   data() {
     return {
+      pageCount: null,
+      page: 1,
+
       recharge_price: {},
       recharge_price_amount: null,
 
@@ -95,11 +110,19 @@ export default {
     };
   },
 
+  created() {
+    if (this.$props.model) {
+      this.selectedGiftcard.push(this.$props.model);
+    }
+  },
+
   mounted() {
-    this.$root.$on("barcodeScan", code => {
-      this.keyword = code;
-      this.getGiftCard();
-    });
+    if (!this.$props.model) {
+      this.$root.$on("barcodeScan", code => {
+        this.keyword = code;
+        this.getGiftCards();
+      });
+    }
   },
 
   beforeDestroy() {
@@ -116,7 +139,7 @@ export default {
         return false;
       }
     },
-    price: {
+    rechargePrice: {
       get() {
         return this.recharge_price_amount;
       },
@@ -143,17 +166,20 @@ export default {
     ...mapActions("requests", ["request"]),
     ...mapActions("cart", ["addProduct"]),
 
-    getGiftCard() {
+    getGiftCards() {
       if (this.keyword.length) {
         this.datatableLoading = true;
         const payload = {
           method: "post",
-          url: "giftcards/search",
-          data: { keyword: this.keyword }
+          url: `giftcards/search?page=${this.page}`,
+          data: { keyword: this.keyword, items: 5 }
         };
         this.request(payload)
           .then(response => {
+            this.page = response.current_page;
+            this.pageCount = response.last_page;
             this.giftcards = response.data;
+
             if (this.giftcards.length === 1) {
               this.selectedGiftcard.push(this.giftcards[0]);
             }
@@ -168,6 +194,9 @@ export default {
         this.selectedGiftcard[0].price = this.recharge_price;
       }
       this.addProduct(this.selectedGiftcard[0]);
+      if (this.$props.model) {
+        this.$router.push({ name: "sale" });
+      }
       this.$emit("submit", true);
     }
   }
