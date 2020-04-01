@@ -223,10 +223,33 @@ export default {
     setMethod(state, value) {
       state.method = value;
     },
-    setMethodStep(state, value) {
-      state.checkoutSteps[0].name = value.name;
-      state.checkoutSteps[0].icon = value.icon;
-      state.checkoutSteps[0].color = value.color;
+    setMethodStep(state) {
+      let name, icon, color;
+
+      switch (state.method) {
+        case "retail":
+          name = "Cash & Carry";
+          icon = "mdi-cart-arrow-right";
+          color = "primary";
+          state.currentCheckoutStep = 2;
+          break;
+        case "pickup":
+          name = "In Store Pickup";
+          icon = "mdi-storefront";
+          color = "warning";
+          state.currentCheckoutStep = 1;
+          break;
+        case "delivery":
+          name = "Delivery";
+          icon = "mdi-truck-delivery";
+          color = "purple";
+          state.currentCheckoutStep = 1;
+          break;
+      }
+
+      state.checkoutSteps[0].name = name;
+      state.checkoutSteps[0].icon = icon;
+      state.checkoutSteps[0].color = color;
     },
     setCheckoutDialog(state, value) {
       state.checkoutDialog = value;
@@ -406,10 +429,11 @@ export default {
       };
       state.billing_address_id = null;
 
-      state.currentCheckoutStep = 1;
       state.checkoutSteps.forEach(checkoutStep => {
         checkoutStep.completed = false;
       });
+
+      state.currentCheckoutStep = 1;
 
       if (hard) {
         state.method = "retail";
@@ -471,6 +495,7 @@ export default {
       return new Promise(resolve => {
         context.commit("resetState");
         context.commit("setMethod", payload.cart.method);
+        context.commit("setMethodStep");
         context.commit("setCustomer", payload.cart.customer);
         context.commit("setDelivery", payload.cart.delivery);
         context.commit("setOrderNotes", payload.cart.order_notes);
@@ -491,10 +516,6 @@ export default {
           "setDeliveryStorePickup",
           payload.cart.order_delivery_store_pickup
         );
-
-        if (payload.cart.method !== "retail") {
-          context.commit("previousStep");
-        }
 
         resolve(true);
       });

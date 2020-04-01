@@ -88,41 +88,13 @@ export default {
       },
       set(value) {
         this.setMethod(value);
-        this.setOrderOptions(value);
+        this.setMethodStep();
       }
     }
   },
 
   methods: {
-    ...mapMutations("cart", ["setMethod", "setMethodStep", "resetDelivery"]),
-
-    setOrderOptions(value) {
-      switch (value) {
-        case "retail":
-          this.setMethodStep({
-            name: "Cash & Carry",
-            icon: "mdi-cart-arrow-right",
-            color: "primary"
-          });
-          break;
-        case "pickup":
-          this.setMethodStep({
-            name: "In Store Pickup",
-            icon: "mdi-storefront",
-            color: "warning"
-          });
-          break;
-        case "delivery":
-          this.setMethodStep({
-            name: "Delivery",
-            icon: "mdi-truck-delivery",
-            color: "success"
-          });
-          break;
-        default:
-          break;
-      }
-    }
+    ...mapMutations("cart", ["setMethod", "setMethodStep", "resetDelivery"])
   }
 };
 </script>

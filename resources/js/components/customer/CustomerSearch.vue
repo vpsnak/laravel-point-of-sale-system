@@ -132,10 +132,8 @@ export default {
         return this.customer;
       },
       set(value) {
-        if (!this.order_id) {
-          if (value !== this.customer) {
-            this.resetDelivery(true);
-          }
+        if (!this.order_id && value !== this.customer && this.results.length) {
+          this.resetDelivery(true);
         }
         this.setCustomer(value);
       }
