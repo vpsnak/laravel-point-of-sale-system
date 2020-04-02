@@ -9,6 +9,6 @@ class BankAccountController extends Controller
 {
     public function all()
     {
-        return response(BankAccount::paginate());
+        return response(BankAccount::paginate(10));
     }
 }

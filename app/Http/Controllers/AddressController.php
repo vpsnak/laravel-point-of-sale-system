@@ -13,7 +13,7 @@ class AddressController extends Controller
 
     public function all()
     {
-        return response(Address::paginate());
+        return response(Address::paginate(10));
     }
 
     public function getOne(Address $model)

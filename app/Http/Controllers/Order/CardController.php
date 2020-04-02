@@ -9,7 +9,7 @@ class CardController extends Controller
 {
     public function all()
     {
-        return response(Card::paginate());
+        return response(Card::paginate(10));
     }
 
     public function getOne(Card $model)
@@ -66,6 +66,6 @@ class CardController extends Controller
         $columns = ['title'];
         $query = Card::query()->search($columns, $validatedData['keyword']);
 
-        return response($query->paginate());
+        return response($query->paginate(10));
     }
 }

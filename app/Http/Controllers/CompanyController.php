@@ -9,7 +9,7 @@ class CompanyController extends Controller
 {
     public function all()
     {
-        return response(Company::paginate());
+        return response(Company::paginate(10));
     }
 
     public function getOne($model)
@@ -59,6 +59,6 @@ class CompanyController extends Controller
         $columns = ['name'];
         $query = Company::query()->search($columns, $validatedData['keyword']);
 
-        return response($query->paginate());
+        return response($query->paginate(10));
     }
 }

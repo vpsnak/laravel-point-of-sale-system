@@ -9,7 +9,7 @@ class TaxController extends Controller
 {
     public function all()
     {
-        return response(Tax::paginate());
+        return response(Tax::paginate(10));
     }
 
     public function getOne(Tax $model)

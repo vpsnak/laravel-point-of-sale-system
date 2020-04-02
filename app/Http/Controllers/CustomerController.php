@@ -12,7 +12,7 @@ class CustomerController extends Controller
 {
     public function all()
     {
-        return response(Customer::paginate());
+        return response(Customer::paginate(10));
     }
 
     public function getOne(Customer $model)

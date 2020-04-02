@@ -15,7 +15,7 @@ class CashRegisterReportController extends Controller
 
     public function all()
     {
-        return response(CashRegisterReport::paginate());
+        return response(CashRegisterReport::paginate(10));
     }
 
     public function getOne(CashRegisterReport $model)
@@ -189,7 +189,7 @@ class CashRegisterReportController extends Controller
         $columns = ['report_name', 'report_type'];
         $query = CashRegisterReport::query()->search($columns, $validatedData['keyword']);
 
-        return response($query->paginate());
+        return response($query->paginate(10));
     }
 
     public function report(CashRegisterReport $report)

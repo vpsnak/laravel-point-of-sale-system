@@ -10,7 +10,7 @@ class CategoryController extends Controller
 {
     public function all()
     {
-        return response(Category::paginate());
+        return response(Category::paginate(10));
     }
 
     public function getOne($model)
@@ -54,14 +54,14 @@ class CategoryController extends Controller
 
     public function productListingCategories()
     {
-        return response(Category::paginate());
+        return response(Category::paginate(10));
     }
 
     public function productsByCategory(Category $category)
     {
         $products = Product::whereHas('categories', function ($query) use ($category) {
             $query->where('id', $category->id);
-        })->paginate();
+        })->paginate(10);
 
         return response($products, 200);
     }
@@ -75,6 +75,6 @@ class CategoryController extends Controller
         $columns = ['name'];
         $query = Category::query()->search($columns, $validatedData['keyword']);
 
-        return response($query->paginate());
+        return response($query->paginate(10));
     }
 }

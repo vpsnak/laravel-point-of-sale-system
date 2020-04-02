@@ -9,7 +9,7 @@ class StoreController extends Controller
 {
     public function all()
     {
-        return response(Store::with(['cashRegisters'])->paginate());
+        return response(Store::with(['cashRegisters'])->paginate(10));
     }
 
     public function getOne(Store $model)
@@ -76,6 +76,6 @@ class StoreController extends Controller
         $columns = ['name', 'phone', 'street', 'postcode'];
         $query = Store::query()->search($columns, $validatedData['keyword']);
 
-        return response($query->paginate());
+        return response($query->paginate(10));
     }
 }

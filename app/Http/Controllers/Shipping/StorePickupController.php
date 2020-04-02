@@ -58,7 +58,7 @@ class StorePickupController extends Controller
 
     public function all()
     {
-        return response(StorePickup::paginate());
+        return response(StorePickup::paginate(10));
     }
 
     public function search(Request $request)
@@ -70,7 +70,7 @@ class StorePickupController extends Controller
         $columns = ['name', 'street', 'street1', 'country_id', 'region_id'];
         $query = StorePickup::query()->search($columns, $validatedData['keyword']);
 
-        return response($query->paginate());
+        return response($query->paginate(10));
     }
 
     public function getOne(StorePickup $model)

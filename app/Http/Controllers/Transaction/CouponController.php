@@ -9,7 +9,7 @@ class CouponController extends Controller
 {
     public function all()
     {
-        return response(Coupon::paginate());
+        return response(Coupon::paginate(10));
     }
 
     public function getOne(Coupon $model)
@@ -68,6 +68,6 @@ class CouponController extends Controller
         $columns = ['name', 'code'];
         $query = Coupon::query()->search($columns, $validatedData['keyword']);
 
-        return response($query->paginate());
+        return response($query->paginate(10));
     }
 }

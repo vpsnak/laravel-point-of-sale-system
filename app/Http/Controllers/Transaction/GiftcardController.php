@@ -9,7 +9,7 @@ class GiftcardController extends Controller
 {
     public function all()
     {
-        return response(Giftcard::with('createdBy')->paginate());
+        return response(Giftcard::with('createdBy')->paginate(10));
     }
 
     public function getOne(Giftcard $model)

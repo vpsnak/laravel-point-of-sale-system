@@ -17,7 +17,7 @@ class UserController extends Controller
 
     public function all()
     {
-        return response(User::with('roles')->paginate());
+        return response(User::with('roles')->paginate(10));
     }
 
     public function getOne(User $model)
@@ -191,7 +191,7 @@ class UserController extends Controller
         $columns = ['username', 'name', 'email', 'phone'];
         $query = User::query()->search($columns, $validatedData['keyword']);
 
-        return response($query->paginate());
+        return response($query->paginate(10));
     }
 
     public function create(Request $request)

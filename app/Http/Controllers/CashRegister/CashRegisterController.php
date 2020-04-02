@@ -9,7 +9,7 @@ class CashRegisterController extends Controller
 {
     public function all()
     {
-        return response(CashRegister::paginate());
+        return response(CashRegister::paginate(10));
     }
 
     public function getOne(CashRegister $model)
@@ -67,6 +67,6 @@ class CashRegisterController extends Controller
         $columns = ['name', 'barcode'];
         $query = CashRegister::query()->search($columns, $validatedData['keyword']);
 
-        return response($query->paginate());
+        return response($query->paginate(10));
     }
 }

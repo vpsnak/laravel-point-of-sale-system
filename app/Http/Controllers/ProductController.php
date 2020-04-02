@@ -11,7 +11,7 @@ class ProductController extends Controller
 
     public function all()
     {
-        return response(Product::paginate());
+        return response(Product::paginate(9));
     }
 
     public function getOne(Product $model)
@@ -106,7 +106,7 @@ class ProductController extends Controller
         $columns = ['sku', 'name', 'description'];
         $query = Product::query()->search($columns, $validatedData['keyword']);
 
-        return response($query->paginate());
+        return response($query->paginate(10));
     }
 
     public function getBarcode(Product $product)

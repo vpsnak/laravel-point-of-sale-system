@@ -28,7 +28,7 @@ class OrderController extends Controller
 
     public function all()
     {
-        return response(Order::orderBy('created_at', 'desc')->paginate());
+        return response(Order::orderBy('created_at', 'desc')->paginate(10));
     }
 
     public function getOne(Order $model)
@@ -367,7 +367,7 @@ class OrderController extends Controller
             $query = $this->applyFilters($query);
         }
 
-        return response($query->paginate());
+        return response($query->paginate(10));
     }
 
     private function applyFilters($query)

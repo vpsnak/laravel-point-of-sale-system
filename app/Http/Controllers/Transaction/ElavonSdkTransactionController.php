@@ -23,7 +23,7 @@ class ElavonSdkTransactionController extends Controller
 
     public function all()
     {
-        return response(ElavonSdkTransaction::paginate());
+        return response(ElavonSdkTransaction::paginate(10));
     }
 
     public function lookup(Request $request)
