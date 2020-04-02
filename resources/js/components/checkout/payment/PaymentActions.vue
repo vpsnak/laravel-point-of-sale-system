@@ -5,14 +5,17 @@
     v-slot="{ invalid }"
   >
     <v-container fluid>
-      <v-row no-gutters justify="center" align="center">
-        ​<v-progress-circular
-          v-if="paymentTypesLoading"
-          indeterminate
-          color="primary"
-        ></v-progress-circular>
+      <v-row v-if="paymentTypesLoading" no-gutters justify="center">
+        <v-skeleton-loader
+          v-for="n in 5"
+          :key="n"
+          type="chip"
+          class="mx-2"
+          tile
+        />
+      </v-row>
+      <v-row v-else no-gutters justify="center" align="center">
         <v-chip-group
-          v-else
           mandatory
           show-arrows
           v-model="paymentType"
@@ -27,7 +30,7 @@
             active-class="primary--text"
             label
           >
-            <v-icon left>{{ payment_type.icon }}</v-icon>
+            <v-icon left v-text="payment_type.icon" />
             {{ payment_type.name }}
           </v-chip>
         </v-chip-group>
@@ -57,7 +60,7 @@
               v-model="card.number"
               :disabled="loading"
               :error-messages="errors"
-            ></v-text-field>
+            />
           </ValidationProvider>
         </v-col>
         <v-col :lg="3" :cols="6">
@@ -75,7 +78,7 @@
               v-model="card.card_holder"
               :disabled="loading"
               :error-messages="errors"
-            ></v-text-field>
+            />
           </ValidationProvider>
         </v-col>
         <v-col :lg="2" :cols="6">
@@ -96,7 +99,7 @@
               prepend-inner-icon="mdi-calendar"
               :error-messages="errors[0] ? 'Format: MMYY' : null"
               hint="Format: MMYY"
-            ></v-text-field>
+            />
           </ValidationProvider>
         </v-col>
         ​
@@ -116,7 +119,7 @@
               v-model="card.cvc"
               :disabled="loading"
               :error-messages="errors"
-            ></v-text-field>
+            />
           </ValidationProvider>
         </v-col>
       </v-row>
@@ -136,7 +139,7 @@
               :disabled="loading"
               v-model="code"
               :error-messages="errors"
-            ></v-text-field>
+            />
           </ValidationProvider>
         </v-col>
       </v-row>
@@ -152,7 +155,7 @@
             :value="orderRemainingPrice.toFormat('0.00')"
             disabled
             label="Remaining Amount"
-          ></v-text-field>
+          />
         </v-col>
         <v-col :lg="2" :md="3" :cols="6" v-if="paymentType.type !== 'coupon'">
           <ValidationProvider
@@ -171,7 +174,7 @@
               prefix="$"
               v-model="amount"
               :error="errors[0] ? true : false"
-            ></v-text-field>
+            />
           </ValidationProvider>
         </v-col>
       </v-row>
@@ -185,9 +188,8 @@
             color="primary"
             :loading="makePaymentLoading"
             :disabled="invalid || !isValidCheckout || loading"
-          >
-            Make a payment
-          </v-btn>
+            v-text="'Make a payment'"
+          />
         </v-col>
       </v-row>
     </v-container>
