@@ -178,12 +178,13 @@ class OrderController extends Controller
 
         ProcessOrder::dispatchNow($this->order);
 
-        return response([
-            'id' => $this->order->id,
-            'status' => $this->order->status,
-            'total_price' => $this->order->total_price,
-            'tax_price' => $this->order->tax_price,
-        ], 201);
+        return
+            response([
+                'id' => $this->order->id,
+                'status' => $this->order->status,
+                'total_price' => $this->order->total_price,
+                'tax_price' => $this->order->tax_price,
+            ], 201);
     }
 
     private function parseDelivery(array $addresses)
@@ -276,27 +277,6 @@ class OrderController extends Controller
 
     public function cancelOrder(Order $model)
     {
-        foreach ($model->items as $product) {
-            if (isset($product['sku'])) {
-                $code = explode('-', $product['sku']);
-                if (count($code) > 1 && $code[0] === 'giftCard') {
-                    $giftCard = Giftcard::whereCode($code[1])->first();
-
-                    if (!$giftCard) {
-                        return response(['errors' => ['Gift Card' => "Gift card with code: $code[1] not found"]], 422);
-                    }
-
-                    $giftCard->amount -= $product->final_price;
-
-                    if ($giftCard->amount >= 0) {
-                        $giftCard->save();
-                    } else {
-                        return response(['errors' =>  ['Order cancellation' => "Gift card with code: {$giftCard->code} has insufficient balance to cancel the order with id: $model->id<br>No changes where made"]], 422);
-                    }
-                }
-            }
-        }
-
         $results = $this->rollbackPayments($model);
 
         if ((is_array($results) && array_key_exists('errors', $results))) {
