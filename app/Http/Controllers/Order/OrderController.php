@@ -175,7 +175,7 @@ class OrderController extends Controller
 
         $submittedStatusId = Status::where('value', 'submitted')->firstOrFail('id');
         $this->order->statuses()->attach($submittedStatusId, ['processed_by_id' => $this->user->id]);
-        sleep(1);
+
         ProcessOrder::dispatchNow($this->order);
 
         return response([

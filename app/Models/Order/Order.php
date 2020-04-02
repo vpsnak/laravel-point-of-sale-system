@@ -245,7 +245,7 @@ class Order extends Model
 
     public function transactions()
     {
-        return $this->hasMany(Transaction::class)->orderBy('created_at', 'desc');
+        return $this->hasMany(Transaction::class)->orderBy('id', 'desc');
     }
 
     public function customer()
@@ -281,7 +281,7 @@ class Order extends Model
             ->withPivot('id')
             ->withPivot('processed_by_id')
             ->withTimestamps(['created_at'])
-            ->orderBy('created_at', 'desc');
+            ->orderBy('id', 'desc');
     }
 
     public function lastStatus()

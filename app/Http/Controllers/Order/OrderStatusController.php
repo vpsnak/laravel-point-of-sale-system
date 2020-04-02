@@ -41,15 +41,22 @@ class OrderStatusController extends Controller
         } else {
             if (!$refund) {
                 if ($this->order->status->value !== 'paid') {
-                    $paidPaymentStatusId = Status::where('value', 'paid')->firstOrFail('id');
-                    $this->order->statuses()->attach($paidPaymentStatusId, ['processed_by_id' => $this->user->id]);
+                    $paidStatusId = Status::where('value', 'paid')->firstOrFail('id');
+                    $this->order->statuses()->attach($paidStatusId, ['processed_by_id' => $this->user->id]);
 
-                    $this->handleGiftcards();
-
-                    MasOrder::create([
-                        'order_id' => $this->order->id,
-                        'status' => 'queued'
-                    ]);
+                    switch ($this->order->method) {
+                        case 'retail':
+                            $completedId = Status::where('value', 'completed')->firstOrFail('id');
+                            $this->order->statuses()->attach($completedId, ['processed_by_id' => $this->user->id]);
+                            $this->handleGiftcards();
+                            break;
+                        default:
+                            MasOrder::create([
+                                'order_id' => $this->order->id,
+                                'status' => 'queued'
+                            ]);
+                            break;
+                    }
                 }
             } else if (empty($payment) && $this->order->status->value !== 'paid') {
                 $paidPaymentStatusId = Status::where('value', 'paid')->firstOrFail('id');
