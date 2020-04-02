@@ -39,19 +39,19 @@ class GiftcardController extends Controller
         unset($validatedData['enabled']);
         unset($validatedData['qty']);
 
-
         if ($bulk) {
             $giftcardCollection = [];
             $j = substr($validatedData['code'], -1);
-            for ($i = 0; $i < $qty; $i++) {
+            if (!is_numeric($j)) {
+                $j .= 0;
+            }
+            for ($i = 0; $i < $qty; $i++, $j++) {
                 $giftcardCollection[$i] = $validatedData;
-                $giftcardCollection[$i]['price'] = json_encode($giftcardCollection[$i]['price']);
+                $giftcardCollection[$i]['price'] = $giftcardCollection[$i]['original_price'] = json_encode($giftcardCollection[$i]['price']);
                 $start_pos = -1 * strlen($j);
                 $giftcardCollection[$i]['code'] = substr($validatedData['code'], 0, $start_pos);
                 $giftcardCollection[$i]['code'] .= $j;
-                $j++;
             }
-
             Giftcard::insert($giftcardCollection);
         } else {
             Giftcard::create($validatedData);

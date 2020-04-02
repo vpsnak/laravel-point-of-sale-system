@@ -44,7 +44,7 @@
         </ValidationProvider>
         <v-row justify="space-around">
           <v-switch
-            v-if="$props.model ? true : false"
+            v-if="!$props.model"
             v-model="formFields.bulk_action"
             label="Bulk Action"
             :readonly="$props.readonly"

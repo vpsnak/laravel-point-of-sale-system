@@ -87,7 +87,7 @@
                       @click.stop
                       @keyup.esc="revertPrice(index)"
                       @keyup.enter="setPrice(index, true)"
-                      :ref="'priceField' + index"
+                      :ref="`priceField${index}`"
                       :min="0"
                       type="number"
                       label="Edit price"

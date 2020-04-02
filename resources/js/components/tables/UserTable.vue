@@ -17,14 +17,13 @@
       <v-tooltip bottom v-if="item.id !== user.id">
         <template v-slot:activator="{ on }">
           <v-btn
-            small
             :disabled="data_table.loading"
             @click.stop="deauthUser(item.id)"
             class="my-2"
             v-on="on"
             icon
           >
-            <v-icon small>mdi-logout-variant</v-icon>
+            <v-icon>mdi-logout-variant</v-icon>
           </v-btn>
         </template>
         <span> Deauthorize {{ item.name }} </span>
@@ -33,14 +32,13 @@
       <v-tooltip bottom v-if="item.id !== user.id">
         <template v-slot:activator="{ on }">
           <v-btn
-            small
             :disabled="data_table.loading"
             @click="changePasswordDialog(item)"
             class="my-2"
             v-on="on"
             icon
           >
-            <v-icon small>mdi-lock-reset</v-icon>
+            <v-icon>mdi-lock-reset</v-icon>
           </v-btn>
         </template>
         <span>Change {{ item.name }} password</span>
@@ -49,14 +47,13 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            small
             :disabled="data_table.loading"
             @click.stop="(item.form = form), editItem(item)"
             class="my-2"
             v-on="on"
             icon
           >
-            <v-icon small>edit</v-icon>
+            <v-icon>edit</v-icon>
           </v-btn>
         </template>
         <span>Edit</span>
@@ -65,14 +62,13 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            small
             :disabled="data_table.loading"
             @click.stop="(item.form = form), viewItem(item)"
             class="my-2"
             v-on="on"
             icon
           >
-            <v-icon small>mdi-eye</v-icon>
+            <v-icon>mdi-eye</v-icon>
           </v-btn>
         </template>
         <span>View</span>
