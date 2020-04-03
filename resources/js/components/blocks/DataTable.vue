@@ -112,13 +112,23 @@
                 <v-alert
                   v-if="search && keyword"
                   type="warning"
-                  outlined
+                  border="left"
+                  colored-border
+                  elevation="3"
                   dense
                   max-width="300px"
                 >
                   Your search for "{{ keyword }}" found no results
                 </v-alert>
-                <v-alert v-else type="info" outlined dense max-width="300px">
+                <v-alert
+                  v-else
+                  type="info"
+                  border="left"
+                  colored-border
+                  elevation="3"
+                  dense
+                  max-width="300px"
+                >
                   No data
                 </v-alert>
               </v-row>

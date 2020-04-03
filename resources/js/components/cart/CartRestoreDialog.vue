@@ -2,7 +2,13 @@
   <v-container fluid>
     <v-row v-if="!cartsLoading" justify="center">
       <v-col v-if="showWarning" cols="auto">
-        <v-alert type="warning" dense outlined>
+        <v-alert
+          type="warning"
+          dense
+          border="left"
+          colored-border
+          elevation="3"
+        >
           Your current cart will be <b>replaced</b>
         </v-alert>
       </v-col>

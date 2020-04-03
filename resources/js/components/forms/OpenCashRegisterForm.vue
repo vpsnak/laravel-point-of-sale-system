@@ -62,7 +62,13 @@
         </v-row>
         <v-row align="center" justify="center" v-if="cashRegisterIsopen">
           <v-col :cols="12">
-            <v-alert text :type="open_session_user ? 'warning' : 'info'">
+            <v-alert
+              text
+              :type="open_session_user ? 'warning' : 'info'"
+              border="left"
+              colored-border
+              elevation="3"
+            >
               <span v-if="open_session_user">
                 {{ open_session_user.name }} has an active session with the
                 selected cash register

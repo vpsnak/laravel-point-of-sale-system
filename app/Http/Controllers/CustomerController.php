@@ -24,16 +24,16 @@ class CustomerController extends Controller
     {
         $validatedData = $request->validate([
             'id' => 'required|exists:customers,id',
-            'email' => 'email|unique:customers,email,' . $request->id,
+            'email' => "email|unique:customers,email,{$request->id}",
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'house_account_status' => 'nullable|bool',
-            'house_account_number' => 'nullable|unique:customers,house_account_number,' . $request->id,
+            'house_account_number' => "nullable|unique:customers,house_account_number,{$request->id}",
             'house_account_limit_price' => 'nullable|array',
             'no_tax' => 'nullable|bool',
             'file' => 'nullable|file|max:15000|mimes:jpeg,jpg,png,pdf',
             'comment' => 'nullable|string',
-            'phone' => 'nullable|string|unique:customers,phone,' . $request->id,
+            'phone' => "nullable|string|unique:customers,phone,{$request->id}",
         ]);
 
         $customer = Customer::findOrFail($validatedData['id']);
@@ -41,12 +41,11 @@ class CustomerController extends Controller
         if ($validatedData['no_tax'] && empty($validatedData['file'])) {
 
             if (empty($customer->no_tax_file)) {
-                return response(['errors' => ['Zero Tax' => 'Certification file is required when zero tax is enabled']], 422);
+                return response(['errors' => ['Certification file is required when zero tax is enabled']], 422);
             }
         }
 
-        $customer->fill($validatedData);
-        $customer->save();
+        $customer->update($validatedData);
 
         return response(['notification' => [
             'msg' => ["Customer {$customer->name} updated successfully"],
