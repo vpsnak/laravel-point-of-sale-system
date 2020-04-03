@@ -7,7 +7,7 @@
           dense
           border="left"
           colored-border
-          elevation="3"
+          :elevation="3"
         >
           Your current cart will be <b>replaced</b>
         </v-alert>

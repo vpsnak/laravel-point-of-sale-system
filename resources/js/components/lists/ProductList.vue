@@ -90,9 +90,7 @@
             :lg="4"
           >
             <v-card
-              :img="product.photo_url"
               @click="addProduct(product)"
-              height="170"
               :elevation="12"
               :ripple="false"
             >
@@ -151,7 +149,7 @@
                   </v-list>
                 </v-menu>
               </v-card-title>
-              <v-card-text style="height:55%;" v-ripple />
+              <v-img :src="product.photo_url" height="150px" />
 
               <v-card-actions @click.stop>
                 <v-chip-group>
@@ -224,7 +222,16 @@
         </v-col>
       </v-row>
       <v-row v-else justify="center">
-        <h2 v-text="'No products found'" />
+        <v-alert
+          type="info"
+          border="left"
+          colored-border
+          :elevation="3"
+          dense
+          max-width="300px"
+        >
+          No data
+        </v-alert>
       </v-row>
     </v-container>
   </v-card>

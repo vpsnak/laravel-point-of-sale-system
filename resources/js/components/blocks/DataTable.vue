@@ -114,7 +114,7 @@
                   type="warning"
                   border="left"
                   colored-border
-                  elevation="3"
+                  :elevation="3"
                   dense
                   max-width="300px"
                 >
@@ -125,7 +125,7 @@
                   type="info"
                   border="left"
                   colored-border
-                  elevation="3"
+                  :elevation="3"
                   dense
                   max-width="300px"
                 >
