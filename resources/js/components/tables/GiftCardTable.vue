@@ -25,7 +25,7 @@
           <v-btn
             icon
             :disabled="data_table.loading"
-            @click.stop="(item.form = form), editItem(item)"
+            @click.stop="(item.form = 'giftCardForm'), editItem(item)"
             class="my-4"
             v-on="on"
           >

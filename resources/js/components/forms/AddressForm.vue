@@ -1,243 +1,243 @@
 <template>
-  <ValidationObserver v-slot="{ invalid }">
-    <v-form @submit.prevent="submit">
-      <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
-        <v-row>
-          <v-col cols="6">
-            <ValidationProvider
-              rules="required|max:100"
-              v-slot="{ errors }"
-              name="First Name"
-            >
-              <v-text-field
-                :readonly="$props.readonly"
-                v-model="formFields.first_name"
-                label="First name"
-                :disabled="loading"
-                :error-messages="errors"
-              ></v-text-field>
-            </ValidationProvider>
-            <ValidationProvider
-              rules="required|max:100"
-              v-slot="{ errors }"
-              name="Address"
-            >
-              <v-text-field
-                :readonly="$props.readonly"
-                v-model="formFields.street"
-                label="Address"
-                :disabled="loading"
-                :error-messages="errors"
-              ></v-text-field>
-            </ValidationProvider>
-          </v-col>
-          <v-col cols="6">
-            <ValidationProvider
-              rules="required|max:100"
-              v-slot="{ errors }"
-              name="Last Name"
-            >
-              <v-text-field
-                :readonly="$props.readonly"
-                v-model="formFields.last_name"
-                label="Last name"
-                :disabled="loading"
-                :error-messages="errors"
-              ></v-text-field>
-            </ValidationProvider>
-            <ValidationProvider
-              rules="max:100"
-              v-slot="{ errors }"
-              name="Second Address"
-            >
-              <v-text-field
-                :readonly="$props.readonly"
-                v-model="formFields.street2"
-                label="Second Address"
-                :disabled="loading"
-                :error-messages="errors"
-              ></v-text-field>
-            </ValidationProvider>
-          </v-col>
-          <v-col cols="3">
-            <ValidationProvider
-              rules="required|max:100"
-              v-slot="{ errors }"
-              name="City"
-            >
-              <v-text-field
-                :readonly="$props.readonly"
-                v-model="formFields.city"
-                label="City"
-                :disabled="loading"
-                :error-messages="errors"
-              ></v-text-field>
-            </ValidationProvider>
-          </v-col>
-          <v-col cols="3">
-            <ValidationProvider
-              rules="required|max:10"
-              v-slot="{ errors }"
-              name="Zip Code"
-            >
-              <v-text-field
-                :readonly="$props.readonly"
-                v-model="formFields.postcode"
-                label="Zip Code"
-                :disabled="loading"
-                :error-messages="errors"
-              ></v-text-field>
-            </ValidationProvider>
-          </v-col>
-          <v-col cols="3">
-            <ValidationProvider
-              rules="required|max:5"
-              v-slot="{ errors }"
-              name="State"
-            >
-              <v-select
-                :disabled="loading"
-                :readonly="$props.readonly"
-                :loading="loading"
-                v-model="formFields.region_id"
-                :items="regions"
-                label="States"
-                :error-messages="errors"
-                item-text="name"
-                item-value="id"
-              ></v-select>
-            </ValidationProvider>
-          </v-col>
-          <v-col cols="3">
-            <ValidationProvider
-              rules="required|max:5"
-              v-slot="{ errors }"
-              name="Countries"
-            >
-              <v-select
-                :disabled="loading"
-                :readonly="$props.readonly"
-                :loading="loading"
-                v-model="formFields.country_id"
-                :items="countries"
-                label="Countries"
-                :error-messages="errors"
-                item-text="name"
-                item-value="id"
-              ></v-select>
-            </ValidationProvider>
-          </v-col>
-          <v-col cols="4">
-            <ValidationProvider
-              rules="max:100"
-              v-slot="{ errors }"
-              name="Location"
-            >
-              <v-select
-                v-model="formFields.location"
-                label="Locations"
-                :items="locations"
-                item-text="label"
-                item-value="id"
-                :disabled="loading"
-                :error-messages="errors"
-              ></v-select>
-            </ValidationProvider>
-          </v-col>
-          <v-col cols="4">
-            <ValidationProvider
-              rules="max:100"
-              v-slot="{ errors }"
-              name="Location name"
-            >
-              <v-text-field
-                v-model="formFields.location_name"
-                label="Location name"
-                :disabled="loading"
-                :error-messages="errors"
-              ></v-text-field>
-            </ValidationProvider>
-          </v-col>
-          <v-col cols="4">
-            <ValidationProvider
-              :rules="{
-                required: true,
-                min: 8,
-                max: 20,
-                regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
-              }"
-              v-slot="{ errors }"
-              name="Phone"
-            >
-              <v-text-field
-                :readonly="$props.readonly"
-                v-model="formFields.phone"
-                label="Phone"
-                :min="0"
-                :disabled="loading"
-                :error-messages="errors"
-              ></v-text-field>
-            </ValidationProvider>
-          </v-col>
-          <v-col cols="6">
-            <ValidationProvider
-              rules="max:100"
-              v-slot="{ errors }"
-              name="Company"
-            >
-              <v-text-field
-                :readonly="$props.readonly"
-                v-model="formFields.company"
-                label="Company"
-                :disabled="loading"
-                :error-messages="errors"
-              ></v-text-field>
-            </ValidationProvider>
-          </v-col>
-          <v-col cols="6">
-            <ValidationProvider
-              rules="max:20"
-              v-slot="{ errors }"
-              name="Vat id"
-            >
-              <v-text-field
-                :readonly="$props.readonly"
-                v-model="formFields.vat_id"
-                label="Vat id"
-                :disabled="loading"
-                :error-messages="errors"
-              ></v-text-field>
-            </ValidationProvider>
-          </v-col>
-          <v-row justify="space-around">
-            <v-checkbox
+  <ValidationObserver
+    v-slot="{ invalid }"
+    tag="v-form"
+    @submit.prevent="submit()"
+  >
+    <v-container fluid class="overflow-y-auto" style="max-height: 60vh;">
+      <v-row>
+        <v-col cols="6">
+          <ValidationProvider
+            rules="required|max:100"
+            v-slot="{ errors }"
+            name="First Name"
+          >
+            <v-text-field
               :readonly="$props.readonly"
-              v-model="formFields.is_default_billing"
-              label="Default billing"
-            ></v-checkbox>
-            <v-checkbox
+              v-model="formFields.first_name"
+              label="First name"
+              :disabled="loading"
+              :error-messages="errors"
+            ></v-text-field>
+          </ValidationProvider>
+        </v-col>
+        <v-col cols="6">
+          <ValidationProvider
+            rules="required|max:100"
+            v-slot="{ errors }"
+            name="Last Name"
+          >
+            <v-text-field
               :readonly="$props.readonly"
-              v-model="formFields.is_default_shipping"
-              label="Default shipping"
-            ></v-checkbox>
-          </v-row>
-        </v-row>
-      </v-container>
-      <v-container>
-        <v-row v-if="!$props.readonly">
-          <v-col cols="12" align="center" justify="center">
-            <v-btn
-              class="mr-4"
-              type="submit"
+              v-model="formFields.last_name"
+              label="Last name"
+              :disabled="loading"
+              :error-messages="errors"
+            ></v-text-field>
+          </ValidationProvider>
+        </v-col>
+        <v-col cols="6">
+          <ValidationProvider
+            rules="required|max:100"
+            v-slot="{ errors }"
+            name="Address"
+          >
+            <v-text-field
+              :readonly="$props.readonly"
+              v-model="formFields.street"
+              label="Address"
+              :disabled="loading"
+              :error-messages="errors"
+            ></v-text-field>
+          </ValidationProvider>
+        </v-col>
+        <v-col cols="6">
+          <ValidationProvider
+            rules="max:100"
+            v-slot="{ errors }"
+            name="Second Address"
+          >
+            <v-text-field
+              :readonly="$props.readonly"
+              v-model="formFields.street2"
+              label="Second Address"
+              :disabled="loading"
+              :error-messages="errors"
+            ></v-text-field>
+          </ValidationProvider>
+        </v-col>
+        <v-col cols="3">
+          <ValidationProvider
+            rules="required|max:100"
+            v-slot="{ errors }"
+            name="City"
+          >
+            <v-text-field
+              :readonly="$props.readonly"
+              v-model="formFields.city"
+              label="City"
+              :disabled="loading"
+              :error-messages="errors"
+            ></v-text-field>
+          </ValidationProvider>
+        </v-col>
+        <v-col cols="3">
+          <ValidationProvider
+            rules="required|max:10"
+            v-slot="{ errors }"
+            name="Zip Code"
+          >
+            <v-text-field
+              :readonly="$props.readonly"
+              v-model="formFields.postcode"
+              label="Zip Code"
+              :disabled="loading"
+              :error-messages="errors"
+            ></v-text-field>
+          </ValidationProvider>
+        </v-col>
+        <v-col cols="3">
+          <ValidationProvider
+            rules="required|max:5"
+            v-slot="{ errors }"
+            name="State"
+          >
+            <v-select
+              :disabled="loading"
+              :readonly="$props.readonly"
               :loading="loading"
-              :disabled="invalid || loading"
-              color="primary"
-              >SAVE CHANGES</v-btn
-            >
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-form>
+              v-model="formFields.region_id"
+              :items="regions"
+              label="States"
+              :error-messages="errors"
+              item-text="name"
+              item-value="id"
+            ></v-select>
+          </ValidationProvider>
+        </v-col>
+        <v-col cols="3">
+          <ValidationProvider
+            rules="required|max:5"
+            v-slot="{ errors }"
+            name="Countries"
+          >
+            <v-select
+              :disabled="loading"
+              :readonly="$props.readonly"
+              :loading="loading"
+              v-model="formFields.country_id"
+              :items="countries"
+              label="Countries"
+              :error-messages="errors"
+              item-text="name"
+              item-value="id"
+            ></v-select>
+          </ValidationProvider>
+        </v-col>
+        <v-col cols="4">
+          <ValidationProvider
+            rules="max:100"
+            v-slot="{ errors }"
+            name="Location"
+          >
+            <v-select
+              v-model="formFields.location"
+              label="Locations"
+              :items="locations"
+              item-text="label"
+              item-value="id"
+              :disabled="loading"
+              :error-messages="errors"
+            ></v-select>
+          </ValidationProvider>
+        </v-col>
+        <v-col cols="4">
+          <ValidationProvider
+            rules="max:100"
+            v-slot="{ errors }"
+            name="Location name"
+          >
+            <v-text-field
+              v-model="formFields.location_name"
+              label="Location name"
+              :disabled="loading"
+              :error-messages="errors"
+            ></v-text-field>
+          </ValidationProvider>
+        </v-col>
+        <v-col cols="4">
+          <ValidationProvider
+            :rules="{
+              required: true,
+              min: 8,
+              max: 20,
+              regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g,
+            }"
+            v-slot="{ errors }"
+            name="Phone"
+          >
+            <v-text-field
+              :readonly="$props.readonly"
+              v-model="formFields.phone"
+              label="Phone"
+              :min="0"
+              :disabled="loading"
+              :error-messages="errors"
+            ></v-text-field>
+          </ValidationProvider>
+        </v-col>
+        <v-col cols="6">
+          <ValidationProvider
+            rules="max:100"
+            v-slot="{ errors }"
+            name="Company"
+          >
+            <v-text-field
+              :readonly="$props.readonly"
+              v-model="formFields.company"
+              label="Company"
+              :disabled="loading"
+              :error-messages="errors"
+            ></v-text-field>
+          </ValidationProvider>
+        </v-col>
+        <v-col cols="6">
+          <ValidationProvider rules="max:20" v-slot="{ errors }" name="Vat id">
+            <v-text-field
+              :readonly="$props.readonly"
+              v-model="formFields.vat_id"
+              label="Vat id"
+              :disabled="loading"
+              :error-messages="errors"
+            ></v-text-field>
+          </ValidationProvider>
+        </v-col>
+      </v-row>
+      <v-row justify="space-around">
+        <v-checkbox
+          :readonly="$props.readonly"
+          v-model="formFields.is_default_billing"
+          label="Default billing"
+        ></v-checkbox>
+        <v-checkbox
+          :readonly="$props.readonly"
+          v-model="formFields.is_default_shipping"
+          label="Default shipping"
+        ></v-checkbox>
+      </v-row>
+    </v-container>
+    <v-container>
+      <v-row v-if="!$props.readonly" align="center" justify="center">
+        <v-btn
+          class="mr-4"
+          type="submit"
+          :loading="loading"
+          :disabled="invalid || loading"
+          color="primary"
+          >save
+        </v-btn>
+      </v-row>
+    </v-container>
   </ValidationObserver>
 </template>
 
@@ -247,7 +247,7 @@ import { mapState, mapActions } from "vuex";
 export default {
   props: {
     model: Object,
-    readonly: Boolean
+    readonly: Boolean,
   },
   data() {
     return {
@@ -269,8 +269,8 @@ export default {
         is_default_billing: false,
         is_default_shipping: false,
         location: null,
-        location_name: null
-      }
+        location_name: null,
+      },
     };
   },
   mounted() {
@@ -278,7 +278,7 @@ export default {
     this.getAllCountries();
     if (this.$props.model) {
       this.formFields = {
-        ...this.$props.model
+        ...this.$props.model,
       };
     }
   },
@@ -287,7 +287,7 @@ export default {
   },
 
   computed: {
-    ...mapState("cart", ["locations"])
+    ...mapState("cart", ["locations"]),
   },
 
   methods: {
@@ -300,11 +300,11 @@ export default {
         this.request({
           method: "patch",
           url: "addresses/update",
-          data: { ...this.formFields }
+          data: { ...this.formFields },
         })
           .then(() => {
             this.$emit("submit", {
-              action: "paginate"
+              action: "paginate",
             });
           })
           .finally(() => {
@@ -314,11 +314,11 @@ export default {
         this.request({
           method: "post",
           url: "addresses/create",
-          data: { ...this.formFields }
+          data: { ...this.formFields },
         })
           .then(() => {
             this.$emit("submit", {
-              action: "paginate"
+              action: "paginate",
             });
           })
           .finally(() => {
@@ -331,9 +331,9 @@ export default {
       this.loading = true;
       this.request({
         method: "get",
-        url: "regions"
+        url: "regions",
       })
-        .then(response => {
+        .then((response) => {
           this.regions = response;
         })
         .finally(() => {
@@ -343,11 +343,11 @@ export default {
     getAllCountries() {
       this.request({
         method: "get",
-        url: "countries"
-      }).then(response => {
+        url: "countries",
+      }).then((response) => {
         this.countries = response;
       });
-    }
-  }
+    },
+  },
 };
 </script>
