@@ -184,7 +184,7 @@
         </v-row>
       </perfect-scrollbar>
 
-      <v-container v-show="lastPage > 1">
+      <v-container v-show="lastPage > 0">
         <v-row justify="center">
           <v-col :cols="10">
             <v-pagination
@@ -350,7 +350,6 @@ export default {
           this.categoriesLoading = false;
         });
     },
-
     getProductsFromCategoryID() {
       const payload = {
         method: "get",

@@ -16,7 +16,7 @@
     "dinero.js": "^1.8.1",
     "es6-promise": "^4.2.8",
     "js-cookie": "^2.2.1",
-    "laravel-echo": "^1.6.1",
+    "laravel-echo": "^1.7.0",
     "material-design-icons-iconfont": "^5.0.1",
     "pusher-js": "^5.1.1",
     "resolve-url-loader": "^3.1.1",

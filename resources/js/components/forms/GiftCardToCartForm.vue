@@ -37,7 +37,7 @@
             </template>
           </v-data-table>
         </v-col>
-        <v-col v-show="pageCount > 1" :cols="12">
+        <v-col v-show="pageCount > 0" :cols="12">
           <v-pagination
             v-model="page"
             :length="pageCount"

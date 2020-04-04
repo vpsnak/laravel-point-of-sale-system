@@ -134,7 +134,7 @@
               </v-row>
             </template>
           </v-data-table>
-          <v-card-actions v-show="pageCount > 1">
+          <v-card-actions v-show="pageCount > 0">
             <v-pagination
               v-model="page"
               :length="pageCount"
