@@ -80,7 +80,7 @@
       </v-container>
     </v-card-text>
     <div v-if="products.length">
-      <perfect-scrollbar tag="v-container" style="height:600px;">
+      <perfect-scrollbar tag="v-container" style="height: 600px;">
         <v-row>
           <v-col
             v-for="product in products"
@@ -149,7 +149,25 @@
                   </v-list>
                 </v-menu>
               </v-card-title>
-              <v-img :src="product.photo_url" height="150px" />
+              <v-card-text class="d-flex justify-center align-center">
+                <v-icon
+                  v-show="!product.imgLoaded || product.imgLoadFailed"
+                  v-text="'mdi-flower'"
+                  size="50"
+                />
+                <v-img
+                  v-show="product.imgLoaded && !product.imgLoadFailed"
+                  :src="product.photo_url"
+                  height="175px"
+                  width="175px"
+                  contain
+                  @error="
+                    set(product, 'imgLoaded', true),
+                      set(product, 'imgLoadFailed', true)
+                  "
+                  @load="set(product, 'imgLoaded', true)"
+                />
+              </v-card-text>
 
               <v-card-actions @click.stop>
                 <v-chip-group>
@@ -251,7 +269,7 @@ export default {
       categoriesLoading: false,
       search_keyword: "",
       selectedCategory: null,
-      btnactive: true
+      btnactive: true,
     };
   },
 
@@ -261,7 +279,7 @@ export default {
   },
 
   mounted() {
-    this.$root.$on("barcodeScan", sku => {
+    this.$root.$on("barcodeScan", (sku) => {
       if (!this.interactive_dialog.show) {
         this.getSingleProduct(sku);
       }
@@ -281,7 +299,7 @@ export default {
         if (value) {
           this.currentPage = 1;
         }
-      }
+      },
     },
     products: {
       get() {
@@ -289,8 +307,8 @@ export default {
       },
       set(value) {
         this.setProductList(value);
-      }
-    }
+      },
+    },
   },
 
   watch: {
@@ -301,7 +319,7 @@ export default {
         this.currentPage = 1;
         this.getAllProducts();
       }
-    }
+    },
   },
 
   methods: {
@@ -336,14 +354,14 @@ export default {
       this.categoriesLoading = true;
       const payload = {
         method: "get",
-        url: "product-listing/categories"
+        url: "product-listing/categories",
       };
 
       this.request(payload)
-        .then(response => {
+        .then((response) => {
           this.categories = response.data;
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         })
         .finally(() => {
@@ -353,7 +371,7 @@ export default {
     getProductsFromCategoryID() {
       const payload = {
         method: "get",
-        url: `categories/${this.selectedCategory}/products?page=${this.currentPage}`
+        url: `categories/${this.selectedCategory}/products?page=${this.currentPage}`,
       };
 
       this.getProductRequest(payload);
@@ -384,7 +402,7 @@ export default {
         const payload = {
           method: "post",
           url: `products/search?page=${this.currentPage}`,
-          data: { keyword: this.keyword }
+          data: { keyword: this.keyword },
         };
 
         this.getProductRequest(payload);
@@ -396,7 +414,7 @@ export default {
       this.selected_category = null;
       const payload = {
         method: "get",
-        url: `products?page=${this.current_page}`
+        url: `products?page=${this.current_page}`,
       };
       this.getProductRequest(payload);
     },
@@ -406,13 +424,13 @@ export default {
         this.products = [];
 
         this.request(payload)
-          .then(response => {
+          .then((response) => {
             this.products = response.data;
             this.currentPage = response.current_page;
             this.lastPage = response.last_page;
             resolve(true);
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
             reject(error);
           })
@@ -432,7 +450,7 @@ export default {
         title: "Send plant care",
         cancelBtnTxt: "Close",
         model: product,
-        titleCloseBtn: true
+        titleCloseBtn: true,
       };
       this.setDialog(payload);
     },
@@ -444,7 +462,7 @@ export default {
         icon: "mdi-wallet-giftcard",
         titleCloseBtn: true,
         persistent: true,
-        width: 700
+        width: 700,
       };
       this.setDialog(payload);
     },
@@ -455,10 +473,10 @@ export default {
         title: "Add custom item to cart",
         icon: "mdi-flower",
         titleCloseBtn: true,
-        persistent: true
+        persistent: true,
       };
       this.setDialog(payload);
-    }
-  }
+    },
+  },
 };
 </script>
