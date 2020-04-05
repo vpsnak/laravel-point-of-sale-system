@@ -17,7 +17,7 @@ class CustomerController extends Controller
 
     public function getOne(Customer $model)
     {
-        return response($model->load('addresses'));
+        return response(Customer::with(['addresses', 'notes'])->findOrFail($model));
     }
 
     public function update(Request $request)
@@ -32,7 +32,6 @@ class CustomerController extends Controller
             'house_account_limit_price' => 'nullable|array',
             'no_tax' => 'nullable|bool',
             'file' => 'nullable|file|max:15000|mimes:jpeg,jpg,png,pdf',
-            'comment' => 'nullable|string',
             'phone' => "nullable|string|unique:customers,phone,{$request->id}",
         ]);
 
@@ -64,7 +63,6 @@ class CustomerController extends Controller
             'house_account_limit_price' => 'nullable|numeric',
             'no_tax' => 'nullable|bool',
             'file' => 'nullable|required_if:no_tax,1|file|max:15000|mimes:jpeg,jpg,png,pdf',
-            'comment' => 'nullable|string',
             'phone' => 'nullable|string|unique:customers,phone',
         ]);
 
@@ -105,10 +103,10 @@ class CustomerController extends Controller
 
     private static function noTaxFileCreation($file, int $id)
     {
-        $fileExt = '.' . $file->extension();
+        $fileExt = ".{$file->extension()}";
         $filePath = $file->storeAs(
             'public/uploads/no_tax',
-            $id . $fileExt
+            "{$id}{$fileExt}"
         );
 
         return $filePath;

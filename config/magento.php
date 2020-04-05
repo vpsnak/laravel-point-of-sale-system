@@ -3,6 +3,6 @@
 return [
     'MAGENTO_URL' => 'https://dev.plantshed.com',
     'MAGENTO_ADMIN' => 'waterfront',
-    'OAUTH_CONSUMER_KEY' => '5601683dd4ecf7c20ff31d4045ca54ab',
-    'OAUTH_CONSUMER_SECRET' => '74e961e7c947b2fb96640d74eb3c4ec1',
+    'OAUTH_CONSUMER_KEY' => '7e3b9fb643fb43e09f1b9efa64aa6f36',
+    'OAUTH_CONSUMER_SECRET' => '8505fe468d77ce74e61250db1c21c51d',
 ];

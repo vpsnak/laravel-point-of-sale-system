@@ -24,7 +24,6 @@ class CreateCustomersTable extends Migration
             $table->unsignedInteger('house_account_limit')->nullable();
             $table->boolean('no_tax')->default(false)->nullable();
             $table->string('no_tax_file')->nullable();
-            $table->text('comment')->nullable();
             $table->string('phone')->nullable();
             $table->foreignId('magento_id')->nullable();
 

@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Setting;
+use Exception;
 use Illuminate\Http\Request;
 use OAuth;
+use OAuthException;
 
 class MagentoOAuthController extends Controller
 {
@@ -58,7 +60,7 @@ class MagentoOAuthController extends Controller
                         'oauth_token_secret',
                         $access_token
                     )) {
-                        $this->state->value = 2;
+                        $this->state->value = '2';
                         $this->state->save();
                         $this->token->value = $access_token['oauth_token'];
                         $this->token->save();
@@ -66,7 +68,7 @@ class MagentoOAuthController extends Controller
                         $this->secret->save();
                         return redirect($this->callback_url);
                     } else {
-                        $this->state->value = 0;
+                        $this->state->value = '0';
                         $this->state->save();
                         return response()->json([
                             'status' => 'bad_request',
@@ -89,7 +91,8 @@ class MagentoOAuthController extends Controller
                 }
             }
         } catch (Exception $e) {
-            Setting::truncate();
+            Setting::orWhere('key', 'state')->orWhere('key', 'token')->orWhere('key', 'secret')->delete();
+
             return $e;
             //     return response()->json([
             //         'status' => 'exception',

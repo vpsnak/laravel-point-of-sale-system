@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCustomerNotesTable extends Migration
+class CreateNotesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,12 @@ class CreateCustomerNotesTable extends Migration
      */
     public function up()
     {
-        Schema::create('customer_notes', function (Blueprint $table) {
+        Schema::create('notes', function (Blueprint $table) {
             $table->id();
 
-            $table->text('notes');
+            $table->foreignId('noteable_id');
+            $table->string('noteable_type');
+            $table->text('note');
             $table->foreignId('created_by_id');
 
             $table->timestampsTz();
@@ -30,6 +32,6 @@ class CreateCustomerNotesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('customer_notes');
+        Schema::dropIfExists('notes');
     }
 }

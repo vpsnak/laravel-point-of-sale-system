@@ -15,7 +15,6 @@ class Customer extends Model
         'house_account_limit',
         'no_tax',
         'no_tax_file',
-        'comment',
         'phone',
 
         'magento_id'
@@ -28,9 +27,11 @@ class Customer extends Model
 
     protected $appends = ['full_name'];
 
-    /**
-     * Get the comments for the blog post.
-     */
+    public function notes()
+    {
+        return $this->morphMany(Note::class, 'noteable');
+    }
+
     public function addresses()
     {
         return $this->hasMany(Address::class);
