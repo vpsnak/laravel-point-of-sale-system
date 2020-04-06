@@ -154,7 +154,6 @@
             :value="orderRemainingPrice.toFormat()"
             disabled
             label="Remaining Amount"
-            :hint="hintSpacing"
           />
         </v-col>
         <v-col :lg="2" :md="3" :cols="6" v-if="paymentType.type !== 'coupon'">
