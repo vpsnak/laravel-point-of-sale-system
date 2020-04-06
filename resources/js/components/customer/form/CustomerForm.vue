@@ -90,7 +90,7 @@
         <v-col :cols="6">
           <ValidationProvider
             v-if="formFields.house_account_status"
-            rules="required|between:0.01|10000"
+            rules="required|between:0.01,10000"
             v-slot="{ errors }"
             name="House account limit"
           >
@@ -123,7 +123,7 @@
               v-model="formFields.file"
               accept="image/png, image/jpeg, application/pdf"
               show-size
-              label="Upload new certification file"
+              label="Upload certification file"
               clearable
               :error-messages="errors"
               :readonly="$props.readonly"
@@ -150,8 +150,8 @@
           type="submit"
           :loading="loading"
           :disabled="invalid || loading"
-          v-text="'save changes'"
-        />
+          >save changes
+        </v-btn>
       </v-row>
     </v-container>
   </ValidationObserver>
@@ -208,16 +208,13 @@ export default {
           "house_account_number",
           this.formFields.house_account_number
         );
-        data.append(
-          "house_account_limit",
-          this.formFields.house_account_limit || 0
-        );
+        data.append("house_account_limit", this.formFields.house_account_limit);
         data.append(
           "house_account_status",
-          this.formFields.house_account_status ? true : false
+          this.formFields.house_account_status ? 1 : 0
         );
       }
-      data.append("no_tax", this.formFields.no_tax ? true : false);
+      data.append("no_tax", this.formFields.no_tax ? 1 : 0);
       data.append("file", this.formFields.file);
       data.append("comment", this.formFields.comment);
 
@@ -225,20 +222,26 @@ export default {
     },
     submit() {
       this.loading = true;
+      let data;
       if (this.formFields.no_tax && this.formFields.file) {
-        this.formFields = this.makeFormData();
+        data = this.makeFormData();
+      } else {
+        data = this.formFields;
       }
 
       const payload = {
         method: this.$props.model ? "patch" : "post",
         url: this.$props.model ? "customers/update" : "customers/create",
-        data: this.formFields,
+        data: data,
       };
       this.request(payload)
         .then(() => {
           this.$emit("submit", {
             action: "paginate",
           });
+        })
+        .catch((error) => {
+          console.log(error);
         })
         .finally(() => {
           this.loading = false;

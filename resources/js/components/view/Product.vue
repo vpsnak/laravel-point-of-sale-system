@@ -74,33 +74,33 @@ import { mapActions } from "vuex";
 
 export default {
   props: {
-    model: Object
+    model: Object,
   },
   data() {
     return {
       headers: [
         { text: "Store name", value: "store.name" },
-        { text: "Qty", value: "store.pivot.qty" }
+        { text: "Qty", value: "store.pivot.qty" },
       ],
-      product: null
+      product: null,
     };
   },
   mounted() {
     if (this.$props.model)
       this.request({
         method: "get",
-        url: `products/get/${this.$props.model.id}`
-      }).then(result => {
+        url: `products/get/${this.$props.model.id}`,
+      }).then((result) => {
         this.product = result;
       });
   },
   computed: {
     productData() {
       return this.product;
-    }
+    },
   },
   methods: {
-    ...mapActions("requests", ["request"])
-  }
+    ...mapActions("requests", ["request"]),
+  },
 };
 </script>

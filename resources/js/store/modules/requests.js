@@ -4,10 +4,10 @@ const actions = {
   request(context, payload) {
     return new Promise((resolve, reject) => {
       let headers = {
-        Authorization: context.rootState.token
+        Authorization: context.rootState.token,
       };
       if (payload.data instanceof FormData) {
-        options.headers["Content-Type"] = "multipart/form-data";
+        headers["Content-Type"] = "multipart/form-data";
       }
       const noSuccessNotification = payload.no_success_notification;
       const noErrorNotification = payload.no_error_notification;
@@ -16,7 +16,7 @@ const actions = {
       if (console_out) {
         console.info({
           request: `${payload.method} request to: ${context.rootState.config.base_url}/${payload.url}`,
-          payload: payload
+          payload: payload,
         });
       }
 
@@ -24,12 +24,12 @@ const actions = {
         method: payload.method,
         url: `${context.rootState.config.base_url}/${payload.url}`,
         data: payload.data,
-        headers
+        headers,
       })
-        .then(response => {
+        .then((response) => {
           if (!noSuccessNotification && _.has(response.data, "notification")) {
             context.commit("setNotification", response.data.notification, {
-              root: true
+              root: true,
             });
           }
 
@@ -39,7 +39,7 @@ const actions = {
 
           resolve(response.data);
         })
-        .catch(error => {
+        .catch((error) => {
           let error_response;
 
           if (_.has(error, "response")) {
@@ -57,7 +57,7 @@ const actions = {
               "setNotification",
               {
                 msg: error_response.errors,
-                type: "error"
+                type: "error",
               },
               { root: true }
             );
@@ -71,9 +71,9 @@ const actions = {
               {
                 msg: [
                   "Unhandled Exception",
-                  `Message: ${error_response.message}<br>${error_response.file}<br>line: ${error_response.line}`
+                  `Message: ${error_response.message}<br>${error_response.file}<br>line: ${error_response.line}`,
                 ],
-                type: "error"
+                type: "error",
               },
               { root: true }
             );
@@ -92,10 +92,10 @@ const actions = {
           reject(error_response);
         });
     });
-  }
+  },
 };
 
 export default {
   namespaced: true,
-  actions
+  actions,
 };

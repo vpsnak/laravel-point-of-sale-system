@@ -15,7 +15,7 @@ class CustomerController extends Controller
         return response(Customer::paginate(10));
     }
 
-    public function getOne(Customer $model)
+    public function getOne(int $model)
     {
         return response(Customer::with(['addresses', 'notes'])->findOrFail($model));
     }
@@ -89,9 +89,10 @@ class CustomerController extends Controller
         if (array_key_exists('file', $validatedData) && $validatedData['no_tax']) {
             $filePath = self::noTaxFileCreation($validatedData['file'], $customer->id);
             // @TODO DEBUG
-            var_dump($filePath);
-            die;
+            // var_dump($filePath);
+            // die;
             // $customer->no_tax_file = "/storage/uploads/no_tax/{$customer->id}{$fileExt}";
+            $customer->no_tax_file = $filePath;
             $customer->save();
         }
 
