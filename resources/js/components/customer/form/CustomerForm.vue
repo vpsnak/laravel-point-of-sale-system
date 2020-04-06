@@ -5,82 +5,76 @@
     @submit.prevent="submit()"
   >
     <v-container fluid class="overflow-y-auto" style="max-height: 60vh;">
-      <ValidationProvider
-        rules="required|max:100"
-        v-slot="{ errors }"
-        name="First name"
-      >
-        <v-text-field
-          v-model="formFields.first_name"
-          label="First name"
-          :error-messages="errors"
-          :readonly="$props.readonly"
-        ></v-text-field>
-      </ValidationProvider>
-      <ValidationProvider
-        rules="required|max:100"
-        v-slot="{ errors }"
-        name="Last Name"
-      >
-        <v-text-field
-          v-model="formFields.last_name"
-          label="Last name"
-          :error-messages="errors"
-          :readonly="$props.readonly"
-        ></v-text-field>
-      </ValidationProvider>
-      <ValidationProvider
-        rules="required|email|max:100"
-        v-slot="{ errors }"
-        name="Email"
-      >
-        <v-text-field
-          v-model="formFields.email"
-          label="Email"
-          :error-messages="errors"
-          :readonly="$props.readonly"
-        ></v-text-field>
-      </ValidationProvider>
+      <v-row align="center">
+        <v-col :cols="6">
+          <ValidationProvider
+            rules="required|max:100"
+            v-slot="{ errors }"
+            name="First name"
+          >
+            <v-text-field
+              v-model="formFields.first_name"
+              label="First name"
+              :error-messages="errors"
+              :readonly="$props.readonly"
+            />
+          </ValidationProvider>
+        </v-col>
+        <v-col :cols="6">
+          <ValidationProvider
+            rules="required|max:100"
+            v-slot="{ errors }"
+            name="Last Name"
+          >
+            <v-text-field
+              v-model="formFields.last_name"
+              label="Last name"
+              :error-messages="errors"
+              :readonly="$props.readonly"
+            />
+          </ValidationProvider>
+        </v-col>
+        <v-col :cols="6">
+          <ValidationProvider
+            rules="required|email|max:100"
+            v-slot="{ errors }"
+            name="Email"
+          >
+            <v-text-field
+              v-model="formFields.email"
+              label="Email"
+              :error-messages="errors"
+              :readonly="$props.readonly"
+            />
+          </ValidationProvider>
+        </v-col>
+        <v-col :cols="6">
+          <ValidationProvider
+            rules="required|min:8|max:16"
+            v-slot="{ errors }"
+            name="Phone"
+          >
+            <v-text-field
+              v-model="formFields.phone"
+              label="Phone"
+              :min="0"
+              :disabled="loading"
+              :error-messages="errors"
+              :readonly="$props.readonly"
+            />
+          </ValidationProvider>
+        </v-col>
 
-      <ValidationProvider
-        :rules="{
-          min: 8,
-          max: 255,
-          regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g,
-        }"
-        v-slot="{ errors }"
-        name="Phone"
-      >
-        <v-text-field
-          v-model="formFields.phone"
-          label="Phone"
-          :min="0"
-          :disabled="loading"
-          :error-messages="errors"
-          :readonly="$props.readonly"
-        ></v-text-field>
-      </ValidationProvider>
-
-      <v-row justify="space-around">
-        <ValidationProvider vid="house_account_status">
+        <v-col :cols="2">
           <v-checkbox
             v-model="formFields.house_account_status"
             label="House account"
             :readonly="$props.readonly"
-          ></v-checkbox>
-        </ValidationProvider>
-        <ValidationProvider vid="no_tax">
-          <v-checkbox
-            v-model="formFields.no_tax"
-            label="Zero tax"
-            :readonly="$props.readonly"
-          ></v-checkbox>
-        </ValidationProvider>
-      </v-row>
-
-      <v-row justify="space-around" align-center>
-        <v-col v-if="formFields.house_account_status">
+          />
+        </v-col>
+        <v-col :cols="4">
           <ValidationProvider
+            v-if="formFields.house_account_status"
             rules="required_if:house_account_status|max:100"
             v-slot="{ errors }"
             name="House account number"
@@ -90,14 +84,13 @@
               label="House account number"
               :error-messages="errors"
               :readonly="$props.readonly"
-            ></v-text-field>
+            />
           </ValidationProvider>
+        </v-col>
+        <v-col :cols="6">
           <ValidationProvider
             v-if="formFields.house_account_status"
-            :rules="{
-              required: true,
-              regex: /^[\d]{1,7}(\.[\d]{1,4})?$/g,
-            }"
+            rules="required|between:0.01|10000"
             v-slot="{ errors }"
             name="House account limit"
           >
@@ -107,16 +100,24 @@
               label="House account limit"
               :error-messages="errors"
               :readonly="$props.readonly"
-            ></v-text-field>
+            />
           </ValidationProvider>
         </v-col>
-      </v-row>
-      <v-row v-if="formFields.no_tax" align="center">
-        <v-col :cols="6">
+
+        <v-col :cols="2">
+          <v-checkbox
+            v-model="formFields.no_tax"
+            label="Zero tax"
+            :readonly="$props.readonly"
+          />
+        </v-col>
+        <v-col :cols="10">
           <ValidationProvider
+            v-if="formFields.no_tax"
             rules="ext:jpg,png,jpeg,pdf"
             v-slot="{ errors }"
             name="Certification file"
+            dense
           >
             <v-file-input
               v-model="formFields.file"
@@ -126,43 +127,31 @@
               clearable
               :error-messages="errors"
               :readonly="$props.readonly"
-            ></v-file-input>
+            />
           </ValidationProvider>
         </v-col>
 
         <v-col v-if="formFields.no_tax_file" :cols="6">
           <v-btn
-            text
             v-if="formFields.no_tax_file"
             :href="formFields.no_tax_file"
+            text
             target="_blank"
-            >View uploaded file
-          </v-btn>
+            v-text="'View uploaded file'"
+          />
         </v-col>
       </v-row>
-      <ValidationProvider rules="max:65535" v-slot="{ errors }" name="Comment">
-        <v-textarea
-          no-resize
-          rows="3"
-          v-model="formFields.comment"
-          label="Comments"
-          :error-messages="errors"
-          :readonly="$props.readonly"
-        ></v-textarea>
-      </ValidationProvider>
     </v-container>
     <v-container v-if="!$props.readonly">
-      <v-row>
-        <v-col cols="12" align="center" justify="center">
-          <v-btn
-            color="primary"
-            class="mr-4"
-            type="submit"
-            :loading="loading"
-            :disabled="invalid || loading"
-            >save changes
-          </v-btn>
-        </v-col>
+      <v-row align="center" justify="center">
+        <v-btn
+          color="primary"
+          class="mr-4"
+          type="submit"
+          :loading="loading"
+          :disabled="invalid || loading"
+          v-text="'save changes'"
+        />
       </v-row>
     </v-container>
   </ValidationObserver>
@@ -189,7 +178,6 @@ export default {
         no_tax: false,
         file: null,
         no_tax_file: null,
-        comment: null,
       },
     };
   },
@@ -226,10 +214,10 @@ export default {
         );
         data.append(
           "house_account_status",
-          this.formFields.house_account_status ? 1 : 0
+          this.formFields.house_account_status ? true : false
         );
       }
-      data.append("no_tax", this.formFields.no_tax ? 1 : 0);
+      data.append("no_tax", this.formFields.no_tax ? true : false);
       data.append("file", this.formFields.file);
       data.append("comment", this.formFields.comment);
 
@@ -237,15 +225,14 @@ export default {
     },
     submit() {
       this.loading = true;
-      const data = this.formFields;
-      if (payload.data.file && payload.data.no_tax) {
-        data = this.makeFormData();
+      if (this.formFields.no_tax && this.formFields.file) {
+        this.formFields = this.makeFormData();
       }
 
       const payload = {
         method: this.$props.model ? "patch" : "post",
         url: this.$props.model ? "customers/update" : "customers/create",
-        data: data,
+        data: this.formFields,
       };
       this.request(payload)
         .then(() => {

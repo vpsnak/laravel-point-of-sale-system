@@ -6,7 +6,7 @@
     persistent
     no-click-animation
   >
-    <v-card class="fill-height">
+    <v-card>
       <v-toolbar>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
@@ -17,13 +17,13 @@
               v-on="on"
               color="red"
             >
-              <v-icon>mdi-close</v-icon>
+              <v-icon v-text="'mdi-close'" />
             </v-btn>
           </template>
-          <span>Close</span>
+          <span v-text="'Close'" />
         </v-tooltip>
 
-        <v-toolbar-title>Checkout</v-toolbar-title>
+        <v-toolbar-title v-text="'Checkout'" />
       </v-toolbar>
 
       <v-card-text>
@@ -36,7 +36,7 @@
               :editable="order_id ? false : true"
               :showMethods="true"
               :showCustomer="true"
-            ></cart>
+            />
           </v-col>
         </v-row>
       </v-card-text>
@@ -50,12 +50,12 @@ import { EventBus } from "../../plugins/eventBus";
 
 export default {
   mounted() {
-    EventBus.$on("checkout-cancel-order", event => {
+    EventBus.$on("checkout-cancel-order", (event) => {
       if (event.payload) {
         this.setCheckoutLoading(true);
         this.request({
           method: "delete",
-          url: `orders/${this.order_id}`
+          url: `orders/${this.order_id}`,
         }).finally(() => {
           this.resetState();
         });
@@ -75,7 +75,7 @@ export default {
       "order_id",
       "order_status",
       "checkoutDialog",
-      "currentCheckoutStep"
+      "currentCheckoutStep",
     ]),
 
     disableControls() {
@@ -91,8 +91,8 @@ export default {
       },
       set(value) {
         this.setCheckoutDialog(value);
-      }
-    }
+      },
+    },
   },
 
   watch: {
@@ -105,7 +105,7 @@ export default {
       if (v.length === 0) {
         this.state = false;
       }
-    }
+    },
   },
 
   methods: {
@@ -113,7 +113,7 @@ export default {
     ...mapMutations("cart", [
       "setCheckoutDialog",
       "setCheckoutLoading",
-      "resetState"
+      "resetState",
     ]),
     ...mapActions("requests", ["request"]),
 
@@ -123,7 +123,7 @@ export default {
       } else {
         this.state = false;
       }
-    }
-  }
+    },
+  },
 };
 </script>

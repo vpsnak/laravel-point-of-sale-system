@@ -4,7 +4,7 @@
     tag="v-form"
     @submit.prevent="submit()"
   >
-    <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
+    <v-container fluid class="overflow-y-auto" style="max-height: 60vh;">
       <v-row>
         <v-col :cols="6">
           <ValidationProvider
@@ -18,17 +18,12 @@
               label="Name"
               :disabled="loading"
               :error-messages="errors"
-            ></v-text-field>
+            />
           </ValidationProvider>
         </v-col>
         <v-col :cols="6">
           <ValidationProvider
-            :rules="{
-              required: true,
-              min: 8,
-              max: 255,
-              regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
-            }"
+            rules="required|min:8|max:16"
             v-slot="{ errors }"
             name="Phone"
           >
@@ -178,7 +173,7 @@ import { mapActions } from "vuex";
 export default {
   props: {
     model: Object,
-    readonly: Boolean
+    readonly: Boolean,
   },
   data() {
     return {
@@ -198,8 +193,8 @@ export default {
         company_id: null,
         active: true,
         is_phone_center: false,
-        default_currency: "USD"
-      }
+        default_currency: "USD",
+      },
     };
   },
 
@@ -221,11 +216,11 @@ export default {
         this.request({
           method: "patch",
           url: "stores/update",
-          data: { ...this.formFields }
+          data: { ...this.formFields },
         })
           .then(() => {
             this.$emit("submit", {
-              action: "paginate"
+              action: "paginate",
             });
           })
           .finally(() => {
@@ -235,11 +230,11 @@ export default {
         this.request({
           method: "post",
           url: "stores/create",
-          data: { ...this.formFields }
+          data: { ...this.formFields },
         })
           .then(() => {
             this.$emit("submit", {
-              action: "paginate"
+              action: "paginate",
             });
           })
           .finally(() => {
@@ -251,9 +246,9 @@ export default {
       this.loading = true;
       this.request({
         method: "get",
-        url: "taxes"
+        url: "taxes",
       })
-        .then(response => {
+        .then((response) => {
           this.taxes = response.data;
         })
         .finally(() => {
@@ -264,18 +259,18 @@ export default {
       this.loading = true;
       this.request({
         method: "get",
-        url: "companies"
+        url: "companies",
       })
-        .then(response => {
+        .then((response) => {
           this.companies = response.data;
         })
         .finally(() => {
           this.loading = false;
         });
-    }
+    },
   },
   beforeDestroy() {
     this.$off("submit");
-  }
+  },
 };
 </script>

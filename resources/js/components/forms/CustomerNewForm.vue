@@ -1,7 +1,7 @@
 <template>
   <ValidationObserver v-slot="{ invalid }">
     <v-form @submit.prevent="submit">
-      <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
+      <v-container fluid class="overflow-y-auto" style="max-height: 60vh;">
         PERSONAL INFORMATION
         <ValidationProvider
           rules="required|max:100"
@@ -37,11 +37,7 @@
           ></v-text-field>
         </ValidationProvider>
         <ValidationProvider
-          :rules="{
-            min: 8,
-            max: 255,
-            regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
-          }"
+          rules="required|min:8|max:16"
           v-slot="{ errors }"
           name="Phone"
         >
@@ -256,11 +252,7 @@
           </v-col>
           <v-col cols="4">
             <ValidationProvider
-              :rules="{
-                min: 8,
-                max: 100,
-                regex: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
-              }"
+              rules="required|min:8|max:16"
               v-slot="{ errors }"
               name="Phone"
             >
@@ -325,22 +317,22 @@ export default {
           is_default_billing: true,
           is_default_shipping: true,
           location: null,
-          location_name: null
-        }
-      }
+          location_name: null,
+        },
+      },
     };
   },
   mounted() {
     this.request({
       method: "get",
-      url: "regions"
-    }).then(response => {
+      url: "regions",
+    }).then((response) => {
       this.regions = response;
     });
     this.request({
       method: "get",
-      url: "countries"
-    }).then(response => {
+      url: "countries",
+    }).then((response) => {
       this.countries = response;
     });
   },
@@ -355,7 +347,7 @@ export default {
         } else {
           this.formFields.first_name = value;
         }
-      }
+      },
     },
     lastName: {
       get() {
@@ -367,7 +359,7 @@ export default {
         } else {
           this.formFields.last_name = value;
         }
-      }
+      },
     },
     phone: {
       get() {
@@ -379,11 +371,11 @@ export default {
         } else {
           this.formFields.phone = value;
         }
-      }
+      },
     },
     locations() {
       return this.$store.state.cart.locations;
-    }
+    },
   },
   methods: {
     ...mapActions("requests", ["request"]),
@@ -393,27 +385,27 @@ export default {
       let payload = {
         method: "post",
         url: "customers/create",
-        data: { ...this.formFields }
+        data: { ...this.formFields },
       };
 
       this.request(payload)
-        .then(response => {
+        .then((response) => {
           this.$emit("submit", {
             data: { customer: response },
             action: "paginate",
             notification: {
               msg: "Customer added successfully",
-              type: "success"
-            }
+              type: "success",
+            },
           });
         })
         .finally(() => {
           this.loading = false;
         });
-    }
+    },
   },
   beforeDestroy() {
     this.$off("submit");
-  }
+  },
 };
 </script>

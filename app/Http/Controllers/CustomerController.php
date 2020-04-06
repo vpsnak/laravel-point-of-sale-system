@@ -66,23 +66,23 @@ class CustomerController extends Controller
             'phone' => 'nullable|string|unique:customers,phone',
         ]);
 
-        $addressData = $request->validate([
-            'address.first_name' => 'required|string',
-            'address.last_name' => 'required|string',
-            'address.street' => 'required|string',
-            'address.street2' => 'nullable|string',
-            'address.city' => 'required|string',
-            'address.country_id' => 'required|exists:countries,id',
-            'address.region_id' => 'required|exists:regions,id',
-            'address.postcode' => 'required|string',
-            'address.phone' => 'required|string',
-            'address.company' => 'nullable|string',
-            'address.vat_id' => 'nullable|string',
-            'address.is_default_billing' => 'nullable|bool',
-            'address.is_default_shipping' => 'nullable|bool',
-            'address.location' => 'nullable|string',
-            'address.location_name' => 'nullable|string'
-        ]);
+        // $addressData = $request->validate([
+        //     'address.first_name' => 'required|string',
+        //     'address.last_name' => 'required|string',
+        //     'address.street' => 'required|string',
+        //     'address.street2' => 'nullable|string',
+        //     'address.city' => 'required|string',
+        //     'address.country_id' => 'required|exists:countries,id',
+        //     'address.region_id' => 'required|exists:regions,id',
+        //     'address.postcode' => 'required|string',
+        //     'address.phone' => 'required|string',
+        //     'address.company' => 'nullable|string',
+        //     'address.vat_id' => 'nullable|string',
+        //     'address.is_default_billing' => 'nullable|bool',
+        //     'address.is_default_shipping' => 'nullable|bool',
+        //     'address.location' => 'nullable|string',
+        //     'address.location_name' => 'nullable|string'
+        // ]);
 
         $customer = Customer::create($validatedData);
 
@@ -95,8 +95,8 @@ class CustomerController extends Controller
             $customer->save();
         }
 
-        $addressData['address']['customer_id'] = $customer->id;
-        Address::create($addressData['address']);
+        // $addressData['address']['customer_id'] = $customer->id;
+        // Address::create($addressData['address']);
 
         return response(Customer::with('addresses')->find($customer->id), 201);
     }
