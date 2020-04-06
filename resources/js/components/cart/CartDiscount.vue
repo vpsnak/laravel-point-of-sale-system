@@ -63,12 +63,12 @@ export default {
   props: {
     productPrice: Object,
     productIndex: Number,
-    editable: Boolean
+    editable: Boolean,
   },
 
   data() {
     return {
-      discount_amount: null
+      discount_amount: null,
     };
   },
 
@@ -100,7 +100,7 @@ export default {
       this.$nextTick(() => {
         this.runValidation();
       });
-    }
+    },
   },
 
   computed: {
@@ -111,7 +111,7 @@ export default {
       "order_id",
       "cart_products",
       "order_discount",
-      "discount_error"
+      "discount_error",
     ]),
 
     discountLabel() {
@@ -124,7 +124,7 @@ export default {
       set(value) {
         this.discount_amount = value;
         this.setDiscountAmount(value);
-      }
+      },
     },
     enableAmount() {
       if (this.discount.type !== "none") {
@@ -151,10 +151,10 @@ export default {
               .subtract(this.parsePrice(1))
               .toFormat("0.00");
           } else {
-            let max = this.parsePrice(this.order_total_price);
-            if (this.discount.amount) {
+            if (this.discountAmount) {
+              const max = this.parsePrice(this.order_total_price);
               return max
-                .add(this.parsePrice(this.discount.amount))
+                .add(this.parsePrice(this.prepareDiscount(this.discountAmount)))
                 .toFormat("0.00");
             } else {
               return 0;
@@ -165,21 +165,21 @@ export default {
         default:
           return 0;
       }
-    }
+    },
   },
 
   methods: {
     ...mapMutations("cart", [
       "setCartDiscount",
       "isValidCart",
-      "setDiscountError"
+      "setDiscountError",
     ]),
 
     runValidation() {
-      this.$refs.checkoutObs.validate().then(result => {
+      this.$refs.checkoutObs.validate().then((result) => {
         if (this.product) {
           const index = _.findIndex(this.product_map, {
-            id: this.product.id
+            id: this.product.id,
           });
           this.$set(this.product_map[index], "discount_error", !result);
         } else {
@@ -194,17 +194,15 @@ export default {
       } else {
         switch (this.discount.type) {
           case "flat":
-            return Number.parseInt(value * 100);
+            return Math.round(value * 10000) / 100;
           case "percentage":
             if (value > 0 && value < 100) {
               return Number(value);
             } else {
-              return 0;
+              return null;
             }
           case "none":
             return null;
-          default:
-            return value;
         }
       }
     },
@@ -222,12 +220,12 @@ export default {
       if (this.product) {
         this.$set(this.product.discount, "amount", value);
       } else {
-        this.setCartDiscount({ amount: value });
+        this.setCartDiscount({ type: this.discount.type, amount: value });
       }
       this.$nextTick(() => {
         this.runValidation();
       });
-    }
-  }
+    },
+  },
 };
 </script>

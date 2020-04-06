@@ -1,41 +1,48 @@
 <template>
   <v-container class="py-0 px-5">
     <v-row v-if="!totalDiscount.isZero()" class="pa-1" dense>
-      <span>Total discount</span>
+      <span v-text="'Total discount'" />
       <v-spacer />
-      <span>{{ totalDiscount.toFormat() }}</span>
+      <span
+        :class="isValidCheckout ? '' : 'error--text'"
+        v-html="
+          isValidCheckout
+            ? displayPrice(totalDiscount)
+            : '<b>Discount error</b>'
+        "
+      />
     </v-row>
 
     <v-divider v-if="!totalDiscount.isZero()" />
 
     <v-row class="pa-1" dense>
-      <span>Sub total w/ discount</span>
+      <span v-text="'Sub total w/ discount'" />
       <v-spacer />
-      <span>{{ subTotalwDiscount.toFormat() }}</span>
+      <span v-text="displayPrice(subTotalwDiscount)" />
     </v-row>
 
     <v-divider />
 
     <v-row class="pa-1" v-if="!deliveryFeesPrice.isZero()" dense>
-      <span>Delivery Fees</span>
+      <span v-text="'Delivery Fees'" />
       <v-spacer />
-      <span>{{ deliveryFeesPrice.toFormat() }}</span>
+      <span v-text="displayPrice(deliveryFeesPrice)" />
     </v-row>
 
     <v-divider v-if="!deliveryFeesPrice.isZero()" />
 
     <v-row class="pa-1" dense>
-      <span>Tax</span>
+      <span v-text="'Tax'" />
       <v-spacer />
-      <span>{{ tax.toFormat() }}</span>
+      <span v-text="displayPrice(tax)" />
     </v-row>
 
     <v-divider />
 
     <v-row class="pa-1" dense>
-      <span>Total</span>
+      <span v-text="'Total'" />
       <v-spacer />
-      <span>{{ orderTotal.toFormat() }}</span>
+      <span v-text="displayPrice(orderTotal)" />
     </v-row>
   </v-container>
 </template>
@@ -53,7 +60,7 @@ export default {
       "customer",
       "order_discount",
       "delivery_fees_price",
-      "order_status"
+      "order_status",
     ]),
 
     deliveryFeesPrice() {
@@ -62,8 +69,8 @@ export default {
     subTotalwDiscount() {
       let subtotal = this.parsePrice();
 
-      this.cart_products.forEach(product => {
-        const productPrice = this.$price(product.price).multiply(
+      this.cart_products.forEach((product) => {
+        const productPrice = this.parsePrice(product.price).multiply(
           Number(product.qty)
         );
         const result = this.calcDiscount(productPrice, product.discount);
@@ -72,7 +79,7 @@ export default {
 
       const cartDiscount = this.calcDiscount(subtotal, this.order_discount);
       subtotal = subtotal.subtract(cartDiscount);
-      return this.isValidCheckout ? subtotal : this.parsePrice();
+      return subtotal;
     },
     tax() {
       if (this.customer && this.customer.no_tax) {
@@ -81,13 +88,13 @@ export default {
         const tax = this.subTotalwDiscount
           .add(this.deliveryFeesPrice)
           .percentage(this.tax_percentage);
-        return this.isValidCheckout ? tax : this.parsePrice();
+        return tax;
       }
     },
     totalDiscount() {
       let subtotalNoDiscount = this.parsePrice();
 
-      this.cart_products.forEach(product => {
+      this.cart_products.forEach((product) => {
         const result = this.parsePrice(product.price).multiply(
           Number(product.qty)
         );
@@ -95,14 +102,14 @@ export default {
       });
 
       subtotalNoDiscount = subtotalNoDiscount.subtract(this.subTotalwDiscount);
-      return this.isValidCheckout ? subtotalNoDiscount : this.parsePrice();
+      return subtotalNoDiscount;
     },
     orderTotal() {
       const orderTotal = this.subTotalwDiscount
         .add(this.tax)
         .add(this.deliveryFeesPrice);
-      return this.isValidCheckout ? orderTotal : this.parsePrice();
-    }
+      return orderTotal;
+    },
   },
 
   watch: {
@@ -112,17 +119,20 @@ export default {
       handler(value) {
         this.setOrderTotalPrice(value.toJSON());
         this.setOrderRemainingPrice(value.toJSON());
-      }
-    }
+      },
+    },
   },
 
   methods: {
-    ...mapMutations("cart", [
-      "setOrderTotalPrice",
-      "setOrderRemainingPrice",
-      "isValidCart"
-    ]),
+    ...mapMutations("cart", ["setOrderTotalPrice", "setOrderRemainingPrice"]),
 
+    displayPrice(price) {
+      if (price.isPositive() || price.isZero()) {
+        return price.toFormat();
+      } else {
+        return this.parsePrice().toFormat();
+      }
+    },
     calcDiscount(price, discount) {
       if (
         _.has(discount, "type") &&
@@ -131,7 +141,7 @@ export default {
       ) {
         switch (discount.type) {
           case "flat":
-            return this.$price({ amount: discount.amount });
+            return this.parsePrice({ amount: discount.amount });
           case "percentage":
             if (Number(discount.amount) > 100) {
               return this.parsePrice();
@@ -144,7 +154,7 @@ export default {
       } else {
         return this.parsePrice();
       }
-    }
-  }
+    },
+  },
 };
 </script>

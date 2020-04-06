@@ -24,9 +24,9 @@
     </v-container>
     <cartTotals />
 
-    <cartActions :disabled="totalProducts" v-if="$props.showActions" />
+    <cartActions v-if="$props.showActions" :disabled="totalProducts" />
 
-    <orderSave url="update-items" v-else-if="$props.showSave" />
+    <orderSave v-else-if="$props.showSave" url="update-items" />
   </v-card>
 </template>
 
@@ -39,7 +39,7 @@ export default {
     showMethods: Boolean,
     showCustomer: Boolean,
     showActions: Boolean,
-    showSave: Boolean
+    showSave: Boolean,
   },
 
   computed: {
@@ -47,7 +47,7 @@ export default {
 
     totalProducts() {
       return _.size(this.cart_products) ? false : true;
-    }
-  }
+    },
+  },
 };
 </script>

@@ -31,13 +31,13 @@
             label
           >
             <v-icon left v-text="payment_type.icon" />
-            {{ payment_type.name }}
+            <span v-text="payment_type.name" />
           </v-chip>
         </v-chip-group>
       </v-row>
     </v-container>
     <v-divider class="mb-2" />
-    <v-container fluid class="overflow-y-auto py-0" style="max-height:75px;">
+    <v-container fluid class="overflow-y-auto py-0" style="max-height: 75px;">
       <v-row
         justify="center"
         align="center"
@@ -146,15 +146,15 @@
     </v-container>
 
     <v-container fluid>
-      <v-row justify="center" align="center" dense>
+      <v-row justify="center" dense>
         <v-col :lg="2" :md="3" :cols="6">
           <v-text-field
             dense
             outlined
-            prefix="$"
-            :value="orderRemainingPrice.toFormat('0.00')"
+            :value="orderRemainingPrice.toFormat()"
             disabled
             label="Remaining Amount"
+            :hint="hintSpacing"
           />
         </v-col>
         <v-col :lg="2" :md="3" :cols="6" v-if="paymentType.type !== 'coupon'">
@@ -173,7 +173,7 @@
               type="number"
               prefix="$"
               v-model="amount"
-              :error="errors[0] ? true : false"
+              :error-messages="amountRules > 0 ? errors : 'Discount error'"
             />
           </ValidationProvider>
         </v-col>
@@ -210,11 +210,16 @@ export default {
       immediate: true,
       handler(value) {
         if (!this.order_status || this.order_status.can_checkout) {
-          this.paymentPrice = this.parsePrice(value);
+          value = this.parsePrice(value);
+          if (value.isPositive() || value.isZero()) {
+            this.paymentPrice = value;
+          } else {
+            this.paymentPrice = this.parsePrice();
+          }
           this.setAmount();
         }
-      }
-    }
+      },
+    },
   },
 
   data() {
@@ -231,8 +236,8 @@ export default {
         card_holder: null,
         number: null,
         cvc: null,
-        exp_date: null
-      }
+        exp_date: null,
+      },
     };
   },
 
@@ -244,7 +249,7 @@ export default {
       "order_status",
       "customer",
       "checkout_loading",
-      "isValidCheckout"
+      "isValidCheckout",
     ]),
 
     loading() {
@@ -265,12 +270,13 @@ export default {
       set(value) {
         this.amount_value = value;
         this.paymentPrice = this.parsePrice(Math.round(value * 10000) / 100);
-      }
+      },
     },
     orderRemainingPrice() {
       if (
         this.order_remaining_price &&
-        _.has(this.order_remaining_price, "amount")
+        _.has(this.order_remaining_price, "amount") &&
+        this.order_remaining_price.amount > 0
       ) {
         return this.parsePrice(this.order_remaining_price);
       } else {
@@ -278,21 +284,25 @@ export default {
       }
     },
     amountRules() {
-      switch (this.paymentType.type) {
-        case "card":
-        case "house-account":
-        case "giftcard":
-        case "pos-terminal":
-          return this.orderRemainingPrice.toFormat("0.00");
-        case "cash":
-          return "10000.00";
+      if (this.orderRemainingPrice.isZero()) {
+        return -1;
+      } else {
+        switch (this.paymentType.type) {
+          case "card":
+          case "house-account":
+          case "giftcard":
+          case "pos-terminal":
+            return this.orderRemainingPrice.toFormat("0.00");
+          case "cash":
+            return "10000.00";
+        }
       }
     },
     paymentTypes() {
       if (this.houseAccount) {
         return this.payment_types;
       } else {
-        return _.filter(this.payment_types, o => {
+        return _.filter(this.payment_types, (o) => {
           return o.type !== "house-account";
         });
       }
@@ -318,7 +328,7 @@ export default {
     },
     houseAccountLimit() {
       return parseFloat(this.customer.house_account_limit);
-    }
+    },
   },
 
   methods: {
@@ -328,7 +338,7 @@ export default {
       "setOrderChangePrice",
       "setOrderRemainingPrice",
       "setOrderStatus",
-      "setCheckoutLoading"
+      "setCheckoutLoading",
     ]),
     ...mapActions("cart", ["submitOrder"]),
     ...mapActions("requests", ["request"]),
@@ -341,12 +351,12 @@ export default {
       this.setCheckoutLoading(true);
       this.request({
         method: "get",
-        url: "payment-types"
+        url: "payment-types",
       })
-        .then(response => {
+        .then((response) => {
           this.payment_types = response;
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         })
         .finally(() => {
@@ -360,7 +370,7 @@ export default {
       let data = {
         order_id: this.order_id,
         payment_type_id: this.paymentType.id,
-        payment_type: this.paymentType.type
+        payment_type: this.paymentType.type,
       };
 
       switch (this.paymentType.type) {
@@ -388,18 +398,18 @@ export default {
       const payload = {
         method: "post",
         url: "payments/create",
-        data: data
+        data: data,
       };
 
       this.request(payload)
-        .then(response => {
+        .then((response) => {
           this.setOrderChangePrice(response.transaction.payment.change_price);
           this.setOrderRemainingPrice(response.remaining);
           this.setOrderStatus(response.status);
 
           this.setTransactions(response.transaction);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
           if (_.has(error, "transaction")) {
             this.setTransactions(error.transaction);
@@ -416,7 +426,7 @@ export default {
           card_holder: "John Longjohn",
           number: "4000000000000002",
           cvc: "123",
-          exp_date: "1224"
+          exp_date: "1224",
         };
       } else {
         this.card.card_holder = null;
@@ -434,11 +444,11 @@ export default {
         this.makePaymentLoading = true;
         this.setCheckoutLoading(true);
         this.submitOrder("create")
-          .then(response => {
+          .then((response) => {
             this.setOrderId(response.id);
             this.pay();
           })
-          .catch(error => {
+          .catch((error) => {
             console.error(error);
             this.setCheckoutLoading(false);
             this.makePaymentLoading = false;
@@ -446,7 +456,7 @@ export default {
       } else {
         this.pay();
       }
-    }
-  }
+    },
+  },
 };
 </script>
