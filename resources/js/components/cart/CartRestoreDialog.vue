@@ -14,7 +14,7 @@
       </v-col>
     </v-row>
     <v-row v-if="!cartsLoading" justify="center" dense>
-      <perfect-scrollbar style="height:375px;" tag="v-col" :cols="12">
+      <perfect-scrollbar style="height: 375px;" tag="v-col" :cols="12">
         <v-data-iterator
           :items="carts"
           disable-pagination
@@ -113,7 +113,7 @@
           </template>
         </v-data-iterator>
       </perfect-scrollbar>
-      <v-col :cols="12" align="center" justify="end" v-if="lastPage > 0">
+      <v-col :cols="12" align="center" justify="end" v-if="carts.length">
         <v-pagination
           v-model="currentPage"
           :length="lastPage"
@@ -160,7 +160,7 @@ export default {
       carts: [],
       currentPage: 1,
       lastPage: null,
-      cartReplacePrompt: false
+      cartReplacePrompt: false,
     };
   },
 
@@ -181,7 +181,7 @@ export default {
       } else {
         return false;
       }
-    }
+    },
   },
 
   methods: {
@@ -192,15 +192,15 @@ export default {
       this.cartsLoading = true;
       const payload = {
         method: "get",
-        url: `carts?page=${this.currentPage}`
+        url: `carts?page=${this.currentPage}`,
       };
       this.request(payload)
-        .then(response => {
+        .then((response) => {
           this.currentPage = response.current_page;
           this.lastPage = response.last_page;
           this.carts = response.data;
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         })
         .finally(() => {
@@ -223,7 +223,7 @@ export default {
       const payload = {
         method: "delete",
         url: `carts/${id}`,
-        no_success_notification: silent
+        no_success_notification: silent,
       };
 
       this.request(payload)
@@ -231,7 +231,7 @@ export default {
           this.getCarts();
           EventBus.$emit("cart-actions-reduce-cart-counter");
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         })
         .finally(() => {
@@ -240,7 +240,7 @@ export default {
             this.deleteLoading[index] = false;
           }
         });
-    }
-  }
+    },
+  },
 };
 </script>

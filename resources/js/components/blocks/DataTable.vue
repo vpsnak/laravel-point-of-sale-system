@@ -3,10 +3,12 @@
     <v-container fluid>
       <v-row justify="center" align="center">
         <v-col cols="auto">
-          <v-icon v-if="data_table.icon" class="mx-2">
-            {{ data_table.icon }}
-          </v-icon>
-          {{ data_table.title }}
+          <v-icon
+            v-if="data_table.icon"
+            class="mx-2"
+            v-text="data_table.icon"
+          />
+          <span v-text="data_table.title" />
         </v-col>
 
         <v-col cols="auto">
@@ -108,7 +110,7 @@
             <!-- generic fields end -->
 
             <template v-slot:no-data v-if="!data_table.loading">
-              <v-row justify="center" align="center" style="height:200px">
+              <v-row justify="center" align="center" style="height: 300px;">
                 <v-alert
                   v-if="search && keyword"
                   type="warning"
@@ -127,14 +129,13 @@
                   colored-border
                   :elevation="3"
                   dense
-                  max-width="300px"
                 >
                   No data
                 </v-alert>
               </v-row>
             </template>
           </v-data-table>
-          <v-card-actions v-show="pageCount > 0">
+          <v-card-actions v-show="data_table.items.length">
             <v-pagination
               v-model="page"
               :length="pageCount"
@@ -163,7 +164,7 @@ export default {
       searchValue: "",
       search: false,
       keyword: null,
-      appliedFilters: null
+      appliedFilters: null,
     };
   },
 
@@ -179,7 +180,7 @@ export default {
 
   computed: {
     ...mapGetters("datatable", ["getHeaders"]),
-    ...mapState("datatable", ["data_table"])
+    ...mapState("datatable", ["data_table"]),
   },
 
   methods: {
@@ -188,10 +189,10 @@ export default {
     ...mapActions("requests", ["request"]),
 
     initEvents() {
-      EventBus.$on("overlay", event => {
+      EventBus.$on("overlay", (event) => {
         this.overlay = event;
       });
-      EventBus.$on("data-table", event => {
+      EventBus.$on("data-table", (event) => {
         if (_.has(event, "payload.action")) {
           switch (event.payload.action) {
             case "paginate":
@@ -213,7 +214,7 @@ export default {
       });
 
       if (this.data_table.newForm === "productForm") {
-        this.$root.$on("barcodeScan", sku => {
+        this.$root.$on("barcodeScan", (sku) => {
           this.keyword = sku;
           this.getItems();
         });
@@ -231,7 +232,7 @@ export default {
         payload.method = "post";
         payload.url = `${this.data_table.model}/search?page=${this.page}`;
         payload.data = {
-          keyword: this.keyword ? this.keyword : ""
+          keyword: this.keyword ? this.keyword : "",
         };
         payload.data.filters = this.appliedFilters;
       } else {
@@ -240,12 +241,12 @@ export default {
       }
 
       this.request(payload)
-        .then(response => {
+        .then((response) => {
           this.setItems(response.data);
 
           this.pageCount = response.last_page;
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         })
         .finally(() => {
@@ -261,10 +262,10 @@ export default {
         titleCloseBtn: true,
         component: this.data_table.newForm,
         persistent: true,
-        eventChannel: "data-table"
+        eventChannel: "data-table",
       };
       this.setDialog(payload);
-    }
-  }
+    },
+  },
 };
 </script>

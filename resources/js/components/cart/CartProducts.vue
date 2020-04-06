@@ -1,7 +1,7 @@
 <template>
   <ValidationObserver tag="v-form" @input="isValidCart()">
     <perfect-scrollbar
-      style="height:450px;"
+      style="height: 450px;"
       tag="v-container"
       fluid
       class="py-0"
@@ -57,32 +57,45 @@
                   </v-row>
 
                   <v-row align="center">
-                    <v-img
-                      v-if="product.type === 'product' && product.photo_url"
-                      :src="product.photo_url"
-                      aspect-ratio="1"
-                      width="100%"
-                      height="100%"
-                      max-width="50"
-                      max-height="50"
-                      contain
-                      @error="product.photo_url = null"
-                    />
+                    <div
+                      class="d-flex justify-center align-center"
+                      style="width: 50px; height: 50px;"
+                    >
+                      <v-img
+                        v-if="product.type === 'product' && product.photo_url"
+                        :src="product.photo_url"
+                        @error="product.photo_url = null"
+                        aspect-ratio="1"
+                        width="100%"
+                        height="100%"
+                        contain
+                      />
 
-                    <v-icon
-                      v-else-if="product.type === 'giftcard'"
-                      size="40"
-                      v-text="'mdi-wallet-giftcard'"
-                    />
+                      <v-icon
+                        v-else-if="product.type === 'custom item'"
+                        size="50px"
+                        v-text="'mdi-flower'"
+                      />
 
-                    <v-icon v-else size="40" v-text="'mdi-flower'" />
+                      <v-icon
+                        v-else-if="product.type === 'giftcard'"
+                        size="50px"
+                        v-text="'mdi-wallet-giftcard'"
+                      />
+
+                      <v-icon
+                        v-else
+                        size="50px"
+                        v-text="'mdi-image-off-outline'"
+                      />
+                    </div>
 
                     <v-spacer />
 
                     <v-text-field
                       v-if="product.is_price_editable && $props.editable"
                       class="mt-5 mx-1 pt-3"
-                      style="max-width:125px;"
+                      style="max-width: 125px;"
                       prefix="$"
                       @click.stop
                       @keyup.esc="revertPrice(index)"
@@ -104,7 +117,7 @@
                     <v-text-field
                       v-else
                       class="mt-5 mx-1 pt-3"
-                      style="max-width:125px;"
+                      style="max-width: 125px;"
                       prefix="$"
                       :ref="`priceField${index}`"
                       :min="0"
@@ -129,13 +142,11 @@
                         dense
                         outlined
                         class="mt-5 pt-3"
-                        :style="
-                          `max-width:110px;${
-                            product.type === 'giftcard'
-                              ? 'visibility:hidden;'
-                              : ''
-                          }`
-                        "
+                        :style="`max-width:110px;${
+                          product.type === 'giftcard'
+                            ? 'visibility:hidden;'
+                            : ''
+                        }`"
                         :disabled="
                           !$props.editable || product.type === 'giftcard'
                         "
@@ -234,7 +245,7 @@ import { mapState, mapMutations, mapActions } from "vuex";
 
 export default {
   props: {
-    editable: Boolean
+    editable: Boolean,
   },
 
   computed: {
@@ -246,8 +257,8 @@ export default {
       },
       set(value) {
         this.setCartProducts(value);
-      }
-    }
+      },
+    },
   },
 
   watch: {
@@ -255,7 +266,7 @@ export default {
       this.$nextTick(() => {
         this.$refs.scroll.$el.scrollTop = this.$refs.cart.clientHeight;
       });
-    }
+    },
   },
 
   methods: {
@@ -264,7 +275,7 @@ export default {
       "setCartProducts",
       "increaseProductQty",
       "decreaseProductQty",
-      "isValidCart"
+      "isValidCart",
     ]),
     ...mapActions("cart", ["removeProduct"]),
 
@@ -290,7 +301,7 @@ export default {
       } else {
         return {
           class: "primary--text",
-          label: label.toFormat()
+          label: label.toFormat(),
         };
       }
     },
@@ -310,7 +321,7 @@ export default {
       const price = this.getSelectedInput(index).lazyValue;
 
       this.$set(this.products[index], "price", {
-        amount: Number.parseInt(price * 100)
+        amount: Number.parseInt(price * 100),
       });
       if (toggleEdit) {
         this.toggleEdit(index);
@@ -357,7 +368,7 @@ export default {
             titleCloseBtn: true,
             icon: "mdi-wallet-giftcard",
             component: "giftCardForm",
-            model: item
+            model: item,
           };
           break;
         case "product":
@@ -368,12 +379,12 @@ export default {
             titleCloseBtn: true,
             icon: "mdi-flower",
             component: `productForm`,
-            model: item
+            model: item,
           };
           break;
       }
       this.setDialog(payload);
-    }
-  }
+    },
+  },
 };
 </script>

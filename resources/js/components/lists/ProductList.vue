@@ -57,7 +57,7 @@
 
         <v-row align="center" justify="center">
           <v-chip-group
-            v-if="!categoriesLoading"
+            v-if="categories.length"
             v-model="selectedCategory"
             @change="keyword = ''"
             active-class="primary--text"
@@ -73,14 +73,31 @@
             />
           </v-chip-group>
 
-          <v-col v-else v-for="n in 6" :key="n" :cols="2">
+          <v-col
+            v-else-if="categoriesLoading"
+            v-for="n in 6"
+            :key="n"
+            :cols="2"
+          >
             <v-skeleton-loader type="chip" tile />
           </v-col>
+
+          <v-alert
+            v-else
+            type="info"
+            border="left"
+            colored-border
+            :elevation="3"
+            dense
+            width="175px"
+          >
+            No categories
+          </v-alert>
         </v-row>
       </v-container>
     </v-card-text>
     <v-card-text v-if="products.length">
-      <perfect-scrollbar tag="v-container" style="height: 600px;">
+      <perfect-scrollbar tag="v-container" style="height: 550px;">
         <v-row>
           <v-col
             v-for="product in products"
@@ -152,7 +169,6 @@
               <v-card-text
                 style="height: 100px; background: #f2f2f2;"
                 class="d-flex pa-1"
-                :ripple="true"
               >
                 <v-col :cols="5" class="pa-0 d-flex justify-center flex-column">
                   <v-chip label dark small class="elevation-6 secondary mb-1">
@@ -191,8 +207,8 @@
 
                   <v-icon
                     v-else
-                    color="green"
-                    v-text="'mdi-flower'"
+                    color="black"
+                    v-text="'mdi-image-off-outline'"
                     size="50"
                   />
                 </v-col>
@@ -201,8 +217,7 @@
           </v-col>
         </v-row>
       </perfect-scrollbar>
-
-      <v-container v-show="lastPage > 0">
+      <v-container>
         <v-row justify="center">
           <v-col :cols="10">
             <v-pagination
@@ -216,42 +231,70 @@
         </v-row>
       </v-container>
     </v-card-text>
-    <v-container v-else>
-      <v-row v-if="productLoading" align="center" justify="center">
-        <v-col v-for="n in 9" :cols="12" :md="6" :lg="4" :key="n">
-          <v-card :elevation="12">
-            <v-skeleton-loader type="card-heading" tile class="mx-auto" />
-            <v-skeleton-loader
-              type="image"
-              tile
-              class="mx-auto"
-              height="120px"
-            />
-          </v-card>
-        </v-col>
-        <v-col :cols="12">
-          <v-skeleton-loader
-            type="heading"
-            tile
-            class="mx-auto d-flex justify-center mt-2"
-            max-width="600px"
-            width="100%"
-          />
-        </v-col>
-      </v-row>
-      <v-row v-else justify="center">
-        <v-alert
-          type="info"
-          border="left"
-          colored-border
-          :elevation="3"
-          dense
-          max-width="300px"
-        >
-          No data
-        </v-alert>
-      </v-row>
-    </v-container>
+    <v-card-text v-else>
+      <v-container style="height: 550px;">
+        <v-row v-if="productLoading" align="center" justify="center">
+          <v-col v-for="n in 9" :key="n" :cols="12" :md="6" :lg="4">
+            <v-card :elevation="12" class="pa-2">
+              <v-card-title
+                class="pa-0 d-flex align-center"
+                style="height: 36px;"
+                @click.stop
+              >
+                <v-col :cols="11" class="pa-0">
+                  <v-skeleton-loader
+                    type="heading"
+                    tile
+                    height="24px"
+                    width="100%"
+                  />
+                </v-col>
+                <v-col :cols="1" class="pa-0">
+                  <v-skeleton-loader
+                    class="pl-1"
+                    type="button"
+                    tile
+                    width="10px"
+                    height="24px"
+                  />
+                </v-col>
+              </v-card-title>
+              <v-card-text style="height: 100px;" class="d-flex pa-1">
+                <v-col :cols="5" class="pa-0 d-flex justify-center flex-column">
+                  <v-skeleton-loader
+                    v-for="n in 3"
+                    :key="n"
+                    type="chip"
+                    tile
+                    height="25px"
+                    class="py-1"
+                  />
+                </v-col>
+                <v-col :cols="7" class="pa-0 mt-1">
+                  <v-skeleton-loader
+                    type="card-avatar"
+                    width="100%"
+                    height="100%"
+                  />
+                </v-col>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+        <v-row v-else justify="center" align="center" class="fill-height">
+          <v-alert
+            type="info"
+            border="left"
+            colored-border
+            :elevation="3"
+            dense
+            width="175px"
+          >
+            No items
+          </v-alert>
+        </v-row>
+      </v-container>
+    </v-card-text>
   </v-card>
 </template>
 

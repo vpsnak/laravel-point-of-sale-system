@@ -63,7 +63,7 @@
               :item-text="getAddressText"
               return-object
               :error-messages="errors"
-            ></v-select>
+            />
           </ValidationProvider>
         </v-col>
 
@@ -76,28 +76,28 @@
                 v-on="on"
                 @click="addressDialog('delivery', true)"
               >
-                <v-icon>mdi-pencil</v-icon>
+                <v-icon v-text="'mdi-pencil'" />
               </v-btn>
             </template>
-            <span>Edit selected address</span>
+            <span v-text="'Edit selected address'" />
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on }">
               <v-btn icon v-on="on" @click="addressDialog('delivery', false)">
-                <v-icon>mdi-plus</v-icon>
+                <v-icon v-text="'mdi-plus'" />
               </v-btn>
             </template>
-            <span>New delivery address</span>
+            <span v-text="'New delivery address'" />
           </v-tooltip>
         </v-col>
 
         <v-col :cols="12">
-          <addressDeliveryForm
+          <addressForm
             v-if="deliveryAddress"
             :key="deliveryAddress.id"
             :model="deliveryAddress"
             readonly
-          ></addressDeliveryForm>
+          />
         </v-col>
       </v-row>
 
@@ -153,7 +153,7 @@
               @input="setCost"
               @click:append="$props.readonly ? null : addTimeSlotDialog()"
               @change="validate()"
-            ></v-select>
+            />
           </ValidationProvider>
         </v-col>
         <v-col :cols="2">
@@ -171,7 +171,7 @@
               :min="0"
               v-model="deliveryFeesPrice"
               @input="validate()"
-            ></v-text-field>
+            />
           </ValidationProvider>
         </v-col>
         <v-col :cols="4">
@@ -183,7 +183,7 @@
             item-value="id"
             v-model="deliveryOccasion"
             prepend-inner-icon="mdi-star-face"
-          ></v-select>
+          />
         </v-col>
       </v-row>
     </ValidationObserver>
@@ -200,7 +200,7 @@ import { EventBus } from "../../../plugins/eventBus";
 export default {
   props: {
     hideNotes: Boolean,
-    readonly: Boolean
+    readonly: Boolean,
   },
 
   mounted() {
@@ -235,13 +235,13 @@ export default {
       billing_address: null,
       loading: false,
       time_slots: [],
-      datePicker: false
+      datePicker: false,
     };
   },
   watch: {
     validateOption() {
       this.validate();
-    }
+    },
   },
 
   computed: {
@@ -252,7 +252,7 @@ export default {
       "occasions",
       "delivery",
       "billing_address_id",
-      "shipping_cost"
+      "shipping_cost",
     ]),
 
     deliveryFeesPrice: {
@@ -262,9 +262,9 @@ export default {
       set(value) {
         this.delivery_amount = value;
         this.setDeliveryFeesPrice({
-          amount: Math.round(value * 10000) / 100
+          amount: Math.round(value * 10000) / 100,
         });
-      }
+      },
     },
     deliveryTime: {
       get() {
@@ -272,7 +272,7 @@ export default {
       },
       set(value) {
         this.setDeliveryTime(value);
-      }
+      },
     },
     deliveryOccasion: {
       get() {
@@ -280,7 +280,7 @@ export default {
       },
       set(value) {
         this.setDeliveryOccasion(value);
-      }
+      },
     },
     timeSlots: {
       get() {
@@ -288,7 +288,7 @@ export default {
       },
       set(value) {
         this.time_slots = value;
-      }
+      },
     },
     dateFormatted() {
       if (this.delivery.date) {
@@ -306,7 +306,7 @@ export default {
         if (_.has(value, "id")) {
           this.setBillingAddressId(value.id);
         }
-      }
+      },
     },
     deliveryAddress: {
       get() {
@@ -317,7 +317,7 @@ export default {
         if (_.has(value, "id")) {
           this.setDeliveryAddressId(value.id);
         }
-      }
+      },
     },
     deliveryDate: {
       get() {
@@ -325,14 +325,14 @@ export default {
       },
       set(value) {
         this.setDeliveryDate(value);
-      }
+      },
     },
     addresses: {
       get() {
         if (this.customer && !this.billingAddress) {
           const billing_address = _.filter(this.customer.addresses, [
             "is_default_billing",
-            true
+            true,
           ]);
 
           this.billingAddress = billing_address.length
@@ -342,7 +342,7 @@ export default {
         if (this.customer && !this.deliveryAddress) {
           const delivery_address = _.filter(this.customer.addresses, [
             "is_default_shipping",
-            true
+            true,
           ]);
 
           this.deliveryAddress = delivery_address.length
@@ -354,8 +354,8 @@ export default {
       },
       set(value) {
         this.setCustomerAddress(value);
-      }
-    }
+      },
+    },
   },
 
   methods: {
@@ -368,7 +368,7 @@ export default {
       "setDeliveryOccasion",
       "setBillingAddressId",
       "setCustomerAddress",
-      "setIsValid"
+      "setIsValid",
     ]),
     ...mapActions("requests", ["request"]),
 
@@ -377,41 +377,41 @@ export default {
     },
 
     initEventBus() {
-      EventBus.$on("shipping-timeslot", event => {
+      EventBus.$on("shipping-timeslot", (event) => {
         if (event.payload) {
           this.timeSlots.push(event.payload);
           this.setDeliveryTime(event.payload.label);
         }
       });
 
-      EventBus.$on("billing-address-new", event => {
+      EventBus.$on("billing-address-new", (event) => {
         if (event.payload) {
           this.addresses.push(event.payload);
           this.billingAddress = event.payload;
         }
       });
 
-      EventBus.$on("billing-address-edit", event => {
+      EventBus.$on("billing-address-edit", (event) => {
         if (event.payload) {
           const index = _.findIndex(this.addresses, {
-            id: event.payload.id
+            id: event.payload.id,
           });
           this.addresses[index] = event.payload;
           this.billingAddress = event.payload;
         }
       });
 
-      EventBus.$on("delivery-address-new", event => {
+      EventBus.$on("delivery-address-new", (event) => {
         if (event.payload) {
           this.addresses.push(event.payload);
           this.deliveryAddress = event.payload;
         }
       });
 
-      EventBus.$on("delivery-address-edit", event => {
+      EventBus.$on("delivery-address-edit", (event) => {
         if (event.payload) {
           const index = _.findIndex(this.addresses, {
-            id: event.payload.id
+            id: event.payload.id,
           });
           this.addresses[index] = event.payload;
           this.deliveryAddress = event.payload;
@@ -427,13 +427,13 @@ export default {
         icon: "mdi-clock",
         component: "timeSlotForm",
         persistent: true,
-        eventChannel: "shipping-timeslot"
+        eventChannel: "shipping-timeslot",
       };
       this.setDialog(payload);
     },
     validate() {
       this.$nextTick(() => {
-        this.$refs.deliveryValidation.validate().then(result => {
+        this.$refs.deliveryValidation.validate().then((result) => {
           this.setIsValid(result);
         });
       });
@@ -471,11 +471,11 @@ export default {
         title: title,
         titleCloseBtn: true,
         icon: icon,
-        component: "addressDeliveryForm",
+        component: "addressForm",
         content: "",
         model: data,
         persistent: true,
-        eventChannel
+        eventChannel,
       });
     },
     setCost(item) {
@@ -493,11 +493,11 @@ export default {
           url: "shipping/timeslot",
           data: {
             postcode: this.delivery_address.postcode,
-            date: this.delivery.date
-          }
+            date: this.delivery.date,
+          },
         };
         this.request(payload)
-          .then(response => {
+          .then((response) => {
             this.timeSlots = response;
           })
           .finally(() => {
@@ -521,7 +521,7 @@ export default {
         ", " +
         item.region.country.iso3_code
       );
-    }
-  }
+    },
+  },
 };
 </script>
