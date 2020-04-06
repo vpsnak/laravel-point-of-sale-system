@@ -155,7 +155,7 @@
                 :ripple="true"
               >
                 <v-col :cols="5" class="pa-0 d-flex justify-center flex-column">
-                  <v-chip label dark small class="elevation-6 secondary">
+                  <v-chip label dark small class="elevation-6 secondary mb-1">
                     <span
                       v-text="`Price: ${parsePrice(product.price).toFormat()}`"
                     />
@@ -169,7 +169,7 @@
                     label
                     small
                     dark
-                    class="elevation-6"
+                    class="elevation-6 my-1"
                     :color="stockColor(product)"
                   >
                     <span v-text="`Stock: ${product.stock}`" />
@@ -177,7 +177,7 @@
                 </v-col>
                 <v-col
                   :cols="7"
-                  class="pa-0 d-flex justify-center align-center"
+                  class="pa-0 d-flex justify-center align-center mt-1"
                 >
                   <v-img
                     v-if="product.photo_url"
