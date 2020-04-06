@@ -17,6 +17,7 @@
               label="First name"
               :error-messages="errors"
               :readonly="$props.readonly"
+              dense
             />
           </ValidationProvider>
         </v-col>
@@ -31,6 +32,7 @@
               label="Last name"
               :error-messages="errors"
               :readonly="$props.readonly"
+              dense
             />
           </ValidationProvider>
         </v-col>
@@ -45,6 +47,7 @@
               label="Email"
               :error-messages="errors"
               :readonly="$props.readonly"
+              dense
             />
           </ValidationProvider>
         </v-col>
@@ -61,20 +64,21 @@
               :disabled="loading"
               :error-messages="errors"
               :readonly="$props.readonly"
+              dense
             />
           </ValidationProvider>
         </v-col>
 
-        <v-col :cols="2">
+        <v-col :cols="4" :lg="2">
           <v-checkbox
             v-model="formFields.house_account_status"
             label="House account"
             :readonly="$props.readonly"
+            dense
           />
         </v-col>
-        <v-col :cols="4">
+        <v-col :cols="4" :lg="4">
           <ValidationProvider
-            v-if="formFields.house_account_status"
             rules="required_if:house_account_status|max:100"
             v-slot="{ errors }"
             name="House account number"
@@ -84,34 +88,36 @@
               label="House account number"
               :error-messages="errors"
               :readonly="$props.readonly"
+              dense
             />
           </ValidationProvider>
         </v-col>
-        <v-col :cols="6">
+        <v-col :cols="4" :lg="6">
           <ValidationProvider
-            v-if="formFields.house_account_status"
             rules="required|between:0.01,10000"
             v-slot="{ errors }"
             name="House account limit"
           >
             <v-text-field
-              type="number"
               v-model="formFields.house_account_limit"
               label="House account limit"
+              type="number"
               :error-messages="errors"
               :readonly="$props.readonly"
+              dense
             />
           </ValidationProvider>
         </v-col>
 
-        <v-col :cols="2">
+        <v-col :cols="6">
           <v-checkbox
             v-model="formFields.no_tax"
             label="Zero tax"
             :readonly="$props.readonly"
+            dense
           />
         </v-col>
-        <v-col :cols="10">
+        <v-col :cols="6">
           <ValidationProvider
             v-if="formFields.no_tax"
             rules="ext:jpg,png,jpeg,pdf"
@@ -121,12 +127,13 @@
           >
             <v-file-input
               v-model="formFields.file"
+              :readonly="$props.readonly"
+              :error-messages="errors"
+              label="Upload certification file"
               accept="image/png, image/jpeg, application/pdf"
               show-size
-              label="Upload certification file"
               clearable
-              :error-messages="errors"
-              :readonly="$props.readonly"
+              dense
             />
           </ValidationProvider>
         </v-col>

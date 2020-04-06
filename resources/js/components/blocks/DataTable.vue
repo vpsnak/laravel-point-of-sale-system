@@ -257,7 +257,7 @@ export default {
     createItemDialog() {
       const payload = {
         show: true,
-        width: 600,
+        width: this.data_table.newDialogWidth,
         title: this.data_table.btnTxt,
         titleCloseBtn: true,
         component: this.data_table.newForm,

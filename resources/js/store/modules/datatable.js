@@ -8,10 +8,11 @@ const state = {
     model: "",
     btnTxt: "",
     newForm: "",
+    newDialogWidth: 600,
     disableNewBtn: false,
     loading: false,
     filters: null,
-    refreshBtn: true
+    refreshBtn: true,
   },
   headers: {
     addresses: [
@@ -25,7 +26,7 @@ const state = {
       { text: "Region", value: "region.name" },
       { text: "Postcode", value: "postcode" },
       { text: "Phone", value: "phone" },
-      { text: "Actions", value: "actions" }
+      { text: "Actions", value: "actions" },
     ],
     cashRegisterReports: [
       { text: "#", value: "id" },
@@ -37,7 +38,7 @@ const state = {
       { text: "Subtotal", value: "subtotal" },
       { text: "Tax", value: "tax" },
       { text: "Total", value: "total" },
-      { text: "Actions", value: "actions" }
+      { text: "Actions", value: "actions" },
     ],
     cashRegisters: [
       { text: "#", value: "id" },
@@ -49,19 +50,19 @@ const state = {
       { text: "Is open", value: "is_open" },
       { text: "Open session with", value: "open_session_user.name" },
       { text: "Active", value: "active" },
-      { text: "Actions", value: "actions" }
+      { text: "Actions", value: "actions" },
     ],
     categories: [
       { text: "#", value: "id" },
       { text: "Name", value: "name" },
       { text: "Enabled", value: "is_enabled" },
-      { text: "Actions", value: "actions" }
+      { text: "Actions", value: "actions" },
     ],
     companies: [
       { text: "#", value: "id" },
       { text: "Name", value: "name" },
       { text: "Tax number", value: "tax_number" },
-      { text: "Actions", value: "actions" }
+      { text: "Actions", value: "actions" },
     ],
     coupons: [
       { text: "#", value: "id" },
@@ -70,7 +71,7 @@ const state = {
       { text: "Uses", value: "uses" },
       { text: "Discount Type", value: "discount.type" },
       { text: "Discount Amount", value: "discount.amount" },
-      { text: "Actions", value: "actions" }
+      { text: "Actions", value: "actions" },
     ],
     customers: [
       { text: "#", value: "id" },
@@ -79,7 +80,7 @@ const state = {
       { text: "E-mail", value: "email" },
       { text: "No tax", value: "no_tax" },
       { text: "House Account", value: "house_account_status" },
-      { text: "Actions", value: "actions" }
+      { text: "Actions", value: "actions" },
     ],
     giftcards: [
       { text: "#", value: "id" },
@@ -88,14 +89,14 @@ const state = {
       { text: "Price", value: "price" },
       { text: "Enabled at", value: "enabled_at" },
       { text: "Created by", value: "created_by.name" },
-      { text: "Actions", value: "actions" }
+      { text: "Actions", value: "actions" },
     ],
     giftcardToCart: [
       { text: "#", value: "id" },
       { text: "Name", value: "name" },
       { text: "Code", value: "code" },
       { text: "Price", value: "price" },
-      { text: "Enabled at", value: "enabled_at" }
+      { text: "Enabled at", value: "enabled_at" },
     ],
     orders: [
       { text: "#", value: "id" },
@@ -107,7 +108,7 @@ const state = {
       { text: "Total income", value: "income_price" },
       { text: "Created by", value: "created_by" },
       { text: "Created at", value: "created_at" },
-      { text: "Actions", value: "actions" }
+      { text: "Actions", value: "actions" },
     ],
     products: [
       { text: "#", value: "id" },
@@ -116,7 +117,7 @@ const state = {
       { text: "Sku", value: "sku" },
       { text: "Stock", value: "stock" },
       { text: "Price", value: "price" },
-      { text: "Actions", value: "actions", shortable: false }
+      { text: "Actions", value: "actions", shortable: false },
     ],
     storePickups: [
       { text: "#", value: "id" },
@@ -126,7 +127,7 @@ const state = {
       { text: "Street 2", value: "street2" },
       { text: "State", value: "region.name" },
       { text: "Country", value: "region.country.name" },
-      { text: "Actions", value: "actions" }
+      { text: "Actions", value: "actions" },
     ],
     stores: [
       { text: "#", value: "id" },
@@ -139,13 +140,13 @@ const state = {
       { text: "Company", value: "company.name" },
       { text: "Active", value: "active" },
       { text: "Created by", value: "created_by_name" },
-      { text: "Actions", value: "actions" }
+      { text: "Actions", value: "actions" },
     ],
     taxes: [
       { text: "#", value: "id" },
       { text: "Name", value: "name" },
       { text: "Percentage", value: "percentage" },
-      { text: "Actions", value: "actions" }
+      { text: "Actions", value: "actions" },
     ],
     users: [
       { text: "#", value: "id" },
@@ -156,7 +157,7 @@ const state = {
       { text: "Active", value: "active" },
       { text: "Created at", value: "created_at" },
       { text: "Updated at", value: "updated_at" },
-      { text: "Actions", value: "actions" }
+      { text: "Actions", value: "actions" },
     ],
     cards: [
       { text: "#", value: "id" },
@@ -166,45 +167,45 @@ const state = {
       { text: "Type", value: "cardable_type" },
       { text: "Created at", value: "created_at" },
       { text: "Updated at", value: "updated_at" },
-      { text: "Actions", value: "actions" }
+      { text: "Actions", value: "actions" },
     ],
     paymentHistory: [
       {
         text: "Payment ID",
         value: "#",
-        sortable: false
+        sortable: false,
       },
       {
         text: "Operator",
         value: "created_by.name",
-        sortable: false
+        sortable: false,
       },
       {
         text: "Date",
         value: "created_at",
-        sortable: false
+        sortable: false,
       },
       {
         text: "Type",
         value: "payment_type.name",
-        sortable: false
+        sortable: false,
       },
       {
         text: "Status",
         value: "status",
-        sortable: false
+        sortable: false,
       },
       {
         text: "Amount (USD)",
         value: "amount",
-        sortable: false
+        sortable: false,
       },
       {
         text: "Actions",
-        value: "actions"
-      }
-    ]
-  }
+        value: "actions",
+      },
+    ],
+  },
 };
 
 // mutations
@@ -217,6 +218,7 @@ const mutations = {
     state.data_table.model = "";
     state.data_table.btnTxt = "";
     state.data_table.newForm = "";
+    state.data_table.newDialogWidth = 600;
     state.data_table.disableNewBtn = false;
     state.data_table.loading = false;
     state.data_table.filters = false;
@@ -230,18 +232,18 @@ const mutations = {
   },
   setLoading(state, value) {
     state.data_table.loading = value;
-  }
+  },
 };
 
 const getters = {
-  getHeaders: state => {
+  getHeaders: (state) => {
     return state.headers[_.camelCase(state.data_table.model)];
-  }
+  },
 };
 
 export default {
   namespaced: true,
   state,
   mutations,
-  getters
+  getters,
 };

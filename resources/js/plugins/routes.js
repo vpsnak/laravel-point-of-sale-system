@@ -8,12 +8,12 @@ import LandingPage from "../components/pages/LandingPage";
 import Dashboard from "../components/pages/Dashboard";
 import Sale from "../components/pages/Sale";
 import OpenCashRegister from "../components/pages/OpenCashRegister";
-import Orders from "../components/order/table/OrderTable";
+import OrderTable from "../components/order/table/OrderTable";
 import OrderViewPage from "../components/order/pages/OrderViewPage";
 import OrderEditOptionsPage from "../components/order/pages/OrderEditOptionsPage";
 import Settings from "../components/settings/pages/SettingsPage";
 // data tables
-import Customers from "../components/tables/CustomerTable";
+import CustomerTable from "../components/customer/table/CustomerTable";
 import Products from "../components/tables/ProductTable";
 import Categories from "../components/tables/CategoryTable";
 import Stores from "../components/tables/StoreTable";
@@ -88,7 +88,7 @@ export default [
     name: "orders",
     path: "/orders",
     components: {
-      default: Orders,
+      default: OrderTable,
       side_menu: SideMenu,
       top_menu: TopMenu,
     },
@@ -117,7 +117,7 @@ export default [
     name: "customers",
     path: "/customers",
     components: {
-      default: Customers,
+      default: CustomerTable,
       side_menu: SideMenu,
       top_menu: TopMenu,
     },

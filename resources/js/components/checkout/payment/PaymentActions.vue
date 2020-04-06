@@ -187,8 +187,8 @@
             color="primary"
             :loading="makePaymentLoading"
             :disabled="invalid || !isValidCheckout || loading"
-            v-text="'Make a payment'"
-          />
+            >Make a payment
+          </v-btn>
         </v-col>
       </v-row>
     </v-container>

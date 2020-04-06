@@ -1,52 +1,50 @@
 <template>
   <data-table v-if="render">
     <template v-slot:item.email="{ item }">
-      <a :href="'mailto:' + item.email">{{ item.email }}</a>
+      <a :href="`mailto:${item.email}`" v-text="item.email" />
     </template>
 
     <template v-slot:item.phone="{ item }">
-      <a :href="'tel:' + item.phone">{{ item.phone }}</a>
+      <a :href="`tel:${item.phone}`" v-text="item.phone" />
     </template>
 
     <template v-slot:item.no_tax="{ item }">
-      {{ item.no_tax ? "Yes" : "No" }}
+      <span v-text="item.no_tax ? 'Yes' : 'No'" />
     </template>
 
     <template v-slot:item.house_account_status="{ item }">
-      {{ item.house_account_status ? "Yes" : "No" }}
+      <span v-text="item.house_account_status ? 'Yes' : 'No'" />
     </template>
 
     <template v-slot:item.actions="{ item }">
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            small
             :disabled="data_table.loading"
             @click.stop="(item.form = form), editItem(item)"
-            class="my-2"
+            class="my-4"
             v-on="on"
             icon
           >
-            <v-icon small>edit</v-icon>
+            <v-icon v-text="'edit'" />
           </v-btn>
         </template>
-        <span>Edit</span>
+        <span v-text="'Edit'" />
       </v-tooltip>
 
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            small
             :disabled="data_table.loading"
             @click.stop="(item.form = form), viewItem(item)"
-            class="my-2"
+            class="my-4"
             v-on="on"
             icon
           >
-            <v-icon small>mdi-eye</v-icon>
+            <v-icon v-text="'mdi-eye'" />
           </v-btn>
         </template>
-        <span>View</span>
+        <span v-text="'View'" />
       </v-tooltip>
     </template>
   </data-table>
@@ -63,10 +61,11 @@ export default {
       icon: "mdi-account-group",
       title: "Customers",
       model: "customers",
-      newForm: "customerNewForm",
+      newForm: "customerCreateStepper",
+      newDialogWidth: 700,
       btnTxt: "New Customer",
       loading: true,
-      disableNewBtn: false
+      disableNewBtn: false,
     });
 
     this.render = true;
@@ -74,19 +73,19 @@ export default {
   data() {
     return {
       render: false,
-      form: "customer"
+      form: "customer",
     };
   },
   computed: {
-    ...mapState("datatable", ["data_table"])
+    ...mapState("datatable", ["data_table"]),
   },
   methods: {
     ...mapMutations("dialog", ["setDialog", "editItem", "viewItem"]),
     ...mapMutations("datatable", [
       "setLoading",
       "setDataTable",
-      "resetDataTable"
-    ])
-  }
+      "resetDataTable",
+    ]),
+  },
 };
 </script>

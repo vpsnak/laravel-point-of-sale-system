@@ -9,11 +9,9 @@
   >
     <v-card>
       <v-card-title>
-        <v-icon v-if="dialog.icon" class="pr-2">
-          {{ dialog.icon }}
-        </v-icon>
+        <v-icon v-if="dialog.icon" class="pr-2" v-text="dialog.icon" />
 
-        {{ dialog.title }}
+        <span v-text="dialog.title" />
 
         <v-spacer v-if="dialog.titleCloseBtn" />
 
@@ -25,14 +23,14 @@
               icon
               v-on="on"
             >
-              <v-icon>mdi-close</v-icon>
+              <v-icon v-text="'mdi-close'" />
             </v-btn>
           </template>
-          <span>Close</span>
+          <span v-text="'Close'" />
         </v-tooltip>
       </v-card-title>
 
-      <v-divider class="mb-3"></v-divider>
+      <v-divider class="mb-3" />
 
       <v-card-text v-if="!dialog.no_padding">
         <component
@@ -42,12 +40,12 @@
           :readonly="dialog.readonly"
           :model="dialog.model"
           @submit="submit"
-        ></component>
+        />
         <div
           v-else
           v-html="dialog.content"
           :class="dialog.contentClass || ''"
-        ></div>
+        />
       </v-card-text>
 
       <div v-else>
@@ -58,17 +56,17 @@
           :readonly="dialog.readonly"
           :model="dialog.model"
           @submit="submit"
-        ></component>
+        />
         <div
           v-else
           v-html="dialog.content"
           :class="dialog.contentClass || ''"
-        ></div>
+        />
       </div>
       <!-- confirmation actions -->
       <v-card-actions
-        class="d-flex align-center mt-5"
         v-if="dialog.action === 'confirmation' || dialog.action === 'info'"
+        class="align-center mt-5"
       >
         <v-spacer />
 
@@ -105,7 +103,7 @@ export default {
 
     dialog() {
       return this.interactive_dialog;
-    }
+    },
   },
 
   methods: {
@@ -116,7 +114,7 @@ export default {
       if (_.has(payload, "notification")) {
         this.setNotification({
           msg: payload.notification.msg,
-          type: payload.notification.type
+          type: payload.notification.type,
         });
       }
 
@@ -130,19 +128,19 @@ export default {
       if (!this.dialog.persistent || close) {
         if (this.dialog.eventChannel) {
           EventBus.$emit(this.dialog.eventChannel, {
-            payload
+            payload,
           });
 
           console.info({
             module: "interactive-dialog",
             payload,
-            event_channel: this.dialog.eventChannel
+            event_channel: this.dialog.eventChannel,
           });
         }
 
         this.resetDialog();
       }
-    }
-  }
+    },
+  },
 };
 </script>
