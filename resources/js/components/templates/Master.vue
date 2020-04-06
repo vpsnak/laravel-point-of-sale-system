@@ -8,9 +8,9 @@
 
     <transition name="fade" mode="out-in">
       <v-content>
-        <router-view class="view side-menu" name="side_menu"></router-view>
-        <router-view class="view top-menu" name="top_menu"></router-view>
-        <router-view class="view default"></router-view>
+        <router-view class="view side-menu" name="side_menu" />
+        <router-view class="view top-menu" name="top_menu" />
+        <router-view class="view default" />
       </v-content>
     </transition>
   </v-app>
@@ -21,15 +21,18 @@ import { mapGetters, mapMutations, mapState } from "vuex";
 
 export default {
   created() {
-    if (this.auth && this.app_load <= 100) {
+    if (this.auth) {
       this.$router.replace({ name: "landingPage" });
+    } else {
+      if (this.$route.name !== "login") {
+        this.$router.replace({ name: "login" });
+      }
     }
   },
   computed: {
-    ...mapGetters(["auth"]),
     ...mapState(["user"]),
-    ...mapState("config", ["app_load"]),
-    ...mapState("cart", ["checkoutDialog"])
+    ...mapState("cart", ["checkoutDialog"]),
+    ...mapGetters(["auth"]),
   },
 
   watch: {
@@ -38,8 +41,8 @@ export default {
       immediate: true,
       handler(value) {
         this.applyUserTheme();
-      }
-    }
+      },
+    },
   },
 
   methods: {
@@ -48,7 +51,7 @@ export default {
     applyUserTheme() {
       if (_.has(this.user, "settings")) {
         const theme_dark = _.find(this.user.settings, {
-          key: "theme_dark"
+          key: "theme_dark",
         });
 
         if (_.has(theme_dark, "value") && theme_dark.value === "0") {
@@ -57,8 +60,8 @@ export default {
           this.$vuetify.theme.dark = true;
         }
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

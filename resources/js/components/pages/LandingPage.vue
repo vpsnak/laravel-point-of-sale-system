@@ -4,8 +4,8 @@
       <v-col :cols="12" :sm="8" :md="4">
         <v-img
           contain
-          src="https://www.plantshed.com//skin/frontend/plantshed/default/images/ps-logo.svg"
-        ></v-img>
+          src="https://www.plantshed.com/skin/frontend/plantshed/default/images/ps-logo.svg"
+        />
       </v-col>
       <v-col :cols="12" align="center" justify="center">
         <v-progress-circular
@@ -15,8 +15,7 @@
           :value="error_txt ? 100 : loadPercent"
           :width="18"
         >
-          <b v-if="!error_txt">{{ loadPercent }} %</b>
-          <b v-else>{{ error_txt }}</b>
+          <b v-text="error_txt ? error_txt : `${loadPercent}%`" />
         </v-progress-circular>
       </v-col>
     </v-row>
@@ -34,10 +33,8 @@
             :key="item.action"
             :data-index="index"
           >
-            <td>{{ item.action }}</td>
-            <td :class="item.status + '--text'">
-              {{ item.message }}
-            </td>
+            <td v-text="item.action" />
+            <td :class="`${item.status}--text`" v-text="item.message" />
           </tr>
         </transition-group>
       </v-col>
@@ -58,7 +55,7 @@ export default {
 
   data() {
     return {
-      error_txt: ""
+      error_txt: "",
     };
   },
 
@@ -88,8 +85,8 @@ export default {
           this.addLoadPercent(1);
           this.redirect();
         }
-      }
-    }
+      },
+    },
   },
   methods: {
     ...mapMutations(["logout"]),
@@ -101,7 +98,7 @@ export default {
       "getMenuItems",
       "initWebSockets",
       "initChannels",
-      "retrieveCashRegister"
+      "retrieveCashRegister",
     ]),
 
     init() {
@@ -112,7 +109,7 @@ export default {
         .then(() => {
           this.loadPercent = 15;
         })
-        .catch(error => {
+        .catch((error) => {
           this.setError(error);
         });
       this.initWebSockets()
@@ -123,11 +120,11 @@ export default {
             .then(() => {
               this.loadPercent = 15;
             })
-            .catch(error => {
+            .catch((error) => {
               this.setError(error);
             });
         })
-        .catch(error => {
+        .catch((error) => {
           if (process.env.NODE_ENV === "development") {
             this.loadPercent = 30;
           } else {
@@ -138,14 +135,14 @@ export default {
         .then(() => {
           this.loadPercent = 15;
         })
-        .catch(error => {
+        .catch((error) => {
           this.setError(error);
         });
       this.retrieveCashRegister()
         .then(() => {
           this.loadPercent = 30;
         })
-        .catch(error => {
+        .catch((error) => {
           this.setError(error);
         });
     },
@@ -181,7 +178,7 @@ export default {
       setTimeout(() => {
         Velocity(el, { opacity: 0, height: 0 }, { complete: done });
       }, delay);
-    }
-  }
+    },
+  },
 };
 </script>
