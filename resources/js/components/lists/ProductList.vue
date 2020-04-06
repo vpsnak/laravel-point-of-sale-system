@@ -79,7 +79,7 @@
         </v-row>
       </v-container>
     </v-card-text>
-    <div v-if="products.length">
+    <v-card-text v-if="products.length">
       <perfect-scrollbar tag="v-container" style="height: 600px;">
         <v-row>
           <v-col
@@ -149,39 +149,18 @@
                   </v-list>
                 </v-menu>
               </v-card-title>
-              <v-card-text class="d-flex justify-center align-center">
-                <v-icon
-                  v-show="!product.imgLoaded || product.imgLoadFailed"
-                  v-text="'mdi-flower'"
-                  size="50"
-                />
-                <v-img
-                  v-show="product.imgLoaded && !product.imgLoadFailed"
-                  :src="product.photo_url"
-                  height="175px"
-                  width="175px"
-                  contain
-                  @error="
-                    set(product, 'imgLoaded', true),
-                      set(product, 'imgLoadFailed', true)
-                  "
-                  @load="set(product, 'imgLoaded', true)"
-                />
-              </v-card-text>
-
-              <v-card-actions @click.stop>
-                <v-chip-group>
-                  <v-chip label dark small class="mr-1 elevation-6 secondary">
+              <v-card-text
+                style="height: 100px; background: #f2f2f2;"
+                class="d-flex pa-1"
+                :ripple="true"
+              >
+                <v-col :cols="5" class="pa-0 d-flex justify-center flex-column">
+                  <v-chip label dark small class="elevation-6 secondary">
                     <span
                       v-text="`Price: ${parsePrice(product.price).toFormat()}`"
                     />
                   </v-chip>
-                  <v-chip
-                    label
-                    small
-                    dark
-                    class="mx-1 elevation-6 grey darken-1"
-                  >
+                  <v-chip label small dark class="elevation-6 grey darken-1">
                     <span v-text="`SKU: ${product.sku}`" />
                   </v-chip>
 
@@ -190,13 +169,34 @@
                     label
                     small
                     dark
-                    class="ml-1 elevation-6"
+                    class="elevation-6"
                     :color="stockColor(product)"
                   >
                     <span v-text="`Stock: ${product.stock}`" />
                   </v-chip>
-                </v-chip-group>
-              </v-card-actions>
+                </v-col>
+                <v-col
+                  :cols="7"
+                  class="pa-0 d-flex justify-center align-center"
+                >
+                  <v-img
+                    v-if="product.photo_url"
+                    :src="product.photo_url"
+                    width="100%"
+                    height="100%"
+                    aspect-ratio="1"
+                    contain
+                    @error="product.photo_url = null"
+                  />
+
+                  <v-icon
+                    v-else
+                    color="green"
+                    v-text="'mdi-flower'"
+                    size="50"
+                  />
+                </v-col>
+              </v-card-text>
             </v-card>
           </v-col>
         </v-row>
@@ -215,7 +215,7 @@
           </v-col>
         </v-row>
       </v-container>
-    </div>
+    </v-card-text>
     <v-container v-else>
       <v-row v-if="productLoading" align="center" justify="center">
         <v-col v-for="n in 9" :cols="12" :md="6" :lg="4" :key="n">
