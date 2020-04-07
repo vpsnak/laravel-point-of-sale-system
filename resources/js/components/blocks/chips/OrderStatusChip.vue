@@ -8,7 +8,7 @@
     offset-y
   >
     <template v-slot:activator="{ on }">
-      <h5 v-if="$props.title">Status</h5>
+      <h5 v-if="$props.title" v-text="'Status'" />
       <v-chip
         dark
         label
@@ -16,8 +16,8 @@
         :color="latestStatus.color"
         :small="small"
       >
-        <v-icon left>{{ $props.latestStatus.icon }}</v-icon>
-        <b>{{ $props.latestStatus.text }}</b>
+        <v-icon left v-text="$props.latestStatus.icon" />
+        <b v-text="$props.latestStatus.text" />
       </v-chip>
     </template>
     <v-card class="pa-5 fill-height" outlined width="750">
@@ -29,7 +29,7 @@
               :size="100"
               :width="10"
               color="light-blue"
-            ></v-progress-circular>
+            />
           </div>
         </v-row>
         <v-row v-else justify="center" align="center" no-gutters>
@@ -46,21 +46,18 @@
           >
             <template v-slot:item.text="{ item }">
               <v-chip label :color="item.color">
-                <v-icon left>{{ item.icon }}</v-icon>
-                {{ item.text }}
+                <v-icon left v-text="item.icon" />
+                <span v-text="item.text" />
               </v-chip>
             </template>
             <template v-slot:item.created_at="{ item }">
               <timestampChip
                 icon="mdi-calendar"
                 :timestamp="item.pivot.created_at"
-              ></timestampChip>
+              />
             </template>
             <template v-slot:item.processed_by="{ item }">
-              <createdByChip
-                menu
-                :createdBy="item.pivot.processed_by"
-              ></createdByChip>
+              <createdByChip menu :createdBy="item.pivot.processed_by" />
             </template>
           </v-data-table>
         </v-row>

@@ -40,95 +40,86 @@
     </template>
 
     <template v-slot:item.actions="{ item }">
-      <v-tooltip bottom>
+      <v-menu :nudge-width="200" offset-y>
         <template v-slot:activator="{ on }">
-          <v-btn
-            :disabled="data_table.loading"
-            @click.stop="printOrder(item.id)"
-            class="my-4"
-            icon
-            v-on="on"
-          >
-            <v-icon v-text="'mdi-printer'" />
+          <v-btn :disabled="data_table.loading" icon v-on="on">
+            <v-icon v-text="'mdi-dots-vertical'" />
           </v-btn>
         </template>
-        <span v-text="'Print'" />
-      </v-tooltip>
-
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            :disabled="data_table.loading"
-            @click.stop="printCustomerOrder(item.id)"
-            class="my-4"
-            icon
-            v-on="on"
-          >
-            <v-icon v-text="'mdi-printer-pos'" />
-          </v-btn>
-        </template>
-        <span v-text="'Print Customer\'s Copy'" />
-      </v-tooltip>
-
-      <v-tooltip v-if="canCheckout(item.status)" bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            :disabled="data_table.loading"
-            @click.stop="checkout(item.id)"
-            class="my-4"
-            icon
-            v-on="on"
-          >
-            <v-icon v-text="'mdi-currency-usd'" />
-          </v-btn>
-        </template>
-        <span v-text="'Continue checkout'" />
-      </v-tooltip>
-
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            :disabled="data_table.loading"
-            @click.stop="reorder(item.id)"
-            class="my-4"
-            icon
-            v-on="on"
-          >
-            <v-icon v-text="'mdi-cart-arrow-down'" />
-          </v-btn>
-        </template>
-        <span v-text="'Reorder'" />
-      </v-tooltip>
-
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            :disabled="data_table.loading"
+        <v-list>
+          <v-subheader v-html="`<b>Order #${item.id}</b>`" />
+          <v-list-item
             :to="{ name: 'viewOrderDetails', params: { id: item.id } }"
-            class="my-4"
-            v-on="on"
-            icon
           >
-            <v-icon v-text="'mdi-eye'" />
-          </v-btn>
-        </template>
-        <span v-text="'View'" />
-      </v-tooltip>
+            <v-list-item-icon>
+              <v-icon v-text="'mdi-eye'" />
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title v-text="'View'" />
+            </v-list-item-content>
+          </v-list-item>
 
-      <v-tooltip bottom v-if="canCancel(item.status)">
-        <template v-slot:activator="{ on }">
-          <v-btn
-            icon
-            :disabled="data_table.loading"
-            @click.stop="cancelOrderDialog(item)"
-            class="my-4"
-            v-on="on"
+          <v-list-item @click="reorder(item.id)">
+            <v-list-item-icon>
+              <v-icon v-text="'mdi-cart-arrow-down'" />
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title v-text="'Reorder'" />
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-divider />
+
+          <v-list-item @click="printOrder(item.id)">
+            <v-list-item-icon>
+              <v-icon v-text="'mdi-printer'" />
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title v-text="'Print'" />
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-divider />
+
+          <v-list-item
+            :disabled="!canReceipt(item)"
+            @click="printCustomerOrder(item.id)"
           >
-            <v-icon v-text="'mdi-cancel'" />
-          </v-btn>
-        </template>
-        <span v-text="'Cancel order'" />
-      </v-tooltip>
+            <v-list-item-icon>
+              <v-icon v-text="'mdi-receipt'" />
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title v-text="'Print receipt'" />
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item
+            :disabled="!canCheckout(item.status)"
+            @click="checkout(item.id)"
+          >
+            <v-list-item-icon>
+              <v-icon v-text="'mdi-currency-usd'" />
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title v-text="'Continue checkout'" />
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-divider />
+
+          <v-list-item
+            :disabled="!canCancel(item.status)"
+            @click="cancelOrderDialog(item)"
+          >
+            <v-list-item-icon>
+              <v-icon v-text="'mdi-cancel'" />
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title v-text="'Cancel order'" />
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </template>
   </data-table>
 </template>
@@ -243,11 +234,11 @@ export default {
         return false;
       }
     },
-    printCustomerOrder(item) {
-      window.open(`/customer-order/${item}`, "_blank");
+    printCustomerOrder(id) {
+      window.open(`/customer-order/${id}`, "_blank");
     },
-    printOrder(item) {
-      window.open(`/order/${item}`, "_blank");
+    printOrder(id) {
+      window.open(`/order/${id}`, "_blank");
     },
     reorder(id) {
       this.setLoading(true);

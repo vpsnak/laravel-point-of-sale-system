@@ -1,7 +1,7 @@
 <template>
   <div>
     <h5 v-if="$props.title">{{ $props.title }}</h5>
-    <v-chip label :small="small">
+    <v-chip label dark :small="small">
       <v-icon left>{{ $props.icon }}</v-icon>
       <b>{{ $props.timestamp }}</b>
     </v-chip>
@@ -13,7 +13,7 @@ export default {
     small: Boolean,
     title: String,
     icon: String,
-    timestamp: String
-  }
+    timestamp: String,
+  },
 };
 </script>

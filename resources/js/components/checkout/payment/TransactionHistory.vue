@@ -1,10 +1,8 @@
 <template>
   <v-card outlined>
     <v-card-title>
-      <v-icon left>mdi-currency-usd</v-icon>
-      <span class="subheading">
-        Transaction history
-      </span>
+      <v-icon left v-text="'mdi-currency-usd'" />
+      <span class="subheading" v-text="'Transaction history'" />
     </v-card-title>
 
     <v-data-table
@@ -20,29 +18,31 @@
       hide-default-footer
     >
       <template v-slot:item.price="{ item }">
-        <b :class="statusColor(item.status, 'amount')">
-          {{ parsePrice(item.price).toFormat() }}
-        </b>
+        <b
+          :class="statusColor(item.status, 'amount')"
+          v-text="parsePrice(item.price).toFormat()"
+        />
       </template>
 
       <template v-slot:item.earnings_price="{ item }">
-        <b :class="statusColor(item.status, 'earnings')">
-          {{ earningsPrice(item).toFormat() }}
-        </b>
+        <b
+          :class="statusColor(item.status, 'earnings')"
+          v-text="earningsPrice(item).toFormat()"
+        />
       </template>
 
       <template v-slot:item.change_price="{ item }">
-        <b :class="changePriceColor(item)" v-if="!changePrice(item).isZero()">
-          {{ changePrice(item).toFormat() }}
-        </b>
+        <b
+          v-if="!changePrice(item).isZero()"
+          :class="changePriceColor(item)"
+          v-text="changePrice(item).toFormat()"
+        />
       </template>
 
       <template v-slot:item.status="{ item }">
-        <v-chip small label :color="statusColor(item.status, 'status')">
-          <v-icon left>{{ parseStatusIcon(item.status) }}</v-icon>
-          <b>
-            {{ parseStatus(item.status) }}
-          </b>
+        <v-chip small label dark :color="statusColor(item.status, 'status')">
+          <v-icon left v-text="parseStatusIcon(item.status)" />
+          <b v-text="parseStatus(item.status)" />
         </v-chip>
       </template>
 
@@ -56,32 +56,26 @@
               :loading="rollbackLoading"
               :disabled="loading"
             >
-              <v-icon>
-                mdi-undo
-              </v-icon>
+              <v-icon v-text="'mdi-undo'" />
             </v-btn>
           </template>
-          <span>
-            Rollback transaction
-          </span>
+          <span v-text="'Rollback transaction'" />
         </v-tooltip>
         <v-menu
           v-else-if="enableRefund(item)"
+          v-model="refundMenu[item.id]"
+          :key="item.id"
           :close-on-content-click="false"
           offset-y
-          :key="item.id"
-          v-model="refundMenu[item.id]"
         >
           <template v-slot:activator="{ on: menu }">
             <v-tooltip bottom>
               <template v-slot:activator="{ on: tooltip }">
                 <v-btn icon v-on="{ ...tooltip, ...menu }">
-                  <v-icon>
-                    mdi-cash-refund
-                  </v-icon>
+                  <v-icon v-text="'mdi-cash-refund'" />
                 </v-btn>
               </template>
-              <span>Issue a refund</span>
+              <span v-text="'Issue a refund'" />
             </v-tooltip>
           </template>
           <orderRefundForm
@@ -100,11 +94,11 @@ import { EventBus } from "../../../plugins/eventBus";
 
 export default {
   props: {
-    checkout: Boolean
+    checkout: Boolean,
   },
 
   mounted() {
-    EventBus.$on("transaction-history-refund", event => {
+    EventBus.$on("transaction-history-refund", (event) => {
       if (event.payload && this.selected_payment) {
         this.rollbackPayment();
       }
@@ -124,49 +118,49 @@ export default {
         {
           text: "#",
           value: "id",
-          sortable: false
+          sortable: false,
         },
         {
           text: "Operator",
           value: "created_by_name",
-          sortable: false
+          sortable: false,
         },
         {
           text: "Date",
           value: "created_at",
-          sortable: false
+          sortable: false,
         },
         {
           text: "Type",
           value: "type_name",
-          sortable: false
+          sortable: false,
         },
         {
           text: "Amount",
           value: "price",
-          sortable: false
+          sortable: false,
         },
         {
           text: "Earnings",
           value: "earnings_price",
-          sortable: false
+          sortable: false,
         },
         {
           text: "Change",
           value: "change_price",
-          sortable: false
+          sortable: false,
         },
         {
           text: "Status",
           value: "status",
-          sortable: false
+          sortable: false,
         },
         {
           text: "Actions",
           value: "actions",
-          sortable: false
-        }
-      ]
+          sortable: false,
+        },
+      ],
     };
   },
 
@@ -179,7 +173,7 @@ export default {
       } else {
         return false;
       }
-    }
+    },
   },
 
   methods: {
@@ -188,7 +182,7 @@ export default {
       "setOrderChangePrice",
       "setOrderRemainingPrice",
       "setOrderStatus",
-      "setCheckoutLoading"
+      "setCheckoutLoading",
     ]),
     ...mapMutations("dialog", ["setDialog"]),
     ...mapActions("requests", ["request"]),
@@ -288,11 +282,11 @@ export default {
       this.rollbackLoading = true;
       const payload = {
         method: "post",
-        url: `payments/${this.selected_payment.id}/rollback`
+        url: `payments/${this.selected_payment.id}/rollback`,
       };
 
       this.request(payload)
-        .then(response => {
+        .then((response) => {
           if (response.refunded_transaction) {
             this.setTransactions(response.transaction);
           }
@@ -301,7 +295,7 @@ export default {
           this.setOrderRemainingPrice(response.remaining);
           this.setOrderStatus(response.order_status);
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
           // @TODO fix payload object
           if (_.has(error, "response.transaction")) {
@@ -326,11 +320,11 @@ export default {
         component: "passwordForm",
         model: { action: "verify" },
         persistent: true,
-        eventChannel: "transaction-history-refund"
+        eventChannel: "transaction-history-refund",
       };
 
       this.setDialog(payload);
-    }
-  }
+    },
+  },
 };
 </script>

@@ -10,26 +10,26 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title>
-              Refundable amount:
-              <b class="primary--text">{{ maxRefundablePrice.toFormat() }}</b>
+              <span v-text="'Refundable amount:'" />
+              <b class="primary--text" v-text="maxRefundablePrice.toFormat()" />
             </v-list-item-title>
             <v-list-item-subtitle>
-              <v-icon small>{{ subtitle.icon }}</v-icon>
-              <span v-html="subtitle.txt" />
+              <v-icon small v-text="subtitle.icon" />
+              <span v-html="`<b>${subtitle.txt}</b>`" />
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-list>
 
-      <v-divider></v-divider>
+      <v-divider />
 
       <v-container>
         <v-row justify="center">
           <v-col :lg="4" :cols="6">
             <ValidationProvider
-              :rules="
-                'required|between:0.01,' + maxRefundablePrice.toFormat('0.00')
-              "
+              :rules="`required|between:0.01,${maxRefundablePrice.toFormat(
+                '0.00'
+              )}`"
               v-slot="{ invalid }"
               name="Amount"
             >
@@ -46,7 +46,7 @@
                 dense
                 :disabled="disableAmount || loading"
                 :error="invalid"
-              ></v-text-field>
+              />
             </ValidationProvider>
           </v-col>
         </v-row>
@@ -56,6 +56,7 @@
         <v-btn
           color="primary"
           text
+          outlined
           type="submit"
           :loading="loading"
           :disabled="invalid || loading"
@@ -73,7 +74,7 @@ import { EventBus } from "../../../plugins/eventBus";
 
 export default {
   props: {
-    transaction: Object
+    transaction: Object,
   },
 
   created() {
@@ -94,8 +95,8 @@ export default {
       maxRefundablePrice: null,
       price: {
         amount: null,
-        currency: null
-      }
+        currency: null,
+      },
     };
   },
 
@@ -105,7 +106,7 @@ export default {
       "order_income_price",
       "order_total_price",
       "order_status",
-      "transactions"
+      "transactions",
     ]),
 
     disableAmount() {
@@ -126,47 +127,47 @@ export default {
       set(value) {
         this.display_amount = value;
         this.price.amount = Math.round(value * 10000) / 100;
-      }
+      },
     },
     subtitle() {
       switch (this.$props.transaction.payment.payment_type.type) {
         case "card":
           return {
             icon: "mdi-credit-card-outline",
-            txt: `<b>${this.$props.transaction.last_log.card_number}</b> / <b>${this.$props.transaction.last_log.card_holder}</b>`
+            txt: `${this.$props.transaction.last_log.card_number} / ${this.$props.transaction.last_log.card_holder}`,
           };
         case "pos-terminal":
           return {
             icon: "mdi-credit-card-outline",
-            txt: ``
+            txt: ``,
           };
         case "giftcard":
           return {
             icon: "mdi-wallet-giftcard",
-            txt: `<b>${this.$props.transaction.code}</b>`
+            txt: this.$props.transaction.code,
           };
         case "coupon":
           return {
             icon: "mdi-ticket-percent",
-            txt: `<b>${this.$props.transaction.code}</b>`
+            txt: this.$props.transaction.code,
           };
         case "cash":
           return {
             icon: "mdi-cash-multiple",
-            txt: `<b>Cash</b>`
+            txt: `Cash`,
           };
         default:
           return {};
       }
       return;
-    }
+    },
   },
 
   methods: {
     ...mapMutations("cart", [
       "setCheckoutLoading",
       "setTransactions",
-      "setOrderStatus"
+      "setOrderStatus",
     ]),
     ...mapActions("requests", ["request"]),
 
@@ -181,12 +182,12 @@ export default {
         data: {
           order_id: this.order_id,
           payment_id: this.$props.transaction.payment.id,
-          price: this.parsePrice(this.price).toJSON()
-        }
+          price: this.parsePrice(this.price).toJSON(),
+        },
       };
 
       this.request(payload)
-        .then(response => {
+        .then((response) => {
           EventBus.$emit("income-analysis-refresh");
 
           this.setTransactions(response.transaction);
@@ -198,7 +199,7 @@ export default {
 
           this.$emit("submit");
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
           if (_.has(error, "transaction"))
             this.setTransactions(error.transaction);
@@ -208,7 +209,7 @@ export default {
           this.loading = false;
           this.setCheckoutLoading(false);
         });
-    }
-  }
+    },
+  },
 };
 </script>

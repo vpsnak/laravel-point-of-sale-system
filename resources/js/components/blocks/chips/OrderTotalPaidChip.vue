@@ -8,7 +8,13 @@
     offset-y
   >
     <template v-slot:activator="{ on }">
-      <v-chip label v-on="$props.menu ? on : null" color="green" :small="small">
+      <v-chip
+        label
+        v-on="$props.menu ? on : null"
+        color="green"
+        :small="small"
+        dark
+      >
         <b>{{ parsePrice($props.income_price).toFormat() }}</b>
       </v-chip>
     </template>
@@ -25,12 +31,12 @@ export default {
     small: Boolean,
     menu: Boolean,
     orderId: Number,
-    income_price: Object
+    income_price: Object,
   },
 
   data() {
     return {
-      orderIncomeAnalysis: false
+      orderIncomeAnalysis: false,
     };
   },
 
@@ -41,7 +47,7 @@ export default {
   watch: {
     orderIncomeAnalysis(value) {
       EventBus.$emit("overlay", value);
-    }
-  }
+    },
+  },
 };
 </script>

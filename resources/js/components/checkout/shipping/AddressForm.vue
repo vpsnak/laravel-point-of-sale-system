@@ -17,7 +17,7 @@
             label="First name"
             :disabled="loading"
             :error-messages="errors"
-          ></v-text-field>
+          />
         </ValidationProvider>
       </v-col>
 
@@ -33,7 +33,7 @@
             label="Last name"
             :disabled="loading"
             :error-messages="errors"
-          ></v-text-field>
+          />
         </ValidationProvider>
       </v-col>
 
@@ -45,7 +45,7 @@
             label="Address"
             :disabled="loading"
             :error-messages="errors"
-          ></v-text-field>
+          />
         </ValidationProvider>
       </v-col>
 
@@ -55,7 +55,7 @@
           v-model="address.street2"
           label="Second Address"
           :disabled="loading"
-        ></v-text-field>
+        />
       </v-col>
 
       <v-col :cols="6">
@@ -66,7 +66,7 @@
             label="City"
             :disabled="loading"
             :error-messages="errors"
-          ></v-text-field>
+          />
         </ValidationProvider>
       </v-col>
 
@@ -83,7 +83,7 @@
             :disabled="loading"
             :error-messages="errors"
             type="number"
-          ></v-text-field>
+          />
         </ValidationProvider>
       </v-col>
 
@@ -100,7 +100,7 @@
             return-object
             :error-messages="errors"
             :loading="country_loading"
-          ></v-autocomplete>
+          />
         </ValidationProvider>
       </v-col>
 
@@ -115,7 +115,7 @@
             item-text="name"
             return-object
             :error-messages="errors"
-          ></v-autocomplete>
+          />
         </ValidationProvider>
       </v-col>
 
@@ -127,7 +127,7 @@
             label="Phone"
             :disabled="loading"
             :error-messages="errors"
-          ></v-text-field>
+          />
         </ValidationProvider>
       </v-col>
 
@@ -141,7 +141,7 @@
           return-object
           v-model="location"
           prepend-inner-icon="mdi-city"
-        ></v-select>
+        />
       </v-col>
     </v-row>
     <v-row v-if="!$props.readonly" justify="center">
@@ -164,7 +164,7 @@ import { mapState, mapActions, mapMutations } from "vuex";
 export default {
   props: {
     model: Object,
-    readonly: Boolean
+    readonly: Boolean,
   },
 
   beforeDestroy() {
@@ -194,8 +194,8 @@ export default {
         phone: null,
         deliverydate: null,
         billing: false,
-        location: 11
-      }
+        location: 11,
+      },
     };
   },
 
@@ -205,7 +205,7 @@ export default {
       this.address = { ...this.address, ...this.$props.model };
 
       this.selected_location = _.find(this.locations, {
-        id: this.$props.model.location
+        id: this.$props.model.location,
       });
     } else {
       this.getAllCountries(false);
@@ -233,7 +233,7 @@ export default {
         } else {
           this.address.location = null;
         }
-      }
+      },
     },
     loading() {
       if (this.submit_loading || this.country_loading || this.region_loading) {
@@ -241,7 +241,7 @@ export default {
       } else {
         return false;
       }
-    }
+    },
   },
 
   methods: {
@@ -263,7 +263,7 @@ export default {
       let payload = {
         method: "post",
         url: this.address.id ? "addresses/update" : "addresses/create",
-        data: this.address
+        data: this.address,
       };
 
       payload.data.customer_id = this.address.customer_id || this.customer.id;
@@ -271,7 +271,7 @@ export default {
       payload.data.country_id = this.address.country.id;
 
       this.request(payload)
-        .then(response => {
+        .then((response) => {
           this.$emit("submit", { data: response.address });
         })
         .finally(() => {
@@ -283,10 +283,10 @@ export default {
 
       const payload = {
         method: "get",
-        url: "countries"
+        url: "countries",
       };
       this.request(payload)
-        .then(response => {
+        .then((response) => {
           this.countries = response;
 
           if (modelInit) {
@@ -294,13 +294,13 @@ export default {
           }
           if (!this.address.country) {
             this.address.country = _.find(this.countries, {
-              iso3_code: "USA"
+              iso3_code: "USA",
             });
 
             this.regions = this.address.country.regions;
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         })
         .finally(() => {
@@ -312,16 +312,16 @@ export default {
 
       const payload = {
         method: "get",
-        url: `countries/${country.id}/regions`
+        url: `countries/${country.id}/regions`,
       };
       this.request(payload)
-        .then(response => {
+        .then((response) => {
           this.regions = response;
         })
         .finally(() => {
           this.region_loading = false;
         });
-    }
-  }
+    },
+  },
 };
 </script>
