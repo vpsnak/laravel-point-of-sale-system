@@ -9,7 +9,7 @@
             :step="checkoutStep.id"
             :complete="checkoutStep.completed"
           >
-            {{ checkoutStep.name }}
+            <span v-text="checkoutStep.name" />
             <v-divider />
           </v-stepper-step>
         </v-stepper-header>
@@ -20,10 +20,8 @@
             :step="checkoutStep.id"
           >
             <v-col align="center">
-              <v-icon :color="checkoutStep.color">
-                {{ checkoutStep.icon }}
-              </v-icon>
-              <span class="title">{{ checkoutStep.name }}</span>
+              <v-icon :color="checkoutStep.color" v-text="checkoutStep.icon" />
+              <span class="title" v-text="checkoutStep.name" />
             </v-col>
             <v-col :cols="12">
               <component :is="checkoutStep.component" />
@@ -39,15 +37,12 @@
 
           <v-btn
             icon
-            fab
             @click="previousStep()"
             v-show="!order_id && currentCheckoutStep === 2"
             color="deep-orange"
             :disabled="checkout_loading"
           >
-            <v-icon large>
-              mdi-chevron-left
-            </v-icon>
+            <v-icon large v-text="'mdi-chevron-left'" />
           </v-btn>
 
           <v-spacer v-show="currentCheckoutStep !== 3" />
@@ -63,16 +58,14 @@
           </v-btn>
 
           <v-btn
-            icon
-            fab
+            text
+            outlined
             @click="completeStep()"
             :disabled="disableNext || checkout_loading"
             color="primary"
             v-show="currentCheckoutStep === 1 ? true : false"
           >
-            <v-icon large>
-              mdi-chevron-right
-            </v-icon>
+            <v-icon large v-text="'mdi-chevron-right'" />
           </v-btn>
 
           <v-spacer />
@@ -92,7 +85,7 @@ export default {
       "is_valid",
       "order_id",
       "checkoutSteps",
-      "method"
+      "method",
     ]),
 
     disableNext() {
@@ -101,11 +94,11 @@ export default {
       } else {
         return false;
       }
-    }
+    },
   },
   methods: {
     ...mapMutations("cart", ["previousStep", "resetState"]),
-    ...mapActions("cart", ["completeStep"])
-  }
+    ...mapActions("cart", ["completeStep"]),
+  },
 };
 </script>

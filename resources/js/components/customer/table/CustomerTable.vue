@@ -1,13 +1,5 @@
 <template>
   <data-table v-if="render">
-    <template v-slot:item.email="{ item }">
-      <a :href="`mailto:${item.email}`" v-text="item.email" />
-    </template>
-
-    <template v-slot:item.phone="{ item }">
-      <a :href="`tel:${item.phone}`" v-text="item.phone" />
-    </template>
-
     <template v-slot:item.no_tax="{ item }">
       <span v-text="item.no_tax ? 'Yes' : 'No'" />
     </template>

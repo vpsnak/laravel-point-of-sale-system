@@ -43,97 +43,91 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            small
             :disabled="data_table.loading"
             @click.stop="printOrder(item.id)"
-            class="my-2"
+            class="my-4"
             icon
             v-on="on"
           >
-            <v-icon small>mdi-printer</v-icon>
+            <v-icon v-text="'mdi-printer'" />
           </v-btn>
         </template>
-        <span>Print</span>
+        <span v-text="'Print'" />
       </v-tooltip>
 
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            small
             :disabled="data_table.loading"
             @click.stop="printCustomerOrder(item.id)"
-            class="my-2"
+            class="my-4"
             icon
             v-on="on"
           >
-            <v-icon small>mdi-printer-pos</v-icon>
+            <v-icon v-text="'mdi-printer-pos'" />
           </v-btn>
         </template>
-        <span>Print Customer's Copy</span>
+        <span v-text="'Print Customer\'s Copy'" />
       </v-tooltip>
 
       <v-tooltip v-if="canCheckout(item.status)" bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            small
             :disabled="data_table.loading"
             @click.stop="checkout(item.id)"
-            class="my-2"
+            class="my-4"
             icon
             v-on="on"
           >
-            <v-icon small>mdi-currency-usd</v-icon>
+            <v-icon v-text="'mdi-currency-usd'" />
           </v-btn>
         </template>
-        <span>Continue checkout</span>
+        <span v-text="'Continue checkout'" />
       </v-tooltip>
 
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            small
             :disabled="data_table.loading"
             @click.stop="reorder(item.id)"
-            class="my-2"
+            class="my-4"
             icon
             v-on="on"
           >
-            <v-icon small>mdi-cart-arrow-down</v-icon>
+            <v-icon v-text="'mdi-cart-arrow-down'" />
           </v-btn>
         </template>
-        <span>Reorder</span>
+        <span v-text="'Reorder'" />
       </v-tooltip>
 
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            small
             :disabled="data_table.loading"
             :to="{ name: 'viewOrderDetails', params: { id: item.id } }"
-            class="my-2"
+            class="my-4"
             v-on="on"
             icon
           >
-            <v-icon small>mdi-eye</v-icon>
+            <v-icon v-text="'mdi-eye'" />
           </v-btn>
         </template>
-        <span>View</span>
+        <span v-text="'View'" />
       </v-tooltip>
 
       <v-tooltip bottom v-if="canCancel(item.status)">
         <template v-slot:activator="{ on }">
           <v-btn
             icon
-            small
             :disabled="data_table.loading"
             @click.stop="cancelOrderDialog(item)"
-            class="my-2"
+            class="my-4"
             v-on="on"
           >
-            <v-icon small>mdi-cancel</v-icon>
+            <v-icon v-text="'mdi-cancel'" />
           </v-btn>
         </template>
-        <span>Cancel order</span>
+        <span v-text="'Cancel order'" />
       </v-tooltip>
     </template>
   </data-table>
@@ -149,7 +143,7 @@ export default {
 
     this.setDataTable(this.table);
 
-    EventBus.$on("order-table-cancel-order", event => {
+    EventBus.$on("order-table-cancel-order", (event) => {
       if (event.payload && this.selectedItem) {
         this.setLoading(true);
         this.cancelOrder()
@@ -184,15 +178,16 @@ export default {
         icon: "mdi-file-multiple",
         title: "Orders",
         model: "orders",
+        searchField: false,
         disableNewBtn: true,
         loading: true,
-        filters: "orderTableFilters"
-      }
+        filters: "orderTableFilters",
+      },
     };
   },
 
   computed: {
-    ...mapState("datatable", ["data_table"])
+    ...mapState("datatable", ["data_table"]),
   },
 
   methods: {
@@ -201,7 +196,7 @@ export default {
     ...mapMutations("datatable", [
       "setLoading",
       "setDataTable",
-      "resetDataTable"
+      "resetDataTable",
     ]),
     ...mapActions("requests", ["request"]),
     ...mapActions("cart", ["loadOrder"]),
@@ -259,9 +254,9 @@ export default {
       this.resetState();
       this.request({
         method: "get",
-        url: `orders/get/${id}`
+        url: `orders/get/${id}`,
       })
-        .then(response => {
+        .then((response) => {
           this.setReorder(response.items);
           this.$router.push({ name: "sale" });
           this.setCheckoutDialog(true);
@@ -283,10 +278,10 @@ export default {
             icon: "mdi-receipt",
             component: "orderReceipt",
             persistent: true,
-            eventChannel: "orders-table-receipt"
+            eventChannel: "orders-table-receipt",
           });
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
         })
         .finally(() => {
@@ -308,9 +303,9 @@ export default {
       return new Promise((resolve, reject) => {
         const payload = {
           method: "get",
-          url: `orders/get/${id}`
+          url: `orders/get/${id}`,
         };
-        this.request(payload).then(response => {
+        this.request(payload).then((response) => {
           this.resetState();
           this.loadOrder(response);
           resolve(true);
@@ -328,7 +323,7 @@ export default {
         component: "passwordForm",
         model: { action: "verify" },
         persistent: true,
-        eventChannel: "order-table-cancel-order"
+        eventChannel: "order-table-cancel-order",
       };
 
       this.setDialog(payload);
@@ -337,21 +332,21 @@ export default {
       return new Promise((resolve, reject) => {
         const payload = {
           method: "get",
-          url: `orders/${this.selectedItem.id}`
+          url: `orders/${this.selectedItem.id}`,
         };
 
         this.request(payload)
           .then(() => {
             resolve(true);
           })
-          .catch(error => {
+          .catch((error) => {
             reject(error);
           })
           .finally(() => {
             this.selectedItem = null;
           });
       });
-    }
-  }
+    },
+  },
 };
 </script>

@@ -23,7 +23,7 @@ export default {
       } else {
         return this.parsePrice();
       }
-    }
-  }
+    },
+  },
 };
 </script>

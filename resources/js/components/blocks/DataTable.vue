@@ -38,7 +38,7 @@
 
         <v-spacer />
 
-        <v-col cols="auto">
+        <v-col v-if="data_table.searchField" cols="auto">
           <v-text-field
             ref="searchInput"
             :disabled="data_table.loading"
@@ -58,7 +58,7 @@
             "
             @click:prepend-inner="getItems()"
             @keyup.enter="(keyword = searchValue), (search = true), getItems()"
-          ></v-text-field>
+          />
         </v-col>
 
         <v-spacer />
@@ -102,10 +102,10 @@
             </template>
 
             <template v-slot:item.email="{ item }">
-              <a :href="'mailto:' + item.email">{{ item.email }}</a>
+              <a :href="`mailto:${item.email}`" v-text="item.email" />
             </template>
             <template v-slot:item.phone="{ item }">
-              <a :href="'tel:' + item.phone">{{ item.phone }}</a>
+              <a :href="`tel:${item.phone}`" v-text="item.phone" />
             </template>
             <!-- generic fields end -->
 
@@ -130,7 +130,7 @@
                   :elevation="3"
                   dense
                 >
-                  No data
+                  <span v-text="'No data'" />
                 </v-alert>
               </v-row>
             </template>

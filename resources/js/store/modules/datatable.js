@@ -6,6 +6,7 @@ const state = {
     title: "",
     headers: [],
     model: "",
+    searchField: true,
     btnTxt: "",
     newForm: "",
     newDialogWidth: 600,
@@ -216,6 +217,7 @@ const mutations = {
     state.data_table.title = "";
     state.data_table.headers = [];
     state.data_table.model = "";
+    state.data_table.searchField = true;
     state.data_table.btnTxt = "";
     state.data_table.newForm = "";
     state.data_table.newDialogWidth = 600;

@@ -33,7 +33,7 @@ import { mapState, mapActions, mapMutations } from "vuex";
 export default {
   data() {
     return {
-      completed: false
+      completed: false,
     };
   },
 
@@ -41,20 +41,23 @@ export default {
     order_status: {
       immediate: true,
       handler(status) {
-        if (_.has(status, "value") && status.value === "paid") {
+        if (
+          _.has(status, "value") &&
+          ["paid", "completed"].indexOf(status.value) !== -1
+        ) {
           this.completed = true;
         } else {
           this.completed = false;
         }
-      }
-    }
+      },
+    },
   },
 
   computed: {
     ...mapState("cart", [
       "order_status",
       "order_change_price",
-      "checkout_loading"
+      "checkout_loading",
     ]),
 
     changePrice() {
@@ -63,11 +66,11 @@ export default {
       } else {
         return this.$price();
       }
-    }
+    },
   },
 
   methods: {
-    ...mapActions("cart", ["createReceipt", "completeStep"])
-  }
+    ...mapActions("cart", ["createReceipt", "completeStep"]),
+  },
 };
 </script>

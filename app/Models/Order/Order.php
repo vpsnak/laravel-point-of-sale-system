@@ -275,13 +275,14 @@ class Order extends Model
 
     public function statuses()
     {
-        return $this
+        return
+            $this
             ->belongsToMany(Status::class)
             ->using(OrderStatus::class)
             ->withPivot('id')
             ->withPivot('processed_by_id')
             ->withTimestamps(['created_at'])
-            ->orderBy('id', 'desc');
+            ->orderBy('pivot_id', 'desc');
     }
 
     public function lastStatus()

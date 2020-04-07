@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Address;
 use App\Customer;
-use App\Giftcard;
 use App\Helper\Price;
 use App\Jobs\ProcessOrder;
 use App\Order;
@@ -337,11 +336,6 @@ class OrderController extends Controller
             'items',
             'store_pickup'
         ]);
-
-        if (isset($this->order_data['keyword'])) {
-            $query = $query
-                ->orWhere('location', 'LIKE', "%{$this->order_data['keyword']}%");
-        }
 
         if (isset($this->order_data['filters'])) {
             $query = $this->applyFilters($query);
