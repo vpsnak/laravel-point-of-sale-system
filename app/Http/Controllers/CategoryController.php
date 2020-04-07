@@ -54,7 +54,7 @@ class CategoryController extends Controller
 
     public function productListingCategories()
     {
-        return response(Category::paginate(10));
+        return response(Category::all());
     }
 
     public function productsByCategory(Category $category)

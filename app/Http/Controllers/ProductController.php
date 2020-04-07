@@ -106,7 +106,7 @@ class ProductController extends Controller
         $columns = ['sku', 'name', 'description'];
         $query = Product::query()->search($columns, $validatedData['keyword']);
 
-        return response($query->paginate(10));
+        return response($query->paginate(9));
     }
 
     public function getBarcode(Product $product)

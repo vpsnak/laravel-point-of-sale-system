@@ -123,8 +123,14 @@
                   <v-list dense>
                     <v-subheader v-text="'VIEW'" />
                     <v-list-item @click="viewProductDialog(product)">
-                      <v-icon class="pr-2" v-text="'mdi-eye'" />
-                      <h5 v-text="'Product'" />
+                      <v-list-item-icon>
+                        <v-icon v-text="'mdi-eye'" />
+                      </v-list-item-icon>
+                      <v-list-item-content>
+                        <v-list-item-title>
+                          <span v-text="'Product'" />
+                        </v-list-item-title>
+                      </v-list-item-content>
                     </v-list-item>
 
                     <v-list-item
@@ -133,11 +139,14 @@
                       link
                       :disabled="!product.url"
                     >
-                      <v-icon
-                        class="pr-2"
-                        v-text="'mdi-alpha-m-circle-outline'"
-                      />
-                      <h5 v-text="'On Magento'" />
+                      <v-list-item-icon>
+                        <v-icon v-text="'mdi-alpha-m-circle-outline'" />
+                      </v-list-item-icon>
+                      <v-list-item-content>
+                        <v-list-item-title>
+                          <span v-text="'On Magento'" />
+                        </v-list-item-title>
+                      </v-list-item-content>
                     </v-list-item>
 
                     <v-list-item
@@ -146,8 +155,14 @@
                       link
                       :disabled="!product.plantcare_pdf"
                     >
-                      <v-icon class="pr-2" v-text="'mdi-flower-outline'" />
-                      <h5 v-text="'Plant care'" />
+                      <v-list-item-icon>
+                        <v-icon v-text="'mdi-flower-outline'" />
+                      </v-list-item-icon>
+                      <v-list-item-content>
+                        <v-list-item-title>
+                          <span v-text="'Plant care'" />
+                        </v-list-item-title>
+                      </v-list-item-content>
                     </v-list-item>
 
                     <v-subheader v-text="'ACTIONS'" />
@@ -155,13 +170,25 @@
                       :disabled="!product.plantcare_pdf"
                       @click="mailPlantCareDialog(product)"
                     >
-                      <v-icon class="pr-2" v-text="'mdi-email-send'" />
-                      <h5 v-text="'Send plant care pdf'" />
+                      <v-list-item-icon>
+                        <v-icon v-text="'mdi-email-send'" />
+                      </v-list-item-icon>
+                      <v-list-item-content>
+                        <v-list-item-title>
+                          <span v-text="'Send plant care pdf'" />
+                        </v-list-item-title>
+                      </v-list-item-content>
                     </v-list-item>
 
                     <v-list-item @click="printProductBarcode(product)">
-                      <v-icon class="pr-2" v-text="'mdi-barcode'" />
-                      <h5 v-text="'Print barcode'" />
+                      <v-list-item-icon>
+                        <v-icon v-text="'mdi-barcode'" />
+                      </v-list-item-icon>
+                      <v-list-item-content>
+                        <v-list-item-title>
+                          <span v-text="'Print barcode'" />
+                        </v-list-item-title>
+                      </v-list-item-content>
                     </v-list-item>
                   </v-list>
                 </v-menu>
@@ -290,7 +317,7 @@
             dense
             width="175px"
           >
-            No items
+            <span v-text="'No items'" />
           </v-alert>
         </v-row>
       </v-container>
@@ -397,12 +424,12 @@ export default {
       this.categoriesLoading = true;
       const payload = {
         method: "get",
-        url: "product-listing/categories",
+        url: "categories/product-listing",
       };
 
       this.request(payload)
         .then((response) => {
-          this.categories = response.data;
+          this.categories = response;
         })
         .catch((error) => {
           console.log(error);
@@ -457,7 +484,7 @@ export default {
       this.selected_category = null;
       const payload = {
         method: "get",
-        url: `products?page=${this.current_page}`,
+        url: `products?page=${this.currentPage}`,
       };
       this.getProductRequest(payload);
     },

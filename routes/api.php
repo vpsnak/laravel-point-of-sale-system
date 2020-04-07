@@ -171,6 +171,7 @@ Route::delete('/carts/{model}', 'CartController@delete')->middleware('scope:admi
 
 // categories
 Route::get('/categories', 'CategoryController@all')->middleware('scope:admin,store_manager,cashier');
+Route::get('/categories/product-listing', "CategoryController@productListingCategories")->middleware('scope:admin,store_manager,cashier');
 Route::get('/categories/get/{model}', 'CategoryController@getOne')->middleware('scope:admin,store_manager,cashier');
 Route::get('/categories/{category}/products', 'CategoryController@productsByCategory')->middleware('scope:admin,store_manager,cashier');
 Route::post('/categories/create', 'CategoryController@create')->middleware('scope:admin,store_manager,cashier');
@@ -189,9 +190,6 @@ Route::post('/cash-register-logs/search', 'CashRegisterLogsController@search')->
 Route::post('/cash-register-logs/open', 'CashRegisterLogsController@open')->middleware('scope:admin,store_manager,cashier');
 Route::post('/cash-register-logs/close', 'CashRegisterLogsController@close')->middleware('scope:admin,store_manager,cashier');
 Route::delete('/cash-register-logs/{model}', 'CashRegisterLogsController@delete')->middleware('scope:admin');
-
-// categories to list in sale
-Route::get('/product-listing/categories', "CategoryController@productListingCategories")->middleware('scope:admin,store_manager,cashier');
 
 // delivery times slot
 Route::post('/shipping/timeslot', "TimeslotController@getTimeslots")->middleware('scope:admin,store_manager,cashier');

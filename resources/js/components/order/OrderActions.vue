@@ -11,9 +11,9 @@
           :disabled="loading"
           :loading="checkout_loading"
         >
-          <v-list-item-avatar>
+          <v-list-item-icon>
             <v-icon>mdi-package-variant</v-icon>
-          </v-list-item-avatar>
+          </v-list-item-icon>
           <v-list-item-title>Order items</v-list-item-title>
         </v-list-item>
         <v-list-item
@@ -22,9 +22,9 @@
           :disabled="loading"
           :loading="checkout_loading"
         >
-          <v-list-item-avatar>
+          <v-list-item-icon>
             <v-icon>mdi-file-document-edit-outline</v-icon>
-          </v-list-item-avatar>
+          </v-list-item-icon>
           <v-list-item-title>Order options</v-list-item-title>
         </v-list-item>
         <v-divider />
@@ -34,9 +34,9 @@
           :disabled="loading"
           :loading="checkout_loading"
         >
-          <v-list-item-avatar>
+          <v-list-item-icon>
             <v-icon>mdi-currency-usd</v-icon>
-          </v-list-item-avatar>
+          </v-list-item-icon>
           <v-list-item-title>Continue checkout</v-list-item-title>
         </v-list-item>
         <v-list-item
@@ -45,9 +45,9 @@
           :disabled="loading"
           :loading="receipt_loading"
         >
-          <v-list-item-avatar>
+          <v-list-item-icon>
             <v-icon>mdi-receipt</v-icon>
-          </v-list-item-avatar>
+          </v-list-item-icon>
           <v-list-item-title>Receipt</v-list-item-title>
         </v-list-item>
         <v-list-item
@@ -55,9 +55,9 @@
           :disabled="loading"
           :loading="reorder_loading"
         >
-          <v-list-item-avatar>
+          <v-list-item-icon>
             <v-icon>mdi-cart-arrow-down</v-icon>
-          </v-list-item-avatar>
+          </v-list-item-icon>
           <v-list-item-title>Reorder</v-list-item-title>
         </v-list-item>
         <v-list-item
@@ -66,9 +66,9 @@
           :disabled="loading"
           :loading="upload_to_mas_loading"
         >
-          <v-list-item-avatar>
+          <v-list-item-icon>
             <v-icon>mdi-file-upload-outline</v-icon>
-          </v-list-item-avatar>
+          </v-list-item-icon>
           <v-list-item-title>Upload to MAS</v-list-item-title>
         </v-list-item>
         <v-list-item
@@ -77,9 +77,9 @@
           :disabled="loading"
           :loading="cancel_loading"
         >
-          <v-list-item-avatar>
+          <v-list-item-icon>
             <v-icon>mdi-cancel</v-icon>
-          </v-list-item-avatar>
+          </v-list-item-icon>
           <v-list-item-title>Cancel order</v-list-item-title>
         </v-list-item>
       </v-list>
@@ -93,7 +93,7 @@ import { EventBus } from "../../plugins/eventBus";
 
 export default {
   mounted() {
-    EventBus.$on("order-edit-cancel-order", event => {
+    EventBus.$on("order-edit-cancel-order", (event) => {
       if (event.payload) {
         this.cancelOrder();
       } else {
@@ -112,7 +112,7 @@ export default {
       reorder_loading: false,
       receipt_loading: false,
       upload_to_mas_loading: false,
-      cancel_loading: false
+      cancel_loading: false,
     };
   },
 
@@ -122,7 +122,7 @@ export default {
       "cart_products",
       "order_status",
       "transactions",
-      "order_page_actions"
+      "order_page_actions",
     ]),
 
     orderPageActions: {
@@ -131,7 +131,7 @@ export default {
       },
       set(value) {
         this.setOrderPageActions(value);
-      }
+      },
     },
     loading() {
       if (
@@ -164,7 +164,7 @@ export default {
     },
     canCancel() {
       return this.order_status.can_cancel;
-    }
+    },
   },
   methods: {
     ...mapMutations("dialog", ["setDialog", "resetDialog"]),
@@ -172,7 +172,7 @@ export default {
       "setCheckoutDialog",
       "resetState",
       "setReorder",
-      "setOrderPageActions"
+      "setOrderPageActions",
     ]),
     ...mapActions("requests", ["request"]),
 
@@ -206,7 +206,7 @@ export default {
         icon: "mdi-receipt",
         component: "orderReceipt",
         persistent: true,
-        eventChannel: "orders-table-receipt"
+        eventChannel: "orders-table-receipt",
       };
       this.setDialog(payload);
     },
@@ -215,7 +215,7 @@ export default {
       this.cancel_loading = true;
       const payload = {
         title: `Verify your password to cancel order #${this.order_id}`,
-        eventChannel: "order-edit-cancel-order"
+        eventChannel: "order-edit-cancel-order",
       };
 
       this.confirmationDialog(payload);
@@ -230,14 +230,14 @@ export default {
         component: "passwordForm",
         model: { action: "verify" },
         persistent: true,
-        eventChannel: payload.eventChannel
+        eventChannel: payload.eventChannel,
       });
     },
     cancelOrder() {
       return new Promise((resolve, reject) => {
         const payload = {
           method: "get",
-          url: `orders/${this.order_id}`
+          url: `orders/${this.order_id}`,
         };
         this.request(payload)
           .then(() => {
@@ -248,7 +248,7 @@ export default {
             this.cancel_loading = false;
           });
       });
-    }
-  }
+    },
+  },
 };
 </script>

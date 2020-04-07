@@ -53,7 +53,7 @@ class Setting extends Model
             self
             ::where('user_id', $user_id)
             ->where('key', 'theme_dark')
-            ->first();
+            ->firstOrFail();
     }
 
     // global settings
