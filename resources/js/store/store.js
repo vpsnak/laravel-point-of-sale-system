@@ -2,11 +2,12 @@ import Vue from "vue";
 import Vuex from "vuex";
 
 import "es6-promise/auto";
-import Cookies from "js-cookie";
+
 import router from "../plugins/router";
 //modules
 import requests from "./modules/requests";
 import config from "./modules/config";
+import Cookies from "js-cookie";
 import menu from "./modules/menu";
 import cart from "./modules/cart";
 import datatable from "./modules/datatable";
@@ -24,50 +25,57 @@ export default new Vuex.Store({
     cart,
     datatable,
     dialog,
-    icons
+    icons,
   },
   state: {
-    user: Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null,
-    token: Cookies.get("token") || null,
+    user: Cookies.getJSON("user"),
+    token: Cookies.get("token"),
 
     cashRegister: null,
 
     // notification
     notification: {
       msg: "",
-      type: ""
+      type: "",
     },
 
     productList: [],
-    storeList: []
+    storeList: [],
   },
   getters: {
-    auth: state => {
+    auth: (state) => {
       if (state.user && state.token) {
         return true;
       } else {
         return false;
       }
     },
-    role: state => {
+    role: (state) => {
       if (state.user) {
         return state.user.roles[0].name;
       } else {
         return false;
       }
-    }
+    },
   },
   mutations: {
+    updateUserSetting(state, setting) {
+      const index = _.findIndex(state.user.settings, {
+        key: setting.key,
+      });
+      state.user.settings[index] = setting;
+      state.config.Cookies.set("user", state.user);
+    },
     setProductList(state, value) {
       state.productList = value;
     },
     logout(state) {
       if (_.has(state.user, "id")) {
-        state.config.echo.leave(`user.${state.user.id}`);
+        state.config.Echo.leave(`user.${state.user.id}`);
       }
 
-      Cookies.remove("user");
-      Cookies.remove("token");
+      state.config.Cookies.remove("user");
+      state.config.Cookies.remove("token");
 
       state.user = null;
       state.token = null;
@@ -96,31 +104,25 @@ export default new Vuex.Store({
     setUser(state, user) {
       if (user) {
         state.user = user;
-        Cookies.set("user", user, {
-          secure: state.config.app_env !== "development" ? true : false,
-          sameSite: "strict"
-        });
+        state.config.Cookies.set("user", user);
       } else {
         state.user = null;
-        Cookies.remove("user");
+        state.config.Cookies.remove("user");
       }
     },
     setToken(state, token) {
       if (token) {
         state.token = token;
-        Cookies.set("token", state.token, {
-          secure: state.config.app_env !== "development" ? true : false,
-          sameSite: "strict"
-        });
+        state.config.Cookies.set("token", state.token);
       } else {
         state.token = null;
-        Cookies.remove("token");
+        state.config.Cookies.remove("token");
       }
     },
     setNotification(state, notification) {
       state.notification = [];
       state.notification = notification;
-    }
+    },
   },
   actions: {
     login(context, data) {
@@ -129,20 +131,20 @@ export default new Vuex.Store({
           method: "post",
           url: "auth/login",
           data: data,
-          no_error_notification: true
+          no_error_notification: true,
         };
         context
           .dispatch("requests/request", payload)
-          .then(response => {
+          .then((response) => {
             context.commit("setToken", response.token);
             context.commit("setUser", response.user);
 
             resolve(response);
           })
-          .catch(error => {
+          .catch((error) => {
             context.commit("setNotification", {
               msg: "Invalid credentials",
-              type: "error"
+              type: "error",
             });
 
             reject(error);
@@ -153,14 +155,14 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         const payload = {
           method: "get",
-          url: "auth/logout"
+          url: "auth/logout",
         };
         context
           .dispatch("requests/request", payload)
           .then(() => {
             resolve(true);
           })
-          .catch(error => {
+          .catch((error) => {
             reject(error);
           })
           .finally(() => {
@@ -175,14 +177,14 @@ export default new Vuex.Store({
         payload.url = "cash-register-logs/open";
         context
           .dispatch("requests/request", payload)
-          .then(response => {
+          .then((response) => {
             context.commit("setCashRegister", response.cash_register);
             context.commit("menu/setStoreName", response.store_name);
             context.commit("cart/setTaxPercentage", response.tax_percentage);
 
             resolve(response.data);
           })
-          .catch(error => {
+          .catch((error) => {
             reject(error);
           });
       });
@@ -191,14 +193,14 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         const payload = {
           method: "get",
-          url: "cash-register-logs/logout"
+          url: "cash-register-logs/logout",
         };
         context
           .dispatch("requests/request", payload)
-          .then(response => {
+          .then((response) => {
             resolve(response);
           })
-          .catch(error => {
+          .catch((error) => {
             reject(error);
           })
           .finally(() => {
@@ -214,18 +216,18 @@ export default new Vuex.Store({
         payload.url = "cash-register-logs/close";
         context
           .dispatch("requests/request", payload)
-          .then(response => {
+          .then((response) => {
             context.commit("setCashRegister", null);
             context.commit("menu/setStoreName", null);
 
             resolve(response.data);
           })
-          .catch(error => {
+          .catch((error) => {
             reject(error);
           });
       });
-    }
-  }
+    },
+  },
 });
 
 export const store = new Vuex.Store();

@@ -13,6 +13,10 @@ class Setting extends Model
         'user_id'
     ];
 
+    protected $hidden = [
+        'user_id'
+    ];
+
     protected $casts = [
         'data' => 'array'
     ];
@@ -35,8 +39,22 @@ class Setting extends Model
     {
         Setting::create([
             'key' => 'theme_dark',
-            'value' => false,
+            'value' => true,
             'user_id' => $user_id
         ]);
     }
+
+    // get individual settings
+
+    // settings per user
+    public static function getUserThemeDark(int $user_id)
+    {
+        return
+            self
+            ::where('user_id', $user_id)
+            ->where('key', 'theme_dark')
+            ->first();
+    }
+
+    // global settings
 }

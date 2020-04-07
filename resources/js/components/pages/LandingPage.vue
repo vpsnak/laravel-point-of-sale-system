@@ -90,19 +90,18 @@ export default {
   },
   methods: {
     ...mapMutations(["logout"]),
-    ...mapMutations("config", ["addLoadPercent", "resetLoad"]),
+    ...mapMutations("config", ["addLoadPercent"]),
     ...mapMutations("cart", ["resetState"]),
     ...mapMutations("dialog", ["resetDialog"]),
     ...mapActions("config", [
-      "getMasEnv",
-      "getMenuItems",
       "initWebSockets",
       "initChannels",
+      "getMasEnv",
+      "getMenuItems",
       "retrieveCashRegister",
     ]),
 
     init() {
-      this.resetLoad();
       this.resetAppState();
 
       this.getMenuItems()

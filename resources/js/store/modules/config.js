@@ -9,7 +9,8 @@ const state = {
 
   app_load: 0,
 
-  echo: {}
+  Echo: {},
+  Cookies: require("js-cookie"),
 };
 
 const mutations = {
@@ -19,7 +20,6 @@ const mutations = {
       ? state.init_info.push(value)
       : (state.init_info[index] = value);
   },
-
   setMasEnv(state, value) {
     state.mas_env = value;
   },
@@ -28,51 +28,57 @@ const mutations = {
   },
   addLoadPercent(state, value) {
     state.app_load += value;
-  }
+  },
 };
 
 const actions = {
+  initCookies(context) {
+    context.state.Cookies.defaults = {
+      secure: context.state.app_env !== "development" ? true : false,
+      sameSite: "strict",
+    };
+  },
   getMenuItems(context) {
     context.state.verbose
       ? context.commit("setInitInfo", {
           action: "getMenuItems",
           status: "info",
-          message: "LOADING"
+          message: "LOADING",
         })
       : "";
 
     return new Promise((resolve, reject) => {
       const payload = {
         method: "get",
-        url: "menu-items"
+        url: "menu-items",
       };
       context
         .dispatch("requests/request", payload, { root: true })
-        .then(response => {
+        .then((response) => {
           context.commit("menu/setTopMenu", response.top_menu, {
-            root: true
+            root: true,
           });
 
           context.commit("menu/setSideMenu", response.side_menu, {
-            root: true
+            root: true,
           });
 
           context.state.verbose
             ? context.commit("setInitInfo", {
                 action: "getMenuItems",
                 status: "success",
-                message: "OK"
+                message: "OK",
               })
             : "";
 
           resolve(true);
         })
-        .catch(error => {
+        .catch((error) => {
           context.state.verbose
             ? context.commit("setInitInfo", {
                 action: "getMenuItems",
                 status: "error",
-                message: "FAILED"
+                message: "FAILED",
               })
             : "";
           reject(error);
@@ -84,23 +90,23 @@ const actions = {
       ? context.commit("setInitInfo", {
           action: "getMasEnv",
           status: "info",
-          message: "LOADING"
+          message: "LOADING",
         })
       : "";
 
     return new Promise((resolve, reject) => {
       const payload = {
         method: "get",
-        url: "mas/env"
+        url: "mas/env",
       };
       context
         .dispatch("requests/request", payload, { root: true })
-        .then(response => {
+        .then((response) => {
           context.state.verbose
             ? context.commit("setInitInfo", {
                 action: "getMasEnv",
                 status: "success",
-                message: "OK"
+                message: "OK",
               })
             : "";
 
@@ -108,12 +114,12 @@ const actions = {
 
           resolve(true);
         })
-        .catch(error => {
+        .catch((error) => {
           context.state.verbose
             ? context.commit("setInitInfo", {
                 action: "getMasEnv",
                 status: "error",
-                message: "FAILED"
+                message: "FAILED",
               })
             : "";
           reject(error);
@@ -124,15 +130,15 @@ const actions = {
     return new Promise((resolve, reject) => {
       const payload = {
         method: "get",
-        url: `mas/set/${env}`
+        url: `mas/set/${env}`,
       };
       context
         .dispatch("requests/request", payload, { root: true })
-        .then(response => {
+        .then((response) => {
           context.commit("setMasEnv", response.payload);
           resolve(true);
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error);
         });
     });
@@ -142,30 +148,30 @@ const actions = {
       ? context.commit("setInitInfo", {
           action: "initWebSockets",
           status: "info",
-          message: "LOADING"
+          message: "LOADING",
         })
       : "";
 
     return new Promise((resolve, reject) => {
       try {
-        state.echo = require("laravel-echo");
-        state.echo = new state.echo.default({
+        state.Echo = require("laravel-echo");
+        state.Echo = new state.Echo.default({
           broadcaster: "pusher",
           key: process.env.MIX_PUSHER_APP_KEY,
           cluster: process.env.MIX_PUSHER_APP_CLUSTER,
           encrypted: true,
           auth: {
             headers: {
-              Authorization: context.rootState.token
-            }
-          }
+              Authorization: context.rootState.token,
+            },
+          },
         });
 
         context.state.verbose
           ? context.commit("setInitInfo", {
               action: "initWebSockets",
               status: "success",
-              message: "OK"
+              message: "OK",
             })
           : "";
 
@@ -176,7 +182,7 @@ const actions = {
           ? context.commit("setInitInfo", {
               action: "initWebSockets",
               status: "error",
-              message: "FAILED"
+              message: "FAILED",
             })
           : "";
 
@@ -189,29 +195,28 @@ const actions = {
       ? context.commit("setInitInfo", {
           action: "initChannels",
           status: "info",
-          message: "LOADING"
+          message: "LOADING",
         })
       : "";
     return new Promise((resolve, reject) => {
       try {
-        state.echo
-          .private(`user.${context.rootState.user.id}`)
-          .listen("CashRegisterLogin", e => {
-            e.mutations.forEach(mutation => {
+        state.Echo.private(`user.${context.rootState.user.id}`)
+          .listen("CashRegisterLogin", (e) => {
+            e.mutations.forEach((mutation) => {
               context.commit(mutation.name, mutation.data, mutation.root);
             });
 
             context.commit("setNotification", e.notification, {
-              root: true
+              root: true,
             });
           })
-          .listen("UserDeauth", e => {
-            e.actions.forEach(action => {
+          .listen("UserDeauth", (e) => {
+            e.actions.forEach((action) => {
               context.dispatch(action.name, action.data, action.root);
             });
 
             context.commit("setNotification", e.notification, {
-              root: true
+              root: true,
             });
           });
 
@@ -219,7 +224,7 @@ const actions = {
           ? context.commit("setInitInfo", {
               action: "initChannels",
               status: "success",
-              message: "OK"
+              message: "OK",
             })
           : "";
 
@@ -229,7 +234,7 @@ const actions = {
           context.commit("setInitInfo", {
             action: "initChannels",
             status: "error",
-            message: "FAILED"
+            message: "FAILED",
           });
 
           reject(error);
@@ -244,37 +249,37 @@ const actions = {
       ? context.commit("setInitInfo", {
           action: "retrieveCashRegister",
           status: "info",
-          message: "LOADING"
+          message: "LOADING",
         })
       : "";
 
     return new Promise((resolve, reject) => {
       const payload = {
         method: "get",
-        url: "cash-register-logs/retrieve"
+        url: "cash-register-logs/retrieve",
       };
 
       context
         .dispatch("requests/request", payload, { root: true })
-        .then(response => {
+        .then((response) => {
           context.commit("setCashRegister", response.cash_register, {
-            root: true
+            root: true,
           });
           context.commit("menu/setStoreName", response.store_name, {
-            root: true
+            root: true,
           });
           context.commit("cart/setTaxPercentage", response.tax_percentage, {
-            root: true
+            root: true,
           });
 
           resolve(response.data);
         })
-        .catch(error => {
+        .catch((error) => {
           if (context.state.verbose) {
             context.commit("setInitInfo", {
               action: "retrieveCashRegister",
               status: "error",
-              message: "FAILED"
+              message: "FAILED",
             });
 
             reject(error);
@@ -283,12 +288,12 @@ const actions = {
           }
         });
     });
-  }
+  },
 };
 
 export default {
   namespaced: true,
   state,
   actions,
-  mutations
+  mutations,
 };

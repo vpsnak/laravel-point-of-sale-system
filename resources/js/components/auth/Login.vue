@@ -23,7 +23,7 @@
                   name="login"
                   prepend-inner-icon="person"
                   type="text"
-                  :error="errors[0]"
+                  :error="errors[0] ? true : false"
                   single-line
                 />
               </ValidationProvider>
@@ -37,7 +37,7 @@
                   label="Password"
                   prepend-inner-icon="lock"
                   type="password"
-                  :error="errors[0]"
+                  :error="errors[0] ? true : false"
                   single-line
                 />
               </ValidationProvider>

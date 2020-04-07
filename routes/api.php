@@ -39,6 +39,9 @@ Route::post('/users/password', 'UserController@changeUserPwd')->middleware('scop
 Route::patch('/users/update', 'UserController@update')->middleware('scope:admin,store_manager');
 Route::get('/users/{model}/deauth', 'UserController@deauthUser')->middleware('scope:admin');
 
+// settings
+Route::patch('/settings/theme-dark', 'SettingController@setThemeDark')->middleware('scope:admin,store_manager,cashier');
+
 // transaction
 Route::get('/transactions', 'TransactionController@all')->middleware('scope:admin,store_manager,cashier');
 

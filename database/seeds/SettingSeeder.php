@@ -14,7 +14,7 @@ class SettingSeeder extends Seeder
         DB::table('settings')->insert([
             [
                 'key' => 'theme_dark',
-                'value' => null,
+                'value' => true,
                 'data' => null,
                 'user_id' => 1,
                 'created_at' => now(),
@@ -30,7 +30,7 @@ class SettingSeeder extends Seeder
             ],
             [
                 'key' => 'theme_dark',
-                'value' => null,
+                'value' => true,
                 'data' => null,
                 'user_id' => 3,
                 'created_at' => now(),
@@ -38,7 +38,7 @@ class SettingSeeder extends Seeder
             ],
             [
                 'key' => 'theme_dark',
-                'value' => null,
+                'value' => true,
                 'data' => null,
                 'user_id' => 4,
                 'created_at' => now(),

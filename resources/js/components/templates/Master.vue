@@ -17,17 +17,19 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapState } from "vuex";
+import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
 
 export default {
   created() {
-    if (this.auth) {
-      this.$router.replace({ name: "landingPage" });
-    } else {
-      if (this.$route.name !== "login") {
-        this.$router.replace({ name: "login" });
+    this.initCookies().then(() => {
+      if (this.auth) {
+        this.$router.replace({ name: "landingPage" });
+      } else {
+        if (this.$route.name !== "login") {
+          this.$router.replace({ name: "login" });
+        }
       }
-    }
+    });
   },
   computed: {
     ...mapState(["user"]),
@@ -40,22 +42,23 @@ export default {
       deep: true,
       immediate: true,
       handler(value) {
-        this.applyUserTheme();
+        this.applyUserTheme(value);
       },
     },
   },
 
   methods: {
     ...mapMutations(["logout"]),
+    ...mapActions("config", ["initCookies"]),
 
-    applyUserTheme() {
-      if (_.has(this.user, "settings")) {
-        const theme_dark = _.find(this.user.settings, {
+    applyUserTheme(value) {
+      if (_.has(value, "settings")) {
+        const theme_dark = _.find(value.settings, {
           key: "theme_dark",
         });
 
-        if (_.has(theme_dark, "value") && theme_dark.value === "0") {
-          this.$vuetify.theme.dark = false;
+        if (_.has(theme_dark, "value")) {
+          this.$vuetify.theme.dark = theme_dark.value === "1" ? true : false;
         } else {
           this.$vuetify.theme.dark = true;
         }

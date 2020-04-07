@@ -1,38 +1,31 @@
 <template>
   <v-app-bar app clipped-left>
-    <v-app-bar-nav-icon
-      @click.stop="menuVisibility = !menuVisibility"
-    ></v-app-bar-nav-icon>
+    <v-app-bar-nav-icon @click.stop="menuVisibility = !menuVisibility" />
+    <v-toolbar-title v-text="app_name" />
+
+    <v-spacer />
+
     <v-toolbar-title>
-      {{ app_name }}
+      <span v-text="'Environment: '" />
+      <i :class="txtColor(app_env)" v-text="app_env" />
     </v-toolbar-title>
 
-    <v-spacer></v-spacer>
+    <v-spacer />
 
-    <v-toolbar-title class="mr-2">
-      Environment:
-      <i :class="txtColor(app_env)">
-        {{ app_env }}
-      </i>
+    <v-toolbar-title>
+      <span v-text="'MAS Env: '" />
+      <i :class="txtColor(mas_env)" @click="clicks++" v-text="mas_env" />
     </v-toolbar-title>
 
-    <v-spacer></v-spacer>
-
-    <v-toolbar-title class="mr-2">
-      MAS Env:
-      <i :class="txtColor(mas_env)" @click="clicks++">
-        {{ mas_env }}
-      </i>
-    </v-toolbar-title>
-
-    <v-spacer></v-spacer>
+    <v-spacer />
 
     <v-chip
       v-if="!cashRegister"
       text
       @click="$router.push({ name: 'openCashRegister' })"
+      label
     >
-      Select cash register
+      <span v-text="'Select cash register'" />
     </v-chip>
     <v-menu
       v-if="cashRegister"
@@ -43,8 +36,8 @@
     >
       <template v-slot:activator="{ on }">
         <v-btn v-on="on" icon dark>
-          <v-avatar color="green" size="36">
-            <v-icon dark>mdi-cash-register</v-icon>
+          <v-avatar color="green" size="36px">
+            <v-icon dark v-text="'mdi-cash-register'" />
           </v-avatar>
         </v-btn>
       </template>
@@ -56,17 +49,17 @@
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
-                {{ store_name }}
+                <span v-text="store_name" />
               </v-list-item-title>
               <v-list-item-subtitle>
-                {{ cashRegister.name }}
+                <span v-text="cashRegister.name" />
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
           <v-divider />
           <v-list-item @click="checkCashRegisterDialog">
             <v-list-item-avatar>
-              <v-icon>mdi-alpha-x-circle</v-icon>
+              <v-icon v-text="'mdi-alpha-x-circle'" />
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>Generate X report</v-list-item-title>
@@ -74,7 +67,7 @@
           </v-list-item>
           <v-list-item @click.stop="cashRegisterLogout()">
             <v-list-item-avatar>
-              <v-icon>mdi-logout</v-icon>
+              <v-icon v-text="'mdi-logout'" />
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>Logout</v-list-item-title>
@@ -83,11 +76,11 @@
           <v-divider></v-divider>
           <v-list-item @click.stop="closeCashRegisterDialog()">
             <v-list-item-avatar>
-              <v-icon>mdi-alpha-z-circle</v-icon>
+              <v-icon v-text="'mdi-alpha-z-circle'" />
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
-                Close and generate Z report
+                <span v-text="'Close and generate Z report'" />
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -97,21 +90,21 @@
     <v-menu left bottom offset-x transition="scale-transition">
       <template v-slot:activator="{ on }">
         <v-btn v-on="on" icon>
-          <v-icon>mdi-account-circle</v-icon>
+          <v-icon v-text="'mdi-account-circle'" />
         </v-btn>
       </template>
       <v-list dense>
         <v-list-item-group>
           <v-list-item inactive two-line @click.stop :ripple="false">
             <v-list-item-avatar color="orange">
-              {{ nameInitials }}
+              <span v-text="nameInitials" />
             </v-list-item-avatar>
             <v-list-item-content>
               <v-list-item-title>
-                {{ user.name }}
+                <span v-text="user.name" />
               </v-list-item-title>
               <v-list-item-subtitle>
-                {{ user.email }}
+                <span v-text="user.email" />
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -126,27 +119,35 @@
             exact
           >
             <v-list-item-avatar>
-              <v-icon>{{ menu_item.icon }}</v-icon>
+              <v-icon v-text="menu_item.icon" />
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title>{{ menu_item.title }}</v-list-item-title>
+              <v-list-item-title>
+                <span v-text="menu_item.title" />
+              </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
 
           <v-divider />
 
-          <v-list-item @click.stop="darkMode = !darkMode">
+          <v-list-item
+            @click.stop="darkMode = !darkMode"
+            :disabled="darkModeLoading"
+          >
             <v-list-item-avatar>
-              <v-icon>mdi-brightness-4</v-icon>
+              <v-icon v-text="'mdi-weather-night'" />
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title>Dark mode</v-list-item-title>
+              <v-list-item-title>
+                <span v-text="'Dark theme'" />
+              </v-list-item-title>
             </v-list-item-content>
             <v-list-item-action>
               <v-switch
                 v-model="darkMode"
                 @click.stop="darkMode = !darkMode"
-              ></v-switch>
+                :loading="darkModeLoading"
+              />
             </v-list-item-action>
           </v-list-item>
         </v-list-item-group>
@@ -161,7 +162,7 @@ import { EventBus } from "../../plugins/eventBus";
 
 export default {
   mounted() {
-    EventBus.$on("top-menu-generate-z", event => {
+    EventBus.$on("top-menu-generate-z", (event) => {
       if (event && _.has(event, "payload.response.report")) {
         this.displayZDialog(event.payload.response.report);
       }
@@ -174,7 +175,8 @@ export default {
 
   data() {
     return {
-      clicks: 0
+      clicks: 0,
+      darkModeLoading: false,
     };
   },
 
@@ -182,17 +184,10 @@ export default {
     clicks(value) {
       if (value === 10) {
         this.clicks = 0;
-        let payload;
-
-        if (this.mas_env === "production") {
-          payload = "test";
-        } else {
-          payload = "production";
-        }
-
+        const payload = this.mas_env === "production" ? "test" : "production";
         this.setMasEnv(payload);
       }
-    }
+    },
   },
 
   computed: {
@@ -206,7 +201,18 @@ export default {
       },
       set(value) {
         this.$vuetify.theme.dark = value;
-      }
+
+        this.darkModeLoading = true;
+        const payload = {
+          method: "patch",
+          url: "settings/theme-dark",
+          data: { value: value ? "1" : "0" },
+        };
+        this.request(payload).then((response) => {
+          this.updateUserSetting(response);
+          this.darkModeLoading = false;
+        });
+      },
     },
     menuVisibility: {
       get() {
@@ -214,7 +220,7 @@ export default {
       },
       set(value) {
         this.setVisibility(value);
-      }
+      },
     },
     nameInitials() {
       const initials = _.split(this.user.name, " ", 2);
@@ -223,12 +229,14 @@ export default {
       } else {
         return this.user.name.charAt(0);
       }
-    }
+    },
   },
 
   methods: {
+    ...mapMutations(["updateUserSetting"]),
     ...mapMutations("dialog", ["setDialog"]),
     ...mapMutations("menu", ["setVisibility"]),
+    ...mapActions("requests", ["request"]),
     ...mapActions("config", ["setMasEnv"]),
     ...mapActions(["cashRegisterLogout"]),
 
@@ -271,7 +279,7 @@ export default {
         icon: "mdi-alpha-z-circle",
         component: "closeCashRegisterForm",
         persistent: true,
-        eventChannel: "top-menu-generate-z"
+        eventChannel: "top-menu-generate-z",
       });
     },
     changePasswordDialog() {
@@ -283,7 +291,7 @@ export default {
         model: { action: "change_self" },
         icon: "mdi-key",
         component: "PasswordForm",
-        persistent: true
+        persistent: true,
       });
     },
     displayZDialog(report) {
@@ -295,7 +303,7 @@ export default {
         model: report,
         icon: "mdi-alpha-z-circle",
         component: "cashRegisterReports",
-        persistent: true
+        persistent: true,
       });
     },
     checkCashRegisterDialog() {
@@ -306,9 +314,9 @@ export default {
         titleCloseBtn: true,
         icon: "mdi-alpha-x-circle",
         component: "cashRegisterReports",
-        persistent: true
+        persistent: true,
       });
-    }
-  }
+    },
+  },
 };
 </script>
