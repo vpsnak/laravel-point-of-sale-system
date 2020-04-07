@@ -7,7 +7,7 @@ import router from "../plugins/router";
 //modules
 import requests from "./modules/requests";
 import config from "./modules/config";
-import Cookies from "js-cookie";
+import { get, getJSON } from "js-cookie";
 import menu from "./modules/menu";
 import cart from "./modules/cart";
 import datatable from "./modules/datatable";
@@ -28,8 +28,8 @@ export default new Vuex.Store({
     icons,
   },
   state: {
-    user: Cookies.getJSON("user"),
-    token: Cookies.get("token"),
+    user: getJSON("user"),
+    token: get("token"),
 
     cashRegister: null,
 
