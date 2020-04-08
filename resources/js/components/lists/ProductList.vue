@@ -122,7 +122,7 @@
               <v-card-title class="pa-0 grey white--text darken-2" @click.stop>
                 <h6 class="px-2" v-text="truncate(product.name)" />
                 <v-spacer />
-                <v-menu bottom left dark>
+                <v-menu bottom left dark offset-y origin="top right">
                   <template v-slot:activator="{ on }">
                     <v-btn icon v-on="on">
                       <v-icon color="white" v-text="'mdi-dots-vertical'" />
