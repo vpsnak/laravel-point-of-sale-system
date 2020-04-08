@@ -103,14 +103,14 @@
       origin="top right"
     >
       <template v-slot:activator="{ on }">
-        <v-btn v-on="on" icon>
-          <v-icon v-text="'mdi-account-circle'" />
+        <v-btn v-on="on" fab small color="blue-grey darken-3">
+          <span v-text="nameInitials" style="font-size:18px;" />
         </v-btn>
       </template>
       <v-list dense>
         <v-list-item inactive two-line @click.stop :ripple="false">
-          <v-list-item-avatar color="orange">
-            <span v-text="nameInitials" />
+          <v-list-item-avatar color="blue-grey darken-3">
+            <span v-text="nameInitials" style="font-size:18px;" />
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title>
