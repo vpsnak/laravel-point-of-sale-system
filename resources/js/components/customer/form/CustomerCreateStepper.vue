@@ -19,7 +19,7 @@
     </v-stepper-header>
 
     <v-stepper-content step="1">
-      <customerForm />
+      <customerForm stepper />
     </v-stepper-content>
     <v-stepper-content step="2">
       <addressForm />
@@ -34,8 +34,8 @@
 export default {
   data() {
     return {
-      step: 1,
+      step: 1
     };
-  },
+  }
 };
 </script>

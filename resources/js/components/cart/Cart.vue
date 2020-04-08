@@ -1,5 +1,5 @@
 <template>
-  <v-card class="fill-height">
+  <v-card class="fill-height" outlined>
     <v-container fluid class="pa-0">
       <customerSearch
         v-if="$props.showCustomer"
@@ -39,7 +39,7 @@ export default {
     showMethods: Boolean,
     showCustomer: Boolean,
     showActions: Boolean,
-    showSave: Boolean,
+    showSave: Boolean
   },
 
   computed: {
@@ -49,7 +49,7 @@ export default {
 
     totalProducts() {
       return _.size(this.cart_products) ? false : true;
-    },
-  },
+    }
+  }
 };
 </script>

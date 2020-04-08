@@ -15,10 +15,10 @@
           v-on="on"
           :disabled="isRetailDisabled"
         >
-          <v-icon>mdi-cart-arrow-right</v-icon>
+          <v-icon v-text="'mdi-cart-arrow-right'" />
         </v-btn>
       </template>
-      <span>Cash & Carry</span>
+      <span v-text="'Cash & Carry'" />
     </v-tooltip>
     <v-tooltip bottom>
       <template v-slot:activator="{ on }">
@@ -29,10 +29,10 @@
           :disabled="isNonRetailDisabled"
           v-on="on"
         >
-          <v-icon>mdi-storefront</v-icon>
+          <v-icon v-text="'mdi-storefront'" />
         </v-btn>
       </template>
-      <span>In Store Pickup</span>
+      <span v-text="'In Store Pickup'" />
     </v-tooltip>
     <v-tooltip bottom>
       <template v-slot:activator="{ on }">
@@ -43,10 +43,10 @@
           :disabled="isNonRetailDisabled"
           v-on="on"
         >
-          <v-icon>mdi-truck-delivery</v-icon>
+          <v-icon v-text="'mdi-truck-delivery'" />
         </v-btn>
       </template>
-      <span>Delivery</span>
+      <span v-text="'Delivery'" />
     </v-tooltip>
   </v-btn-toggle>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <v-card class="fill-height pa-3" elevation="12">
+  <v-card class="fill-height pa-3" :elevation="12" outlined>
     <v-container fluid>
       <v-row justify="space-between">
         <v-col cols="auto">
@@ -34,11 +34,16 @@
         </v-col>
 
         <v-col cols="auto">
-          <v-menu :nudge-width="200" offset-x>
-            <template v-slot:activator="{ on }">
-              <v-btn text v-on="on">
-                <v-icon v-text="'mdi-plus'" />
-              </v-btn>
+          <v-menu :nudge-width="200" offset-y>
+            <template v-slot:activator="{ on: menu }">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on: tooltip }">
+                  <v-btn text v-on="{ ...tooltip, ...menu }">
+                    <v-icon v-text="'mdi-plus'" />
+                  </v-btn>
+                </template>
+                <span v-text="'Add [...] to cart'" />
+              </v-tooltip>
             </template>
             <v-list>
               <v-list-item @click="addCustomProductDialog()">

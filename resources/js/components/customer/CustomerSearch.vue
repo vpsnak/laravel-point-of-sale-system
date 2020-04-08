@@ -37,14 +37,14 @@
           class="mx-2"
           @click.stop="customerForm(false)"
           v-on="on"
-          icon
+          text
           :disabled="!editable"
           small
         >
-          <v-icon>mdi-pencil</v-icon>
+          <v-icon v-text="'mdi-pencil'" />
         </v-btn>
       </template>
-      <span>View / Edit selected customer</span>
+      <span v-text="'View / Edit selected customer'" />
     </v-tooltip>
 
     <v-tooltip bottom v-if="cartCustomerComment">
@@ -52,15 +52,15 @@
         <v-btn
           class="mx-2"
           @click.stop="viewCustomerComments"
-          icon
+          text
           color="red"
           v-on="on"
           small
         >
-          <v-icon>mdi-comment</v-icon>
+          <v-icon v-text="'mdi-comment'" />
         </v-btn>
       </template>
-      <span>View comments</span>
+      <span v-text="'View comments'" />
     </v-tooltip>
 
     <v-tooltip bottom>
@@ -69,16 +69,16 @@
           class="mx-2"
           @click.stop="customerForm(true)"
           v-on="on"
-          icon
+          text
           :disabled="!editable"
           small
         >
-          <v-icon>mdi-plus</v-icon>
+          <v-icon v-text="'mdi-plus'" />
         </v-btn>
       </template>
-      <span>Add a customer</span>
+      <span v-text="'Add a customer'" />
     </v-tooltip>
-    <v-divider vertical class="mx-1"></v-divider>
+    <v-divider vertical class="mx-1" />
     <cartMethods v-if="$props.showMethods" />
   </v-row>
 </template>
@@ -88,7 +88,7 @@ import { EventBus } from "../../plugins/eventBus";
 
 export default {
   mounted() {
-    EventBus.$on("customer-search", (event) => {
+    EventBus.$on("customer-search", event => {
       if (event.payload.customer) {
         this.cartCustomer = event.payload.customer;
       }
@@ -102,7 +102,7 @@ export default {
   props: {
     showMethods: Boolean,
     keywordLength: Number,
-    editable: Boolean,
+    editable: Boolean
   },
 
   data() {
@@ -111,7 +111,7 @@ export default {
       search: null,
       showCustomerComments: false,
       showCreateDialog: false,
-      customers: [],
+      customers: []
     };
   },
 
@@ -124,7 +124,7 @@ export default {
       },
       set(value) {
         this.customers = value;
-      },
+      }
     },
     cartCustomer: {
       get() {
@@ -135,7 +135,7 @@ export default {
           this.resetDelivery(true);
         }
         this.setCustomer(value);
-      },
+      }
     },
     cartCustomerComment() {
       if (this.cartCustomer) {
@@ -143,7 +143,7 @@ export default {
       } else {
         return false;
       }
-    },
+    }
   },
 
   methods: {
@@ -164,7 +164,7 @@ export default {
         component: create ? "customerNewForm" : "customerForm",
         model: create ? {} : this.cartCustomer,
         persistent: create ? true : false,
-        eventChannel: "customer-search",
+        eventChannel: "customer-search"
       });
     },
     viewCustomerComments() {
@@ -177,7 +177,7 @@ export default {
         titleCloseBtn: true,
         component: "customerComment",
         model: this.cartCustomer,
-        persistent: false,
+        persistent: false
       });
     },
     checkIfObjectEvent() {
@@ -198,19 +198,19 @@ export default {
       const payload = {
         method: "post",
         url: "customers/search",
-        data: { keyword: keyword },
+        data: { keyword: keyword }
       };
       this.request(payload)
-        .then((result) => {
+        .then(result => {
           this.results = result;
         })
-        .catch((error) => {
+        .catch(error => {
           console.error(error);
         })
         .finally(() => {
           this.loading = false;
         });
-    },
+    }
   },
 
   watch: {
@@ -228,7 +228,7 @@ export default {
       if (!value) {
         this.$refs.searchfield.lazySearch = this.$refs.searchfield.lazyValue = null;
       }
-    },
-  },
+    }
+  }
 };
 </script>

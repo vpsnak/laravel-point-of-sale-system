@@ -170,6 +170,7 @@ export default {
   props: {
     model: Object,
     readonly: Boolean,
+    stepper: Boolean
   },
 
   data() {
@@ -184,15 +185,15 @@ export default {
         house_account_status: false,
         no_tax: false,
         file: null,
-        no_tax_file: null,
-      },
+        no_tax_file: null
+      }
     };
   },
 
   mounted() {
     if (this.$props.model) {
       this.formFields = {
-        ...this.$props.model,
+        ...this.$props.model
       };
     }
   },
@@ -239,21 +240,21 @@ export default {
       const payload = {
         method: this.$props.model ? "patch" : "post",
         url: this.$props.model ? "customers/update" : "customers/create",
-        data: data,
+        data: data
       };
       this.request(payload)
         .then(() => {
           this.$emit("submit", {
-            action: "paginate",
+            action: "paginate"
           });
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         })
         .finally(() => {
           this.loading = false;
         });
-    },
-  },
+    }
+  }
 };
 </script>

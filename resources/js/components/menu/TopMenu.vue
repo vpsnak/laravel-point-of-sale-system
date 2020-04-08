@@ -31,119 +31,131 @@
       v-if="cashRegister"
       left
       bottom
-      offset-x
+      offset-y
       transition="scale-transition"
+      origin="top center"
     >
       <template v-slot:activator="{ on }">
-        <v-btn v-on="on" icon dark>
-          <v-avatar color="green" size="36px">
-            <v-icon dark v-text="'mdi-cash-register'" />
-          </v-avatar>
-        </v-btn>
+        <v-chip v-on="on" class="ma-2" color="primary" label>
+          <v-icon left v-text="'mdi-cash-register'" />
+          <span v-text="cashRegister.name" />
+        </v-chip>
       </template>
       <v-list dense>
-        <v-list-item-group>
-          <v-list-item inactive two-line @click.stop :ripple="false">
-            <v-list-item-avatar color="green">
-              <v-icon>mdi-cash-register</v-icon>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title>
-                <span v-text="store_name" />
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                <span v-text="cashRegister.name" />
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-divider />
-          <v-list-item @click="checkCashRegisterDialog">
-            <v-list-item-avatar>
-              <v-icon v-text="'mdi-alpha-x-circle'" />
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title>Generate X report</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item @click.stop="cashRegisterLogout()">
-            <v-list-item-avatar>
-              <v-icon v-text="'mdi-logout'" />
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title>Logout</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-divider></v-divider>
-          <v-list-item @click.stop="closeCashRegisterDialog()">
-            <v-list-item-avatar>
-              <v-icon v-text="'mdi-alpha-z-circle'" />
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title>
-                <span v-text="'Close and generate Z report'" />
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
+        <v-list-item inactive two-line @click.stop :ripple="false">
+          <v-list-item-avatar color="primary">
+            <v-icon v-text="'mdi-cash-register'" />
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title>
+              <span v-text="store_name" />
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              <span v-text="cashRegister.name" />
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-divider />
+
+        <v-list-item @click="checkCashRegisterDialog">
+          <v-list-item-icon>
+            <v-icon v-text="'mdi-alpha-x-circle'" />
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>
+              <span v-text="'View X report'" />
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-list-item @click.stop="cashRegisterLogout()">
+          <v-list-item-icon>
+            <v-icon v-text="'mdi-logout'" />
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>
+              <span v-text="'Logout'" />
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+
+        <v-divider />
+
+        <v-list-item @click.stop="closeCashRegisterDialog()">
+          <v-list-item-icon>
+            <v-icon v-text="'mdi-alpha-z-circle'" />
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>
+              <span v-text="'Close and generate Z report'" />
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-menu>
-    <v-menu left bottom offset-x transition="scale-transition">
+
+    <v-menu
+      left
+      bottom
+      offset-y
+      transition="scale-transition"
+      origin="top right"
+    >
       <template v-slot:activator="{ on }">
         <v-btn v-on="on" icon>
           <v-icon v-text="'mdi-account-circle'" />
         </v-btn>
       </template>
       <v-list dense>
-        <v-list-item-group>
-          <v-list-item inactive two-line @click.stop :ripple="false">
-            <v-list-item-avatar color="orange">
-              <span v-text="nameInitials" />
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title>
-                <span v-text="user.name" />
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                <span v-text="user.email" />
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+        <v-list-item inactive two-line @click.stop :ripple="false">
+          <v-list-item-avatar color="orange">
+            <span v-text="nameInitials" />
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title>
+              <span v-text="user.name" />
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              <span v-text="user.email" />
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
 
-          <v-divider />
+        <v-divider />
 
-          <v-list-item
-            v-for="menu_item in top_menu"
-            :key="menu_item.id"
-            :to="menuLink(menu_item)"
-            @click.stop="menuAction(menu_item)"
-            exact
-          >
-            <v-list-item-avatar>
-              <v-icon v-text="menu_item.icon" />
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title>
-                <span v-text="menu_item.title" />
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
+        <v-list-item
+          v-for="menu_item in top_menu"
+          :key="menu_item.id"
+          :to="menuLink(menu_item)"
+          @click.stop="menuAction(menu_item)"
+          exact
+        >
+          <v-list-item-icon>
+            <v-icon v-text="menu_item.icon" />
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>
+              <span v-text="menu_item.title" />
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
 
-          <v-divider />
+        <v-divider />
 
-          <v-list-item :ripple="false" @click.stop>
-            <v-list-item-avatar>
-              <v-icon v-text="'mdi-weather-night'" />
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title>
-                <span v-text="'Dark theme'" />
-              </v-list-item-title>
-            </v-list-item-content>
-            <v-list-item-action>
-              <v-switch v-model="darkMode" :loading="darkModeLoading" />
-            </v-list-item-action>
-          </v-list-item>
-        </v-list-item-group>
+        <v-list-item :ripple="false" @click.stop dense>
+          <v-list-item-icon>
+            <v-icon v-text="'mdi-weather-night'" />
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>
+              <span v-text="'Dark theme'" />
+            </v-list-item-title>
+          </v-list-item-content>
+          <v-list-item-action>
+            <v-switch v-model="darkMode" :loading="darkModeLoading" />
+          </v-list-item-action>
+        </v-list-item>
       </v-list>
     </v-menu>
   </v-app-bar>

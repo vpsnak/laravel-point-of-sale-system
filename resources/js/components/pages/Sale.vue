@@ -4,9 +4,9 @@
       <v-col :lg="7" :cols="12" class="pa-lg-0">
         <productList />
       </v-col>
-      <v-col :lg="5" :cols="12" class="py-lg-0">
+      <v-col :lg="5" :cols="12" class="py-lg-0 pl-lg-0">
         <cart
-          :editable="true"
+          editable
           :showMethods="$props.showMethods"
           :showCustomer="$props.showCustomer"
           :showActions="$props.showActions"
@@ -23,7 +23,7 @@ export default {
     showMethods: Boolean,
     showCustomer: Boolean,
     showActions: Boolean,
-    showSave: Boolean,
-  },
+    showSave: Boolean
+  }
 };
 </script>
