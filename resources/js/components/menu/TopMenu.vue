@@ -44,7 +44,7 @@
       <v-list dense>
         <v-list-item inactive two-line @click.stop :ripple="false">
           <v-list-item-avatar color="primary">
-            <v-icon v-text="'mdi-cash-register'" />
+            <v-icon dark v-text="'mdi-cash-register'" />
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title>

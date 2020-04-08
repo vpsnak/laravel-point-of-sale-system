@@ -74,12 +74,13 @@
             v-model="formFields.house_account_status"
             label="House account"
             :readonly="$props.readonly"
+            @change="house_account_status = formFields.house_account_status"
             dense
           />
         </v-col>
         <v-col :cols="4" :lg="4">
           <ValidationProvider
-            rules="required_if:house_account_status|max:100"
+            :rules="house_account_status ? 'required|max:100' : 'max:100'"
             v-slot="{ errors }"
             name="House account number"
           >
@@ -94,7 +95,11 @@
         </v-col>
         <v-col :cols="4" :lg="6">
           <ValidationProvider
-            rules="required|between:0.01,10000"
+            :rules="
+              house_account_status
+                ? 'required|between:0.01,10000'
+                : 'between:0.01,10000'
+            "
             v-slot="{ errors }"
             name="House account limit"
           >
@@ -157,7 +162,8 @@
           type="submit"
           :loading="loading"
           :disabled="invalid || loading"
-          >save changes
+        >
+          <span v-text="stepper ? 'next' : 'save'" />
         </v-btn>
       </v-row>
     </v-container>
@@ -165,6 +171,7 @@
 </template>
 <script>
 import { mapState, mapActions } from "vuex";
+import { EventBus } from "../../../plugins/eventBus";
 
 export default {
   props: {
@@ -176,6 +183,8 @@ export default {
   data() {
     return {
       loading: false,
+      house_account_status: false,
+
       formFields: {
         first_name: null,
         last_name: null,
@@ -199,7 +208,7 @@ export default {
   },
 
   beforeDestroy() {
-    this.$off("submit");
+    EventBus.$off("submit");
   },
 
   methods: {
@@ -243,10 +252,9 @@ export default {
         data: data
       };
       this.request(payload)
-        .then(() => {
-          this.$emit("submit", {
-            action: "paginate"
-          });
+        .then(response => {
+          console.log(response);
+          EventBus.$emit("submit", response);
         })
         .catch(error => {
           console.log(error);
