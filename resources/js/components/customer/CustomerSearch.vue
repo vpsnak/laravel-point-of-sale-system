@@ -1,14 +1,13 @@
 <template>
   <v-row align="center" class="mx-3">
     <v-combobox
-      style="max-width:43vw;"
+      v-if="editable"
+      v-model="cartCustomer"
       solo
       loader-height="5"
       class="pt-5 mt-2"
       ref="searchfield"
       :no-filter="true"
-      v-if="editable"
-      v-model="cartCustomer"
       clearable
       outlined
       dense
@@ -23,19 +22,19 @@
       prepend-inner-icon="mdi-account-search"
       return-object
       @blur="checkIfObjectEvent"
-    ></v-combobox>
+    />
 
     <v-text-field
       v-else
       :value="getCustomerFullname(cartCustomer)"
       disabled
       prepend-icon="person"
-    ></v-text-field>
+    />
 
     <v-tooltip bottom v-if="cartCustomer">
       <template v-slot:activator="{ on }">
         <v-btn
-          class="mx-1"
+          class="mx-2"
           @click.stop="customerForm(false)"
           v-on="on"
           icon
@@ -51,7 +50,7 @@
     <v-tooltip bottom v-if="cartCustomerComment">
       <template v-slot:activator="{ on }">
         <v-btn
-          class="mx-1"
+          class="mx-2"
           @click.stop="viewCustomerComments"
           icon
           color="red"
@@ -67,7 +66,7 @@
     <v-tooltip bottom>
       <template v-slot:activator="{ on }">
         <v-btn
-          class="mx-1"
+          class="mx-2"
           @click.stop="customerForm(true)"
           v-on="on"
           icon
@@ -89,7 +88,7 @@ import { EventBus } from "../../plugins/eventBus";
 
 export default {
   mounted() {
-    EventBus.$on("customer-search", event => {
+    EventBus.$on("customer-search", (event) => {
       if (event.payload.customer) {
         this.cartCustomer = event.payload.customer;
       }
@@ -103,7 +102,7 @@ export default {
   props: {
     showMethods: Boolean,
     keywordLength: Number,
-    editable: Boolean
+    editable: Boolean,
   },
 
   data() {
@@ -112,7 +111,7 @@ export default {
       search: null,
       showCustomerComments: false,
       showCreateDialog: false,
-      customers: []
+      customers: [],
     };
   },
 
@@ -125,7 +124,7 @@ export default {
       },
       set(value) {
         this.customers = value;
-      }
+      },
     },
     cartCustomer: {
       get() {
@@ -136,7 +135,7 @@ export default {
           this.resetDelivery(true);
         }
         this.setCustomer(value);
-      }
+      },
     },
     cartCustomerComment() {
       if (this.cartCustomer) {
@@ -144,7 +143,7 @@ export default {
       } else {
         return false;
       }
-    }
+    },
   },
 
   methods: {
@@ -165,7 +164,7 @@ export default {
         component: create ? "customerNewForm" : "customerForm",
         model: create ? {} : this.cartCustomer,
         persistent: create ? true : false,
-        eventChannel: "customer-search"
+        eventChannel: "customer-search",
       });
     },
     viewCustomerComments() {
@@ -178,7 +177,7 @@ export default {
         titleCloseBtn: true,
         component: "customerComment",
         model: this.cartCustomer,
-        persistent: false
+        persistent: false,
       });
     },
     checkIfObjectEvent() {
@@ -199,19 +198,19 @@ export default {
       const payload = {
         method: "post",
         url: "customers/search",
-        data: { keyword: keyword }
+        data: { keyword: keyword },
       };
       this.request(payload)
-        .then(result => {
+        .then((result) => {
           this.results = result;
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
         })
         .finally(() => {
           this.loading = false;
         });
-    }
+    },
   },
 
   watch: {
@@ -229,7 +228,7 @@ export default {
       if (!value) {
         this.$refs.searchfield.lazySearch = this.$refs.searchfield.lazyValue = null;
       }
-    }
-  }
+    },
+  },
 };
 </script>
