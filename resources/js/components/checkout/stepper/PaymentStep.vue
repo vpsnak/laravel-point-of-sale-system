@@ -17,7 +17,6 @@
             v-if="completed"
             color="primary"
             @click="completeStep()"
-            :loading="false"
             :disabled="checkout_loading"
             outlined
             >Complete order
@@ -33,7 +32,7 @@ import { mapState, mapActions, mapMutations } from "vuex";
 export default {
   data() {
     return {
-      completed: false,
+      completed: false
     };
   },
 
@@ -49,15 +48,15 @@ export default {
         } else {
           this.completed = false;
         }
-      },
-    },
+      }
+    }
   },
 
   computed: {
     ...mapState("cart", [
       "order_status",
       "order_change_price",
-      "checkout_loading",
+      "checkout_loading"
     ]),
 
     changePrice() {
@@ -66,11 +65,11 @@ export default {
       } else {
         return this.$price();
       }
-    },
+    }
   },
 
   methods: {
-    ...mapActions("cart", ["createReceipt", "completeStep"]),
-  },
+    ...mapActions("cart", ["createReceipt", "completeStep"])
+  }
 };
 </script>
