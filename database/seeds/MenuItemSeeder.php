@@ -146,8 +146,8 @@ class MenuItemSeeder extends Seeder
         $customers->roles()->sync($all);
         $products->roles()->sync($all);
         $categories->roles()->sync($all);
-        $giftCards->roles()->sync($admin);
-        $coupons->roles()->sync($admin);
+        $giftCards->roles()->sync($all);
+        $coupons->roles()->sync($all);
         $cashRegisters->roles()->sync($admin);
         $stores->roles()->sync($admin);
         $storePickups->roles()->sync($admin);

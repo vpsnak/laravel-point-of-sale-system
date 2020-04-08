@@ -1,57 +1,65 @@
 <template>
   <v-card class="fill-height pa-3" elevation="12">
     <v-container fluid>
-      <v-row>
-        <v-btn
-          class="mx-1"
-          @click="btnactive = !btnactive"
-          :color="btnactive ? 'primary' : null"
-        >
-          <v-icon left v-text="'mdi-barcode-scan'" />
-          <v-icon v-text="'mdi-chevron-right'" />
-          <v-icon right v-text="btnactive ? 'mdi-cart' : 'mdi-eye'" />
-        </v-btn>
+      <v-row justify="space-between">
+        <v-col cols="auto">
+          <v-btn
+            class="mx-1"
+            @click="btnactive = !btnactive"
+            :color="btnactive ? 'primary' : null"
+          >
+            <v-icon left v-text="'mdi-barcode-scan'" />
+            <v-icon v-text="'mdi-chevron-right'" />
+            <v-icon right v-text="btnactive ? 'mdi-cart' : 'mdi-eye'" />
+          </v-btn>
+        </v-col>
 
-        <v-text-field
-          :disabled="productLoading"
-          dense
-          class="mx-1"
-          outlined
-          solo
-          v-model="keyword"
-          prepend-inner-icon="mdi-magnify"
-          @click:prepend-inner="searchProduct()"
-          placeholder="Search product"
-          @keyup.enter="searchProduct"
-          clearable
-          @click:clear="(currentPage = 1), getAllProducts()"
-        />
+        <v-col :cols="8">
+          <v-text-field
+            v-model="keyword"
+            :disabled="productLoading"
+            dense
+            class="mx-1"
+            outlined
+            solo
+            placeholder="Search product"
+            @keyup.enter="searchProduct()"
+          >
+            <template slot="append">
+              <v-btn @click="searchProduct()" text>
+                <v-icon v-text="'mdi-magnify'" />
+              </v-btn>
+            </template>
+          </v-text-field>
+        </v-col>
 
-        <v-menu :nudge-width="200" offset-x>
-          <template v-slot:activator="{ on }">
-            <v-btn icon v-on="on">
-              <v-icon v-text="'mdi-plus'" />
-            </v-btn>
-          </template>
-          <v-list>
-            <v-list-item @click="addCustomProductDialog()">
-              <v-list-item-icon>
-                <v-icon v-text="'mdi-flower'" />
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title v-text="'Custom item'" />
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item @click="giftcardDialog()">
-              <v-list-item-icon>
-                <v-icon v-text="'mdi-wallet-giftcard'" />
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title v-text="'Giftcard'" />
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-menu>
+        <v-col cols="auto">
+          <v-menu :nudge-width="200" offset-x>
+            <template v-slot:activator="{ on }">
+              <v-btn text v-on="on">
+                <v-icon v-text="'mdi-plus'" />
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item @click="addCustomProductDialog()">
+                <v-list-item-icon>
+                  <v-icon v-text="'mdi-flower'" />
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title v-text="'Custom item'" />
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item @click="giftcardDialog()">
+                <v-list-item-icon>
+                  <v-icon v-text="'mdi-wallet-giftcard'" />
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title v-text="'Giftcard'" />
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </v-col>
       </v-row>
 
       <v-row align="center" justify="center">
@@ -86,7 +94,7 @@
           dense
           width="175px"
         >
-          No categories
+          <span v-text="'No categories'" />
         </v-alert>
       </v-row>
     </v-container>
@@ -334,7 +342,7 @@ export default {
       categoriesLoading: false,
       search_keyword: "",
       selectedCategory: null,
-      btnactive: true,
+      btnactive: true
     };
   },
 
@@ -344,7 +352,7 @@ export default {
   },
 
   mounted() {
-    this.$root.$on("barcodeScan", (sku) => {
+    this.$root.$on("barcodeScan", sku => {
       if (!this.interactive_dialog.show) {
         this.getSingleProduct(sku);
       }
@@ -364,7 +372,7 @@ export default {
         if (value) {
           this.currentPage = 1;
         }
-      },
+      }
     },
     products: {
       get() {
@@ -372,8 +380,8 @@ export default {
       },
       set(value) {
         this.setProductList(value);
-      },
-    },
+      }
+    }
   },
 
   watch: {
@@ -384,7 +392,7 @@ export default {
         this.currentPage = 1;
         this.getAllProducts();
       }
-    },
+    }
   },
 
   methods: {
@@ -419,14 +427,14 @@ export default {
       this.categoriesLoading = true;
       const payload = {
         method: "get",
-        url: "categories/product-listing",
+        url: "categories/product-listing"
       };
 
       this.request(payload)
-        .then((response) => {
+        .then(response => {
           this.categories = response;
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         })
         .finally(() => {
@@ -436,7 +444,7 @@ export default {
     getProductsFromCategoryID() {
       const payload = {
         method: "get",
-        url: `categories/${this.selectedCategory}/products?page=${this.currentPage}`,
+        url: `categories/${this.selectedCategory}/products?page=${this.currentPage}`
       };
 
       this.getProductRequest(payload);
@@ -467,7 +475,7 @@ export default {
         const payload = {
           method: "post",
           url: `products/search?page=${this.currentPage}`,
-          data: { keyword: this.keyword },
+          data: { keyword: this.keyword }
         };
 
         this.getProductRequest(payload);
@@ -479,7 +487,7 @@ export default {
       this.selected_category = null;
       const payload = {
         method: "get",
-        url: `products?page=${this.current_page}`,
+        url: `products?page=${this.current_page}`
       };
       this.getProductRequest(payload);
     },
@@ -489,13 +497,13 @@ export default {
         this.products = [];
 
         this.request(payload)
-          .then((response) => {
+          .then(response => {
             this.products = response.data;
             this.currentPage = response.current_page;
             this.lastPage = response.last_page;
             resolve(true);
           })
-          .catch((error) => {
+          .catch(error => {
             console.log(error);
             reject(error);
           })
@@ -515,7 +523,7 @@ export default {
         title: "Send plant care",
         cancelBtnTxt: "Close",
         model: product,
-        titleCloseBtn: true,
+        titleCloseBtn: true
       };
       this.setDialog(payload);
     },
@@ -527,7 +535,7 @@ export default {
         icon: "mdi-wallet-giftcard",
         titleCloseBtn: true,
         persistent: true,
-        width: 700,
+        width: 700
       };
       this.setDialog(payload);
     },
@@ -538,10 +546,10 @@ export default {
         title: "Add custom item to cart",
         icon: "mdi-flower",
         titleCloseBtn: true,
-        persistent: true,
+        persistent: true
       };
       this.setDialog(payload);
-    },
-  },
+    }
+  }
 };
 </script>

@@ -130,10 +130,7 @@
 
           <v-divider />
 
-          <v-list-item
-            @click.stop="darkMode = !darkMode"
-            :disabled="darkModeLoading"
-          >
+          <v-list-item :ripple="false" @click.stop>
             <v-list-item-avatar>
               <v-icon v-text="'mdi-weather-night'" />
             </v-list-item-avatar>
@@ -143,11 +140,7 @@
               </v-list-item-title>
             </v-list-item-content>
             <v-list-item-action>
-              <v-switch
-                v-model="darkMode"
-                @click.stop="darkMode = !darkMode"
-                :loading="darkModeLoading"
-              />
+              <v-switch v-model="darkMode" :loading="darkModeLoading" />
             </v-list-item-action>
           </v-list-item>
         </v-list-item-group>
@@ -162,7 +155,7 @@ import { EventBus } from "../../plugins/eventBus";
 
 export default {
   mounted() {
-    EventBus.$on("top-menu-generate-z", (event) => {
+    EventBus.$on("top-menu-generate-z", event => {
       if (event && _.has(event, "payload.response.report")) {
         this.displayZDialog(event.payload.response.report);
       }
@@ -176,7 +169,7 @@ export default {
   data() {
     return {
       clicks: 0,
-      darkModeLoading: false,
+      darkModeLoading: false
     };
   },
 
@@ -187,7 +180,7 @@ export default {
         const payload = this.mas_env === "production" ? "test" : "production";
         this.setMasEnv(payload);
       }
-    },
+    }
   },
 
   computed: {
@@ -206,13 +199,13 @@ export default {
         const payload = {
           method: "patch",
           url: "settings/theme-dark",
-          data: { value: value ? "1" : "0" },
+          data: { value: value ? "1" : "0" }
         };
-        this.request(payload).then((response) => {
+        this.request(payload).then(response => {
           this.updateUserSetting(response);
           this.darkModeLoading = false;
         });
-      },
+      }
     },
     menuVisibility: {
       get() {
@@ -220,7 +213,7 @@ export default {
       },
       set(value) {
         this.setVisibility(value);
-      },
+      }
     },
     nameInitials() {
       const initials = _.split(this.user.name, " ", 2);
@@ -229,7 +222,7 @@ export default {
       } else {
         return this.user.name.charAt(0);
       }
-    },
+    }
   },
 
   methods: {
@@ -279,7 +272,7 @@ export default {
         icon: "mdi-alpha-z-circle",
         component: "closeCashRegisterForm",
         persistent: true,
-        eventChannel: "top-menu-generate-z",
+        eventChannel: "top-menu-generate-z"
       });
     },
     changePasswordDialog() {
@@ -291,7 +284,7 @@ export default {
         model: { action: "change_self" },
         icon: "mdi-key",
         component: "PasswordForm",
-        persistent: true,
+        persistent: true
       });
     },
     displayZDialog(report) {
@@ -303,7 +296,7 @@ export default {
         model: report,
         icon: "mdi-alpha-z-circle",
         component: "cashRegisterReports",
-        persistent: true,
+        persistent: true
       });
     },
     checkCashRegisterDialog() {
@@ -314,9 +307,9 @@ export default {
         titleCloseBtn: true,
         icon: "mdi-alpha-x-circle",
         component: "cashRegisterReports",
-        persistent: true,
+        persistent: true
       });
-    },
-  },
+    }
+  }
 };
 </script>
