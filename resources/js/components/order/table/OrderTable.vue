@@ -46,7 +46,7 @@
             <v-icon v-text="'mdi-dots-vertical'" />
           </v-btn>
         </template>
-        <v-list>
+        <v-list dense>
           <v-subheader v-html="`<b>Order #${item.id}</b>`" />
           <v-list-item
             :to="{ name: 'viewOrderDetails', params: { id: item.id } }"
@@ -134,7 +134,7 @@ export default {
 
     this.setDataTable(this.table);
 
-    EventBus.$on("order-table-cancel-order", (event) => {
+    EventBus.$on("order-table-cancel-order", event => {
       if (event.payload && this.selectedItem) {
         this.setLoading(true);
         this.cancelOrder()
@@ -172,13 +172,13 @@ export default {
         searchField: false,
         disableNewBtn: true,
         loading: true,
-        filters: "orderTableFilters",
-      },
+        filters: "orderTableFilters"
+      }
     };
   },
 
   computed: {
-    ...mapState("datatable", ["data_table"]),
+    ...mapState("datatable", ["data_table"])
   },
 
   methods: {
@@ -187,7 +187,7 @@ export default {
     ...mapMutations("datatable", [
       "setLoading",
       "setDataTable",
-      "resetDataTable",
+      "resetDataTable"
     ]),
     ...mapActions("requests", ["request"]),
     ...mapActions("cart", ["loadOrder"]),
@@ -245,9 +245,9 @@ export default {
       this.resetState();
       this.request({
         method: "get",
-        url: `orders/get/${id}`,
+        url: `orders/get/${id}`
       })
-        .then((response) => {
+        .then(response => {
           this.setReorder(response.items);
           this.$router.push({ name: "sale" });
           this.setCheckoutDialog(true);
@@ -269,10 +269,10 @@ export default {
             icon: "mdi-receipt",
             component: "orderReceipt",
             persistent: true,
-            eventChannel: "orders-table-receipt",
+            eventChannel: "orders-table-receipt"
           });
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         })
         .finally(() => {
@@ -294,9 +294,9 @@ export default {
       return new Promise((resolve, reject) => {
         const payload = {
           method: "get",
-          url: `orders/get/${id}`,
+          url: `orders/get/${id}`
         };
-        this.request(payload).then((response) => {
+        this.request(payload).then(response => {
           this.resetState();
           this.loadOrder(response);
           resolve(true);
@@ -314,7 +314,7 @@ export default {
         component: "passwordForm",
         model: { action: "verify" },
         persistent: true,
-        eventChannel: "order-table-cancel-order",
+        eventChannel: "order-table-cancel-order"
       };
 
       this.setDialog(payload);
@@ -323,21 +323,21 @@ export default {
       return new Promise((resolve, reject) => {
         const payload = {
           method: "get",
-          url: `orders/${this.selectedItem.id}`,
+          url: `orders/${this.selectedItem.id}`
         };
 
         this.request(payload)
           .then(() => {
             resolve(true);
           })
-          .catch((error) => {
+          .catch(error => {
             reject(error);
           })
           .finally(() => {
             this.selectedItem = null;
           });
       });
-    },
-  },
+    }
+  }
 };
 </script>

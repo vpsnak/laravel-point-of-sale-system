@@ -29,13 +29,13 @@ export default [
   {
     path: "*",
     redirect: "/",
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
     name: "landingPage",
     path: "/",
     component: LandingPage,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
     name: "dashboard",
@@ -43,29 +43,29 @@ export default [
     components: {
       default: Dashboard,
       side_menu: SideMenu,
-      top_menu: TopMenu,
+      top_menu: TopMenu
     },
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
     name: "login",
     path: "/login",
     component: Login,
-    meta: { requiresAuth: false },
+    meta: { requiresAuth: false }
   },
   {
     name: "logout",
     path: "/logout",
     component: Logout,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
     name: "openCashRegister",
     path: "/open-cash-register",
     components: {
-      default: OpenCashRegister,
+      default: OpenCashRegister
     },
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
     name: "sale",
@@ -73,16 +73,16 @@ export default [
     components: {
       default: Sale,
       side_menu: SideMenu,
-      top_menu: TopMenu,
+      top_menu: TopMenu
     },
     meta: { requiresAuth: true },
     props: {
       default: {
         showMethods: true,
         showCustomer: true,
-        showActions: true,
-      },
-    },
+        showActions: true
+      }
+    }
   },
   {
     name: "orders",
@@ -90,28 +90,28 @@ export default [
     components: {
       default: OrderTable,
       side_menu: SideMenu,
-      top_menu: TopMenu,
+      top_menu: TopMenu
     },
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
     name: "viewOrderDetails",
     path: "/order/:id/details",
     component: OrderViewPage,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
     name: "editOrderItemsPage",
     path: "/order/:id/edit-items",
     component: Sale,
     meta: { requiresAuth: true },
-    props: { showSave: true },
+    props: { showSave: true }
   },
   {
     name: "editOrderOptionsPage",
     path: "/order/:id/edit-options",
     component: OrderEditOptionsPage,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
     name: "customers",
@@ -119,9 +119,9 @@ export default [
     components: {
       default: CustomerTable,
       side_menu: SideMenu,
-      top_menu: TopMenu,
+      top_menu: TopMenu
     },
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
     name: "products",
@@ -129,9 +129,9 @@ export default [
     components: {
       default: Products,
       side_menu: SideMenu,
-      top_menu: TopMenu,
+      top_menu: TopMenu
     },
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
     name: "categories",
@@ -139,9 +139,9 @@ export default [
     components: {
       default: Categories,
       side_menu: SideMenu,
-      top_menu: TopMenu,
+      top_menu: TopMenu
     },
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
     name: "stores",
@@ -149,9 +149,9 @@ export default [
     components: {
       default: Stores,
       side_menu: SideMenu,
-      top_menu: TopMenu,
+      top_menu: TopMenu
     },
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
     name: "Users",
@@ -159,9 +159,9 @@ export default [
     components: {
       default: Users,
       side_menu: SideMenu,
-      top_menu: TopMenu,
+      top_menu: TopMenu
     },
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
     name: "StorePickups",
@@ -169,9 +169,9 @@ export default [
     components: {
       default: StorePickups,
       side_menu: SideMenu,
-      top_menu: TopMenu,
+      top_menu: TopMenu
     },
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
     name: "Taxes",
@@ -179,9 +179,9 @@ export default [
     components: {
       default: Taxes,
       side_menu: SideMenu,
-      top_menu: TopMenu,
+      top_menu: TopMenu
     },
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
     name: "CashRegisters",
@@ -189,9 +189,9 @@ export default [
     components: {
       default: CashRegisters,
       side_menu: SideMenu,
-      top_menu: TopMenu,
+      top_menu: TopMenu
     },
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
     name: "Reports",
@@ -199,9 +199,9 @@ export default [
     components: {
       default: Reports,
       side_menu: SideMenu,
-      top_menu: TopMenu,
+      top_menu: TopMenu
     },
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
     name: "GiftCards",
@@ -209,9 +209,9 @@ export default [
     components: {
       default: GiftCards,
       side_menu: SideMenu,
-      top_menu: TopMenu,
+      top_menu: TopMenu
     },
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
     name: "Coupons",
@@ -219,9 +219,9 @@ export default [
     components: {
       default: Coupons,
       side_menu: SideMenu,
-      top_menu: TopMenu,
+      top_menu: TopMenu
     },
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: true }
   },
   {
     name: "Settings",
@@ -229,8 +229,8 @@ export default [
     components: {
       default: Settings,
       side_menu: SideMenu,
-      top_menu: TopMenu,
+      top_menu: TopMenu
     },
-    meta: { requiresAuth: true },
-  },
+    meta: { requiresAuth: true }
+  }
 ];

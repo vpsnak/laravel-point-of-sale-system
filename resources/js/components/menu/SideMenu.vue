@@ -1,17 +1,21 @@
 <template>
   <v-navigation-drawer app clipped v-model="menuVisibility" :width="180">
-    <v-list dense>
+    <v-list dense nav>
       <v-list-item
-        v-for="menu_item in side_menu"
-        :key="menu_item.id"
-        :to="menuAction(menu_item)"
+        v-for="item in side_menu"
+        :key="item.id"
+        :to="item.action.link"
         :disabled="data_table.loading"
+        exact
+        link
       >
         <v-list-item-icon>
-          <v-icon v-text="menu_item.icon" />
+          <v-icon v-text="item.icon" />
         </v-list-item-icon>
         <v-list-item-content>
-          <v-list-item-title v-text="menu_item.title" />
+          <v-list-item-title>
+            <span v-text="item.title" />
+          </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
       <v-divider class="my-4" />
@@ -40,15 +44,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations("menu", ["setVisibility"]),
-
-    menuAction(item) {
-      if (_.has(item, "action.link")) {
-        return `/${item.action.link}`;
-      } else if (_.has(item, "action.method")) {
-        return item.action.method;
-      }
-    }
+    ...mapMutations("menu", ["setVisibility"])
   }
 };
 </script>

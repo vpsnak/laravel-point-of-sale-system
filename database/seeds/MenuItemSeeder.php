@@ -22,7 +22,7 @@ class MenuItemSeeder extends Seeder
 
         $dashboard = MenuItem::create([
             'title' => 'Dashboard',
-            'action' => ['link' => '/'],
+            'action' => ['link' => 'dashboard'],
             'icon' =>  'dashboard',
             'location' => 'side_menu'
         ]);
@@ -127,7 +127,7 @@ class MenuItemSeeder extends Seeder
 
         $sign_out = MenuItem::create([
             'title' => 'Sign out',
-            'action' => ['link' => '/logout'],
+            'action' => ['link' => 'logout'],
             'icon' =>  'mdi-logout-variant',
             'location' => 'top_menu'
         ]);
