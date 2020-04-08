@@ -1,5 +1,5 @@
 <template>
-  <v-container class="pb-0">
+  <v-container>
     <v-row justify="center" class="px-5">
       <v-btn
         outlined
@@ -74,12 +74,12 @@ import { EventBus } from "../../plugins/eventBus";
 
 export default {
   props: {
-    disabled: Boolean
+    disabled: Boolean,
   },
 
   mounted() {
     this.getCartsOnHoldSize();
-    EventBus.$on("cart-actions-empty-current-cart", event => {
+    EventBus.$on("cart-actions-empty-current-cart", (event) => {
       if (event.payload) {
         this.resetState();
       }
@@ -108,7 +108,7 @@ export default {
         title: "Empty cart",
         content: "<p>Are you sure you want to empty the cart?</p>",
         persistent: true,
-        eventChannel: "cart-actions-empty-current-cart"
+        eventChannel: "cart-actions-empty-current-cart",
       },
       cartRestoreDialog: {
         show: true,
@@ -117,8 +117,8 @@ export default {
         titleCloseBtn: true,
         title: "Restore cart",
         component: "cartRestoreDialog",
-        eventChannel: "cart-actions-restore-cart"
-      }
+        eventChannel: "cart-actions-restore-cart",
+      },
     };
   },
 
@@ -141,7 +141,7 @@ export default {
       "order_delivery_address",
       "order_delivery_store_pickup",
       "notes",
-      "order_total_price"
+      "order_total_price",
     ]),
 
     loading() {
@@ -174,7 +174,7 @@ export default {
       } else {
         return true;
       }
-    }
+    },
   },
 
   methods: {
@@ -182,7 +182,7 @@ export default {
     ...mapMutations("cart", [
       "resetState",
       "setCheckoutDialog",
-      "setCheckoutLoading"
+      "setCheckoutLoading",
     ]),
     ...mapActions("requests", ["request"]),
     ...mapActions("cart", ["submitOrder"]),
@@ -215,12 +215,12 @@ export default {
             order_notes: this.order_notes,
             order_billing_address: this.order_billing_address,
             order_delivery_address: this.order_delivery_address,
-            order_delivery_store_pickup: this.order_delivery_store_pickup
-          }
-        }
+            order_delivery_store_pickup: this.order_delivery_store_pickup,
+          },
+        },
       };
       this.request(payload)
-        .then(response => {
+        .then((response) => {
           this.cartsOnHoldSize = response.count;
           this.resetState();
         })
@@ -234,17 +234,17 @@ export default {
       this.cartsOnHoldSizeLoading = true;
       const payload = {
         method: "get",
-        url: "carts/count"
+        url: "carts/count",
       };
       this.request(payload)
-        .then(response => {
+        .then((response) => {
           this.cartsOnHoldSize = response;
         })
         .finally(() => {
           this.setCheckoutLoading(false);
           this.cartsOnHoldSizeLoading = false;
         });
-    }
-  }
+    },
+  },
 };
 </script>

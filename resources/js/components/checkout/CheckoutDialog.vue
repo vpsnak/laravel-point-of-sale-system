@@ -26,12 +26,12 @@
         <v-toolbar-title v-text="'Checkout'" />
       </v-toolbar>
 
-      <v-card-text>
-        <v-row dense>
-          <v-col :lg="8">
+      <v-container>
+        <v-row>
+          <v-col :lg="7" :cols="12">
             <checkoutStepper v-if="checkoutDialog" />
           </v-col>
-          <v-col :lg="4">
+          <v-col :lg="5" :cols="12">
             <cart
               :editable="order_id ? false : true"
               :showMethods="true"
@@ -39,7 +39,7 @@
             />
           </v-col>
         </v-row>
-      </v-card-text>
+      </v-container>
     </v-card>
   </v-dialog>
 </template>

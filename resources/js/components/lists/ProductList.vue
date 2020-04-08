@@ -1,63 +1,62 @@
 <template>
-  <v-card class="fill-height">
-    <v-card-text>
-      <v-container fluid>
-        <v-row>
-          <v-btn
-            class="mx-1"
-            @click="btnactive = !btnactive"
-            :color="btnactive ? 'primary' : null"
-          >
-            <v-icon left v-text="'mdi-barcode-scan'" />
-            <v-icon v-text="'mdi-chevron-right'" />
-            <v-icon right v-text="btnactive ? 'mdi-cart' : 'mdi-eye'" />
-          </v-btn>
+  <v-card class="fill-height pa-3" elevation="12">
+    <v-container fluid>
+      <v-row>
+        <v-btn
+          class="mx-1"
+          @click="btnactive = !btnactive"
+          :color="btnactive ? 'primary' : null"
+        >
+          <v-icon left v-text="'mdi-barcode-scan'" />
+          <v-icon v-text="'mdi-chevron-right'" />
+          <v-icon right v-text="btnactive ? 'mdi-cart' : 'mdi-eye'" />
+        </v-btn>
 
-          <v-text-field
-            :disabled="productLoading"
-            dense
-            class="mx-1"
-            outlined
-            solo
-            v-model="keyword"
-            prepend-inner-icon="mdi-magnify"
-            @click:prepend-inner="searchProduct()"
-            placeholder="Search product"
-            @keyup.enter="searchProduct"
-            clearable
-            @click:clear="(currentPage = 1), getAllProducts()"
-          />
+        <v-text-field
+          :disabled="productLoading"
+          dense
+          class="mx-1"
+          outlined
+          solo
+          v-model="keyword"
+          prepend-inner-icon="mdi-magnify"
+          @click:prepend-inner="searchProduct()"
+          placeholder="Search product"
+          @keyup.enter="searchProduct"
+          clearable
+          @click:clear="(currentPage = 1), getAllProducts()"
+        />
 
-          <v-menu :nudge-width="200" offset-x>
-            <template v-slot:activator="{ on }">
-              <v-btn icon v-on="on">
-                <v-icon v-text="'mdi-plus'" />
-              </v-btn>
-            </template>
-            <v-list>
-              <v-list-item @click="addCustomProductDialog()">
-                <v-list-item-icon>
-                  <v-icon v-text="'mdi-flower'" />
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title v-text="'Custom item'" />
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item @click="giftcardDialog()">
-                <v-list-item-icon>
-                  <v-icon v-text="'mdi-wallet-giftcard'" />
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title v-text="'Giftcard'" />
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </v-row>
+        <v-menu :nudge-width="200" offset-x>
+          <template v-slot:activator="{ on }">
+            <v-btn icon v-on="on">
+              <v-icon v-text="'mdi-plus'" />
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item @click="addCustomProductDialog()">
+              <v-list-item-icon>
+                <v-icon v-text="'mdi-flower'" />
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title v-text="'Custom item'" />
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item @click="giftcardDialog()">
+              <v-list-item-icon>
+                <v-icon v-text="'mdi-wallet-giftcard'" />
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title v-text="'Giftcard'" />
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </v-row>
 
-        <v-row align="center" justify="center">
+      <v-row align="center" justify="center">
+        <v-col v-if="categories.length" :cols="12">
           <v-chip-group
-            v-if="categories.length"
             v-model="selectedCategory"
             @change="keyword = ''"
             active-class="primary--text"
@@ -72,30 +71,26 @@
               label
             />
           </v-chip-group>
+        </v-col>
 
-          <v-col
-            v-else-if="categoriesLoading"
-            v-for="n in 6"
-            :key="n"
-            :cols="2"
-          >
-            <v-skeleton-loader type="chip" tile />
-          </v-col>
+        <v-col v-else-if="categoriesLoading" v-for="n in 6" :key="n" :cols="2">
+          <v-skeleton-loader type="chip" tile />
+        </v-col>
 
-          <v-alert
-            v-else
-            type="info"
-            border="left"
-            colored-border
-            :elevation="3"
-            dense
-            width="175px"
-          >
-            No categories
-          </v-alert>
-        </v-row>
-      </v-container>
-    </v-card-text>
+        <v-alert
+          v-else
+          type="info"
+          border="left"
+          colored-border
+          :elevation="3"
+          dense
+          width="175px"
+        >
+          No categories
+        </v-alert>
+      </v-row>
+    </v-container>
+
     <v-card-text v-if="products.length">
       <perfect-scrollbar tag="v-container" style="height: 550px;">
         <v-row>
@@ -484,7 +479,7 @@ export default {
       this.selected_category = null;
       const payload = {
         method: "get",
-        url: `products?page=${this.currentPage}`,
+        url: `products?page=${this.current_page}`,
       };
       this.getProductRequest(payload);
     },

@@ -1,10 +1,10 @@
 <template>
-  <v-container fluid class="fill-height pa-0">
-    <v-row dense class="fill-height">
-      <v-col :lg="7" :cols="12">
+  <v-container fluid class="fill-height py-0">
+    <v-row class="fill-height">
+      <v-col :lg="7" :cols="12" class="pa-lg-0">
         <productList />
       </v-col>
-      <v-col :lg="5" :cols="12">
+      <v-col :lg="5" :cols="12" class="py-lg-0">
         <cart
           :editable="true"
           :showMethods="$props.showMethods"
@@ -23,7 +23,7 @@ export default {
     showMethods: Boolean,
     showCustomer: Boolean,
     showActions: Boolean,
-    showSave: Boolean
-  }
+    showSave: Boolean,
+  },
 };
 </script>

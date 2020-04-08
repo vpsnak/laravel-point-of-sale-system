@@ -1,23 +1,22 @@
 <template>
   <v-app id="app">
     <notification />
-
     <interactiveDialog />
+    <checkoutDialog />
 
-    <checkoutDialog v-if="checkoutDialog" />
-
-    <transition name="fade" mode="out-in">
-      <v-content>
-        <router-view class="view side-menu" name="side_menu" />
-        <router-view class="view top-menu" name="top_menu" />
-        <router-view class="view default" />
-      </v-content>
-    </transition>
+    <v-content ref="main">
+      <router-view class="view side-menu" name="side_menu" />
+      <router-view class="view top-menu" name="top_menu" />
+      <perfect-scrollbar ref="scroll" :style="`height: ${inner_height}px;`">
+        <router-view class="default" name="default" />
+      </perfect-scrollbar>
+    </v-content>
   </v-app>
 </template>
 
 <script>
 import { mapState, mapGetters, mapMutations, mapActions } from "vuex";
+import { EventBus } from "../../plugins/eventBus";
 
 export default {
   created() {
@@ -31,13 +30,38 @@ export default {
       }
     });
   },
+
+  mounted() {
+    this.setInnerHeight(
+      window.innerHeight - this.$refs.main.$el.style.paddingTop.slice(0, -2)
+    );
+
+    window.addEventListener("resize", () => {
+      this.setInnerHeight(
+        window.innerHeight - this.$refs.main.$el.style.paddingTop.slice(0, -2)
+      );
+      this.$nextTick(() => {
+        this.$refs.scroll.update();
+      });
+    });
+  },
+
+  beforeDestroy() {
+    EventBus.$off("inner-height");
+    window.removeEventListener("resize");
+  },
+
   computed: {
+    ...mapState("dialog", ["interactive_dialog"]),
     ...mapState(["user"]),
-    ...mapState("cart", ["checkoutDialog"]),
+    ...mapState("config", ["inner_height"]),
     ...mapGetters(["auth"]),
   },
 
   watch: {
+    $route() {
+      this.$refs.scroll.$el.scrollTop = 0;
+    },
     user: {
       deep: true,
       immediate: true,
@@ -49,6 +73,7 @@ export default {
 
   methods: {
     ...mapMutations(["logout"]),
+    ...mapMutations("config", ["setInnerHeight"]),
     ...mapActions("config", ["initCookies"]),
 
     applyUserTheme(value) {
@@ -69,6 +94,10 @@ export default {
 </script>
 
 <style>
+html {
+  overflow-y: hidden;
+}
+
 a {
   text-decoration: none;
 }

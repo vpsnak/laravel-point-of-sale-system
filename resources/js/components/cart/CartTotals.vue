@@ -1,48 +1,73 @@
 <template>
-  <v-container class="py-0 px-5">
-    <v-row v-if="!totalDiscount.isZero()" class="pa-1" dense>
-      <span v-text="'Total discount'" />
-      <v-spacer />
-      <span
-        :class="isValidCheckout ? '' : 'error--text'"
-        v-html="
-          isValidCheckout
-            ? displayPrice(totalDiscount)
-            : '<b>Discount error</b>'
-        "
-      />
+  <v-container>
+    <v-row
+      v-if="!totalDiscount.isZero()"
+      justify="space-between"
+      align="center"
+      dense
+    >
+      <v-col cols="auto">
+        <span v-text="'Total discount'" />
+      </v-col>
+      <v-col cols="auto">
+        <span
+          :class="isValidCheckout ? '' : 'error--text'"
+          v-html="
+            isValidCheckout
+              ? displayPrice(totalDiscount)
+              : '<b>Discount error</b>'
+          "
+        />
+      </v-col>
     </v-row>
 
     <v-divider v-if="!totalDiscount.isZero()" />
 
-    <v-row class="pa-1" dense>
-      <span v-text="'Sub total w/ discount'" />
-      <v-spacer />
-      <span v-text="displayPrice(subTotalwDiscount)" />
+    <v-row justify="space-between" align="center" dense>
+      <v-col cols="auto">
+        <span v-text="'Sub total w/ discount'" />
+      </v-col>
+      <v-col cols="auto">
+        <span v-text="displayPrice(subTotalwDiscount)" />
+      </v-col>
     </v-row>
 
     <v-divider />
 
-    <v-row class="pa-1" v-if="!deliveryFeesPrice.isZero()" dense>
-      <span v-text="'Delivery Fees'" />
-      <v-spacer />
-      <span v-text="displayPrice(deliveryFeesPrice)" />
+    <v-row
+      v-if="!deliveryFeesPrice.isZero()"
+      justify="space-between"
+      align="center"
+      dense
+    >
+      <v-col cols="auto">
+        <span v-text="'Delivery Fees'" />
+      </v-col>
+      <v-col cols="auto">
+        <span v-text="displayPrice(deliveryFeesPrice)" />
+      </v-col>
     </v-row>
 
     <v-divider v-if="!deliveryFeesPrice.isZero()" />
 
-    <v-row class="pa-1" dense>
-      <span v-text="'Tax'" />
-      <v-spacer />
-      <span v-text="displayPrice(tax)" />
+    <v-row justify="space-between" align="center" dense>
+      <v-col cols="auto">
+        <span v-text="'Tax'" />
+      </v-col>
+      <v-col cols="auto">
+        <span v-text="displayPrice(tax)" />
+      </v-col>
     </v-row>
 
     <v-divider />
 
-    <v-row class="pa-1" dense>
-      <span v-text="'Total'" />
-      <v-spacer />
-      <span v-text="displayPrice(orderTotal)" />
+    <v-row justify="space-between" align="center" dense>
+      <v-col cols="auto">
+        <span v-text="'Total'" />
+      </v-col>
+      <v-col cols="auto">
+        <span v-text="displayPrice(orderTotal)" />
+      </v-col>
     </v-row>
   </v-container>
 </template>

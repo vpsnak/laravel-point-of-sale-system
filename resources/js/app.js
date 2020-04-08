@@ -19,10 +19,12 @@ import "vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css";
 
 import {
   ValidationProvider,
-  ValidationObserver
+  ValidationObserver,
 } from "vee-validate/dist/vee-validate.full";
 
 window.Vue = require("vue");
+
+Vue.config.productionTip = false;
 
 Vue.component("ValidationProvider", ValidationProvider);
 Vue.component("ValidationObserver", ValidationObserver);
@@ -43,15 +45,11 @@ const scanner = BarcodeScanner();
  */
 
 const files = require.context("./", true, /\.vue$/i);
-files.keys().map(key =>
-  Vue.component(
-    key
-      .split("/")
-      .pop()
-      .split(".")[0],
-    files(key).default
-  )
-);
+files
+  .keys()
+  .map((key) =>
+    Vue.component(key.split("/").pop().split(".")[0], files(key).default)
+  );
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -74,5 +72,5 @@ const app = new Vue({
   },
   beforeDestroy() {
     this.$off("barcodeScan");
-  }
+  },
 });

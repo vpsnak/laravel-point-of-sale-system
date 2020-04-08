@@ -9,19 +9,19 @@
       />
       <v-divider v-if="$props.showCustomer" />
     </v-container>
-    <v-container fluid class="pa-0">
-      <cartProducts class="mt-2 elevation-2" :editable="$props.editable" />
-    </v-container>
+
+    <cartProducts class="mt-2 elevation-2" :editable="$props.editable" />
 
     <v-divider />
 
-    <v-container class="py-0">
+    <v-container>
       <cartDiscount
-        class="mt-2"
+        class="mt-1"
         :productIndex="-1"
         :editable="$props.editable"
       />
     </v-container>
+
     <cartTotals />
 
     <cartActions v-if="$props.showActions" :disabled="totalProducts" />
@@ -43,7 +43,9 @@ export default {
   },
 
   computed: {
+    ...mapState("dialog", ["checkout_dialog"]),
     ...mapState("cart", ["cart_products"]),
+    ...mapState("config", ["inner_height"]),
 
     totalProducts() {
       return _.size(this.cart_products) ? false : true;

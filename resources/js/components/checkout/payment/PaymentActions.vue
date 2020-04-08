@@ -182,7 +182,6 @@
           <v-btn
             outlined
             type="submit"
-            dark
             block
             color="primary"
             :loading="makePaymentLoading"

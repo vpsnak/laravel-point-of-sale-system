@@ -1,4 +1,5 @@
 const state = {
+  inner_height: 0,
   verbose: process.env.NODE_ENV === "development" ? true : false,
   init_info: [],
   base_url: process.env.MIX_BASE_URL,
@@ -14,6 +15,9 @@ const state = {
 };
 
 const mutations = {
+  setInnerHeight(state, value) {
+    state.inner_height = value;
+  },
   setInitInfo(state, value) {
     const index = _.findIndex(state.init_info, { action: value.action });
     index === -1
