@@ -103,13 +103,13 @@
       origin="top right"
     >
       <template v-slot:activator="{ on }">
-        <v-btn v-on="on" fab small color="blue-grey darken-3">
+        <v-btn v-on="on" fab small color="blue-grey darken-2">
           <span v-text="nameInitials" style="font-size:18px; color:white;" />
         </v-btn>
       </template>
       <v-list dense>
         <v-list-item inactive two-line @click.stop :ripple="false">
-          <v-list-item-avatar color="blue-grey darken-3">
+          <v-list-item-avatar color="blue-grey darken-2">
             <span v-text="nameInitials" style="font-size:18px; color:white;" />
           </v-list-item-avatar>
           <v-list-item-content>
