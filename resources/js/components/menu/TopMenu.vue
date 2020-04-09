@@ -95,6 +95,8 @@
       </v-list>
     </v-menu>
 
+    <v-spacer />
+
     <v-menu
       left
       bottom
