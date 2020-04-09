@@ -26,7 +26,7 @@ export default {
       { id: 9, label: "International City" },
       { id: 10, label: "School" },
       { id: 11, label: "Other" },
-      { id: 12, label: "Pick Up or Will Call" },
+      { id: 12, label: "Pick Up or Will Call" }
     ],
 
     occasions: [
@@ -38,22 +38,22 @@ export default {
       { id: 6, label: "New Baby" },
       { id: 7, label: "Get Well" },
       { id: 8, label: "Funeral" },
-      { id: 9, label: "Other" },
+      { id: 9, label: "Other" }
     ],
 
     discountTypes: [
       {
         text: "None",
-        value: "none",
+        value: "none"
       },
       {
         text: "Flat",
-        value: "flat",
+        value: "flat"
       },
       {
         text: "Percentage",
-        value: "percentage",
-      },
+        value: "percentage"
+      }
     ],
 
     checkoutSteps: [
@@ -63,7 +63,7 @@ export default {
         icon: "mdi-cart-arrow-right",
         color: "primary",
         component: "shipping",
-        completed: true,
+        completed: true
       },
       {
         id: 2,
@@ -71,7 +71,7 @@ export default {
         icon: "mdi-cash-register",
         color: "",
         component: "paymentStep",
-        completed: false,
+        completed: false
       },
       {
         id: 3,
@@ -79,8 +79,8 @@ export default {
         icon: "check_circle",
         color: "",
         component: "completion",
-        completed: false,
-      },
+        completed: false
+      }
     ],
     currentCheckoutStep: 2,
 
@@ -96,7 +96,7 @@ export default {
       address_id: null,
       date: null,
       time: null,
-      occasion: 9,
+      occasion: 9
     },
 
     billing_address_id: null,
@@ -117,7 +117,7 @@ export default {
     order_timestamp: null,
     order_created_by: null,
 
-    order_page_actions: false,
+    order_page_actions: false
   },
 
   mutations: {
@@ -270,13 +270,13 @@ export default {
         result = false;
       }
 
-      state.product_map.forEach((product) => {
+      state.product_map.forEach(product => {
         if (product.discount_error) {
           result = false;
         }
       });
 
-      state.cart_products.forEach((product) => {
+      state.cart_products.forEach(product => {
         if (product.qty < 0) {
           result = false;
         }
@@ -288,7 +288,7 @@ export default {
       state.delivery_fees_price = value;
     },
     addProduct(state, item) {
-      const index = _.findIndex(state.cart_products, (giftcard) => {
+      const index = _.findIndex(state.cart_products, giftcard => {
         return giftcard.id === item.id;
       });
       switch (item.type) {
@@ -314,21 +314,21 @@ export default {
 
       state.product_map.push({
         id: clonedProduct.id,
-        discount_error: false,
+        discount_error: false
       });
       state.cart_products.push(clonedProduct);
     },
     removeProduct(state, index) {
       const productId = state.cart_products[index].id;
       const product_mapindex = _.findIndex(state.product_map, {
-        id: productId,
+        id: productId
       });
 
       state.cart_products.splice(index, 1);
       state.product_map.splice(product_mapindex, 1);
     },
     increaseProductQty(state, target_product) {
-      const index = _.findIndex(state.cart_products, (product) => {
+      const index = _.findIndex(state.cart_products, product => {
         return product.id === target_product.id;
       });
 
@@ -337,7 +337,7 @@ export default {
       }
     },
     decreaseProductQty(state, target_product) {
-      const index = _.findIndex(state.cart_products, (product) => {
+      const index = _.findIndex(state.cart_products, product => {
         return product.id === target_product.id;
       });
 
@@ -356,7 +356,18 @@ export default {
       }
     },
     setCustomerAddress(state, value) {
-      state.customer.addresses = value;
+      if (Array.isArray(value)) {
+        state.customer.addresses = value;
+      } else {
+        const index = _.findIndex(this.addresses, {
+          id: value.id
+        });
+        if (index !== -1) {
+          state.customer.addresses[index] = value;
+        } else {
+          state.customer.addresses.push(value);
+        }
+      }
     },
     completeStep(state) {
       let index = -1 + state.currentCheckoutStep;
@@ -404,7 +415,7 @@ export default {
       state.checkoutSteps[0].icon = "mdi-cart-arrow-right";
       state.checkoutSteps[0].color = "primary";
       state.currentCheckoutStep = 2;
-      state.checkoutSteps.forEach((checkoutStep) => {
+      state.checkoutSteps.forEach(checkoutStep => {
         checkoutStep.completed = false;
       });
 
@@ -412,7 +423,7 @@ export default {
         address_id: null,
         date: null,
         time: null,
-        occasion: 9,
+        occasion: 9
       };
       state.billing_address_id = null;
     },
@@ -421,11 +432,11 @@ export default {
         address_id: null,
         date: null,
         time: null,
-        occasion: 9,
+        occasion: 9
       };
       state.billing_address_id = null;
 
-      state.checkoutSteps.forEach((checkoutStep) => {
+      state.checkoutSteps.forEach(checkoutStep => {
         checkoutStep.completed = false;
       });
 
@@ -437,7 +448,7 @@ export default {
         state.checkoutSteps[0].icon = "mdi-cart-arrow-right";
         state.checkoutSteps[0].color = "primary";
       }
-    },
+    }
   },
   actions: {
     addProduct(context, payload) {
@@ -462,8 +473,8 @@ export default {
               ? context.state.customer.id
               : "",
             billing_address_id: context.state.billing_address_id,
-            notes: context.state.order_notes,
-          },
+            notes: context.state.order_notes
+          }
         };
 
         if (context.state.method !== "retail") {
@@ -473,7 +484,7 @@ export default {
 
         context
           .dispatch("requests/request", payload, { root: true })
-          .then((response) => {
+          .then(response => {
             if (url === "create") {
               context.commit("setOrderId", response.order_id);
               context.commit("setOrderStatus", response.order_status);
@@ -482,13 +493,13 @@ export default {
             }
             resolve(response);
           })
-          .catch((error) => {
+          .catch(error => {
             reject(error);
           });
       });
     },
     restoreCart(context, payload) {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         context.commit("resetState");
         context.commit("setMethod", payload.cart.method);
         context.commit("setMethodStep");
@@ -517,7 +528,7 @@ export default {
       });
     },
     loadOrder(context, order) {
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         context.commit("resetState");
 
         context.commit("setOrderId", order.id);
@@ -540,7 +551,7 @@ export default {
         context.commit("setOrderCreatedBy", order.created_by);
         context.commit("setOrderTimestamp", {
           created_at: order.created_at,
-          updated_at: order.updated_at,
+          updated_at: order.updated_at
         });
 
         if (order.method !== "retail") {
@@ -567,6 +578,6 @@ export default {
     completeStep(context) {
       context.commit("completeStep");
       context.commit("nextCheckoutStep");
-    },
-  },
+    }
+  }
 };

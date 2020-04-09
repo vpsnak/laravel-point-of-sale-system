@@ -100,6 +100,7 @@
             return-object
             :error-messages="errors"
             :loading="country_loading"
+            :disabled="loading"
           />
         </ValidationProvider>
       </v-col>
@@ -109,6 +110,7 @@
           <v-autocomplete
             v-model="address.region"
             :loading="region_loading"
+            :disabled="loading"
             :readonly="$props.readonly"
             :items="regions"
             label="State"
@@ -144,27 +146,41 @@
         />
       </v-col>
     </v-row>
-    <v-row v-if="!$props.readonly" justify="center">
-      <v-btn
-        text
-        color="primary"
-        type="submit"
-        :disabled="invalid || loading"
-        :loading="submit_loading"
-      >
-        {{ submitBtnTxt }}
-      </v-btn>
+    <v-row
+      v-if="!$props.readonly"
+      :justify="stepper ? 'space-around' : 'center'"
+    >
+      <v-col v-if="stepper" cols="auto">
+        <v-btn @click="back()" :disabled="loading" :loading="back_loading">
+          <span v-text="'Back'" />
+        </v-btn>
+      </v-col>
+      <v-col cols="auto">
+        <v-btn
+          text
+          outlined
+          color="primary"
+          type="submit"
+          :disabled="invalid || loading"
+          :loading="submit_loading"
+        >
+          <span v-text="submitBtnTxt" />
+        </v-btn>
+      </v-col>
     </v-row>
   </ValidationObserver>
 </template>
 
 <script>
 import { mapState, mapActions, mapMutations } from "vuex";
+import { EventBus } from "../../../plugins/eventBus";
 
 export default {
   props: {
+    stepper: Boolean,
     model: Object,
-    readonly: Boolean,
+    customer: Object,
+    readonly: Boolean
   },
 
   beforeDestroy() {
@@ -173,6 +189,7 @@ export default {
 
   data() {
     return {
+      back_loading: false,
       submit_loading: false,
       country_loading: false,
       region_loading: false,
@@ -194,8 +211,8 @@ export default {
         phone: null,
         deliverydate: null,
         billing: false,
-        location: 11,
-      },
+        location: 11
+      }
     };
   },
 
@@ -203,17 +220,22 @@ export default {
     if (this.$props.model) {
       this.getAllCountries(true);
       this.address = { ...this.address, ...this.$props.model };
-
-      this.selected_location = _.find(this.locations, {
-        id: this.$props.model.location,
+      this.location = _.find(this.locations, {
+        id: this.$props.model.location
       });
     } else {
+      if (this.$props.customer) {
+        this.address.customer_id = this.$props.customer.id;
+        this.address.first_name = this.$props.customer.first_name;
+        this.address.last_name = this.$props.customer.last_name;
+        this.address.phone = this.$props.customer.phone;
+      }
       this.getAllCountries(false);
     }
   },
 
   computed: {
-    ...mapState("cart", ["locations", "customer"]),
+    ...mapState("cart", ["locations"]),
 
     submitBtnTxt() {
       if (_.has(this.$props.model, "id")) {
@@ -233,7 +255,7 @@ export default {
         } else {
           this.address.location = null;
         }
-      },
+      }
     },
     loading() {
       if (this.submit_loading || this.country_loading || this.region_loading) {
@@ -241,7 +263,7 @@ export default {
       } else {
         return false;
       }
-    },
+    }
   },
 
   methods: {
@@ -257,21 +279,25 @@ export default {
       }
       this.getRegionsByCountry(country);
     },
+    back() {
+      EventBus.$emit("customer-form-back");
+    },
     submit() {
       this.submit_loading = true;
 
       let payload = {
-        method: "post",
+        method: this.address.id ? "patch" : "post",
         url: this.address.id ? "addresses/update" : "addresses/create",
-        data: this.address,
+        data: this.address
       };
 
-      payload.data.customer_id = this.address.customer_id || this.customer.id;
+      payload.data.customer_id =
+        this.address.customer_id || this.$props.customer.id;
       payload.data.region_id = this.address.region.id;
       payload.data.country_id = this.address.country.id;
 
       this.request(payload)
-        .then((response) => {
+        .then(response => {
           this.$emit("submit", { data: response.address });
         })
         .finally(() => {
@@ -283,10 +309,10 @@ export default {
 
       const payload = {
         method: "get",
-        url: "countries",
+        url: "countries"
       };
       this.request(payload)
-        .then((response) => {
+        .then(response => {
           this.countries = response;
 
           if (modelInit) {
@@ -294,13 +320,13 @@ export default {
           }
           if (!this.address.country) {
             this.address.country = _.find(this.countries, {
-              iso3_code: "USA",
+              iso3_code: "USA"
             });
 
             this.regions = this.address.country.regions;
           }
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         })
         .finally(() => {
@@ -312,16 +338,16 @@ export default {
 
       const payload = {
         method: "get",
-        url: `countries/${country.id}/regions`,
+        url: `countries/${country.id}/regions`
       };
       this.request(payload)
-        .then((response) => {
+        .then(response => {
           this.regions = response;
         })
         .finally(() => {
           this.region_loading = false;
         });
-    },
-  },
+    }
+  }
 };
 </script>

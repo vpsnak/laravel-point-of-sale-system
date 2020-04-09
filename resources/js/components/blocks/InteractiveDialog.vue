@@ -38,7 +38,6 @@
           :is="dialog.component"
           v-bind="dialog.component_props"
           :readonly="dialog.readonly"
-          :model="dialog.model"
           @submit="submit"
         />
         <div
@@ -54,7 +53,6 @@
           :is="dialog.component"
           v-bind="dialog.component_props"
           :readonly="dialog.readonly"
-          :model="dialog.model"
           @submit="submit"
         />
         <div
@@ -103,7 +101,11 @@ export default {
 
     dialog() {
       return this.interactive_dialog;
-    },
+    }
+  },
+
+  mounted() {
+    console.log(this.dialog.component_props);
   },
 
   methods: {
@@ -114,7 +116,7 @@ export default {
       if (_.has(payload, "notification")) {
         this.setNotification({
           msg: payload.notification.msg,
-          type: payload.notification.type,
+          type: payload.notification.type
         });
       }
 
@@ -128,19 +130,19 @@ export default {
       if (!this.dialog.persistent || close) {
         if (this.dialog.eventChannel) {
           EventBus.$emit(this.dialog.eventChannel, {
-            payload,
+            payload
           });
 
           console.info({
             module: "interactive-dialog",
             payload,
-            event_channel: this.dialog.eventChannel,
+            event_channel: this.dialog.eventChannel
           });
         }
 
         this.resetDialog();
       }
-    },
-  },
+    }
+  }
 };
 </script>

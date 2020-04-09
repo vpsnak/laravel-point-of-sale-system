@@ -28,7 +28,11 @@
             >
               <v-card>
                 <v-card-text>
-                  <addressForm @submit="submit" :model="address"></addressForm>
+                  <addressForm
+                    @submit="submit"
+                    :model="address"
+                    :customer="customer"
+                  />
                 </v-card-text>
               </v-card>
             </v-tab-item>

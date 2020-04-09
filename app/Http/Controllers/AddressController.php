@@ -69,6 +69,7 @@ class AddressController extends Controller
             'street' => 'required|string',
             'street2' => 'nullable|string',
             'city' => 'required|string',
+            'country_id' => 'required|exists:countries,id',
             'postcode' => 'required|string',
             'phone' => 'required|numeric',
             'company' => 'nullable|string',

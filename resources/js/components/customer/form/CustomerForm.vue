@@ -17,6 +17,7 @@
               label="First name"
               :error-messages="errors"
               :readonly="$props.readonly"
+              :disabled="loading"
               dense
             />
           </ValidationProvider>
@@ -32,6 +33,7 @@
               label="Last name"
               :error-messages="errors"
               :readonly="$props.readonly"
+              :disabled="loading"
               dense
             />
           </ValidationProvider>
@@ -47,6 +49,7 @@
               label="Email"
               :error-messages="errors"
               :readonly="$props.readonly"
+              :disabled="loading"
               dense
             />
           </ValidationProvider>
@@ -72,6 +75,7 @@
         <v-col :cols="4" :lg="2">
           <v-checkbox
             v-model="formFields.house_account_status"
+            :disabled="loading"
             label="House account"
             :readonly="$props.readonly"
             @change="house_account_status = formFields.house_account_status"
@@ -86,6 +90,7 @@
           >
             <v-text-field
               v-model="formFields.house_account_number"
+              :disabled="loading"
               label="House account number"
               :error-messages="errors"
               :readonly="$props.readonly"
@@ -105,6 +110,7 @@
           >
             <v-text-field
               v-model="formFields.house_account_limit"
+              :disabled="loading"
               label="House account limit"
               type="number"
               :error-messages="errors"
@@ -117,6 +123,7 @@
         <v-col :cols="6">
           <v-checkbox
             v-model="formFields.no_tax"
+            :disabled="loading"
             label="Zero tax"
             :readonly="$props.readonly"
             dense
@@ -134,6 +141,7 @@
               v-model="formFields.file"
               :readonly="$props.readonly"
               :error-messages="errors"
+              :disabled="loading"
               label="Upload certification file"
               accept="image/png, image/jpeg, application/pdf"
               show-size
@@ -147,6 +155,7 @@
           <v-btn
             v-if="formFields.no_tax_file"
             :href="formFields.no_tax_file"
+            :disabled="loading"
             text
             target="_blank"
             v-text="'View uploaded file'"
@@ -207,10 +216,6 @@ export default {
     }
   },
 
-  beforeDestroy() {
-    EventBus.$off("submit");
-  },
-
   methods: {
     ...mapActions("requests", ["request"]),
 
@@ -247,17 +252,19 @@ export default {
       }
 
       const payload = {
-        method: this.$props.model ? "patch" : "post",
-        url: this.$props.model ? "customers/update" : "customers/create",
+        method: _.has(this.$props.model, "id") ? "patch" : "post",
+        url: _.has(this.$props.model, "id")
+          ? "customers/update"
+          : "customers/create",
         data: data
       };
       this.request(payload)
         .then(response => {
           console.log(response);
-          EventBus.$emit("submit", response);
+          EventBus.$emit("customer-form-submit", response.customer);
         })
         .catch(error => {
-          console.log(error);
+          console.error(error);
         })
         .finally(() => {
           this.loading = false;

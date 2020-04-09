@@ -96,6 +96,7 @@
             v-if="deliveryAddress"
             :key="deliveryAddress.id"
             :model="deliveryAddress"
+            :customer="customer"
             readonly
           />
         </v-col>
@@ -150,7 +151,6 @@
               :error-messages="errors"
               item-text="label"
               v-model="deliveryTime"
-              @input="setCost"
               @click:append="$props.readonly ? null : addTimeSlotDialog()"
               @change="validate()"
             />
@@ -200,13 +200,14 @@ import { EventBus } from "../../../plugins/eventBus";
 export default {
   props: {
     hideNotes: Boolean,
-    readonly: Boolean,
+    readonly: Boolean
   },
 
   mounted() {
     this.validate();
 
     this.initEventBus();
+    this.setDefaultAddresses();
 
     if (this.order_billing_address) {
       this.billingAddress = this.order_billing_address;
@@ -235,13 +236,13 @@ export default {
       billing_address: null,
       loading: false,
       time_slots: [],
-      datePicker: false,
+      datePicker: false
     };
   },
   watch: {
     validateOption() {
       this.validate();
-    },
+    }
   },
 
   computed: {
@@ -252,7 +253,7 @@ export default {
       "occasions",
       "delivery",
       "billing_address_id",
-      "shipping_cost",
+      "shipping_cost"
     ]),
 
     deliveryFeesPrice: {
@@ -262,9 +263,9 @@ export default {
       set(value) {
         this.delivery_amount = value;
         this.setDeliveryFeesPrice({
-          amount: Math.round(value * 10000) / 100,
+          amount: Math.round(value * 10000) / 100
         });
-      },
+      }
     },
     deliveryTime: {
       get() {
@@ -272,7 +273,7 @@ export default {
       },
       set(value) {
         this.setDeliveryTime(value);
-      },
+      }
     },
     deliveryOccasion: {
       get() {
@@ -280,7 +281,7 @@ export default {
       },
       set(value) {
         this.setDeliveryOccasion(value);
-      },
+      }
     },
     timeSlots: {
       get() {
@@ -288,7 +289,7 @@ export default {
       },
       set(value) {
         this.time_slots = value;
-      },
+      }
     },
     dateFormatted() {
       if (this.delivery.date) {
@@ -306,7 +307,7 @@ export default {
         if (_.has(value, "id")) {
           this.setBillingAddressId(value.id);
         }
-      },
+      }
     },
     deliveryAddress: {
       get() {
@@ -317,7 +318,7 @@ export default {
         if (_.has(value, "id")) {
           this.setDeliveryAddressId(value.id);
         }
-      },
+      }
     },
     deliveryDate: {
       get() {
@@ -325,37 +326,16 @@ export default {
       },
       set(value) {
         this.setDeliveryDate(value);
-      },
+      }
     },
     addresses: {
       get() {
-        if (this.customer && !this.billingAddress) {
-          const billing_address = _.filter(this.customer.addresses, [
-            "is_default_billing",
-            true,
-          ]);
-
-          this.billingAddress = billing_address.length
-            ? billing_address[0]
-            : null;
-        }
-        if (this.customer && !this.deliveryAddress) {
-          const delivery_address = _.filter(this.customer.addresses, [
-            "is_default_shipping",
-            true,
-          ]);
-
-          this.deliveryAddress = delivery_address.length
-            ? delivery_address[0]
-            : null;
-        }
-
         return this.customer.addresses;
       },
       set(value) {
         this.setCustomerAddress(value);
-      },
-    },
+      }
+    }
   },
 
   methods: {
@@ -368,57 +348,71 @@ export default {
       "setDeliveryOccasion",
       "setBillingAddressId",
       "setCustomerAddress",
-      "setIsValid",
+      "setIsValid"
     ]),
     ...mapActions("requests", ["request"]),
 
+    setDefaultAddresses() {
+      if (this.customer && !this.billingAddress) {
+        const billing_address = _.filter(this.customer.addresses, [
+          "is_default_billing",
+          true
+        ]);
+
+        this.billingAddress = billing_address.length
+          ? billing_address[0]
+          : null;
+      }
+      if (this.customer && !this.deliveryAddress) {
+        const delivery_address = _.filter(this.customer.addresses, [
+          "is_default_shipping",
+          true
+        ]);
+
+        this.deliveryAddress = delivery_address.length
+          ? delivery_address[0]
+          : null;
+      }
+    },
     getAddressById(id) {
       return _.find(this.customer.addresses, { id: id });
     },
-
     initEventBus() {
-      EventBus.$on("shipping-timeslot", (event) => {
+      EventBus.$on("shipping-timeslot", event => {
         if (event.payload) {
           this.timeSlots.push(event.payload);
           this.setDeliveryTime(event.payload.label);
         }
       });
 
-      EventBus.$on("billing-address-new", (event) => {
+      EventBus.$on("billing-address-new", event => {
         if (event.payload) {
-          this.addresses.push(event.payload);
+          this.setCustomerAddress(event.payload);
           this.billingAddress = event.payload;
         }
       });
 
-      EventBus.$on("billing-address-edit", (event) => {
+      EventBus.$on("billing-address-edit", event => {
         if (event.payload) {
-          const index = _.findIndex(this.addresses, {
-            id: event.payload.id,
-          });
-          this.addresses[index] = event.payload;
+          this.setCustomerAddress(event.payload);
           this.billingAddress = event.payload;
         }
       });
 
-      EventBus.$on("delivery-address-new", (event) => {
+      EventBus.$on("delivery-address-new", event => {
         if (event.payload) {
-          this.addresses.push(event.payload);
+          this.setCustomerAddress(event.payload);
           this.deliveryAddress = event.payload;
         }
       });
 
-      EventBus.$on("delivery-address-edit", (event) => {
+      EventBus.$on("delivery-address-edit", event => {
         if (event.payload) {
-          const index = _.findIndex(this.addresses, {
-            id: event.payload.id,
-          });
-          this.addresses[index] = event.payload;
+          this.setCustomerAddress(event.payload);
           this.deliveryAddress = event.payload;
         }
       });
     },
-
     addTimeSlotDialog() {
       const payload = {
         show: true,
@@ -427,13 +421,13 @@ export default {
         icon: "mdi-clock",
         component: "timeSlotForm",
         persistent: true,
-        eventChannel: "shipping-timeslot",
+        eventChannel: "shipping-timeslot"
       };
       this.setDialog(payload);
     },
     validate() {
       this.$nextTick(() => {
-        this.$refs.deliveryValidation.validate().then((result) => {
+        this.$refs.deliveryValidation.validate().then(result => {
           this.setIsValid(result);
         });
       });
@@ -455,16 +449,16 @@ export default {
       if (action === "delivery") {
         icon = "mdi-map-marker";
         title = edit ? "Edit delivery address" : "New delivery address";
-        data = edit ? this.deliveryAddress : null;
+        data = edit ? _.cloneDeep(this.deliveryAddress) : null;
         eventChannel = edit ? "delivery-address-edit" : "delivery-address-new";
       } else {
         icon = "mdi-receipt";
         title = edit ? "Edit billing address" : "New billing address";
-        data = edit ? this.billingAddress : null;
+        data = edit ? _.cloneDeep(this.billingAddress) : null;
         eventChannel = edit ? "billing-address-edit" : "billing-address-new";
       }
 
-      this.setDialog({
+      const payload = {
         show: true,
         width: 750,
         fullscreen: false,
@@ -472,18 +466,12 @@ export default {
         titleCloseBtn: true,
         icon: icon,
         component: "addressForm",
+        component_props: { customer: this.customer, model: data },
         content: "",
-        model: data,
         persistent: true,
-        eventChannel,
-      });
-    },
-    setCost(item) {
-      if (_.has(item, "cost")) {
-        this.shippingCost = item.cost;
-      } else {
-        this.shippingCost = 0;
-      }
+        eventChannel
+      };
+      this.setDialog(payload);
     },
     getTimeSlots() {
       if (this.delivery.address_id && this.delivery.date) {
@@ -493,11 +481,11 @@ export default {
           url: "shipping/timeslot",
           data: {
             postcode: this.delivery_address.postcode,
-            date: this.delivery.date,
-          },
+            date: this.delivery.date
+          }
         };
         this.request(payload)
-          .then((response) => {
+          .then(response => {
             this.timeSlots = response;
           })
           .finally(() => {
@@ -521,7 +509,7 @@ export default {
         ", " +
         item.region.country.iso3_code
       );
-    },
-  },
+    }
+  }
 };
 </script>

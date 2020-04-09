@@ -21,8 +21,8 @@
                 <v-row align="center" justify="space-around">
                   <v-col cols="auto">
                     <h4>
-                      <b class="amber--text">{{ 1 + index }}.</b>
-                      &nbsp;{{ product.name }}
+                      <b class="amber--text" v-text="1 + index" />
+                      <span v-text="product.name" />
                     </h4>
                   </v-col>
                   <v-col cols="auto">
@@ -42,13 +42,20 @@
                 </v-row>
                 <v-row>
                   <v-col cols="auto">
-                    <v-row class="ma-0" justify="space-around">
+                    <v-row class="ma-0" justify="space-around" align="center">
                       <v-col>
                         <v-img
-                          :lazy-src="product.photo_url"
+                          v-if="product.photo_url"
                           :src="product.photo_url"
-                          width="75"
-                          height="75"
+                          width="50"
+                          height="50"
+                          contain
+                        />
+
+                        <v-icon
+                          v-else
+                          size="50px"
+                          v-text="'mdi-image-off-outline'"
                         />
                       </v-col>
                       <v-col cols="auto" v-if="productHasDiscount(product)">
