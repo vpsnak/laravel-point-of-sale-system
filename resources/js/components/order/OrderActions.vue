@@ -1,90 +1,102 @@
 <template>
-  <div class="text-center">
-    <v-bottom-sheet v-model="orderPageActions">
-      <v-list>
-        <v-subheader v-if="canEditOrderItems || canEditOrderOptions">
-          <h3>Edit</h3>
-        </v-subheader>
-        <v-list-item
-          v-if="canEditOrderItems"
-          @click.stop="editOrderItems()"
-          :disabled="loading"
-          :loading="checkout_loading"
-        >
-          <v-list-item-icon>
-            <v-icon>mdi-package-variant</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>Order items</v-list-item-title>
-        </v-list-item>
-        <v-list-item
-          v-if="canEditOrderOptions"
-          @click.stop="editOrderOptions()"
-          :disabled="loading"
-          :loading="checkout_loading"
-        >
-          <v-list-item-icon>
-            <v-icon>mdi-file-document-edit-outline</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>Order options</v-list-item-title>
-        </v-list-item>
-        <v-divider />
-        <v-list-item
-          @click.stop="checkout()"
-          v-if="canCheckout"
-          :disabled="loading"
-          :loading="checkout_loading"
-        >
-          <v-list-item-icon>
-            <v-icon>mdi-currency-usd</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>Continue checkout</v-list-item-title>
-        </v-list-item>
-        <v-list-item
-          @click.stop="receipt()"
-          v-if="canReceipt"
-          :disabled="loading"
-          :loading="receipt_loading"
-        >
-          <v-list-item-icon>
-            <v-icon>mdi-receipt</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>Receipt</v-list-item-title>
-        </v-list-item>
-        <v-list-item
-          @click.stop="reorder()"
-          :disabled="loading"
-          :loading="reorder_loading"
-        >
-          <v-list-item-icon>
-            <v-icon>mdi-cart-arrow-down</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>Reorder</v-list-item-title>
-        </v-list-item>
-        <v-list-item
-          @click.stop="uploadToMas()"
-          v-if="canUploadToMas"
-          :disabled="loading"
-          :loading="upload_to_mas_loading"
-        >
-          <v-list-item-icon>
-            <v-icon>mdi-file-upload-outline</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>Upload to MAS</v-list-item-title>
-        </v-list-item>
-        <v-list-item
-          @click.stop="cancelDialog()"
-          v-if="canCancel"
-          :disabled="loading"
-          :loading="cancel_loading"
-        >
-          <v-list-item-icon>
-            <v-icon>mdi-cancel</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>Cancel order</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-bottom-sheet>
-  </div>
+  <v-bottom-sheet v-model="orderPageActions">
+    <v-list>
+      <v-subheader v-if="canEditOrderItems || canEditOrderOptions">
+        <h3 v-text="'Edit'" />
+      </v-subheader>
+      <v-list-item
+        v-if="canEditOrderItems"
+        @click.stop="editOrderItems()"
+        :disabled="loading"
+        :loading="checkout_loading"
+      >
+        <v-list-item-icon>
+          <v-icon v-text="'mdi-package-variant'" />
+        </v-list-item-icon>
+        <v-list-item-title>
+          <span v-text="'Order items'" />
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item
+        v-if="canEditOrderOptions"
+        @click.stop="editOrderOptions()"
+        :disabled="loading"
+        :loading="checkout_loading"
+      >
+        <v-list-item-icon>
+          <v-icon v-text="'mdi-file-document-edit-outline'" />
+        </v-list-item-icon>
+        <v-list-item-title>
+          <span v-text="'Order options'" />
+        </v-list-item-title>
+      </v-list-item>
+      <v-divider />
+      <v-list-item
+        v-if="canCheckout"
+        @click.stop="checkout()"
+        :disabled="loading"
+        :loading="checkout_loading"
+      >
+        <v-list-item-icon>
+          <v-icon v-text="'mdi-currency-usd'" />
+        </v-list-item-icon>
+        <v-list-item-title>
+          <span v-text="'Continue checkout'" />
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item
+        v-if="canReceipt"
+        @click.stop="receipt()"
+        :disabled="loading"
+        :loading="receipt_loading"
+      >
+        <v-list-item-icon>
+          <v-icon v-text="'mdi-receipt'" />
+        </v-list-item-icon>
+        <v-list-item-title>
+          <span v-text="'Receipt'" />
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item
+        @click.stop="reorder()"
+        :disabled="loading"
+        :loading="reorder_loading"
+      >
+        <v-list-item-icon>
+          <v-icon v-text="'mdi-cart-arrow-down'" />
+        </v-list-item-icon>
+        <v-list-item-title>
+          <span v-text="'Reorder'" />
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item
+        v-if="canUploadToMas"
+        @click.stop="uploadToMas()"
+        :disabled="loading"
+        :loading="upload_to_mas_loading"
+      >
+        <v-list-item-icon>
+          <v-icon v-text="'>mdi-file-upload-outline'" />
+        </v-list-item-icon>
+        <v-list-item-title>
+          <span v-text="'Upload to MAS'" />
+        </v-list-item-title>
+      </v-list-item>
+      <v-list-item
+        @click.stop="cancelDialog()"
+        v-if="canCancel"
+        :disabled="loading"
+        :loading="cancel_loading"
+      >
+        <v-list-item-icon>
+          <v-icon v-text="'mdi-cancel'" />
+        </v-list-item-icon>
+        <v-list-item-title>
+          <span v-text="'Cancel order'" />
+        </v-list-item-title>
+      </v-list-item>
+    </v-list>
+  </v-bottom-sheet>
 </template>
 
 <script>
@@ -93,7 +105,7 @@ import { EventBus } from "../../plugins/eventBus";
 
 export default {
   mounted() {
-    EventBus.$on("order-edit-cancel-order", (event) => {
+    EventBus.$on("order-edit-cancel-order", event => {
       if (event.payload) {
         this.cancelOrder();
       } else {
@@ -113,6 +125,17 @@ export default {
       receipt_loading: false,
       upload_to_mas_loading: false,
       cancel_loading: false,
+      confirmationDialog: {
+        show: true,
+        width: 600,
+        title: null,
+        titleCloseBtn: true,
+        icon: "mdi-lock-alert",
+        component: "passwordForm",
+        component_props: { action: "verify" },
+        persistent: true,
+        eventChannel: null
+      }
     };
   },
 
@@ -122,7 +145,7 @@ export default {
       "cart_products",
       "order_status",
       "transactions",
-      "order_page_actions",
+      "order_page_actions"
     ]),
 
     orderPageActions: {
@@ -131,7 +154,7 @@ export default {
       },
       set(value) {
         this.setOrderPageActions(value);
-      },
+      }
     },
     loading() {
       if (
@@ -164,7 +187,7 @@ export default {
     },
     canCancel() {
       return this.order_status.can_cancel;
-    },
+    }
   },
   methods: {
     ...mapMutations("dialog", ["setDialog", "resetDialog"]),
@@ -172,7 +195,7 @@ export default {
       "setCheckoutDialog",
       "resetState",
       "setReorder",
-      "setOrderPageActions",
+      "setOrderPageActions"
     ]),
     ...mapActions("requests", ["request"]),
 
@@ -206,7 +229,7 @@ export default {
         icon: "mdi-receipt",
         component: "orderReceipt",
         persistent: true,
-        eventChannel: "orders-table-receipt",
+        eventChannel: "orders-table-receipt"
       };
       this.setDialog(payload);
     },
@@ -215,29 +238,16 @@ export default {
       this.cancel_loading = true;
       const payload = {
         title: `Verify your password to cancel order #${this.order_id}`,
-        eventChannel: "order-edit-cancel-order",
+        eventChannel: "order-edit-cancel-order"
       };
+      this.setDialog({ ...this.confirmationDialog, ...payload });
+    },
 
-      this.confirmationDialog(payload);
-    },
-    confirmationDialog(payload) {
-      this.setDialog({
-        show: true,
-        width: 600,
-        title: payload.title,
-        titleCloseBtn: true,
-        icon: "mdi-lock-alert",
-        component: "passwordForm",
-        model: { action: "verify" },
-        persistent: true,
-        eventChannel: payload.eventChannel,
-      });
-    },
     cancelOrder() {
       return new Promise((resolve, reject) => {
         const payload = {
           method: "get",
-          url: `orders/${this.order_id}`,
+          url: `orders/${this.order_id}`
         };
         this.request(payload)
           .then(() => {
@@ -248,7 +258,7 @@ export default {
             this.cancel_loading = false;
           });
       });
-    },
-  },
+    }
+  }
 };
 </script>

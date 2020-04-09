@@ -94,11 +94,11 @@ import { EventBus } from "../../../plugins/eventBus";
 
 export default {
   props: {
-    checkout: Boolean,
+    checkout: Boolean
   },
 
   mounted() {
-    EventBus.$on("transaction-history-refund", (event) => {
+    EventBus.$on("transaction-history-refund", event => {
       if (event.payload && this.selected_payment) {
         this.rollbackPayment();
       }
@@ -118,49 +118,49 @@ export default {
         {
           text: "#",
           value: "id",
-          sortable: false,
+          sortable: false
         },
         {
           text: "Operator",
           value: "created_by_name",
-          sortable: false,
+          sortable: false
         },
         {
           text: "Date",
           value: "created_at",
-          sortable: false,
+          sortable: false
         },
         {
           text: "Type",
           value: "type_name",
-          sortable: false,
+          sortable: false
         },
         {
           text: "Amount",
           value: "price",
-          sortable: false,
+          sortable: false
         },
         {
           text: "Earnings",
           value: "earnings_price",
-          sortable: false,
+          sortable: false
         },
         {
           text: "Change",
           value: "change_price",
-          sortable: false,
+          sortable: false
         },
         {
           text: "Status",
           value: "status",
-          sortable: false,
+          sortable: false
         },
         {
           text: "Actions",
           value: "actions",
-          sortable: false,
-        },
-      ],
+          sortable: false
+        }
+      ]
     };
   },
 
@@ -173,7 +173,7 @@ export default {
       } else {
         return false;
       }
-    },
+    }
   },
 
   methods: {
@@ -182,7 +182,7 @@ export default {
       "setOrderChangePrice",
       "setOrderRemainingPrice",
       "setOrderStatus",
-      "setCheckoutLoading",
+      "setCheckoutLoading"
     ]),
     ...mapMutations("dialog", ["setDialog"]),
     ...mapActions("requests", ["request"]),
@@ -282,11 +282,11 @@ export default {
       this.rollbackLoading = true;
       const payload = {
         method: "post",
-        url: `payments/${this.selected_payment.id}/rollback`,
+        url: `payments/${this.selected_payment.id}/rollback`
       };
 
       this.request(payload)
-        .then((response) => {
+        .then(response => {
           if (response.refunded_transaction) {
             this.setTransactions(response.transaction);
           }
@@ -295,7 +295,7 @@ export default {
           this.setOrderRemainingPrice(response.remaining);
           this.setOrderStatus(response.order_status);
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
           // @TODO fix payload object
           if (_.has(error, "response.transaction")) {
@@ -318,13 +318,12 @@ export default {
         titleCloseBtn: true,
         icon: "mdi-lock-alert",
         component: "passwordForm",
-        model: { action: "verify" },
+        component_props: { action: "verify" },
         persistent: true,
-        eventChannel: "transaction-history-refund",
+        eventChannel: "transaction-history-refund"
       };
-
       this.setDialog(payload);
-    },
-  },
+    }
+  }
 };
 </script>

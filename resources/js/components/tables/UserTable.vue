@@ -134,7 +134,7 @@ export default {
         titleCloseBtn: true,
         icon: "mdi-lock-reset",
         component: "passwordForm",
-        model: item,
+        component_props: { model: item },
         persistent: true
       };
 

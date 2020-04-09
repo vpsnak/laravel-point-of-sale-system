@@ -142,11 +142,13 @@
                         dense
                         outlined
                         class="mt-5 pt-3"
-                        :style="`max-width:110px;${
-                          product.type === 'giftcard'
-                            ? 'visibility:hidden;'
-                            : ''
-                        }`"
+                        :style="
+                          `max-width:110px;${
+                            product.type === 'giftcard'
+                              ? 'visibility:hidden;'
+                              : ''
+                          }`
+                        "
                         :disabled="
                           !$props.editable || product.type === 'giftcard'
                         "
@@ -245,7 +247,7 @@ import { mapState, mapMutations, mapActions } from "vuex";
 
 export default {
   props: {
-    editable: Boolean,
+    editable: Boolean
   },
 
   computed: {
@@ -257,8 +259,8 @@ export default {
       },
       set(value) {
         this.setCartProducts(value);
-      },
-    },
+      }
+    }
   },
 
   watch: {
@@ -266,7 +268,7 @@ export default {
       this.$nextTick(() => {
         this.$refs.scroll.$el.scrollTop = this.$refs.cart.clientHeight;
       });
-    },
+    }
   },
 
   methods: {
@@ -275,7 +277,7 @@ export default {
       "setCartProducts",
       "increaseProductQty",
       "decreaseProductQty",
-      "isValidCart",
+      "isValidCart"
     ]),
     ...mapActions("cart", ["removeProduct"]),
 
@@ -301,7 +303,7 @@ export default {
       } else {
         return {
           class: "primary--text",
-          label: label.toFormat(),
+          label: label.toFormat()
         };
       }
     },
@@ -321,7 +323,7 @@ export default {
       const price = this.getSelectedInput(index).lazyValue;
 
       this.$set(this.products[index], "price", {
-        amount: Number.parseInt(price * 100),
+        amount: Number.parseInt(price * 100)
       });
       if (toggleEdit) {
         this.toggleEdit(index);
@@ -358,33 +360,20 @@ export default {
       }
     },
     viewItemDialog(item) {
-      let payload;
-      switch (item.type) {
-        case "giftcard":
-          payload = {
-            show: true,
-            width: 450,
-            title: `Giftcard: ${item.code}`,
-            titleCloseBtn: true,
-            icon: "mdi-wallet-giftcard",
-            component: "giftCardForm",
-            model: item,
-          };
-          break;
-        case "product":
-          payload = {
-            show: true,
-            width: 1000,
-            title: `Product: ${item.sku}`,
-            titleCloseBtn: true,
-            icon: "mdi-flower",
-            component: `productForm`,
-            model: item,
-          };
-          break;
-      }
+      const payload = {
+        show: true,
+        width: item.type === "giftcard" ? 450 : 1000,
+        title:
+          item.type === "giftcard"
+            ? `Giftcard: ${item.code}`
+            : `Product: ${item.sku}`,
+        titleCloseBtn: true,
+        icon: item.type === "giftcard" ? "mdi-wallet-giftcard" : "mdi-flower",
+        component: item.type === "giftcard" ? "giftCardForm" : `product`,
+        component_props: { model: item }
+      };
       this.setDialog(payload);
-    },
-  },
+    }
+  }
 };
 </script>

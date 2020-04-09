@@ -8,19 +8,19 @@
     offset-y
   >
     <template v-slot:activator="{ on }">
-      <h5 v-if="$props.title">Created by</h5>
+      <h5 v-if="$props.title" v-text="'Created by'" />
       <v-chip
         label
         v-on="$props.menu ? on : null"
         color="primary"
         :small="small"
       >
-        <v-icon left>mdi-account-circle</v-icon>
-        <b>{{ $props.createdBy.name }}</b>
+        <v-icon left v-text="'mdi-account-circle'" />
+        <b v-text="$props.user.name" />
       </v-chip>
     </template>
     <v-card width="450" class="pa-5" outlined>
-      <userForm :model="$props.createdBy" :readonly="true" />
+      <userForm :model="$props.user" :readonly="true" />
     </v-card>
   </v-menu>
 </template>
@@ -33,7 +33,7 @@ export default {
     small: Boolean,
     title: Boolean,
     menu: Boolean,
-    createdBy: Object
+    user: Object
   },
 
   beforeDestroy() {

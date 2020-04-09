@@ -262,9 +262,9 @@ export default {
         titleCloseBtn: true,
         icon: "mdi-storefront",
         component: "storePickupForm",
+        component_props: { model },
         persistent: true,
-        eventChannel: model ? "edit-instore-pickup" : "new-instore-pickup",
-        model: model
+        eventChannel: model ? "edit-instore-pickup" : "new-instore-pickup"
       };
       this.setDialog(payload);
     },

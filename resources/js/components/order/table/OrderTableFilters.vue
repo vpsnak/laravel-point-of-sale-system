@@ -301,7 +301,7 @@ export default {
         title: `View customer #${this.selectedCustomer.full_name}`,
         titleCloseBtn: true,
         component: "customerForm",
-        model: this.selectedCustomer,
+        component_props: { model: this.selectedCustomer },
         persistent: false
       };
       this.setDialog(dialog);

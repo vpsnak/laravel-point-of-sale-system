@@ -104,10 +104,6 @@ export default {
     }
   },
 
-  mounted() {
-    console.log(this.dialog.component_props);
-  },
-
   methods: {
     ...mapMutations(["setNotification"]),
     ...mapMutations("dialog", ["resetDialog"]),

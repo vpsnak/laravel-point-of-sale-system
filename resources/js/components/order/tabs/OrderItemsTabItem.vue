@@ -174,26 +174,28 @@ export default {
     ...mapMutations("dialog", ["setDialog"]),
 
     viewProduct(product) {
-      this.setDialog({
+      const payload = {
         show: true,
         title: `View: ${product.name}`,
         component: "product",
+        component_props: { model: product },
         icon: "mdi-package-variant",
-        model: product,
         width: 1000,
         titleCloseBtn: true
-      });
+      };
+      this.setDialog(payload);
     },
     viewNotes(product) {
-      this.setDialog({
+      const payload = {
         show: true,
         title: `Notes: ${product.name}`,
         component: "orderItemNotes",
+        component_props: { model: product.notes },
         icon: "mdi-card-text-outline",
-        model: product.notes,
         width: 1000,
         titleCloseBtn: true
-      });
+      };
+      this.setDialog(payload);
     },
     hasNotes(product) {
       if (product.notes && product.notes.length) {

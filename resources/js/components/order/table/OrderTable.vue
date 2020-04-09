@@ -36,11 +36,11 @@
       />
     </template>
     <template v-slot:item.created_by="{ item }">
-      <createdByChip menu :createdBy="item.created_by" :small="smallChips" />
+      <userChip menu :user="item.created_by" :small="smallChips" />
     </template>
 
     <template v-slot:item.actions="{ item }">
-      <v-menu :nudge-width="200" offset-y>
+      <v-menu :nudge-width="200" offset-y dark>
         <template v-slot:activator="{ on }">
           <v-btn :disabled="data_table.loading" icon v-on="on">
             <v-icon v-text="'mdi-dots-vertical'" />
@@ -261,7 +261,7 @@ export default {
 
       this.getSingleOrder(id)
         .then(() => {
-          this.setDialog({
+          const payload = {
             show: true,
             width: 600,
             title: `Receipt #${id}`,
@@ -270,10 +270,11 @@ export default {
             component: "orderReceipt",
             persistent: true,
             eventChannel: "orders-table-receipt"
-          });
+          };
+          this.setDialog(payload);
         })
         .catch(error => {
-          console.log(error);
+          console.error(error);
         })
         .finally(() => {
           this.setLoading(false);
@@ -312,7 +313,7 @@ export default {
         titleCloseBtn: true,
         icon: "mdi-lock-alert",
         component: "passwordForm",
-        model: { action: "verify" },
+        component_props: { action: "verify" },
         persistent: true,
         eventChannel: "order-table-cancel-order"
       };

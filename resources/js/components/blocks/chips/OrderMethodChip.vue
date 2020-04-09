@@ -11,6 +11,7 @@
       <h5 v-if="$props.title">Type</h5>
       <v-chip
         label
+        dark
         v-on="$props.method === 'retail' || !$props.menu ? '' : on"
         :color="parseMethod.color"
         :small="small"

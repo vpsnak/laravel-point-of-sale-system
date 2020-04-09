@@ -104,7 +104,7 @@ export default {
         titleCloseBtn: true,
         icon: "mdi-wallet-giftcard",
         component: "giftCardToCartForm",
-        model: item,
+        component_props: { model: item },
         persistent: true,
         eventChannel: "gift-card-table"
       };

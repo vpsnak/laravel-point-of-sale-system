@@ -7,11 +7,11 @@
     <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
       <v-row>
         <v-col
+          v-if="['change_self', 'verify'].indexOf($props.action) !== -1"
           :cols="12"
-          v-if="action === 'change_self' || action === 'verify'"
         >
           <ValidationProvider
-            rules="required|min:8|max:100"
+            rules="required|min:8|max:20"
             v-slot="{ errors }"
             name="Password"
           >
@@ -26,16 +26,16 @@
               hint="At least 8 characters"
               counter
               @click:append="showCurrentPassword = !showCurrentPassword"
-            ></v-text-field>
+            />
           </ValidationProvider>
         </v-col>
         <v-col
+          v-if="['change_self', 'change'].indexOf($props.action) !== -1"
           :cols="12"
-          v-if="action === 'change' || action === 'change_self'"
         >
           <ValidationProvider
             v-slot="{ errors }"
-            rules="required|min:8|max:100"
+            rules="required|min:8|max:20"
             name="New Password"
             vid="confirmation"
           >
@@ -49,15 +49,15 @@
               hint="At least 8 characters"
               counter
               @click:append="showPassword = !showPassword"
-            ></v-text-field>
+            />
           </ValidationProvider>
         </v-col>
         <v-col
+          v-if="['change_self', 'change'].indexOf($props.action) !== -1"
           :cols="12"
-          v-if="action === 'change' || action === 'change_self'"
         >
           <ValidationProvider
-            rules="required|min:8|max:100|confirmed:confirmation"
+            rules="required|min:8|max:20|confirmed:confirmation"
             v-slot="{ errors }"
             name="Password Confirmation"
           >
@@ -74,12 +74,11 @@
               @click:append="
                 showPasswordConfirmation = !showPasswordConfirmation
               "
-            ></v-text-field>
+            />
           </ValidationProvider>
         </v-col>
-        <v-col :cols="12" v-if="action === 'change'">
-          <v-checkbox label="Deauthorize" v-model="formFields.deauth">
-          </v-checkbox>
+        <v-col :cols="12" v-if="$props.action === 'change'">
+          <v-checkbox label="Deauthorize" v-model="formFields.deauth" />
         </v-col>
       </v-row>
     </v-container>
@@ -104,7 +103,7 @@ import { mapActions } from "vuex";
 
 export default {
   props: {
-    model: Object
+    action: String
   },
 
   beforeDestroy() {
@@ -127,11 +126,8 @@ export default {
   },
 
   computed: {
-    action() {
-      return this.$props.model.action;
-    },
     disableSubmit() {
-      switch (this.action) {
+      switch (this.$props.action) {
         case "change_self":
           return this.formFields.current_password ? false : true;
         case "change":
@@ -148,7 +144,7 @@ export default {
     ...mapActions("requests", ["request"]),
 
     submit() {
-      switch (this.action) {
+      switch (this.$props.action) {
         case "change_self":
           this.loading = true;
           this.request({

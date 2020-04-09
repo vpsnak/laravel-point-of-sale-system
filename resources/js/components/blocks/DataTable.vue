@@ -120,7 +120,11 @@
                   dense
                   max-width="300px"
                 >
-                  Your search for "{{ keyword }}" found no results
+                  <span
+                    v-text="
+                      `Your search for &quot;${keyword}&quot; found no results`
+                    "
+                  />
                 </v-alert>
                 <v-alert
                   v-else
@@ -164,7 +168,7 @@ export default {
       searchValue: "",
       search: false,
       keyword: null,
-      appliedFilters: null,
+      appliedFilters: null
     };
   },
 
@@ -180,7 +184,7 @@ export default {
 
   computed: {
     ...mapGetters("datatable", ["getHeaders"]),
-    ...mapState("datatable", ["data_table"]),
+    ...mapState("datatable", ["data_table"])
   },
 
   methods: {
@@ -189,10 +193,10 @@ export default {
     ...mapActions("requests", ["request"]),
 
     initEvents() {
-      EventBus.$on("overlay", (event) => {
+      EventBus.$on("overlay", event => {
         this.overlay = event;
       });
-      EventBus.$on("data-table", (event) => {
+      EventBus.$on("data-table", event => {
         if (_.has(event, "payload.action")) {
           switch (event.payload.action) {
             case "paginate":
@@ -214,7 +218,7 @@ export default {
       });
 
       if (this.data_table.newForm === "productForm") {
-        this.$root.$on("barcodeScan", (sku) => {
+        this.$root.$on("barcodeScan", sku => {
           this.keyword = sku;
           this.getItems();
         });
@@ -232,7 +236,7 @@ export default {
         payload.method = "post";
         payload.url = `${this.data_table.model}/search?page=${this.page}`;
         payload.data = {
-          keyword: this.keyword ? this.keyword : "",
+          keyword: this.keyword ? this.keyword : ""
         };
         payload.data.filters = this.appliedFilters;
       } else {
@@ -241,12 +245,12 @@ export default {
       }
 
       this.request(payload)
-        .then((response) => {
+        .then(response => {
           this.setItems(response.data);
 
           this.pageCount = response.last_page;
         })
-        .catch((error) => {
+        .catch(error => {
           console.error(error);
         })
         .finally(() => {
@@ -262,10 +266,10 @@ export default {
         titleCloseBtn: true,
         component: this.data_table.newForm,
         persistent: true,
-        eventChannel: "data-table",
+        eventChannel: "data-table"
       };
       this.setDialog(payload);
-    },
-  },
+    }
+  }
 };
 </script>

@@ -152,7 +152,7 @@ export default {
     ...mapMutations("cart", ["setCustomer", "resetDelivery"]),
 
     customerForm(create) {
-      this.setDialog({
+      const payload = {
         show: true,
         width: 600,
         fullscreen: false,
@@ -162,13 +162,14 @@ export default {
           : `View / Edit customer #${this.cartCustomer.id}`,
         titleCloseBtn: true,
         component: create ? "customerNewForm" : "customerForm",
-        model: create ? {} : this.cartCustomer,
+        component_props: { model: create ? {} : this.cartCustomer },
         persistent: create ? true : false,
         eventChannel: "customer-search"
-      });
+      };
+      this.setDialog(payload);
     },
     viewCustomerComments() {
-      this.setDialog({
+      const payload = {
         show: true,
         width: 600,
         fullscreen: false,
@@ -176,9 +177,10 @@ export default {
         title: `Comments for ${this.cartCustomer.full_name}`,
         titleCloseBtn: true,
         component: "customerComment",
-        model: this.cartCustomer,
+        component_props: { model: this.cartCustomer },
         persistent: false
-      });
+      };
+      this.setDialog(payload);
     },
     checkIfObjectEvent() {
       if (!_.isObjectLike(this.cartCustomer)) {
@@ -187,7 +189,7 @@ export default {
     },
     getCustomerFullname(item) {
       if (_.has(item, "full_name")) {
-        return `${item.full_name}`;
+        return item.full_name;
       } else {
         return "Guest";
       }

@@ -524,11 +524,11 @@ export default {
     mailPlantCareDialog(product) {
       const payload = {
         show: true,
-        component: "MailPlantCareDialog",
         title: "Send plant care",
         cancelBtnTxt: "Close",
-        model: product,
-        titleCloseBtn: true
+        titleCloseBtn: true,
+        component: "MailPlantCareDialog",
+        component_props: { model: product }
       };
       this.setDialog(payload);
     },

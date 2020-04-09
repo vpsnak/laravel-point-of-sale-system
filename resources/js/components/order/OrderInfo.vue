@@ -9,7 +9,7 @@
     <v-container>
       <v-row justify="center" align="center">
         <v-col :lg="4" :md="6" :cols="12" class="text-center">
-          <createdByChip title menu :createdBy="order_created_by" />
+          <userChip title menu :user="order_created_by" />
         </v-col>
         <v-col :lg="4" :md="6" :cols="12" class="text-center">
           <timestampChip

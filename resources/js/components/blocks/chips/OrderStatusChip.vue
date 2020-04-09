@@ -57,7 +57,7 @@
               />
             </template>
             <template v-slot:item.processed_by="{ item }">
-              <createdByChip menu :createdBy="item.pivot.processed_by" />
+              <userChip menu :user="item.pivot.processed_by" />
             </template>
           </v-data-table>
         </v-row>
@@ -76,7 +76,7 @@ export default {
     menu: Boolean,
     orderId: Number,
     title: Boolean,
-    latestStatus: Object,
+    latestStatus: Object
   },
 
   beforeDestroy() {
@@ -91,8 +91,8 @@ export default {
       headers: [
         { text: "Status", value: "text" },
         { text: "Processed on", value: "created_at" },
-        { text: "Processed by", value: "processed_by" },
-      ],
+        { text: "Processed by", value: "processed_by" }
+      ]
     };
   },
 
@@ -102,7 +102,7 @@ export default {
       if (value && !this.statuses.length) {
         this.getOrderStatuses();
       }
-    },
+    }
   },
 
   methods: {
@@ -112,20 +112,20 @@ export default {
       this.loading = true;
       const payload = {
         method: "get",
-        url: `orders/${this.$props.orderId}/statuses`,
+        url: `orders/${this.$props.orderId}/statuses`
       };
 
       this.request(payload)
-        .then((response) => {
+        .then(response => {
           this.statuses = response;
         })
-        .catch((error) => {
+        .catch(error => {
           console.log(error);
         })
         .finally(() => {
           this.loading = false;
         });
-    },
-  },
+    }
+  }
 };
 </script>

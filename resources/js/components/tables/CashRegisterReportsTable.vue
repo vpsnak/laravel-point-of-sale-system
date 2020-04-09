@@ -48,7 +48,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations("dialog", ["setDialog", "editItem", "viewItem"]),
+    ...mapMutations("dialog", ["setDialog"]),
     ...mapMutations("datatable", ["setDataTable", "resetDataTable"]),
     ...mapMutations("cart", ["setCheckoutDialog"])
   }

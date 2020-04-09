@@ -5,28 +5,20 @@
 
     <v-spacer />
 
-    <v-toolbar-title>
-      <span v-text="'Environment: '" />
-      <i :class="txtColor(app_env)" v-text="app_env" />
-    </v-toolbar-title>
-
-    <v-spacer />
-
-    <v-toolbar-title>
-      <span v-text="'MAS Env: '" />
-      <i :class="txtColor(mas_env)" @click="clicks++" v-text="mas_env" />
-    </v-toolbar-title>
-
-    <v-spacer />
-
-    <v-chip
-      v-if="!cashRegister"
-      text
-      @click="$router.push({ name: 'openCashRegister' })"
-      label
-    >
-      <span v-text="'Select cash register'" />
+    <v-chip text label>
+      <span v-html="'App env:&nbsp;'" />
+      <b><i :class="txtColor(app_env)" v-text="app_env"/></b>
     </v-chip>
+
+    <v-spacer />
+
+    <v-chip text label>
+      <span v-html="'MAS Env:&nbsp;'" />
+      <b><i :class="txtColor(mas_env)" @click="clicks++" v-text="mas_env"/></b>
+    </v-chip>
+
+    <v-spacer />
+
     <v-menu
       v-if="cashRegister"
       left
@@ -36,7 +28,7 @@
       origin="top center"
     >
       <template v-slot:activator="{ on }">
-        <v-chip v-on="on" class="ma-2" color="primary" label>
+        <v-chip v-on="on" color="primary" label>
           <v-icon left v-text="'mdi-cash-register'" />
           <span v-text="cashRegister.name" />
         </v-chip>
@@ -95,6 +87,15 @@
       </v-list>
     </v-menu>
 
+    <v-chip
+      v-else
+      text
+      @click="$router.push({ name: 'openCashRegister' })"
+      label
+    >
+      <span v-text="'Select cash register'" />
+    </v-chip>
+
     <v-spacer />
 
     <v-menu
@@ -105,7 +106,7 @@
       origin="top right"
     >
       <template v-slot:activator="{ on }">
-        <v-btn v-on="on" fab small color="blue-grey darken-2">
+        <v-btn v-on="on" fab small color="blue-grey darken-2" :elevation="0">
           <span v-text="nameInitials" style="font-size:18px; color:white;" />
         </v-btn>
       </template>
@@ -249,7 +250,6 @@ export default {
 
     menuAction(item) {
       if (_.has(item, "action.method")) {
-        console.log(item.action.method);
         switch (item.action.method) {
           case "changePasswordDialog":
             this.changePasswordDialog();
@@ -278,7 +278,7 @@ export default {
       }
     },
     closeCashRegisterDialog() {
-      this.setDialog({
+      const payload = {
         show: true,
         width: 600,
         title: `Close and generate Z report`,
@@ -287,34 +287,37 @@ export default {
         component: "closeCashRegisterForm",
         persistent: true,
         eventChannel: "top-menu-generate-z"
-      });
+      };
+      this.setDialog(payload);
     },
     changePasswordDialog() {
-      this.setDialog({
+      const payload = {
         show: true,
         width: 600,
         title: `Change Password`,
         titleCloseBtn: true,
-        model: { action: "change_self" },
         icon: "mdi-key",
         component: "PasswordForm",
+        component_props: { action: "change_self" },
         persistent: true
-      });
+      };
+      this.setDialog(payload);
     },
     displayZDialog(report) {
-      this.setDialog({
+      const payload = {
         show: true,
         width: 1000,
         title: report.report_name,
         titleCloseBtn: true,
-        model: report,
         icon: "mdi-alpha-z-circle",
         component: "cashRegisterReports",
+        component_props: { model: report },
         persistent: true
-      });
+      };
+      this.setDialog(payload);
     },
     checkCashRegisterDialog() {
-      this.setDialog({
+      const payload = {
         show: true,
         width: 1000,
         title: `Report: ${this.cashRegister.name}`,
@@ -322,7 +325,8 @@ export default {
         icon: "mdi-alpha-x-circle",
         component: "cashRegisterReports",
         persistent: true
-      });
+      };
+      this.setDialog(payload);
     }
   }
 };
