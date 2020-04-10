@@ -49,8 +49,11 @@ export default {
       icon: "mdi-sack-percent",
       title: "Taxes",
       model: "taxes",
-      newForm: "taxForm",
-      btnTxt: "New Tax",
+      newDialogProps: {
+        title: "Add tax",
+        component: "taxForm"
+      },
+      newBtnTxt: "add tax",
       loading: true,
       eventChannel: "data-table"
     });

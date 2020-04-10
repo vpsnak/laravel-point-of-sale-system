@@ -30,7 +30,7 @@
         </v-tooltip>
       </v-card-title>
 
-      <v-divider class="mb-3" />
+      <v-divider class="mb-3" v-if="!dialog.no_padding" />
 
       <v-card-text v-if="!dialog.no_padding">
         <component

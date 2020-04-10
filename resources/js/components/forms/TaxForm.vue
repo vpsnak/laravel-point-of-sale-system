@@ -44,7 +44,6 @@
     <v-container v-if="!$props.readonly">
       <v-row justify="center">
         <v-btn
-          class="mr-4"
           type="submit"
           :loading="loading"
           :disabled="invalid || loading"

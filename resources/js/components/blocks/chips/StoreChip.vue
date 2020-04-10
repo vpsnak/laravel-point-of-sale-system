@@ -16,7 +16,7 @@
       </v-chip>
     </template>
     <v-card class="pa-5" width="450" outlined>
-      <storeForm :model="$props.store" :readonly="true" />
+      <storeForm :model="$props.store" readonly />
     </v-card>
   </v-menu>
 </template>

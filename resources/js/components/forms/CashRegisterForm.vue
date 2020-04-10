@@ -11,12 +11,12 @@
         name="Name"
       >
         <v-text-field
-          :readonly="$props.readonly"
           v-model="formFields.name"
+          :readonly="$props.readonly"
           label="Name"
           :disabled="loading"
           :error-messages="errors"
-        ></v-text-field>
+        />
       </ValidationProvider>
       <ValidationProvider
         rules="required|max:3"
@@ -30,9 +30,10 @@
           :items="stores"
           item-text="name"
           item-value="id"
+          :loading="storesLoading"
           :disabled="loading"
           :error-messages="errors"
-        ></v-select>
+        />
       </ValidationProvider>
       <ValidationProvider
         rules="required|max:100"
@@ -74,17 +75,17 @@
         />
       </ValidationProvider>
       <v-checkbox
-        :readonly="$props.readonly"
         v-model="formFields.active"
+        :readonly="$props.readonly"
+        :disabled="loading"
         label="Active"
       />
     </v-container>
     <v-container v-if="!$props.readonly">
       <v-row justify="center">
         <v-btn
-          class="mr-4"
           type="submit"
-          :loading="loading"
+          :loading="submitLoading"
           :disabled="invalid || loading"
           color="primary"
           >submit
@@ -101,9 +102,12 @@ export default {
     model: Object,
     readonly: Boolean
   },
+
   data() {
     return {
-      loading: false,
+      storesLoading: false,
+      submitLoading: false,
+
       formFields: {
         name: null,
         store_id: null,
@@ -115,6 +119,7 @@ export default {
       stores: []
     };
   },
+
   mounted() {
     this.getAllStores();
     if (this.$props.model) {
@@ -123,11 +128,26 @@ export default {
       };
     }
   },
+
+  beforeDestroy() {
+    this.$off("submit");
+  },
+
+  computed: {
+    loading() {
+      if (this.storesLoading || this.submitLoading) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  },
+
   methods: {
     ...mapActions("requests", ["request"]),
 
     submit() {
-      this.loading = true;
+      this.submitLoading = true;
       const payload = {
         method: this.formFields.id ? "patch" : "post",
         url: this.formFields.id
@@ -146,11 +166,11 @@ export default {
           console.error(error);
         })
         .finally(() => {
-          this.loading = false;
+          this.submitLoading = false;
         });
     },
     getAllStores() {
-      this.loading = true;
+      this.storesLoading = true;
       const payload = {
         method: "get",
         url: "stores"
@@ -161,12 +181,9 @@ export default {
           this.stores = response.data;
         })
         .finally(() => {
-          this.loading = false;
+          this.storesLoading = false;
         });
     }
-  },
-  beforeDestroy() {
-    this.$off("submit");
   }
 };
 </script>

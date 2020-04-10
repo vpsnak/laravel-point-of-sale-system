@@ -72,8 +72,11 @@ export default {
       icon: "mdi-package-variant",
       title: "Products",
       model: "products",
-      newForm: "productForm",
-      btnTxt: "New Product",
+      newDialogProps: {
+        title: "Add product",
+        component: "productForm"
+      },
+      newBtnTxt: "add product",
       loading: true
     });
 

@@ -1,7 +1,7 @@
 <template>
   <data-table v-if="render">
     <template v-slot:item.active="{ item }">
-      <v-checkbox v-model="item.active" :ripple="false" :readonly="true" />
+      <v-checkbox v-model="item.active" :ripple="false" readonly dense />
     </template>
 
     <template v-slot:item.actions="{ item }">
@@ -49,8 +49,11 @@ export default {
       icon: "mdi-store",
       title: "Stores",
       model: "stores",
-      newForm: this.form,
-      btnTxt: "New Store",
+      newDialogProps: {
+        title: "Add store",
+        component: "storeForm"
+      },
+      newBtnTxt: "add store",
       loading: true
     });
 

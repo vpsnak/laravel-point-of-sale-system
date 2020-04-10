@@ -29,18 +29,15 @@
       </v-col>
     </v-container>
     <v-container>
-      <v-row v-if="!$props.readonly">
-        <v-col cols="12" align="center" justify="center">
-          <v-btn
-            class="mr-4"
-            type="submit"
-            @click.prevent="submit"
-            :loading="loading"
-            :disabled="invalid || loading"
-            color="primary"
-            >submit
-          </v-btn>
-        </v-col>
+      <v-row v-if="!$props.readonly" justify="center">
+        <v-btn
+          type="submit"
+          @click.prevent="submit"
+          :loading="loading"
+          :disabled="invalid || loading"
+          color="primary"
+          >submit
+        </v-btn>
       </v-row>
     </v-container>
   </ValidationObserver>

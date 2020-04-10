@@ -20,7 +20,7 @@
       </v-chip>
     </template>
     <v-card width="450" class="pa-5" outlined>
-      <customerForm :model="$props.customer" :readonly="true" />
+      <customerForm :model="$props.customer" readonly />
     </v-card>
   </v-menu>
 </template>

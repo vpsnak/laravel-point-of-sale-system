@@ -7,9 +7,9 @@ const state = {
     headers: [],
     model: "",
     searchField: true,
-    btnTxt: "",
+    newBtnTxt: "",
     newDialogProps: {},
-    disableNewBtn: false,
+    newBtn: true,
     loading: false,
     filters: null,
     refreshBtn: true
@@ -217,9 +217,11 @@ const mutations = {
     state.data_table.headers = [];
     state.data_table.model = "";
     state.data_table.searchField = true;
-    state.data_table.btnTxt = "";
-    state.data_table.newDialogProps;
-    state.data_table.disableNewBtn = false;
+    state.data_table.newBtnTxt = "";
+    state.data_table.newDialogProps = {
+      component: ""
+    };
+    state.data_table.newBtn = true;
     state.data_table.loading = false;
     state.data_table.filters = false;
     state.data_table.refreshBtn = true;

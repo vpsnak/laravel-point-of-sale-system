@@ -7,7 +7,7 @@
       loader-height="5"
       class="pt-5 mt-2"
       ref="searchfield"
-      :no-filter="true"
+      no-filter
       clearable
       outlined
       dense
@@ -22,6 +22,7 @@
       prepend-inner-icon="mdi-account-search"
       return-object
       @blur="checkIfObjectEvent"
+      hint="Results are limited to 15"
     />
 
     <v-text-field
@@ -87,18 +88,6 @@ import { mapState, mapMutations, mapActions } from "vuex";
 import { EventBus } from "../../plugins/eventBus";
 
 export default {
-  mounted() {
-    EventBus.$on("customer-search", event => {
-      if (event.payload.customer) {
-        this.cartCustomer = event.payload.customer;
-      }
-    });
-  },
-
-  beforeDestroy() {
-    EventBus.$off("customer-search");
-  },
-
   props: {
     showMethods: Boolean,
     keywordLength: Number,
@@ -113,6 +102,18 @@ export default {
       showCreateDialog: false,
       customers: []
     };
+  },
+
+  mounted() {
+    EventBus.$on("customer-search", event => {
+      if (event.payload.customer) {
+        this.cartCustomer = event.payload.customer;
+      }
+    });
+  },
+
+  beforeDestroy() {
+    EventBus.$off("customer-search");
   },
 
   computed: {
@@ -161,7 +162,7 @@ export default {
           ? "Add new customer"
           : `View / Edit customer #${this.cartCustomer.id}`,
         titleCloseBtn: true,
-        component: create ? "customerNewForm" : "customerForm",
+        component: create ? "customerCreateStepper" : "customerForm",
         component_props: { model: create ? {} : this.cartCustomer },
         persistent: create ? true : false,
         eventChannel: "customer-search"
@@ -200,11 +201,11 @@ export default {
       const payload = {
         method: "post",
         url: "customers/search",
-        data: { keyword: keyword }
+        data: { keyword: keyword, items: 15 }
       };
       this.request(payload)
         .then(result => {
-          this.results = result;
+          this.results = result.data;
         })
         .catch(error => {
           console.error(error);

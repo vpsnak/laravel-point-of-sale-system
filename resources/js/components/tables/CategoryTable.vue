@@ -1,7 +1,7 @@
 <template>
   <data-table v-if="render">
     <template v-slot:item.is_enabled="{ item }">
-      <v-checkbox v-model="item.is_enabled" dense />
+      <v-checkbox v-model="item.is_enabled" :ripple="false" readonly dense />
     </template>
 
     <template v-slot:item.actions="{ item }">
@@ -50,8 +50,11 @@ export default {
       icon: "mdi-inbox-multiple",
       title: "Categories",
       model: "categories",
-      newForm: this.form,
-      btnTxt: "New Category",
+      newDialogProps: {
+        title: "New category",
+        component: "categoryForm"
+      },
+      newBtnTxt: "new category",
       loading: true
     });
 
@@ -59,8 +62,7 @@ export default {
   },
   data() {
     return {
-      render: false,
-      form: "categoryForm"
+      render: false
     };
   },
   computed: {

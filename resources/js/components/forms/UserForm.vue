@@ -103,17 +103,14 @@
         </v-row>
       </v-container>
       <v-container v-if="!$props.readonly">
-        <v-row>
-          <v-col :cols="12" align="center" justify="center">
-            <v-btn
-              class="mr-4"
-              type="submit"
-              :loading="submitLoading"
-              :disabled="invalid || loading"
-              color="primary"
-              >submit
-            </v-btn>
-          </v-col>
+        <v-row justify="center">
+          <v-btn
+            type="submit"
+            :loading="submitLoading"
+            :disabled="invalid || loading"
+            color="primary"
+            >submit
+          </v-btn>
         </v-row>
       </v-container>
     </v-form>

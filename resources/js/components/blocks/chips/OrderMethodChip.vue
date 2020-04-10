@@ -24,7 +24,7 @@
       <component
         :is="parseMethod.component"
         :model="parseMethod.model"
-        :readonly="true"
+        readonly
         :hideNotes="true"
       />
     </v-card>

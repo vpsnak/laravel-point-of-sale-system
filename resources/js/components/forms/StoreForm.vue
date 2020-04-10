@@ -104,16 +104,12 @@
         </v-col>
 
         <v-col :cols="6">
-          <ValidationProvider
-            rules="required"
-            v-slot="{ errors }"
-            name="Tax percentage"
-          >
+          <ValidationProvider rules="required" v-slot="{ errors }" name="Tax">
             <v-select
               :readonly="$props.readonly"
               v-model="formFields.tax_id"
               :items="taxes"
-              label="Tax percentage"
+              label="Tax"
               :disabled="loading"
               item-text="name"
               item-value="id"
@@ -144,18 +140,19 @@
           v-model="formFields.active"
           label="Active"
           :readonly="$props.readonly"
+          :disabled="loading"
         ></v-checkbox>
         <v-checkbox
           v-model="formFields.is_phone_center"
           label="Phone center"
           :readonly="$props.readonly"
+          :disabled="loading"
         ></v-checkbox>
       </v-row>
     </v-container>
     <v-container v-if="!$props.readonly">
       <v-row justify="center">
         <v-btn
-          class="mr-4"
           type="submit"
           :loading="loading"
           :disabled="invalid || loading"

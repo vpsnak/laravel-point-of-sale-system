@@ -77,8 +77,8 @@ export default {
         content: "This action is <b>irreversible</b>. Do you want to continue?",
         action: "confirmation",
         persistent: true,
-        cancelBtnTxt: "No",
-        confirmationBtnTxt: "Yes",
+        cancelnewBtnTxt: "No",
+        confirmationnewBtnTxt: "Yes",
         eventChannel: "order-save-confirmation"
       };
       this.setDialog(payload);

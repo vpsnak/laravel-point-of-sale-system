@@ -537,7 +537,7 @@ export default {
       const payload = {
         show: true,
         title: "Send plant care",
-        cancelBtnTxt: "Close",
+        cancelnewBtnTxt: "Close",
         titleCloseBtn: true,
         component: "MailPlantCareDialog",
         component_props: { model: product }

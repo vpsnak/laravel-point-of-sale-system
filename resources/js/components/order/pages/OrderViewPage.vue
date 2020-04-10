@@ -101,8 +101,8 @@ export default {
         content: "Are you sure you want to <b>cancel</b> the current order?",
         action: "confirmation",
         persistent: true,
-        cancelBtnTxt: "No",
-        confirmationBtnTxt: "Yes"
+        cancelnewBtnTxt: "No",
+        confirmationnewBtnTxt: "Yes"
       });
     },
     close() {

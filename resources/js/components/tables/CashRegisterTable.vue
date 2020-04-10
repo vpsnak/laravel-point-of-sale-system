@@ -59,8 +59,11 @@ export default {
       icon: "mdi-cash-register",
       title: "Cash Registers",
       model: "cash-registers",
-      newForm: this.form,
-      btnTxt: "New Cash Register",
+      newDialogProps: {
+        title: "Add cash register",
+        component: "cashRegisterForm"
+      },
+      newBtnTxt: "Add cash register",
       loading: true
     });
 
@@ -68,8 +71,7 @@ export default {
   },
   data() {
     return {
-      render: false,
-      form: "cashRegisterForm"
+      render: false
     };
   },
 

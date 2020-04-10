@@ -1,7 +1,7 @@
 <template>
   <data-table v-if="render">
     <template v-slot:item.no_tax="{ item }">
-      <v-checkbox v-model="item.no_tax" :ripple="false" readonly />
+      <v-checkbox v-model="item.no_tax" :ripple="false" readonly dense />
     </template>
 
     <template v-slot:item.house_account_status="{ item }">
@@ -9,6 +9,7 @@
         v-model="item.house_account_status"
         :ripple="false"
         readonly
+        dense
       />
     </template>
 
@@ -57,11 +58,14 @@ export default {
       icon: "mdi-account-group",
       title: "Customers",
       model: "customers",
-      newForm: "customerCreateStepper",
-      newDialogProps: { width: 700, no_padding: true },
-      btnTxt: "New Customer",
-      loading: true,
-      disableNewBtn: false
+      newDialogProps: {
+        title: "Add customer",
+        component: "customerCreateStepper",
+        width: 700,
+        no_padding: true
+      },
+      newBtnTxt: "add customer",
+      loading: true
     });
 
     this.render = true;

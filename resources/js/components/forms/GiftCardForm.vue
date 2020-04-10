@@ -50,6 +50,7 @@
               prefix="$"
               :disabled="loading"
               :error-messages="errors"
+              style="width: 75px;"
             />
           </ValidationProvider>
         </v-col>
@@ -67,7 +68,7 @@
           <v-switch
             v-if="!$props.model"
             v-model="formFields.bulk_action"
-            label="Bulk Action"
+            label="Bulk add"
             :readonly="$props.readonly"
           />
         </v-col>
@@ -86,6 +87,7 @@
               :disabled="loading"
               :error-messages="errors"
               :min="1"
+              style="width: 50px;"
             />
           </ValidationProvider>
         </v-col>
@@ -94,12 +96,11 @@
     <v-container v-if="!$props.readonly">
       <v-row justify="center">
         <v-btn
-          class="mr-4"
           type="submit"
           :loading="loading"
           :disabled="invalid || loading"
           color="primary"
-          >submit
+          >save
         </v-btn>
       </v-row>
     </v-container>

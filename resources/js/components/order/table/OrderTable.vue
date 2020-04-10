@@ -170,7 +170,7 @@ export default {
         title: "Orders",
         model: "orders",
         searchField: false,
-        disableNewBtn: true,
+        newBtn: false,
         loading: true,
         filters: "orderTableFilters"
       }

@@ -47,8 +47,11 @@ export default {
       icon: "mdi-ticket-percent",
       title: "Coupons",
       model: "coupons",
-      newForm: "couponForm",
-      btnTxt: "New Coupon",
+      newDialogProps: {
+        title: "New coupon",
+        component: "couponForm"
+      },
+      newBtnTxt: "new coupon",
       loading: true
     });
 

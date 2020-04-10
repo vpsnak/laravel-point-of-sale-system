@@ -14,7 +14,7 @@
           <v-btn
             :disabled="data_table.loading"
             @click.stop="deauthUser(item.id)"
-            class="my-4"
+            class="mr-4"
             v-on="on"
             icon
           >
@@ -59,7 +59,7 @@
           <v-btn
             :disabled="data_table.loading"
             @click.stop="view(item)"
-            class="my-4"
+            class="ml-4"
             v-on="on"
             icon
           >
@@ -83,8 +83,11 @@ export default {
       icon: "mdi-account-multiple",
       title: "Users",
       model: "users",
-      newForm: "userForm",
-      btnTxt: "New User",
+      newDialogProps: {
+        title: "Add store pickup",
+        component: "userForm"
+      },
+      newBtnTxt: "add user",
       loading: true
     });
 

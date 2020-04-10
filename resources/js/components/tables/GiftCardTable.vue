@@ -63,8 +63,11 @@ export default {
       icon: "mdi-wallet-giftcard",
       title: "Gift Cards",
       model: "giftcards",
-      newForm: "giftCardForm",
-      btnTxt: "New Gift Card"
+      newDialogProps: {
+        title: "Add gift card",
+        component: "giftCardForm"
+      },
+      newBtnTxt: "add gift card"
     };
     this.setDataTable(payload);
 

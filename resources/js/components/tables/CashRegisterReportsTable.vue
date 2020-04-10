@@ -29,7 +29,7 @@ export default {
       icon: "mdi-file-document-box",
       title: "Cash Register Reports",
       model: "cash-register-reports",
-      disableNewBtn: true,
+      newBtn: false,
       loading: true
     });
 

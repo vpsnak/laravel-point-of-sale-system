@@ -72,17 +72,7 @@
           </ValidationProvider>
         </v-col>
 
-        <v-col :cols="4" :lg="2">
-          <v-checkbox
-            v-model="formFields.house_account_status"
-            :disabled="loading"
-            label="House account"
-            :readonly="$props.readonly"
-            @change="house_account_status = formFields.house_account_status"
-            dense
-          />
-        </v-col>
-        <v-col :cols="4" :lg="4">
+        <v-col :cols="6">
           <ValidationProvider
             :rules="house_account_status ? 'required|max:100' : 'max:100'"
             v-slot="{ errors }"
@@ -98,7 +88,7 @@
             />
           </ValidationProvider>
         </v-col>
-        <v-col :cols="4" :lg="6">
+        <v-col :cols="6">
           <ValidationProvider
             :rules="
               house_account_status
@@ -120,7 +110,18 @@
           </ValidationProvider>
         </v-col>
 
-        <v-col :cols="6">
+        <v-col :cols="3">
+          <v-checkbox
+            v-model="formFields.house_account_status"
+            :disabled="loading"
+            label="Enable house account"
+            :readonly="$props.readonly"
+            @change="house_account_status = formFields.house_account_status"
+            dense
+          />
+        </v-col>
+
+        <v-col :cols="3">
           <v-checkbox
             v-model="formFields.no_tax"
             :disabled="loading"
@@ -173,7 +174,6 @@
       <v-row align="center" justify="center">
         <v-btn
           color="primary"
-          class="mr-4"
           type="submit"
           :loading="loading"
           :disabled="invalid || loading"

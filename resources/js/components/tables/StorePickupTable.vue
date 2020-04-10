@@ -43,8 +43,11 @@ export default {
     this.setDataTable({
       icon: "mdi-storefront",
       title: "Store pickups",
-      newForm: "storePickupForm",
-      btnTxt: "New Store Pickup",
+      newDialogProps: {
+        title: "Add store pickup",
+        component: "storePickupForm"
+      },
+      newBtnTxt: "add store pickup",
       model: "store-pickups",
       loading: true
     });

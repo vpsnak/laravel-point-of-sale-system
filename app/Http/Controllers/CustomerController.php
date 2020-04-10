@@ -104,7 +104,8 @@ class CustomerController extends Controller
     public function search(Request $request)
     {
         $validatedData = $request->validate([
-            'keyword' => 'required'
+            'keyword' => 'required',
+            'items' => 'nullable|numeric|between:1,50'
         ]);
 
         $columns = [
@@ -116,6 +117,12 @@ class CustomerController extends Controller
             DB::raw("concat(last_name, ' ', first_name)"),
         ];
 
-        return Customer::query()->search($columns, $validatedData['keyword'])->with('addresses')->get();
+        $result =
+            Customer::query()
+            ->search($columns, $validatedData['keyword'])
+            ->with('addresses')
+            ->paginate($validatedData['items'] ?? 10);
+
+        return response($result);
     }
 }

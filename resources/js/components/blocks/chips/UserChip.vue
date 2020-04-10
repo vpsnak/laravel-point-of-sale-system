@@ -20,7 +20,7 @@
       </v-chip>
     </template>
     <v-card width="450" class="pa-5" outlined>
-      <userForm :model="$props.user" :readonly="true" />
+      <userForm :model="$props.user" readonly />
     </v-card>
   </v-menu>
 </template>

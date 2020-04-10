@@ -15,9 +15,9 @@
           <v-tooltip bottom v-if="data_table.refreshBtn">
             <template v-slot:activator="{ on }">
               <v-btn
-                :loading="refreshLoading"
+                :loading="resetLoading"
                 :disabled="data_table.loading"
-                @click.stop="(refreshLoading = true), getItems()"
+                @click.stop="reset()"
                 icon
                 v-on="on"
                 color="primary"
@@ -25,7 +25,7 @@
                 <v-icon v-text="'mdi-refresh'" />
               </v-btn>
             </template>
-            <span v-text="'Refresh'" />
+            <span v-text="'Reset'" />
           </v-tooltip>
         </v-col>
 
@@ -42,36 +42,29 @@
           <v-text-field
             ref="searchInput"
             :disabled="data_table.loading"
-            prepend-inner-icon="search"
+            append-icon="search"
             hide-details
             label="Search"
             dense
             outlined
             solo
             v-model="searchValue"
-            clearable
-            @click:clear="
-              (page = 1),
-                (keyword = searchValue = null),
-                (search = false),
-                getItems()
-            "
-            @click:prepend-inner="getItems()"
+            @click:append="getItems()"
             @keyup.enter="(keyword = searchValue), (search = true), getItems()"
           />
         </v-col>
 
         <v-spacer />
 
-        <v-col cols="auto">
+        <v-col v-if="data_table.newBtn" cols="auto">
           <v-btn
-            v-if="data_table.newForm && data_table.btnTxt"
-            :disabled="data_table.disableNewBtn || data_table.loading"
+            :disabled="data_table.loading"
             color="primary"
             outlined
             @click="createItemDialog()"
           >
-            {{ data_table.btnTxt }}
+            <v-icon left v-text="'mdi-plus'" />
+            <span v-text="data_table.newBtnTxt" />
           </v-btn>
         </v-col>
       </v-row>
@@ -113,7 +106,7 @@
               <v-row justify="center" align="center" style="height: 300px;">
                 <v-alert
                   v-if="search && keyword"
-                  type="warning"
+                  type="info"
                   border="left"
                   colored-border
                   :elevation="3"
@@ -139,7 +132,7 @@
               </v-row>
             </template>
           </v-data-table>
-          <v-card-actions v-show="data_table.items.length">
+          <v-card-actions v-show="data_table.items && data_table.items.length">
             <v-pagination
               v-model="page"
               :length="pageCount"
@@ -160,7 +153,7 @@ import { EventBus } from "../../plugins/eventBus";
 export default {
   data() {
     return {
-      refreshLoading: false,
+      resetLoading: false,
       overlay: false,
       page: 1,
       pageCount: null,
@@ -192,6 +185,15 @@ export default {
     ...mapMutations("datatable", ["setItems", "setLoading", "resetDataTable"]),
     ...mapActions("requests", ["request"]),
 
+    reset() {
+      this.resetLoading = true;
+
+      this.page = 1;
+      this.keyword = this.searchValue = null;
+      this.search = false;
+
+      this.getItems();
+    },
     initEvents() {
       EventBus.$on("overlay", event => {
         this.overlay = event;
@@ -254,7 +256,7 @@ export default {
           console.error(error);
         })
         .finally(() => {
-          this.refreshLoading = false;
+          this.resetLoading = false;
           this.setLoading(false);
         });
     },
@@ -263,6 +265,7 @@ export default {
         ...{
           show: true,
           width: 600,
+          icon: "mdi-plus",
           title: "New",
           titleCloseBtn: true,
           persistent: true,
