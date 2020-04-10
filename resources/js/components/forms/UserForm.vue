@@ -15,7 +15,7 @@
                 :error-messages="errors"
                 v-model="formFields.name"
                 label="Name"
-              ></v-text-field>
+              />
             </ValidationProvider>
           </v-col>
           <v-col :cols="6">
@@ -25,12 +25,13 @@
               name="Phone"
             >
               <v-text-field
+                v-model="formFields.phone"
+                type="number"
                 :disabled="loading"
                 :readonly="$props.readonly"
-                v-model="formFields.phone"
                 :error-messages="errors"
                 label="Phone"
-              ></v-text-field>
+              />
             </ValidationProvider>
           </v-col>
           <v-col :cols="6">
@@ -45,7 +46,7 @@
                 v-model="formFields.email"
                 :error-messages="errors"
                 label="E-mail"
-              ></v-text-field>
+              />
             </ValidationProvider>
           </v-col>
 
@@ -61,7 +62,7 @@
                 v-model="formFields.username"
                 :error-messages="errors"
                 label="Username"
-              ></v-text-field>
+              />
             </ValidationProvider>
           </v-col>
           <v-col :cols="6">
@@ -70,7 +71,7 @@
               :readonly="$props.readonly"
               v-model="formFields.active"
               label="Active"
-            ></v-checkbox>
+            />
           </v-col>
           <v-col :cols="6">
             <v-text-field
@@ -79,8 +80,7 @@
               label="Role"
               :disabled="loading"
               readonly
-            >
-            </v-text-field>
+            />
             <ValidationProvider
               v-else
               v-slot="{ errors }"
@@ -97,13 +97,13 @@
                 :disabled="loading"
                 item-text="text"
                 item-value="id"
-              ></v-select>
+              />
             </ValidationProvider>
           </v-col>
         </v-row>
       </v-container>
-      <v-container>
-        <v-row v-if="!$props.readonly">
+      <v-container v-if="!$props.readonly">
+        <v-row>
           <v-col :cols="12" align="center" justify="center">
             <v-btn
               class="mr-4"
@@ -196,8 +196,8 @@ export default {
     submit() {
       this.submitLoading = true;
       const payload = {
-        method: this.$props.model ? "patch" : "post",
-        url: this.$props.model ? "users/update" : "users/create",
+        method: this.formFields.id ? "patch" : "post",
+        url: this.formFields.id ? "users/update" : "users/create",
         data: this.formFields
       };
 

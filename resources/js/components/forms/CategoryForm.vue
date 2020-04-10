@@ -1,7 +1,11 @@
 <template>
-  <ValidationObserver v-slot="{ invalid }">
-    <v-form @submit.prevent="submit">
-      <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
+  <ValidationObserver
+    v-slot="{ invalid }"
+    tag="v-form"
+    @submit.prevent="submit()"
+  >
+    <v-container fluid class="overflow-y-auto" style="max-height: 60vh">
+      <v-col :cols="6">
         <ValidationProvider
           rules="required|max:100"
           v-slot="{ errors }"
@@ -13,30 +17,32 @@
             v-model="formFields.name"
             label="Name"
             required
-          ></v-text-field>
+          />
         </ValidationProvider>
+      </v-col>
+      <v-col :cols="6">
         <v-checkbox
           :readonly="$props.readonly"
           v-model="formFields.is_enabled"
           label="Enabled"
-        ></v-checkbox>
-      </v-container>
-      <v-container>
-        <v-row v-if="!$props.readonly">
-          <v-col cols="12" align="center" justify="center">
-            <v-btn
-              class="mr-4"
-              type="submit"
-              @click.prevent="submit"
-              :loading="loading"
-              :disabled="invalid || loading"
-              color="primary"
-              >submit
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-form>
+        />
+      </v-col>
+    </v-container>
+    <v-container>
+      <v-row v-if="!$props.readonly">
+        <v-col cols="12" align="center" justify="center">
+          <v-btn
+            class="mr-4"
+            type="submit"
+            @click.prevent="submit"
+            :loading="loading"
+            :disabled="invalid || loading"
+            color="primary"
+            >submit
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-container>
   </ValidationObserver>
 </template>
 
@@ -48,15 +54,17 @@ export default {
     model: Object,
     readonly: Boolean
   },
+
   data() {
     return {
       loading: false,
       formFields: {
         name: "",
-        is_enabled: false
+        is_enabled: true
       }
     };
   },
+
   mounted() {
     if (this.$props.model) {
       this.formFields = {
@@ -64,45 +72,35 @@ export default {
       };
     }
   },
+
+  beforeDestroy() {
+    this.$off("submit");
+  },
+
   methods: {
     ...mapActions("requests", ["request"]),
 
     submit() {
       this.loading = true;
+      const payload = {
+        method: this.formFields.id ? "patch" : "post",
+        url: this.formFields.id ? "categories/update" : "categories/create",
+        data: this.formFields
+      };
 
-      if (this.$props.model) {
-        this.request({
-          method: "patch",
-          url: "categories/update",
-          data: { ...this.formFields }
-        })
-          .then(() => {
-            this.$emit("submit", {
-              action: "paginate"
-            });
-          })
-          .finally(() => {
-            this.loading = false;
+      this.request(payload)
+        .then(() => {
+          this.$emit("submit", {
+            action: "paginate"
           });
-      } else {
-        this.request({
-          method: "post",
-          url: "categories/create",
-          data: { ...this.formFields }
         })
-          .then(() => {
-            this.$emit("submit", {
-              action: "paginate"
-            });
-          })
-          .finally(() => {
-            this.loading = false;
-          });
-      }
+        .catch(error => {
+          console.error(error);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     }
-  },
-  beforeDestroy() {
-    this.$off("submit");
   }
 };
 </script>

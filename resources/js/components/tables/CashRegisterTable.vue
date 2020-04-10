@@ -84,7 +84,7 @@ export default {
     view(item) {
       const payload = {
         show: true,
-        fullscreen: false,
+
         width: 600,
         title: `View: ${item.name}`,
         titleCloseBtn: true,
@@ -92,26 +92,24 @@ export default {
         component: "cashRegisterForm",
         component_props: { model: item },
         readonly: true,
-        persistent: false,
-        eventChannel: "",
-        no_padding: false
+
+        eventChannel: ""
       };
       this.setDialog(payload);
     },
     edit(item) {
       const payload = {
         show: true,
-        fullscreen: false,
+
         width: 600,
         title: `Edit: ${item.name}`,
         titleCloseBtn: true,
         icon: "mdi-pencil",
         component: "cashRegisterForm",
         component_props: { model: _.cloneDeep(item) },
-        readonly: false,
+
         persistent: true,
-        eventChannel: "data-table",
-        no_padding: false
+        eventChannel: "data-table"
       };
       this.setDialog(payload);
     }

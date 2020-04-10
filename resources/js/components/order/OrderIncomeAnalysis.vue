@@ -1,16 +1,14 @@
 <template>
   <v-card outlined class="fill-height">
     <v-card-title>
-      <v-icon left>mdi-file-chart</v-icon>
-      <span class="subheading">
-        Earnings analysis
-      </span>
+      <v-icon left v-text="'mdi-file-chart'" />
+      <span class="subheading" v-text="'Earnings analysis'" />
     </v-card-title>
     <v-container>
       <v-row justify="center" align="center">
         <v-progress-circular v-if="loading" indeterminate color="primary" />
 
-        <v-col v-else-if="total_paid.greaterThan($price({ amount: 0 }))">
+        <v-col v-else-if="total_paid.greaterThan(parsePrice())">
           <vc-donut
             hasLegend
             legendPlacement="left"
@@ -20,12 +18,20 @@
             :total="Number(total_paid.toFormat('0.00'))"
             :background="bgColor"
           >
-            <h2>{{ total_paid.toFormat() }}</h2>
-            <h2>total income</h2>
+            <h2 v-text="total_paid.toFormat()" />
+            <h2 v-text="'total income'" />
           </vc-donut>
         </v-col>
         <v-col v-else cols="auto">
-          No earnings
+          <v-alert
+            type="info"
+            border="left"
+            colored-border
+            :elevation="3"
+            dense
+          >
+            <span v-text="'No earnings'" />
+          </v-alert>
         </v-col>
       </v-row>
     </v-container>

@@ -1,16 +1,21 @@
 <template>
   <v-container v-if="productData">
     <v-row>
-      <v-col cols="12" md="6">
-        <v-img :src="productData.photo_url" height="100%"></v-img>
+      <v-col :cols="12" :md="6">
+        <v-img
+          :src="productData.photo_url"
+          height="200px"
+          width="auto"
+          contain
+        />
       </v-col>
-      <v-col cols="12" md="6">
-        <v-card>
+      <v-col :cols="12" :md="6">
+        <v-card outlined>
           <v-card-title>{{ productData.name }}</v-card-title>
           <v-card-text>
             <div class="subtitle-1">Sku: {{ productData.sku }}</div>
             <div class="subtitle-1">
-              Price: {{ $price(product.price).toFormat() }}
+              Price: {{ parsePrice(product.price).toFormat() }}
             </div>
             <div class="subtitle-1">Stock: {{ productData.stock }}</div>
             <div class="subtitle-1">
@@ -27,6 +32,10 @@
               </barcode>
             </div>
           </v-card-text>
+        </v-card>
+      </v-col>
+      <v-col :cols="12">
+        <v-card outlined>
           <v-simple-table fixed-header>
             <template v-slot:default>
               <thead>
@@ -74,33 +83,33 @@ import { mapActions } from "vuex";
 
 export default {
   props: {
-    model: Object,
+    model: Object
   },
   data() {
     return {
       headers: [
         { text: "Store name", value: "store.name" },
-        { text: "Qty", value: "store.pivot.qty" },
+        { text: "Qty", value: "store.pivot.qty" }
       ],
-      product: null,
+      product: null
     };
   },
   mounted() {
     if (this.$props.model)
       this.request({
         method: "get",
-        url: `products/get/${this.$props.model.id}`,
-      }).then((result) => {
+        url: `products/get/${this.$props.model.id}`
+      }).then(result => {
         this.product = result;
       });
   },
   computed: {
     productData() {
       return this.product;
-    },
+    }
   },
   methods: {
-    ...mapActions("requests", ["request"]),
-  },
+    ...mapActions("requests", ["request"])
+  }
 };
 </script>

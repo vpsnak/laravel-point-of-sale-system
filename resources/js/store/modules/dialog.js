@@ -24,7 +24,7 @@ const state = {
 // mutations
 const mutations = {
   setDialog(state, value) {
-    state.interactive_dialog = { ...state.interactive_dialog, ...value };
+    state.interactive_dialog = { ...value };
   },
   resetDialog(state) {
     state.interactive_dialog.show = false;

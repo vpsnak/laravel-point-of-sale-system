@@ -5,16 +5,20 @@
 
     <v-spacer />
 
-    <v-chip text label>
+    <v-chip text label class="d-none d-lg-flex d-xl-flex">
       <span v-html="'App env:&nbsp;'" />
-      <b><i :class="txtColor(app_env)" v-text="app_env"/></b>
+      <b :class="txtColor(app_env)">
+        <i v-text="app_env" />
+      </b>
     </v-chip>
 
     <v-spacer />
 
-    <v-chip text label>
+    <v-chip text label class="d-none d-lg-flex d-xl-flex">
       <span v-html="'MAS Env:&nbsp;'" />
-      <b><i :class="txtColor(mas_env)" @click="clicks++" v-text="mas_env"/></b>
+      <b :class="txtColor(mas_env)">
+        <i @click="clicks++" v-text="mas_env" />
+      </b>
     </v-chip>
 
     <v-spacer />

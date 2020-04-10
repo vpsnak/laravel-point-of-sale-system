@@ -15,10 +15,10 @@
         :small="small"
         dark
       >
-        <b>{{ parsePrice($props.totalPrice).toFormat() }}</b>
+        <b v-text="parsePrice($props.totalPrice).toFormat()" />
       </v-chip>
     </template>
-    <orderCostAnalysis />
+    <orderCostAnalysis :orderPrices="orderPrices" />
   </v-menu>
 </template>
 
@@ -36,21 +36,25 @@ export default {
     deliveryFeesPrice: Object
   },
 
-  mounted() {
-    this.setOrderTotalPrice(this.$props.totalPrice);
-    this.setOrderMdsePrice(this.$props.mdsePrice);
-    this.setOrderTaxPrice(this.$props.taxPrice);
-    this.setDeliveryFeesPrice(this.$props.deliveryFeesPrice);
-  },
-
-  beforeDestroy() {
-    EventBus.$off("overlay");
-  },
-
   data() {
     return {
       orderCostAnalysis: false
     };
+  },
+
+  computed: {
+    orderPrices() {
+      return {
+        totalPrice: this.$props.totalPrice,
+        mdsePrice: this.$props.mdsePrice,
+        taxPrice: this.$props.taxPrice,
+        deliveryFeesPrice: this.$props.deliveryFeesPrice
+      };
+    }
+  },
+
+  beforeDestroy() {
+    EventBus.$off("overlay");
   },
 
   watch: {

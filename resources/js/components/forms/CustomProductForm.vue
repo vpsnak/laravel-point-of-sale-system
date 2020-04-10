@@ -18,7 +18,7 @@
               v-model="customItem.name"
               label="Name"
               :error-messages="errors"
-            ></v-text-field>
+            />
           </ValidationProvider>
         </v-col>
         <v-col :cols="12">
@@ -32,7 +32,7 @@
               prefix="$"
               :error-messages="errors"
               style="max-width:100px;"
-            ></v-text-field>
+            />
           </ValidationProvider>
         </v-col>
         <v-col :cols="12">
@@ -45,7 +45,7 @@
             label="Notes"
             count
             no-resize
-          ></v-textarea>
+          />
         </v-col>
       </v-row>
     </v-container>
@@ -64,10 +64,6 @@
 import { mapActions } from "vuex";
 
 export default {
-  beforeDestroy() {
-    this.$off("submit");
-  },
-
   data() {
     return {
       price_amount: null,
@@ -85,6 +81,10 @@ export default {
         is_price_editable: true
       }
     };
+  },
+
+  beforeDestroy() {
+    this.$off("submit");
   },
 
   computed: {

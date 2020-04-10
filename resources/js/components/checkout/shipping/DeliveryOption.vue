@@ -461,7 +461,7 @@ export default {
       const payload = {
         show: true,
         width: 750,
-        fullscreen: false,
+
         title: title,
         titleCloseBtn: true,
         icon: icon,

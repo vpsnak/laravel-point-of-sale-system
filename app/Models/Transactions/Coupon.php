@@ -23,8 +23,6 @@ class Coupon extends Model
         'to' => 'm/d/Y',
     ];
 
-    protected $dates = ['from', 'to'];
-
     public function setDiscountAttribute($value)
     {
         if (is_array($value)) {

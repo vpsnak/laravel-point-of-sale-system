@@ -25,7 +25,7 @@
           <v-btn
             icon
             :disabled="data_table.loading"
-            @click.stop="(item.form = 'giftCardForm'), editItem(item)"
+            @click.stop="edit(item)"
             class="my-4"
             v-on="on"
           >
@@ -39,7 +39,7 @@
           <v-btn
             icon
             :disabled="data_table.loading"
-            @click.stop="(item.form = form), viewItem(item)"
+            @click.stop="view(item)"
             class="ml-4"
             v-on="on"
           >
@@ -92,7 +92,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations("dialog", ["setDialog", "editItem", "viewItem"]),
+    ...mapMutations("dialog", ["setDialog"]),
     ...mapMutations("datatable", ["setDataTable", "resetDataTable"]),
     ...mapMutations("cart", ["setCheckoutDialog"]),
 
@@ -107,6 +107,34 @@ export default {
         component_props: { model: item },
         persistent: true,
         eventChannel: "gift-card-table"
+      };
+      this.setDialog(payload);
+    },
+    view(item) {
+      const payload = {
+        show: true,
+        width: 400,
+        title: `View: ${item.name}`,
+        titleCloseBtn: true,
+        icon: "mdi-eye",
+        component: "giftCardForm",
+        component_props: { model: item },
+        readonly: true,
+        eventChannel: ""
+      };
+      this.setDialog(payload);
+    },
+    edit(item) {
+      const payload = {
+        show: true,
+        width: 400,
+        title: `Edit: ${item.name}`,
+        titleCloseBtn: true,
+        icon: "mdi-pencil",
+        component: "giftCardForm",
+        component_props: { model: _.cloneDeep(item) },
+        persistent: true,
+        eventChannel: "data-table"
       };
       this.setDialog(payload);
     }

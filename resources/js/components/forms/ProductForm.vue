@@ -1,144 +1,174 @@
 <template>
   <ValidationObserver
     v-slot="{ invalid }"
-    @submit.prevent="submit()"
     tag="v-form"
+    @submit.prevent="submit()"
   >
     <v-container class="overflow-y-auto" style="max-height: 60vh">
-      <ValidationProvider
-        rules="required|max:100"
-        v-slot="{ errors }"
-        name="Name"
-      >
-        <v-text-field
-          :readonly="$props.readonly"
-          v-model="formFields.name"
-          label="Name"
-          :error-messages="errors"
-        ></v-text-field>
-      </ValidationProvider>
-      <ValidationProvider
-        rules="required|max:100"
-        v-slot="{ errors }"
-        name="Sku"
-      >
-        <v-text-field
-          :readonly="$props.readonly"
-          v-model="formFields.sku"
-          label="Sku"
-          :error-messages="errors"
-        ></v-text-field>
-      </ValidationProvider>
-      <ValidationProvider rules="max:255" v-slot="{ errors }" name="Url">
-        <v-text-field
-          :readonly="$props.readonly"
-          v-model="formFields.url"
-          label="Url"
-          :error-messages="errors"
-        ></v-text-field>
-      </ValidationProvider>
-      <ValidationProvider rules="max:255" v-slot="{ errors }" name="Photo url">
-        <v-text-field
-          :readonly="$props.readonly"
-          v-model="formFields.photo_url"
-          label="Photo url"
-          :error-messages="errors"
-        ></v-text-field>
-      </ValidationProvider>
-
-      <ValidationProvider
-        rules="max:65535"
-        v-slot="{ errors }"
-        name="Description"
-      >
-        <v-text-field
-          :readonly="$props.readonly"
-          v-model="formFields.description"
-          label="Description"
-          :error-messages="errors"
-          :disabled="loading"
-        ></v-text-field>
-      </ValidationProvider>
-
-      <ValidationProvider rules="required" v-slot="{ errors }" name="Price">
-        <v-text-field
-          :readonly="$props.readonly"
-          type="number"
-          v-model="price"
-          label="Price"
-          prefix="$"
-          :error-messages="errors"
-          :disabled="loading"
-        ></v-text-field>
-      </ValidationProvider>
-
       <v-row justify="space-around">
+        <v-col :cols="12">
+          <ValidationProvider
+            rules="required|max:100"
+            v-slot="{ errors }"
+            name="Name"
+          >
+            <v-text-field
+              :readonly="$props.readonly"
+              v-model="formFields.name"
+              label="Name"
+              :error-messages="errors"
+            />
+          </ValidationProvider>
+        </v-col>
+        <v-col :cols="12">
+          <ValidationProvider
+            rules="required|max:100"
+            v-slot="{ errors }"
+            name="Sku"
+          >
+            <v-text-field
+              :readonly="$props.readonly"
+              v-model="formFields.sku"
+              label="Sku"
+              :error-messages="errors"
+            />
+          </ValidationProvider>
+        </v-col>
+        <v-col :cols="12">
+          <ValidationProvider rules="max:255" v-slot="{ errors }" name="Url">
+            <v-text-field
+              :readonly="$props.readonly"
+              v-model="formFields.url"
+              label="Url"
+              :error-messages="errors"
+            />
+          </ValidationProvider>
+        </v-col>
+        <v-col :cols="12">
+          <ValidationProvider
+            rules="max:255"
+            v-slot="{ errors }"
+            name="Photo url"
+          >
+            <v-text-field
+              :readonly="$props.readonly"
+              v-model="formFields.photo_url"
+              label="Photo url"
+              :error-messages="errors"
+            />
+          </ValidationProvider>
+        </v-col>
+        <v-col :cols="12">
+          <ValidationProvider
+            rules="max:30000"
+            v-slot="{ errors }"
+            name="Description"
+          >
+            <v-text-field
+              :readonly="$props.readonly"
+              v-model="formFields.description"
+              label="Description"
+              :error-messages="errors"
+              :disabled="loading"
+            />
+          </ValidationProvider>
+        </v-col>
+        <v-col :cols="12">
+          <ValidationProvider rules="required" v-slot="{ errors }" name="Price">
+            <v-text-field
+              :readonly="$props.readonly"
+              type="number"
+              v-model="price"
+              label="Price"
+              prefix="$"
+              :error-messages="errors"
+              :disabled="loading"
+            />
+          </ValidationProvider>
+        </v-col>
+
         <v-checkbox
           :readonly="$props.readonly"
           v-model="formFields.is_price_editable"
           label="Editable price"
           :disabled="loading"
-        ></v-checkbox>
+        />
 
         <v-checkbox
           :readonly="$props.readonly"
           v-model="formFields.is_discountable"
           label="Discountable"
           :disabled="loading"
-        ></v-checkbox>
+        />
+
+        <v-col cols="12">
+          <v-select
+            :readonly="$props.readonly"
+            :loading="categoriesLoading"
+            v-model="formFields.categories"
+            :items="categories"
+            chips
+            label="Categories"
+            multiple
+            item-text="name"
+            item-value="id"
+            :disabled="loading"
+            clearable
+          />
+        </v-col>
       </v-row>
-
-      <v-select
-        :readonly="$props.readonly"
-        :loading="categoriesLoading"
-        v-model="formFields.categories"
-        :items="categories"
-        chips
-        label="Categories"
-        multiple
-        item-text="name"
-        item-value="id"
-        :disabled="loading"
-        clearable
-      ></v-select>
-
       <v-row v-if="formFields.stores">
-        <v-col :key="store.id" v-for="store in formFields.stores">
-          <v-card>
-            <v-card-title class="blue-grey pa-0" @click.stop>
-              <h6 class="px-2">{{ store.name }}</h6>
-            </v-card-title>
-            <ValidationProvider rules="max:10" v-slot="{ errors }" name="Qty">
-              <v-text-field
-                :readonly="$props.readonly"
-                type="number"
-                label="Qty"
-                :error-messages="errors"
-                v-model="store.pivot.qty"
-                required
-                :disabled="loading"
-              ></v-text-field>
-            </ValidationProvider>
+        <v-col :cols="12">
+          <v-card outlined>
+            <v-simple-table fixed-header>
+              <template v-slot:default>
+                <thead>
+                  <tr>
+                    <th class="text-left">
+                      <span v-text="'Store name'" />
+                    </th>
+                    <th class="text-left">
+                      <span v-text="'Qty'" />
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="store in formFields.stores" :key="store.id">
+                    <td>
+                      <span v-text="store.name" />
+                    </td>
+                    <td>
+                      <v-text-field
+                        v-model="store.pivot.qty"
+                        type="number"
+                        :disabled="loading"
+                        :readonly="$props.readonly"
+                        style="width:60px;"
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
           </v-card>
         </v-col>
       </v-row>
     </v-container>
-    <v-container>
-      <v-row v-if="!$props.readonly">
-        <v-col :cols="12" align="center" justify="center">
-          <v-btn
-            class="mr-4"
-            type="submit"
-            :loading="submitLoading"
-            :disabled="invalid || loading"
-            color="primary"
-            >submit
-          </v-btn>
-        </v-col>
+    <v-container v-if="!$props.readonly">
+      <v-row justify="center">
+        <v-btn
+          class="mr-4"
+          type="submit"
+          :loading="submitLoading"
+          :disabled="invalid || loading"
+          color="primary"
+          >submit
+        </v-btn>
       </v-row>
     </v-container>
   </ValidationObserver>
 </template>
+
 <script>
 import { mapActions } from "vuex";
 
@@ -166,7 +196,7 @@ export default {
         is_price_editable: true,
         is_discountable: true,
         categories: [],
-        stores: []
+        stores: null
       }
     };
   },
@@ -181,6 +211,10 @@ export default {
       );
     }
     this.getAllCategories();
+  },
+
+  beforeDestroy() {
+    this.$off("submit");
   },
 
   computed: {
@@ -208,18 +242,12 @@ export default {
     ...mapActions("requests", ["request"]),
 
     submit() {
-      console.log(this.formFields.categories);
       this.submitLoading = true;
-
       const payload = {
-        method: "post",
-        url: "products/create",
-        data: { ...this.formFields }
+        method: this.formFields.id ? "patch" : "post",
+        url: this.formFields.id ? "products/update" : "products/create",
+        data: this.formFields
       };
-      if (this.$props.model) {
-        payload.method = "patch";
-        payload.url = "products/update";
-      }
 
       this.request(payload)
         .then(() => {
@@ -251,9 +279,6 @@ export default {
           this.categoriesLoading = false;
         });
     }
-  },
-  beforeDestroy() {
-    this.$off("submit");
   }
 };
 </script>

@@ -61,9 +61,11 @@
               :error-messages="errors"
               clearable
               label="Recharge amount"
-              :hint="`Original amount: ${parsePrice(
-                selectedGiftcard[0].original_price
-              ).toFormat()}`"
+              :hint="
+                `Original amount: ${parsePrice(
+                  selectedGiftcard[0].original_price
+                ).toFormat()}`
+              "
               prefix="$"
               outlined
               dense
@@ -90,7 +92,7 @@ import { mapState, mapActions } from "vuex";
 
 export default {
   props: {
-    model: Object,
+    model: Object
   },
 
   data() {
@@ -104,7 +106,7 @@ export default {
       datatableLoading: false,
       keyword: null,
       giftcards: [],
-      selectedGiftcard: [],
+      selectedGiftcard: []
     };
   },
 
@@ -116,7 +118,7 @@ export default {
 
   mounted() {
     if (!this.$props.model) {
-      this.$root.$on("barcodeScan", (code) => {
+      this.$root.$on("barcodeScan", code => {
         this.keyword = code;
         this.getGiftCards();
       });
@@ -146,8 +148,8 @@ export default {
         this.recharge_price = this.parsePrice(
           Math.round(value * 10000) / 100
         ).toJSON();
-      },
-    },
+      }
+    }
   },
 
   watch: {
@@ -157,7 +159,7 @@ export default {
       } else {
         this.price_amount = null;
       }
-    },
+    }
   },
 
   methods: {
@@ -170,10 +172,10 @@ export default {
         const payload = {
           method: "post",
           url: `giftcards/search?page=${this.page}`,
-          data: { keyword: this.keyword, items: 5 },
+          data: { keyword: this.keyword, items: 5 }
         };
         this.request(payload)
-          .then((response) => {
+          .then(response => {
             this.page = response.current_page;
             this.pageCount = response.last_page;
             this.giftcards = response.data;
@@ -196,7 +198,7 @@ export default {
         this.$router.push({ name: "sale" });
       }
       this.$emit("submit", true);
-    },
-  },
+    }
+  }
 };
 </script>

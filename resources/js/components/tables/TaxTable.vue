@@ -1,77 +1,105 @@
 <template>
-	<div>
-		<data-table v-if="render">
-			<template v-slot:item.actions="{ item }">
-				<v-tooltip bottom>
-					<template v-slot:activator="{ on }">
-						<v-btn
-							small
-							:disabled="data_table.loading"
-							@click.stop="(item.form = form), editItem(item)"
-							class="my-2"
-							v-on="on"
-							icon
-						>
-							<v-icon small>edit</v-icon>
-						</v-btn>
-					</template>
-					<span>Edit</span>
-				</v-tooltip>
+  <data-table v-if="render">
+    <template v-slot:item.percentage="{ item }">
+      <span v-text="`${item.percentage} %`" />
+    </template>
 
-				<v-tooltip bottom>
-					<template v-slot:activator="{ on }">
-						<v-btn
-							small
-							:disabled="data_table.loading"
-							@click.stop="(item.form = form), viewItem(item)"
-							class="my-2"
-							v-on="on"
-							icon
-						>
-							<v-icon small>mdi-eye</v-icon>
-						</v-btn>
-					</template>
-					<span>View</span>
-				</v-tooltip>
-			</template>
-		</data-table>
-	</div>
+    <template v-slot:item.actions="{ item }">
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            :disabled="data_table.loading"
+            @click.stop="edit(item)"
+            class="my-4"
+            v-on="on"
+            icon
+          >
+            <v-icon v-text="'edit'" />
+          </v-btn>
+        </template>
+        <span v-text="'Edit'" />
+      </v-tooltip>
+
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            :disabled="data_table.loading"
+            @click.stop="view(item)"
+            class="my-4"
+            v-on="on"
+            icon
+          >
+            <v-icon v-text="'mdi-eye'" />
+          </v-btn>
+        </template>
+        <span v-text="'View'" />
+      </v-tooltip>
+    </template>
+  </data-table>
 </template>
 
 <script>
 import { mapMutations, mapState } from "vuex";
 
 export default {
-	mounted() {
-		this.resetDataTable();
+  mounted() {
+    this.resetDataTable();
 
-		this.setDataTable({
-			icon: "mdi-sack-percent",
-			title: "Taxes",
-			model: "taxes",
-			newForm: this.form,
-			btnTxt: "New Tax",
-			loading: true,
-			eventChannel: "data-table"
-		});
+    this.setDataTable({
+      icon: "mdi-sack-percent",
+      title: "Taxes",
+      model: "taxes",
+      newForm: "taxForm",
+      btnTxt: "New Tax",
+      loading: true,
+      eventChannel: "data-table"
+    });
 
-		this.render = true;
-	},
+    this.render = true;
+  },
 
-	data() {
-		return {
-			render: false,
-			form: "taxForm"
-		};
-	},
+  data() {
+    return {
+      render: false
+    };
+  },
 
-	computed: {
-		...mapState("datatable", ["data_table"])
-	},
+  computed: {
+    ...mapState("datatable", ["data_table"])
+  },
 
-	methods: {
-		...mapMutations("dialog", ["editItem", "viewItem"]),
-		...mapMutations("datatable", ["setDataTable", "resetDataTable"])
-	}
+  methods: {
+    ...mapMutations("dialog", ["setDialog"]),
+    ...mapMutations("datatable", ["setDataTable", "resetDataTable"]),
+
+    view(item) {
+      const payload = {
+        show: true,
+        width: 400,
+        title: `View: ${item.name}`,
+        titleCloseBtn: true,
+        icon: "mdi-eye",
+        component: "taxForm",
+        component_props: { model: item },
+        readonly: true,
+        eventChannel: ""
+      };
+      this.setDialog(payload);
+    },
+    edit(item) {
+      const payload = {
+        show: true,
+        width: 400,
+        title: `Edit: ${item.name}`,
+        titleCloseBtn: true,
+        icon: "mdi-pencil",
+        component: "taxForm",
+        component_props: { model: _.cloneDeep(item) },
+        persistent: true,
+        eventChannel: "data-table"
+      };
+      this.setDialog(payload);
+    }
+  }
 };
 </script>

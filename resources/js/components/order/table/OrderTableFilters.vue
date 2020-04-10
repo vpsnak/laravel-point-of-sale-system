@@ -296,7 +296,7 @@ export default {
       const dialog = {
         show: true,
         width: 600,
-        fullscreen: false,
+
         icon: "mdi-account-outline",
         title: `View customer #${this.selectedCustomer.full_name}`,
         titleCloseBtn: true,

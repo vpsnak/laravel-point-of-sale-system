@@ -34,7 +34,7 @@
               :min="0"
               :disabled="loading"
               :error-messages="errors"
-            ></v-text-field>
+            />
           </ValidationProvider>
         </v-col>
         <v-col :cols="6">
@@ -49,7 +49,7 @@
               label="Street"
               :disabled="loading"
               :error-messages="errors"
-            ></v-text-field>
+            />
           </ValidationProvider>
         </v-col>
         <v-col :cols="6">
@@ -64,7 +64,7 @@
               label="Postcode"
               :disabled="loading"
               :error-messages="errors"
-            ></v-text-field>
+            />
           </ValidationProvider>
         </v-col>
 
@@ -80,7 +80,7 @@
               label="City"
               :disabled="loading"
               :error-messages="errors"
-            ></v-text-field>
+            />
           </ValidationProvider>
         </v-col>
 
@@ -99,9 +99,10 @@
               item-text="name"
               item-value="id"
               :error-messages="errors"
-            ></v-select>
+            />
           </ValidationProvider>
         </v-col>
+
         <v-col :cols="6">
           <ValidationProvider
             rules="required"
@@ -117,9 +118,10 @@
               item-text="name"
               item-value="id"
               :error-messages="errors"
-            ></v-select>
+            />
           </ValidationProvider>
         </v-col>
+
         <v-col :cols="6">
           <ValidationProvider
             rules="required"
@@ -133,7 +135,7 @@
               label="Default currency"
               :disabled="loading || true"
               :error-messages="errors"
-            ></v-select>
+            />
           </ValidationProvider>
         </v-col>
       </v-row>
@@ -150,18 +152,16 @@
         ></v-checkbox>
       </v-row>
     </v-container>
-    <v-container>
-      <v-row v-if="!$props.readonly">
-        <v-col cols="12" align="center" justify="center">
-          <v-btn
-            class="mr-4"
-            type="submit"
-            :loading="loading"
-            :disabled="invalid || loading"
-            color="primary"
-            >submit
-          </v-btn>
-        </v-col>
+    <v-container v-if="!$props.readonly">
+      <v-row justify="center">
+        <v-btn
+          class="mr-4"
+          type="submit"
+          :loading="loading"
+          :disabled="invalid || loading"
+          color="primary"
+          >submit
+        </v-btn>
       </v-row>
     </v-container>
   </ValidationObserver>
@@ -173,7 +173,7 @@ import { mapActions } from "vuex";
 export default {
   props: {
     model: Object,
-    readonly: Boolean,
+    readonly: Boolean
   },
   data() {
     return {
@@ -193,8 +193,8 @@ export default {
         company_id: null,
         active: true,
         is_phone_center: false,
-        default_currency: "USD",
-      },
+        default_currency: "USD"
+      }
     };
   },
 
@@ -202,7 +202,7 @@ export default {
     this.getAllTaxes();
     this.getAllCompanies();
     if (this.$props.model) {
-      this.formFields = { ...this.formFields, ...this.$props.model };
+      this.formFields = { ...this.$props.model };
     }
   },
 
@@ -211,44 +211,32 @@ export default {
 
     submit() {
       this.loading = true;
+      const payload = {
+        method: this.formFields.id ? "patch" : "post",
+        url: this.formFields.id ? "stores/update" : "stores/create",
+        data: this.formFields
+      };
 
-      if (this.$props.model) {
-        this.request({
-          method: "patch",
-          url: "stores/update",
-          data: { ...this.formFields },
-        })
-          .then(() => {
-            this.$emit("submit", {
-              action: "paginate",
-            });
-          })
-          .finally(() => {
-            this.loading = false;
+      this.request(payload)
+        .then(() => {
+          this.$emit("submit", {
+            action: "paginate"
           });
-      } else {
-        this.request({
-          method: "post",
-          url: "stores/create",
-          data: { ...this.formFields },
         })
-          .then(() => {
-            this.$emit("submit", {
-              action: "paginate",
-            });
-          })
-          .finally(() => {
-            this.loading = false;
-          });
-      }
+        .catch(error => {
+          console.error(error);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
     getAllTaxes() {
       this.loading = true;
       this.request({
         method: "get",
-        url: "taxes",
+        url: "taxes"
       })
-        .then((response) => {
+        .then(response => {
           this.taxes = response.data;
         })
         .finally(() => {
@@ -257,20 +245,21 @@ export default {
     },
     getAllCompanies() {
       this.loading = true;
-      this.request({
+      const payload = {
         method: "get",
-        url: "companies",
-      })
-        .then((response) => {
+        url: "companies"
+      };
+      this.request(payload)
+        .then(response => {
           this.companies = response.data;
         })
         .finally(() => {
           this.loading = false;
         });
-    },
+    }
   },
   beforeDestroy() {
     this.$off("submit");
-  },
+  }
 };
 </script>

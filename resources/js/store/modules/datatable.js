@@ -8,8 +8,7 @@ const state = {
     model: "",
     searchField: true,
     btnTxt: "",
-    newForm: "",
-    newDialogWidth: 600,
+    newDialogProps: {},
     disableNewBtn: false,
     loading: false,
     filters: null,
@@ -219,8 +218,7 @@ const mutations = {
     state.data_table.model = "";
     state.data_table.searchField = true;
     state.data_table.btnTxt = "";
-    state.data_table.newForm = "";
-    state.data_table.newDialogWidth = 600;
+    state.data_table.newDialogProps;
     state.data_table.disableNewBtn = false;
     state.data_table.loading = false;
     state.data_table.filters = false;

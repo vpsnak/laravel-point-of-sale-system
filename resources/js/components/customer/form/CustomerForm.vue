@@ -129,6 +129,19 @@
             dense
           />
         </v-col>
+
+        <v-col v-if="formFields.no_tax_file" :cols="6">
+          <v-btn
+            v-if="formFields.no_tax_file"
+            :href="formFields.no_tax_file"
+            :disabled="loading"
+            text
+            color="primary"
+            target="_blank"
+            v-text="'View uploaded file'"
+          />
+        </v-col>
+
         <v-col :cols="6">
           <ValidationProvider
             v-if="formFields.no_tax"
@@ -142,24 +155,17 @@
               :readonly="$props.readonly"
               :error-messages="errors"
               :disabled="loading"
-              label="Upload certification file"
+              :label="
+                formFields.no_tax_file
+                  ? 'Reupload certification file'
+                  : 'Upload certification file'
+              "
               accept="image/png, image/jpeg, application/pdf"
               show-size
               clearable
               dense
             />
           </ValidationProvider>
-        </v-col>
-
-        <v-col v-if="formFields.no_tax_file" :cols="6">
-          <v-btn
-            v-if="formFields.no_tax_file"
-            :href="formFields.no_tax_file"
-            :disabled="loading"
-            text
-            target="_blank"
-            v-text="'View uploaded file'"
-          />
         </v-col>
       </v-row>
     </v-container>
@@ -252,15 +258,12 @@ export default {
       }
 
       const payload = {
-        method: _.has(this.$props.model, "id") ? "patch" : "post",
-        url: _.has(this.$props.model, "id")
-          ? "customers/update"
-          : "customers/create",
+        method: this.formFields.id ? "patch" : "post",
+        url: this.formFields.id ? "customers/update" : "customers/create",
         data: data
       };
       this.request(payload)
         .then(response => {
-          console.log(response);
           EventBus.$emit("customer-form-submit", response.customer);
         })
         .catch(error => {

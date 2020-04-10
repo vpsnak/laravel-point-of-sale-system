@@ -1,64 +1,61 @@
 <template>
   <data-table v-if="render">
     <template v-slot:item.price="{ item }">
-      {{ parsePrice(item.price).toFormat() }}
+      <span v-text="parsePrice(item.price).toFormat()" />
     </template>
 
     <template v-slot:item.photo_url="{ item }">
-      <v-img contain :src="item.photo_url" :width="40" :height="40"></v-img>
+      <v-img contain :src="item.photo_url" :width="40" :height="40" />
     </template>
 
     <template v-slot:item.stock="{ item }">
-      <h4 :class="getStockColor(item.stock)">{{ item.stock }}</h4>
+      <h4 :class="getStockColor(item.stock)" v-text="item.stock" />
     </template>
 
     <template v-slot:item.actions="{ item }">
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            small
             @click.stop="printProductBarcode(item)"
             :disabled="data_table.loading"
-            class="my-2"
+            class="my-4"
             icon
             v-on="on"
           >
-            <v-icon>mdi-barcode</v-icon>
+            <v-icon v-text="'mdi-barcode'" />
           </v-btn>
         </template>
-        <span>Print Barcode</span>
+        <span v-text="'Print Barcode'" />
       </v-tooltip>
 
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            small
             :disabled="data_table.loading"
-            @click.stop="(item.form = form), editItem(item)"
-            class="my-2"
+            @click.stop="edit(item)"
+            class="my-4"
             v-on="on"
             icon
           >
-            <v-icon small>edit</v-icon>
+            <v-icon v-text="'edit'" />
           </v-btn>
         </template>
-        <span>Edit</span>
+        <span v-text="'Edit'" />
       </v-tooltip>
 
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            small
             :disabled="data_table.loading"
-            @click.stop="(item.form = form), viewItem(item)"
-            class="my-1"
+            @click.stop="view(item)"
+            class="my-4"
             v-on="on"
             icon
           >
-            <v-icon small>mdi-eye</v-icon>
+            <v-icon v-text="'mdi-eye'" />
           </v-btn>
         </template>
-        <span>View</span>
+        <span v-text="'View'" />
       </v-tooltip>
     </template>
   </data-table>
@@ -75,7 +72,7 @@ export default {
       icon: "mdi-package-variant",
       title: "Products",
       model: "products",
-      newForm: this.form,
+      newForm: "productForm",
       btnTxt: "New Product",
       loading: true
     });
@@ -85,18 +82,16 @@ export default {
 
   data() {
     return {
-      render: false,
-      form: "productForm"
+      render: false
     };
   },
 
   computed: {
-    ...mapState("datatable", ["data_table"]),
-    ...mapGetters(["role"])
+    ...mapState("datatable", ["data_table"])
   },
 
   methods: {
-    ...mapMutations("dialog", ["editItem", "viewItem"]),
+    ...mapMutations("dialog", ["setDialog"]),
     ...mapMutations("datatable", [
       "setLoading",
       "setDataTable",
@@ -114,6 +109,34 @@ export default {
     },
     printProductBarcode(item) {
       window.open(`/product_barcode/${item.id}`, "_blank");
+    },
+    view(item) {
+      const payload = {
+        show: true,
+        width: 600,
+        title: `View: ${item.name}`,
+        titleCloseBtn: true,
+        icon: "mdi-eye",
+        component: "product",
+        component_props: { model: item },
+        readonly: true,
+        eventChannel: ""
+      };
+      this.setDialog(payload);
+    },
+    edit(item) {
+      const payload = {
+        show: true,
+        width: 600,
+        title: `Edit: ${item.name}`,
+        titleCloseBtn: true,
+        icon: "mdi-pencil",
+        component: "productForm",
+        component_props: { model: _.cloneDeep(item) },
+        persistent: true,
+        eventChannel: "data-table"
+      };
+      this.setDialog(payload);
     }
   }
 };

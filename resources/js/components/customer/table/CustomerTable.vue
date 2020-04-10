@@ -1,11 +1,15 @@
 <template>
   <data-table v-if="render">
     <template v-slot:item.no_tax="{ item }">
-      <span v-text="item.no_tax ? 'Yes' : 'No'" />
+      <v-checkbox v-model="item.no_tax" :ripple="false" readonly />
     </template>
 
     <template v-slot:item.house_account_status="{ item }">
-      <span v-text="item.house_account_status ? 'Yes' : 'No'" />
+      <v-checkbox
+        v-model="item.house_account_status"
+        :ripple="false"
+        readonly
+      />
     </template>
 
     <template v-slot:item.actions="{ item }">
@@ -13,7 +17,7 @@
         <template v-slot:activator="{ on }">
           <v-btn
             :disabled="data_table.loading"
-            @click.stop="(item.form = form), editItem(item)"
+            @click="edit(item)"
             class="my-4"
             v-on="on"
             icon
@@ -28,7 +32,7 @@
         <template v-slot:activator="{ on }">
           <v-btn
             :disabled="data_table.loading"
-            @click.stop="(item.form = form), viewItem(item)"
+            @click="view(item)"
             class="my-4"
             v-on="on"
             icon
@@ -54,30 +58,61 @@ export default {
       title: "Customers",
       model: "customers",
       newForm: "customerCreateStepper",
-      newDialogWidth: 700,
+      newDialogProps: { width: 700, no_padding: true },
       btnTxt: "New Customer",
       loading: true,
-      disableNewBtn: false,
+      disableNewBtn: false
     });
 
     this.render = true;
   },
+
   data() {
     return {
       render: false,
-      form: "customer",
+      form: "customer"
     };
   },
+
   computed: {
-    ...mapState("datatable", ["data_table"]),
+    ...mapState("datatable", ["data_table"])
   },
+
   methods: {
-    ...mapMutations("dialog", ["setDialog", "editItem", "viewItem"]),
+    ...mapMutations("dialog", ["setDialog"]),
     ...mapMutations("datatable", [
       "setLoading",
       "setDataTable",
-      "resetDataTable",
+      "resetDataTable"
     ]),
-  },
+    view(item) {
+      const payload = {
+        show: true,
+        width: 700,
+        title: `View: ${item.full_name}`,
+        titleCloseBtn: true,
+        icon: "mdi-eye",
+        component: "customerForm",
+        component_props: { model: item },
+        readonly: true,
+        eventChannel: ""
+      };
+      this.setDialog(payload);
+    },
+    edit(item) {
+      const payload = {
+        show: true,
+        width: 700,
+        title: `Edit: ${item.full_name}`,
+        titleCloseBtn: true,
+        icon: "mdi-pencil",
+        component: "customerForm",
+        component_props: { model: _.cloneDeep(item) },
+        persistent: true,
+        eventChannel: "data-table"
+      };
+      this.setDialog(payload);
+    }
+  }
 };
 </script>

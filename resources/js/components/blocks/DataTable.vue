@@ -260,13 +260,15 @@ export default {
     },
     createItemDialog() {
       const payload = {
-        show: true,
-        width: this.data_table.newDialogWidth,
-        title: this.data_table.btnTxt,
-        titleCloseBtn: true,
-        component: this.data_table.newForm,
-        persistent: true,
-        eventChannel: "data-table"
+        ...{
+          show: true,
+          width: 600,
+          title: "New",
+          titleCloseBtn: true,
+          persistent: true,
+          eventChannel: "data-table"
+        },
+        ...this.data_table.newDialogProps
       };
       this.setDialog(payload);
     }

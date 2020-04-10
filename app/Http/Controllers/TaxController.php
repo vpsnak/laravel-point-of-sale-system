@@ -21,10 +21,9 @@ class TaxController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string',
-            'percentage' => 'required|numeric',
-            'created_by_id' => 'required|exists:users,id'
+            'percentage' => 'required|numeric|min:0|max:50',
         ]);
-
+        $validatedData['created_by_id'] = auth()->user();
         $tax = Tax::create($validatedData);
 
         return response(['notification' => [
@@ -38,8 +37,7 @@ class TaxController extends Controller
         $validatedData = $request->validate([
             'id' => 'required|exists:taxes,id',
             'name' => 'required|string',
-            'percentage' => 'required|numeric',
-            'created_by_id' => 'required|exists:users,id'
+            'percentage' => 'required|numeric|min:0|max:50',
         ]);
         $tax = Tax::findOrFail($validatedData['id']);
         $tax->update($validatedData);

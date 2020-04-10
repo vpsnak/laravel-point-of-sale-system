@@ -402,7 +402,7 @@ export default {
 
   methods: {
     ...mapMutations(["setProductList"]),
-    ...mapMutations("dialog", ["viewItem", "setDialog"]),
+    ...mapMutations("dialog", ["setDialog"]),
     ...mapActions("requests", ["request"]),
     ...mapActions("cart", ["addProduct"]),
 
@@ -440,7 +440,7 @@ export default {
           this.categories = response;
         })
         .catch(error => {
-          console.log(error);
+          console.error(error);
         })
         .finally(() => {
           this.categoriesLoading = false;
@@ -518,8 +518,20 @@ export default {
       });
     },
     viewProductDialog(product) {
-      product.form = "product";
-      this.viewItem(product);
+      const payload = {
+        show: true,
+
+        width: 700,
+        title: `View: ${product.name}`,
+        titleCloseBtn: true,
+        icon: "mdi-eye",
+        component: "product",
+        component_props: { model: product },
+        readonly: true,
+
+        eventChannel: ""
+      };
+      this.setDialog(payload);
     },
     mailPlantCareDialog(product) {
       const payload = {

@@ -183,7 +183,7 @@ export default {
 
   methods: {
     ...mapMutations("cart", ["setCheckoutDialog", "resetState", "setReorder"]),
-    ...mapMutations("dialog", ["setDialog", "editItem", "viewItem"]),
+    ...mapMutations("dialog", ["setDialog"]),
     ...mapMutations("datatable", [
       "setLoading",
       "setDataTable",

@@ -155,7 +155,7 @@ export default {
       const payload = {
         show: true,
         width: 600,
-        fullscreen: false,
+
         icon: "mdi-account-plus",
         title: create
           ? "Add new customer"
@@ -172,7 +172,7 @@ export default {
       const payload = {
         show: true,
         width: 600,
-        fullscreen: false,
+
         icon: "mdi-comment",
         title: `Comments for ${this.cartCustomer.full_name}`,
         titleCloseBtn: true,

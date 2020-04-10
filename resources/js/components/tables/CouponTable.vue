@@ -1,39 +1,37 @@
 <template>
   <data-table v-if="render">
     <template v-slot:item.discount.amount="{ item }">
-      {{ couponAmount(item) }}
+      <span v-text="couponAmount(item)" />
     </template>
     <template v-slot:item.actions="{ item }">
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            small
             :disabled="data_table.loading"
-            @click.stop="(item.form = form), editItem(item)"
-            class="my-2"
+            @click.stop="edit(item)"
+            class="my-4"
             v-on="on"
             icon
           >
-            <v-icon small>edit</v-icon>
+            <v-icon v-text="'edit'" />
           </v-btn>
         </template>
-        <span>Edit</span>
+        <span v-text="'Edit'" />
       </v-tooltip>
 
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
-            small
             :disabled="data_table.loading"
-            @click.stop="(item.form = form), viewItem(item)"
-            class="my-2"
+            @click.stop="view(item)"
+            class="my-4"
             v-on="on"
             icon
           >
-            <v-icon small>mdi-eye</v-icon>
+            <v-icon v-text="'mdi-eye'" />
           </v-btn>
         </template>
-        <span>View</span>
+        <span v-text="'View'" />
       </v-tooltip>
     </template>
   </data-table>
@@ -49,7 +47,7 @@ export default {
       icon: "mdi-ticket-percent",
       title: "Coupons",
       model: "coupons",
-      newForm: this.form,
+      newForm: "couponForm",
       btnTxt: "New Coupon",
       loading: true
     });
@@ -58,23 +56,50 @@ export default {
   },
   data() {
     return {
-      render: false,
-      form: "couponForm"
+      render: false
     };
   },
   computed: {
     ...mapState("datatable", ["data_table"])
   },
   methods: {
-    ...mapMutations("dialog", ["setDialog", "editItem", "viewItem"]),
+    ...mapMutations("dialog", ["setDialog"]),
     ...mapMutations("datatable", ["setDataTable", "resetDataTable"]),
 
     couponAmount(item) {
       if (item.discount.type === "flat") {
         return this.parsePrice(item.discount.amount).toFormat();
       } else {
-        return `${item.discount.amount}%`;
+        return `${item.discount.amount} %`;
       }
+    },
+    view(item) {
+      const payload = {
+        show: true,
+        width: 500,
+        title: `View: ${item.name}`,
+        titleCloseBtn: true,
+        icon: "mdi-eye",
+        component: "couponForm",
+        component_props: { model: item },
+        readonly: true,
+        eventChannel: ""
+      };
+      this.setDialog(payload);
+    },
+    edit(item) {
+      const payload = {
+        show: true,
+        width: 500,
+        title: `Edit: ${item.name}`,
+        titleCloseBtn: true,
+        icon: "mdi-pencil",
+        component: "couponForm",
+        component_props: { model: _.cloneDeep(item) },
+        persistent: true,
+        eventChannel: "data-table"
+      };
+      this.setDialog(payload);
     }
   }
 };

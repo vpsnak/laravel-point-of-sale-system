@@ -1,3 +1,1 @@
-<template>
-  <customerCreateStepper> </customerCreateStepper>
-</template>
+<template> </template>

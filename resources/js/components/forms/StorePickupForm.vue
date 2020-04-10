@@ -4,153 +4,156 @@
     tag="v-form"
     @submit.prevent="submit()"
   >
-    <v-row>
-      <v-col :cols="12">
-        <ValidationProvider
-          rules="required"
-          v-slot="{ errors }"
-          name="Store name"
-        >
-          <v-text-field
-            v-model="store_pickup.name"
-            :readonly="$props.readonly"
-            label="Store name"
-            :disabled="loading"
-            :error-messages="errors"
-          ></v-text-field>
-        </ValidationProvider>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col :cols="6">
-        <ValidationProvider rules="required" v-slot="{ errors }" name="Address">
-          <v-text-field
-            :readonly="$props.readonly"
-            v-model="store_pickup.street"
-            label="Address"
-            :disabled="loading"
-            :error-messages="errors"
-          ></v-text-field>
-        </ValidationProvider>
-      </v-col>
-      <v-col :cols="6">
-        <v-text-field
-          :readonly="$props.readonly"
-          v-model="store_pickup.street2"
-          label="Second Address"
-          :disabled="loading"
-        ></v-text-field>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col :cols="6">
-        <ValidationProvider rules="required" v-slot="{ errors }" name="City">
-          <v-text-field
-            v-model="store_pickup.city"
-            :readonly="$props.readonly"
-            label="City"
-            :disabled="loading"
-            :error-messages="errors"
-          ></v-text-field>
-        </ValidationProvider>
-      </v-col>
-      <v-col :cols="6">
-        <ValidationProvider
-          rules="required|digits:5"
-          v-slot="{ errors }"
-          name="Zip Code"
-        >
+    <v-container>
+      <v-row>
+        <v-col :cols="12">
+          <ValidationProvider
+            rules="required"
+            v-slot="{ errors }"
+            name="Store name"
+          >
+            <v-text-field
+              v-model="store_pickup.name"
+              :readonly="$props.readonly"
+              label="Store name"
+              :disabled="loading"
+              :error-messages="errors"
+            />
+          </ValidationProvider>
+        </v-col>
+
+        <v-col :cols="6">
+          <ValidationProvider
+            rules="required"
+            v-slot="{ errors }"
+            name="Address"
+          >
+            <v-text-field
+              :readonly="$props.readonly"
+              v-model="store_pickup.street"
+              label="Address"
+              :disabled="loading"
+              :error-messages="errors"
+            />
+          </ValidationProvider>
+        </v-col>
+
+        <v-col :cols="6">
           <v-text-field
             :readonly="$props.readonly"
-            v-model="store_pickup.postcode"
-            label="Zip Code"
+            v-model="store_pickup.street2"
+            label="Second Address"
             :disabled="loading"
-            :error-messages="errors"
-          ></v-text-field>
-        </ValidationProvider>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col :cols="6">
-        <ValidationProvider rules="required" v-slot="{ errors }" name="Country">
-          <v-autocomplete
-            @change="countryChanged"
+          />
+        </v-col>
+
+        <v-col :cols="6">
+          <ValidationProvider rules="required" v-slot="{ errors }" name="City">
+            <v-text-field
+              v-model="store_pickup.city"
+              :readonly="$props.readonly"
+              label="City"
+              :disabled="loading"
+              :error-messages="errors"
+            />
+          </ValidationProvider>
+        </v-col>
+        <v-col :cols="6">
+          <ValidationProvider
+            rules="required|digits:5"
+            v-slot="{ errors }"
+            name="Zip Code"
+          >
+            <v-text-field
+              :readonly="$props.readonly"
+              v-model="store_pickup.postcode"
+              label="Zip Code"
+              :disabled="loading"
+              :error-messages="errors"
+            />
+          </ValidationProvider>
+        </v-col>
+
+        <v-col :cols="6">
+          <ValidationProvider
+            rules="required"
+            v-slot="{ errors }"
+            name="Country"
+          >
+            <v-autocomplete
+              @change="countryChanged"
+              :readonly="$props.readonly"
+              v-model="store_pickup.country"
+              :items="countries"
+              label="Country"
+              required
+              item-text="name"
+              return-object
+              :error-messages="errors"
+              :loading="country_loading"
+            />
+          </ValidationProvider>
+        </v-col>
+        <v-col :cols="6">
+          <ValidationProvider rules="required" v-slot="{ errors }" name="State">
+            <v-autocomplete
+              v-model="store_pickup.region"
+              :loading="region_loading"
+              :readonly="$props.readonly"
+              :items="regions"
+              label="State"
+              item-text="name"
+              return-object
+              :error-messages="errors"
+            ></v-autocomplete>
+          </ValidationProvider>
+        </v-col>
+
+        <v-col :cols="6">
+          <ValidationProvider rules="required" v-slot="{ errors }" name="Phone">
+            <v-text-field
+              :readonly="$props.readonly"
+              v-model="store_pickup.phone"
+              label="Phone"
+              :disabled="loading"
+              :error-messages="errors"
+            />
+          </ValidationProvider>
+        </v-col>
+        <v-col :cols="6">
+          <v-select
             :readonly="$props.readonly"
-            v-model="store_pickup.country"
-            :items="countries"
-            label="Country"
-            required
-            item-text="name"
+            :disabled="loading"
+            label="Location"
+            :items="locations"
+            item-text="label"
             return-object
-            :error-messages="errors"
-            :loading="country_loading"
-          ></v-autocomplete>
-        </ValidationProvider>
-      </v-col>
-      <v-col :cols="6">
-        <ValidationProvider rules="required" v-slot="{ errors }" name="State">
-          <v-autocomplete
-            v-model="store_pickup.region"
-            :loading="region_loading"
-            :readonly="$props.readonly"
-            :items="regions"
-            label="State"
-            item-text="name"
-            return-object
-            :error-messages="errors"
-          ></v-autocomplete>
-        </ValidationProvider>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col :cols="6">
-        <ValidationProvider rules="required" v-slot="{ errors }" name="Phone">
-          <v-text-field
-            :readonly="$props.readonly"
-            v-model="store_pickup.phone"
-            label="Phone"
-            :disabled="loading"
-            :error-messages="errors"
-          ></v-text-field>
-        </ValidationProvider>
-      </v-col>
-      <v-col :cols="6">
-        <v-select
-          :readonly="$props.readonly"
-          :disabled="loading"
-          label="Location"
-          :items="locations"
-          item-text="label"
-          return-object
-          v-model="location"
-          prepend-inner-icon="mdi-city"
-        ></v-select>
-      </v-col>
-    </v-row>
-    <v-row v-if="!$props.readonly" justify="center">
-      <v-btn
-        color="primary"
-        type="submit"
-        :disabled="invalid || loading"
-        :loading="submit_loading"
-      >
-        {{ submitBtnTxt }}
-      </v-btn>
-    </v-row>
+            v-model="location"
+            prepend-inner-icon="mdi-city"
+          />
+        </v-col>
+      </v-row>
+      <v-row v-if="!$props.readonly" justify="center">
+        <v-btn
+          color="primary"
+          type="submit"
+          :disabled="invalid || loading"
+          :loading="submit_loading"
+        >
+          {{ submitBtnTxt }}
+        </v-btn>
+      </v-row>
+    </v-container>
   </ValidationObserver>
 </template>
 
 <script>
-import { mapState, mapActions, mapMutations } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
   props: {
     model: Object,
     readonly: Boolean
-  },
-
-  beforeDestroy() {
-    this.$off("submit");
   },
 
   data() {
@@ -182,7 +185,7 @@ export default {
   mounted() {
     if (this.$props.model) {
       this.getAllCountries(true);
-      this.store_pickup = { ...this.store_pickup, ...this.$props.model };
+      this.store_pickup = { ...this.$props.model };
 
       this.selected_location = _.find(this.locations, {
         id: this.$props.model.location
@@ -190,6 +193,10 @@ export default {
     } else {
       this.getAllCountries(false);
     }
+  },
+
+  beforeDestroy() {
+    this.$off("submit");
   },
 
   computed: {
@@ -284,7 +291,7 @@ export default {
           }
         })
         .catch(error => {
-          console.log(error);
+          console.error(error);
         })
         .finally(() => {
           this.country_loading = false;
