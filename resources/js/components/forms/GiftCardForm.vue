@@ -100,6 +100,8 @@
           :loading="loading"
           :disabled="invalid || loading"
           color="primary"
+          outlined
+          text
           >save
         </v-btn>
       </v-row>
@@ -174,7 +176,7 @@ export default {
         data: this.formFields
       };
 
-      this.request()
+      this.request(payload)
         .then(() => {
           this.$emit("submit", {
             action: "paginate"

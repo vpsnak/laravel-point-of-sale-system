@@ -32,7 +32,7 @@ class StoreController extends Controller
             'is_phone_center' => 'required|boolean'
 
         ]);
-        $validatedData['created_by_id'] = auth()->user();
+        $validatedData['created_by_id'] = auth()->user()->id;
         $store = Store::create($validatedData);
 
         return response(['notification' => [
@@ -56,7 +56,6 @@ class StoreController extends Controller
             'default_currency' => 'required|string|size:3',
             'is_phone_center' => 'required|boolean'
         ]);
-        $validatedData['user_id'] = auth()->user()->id;
 
         $store = Store::findOrFail($validatedData['id']);
         $store->update($validatedData);

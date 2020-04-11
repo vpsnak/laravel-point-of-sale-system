@@ -81,13 +81,12 @@ class ProductController extends Controller
         $product->categories()->sync($validatedExtra['categories']);
 
         foreach ($validatedExtra['stores'] as $store) {
-            if (!empty($store['pivot'])) {
+            if (!empty($store->pivot)) {
                 $product->stores()->syncWithoutDetaching(
                     [$store['id'] => ['qty' => $store['pivot']['qty'] ?? 0]]
                 );
             }
         }
-
         $product->update($validatedData);
 
         return response(['notification' => [

@@ -20,7 +20,7 @@
           </v-col>
           <v-col :cols="6">
             <ValidationProvider
-              rules="required|min:10|max:15"
+              rules="required|min:10|max:16"
               v-slot="{ errors }"
               name="Phone"
             >

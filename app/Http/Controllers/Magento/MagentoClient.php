@@ -5,7 +5,6 @@ namespace App\Magento;
 use App\Setting;
 use Exception;
 use OAuth;
-use OAuthException;
 
 class MagentoClient
 {
@@ -33,9 +32,9 @@ class MagentoClient
         $this->baseUrl = config('magento.MAGENTO_URL') . '/api/rest/';
         $this->consumer_key = config('magento.OAUTH_CONSUMER_KEY');
         $this->consumer_secret = config('magento.OAUTH_CONSUMER_SECRET');
-        $this->state = Setting::where('key', 'state')->first();
-        $this->token = Setting::where('key', 'token')->first();
-        $this->secret = Setting::where('key', 'secret')->first();
+        $this->state = Setting::where('key', 'state')->firstOrFail();
+        $this->token = Setting::where('key', 'token')->firstOrFail();
+        $this->secret = Setting::where('key', 'secret')->firstOrFail();
 
         $auth_type = ($this->state->value === '2') ? OAUTH_AUTH_TYPE_AUTHORIZATION : OAUTH_AUTH_TYPE_URI;
         try {
@@ -48,7 +47,7 @@ class MagentoClient
             $this->oauth_client->enableDebug();
             $this->oauth_client->setSSLChecks(OAUTH_SSLCHECK_NONE);
             $this->oauth_client->setToken($this->token->value, $this->secret->value);
-        } catch (OAuthException $e) {
+        } catch (Exception $e) {
             print_r($e->getMessage());
         }
     }

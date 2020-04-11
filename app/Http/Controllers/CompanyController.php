@@ -41,8 +41,7 @@ class CompanyController extends Controller
         ]);
         $company = Company::findOrFail($validatedData['id']);
 
-        $company->fill($validatedData);
-        $company->save();
+        $company->update($validatedData);
 
         return response(['notification' => [
             'msg' => ["Company {$company->name} updated successfully"],

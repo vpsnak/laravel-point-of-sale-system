@@ -163,7 +163,10 @@ export default {
           : `View / Edit customer #${this.cartCustomer.id}`,
         titleCloseBtn: true,
         component: create ? "customerCreateStepper" : "customerForm",
-        component_props: { model: create ? {} : this.cartCustomer },
+        component_props: {
+          model: create ? {} : this.cartCustomer
+        },
+        no_padding: true,
         persistent: create ? true : false,
         eventChannel: "customer-search"
       };

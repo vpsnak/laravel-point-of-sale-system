@@ -11,7 +11,7 @@
             icon
             @click="rechargeGiftcardDialog(item)"
             :disabled="data_table.loading"
-            class="mr-4"
+            class="my-4"
             v-on="on"
           >
             <v-icon v-text="'mdi-credit-card-plus'" />
@@ -40,7 +40,7 @@
             icon
             :disabled="data_table.loading"
             @click.stop="view(item)"
-            class="ml-4"
+            class="my-4"
             v-on="on"
           >
             <v-icon v-text="'mdi-eye'" />

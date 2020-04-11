@@ -42,9 +42,7 @@ class CategoryController extends Controller
             'is_enabled' => 'required|boolean',
         ]);
         $category = Category::findOrFail($validatedData['id']);
-
-        $category->fill($validatedData);
-        $category->save();
+        $category->update($validatedData);
 
         return response(['notification' => [
             'msg' => ["Category {$category->name} updated successfully"],

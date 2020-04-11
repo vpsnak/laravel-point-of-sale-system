@@ -34,11 +34,9 @@ class CustomerController extends Controller
             'file' => 'nullable|file|max:15000|mimes:jpeg,jpg,png,pdf',
             'phone' => "nullable|string|unique:customers,phone,{$request->id}",
         ]);
-
         $customer = Customer::findOrFail($validatedData['id']);
 
         if (isset($validatedData['no_tax']) && $validatedData['no_tax'] && empty($validatedData['file'])) {
-
             if (empty($customer->no_tax_file)) {
                 return response(['errors' => ['Certification file is required when zero tax is enabled']], 422);
             }

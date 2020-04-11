@@ -7,7 +7,6 @@ use App\Setting;
 use Exception;
 use Illuminate\Http\Request;
 use OAuth;
-use OAuthException;
 
 class MagentoOAuthController extends Controller
 {

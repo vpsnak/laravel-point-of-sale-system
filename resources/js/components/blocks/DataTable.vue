@@ -58,17 +58,17 @@
 
         <v-col v-if="data_table.newBtn" cols="auto">
           <v-btn
+            @click="createItemDialog()"
             :disabled="data_table.loading"
             color="primary"
             outlined
-            @click="createItemDialog()"
+            text
           >
             <v-icon left v-text="'mdi-plus'" />
             <span v-text="data_table.newBtnTxt" />
           </v-btn>
         </v-col>
-      </v-row>
-      <v-row no-gutters>
+
         <v-col :cols="12">
           <v-data-table
             fixed-header
@@ -81,6 +81,16 @@
             :items="data_table.items"
             :loading="data_table.loading"
           >
+            <template v-slot:loading>
+              <v-row
+                justify="center"
+                align="center"
+                :style="`height: ${inner_height - 200}px;`"
+              >
+                <v-progress-circular indeterminate color="primary" />
+              </v-row>
+            </template>
+
             <template v-for="(_, slot) of $scopedSlots" v-slot:[slot]="scope">
               <slot :name="slot" v-bind="scope" />
             </template>
@@ -103,7 +113,11 @@
             <!-- generic fields end -->
 
             <template v-slot:no-data v-if="!data_table.loading">
-              <v-row justify="center" align="center" style="height: 300px;">
+              <v-row
+                justify="center"
+                align="center"
+                :style="`height: ${inner_height - 200}px;`"
+              >
                 <v-alert
                   v-if="search && keyword"
                   type="info"
@@ -177,7 +191,8 @@ export default {
 
   computed: {
     ...mapGetters("datatable", ["getHeaders"]),
-    ...mapState("datatable", ["data_table"])
+    ...mapState("datatable", ["data_table"]),
+    ...mapState("config", ["inner_height"])
   },
 
   methods: {

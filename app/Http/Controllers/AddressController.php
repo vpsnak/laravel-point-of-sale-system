@@ -86,11 +86,10 @@ class AddressController extends Controller
             unset($this->address['country_id']);
 
             $address = Address::findOrFail($this->address['id']);
-            $address->fill($this->address);
-            $address->save();
+            $address->update($this->address);
 
             return response([
-                'address' => $address->load('region'),
+                'address' => $address,
                 'notification' => [
                     'msg' => ['Address successfully updated!'],
                     'type' => 'success'

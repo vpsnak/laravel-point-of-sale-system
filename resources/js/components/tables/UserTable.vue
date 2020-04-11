@@ -14,7 +14,7 @@
           <v-btn
             :disabled="data_table.loading"
             @click.stop="deauthUser(item.id)"
-            class="mr-4"
+            class="my-4"
             v-on="on"
             icon
           >
@@ -59,7 +59,7 @@
           <v-btn
             :disabled="data_table.loading"
             @click.stop="view(item)"
-            class="ml-4"
+            class="my-4"
             v-on="on"
             icon
           >

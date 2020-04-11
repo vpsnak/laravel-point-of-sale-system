@@ -95,7 +95,7 @@
               v-model="formFields.company_id"
               :items="companies"
               label="Company"
-              :disabled="loading"
+              :disabled="companiesLoading"
               item-text="name"
               item-value="id"
               :error-messages="errors"
@@ -141,20 +141,20 @@
           label="Active"
           :readonly="$props.readonly"
           :disabled="loading"
-        ></v-checkbox>
+        />
         <v-checkbox
           v-model="formFields.is_phone_center"
           label="Phone center"
           :readonly="$props.readonly"
           :disabled="loading"
-        ></v-checkbox>
+        />
       </v-row>
     </v-container>
     <v-container v-if="!$props.readonly">
       <v-row justify="center">
         <v-btn
           type="submit"
-          :loading="loading"
+          :loading="submitLoading"
           :disabled="invalid || loading"
           color="primary"
           >submit
@@ -174,7 +174,9 @@ export default {
   },
   data() {
     return {
-      loading: false,
+      companiesLoading: false,
+      submitLoading: false,
+
       currencies: ["USD"],
 
       valid: true,
@@ -200,6 +202,20 @@ export default {
     this.getAllCompanies();
     if (this.$props.model) {
       this.formFields = { ...this.$props.model };
+    }
+  },
+
+  beforeDestroy() {
+    this.$off("submit");
+  },
+
+  computed: {
+    loading() {
+      if (this.companiesLoading || this.submitLoading) {
+        return true;
+      } else {
+        return false;
+      }
     }
   },
 
@@ -241,7 +257,7 @@ export default {
         });
     },
     getAllCompanies() {
-      this.loading = true;
+      this.companiesLoading = true;
       const payload = {
         method: "get",
         url: "companies"
@@ -251,12 +267,9 @@ export default {
           this.companies = response.data;
         })
         .finally(() => {
-          this.loading = false;
+          this.companiesLoading = false;
         });
     }
-  },
-  beforeDestroy() {
-    this.$off("submit");
   }
 };
 </script>
