@@ -114,7 +114,7 @@
           <v-checkbox
             v-model="formFields.house_account_status"
             :disabled="loading"
-            label="Enable house account"
+            label="House account"
             :readonly="$props.readonly"
             @change="house_account_status = formFields.house_account_status"
             dense
@@ -173,12 +173,24 @@
     <v-container v-if="!$props.readonly">
       <v-row align="center" justify="center">
         <v-btn
+          v-if="$props.stepper"
+          color="primary"
+          type="submit"
+          :disabled="invalid || loading"
+          :loading="submit_loading"
+          outlined
+          text
+        >
+          <v-icon large v-text="'mdi-chevron-right'" />
+        </v-btn>
+        <v-btn
+          v-else
           color="primary"
           type="submit"
           :loading="loading"
           :disabled="invalid || loading"
         >
-          <span v-text="stepper ? 'next' : 'save'" />
+          <span v-text="'save'" />
         </v-btn>
       </v-row>
     </v-container>

@@ -105,9 +105,9 @@ export default {
   },
 
   mounted() {
-    EventBus.$on("customer-search", event => {
-      if (event.payload.customer) {
-        this.cartCustomer = event.payload.customer;
+    EventBus.$on("customer-search", customer => {
+      if (customer) {
+        this.cartCustomer = customer;
       }
     });
   },
@@ -164,11 +164,11 @@ export default {
         titleCloseBtn: true,
         component: create ? "customerCreateStepper" : "customerForm",
         component_props: {
-          model: create ? {} : this.cartCustomer
+          model: create ? null : this.cartCustomer,
+          addToCart: true
         },
         no_padding: true,
-        persistent: create ? true : false,
-        eventChannel: "customer-search"
+        persistent: create ? true : false
       };
       this.setDialog(payload);
     },

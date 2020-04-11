@@ -84,7 +84,7 @@ export default {
       title: "Users",
       model: "users",
       newDialogProps: {
-        title: "Add store pickup",
+        title: "Add user",
         component: "userForm"
       },
       newBtnTxt: "add user",

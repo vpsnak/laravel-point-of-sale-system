@@ -4,7 +4,7 @@
     tag="v-form"
     @submit.prevent="submit()"
   >
-    <v-row>
+    <v-row justify="space-around">
       <v-col :cols="6">
         <ValidationProvider
           rules="required"
@@ -145,28 +145,57 @@
           prepend-inner-icon="mdi-city"
         />
       </v-col>
+
+      <v-checkbox
+        v-model="address.is_default_billing"
+        label="Default billing address"
+      />
+
+      <v-checkbox
+        v-model="address.is_default_shipping"
+        label="Default delivery address"
+      />
     </v-row>
+
     <v-row
-      v-if="!$props.readonly"
+      v-if="!$props.readonly && $props.stepper"
       :justify="stepper ? 'space-around' : 'center'"
     >
-      <v-col v-if="stepper" cols="auto">
-        <v-btn @click="back()" :disabled="loading" :loading="back_loading">
-          <span v-text="'Back'" />
-        </v-btn>
-      </v-col>
-      <v-col cols="auto">
-        <v-btn
-          text
-          outlined
-          color="primary"
-          type="submit"
-          :disabled="invalid || loading"
-          :loading="submit_loading"
-        >
-          <span v-text="submitBtnTxt" />
-        </v-btn>
-      </v-col>
+      <v-btn
+        v-if="$props.stepper"
+        @click="back()"
+        :disabled="loading"
+        :loading="back_loading"
+        color="deep-orange"
+        icon
+      >
+        <v-icon large v-text="'mdi-chevron-left'" />
+      </v-btn>
+
+      <v-btn
+        v-if="$props.stepper"
+        color="primary"
+        type="submit"
+        :disabled="invalid || loading"
+        :loading="submit_loading"
+        outlined
+        text
+      >
+        <v-icon large v-text="'mdi-chevron-right'" />
+      </v-btn>
+    </v-row>
+
+    <v-row v-else-if="!$props.readonly && !$props.stepper">
+      <v-btn
+        text
+        outlined
+        color="primary"
+        type="submit"
+        :disabled="invalid || loading"
+        :loading="submit_loading"
+      >
+        <span v-text="submitBtnTxt" />
+      </v-btn>
     </v-row>
   </ValidationObserver>
 </template>
@@ -211,7 +240,9 @@ export default {
         phone: null,
         deliverydate: null,
         billing: false,
-        location: 11
+        location: 11,
+        is_default_billing: false,
+        is_default_shipping: false
       }
     };
   },
